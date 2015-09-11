@@ -1,6 +1,6 @@
-/// <reference path="harness.ts" />
+import {Harness} from "./harness";
 
-abstract class RunnerBase {
+export abstract class RunnerBase {
     constructor() { }
 
     // contains the tests to run

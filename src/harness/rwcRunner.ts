@@ -1,9 +1,11 @@
-/// <reference path="harness.ts"/>
-/// <reference path="runnerbase.ts" />
-/// <reference path="loggedIO.ts" />
-/// <reference path="..\compiler\commandLineParser.ts"/>
+import {IOLog, Playback} from "./loggedIO";
+import {parseCommandLine} from "../compiler/commandLineParser";
+import {CompilerOptions, ParsedCommandLine} from "../compiler/types";
+import {normalizeSlashes, forEach} from "../compiler/core"
+import {Harness, assert} from "./harness";
+import {RunnerBase} from "./runnerbase";
 
-module RWC {
+export namespace RWC {
     function runWithIOLog(ioLog: IOLog, fn: (oldIO: Harness.IO) => void) {
         let oldIO = Harness.IO;
 
@@ -24,12 +26,12 @@ module RWC {
             let inputFiles: { unitName: string; content: string; }[] = [];
             let otherFiles: { unitName: string; content: string; }[] = [];
             let compilerResult: Harness.Compiler.CompilerResult;
-            let compilerOptions: ts.CompilerOptions;
+            let compilerOptions: CompilerOptions;
             let baselineOpts: Harness.Baseline.BaselineOptions = {
                 Subfolder: "rwc",
                 Baselinefolder: "internal/baselines"
             };
-            let baseName = /(.*)\/(.*).json/.exec(ts.normalizeSlashes(jsonPath))[2];
+            let baseName = /(.*)\/(.*).json/.exec(normalizeSlashes(jsonPath))[2];
             let currentDirectory: string;
             let useCustomLibraryFile: boolean;
             after(() => {
@@ -50,13 +52,13 @@ module RWC {
 
             it("can compile", () => {
                 let harnessCompiler = Harness.Compiler.getCompiler();
-                let opts: ts.ParsedCommandLine;
+                let opts: ParsedCommandLine;
 
                 let ioLog: IOLog = JSON.parse(Harness.IO.readFile(jsonPath));
                 currentDirectory = ioLog.currentDirectory;
                 useCustomLibraryFile = ioLog.useCustomLibraryFile;
                 runWithIOLog(ioLog, () => {
-                    opts = ts.parseCommandLine(ioLog.arguments, fileName => Harness.IO.readFile(fileName));
+                    opts = parseCommandLine(ioLog.arguments, fileName => Harness.IO.readFile(fileName));
                     assert.equal(opts.errors.length, 0);
 
                     // To provide test coverage of output javascript file,
@@ -68,7 +70,7 @@ module RWC {
                     harnessCompiler.reset();
 
                     // Load the files
-                    ts.forEach(opts.fileNames, fileName => {
+                    forEach(opts.fileNames, fileName => {
                         inputFiles.push(getHarnessCompilerInputUnit(fileName));
                     });
 
@@ -76,8 +78,8 @@ module RWC {
                     let isInInputList = (resolvedPath: string) => (inputFile: { unitName: string; content: string; }) => inputFile.unitName === resolvedPath;
                     for (let fileRead of ioLog.filesRead) {
                         // Check if the file is already added into the set of input files.
-                        const resolvedPath = ts.normalizeSlashes(Harness.IO.resolvePath(fileRead.path));
-                        let inInputList = ts.forEach(inputFiles, isInInputList(resolvedPath));
+                        const resolvedPath = normalizeSlashes(Harness.IO.resolvePath(fileRead.path));
+                        let inInputList = forEach(inputFiles, isInInputList(resolvedPath));
 
                         if (!Harness.isLibraryFile(fileRead.path)) {
                             if (inInputList) {
@@ -118,7 +120,7 @@ module RWC {
                 });
 
                 function getHarnessCompilerInputUnit(fileName: string) {
-                    let unitName = ts.normalizeSlashes(Harness.IO.resolvePath(fileName));
+                    let unitName = normalizeSlashes(Harness.IO.resolvePath(fileName));
                     let content: string = null;
                     try {
                         content = Harness.IO.readFile(unitName);
@@ -198,7 +200,7 @@ module RWC {
     }
 }
 
-class RWCRunner extends RunnerBase {
+export class RWCRunner extends RunnerBase {
     private static sourcePath = "internal/cases/rwc/";
 
     /** Setup the runner's tests so that they are ready to be executed by the harness

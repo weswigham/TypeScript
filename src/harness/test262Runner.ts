@@ -1,7 +1,9 @@
-/// <reference path="harness.ts" />
-/// <reference path="runnerbase.ts" />
+import {Harness, Utils} from "./harness";
+import {RunnerBase} from "./runnerbase";
+import {CompilerOptions, ModuleKind, ScriptTarget, Program} from "../compiler/types";
+import {removeFileExtension, normalizePath} from "../compiler/core";
 
-class Test262BaselineRunner extends RunnerBase {
+export class Test262BaselineRunner extends RunnerBase {
     private static basePath = "internal/cases/test262";
     private static helpersFilePath = "tests/cases/test262-harness/helpers.d.ts";
     private static helperFile = {
@@ -9,10 +11,10 @@ class Test262BaselineRunner extends RunnerBase {
         content: Harness.IO.readFile(Test262BaselineRunner.helpersFilePath)
     };
     private static testFileExtensionRegex = /\.js$/;
-    private static options: ts.CompilerOptions = {
+    private static options: CompilerOptions = {
         allowNonTsExtensions: true,
-        target: ts.ScriptTarget.Latest,
-        module: ts.ModuleKind.CommonJS
+        target: ScriptTarget.Latest,
+        module: ModuleKind.CommonJS
     };
     private static baselineOptions: Harness.Baseline.BaselineOptions = {
         Subfolder: "test262",
@@ -31,12 +33,12 @@ class Test262BaselineRunner extends RunnerBase {
                 filename: string;
                 compilerResult: Harness.Compiler.CompilerResult;
                 inputFiles: { unitName: string; content: string }[];
-                program: ts.Program;
+                program: Program;
             };
 
             before(() => {
                 let content = Harness.IO.readFile(filePath);
-                let testFilename = ts.removeFileExtension(filePath).replace(/\//g, "_") + ".test";
+                let testFilename = removeFileExtension(filePath).replace(/\//g, "_") + ".test";
                 let testCaseContent = Harness.TestCaseParser.makeUnitsFromTest(content, testFilename);
 
                 let inputFiles = testCaseContent.testUnitData.map(unit => {
@@ -98,7 +100,7 @@ class Test262BaselineRunner extends RunnerBase {
         if (this.tests.length === 0) {
             let testFiles = this.enumerateFiles(Test262BaselineRunner.basePath, Test262BaselineRunner.testFileExtensionRegex, { recursive: true });
             testFiles.forEach(fn => {
-                this.runTest(ts.normalizePath(fn));
+                this.runTest(normalizePath(fn));
             });
         }
         else {

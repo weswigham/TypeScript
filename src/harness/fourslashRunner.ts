@@ -1,15 +1,15 @@
-///<reference path="fourslash.ts" />
-///<reference path="harness.ts"/>
-///<reference path="runnerbase.ts" />
+import {normalizeSlashes} from "../compiler/core";
+import {RunnerBase} from "./runnerbase";
+import {FourSlash} from "./fourslash";
 
-const enum FourSlashTestType {
+export const enum FourSlashTestType {
     Native,
     Shims,
     ShimsWithPreprocess,
     Server
 }
 
-class FourSlashRunner extends RunnerBase {
+export class FourSlashRunner extends RunnerBase {
     protected basePath: string;
     protected testSuiteName: string;
 
@@ -43,7 +43,7 @@ class FourSlashRunner extends RunnerBase {
         describe(this.testSuiteName + " tests", () => {
             this.tests.forEach((fn: string) => {
                  describe(fn, () => {
-                       fn = ts.normalizeSlashes(fn);
+                       fn = normalizeSlashes(fn);
                         let justName = fn.replace(/^.*[\\\/]/, "");
 
                         // Convert to relative path
@@ -110,7 +110,7 @@ class FourSlashRunner extends RunnerBase {
     }
 }
 
-class GeneratedFourslashRunner extends FourSlashRunner {
+export class GeneratedFourslashRunner extends FourSlashRunner {
     constructor(testType: FourSlashTestType) {
         super(testType);
         this.basePath += "/generated/";

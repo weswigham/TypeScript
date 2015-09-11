@@ -1,6 +1,7 @@
-/// <reference path="..\..\src\compiler\sys.ts" />
-/// <reference path="..\..\src\harness\harness.ts" />
-/// <reference path="..\..\src\harness\runnerbase.ts" />
+import {RunnerBase} from "./runnerbase";
+import {Harness} from "./harness";
+import {sys} from "../compiler/sys";
+import {normalizeSlashes, isRootedDiskPath} from "../compiler/core";
 
 interface FileInformation {
     contents: string;
@@ -11,7 +12,7 @@ interface FindFileResult {
 
 }
 
-interface IOLog {
+export interface IOLog {
     timestamp: string;
     arguments: string[];
     executingPath: string;
@@ -70,7 +71,7 @@ interface PlaybackControl {
     endRecord(): void;
 }
 
-module Playback {
+export namespace Playback {
     let recordLog: IOLog = undefined;
     let replayLog: IOLog = undefined;
     let recordLogFileNameBase = "";
@@ -177,10 +178,10 @@ module Playback {
     }
 
     function findResultByPath<T>(wrapper: { resolvePath(s: string): string }, logArray: { path: string; result?: T }[], expectedPath: string, defaultValue?: T): T {
-        let normalizedName = ts.normalizeSlashes(expectedPath).toLowerCase();
+        let normalizedName = normalizeSlashes(expectedPath).toLowerCase();
         // Try to find the result through normal fileName
         for (let i = 0; i < logArray.length; i++) {
-            if (ts.normalizeSlashes(logArray[i].path).toLowerCase() === normalizedName) {
+            if (normalizeSlashes(logArray[i].path).toLowerCase() === normalizedName) {
                 return logArray[i].result;
             }
         }
@@ -205,7 +206,7 @@ module Playback {
     function pathsAreEquivalent(left: string, right: string, wrapper: { resolvePath(s: string): string }) {
         let key = left + "-~~-" + right;
         function areSame(a: string, b: string) {
-            return ts.normalizeSlashes(a).toLowerCase() === ts.normalizeSlashes(b).toLowerCase();
+            return normalizeSlashes(a).toLowerCase() === normalizeSlashes(b).toLowerCase();
         }
         function check() {
             if (Harness.Path.getFileName(left).toLowerCase() === Harness.Path.getFileName(right).toLowerCase()) {
@@ -292,7 +293,7 @@ module Playback {
 
         wrapper.resolvePath = recordReplay(wrapper.resolvePath, underlying)(
             (path) => callAndRecord(underlying.resolvePath(path), recordLog.pathsResolved, { path: path }),
-            memoize((path) => findResultByFields(replayLog.pathsResolved, { path: path }, !ts.isRootedDiskPath(ts.normalizeSlashes(path)) && replayLog.currentDirectory ? replayLog.currentDirectory + "/" + path : ts.normalizeSlashes(path))));
+            memoize((path) => findResultByFields(replayLog.pathsResolved, { path: path }, !isRootedDiskPath(normalizeSlashes(path)) && replayLog.currentDirectory ? replayLog.currentDirectory + "/" + path : normalizeSlashes(path))));
 
         wrapper.readFile = recordReplay(wrapper.readFile, underlying)(
             (path) => {

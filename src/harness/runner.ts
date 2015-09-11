@@ -13,12 +13,8 @@
 // limitations under the License.
 //
 
-/// <reference path="test262Runner.ts" />
-/// <reference path="compilerRunner.ts" />
-/// <reference path="fourslashRunner.ts" />
-/// <reference path="projectsRunner.ts" />
-/// <reference path="rwcRunner.ts" />
-/// <reference path="harness.ts" />
+import {RunnerBase} from "./runnerbase";
+import {Harness, Utils} from "./harness";
 
 let runners: RunnerBase[] = [];
 let iterations: number = 1;

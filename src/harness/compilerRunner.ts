@@ -1,14 +1,16 @@
-/// <reference path="harness.ts" />
-/// <reference path="runnerbase.ts" />
-/// <reference path="typeWriter.ts" />
+import {RunnerBase} from "./runnerbase";
+import {Harness} from "./harness";
+import {Program, CompilerOptions, Map} from "../compiler/types";
+import {fileExtensionIs} from "../compiler/core";
+import {TypeWriterResult, TypeWriterWalker} from "./typeWriter";
 
-const enum CompilerTestType {
+export const enum CompilerTestType {
     Conformance,
     Regressions,
     Test262
 }
 
-class CompilerBaselineRunner extends RunnerBase {
+export class CompilerBaselineRunner extends RunnerBase {
     private basePath = "tests/cases";
     private testSuiteName: string;
     private errors: boolean;
@@ -53,8 +55,8 @@ class CompilerBaselineRunner extends RunnerBase {
             let rootDir: string;
 
             let result: Harness.Compiler.CompilerResult;
-            let program: ts.Program;
-            let options: ts.CompilerOptions;
+            let program: Program;
+            let options: CompilerOptions;
             // equivalent to the files that will be passed on the command line
             let toBeCompiled: { unitName: string; content: string }[];
             // equivalent to other files on the file system not directly passed to the compiler (ie things that are referenced by other files)
@@ -172,7 +174,7 @@ class CompilerBaselineRunner extends RunnerBase {
             });
 
             it("Correct JS output for " + fileName, () => {
-                if (!ts.fileExtensionIs(lastUnit.name, ".d.ts") && this.emit) {
+                if (!fileExtensionIs(lastUnit.name, ".d.ts") && this.emit) {
                     if (result.files.length === 0 && result.errors.length === 0) {
                         throw new Error("Expected at least one js file to be emitted or at least one error to be created.");
                     }
@@ -282,8 +284,8 @@ class CompilerBaselineRunner extends RunnerBase {
                     let fullWalker = new TypeWriterWalker(program, /*fullTypeCheck:*/ true);
                     let pullWalker = new TypeWriterWalker(program, /*fullTypeCheck:*/ false);
 
-                    let fullResults: ts.Map<TypeWriterResult[]> = {};
-                    let pullResults: ts.Map<TypeWriterResult[]> = {};
+                    let fullResults: Map<TypeWriterResult[]> = {};
+                    let pullResults: Map<TypeWriterResult[]> = {};
 
                     for (let sourceFile of allFiles) {
                         fullResults[sourceFile.unitName] = fullWalker.getTypeAndSymbols(sourceFile.unitName);
@@ -329,7 +331,7 @@ class CompilerBaselineRunner extends RunnerBase {
                         }
                     }
 
-                    function generateBaseLine(typeWriterResults: ts.Map<TypeWriterResult[]>, isSymbolBaseline: boolean): string {
+                    function generateBaseLine(typeWriterResults: Map<TypeWriterResult[]>, isSymbolBaseline: boolean): string {
                         let typeLines: string[] = [];
                         let typeMap: { [fileName: string]: { [lineNum: number]: string[]; } } = {};
 

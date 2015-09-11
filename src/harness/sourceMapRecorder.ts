@@ -13,24 +13,25 @@
 // limitations under the License.
 //
 
-///<reference path="harness.ts"/>
+import {SourceMapSpan, SourceMapData, Program, SourceFile} from "../compiler/types";
+import {computeLineStarts} from "../compiler/scanner";
+import {Harness, assert} from "./harness";
 
-module Harness.SourceMapRecoder {
-
+export namespace SourceMapRecoder {
     interface SourceMapSpanWithDecodeErrors {
-        sourceMapSpan: ts.SourceMapSpan;
+        sourceMapSpan: SourceMapSpan;
         decodeErrors: string[];
     }
 
-    module SourceMapDecoder {
+    namespace SourceMapDecoder {
         let sourceMapMappings: string;
         let sourceMapNames: string[];
         let decodingIndex: number;
         let prevNameIndex: number;
-        let decodeOfEncodedMapping: ts.SourceMapSpan;
+        let decodeOfEncodedMapping: SourceMapSpan;
         let errorDecodeOfEncodedMapping: string;
 
-        export function initializeSourceMapDecoding(sourceMapData: ts.SourceMapData) {
+        export function initializeSourceMapDecoding(sourceMapData: SourceMapData) {
             sourceMapMappings = sourceMapData.sourceMapMappings;
             sourceMapNames = sourceMapData.sourceMapNames;
             decodingIndex = 0;
@@ -202,12 +203,12 @@ module Harness.SourceMapRecoder {
         }
     }
 
-    module SourceMapSpanWriter {
-        let sourceMapRecoder: Compiler.WriterAggregator;
+    namespace SourceMapSpanWriter {
+        let sourceMapRecoder: Harness.Compiler.WriterAggregator;
         let sourceMapSources: string[];
         let sourceMapNames: string[];
 
-        let jsFile: Compiler.GeneratedFile;
+        let jsFile: Harness.Compiler.GeneratedFile;
         let jsLineMap: number[];
         let tsCode: string;
         let tsLineMap: number[];
@@ -217,13 +218,13 @@ module Harness.SourceMapRecoder {
         let prevWrittenJsLine: number;
         let spanMarkerContinues: boolean;
 
-        export function intializeSourceMapSpanWriter(sourceMapRecordWriter: Compiler.WriterAggregator, sourceMapData: ts.SourceMapData, currentJsFile: Compiler.GeneratedFile) {
+        export function intializeSourceMapSpanWriter(sourceMapRecordWriter: Harness.Compiler.WriterAggregator, sourceMapData: SourceMapData, currentJsFile: Harness.Compiler.GeneratedFile) {
             sourceMapRecoder = sourceMapRecordWriter;
             sourceMapSources = sourceMapData.sourceMapSources;
             sourceMapNames = sourceMapData.sourceMapNames;
 
             jsFile = currentJsFile;
-            jsLineMap = ts.computeLineStarts(jsFile.code);
+            jsLineMap = computeLineStarts(jsFile.code);
 
             spansOnSingleLine = [];
             prevWrittenSourcePos = 0;
@@ -243,7 +244,7 @@ module Harness.SourceMapRecoder {
             sourceMapRecoder.WriteLine("===================================================================");
         }
 
-        function getSourceMapSpanString(mapEntry: ts.SourceMapSpan, getAbsentNameIndex?: boolean) {
+        function getSourceMapSpanString(mapEntry: SourceMapSpan, getAbsentNameIndex?: boolean) {
             let mapString = "Emitted(" + mapEntry.emittedLine + ", " + mapEntry.emittedColumn + ") Source(" + mapEntry.sourceLine + ", " + mapEntry.sourceColumn + ") + SourceIndex(" + mapEntry.sourceIndex + ")";
             if (mapEntry.nameIndex >= 0 && mapEntry.nameIndex < sourceMapNames.length) {
                 mapString += " name (" + sourceMapNames[mapEntry.nameIndex] + ")";
@@ -257,7 +258,7 @@ module Harness.SourceMapRecoder {
             return mapString;
         }
 
-        export function recordSourceMapSpan(sourceMapSpan: ts.SourceMapSpan) {
+        export function recordSourceMapSpan(sourceMapSpan: SourceMapSpan) {
             // verify the decoded span is same as the new span
             let decodeResult = SourceMapDecoder.decodeNextEncodedSourceMapSpan();
             let decodedErrors: string[];
@@ -287,7 +288,7 @@ module Harness.SourceMapRecoder {
             }
         }
 
-        export function recordNewSourceFileSpan(sourceMapSpan: ts.SourceMapSpan, newSourceFileCode: string) {
+        export function recordNewSourceFileSpan(sourceMapSpan: SourceMapSpan, newSourceFileCode: string) {
             assert.isTrue(spansOnSingleLine.length === 0 || spansOnSingleLine[0].sourceMapSpan.emittedLine !== sourceMapSpan.emittedLine, "new file source map span should be on new line. We currently handle only that scenario");
             recordSourceMapSpan(sourceMapSpan);
 
@@ -297,7 +298,7 @@ module Harness.SourceMapRecoder {
             sourceMapRecoder.WriteLine("sourceFile:" + sourceMapSources[spansOnSingleLine[0].sourceMapSpan.sourceIndex]);
             sourceMapRecoder.WriteLine("-------------------------------------------------------------------");
 
-            tsLineMap = ts.computeLineStarts(newSourceFileCode);
+            tsLineMap = computeLineStarts(newSourceFileCode);
             tsCode = newSourceFileCode;
             prevWrittenSourcePos = 0;
         }
@@ -395,7 +396,7 @@ module Harness.SourceMapRecoder {
                     }
                 }
 
-                let tsCodeLineMap = ts.computeLineStarts(sourceText);
+                let tsCodeLineMap = computeLineStarts(sourceText);
                 for (let i = 0; i < tsCodeLineMap.length; i++) {
                     writeSourceMapIndent(prevEmittedCol, i === 0 ? markerIds[index] : "  >");
                     sourceMapRecoder.Write(getTextOfLine(i, tsCodeLineMap, sourceText));
@@ -437,12 +438,12 @@ module Harness.SourceMapRecoder {
         }
     }
 
-    export function getSourceMapRecord(sourceMapDataList: ts.SourceMapData[], program: ts.Program, jsFiles: Compiler.GeneratedFile[]) {
-        let sourceMapRecoder = new Compiler.WriterAggregator();
+    export function getSourceMapRecord(sourceMapDataList: SourceMapData[], program: Program, jsFiles: Harness.Compiler.GeneratedFile[]) {
+        let sourceMapRecoder = new Harness.Compiler.WriterAggregator();
 
         for (let i = 0; i < sourceMapDataList.length; i++) {
             let sourceMapData = sourceMapDataList[i];
-            let prevSourceFile: ts.SourceFile = null;
+            let prevSourceFile: SourceFile = null;
 
             SourceMapSpanWriter.intializeSourceMapSpanWriter(sourceMapRecoder, sourceMapData, jsFiles[i]);
             for (let j = 0; j < sourceMapData.sourceMapDecodedMappings.length; j++) {

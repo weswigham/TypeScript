@@ -1,4 +1,18 @@
-interface TypeWriterResult {
+import {SourceFile} from "../services/services";
+import {
+    TypeChecker, Program,
+    Node, SyntaxKind, TypeFormatFlags
+} from "../compiler/types";
+import {
+    isExpression, getTextOfNodeFromSourceText, isExpressionWithTypeArgumentsInClassExtendsClause
+} from "../compiler/utilities";
+import {
+    Debug, getBaseFileName
+} from "../compiler/core";
+import {forEachChild} from "../compiler/parser";
+import {skipTrivia} from "../compiler/scanner";
+
+export interface TypeWriterResult {
     line: number;
     syntaxKind: number;
     sourceText: string;
@@ -6,13 +20,13 @@ interface TypeWriterResult {
     symbol: string;
 }
 
-class TypeWriterWalker {
+export class TypeWriterWalker {
     results: TypeWriterResult[];
-    currentSourceFile: ts.SourceFile;
+    currentSourceFile: SourceFile;
 
-    private checker: ts.TypeChecker;
+    private checker: TypeChecker;
 
-    constructor(private program: ts.Program, fullTypeCheck: boolean) {
+    constructor(private program: Program, fullTypeCheck: boolean) {
         // Consider getting both the diagnostics checker and the non-diagnostics checker to verify
         // they are consistent.
         this.checker = fullTypeCheck
@@ -28,27 +42,27 @@ class TypeWriterWalker {
         return this.results;
     }
 
-    private visitNode(node: ts.Node): void {
-        if (ts.isExpression(node) || node.kind === ts.SyntaxKind.Identifier) {
+    private visitNode(node: Node): void {
+        if (isExpression(node) || node.kind === SyntaxKind.Identifier) {
             this.logTypeAndSymbol(node);
         }
 
-        ts.forEachChild(node, child => this.visitNode(child));
+        forEachChild(node, child => this.visitNode(child));
     }
 
-    private logTypeAndSymbol(node: ts.Node): void {
-        let actualPos = ts.skipTrivia(this.currentSourceFile.text, node.pos);
+    private logTypeAndSymbol(node: Node): void {
+        let actualPos = skipTrivia(this.currentSourceFile.text, node.pos);
         let lineAndCharacter = this.currentSourceFile.getLineAndCharacterOfPosition(actualPos);
-        let sourceText = ts.getTextOfNodeFromSourceText(this.currentSourceFile.text, node);
+        let sourceText = getTextOfNodeFromSourceText(this.currentSourceFile.text, node);
 
         // Workaround to ensure we output 'C' instead of 'typeof C' for base class expressions
         // let type = this.checker.getTypeAtLocation(node);
-        let type = node.parent && ts.isExpressionWithTypeArgumentsInClassExtendsClause(node.parent) && this.checker.getTypeAtLocation(node.parent) || this.checker.getTypeAtLocation(node);
+        let type = node.parent && isExpressionWithTypeArgumentsInClassExtendsClause(node.parent) && this.checker.getTypeAtLocation(node.parent) || this.checker.getTypeAtLocation(node);
 
-        ts.Debug.assert(type !== undefined, "type doesn't exist");
+        Debug.assert(type !== undefined, "type doesn't exist");
         let symbol = this.checker.getSymbolAtLocation(node);
 
-        let typeString = this.checker.typeToString(type, node.parent, ts.TypeFormatFlags.NoTruncation);
+        let typeString = this.checker.typeToString(type, node.parent, TypeFormatFlags.NoTruncation);
         let symbolString: string;
         if (symbol) {
             symbolString = "Symbol(" + this.checker.symbolToString(symbol, node.parent);
@@ -57,7 +71,7 @@ class TypeWriterWalker {
                     symbolString += ", ";
                     let declSourceFile = declaration.getSourceFile();
                     let declLineAndCharacter = declSourceFile.getLineAndCharacterOfPosition(declaration.pos);
-                    symbolString += `Decl(${ ts.getBaseFileName(declSourceFile.fileName) }, ${ declLineAndCharacter.line }, ${ declLineAndCharacter.character })`;
+                    symbolString += `Decl(${ getBaseFileName(declSourceFile.fileName) }, ${ declLineAndCharacter.line }, ${ declLineAndCharacter.character })`;
                 }
             }
             symbolString += ")";
