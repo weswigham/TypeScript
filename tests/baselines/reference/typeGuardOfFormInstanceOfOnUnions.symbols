@@ -1,0 +1,331 @@
+=== tests/cases/conformance/expressions/typeGuards/typeGuardOfFormInstanceOfOnUnions.ts ===
+class Cube {
+>Cube : Symbol(Cube, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 0, 0))
+
+	private __cube: void;
+>__cube : Symbol(__cube, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 0, 12))
+
+	sides = 6;
+>sides : Symbol(sides, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 1, 22))
+
+    constructor(public length: number) {}
+>length : Symbol(length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+}
+
+class Polygon {
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+	private __polygon: void;
+>__polygon : Symbol(__polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 6, 15))
+
+	sides: number;
+>sides : Symbol(sides, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 7, 25))
+}
+
+class Square extends Polygon {
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+	private __square: void;
+>__square : Symbol(__square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 11, 30))
+
+	sides = 4;
+>sides : Symbol(sides, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 12, 24))
+
+    constructor(public length: number) { super(); }
+>length : Symbol(length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>super : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+}
+
+class Rectangle extends Polygon {
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+	private __rectangle: void;
+>__rectangle : Symbol(__rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 17, 33))
+
+	sides = 4;
+>sides : Symbol(sides, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 18, 27))
+
+    constructor(public length: number, public width: number) { super(); }
+>length : Symbol(length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>width : Symbol(width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>super : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+}
+
+class Triangle extends Polygon {
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+	private __triangle: void;
+>__triangle : Symbol(__triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 23, 32))
+
+	sides = 3;
+>sides : Symbol(sides, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 24, 26))
+
+    constructor(public base: number, public height: number) { super(); }
+>base : Symbol(base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>height : Symbol(height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>super : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+}
+
+
+function calculateArea1(shape: (Square | Rectangle | Triangle)) : number {
+>calculateArea1 : Symbol(calculateArea1, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 27, 1))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+
+	if(shape instanceof Square) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+
+		return shape.length * shape.length;
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+	}
+	else if(shape instanceof Rectangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+
+		return shape.length * shape.width;
+>shape.length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape.width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+	}
+	else if(shape instanceof Triangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+
+		return (shape.base * shape.height) / 2;
+>shape.base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape.height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 30, 24))
+>height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+	}
+}
+
+function calculateArea2(shape: (Square | Rectangle | Triangle)) : number {
+>calculateArea2 : Symbol(calculateArea2, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 40, 1))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+
+	if(shape instanceof Square) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+
+		return shape.length * shape.length;
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+	}
+	else if(shape instanceof Rectangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+
+		return shape.length * shape.width;
+>shape.length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape.width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+	}
+	else {
+		return (shape.base * shape.height) / 2;
+>shape.base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape.height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 42, 24))
+>height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+	}
+}
+
+function calculateArea3(shape: (Square | Rectangle | Triangle | Cube)) : number {
+>calculateArea3 : Symbol(calculateArea3, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 52, 1))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+>Cube : Symbol(Cube, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 0, 0))
+
+	if (shape instanceof Polygon) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+		if (shape instanceof Square) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+
+			return shape.length * shape.length;
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+		}
+		else if (shape instanceof Rectangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+
+			return shape.length * shape.width;
+>shape.length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape.width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+		}
+		else {
+			return (shape.base * shape.height) / 2;
+>shape.base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape.height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+		}
+	}
+	else {
+		return shape.length * shape.length * 6;
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 54, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+	}
+}
+
+function calculateArea4(shape: (Square | Rectangle | Triangle | Cube)) : number {
+>calculateArea4 : Symbol(calculateArea4, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 69, 1))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+>Cube : Symbol(Cube, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 0, 0))
+
+	if (!(shape instanceof Polygon)) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+		return shape.length * shape.length * 6;
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+	}
+	else {
+		if (shape instanceof Square) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+
+			return shape.length * shape.length;
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+		}
+		else if (shape instanceof Rectangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+
+			return shape.length * shape.width;
+>shape.length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape.width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+		}
+		else {
+			return (shape.base * shape.height) / 2;
+>shape.base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape.height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 71, 24))
+>height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+		}
+	}
+}
+
+function calculateArea5(shape: (Polygon | Cube)) : number {
+>calculateArea5 : Symbol(calculateArea5, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 86, 1))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+>Cube : Symbol(Cube, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 0, 0))
+
+	if (shape instanceof Polygon) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>Polygon : Symbol(Polygon, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 4, 1))
+
+		if (shape instanceof Square) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>Square : Symbol(Square, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 9, 1))
+
+			return shape.length * shape.length;
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape.length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>length : Symbol(Square.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 14, 16))
+		}
+		else if (shape instanceof Rectangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>Rectangle : Symbol(Rectangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 15, 1))
+
+			return shape.length * shape.width;
+>shape.length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>length : Symbol(Rectangle.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 16))
+>shape.width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>width : Symbol(Rectangle.width, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 20, 38))
+		}
+		else if (shape instanceof Triangle) {
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>Triangle : Symbol(Triangle, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 21, 1))
+
+			return (shape.base * shape.height) / 2;
+>shape.base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>base : Symbol(Triangle.base, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 16))
+>shape.height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>height : Symbol(Triangle.height, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 26, 36))
+		}
+	}
+	else {
+		return shape.length * shape.length * 6;
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape.length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+>shape : Symbol(shape, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 88, 24))
+>length : Symbol(Cube.length, Decl(typeGuardOfFormInstanceOfOnUnions.ts, 3, 16))
+	}
+}
+

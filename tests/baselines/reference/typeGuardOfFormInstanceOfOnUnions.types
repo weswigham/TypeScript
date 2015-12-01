@@ -1,0 +1,394 @@
+=== tests/cases/conformance/expressions/typeGuards/typeGuardOfFormInstanceOfOnUnions.ts ===
+class Cube {
+>Cube : Cube
+
+	private __cube: void;
+>__cube : void
+
+	sides = 6;
+>sides : number
+>6 : number
+
+    constructor(public length: number) {}
+>length : number
+}
+
+class Polygon {
+>Polygon : Polygon
+
+	private __polygon: void;
+>__polygon : void
+
+	sides: number;
+>sides : number
+}
+
+class Square extends Polygon {
+>Square : Square
+>Polygon : Polygon
+
+	private __square: void;
+>__square : void
+
+	sides = 4;
+>sides : number
+>4 : number
+
+    constructor(public length: number) { super(); }
+>length : number
+>super() : void
+>super : typeof Polygon
+}
+
+class Rectangle extends Polygon {
+>Rectangle : Rectangle
+>Polygon : Polygon
+
+	private __rectangle: void;
+>__rectangle : void
+
+	sides = 4;
+>sides : number
+>4 : number
+
+    constructor(public length: number, public width: number) { super(); }
+>length : number
+>width : number
+>super() : void
+>super : typeof Polygon
+}
+
+class Triangle extends Polygon {
+>Triangle : Triangle
+>Polygon : Polygon
+
+	private __triangle: void;
+>__triangle : void
+
+	sides = 3;
+>sides : number
+>3 : number
+
+    constructor(public base: number, public height: number) { super(); }
+>base : number
+>height : number
+>super() : void
+>super : typeof Polygon
+}
+
+
+function calculateArea1(shape: (Square | Rectangle | Triangle)) : number {
+>calculateArea1 : (shape: Square | Rectangle | Triangle) => number
+>shape : Square | Rectangle | Triangle
+>Square : Square
+>Rectangle : Rectangle
+>Triangle : Triangle
+
+	if(shape instanceof Square) {
+>shape instanceof Square : boolean
+>shape : Square | Rectangle | Triangle
+>Square : typeof Square
+
+		return shape.length * shape.length;
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Square
+>length : number
+>shape.length : number
+>shape : Square
+>length : number
+	}
+	else if(shape instanceof Rectangle) {
+>shape instanceof Rectangle : boolean
+>shape : Rectangle | Triangle
+>Rectangle : typeof Rectangle
+
+		return shape.length * shape.width;
+>shape.length * shape.width : number
+>shape.length : number
+>shape : Rectangle
+>length : number
+>shape.width : number
+>shape : Rectangle
+>width : number
+	}
+	else if(shape instanceof Triangle) {
+>shape instanceof Triangle : boolean
+>shape : Triangle
+>Triangle : typeof Triangle
+
+		return (shape.base * shape.height) / 2;
+>(shape.base * shape.height) / 2 : number
+>(shape.base * shape.height) : number
+>shape.base * shape.height : number
+>shape.base : number
+>shape : Triangle
+>base : number
+>shape.height : number
+>shape : Triangle
+>height : number
+>2 : number
+	}
+}
+
+function calculateArea2(shape: (Square | Rectangle | Triangle)) : number {
+>calculateArea2 : (shape: Square | Rectangle | Triangle) => number
+>shape : Square | Rectangle | Triangle
+>Square : Square
+>Rectangle : Rectangle
+>Triangle : Triangle
+
+	if(shape instanceof Square) {
+>shape instanceof Square : boolean
+>shape : Square | Rectangle | Triangle
+>Square : typeof Square
+
+		return shape.length * shape.length;
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Square
+>length : number
+>shape.length : number
+>shape : Square
+>length : number
+	}
+	else if(shape instanceof Rectangle) {
+>shape instanceof Rectangle : boolean
+>shape : Rectangle | Triangle
+>Rectangle : typeof Rectangle
+
+		return shape.length * shape.width;
+>shape.length * shape.width : number
+>shape.length : number
+>shape : Rectangle
+>length : number
+>shape.width : number
+>shape : Rectangle
+>width : number
+	}
+	else {
+		return (shape.base * shape.height) / 2;
+>(shape.base * shape.height) / 2 : number
+>(shape.base * shape.height) : number
+>shape.base * shape.height : number
+>shape.base : number
+>shape : Triangle
+>base : number
+>shape.height : number
+>shape : Triangle
+>height : number
+>2 : number
+	}
+}
+
+function calculateArea3(shape: (Square | Rectangle | Triangle | Cube)) : number {
+>calculateArea3 : (shape: Square | Rectangle | Triangle | Cube) => number
+>shape : Square | Rectangle | Triangle | Cube
+>Square : Square
+>Rectangle : Rectangle
+>Triangle : Triangle
+>Cube : Cube
+
+	if (shape instanceof Polygon) {
+>shape instanceof Polygon : boolean
+>shape : Square | Rectangle | Triangle | Cube
+>Polygon : typeof Polygon
+
+		if (shape instanceof Square) {
+>shape instanceof Square : boolean
+>shape : Square | Rectangle | Triangle
+>Square : typeof Square
+
+			return shape.length * shape.length;
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Square
+>length : number
+>shape.length : number
+>shape : Square
+>length : number
+		}
+		else if (shape instanceof Rectangle) {
+>shape instanceof Rectangle : boolean
+>shape : Rectangle | Triangle
+>Rectangle : typeof Rectangle
+
+			return shape.length * shape.width;
+>shape.length * shape.width : number
+>shape.length : number
+>shape : Rectangle
+>length : number
+>shape.width : number
+>shape : Rectangle
+>width : number
+		}
+		else {
+			return (shape.base * shape.height) / 2;
+>(shape.base * shape.height) / 2 : number
+>(shape.base * shape.height) : number
+>shape.base * shape.height : number
+>shape.base : number
+>shape : Triangle
+>base : number
+>shape.height : number
+>shape : Triangle
+>height : number
+>2 : number
+		}
+	}
+	else {
+		return shape.length * shape.length * 6;
+>shape.length * shape.length * 6 : number
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>6 : number
+	}
+}
+
+function calculateArea4(shape: (Square | Rectangle | Triangle | Cube)) : number {
+>calculateArea4 : (shape: Square | Rectangle | Triangle | Cube) => number
+>shape : Square | Rectangle | Triangle | Cube
+>Square : Square
+>Rectangle : Rectangle
+>Triangle : Triangle
+>Cube : Cube
+
+	if (!(shape instanceof Polygon)) {
+>!(shape instanceof Polygon) : boolean
+>(shape instanceof Polygon) : boolean
+>shape instanceof Polygon : boolean
+>shape : Square | Rectangle | Triangle | Cube
+>Polygon : typeof Polygon
+
+		return shape.length * shape.length * 6;
+>shape.length * shape.length * 6 : number
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>6 : number
+	}
+	else {
+		if (shape instanceof Square) {
+>shape instanceof Square : boolean
+>shape : Square | Rectangle | Triangle
+>Square : typeof Square
+
+			return shape.length * shape.length;
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Square
+>length : number
+>shape.length : number
+>shape : Square
+>length : number
+		}
+		else if (shape instanceof Rectangle) {
+>shape instanceof Rectangle : boolean
+>shape : Rectangle | Triangle
+>Rectangle : typeof Rectangle
+
+			return shape.length * shape.width;
+>shape.length * shape.width : number
+>shape.length : number
+>shape : Rectangle
+>length : number
+>shape.width : number
+>shape : Rectangle
+>width : number
+		}
+		else {
+			return (shape.base * shape.height) / 2;
+>(shape.base * shape.height) / 2 : number
+>(shape.base * shape.height) : number
+>shape.base * shape.height : number
+>shape.base : number
+>shape : Triangle
+>base : number
+>shape.height : number
+>shape : Triangle
+>height : number
+>2 : number
+		}
+	}
+}
+
+function calculateArea5(shape: (Polygon | Cube)) : number {
+>calculateArea5 : (shape: Polygon | Cube) => number
+>shape : Polygon | Cube
+>Polygon : Polygon
+>Cube : Cube
+
+	if (shape instanceof Polygon) {
+>shape instanceof Polygon : boolean
+>shape : Polygon | Cube
+>Polygon : typeof Polygon
+
+		if (shape instanceof Square) {
+>shape instanceof Square : boolean
+>shape : Polygon
+>Square : typeof Square
+
+			return shape.length * shape.length;
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Square
+>length : number
+>shape.length : number
+>shape : Square
+>length : number
+		}
+		else if (shape instanceof Rectangle) {
+>shape instanceof Rectangle : boolean
+>shape : Polygon
+>Rectangle : typeof Rectangle
+
+			return shape.length * shape.width;
+>shape.length * shape.width : number
+>shape.length : number
+>shape : Rectangle
+>length : number
+>shape.width : number
+>shape : Rectangle
+>width : number
+		}
+		else if (shape instanceof Triangle) {
+>shape instanceof Triangle : boolean
+>shape : Polygon
+>Triangle : typeof Triangle
+
+			return (shape.base * shape.height) / 2;
+>(shape.base * shape.height) / 2 : number
+>(shape.base * shape.height) : number
+>shape.base * shape.height : number
+>shape.base : number
+>shape : Triangle
+>base : number
+>shape.height : number
+>shape : Triangle
+>height : number
+>2 : number
+		}
+	}
+	else {
+		return shape.length * shape.length * 6;
+>shape.length * shape.length * 6 : number
+>shape.length * shape.length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>shape.length : number
+>shape : Cube
+>length : number
+>6 : number
+	}
+}
+

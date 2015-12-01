@@ -6652,26 +6652,26 @@ namespace ts {
                 }
 
                 if (targetType) {
-                    if (!assumeTrue) {
-                        if (type.flags & TypeFlags.Union) {
-                            return getUnionType(filter((<UnionType>type).types, t => !isTypeSubtypeOf(t, targetType)));
-                        }
-                        return type;
-                    }
-
-                    return getNarrowedType(type, targetType);
+                    return getNarrowedType(type, targetType, assumeTrue);
                 }
 
                 return type;
             }
 
-            function getNarrowedType(originalType: Type, narrowedTypeCandidate: Type) {
+            function getNarrowedType(originalType: Type, narrowedTypeCandidate: Type, assumeTrue: boolean) {
+                if (!assumeTrue) {
+                    if (originalType.flags & TypeFlags.Union) {
+                        return getUnionType(filter((<UnionType>originalType).types, t => !isTypeAssignableTo(t, narrowedTypeCandidate)), /*noSubtypeReduction*/ true);
+                    }
+                    return originalType;
+                }
+
                 // If the current type is a union type, remove all constituents that aren't assignable to target. If that produces
                 // 0 candidates, fall back to the assignability check
                 if (originalType.flags & TypeFlags.Union) {
                     const assignableConstituents = filter((<UnionType>originalType).types, t => isTypeAssignableTo(t, narrowedTypeCandidate));
                     if (assignableConstituents.length) {
-                        return getUnionType(assignableConstituents);
+                        return getUnionType(assignableConstituents, /*noSubtypeReduction*/ true);
                     }
                 }
 
@@ -6693,13 +6693,7 @@ namespace ts {
                     expr.arguments[signature.typePredicate.parameterIndex] &&
                     getSymbolAtLocation(expr.arguments[signature.typePredicate.parameterIndex]) === symbol) {
 
-                    if (!assumeTrue) {
-                        if (type.flags & TypeFlags.Union) {
-                            return getUnionType(filter((<UnionType>type).types, t => !isTypeSubtypeOf(t, signature.typePredicate.type)));
-                        }
-                        return type;
-                    }
-                    return getNarrowedType(type, signature.typePredicate.type);
+                    return getNarrowedType(type, signature.typePredicate.type, assumeTrue);
                 }
                 return type;
             }
