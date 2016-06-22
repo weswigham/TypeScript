@@ -72,6 +72,7 @@ namespace ts {
             getTypeOfSymbolAtLocation,
             getSymbolsOfParameterPropertyDeclaration,
             getDeclaredTypeOfSymbol,
+            getTypeOfSymbol,
             getPropertiesOfType,
             getPropertyOfType,
             getSignaturesOfType,
@@ -103,7 +104,8 @@ namespace ts {
 
             getJsxElementAttributesType,
             getJsxIntrinsicTagNames,
-            isOptionalParameter
+            isOptionalParameter,
+            getTypeBuilder,
         };
 
         const unknownSymbol = createSymbol(SymbolFlags.Property | SymbolFlags.Transient, "unknown");
@@ -321,9 +323,928 @@ namespace ts {
             [undefinedSymbol.name]: undefinedSymbol
         };
 
+        let createTupleTypeBuilder: {
+            /**
+             * ```
+             * const builder = checker.getTypeBuilder();
+             * // builds [typeof ts, number]
+             * builder.startTupleType()
+             *     .addType(() => {
+             *         builder.lookupGlobalType("ts");
+             *     })
+             *     .addType(builder.getNumberType())
+             *     .finish();
+             * ```
+             * 
+             * or
+             * 
+             * ```
+             * const builder = checker.getTypeBuilder();
+             * // builds [[number, [string]], {do: () => Promise<number>}]
+             * builder.startTupleType()
+             *     .buildMemberType(ts.TypeBuilderKind.Tuple)
+             *         .addType(builder.getNumberType())
+             *         .buildMemberType(ts.TypeBuilderKind.Tuple)
+             *             .addType(builder.getStringType())
+             *             .finish()
+             *         .finish()
+             *     .buildMemberType(ts.TypeBuilderKind.Anonymous)
+             *         .buildMember("do", ts.TypeBuilderKind.Signature)
+             *             .setReturnType(() => {
+             *                 return builder.instantiateGenericType(builder.lookupGlobalType("Promise"), builder.getNumberType());
+             *             })
+             *             .finish()
+             *         .finish()
+             *     .finish();
+             * ```
+             */
+            (): TupleTypeBuilder<TupleType>;
+            <T>(parent: T, parentMethod: (finalize: () => TupleType) => void): TupleTypeBuilder<T>;
+            <T>(parent?: T, parentMethod?: (finalize: () => TupleType) => void): TupleTypeBuilder<TupleType> | TupleTypeBuilder<T>;
+        };
+        let createUnionTypeBuilder: {
+            (): UnionTypeBuilder<UnionType>;
+            <T>(parent: T, parentMethod: (finalize: () => UnionType) => void): UnionTypeBuilder<T>;
+            <T>(parent?: T, parentMethod?: (finalize: () => UnionType) => void): UnionTypeBuilder<UnionType> | UnionTypeBuilder<T>;
+        };
+
+        let createIntersectionTypeBuilder: {
+            (): IntersectionTypeBuilder<IntersectionType>;
+            <T>(parent: T, parentMethod: (finalize: () => IntersectionType) => void): IntersectionTypeBuilder<T>;
+            <T>(parent?: T, parentMethod?: (finalize: () => IntersectionType) => void): IntersectionTypeBuilder<IntersectionType> | IntersectionTypeBuilder<T>;
+        };
+
         initializeTypeChecker();
 
         return checker;
+
+        function getAnyType() {
+            return anyType;
+        }
+
+        function getStringType() {
+            return stringType;
+        }
+
+        function getNumberType() {
+            return numberType;
+        }
+
+        function getBooleanType() {
+            return booleanType;
+        }
+
+        function getVoidType() {
+            return voidType;
+        }
+
+        function getUndefinedType() {
+            return undefinedType;
+        }
+
+        function getNullType() {
+            return nullType;
+        }
+
+        function getNeverType() {
+            return neverType;
+        }
+
+        function getESSymbolType() {
+            return esSymbolType;
+        }
+
+        function getUnknownType() {
+            return unknownType;
+        }
+
+        function createNamespaceBuilder(): NamespaceBuilder<Symbol>;
+        function createNamespaceBuilder<T>(parent: T, parentCallback: (finalize: () => Symbol) => void): NamespaceBuilder<T>;
+        function createNamespaceBuilder<T>(parent?: T, parentCallback?: (finalize: () => Symbol) => void): NamespaceBuilder<T> | NamespaceBuilder<Symbol> {
+            let name = "<namespace>";
+            const exports: Lazy<Symbol>[] = [];
+
+            type LocalBuilder = NamespaceBuilder<Symbol>;
+            const builder: LocalBuilder = {
+                setName(newName: string) {
+                    name = newName;
+                    return builder;
+                },
+                addExport(nameOrSymbol: string | Lazy<Symbol>, type?: Lazy<Type>) {
+                    if (typeof nameOrSymbol === "string") {
+                        const name = nameOrSymbol;
+                        exports.push(() => {
+                            const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Export | SymbolFlags.Property, name) as TransientSymbol;
+                            symbol.type =  possiblyCall(type);
+                            symbol.declarationFlags = NodeFlags.Public | NodeFlags.Static;
+                            symbol.declarations = [];
+                            return symbol;
+                        });
+                    }
+                    else {
+                        exports.push(nameOrSymbol);
+                    }
+                    return builder;
+                },
+                buildExport(name: string, kind: TypeBuilderKind): any {
+                    if (kind === TypeBuilderKind.Signature) {
+                        return createSpecificTypeBuilder(kind, builder, (sig: () => Signature) => {
+                            builder.addExport(name, () => getOrCreateTypeFromSignature(sig()));
+                        });
+                    }
+                    else if (kind === TypeBuilderKind.Namespace) {
+                        return createNamespaceBuilder(builder, (sym: () => Symbol) => {
+                            exports.push(sym);
+                        }).setName(name);
+                    }
+                    return createSpecificTypeBuilder(kind, builder, (type: () => Type) => {
+                        builder.addExport(name, type);
+                    });
+                },
+                finish: finalizeNamespace,
+            };
+
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            function finalizeNamespace(): Symbol {
+                builder.finish = poisonedFinish;
+                const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Namespace, name) as TransientSymbol;
+                symbol.exports = createSymbolTable(possiblyCall(exports));
+                symbol.declarations = emptyArray;
+                return symbol;
+            }
+        }
+
+        function createSignatureBuilder(): SignatureBuilder<Signature>;
+        function createSignatureBuilder<T>(parent: T, parentCallback: (finalize: () => Signature) => void): SignatureBuilder<T>;
+        function createSignatureBuilder<T>(parent?: T, parentCallback?: (finalize: () => Signature) => void): SignatureBuilder<T> | SignatureBuilder<Signature> {
+            let name = "<function>";
+            const typeParams: Lazy<TypeParameter>[] = [];
+            let explicitThis: Lazy<Type>;
+            const parameters: {name: string, type: Lazy<Type>}[] = [];
+            let returnType: Lazy<Type> = voidType;
+            let predicate: Lazy<TypePredicate | undefined> = undefined;
+            let minArgs = 0;
+            let hasRestParameter = false;
+            let hasStringLiteral = false;
+            let isConstructor = false;
+            type LocalBuilder = SignatureBuilder<Signature>;
+
+            // TODO (weswig): Figure out how to write the types for the `build...`
+            //    methods so they no longer require a cast on tehir return types.
+            const builder: LocalBuilder = {
+                setName(newName: string) {
+                    name = newName;
+                    return builder;
+                },
+                setConstructor(flag: boolean) {
+                    isConstructor = flag;
+                    return builder;
+                },
+                addParameter(name: string, type: Lazy<Type>) {
+                    // TODO (weswig): Check for/allow optional parameters
+                    minArgs++;
+                    parameters.push({ name, type });
+                    return builder;
+                },
+                buildParameter: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A parameter cannot be an enum", (type, name) => builder.addParameter(name, type), getBuilder),
+                addTypeParameter(typeOrName: string | Lazy<TypeParameter>, constraint: Lazy<Type> = noConstraintType) {
+                    if (typeof typeOrName === "string") {
+                        const name = typeOrName;
+                        typeParams.push(() => createTypeParameter(name, constraint));
+                    }
+                    else {
+                        typeParams.push(typeOrName);
+                    }
+                    return builder;
+                },
+                buildTypeParameter: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A type parameter constraint cannot be an enum", (type, name) => builder.addTypeParameter(name, type), getBuilder),
+                // TODO (weswig): Cause all paramater addition to error after a rest parameter has been set
+                setRestParameter(name: string, type: Lazy<Type>) {
+                    Debug.assert(!hasRestParameter, "A rest parameter cannot be set twice.");
+                    hasRestParameter = true;
+                    return builder.addParameter(name, type);
+                },
+                buildRestParameter: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A parameter cannot be an enum", (type, name) => builder.setRestParameter(name, type), getBuilder),
+                setReturnType(type: Lazy<Type>) {
+                    returnType = type;
+                    return builder;
+                },
+                buildReturnType: buildTypeBuilderMethod((kind) => kind !== TypeBuilderKind.Enum, "A signature cannot return an enum", (type) => returnType = type, getBuilder),
+                setThisType(type: Lazy<Type>) {
+                    explicitThis = type;
+                    return builder;
+                },
+                buildThisType: buildTypeBuilderMethod((kind) => kind !== TypeBuilderKind.Enum, "A signature this-type cannot be an enum", (type) => explicitThis = type, getBuilder),
+                setPredicateType(argument: string, constraint: Lazy<Type>) {
+                    if (argument !== "this") {
+                        predicate = (() => ({
+                            kind: TypePredicateKind.Identifier,
+                            parameterName: argument,
+                            parameterIndex: forEach(parameters, (p, index) => p.name === argument ? index : undefined),
+                            type: possiblyCall(constraint)
+                        }) as IdentifierTypePredicate);
+                    }
+                    else {
+                        predicate = (() => ({
+                            kind: TypePredicateKind.This,
+                            type: possiblyCall(constraint)
+                        } as ThisTypePredicate));
+                    }
+                    return builder;
+                },
+                buildPredicateType: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A type predicate may not guard against an inline enum", (type, name) => builder.setPredicateType(name, type), getBuilder),
+                finish: finalizeSignature,
+            };
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            function finalizeSignature(): Signature {
+                builder.finish = poisonedFinish;
+                const resolvedReturnType = possiblyCall(returnType);
+                const sig = createSignature(/*declaration*/undefined, possiblyCall(typeParams), possiblyCall(explicitThis), map(parameters, createParameterSymbol), resolvedReturnType, possiblyCall(predicate), minArgs, hasRestParameter, hasStringLiteral);
+                const type = <ResolvedType>createObjectType(TypeFlags.Anonymous | TypeFlags.FromSignature);
+                type.members = emptySymbols;
+                type.properties = emptyArray;
+                type.callSignatures = !isConstructor ? [sig] : emptyArray;
+                type.constructSignatures = isConstructor ? [sig] : emptyArray;
+                sig.isolatedSignatureType = type;
+                Object.defineProperty(sig, "resolvedReturnType", {
+                    get() {
+                        return possiblyCall(returnType) || unknownType;
+                    }
+                });
+                return sig;
+            }
+
+            function createParameterSymbol({name, type}: {name: string, type: Lazy<Type>}): Symbol {
+                const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Variable, name) as TransientSymbol;
+                symbol.type = possiblyCall(type);
+                symbol.declarations = emptyArray;
+                if (symbol.type.flags & TypeFlags.StringLiteral) {
+                    hasStringLiteral = true;
+                }
+                return symbol;
+            }
+
+            function getBuilder() {
+                return builder;
+            }
+        }
+
+        function createAnonymousTypeBuilder(): AnonymousTypeBuilder<AnonymousType>;
+        function createAnonymousTypeBuilder<T>(parent: T, parentCallback: (finalize: () => AnonymousType) => void): AnonymousTypeBuilder<T>;
+        function createAnonymousTypeBuilder<T>(parent?: T, parentCallback?: (finalize: () => AnonymousType) => void): AnonymousTypeBuilder<T> | AnonymousTypeBuilder<AnonymousType> {
+            type LocalBuilder = AnonymousTypeBuilder<AnonymousType>;
+            const callSignatures: Lazy<Signature>[] = [];
+            const constructSignatures: Lazy<Signature>[] = [];
+            let stringIndex: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>};
+            let numberIndex: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>};
+            const members: {name: string, type: Lazy<Type>}[] = [];
+
+            const builder: LocalBuilder = {
+                finish: finalizeType,
+                addCallSignature(sig: Lazy<Signature>) {
+                    callSignatures.push(sig);
+                    return builder;
+                },
+                buildCallSignature() {
+                    return createSignatureBuilder(builder, (sig: () => Signature) => {
+                        builder.addCallSignature(sig);
+                    });
+                },
+                addConstructSignature(sig: Lazy<Signature>) {
+                    constructSignatures.push(sig);
+                    return builder;
+                },
+                buildConstructSignature() {
+                    return createSignatureBuilder(builder, (sig: () => Signature) => {
+                        builder.addConstructSignature(sig);
+                    });
+                },
+                addStringIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    Debug.assert(!stringIndex, "String index already set!");
+                    stringIndex = { name, type, flags };
+                    return builder;
+                },
+                buildStringIndexType: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A string index type cannot be an enum literal.", (type, name, flags) => builder.addStringIndexType(name, flags, type), getBuilder),
+                addNumberIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    Debug.assert(!numberIndex, "Number index already set!");
+                    numberIndex = { name, type, flags };
+                    return builder;
+                },
+                buildNumberIndexType: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A string index type cannot be an enum literal.", (type, name, flags) => builder.addNumberIndexType(name, flags, type), getBuilder),
+                addMember(name: string, type: Lazy<Type>) {
+                    members.push({ name, type });
+                    return builder;
+                },
+                buildMember: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "An interface member cannot be an enum literal", (type, name) => builder.addMember(name, type), getBuilder),
+            };
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            // TODO (weswig): How to represent public/private/protected?!?!
+            // TODO (weswig): How do you name the index info key?
+            function finalizeType(): InterfaceType {
+                builder.finish = poisonedFinish;
+                const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.TypeLiteral, "__anonymous__") as TransientSymbol;
+                const type = createType(TypeFlags.Anonymous) as InterfaceTypeWithDeclaredMembers;
+                type.symbol = symbol;
+                symbol.declaredType = type;
+                symbol.type = type;
+                symbol.declarations = emptyArray;
+                symbol.members = createSymbolTable(map(members, ({name, type}) => {
+                    const memberSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Property, name) as TransientSymbol;
+                    memberSymbol.declarations = emptyArray;
+                    const memberType = possiblyCall(type);
+                    memberSymbol.type = memberType;
+                    memberSymbol.declarationFlags = NodeFlags.None;
+                    return memberSymbol;
+                }));
+                type.declaredCallSignatures = possiblyCall(callSignatures);
+                type.declaredConstructSignatures = possiblyCall(constructSignatures);
+                type.declaredProperties = getNamedMembers(symbol.members);
+                type.declaredNumberIndexInfo = numberIndex && createIndexInfo(possiblyCall(numberIndex.type), /*isReadonly*/false);
+                type.declaredStringIndexInfo = stringIndex && createIndexInfo(possiblyCall(stringIndex.type), /*isReadonly*/false);
+                if (type.declaredCallSignatures && type.declaredCallSignatures.length) {
+                    const callSymbol = symbol.members["__call"] = createSymbol(SymbolFlags.Transient, "__call") as TransientSymbol;
+                    callSymbol.declarations = emptyArray;
+                    callSymbol.resolvedSignatures = type.declaredCallSignatures;
+                }
+                if (type.declaredConstructSignatures && type.declaredConstructSignatures.length) {
+                    const constructSymbol = symbol.members["__new"] = createSymbol(SymbolFlags.Transient, "__new") as TransientSymbol;
+                    constructSymbol.declarations = emptyArray;
+                    constructSymbol.resolvedSignatures = type.declaredConstructSignatures;
+                }
+                if (type.declaredNumberIndexInfo || type.declaredStringIndexInfo) {
+                    const indexSymbol = symbol.members["__index"] = createSymbol(SymbolFlags.Transient, "__index") as TransientSymbol;
+                    indexSymbol.declarations = emptyArray;
+                    indexSymbol.resolvedIndexInfos = {};
+                    if (type.declaredNumberIndexInfo) {
+                        indexSymbol.resolvedIndexInfos[IndexKind.Number] = type.declaredNumberIndexInfo;
+                    }
+                    if (type.declaredStringIndexInfo) {
+                        indexSymbol.resolvedIndexInfos[IndexKind.String] = type.declaredStringIndexInfo;
+                    }
+                }
+
+                return type;
+            }
+
+            function getBuilder() {
+                return builder;
+            }
+        }
+
+        function createClassTypeBuilder(): ClassTypeBuilder<InterfaceType>;
+        function createClassTypeBuilder<T>(parent: T, parentCallback: (finalize: () => InterfaceType) => void): ClassTypeBuilder<T>;
+        function createClassTypeBuilder<T>(parent?: T, parentCallback?: (finalize: () => InterfaceType) => void): ClassTypeBuilder<T> | ClassTypeBuilder<InterfaceType> {
+            type LocalBuilder = ClassTypeBuilder<InterfaceType>;
+            let name = "<class>";
+            let baseType: Lazy<Type>;
+            const implementsTypes: Lazy<Type>[] = [];
+            const constructSignatures: Lazy<Signature>[] = [];
+            const members: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>}[] = [];
+            const statics: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>}[] = [];
+            const typeParams: Lazy<TypeParameter>[] = [];
+
+            const builder: LocalBuilder = {
+                finish: finalizeType,
+                setName(newName: string) {
+                    name = newName;
+                    return builder;
+                },
+                setBaseType(type: Lazy<Type>) {
+                    Debug.assert(!baseType, "A class may only have one base type.");
+                    baseType = type;
+                    return builder;
+                },
+                buildBaseType: ((kind: TypeBuilderKind): ClassTypeBuilder<LocalBuilder> | InterfaceTypeBuilder<LocalBuilder> | AnonymousTypeBuilder<LocalBuilder> | UnionTypeBuilder<LocalBuilder> | IntersectionTypeBuilder<LocalBuilder> => {
+                    switch (kind) {
+                        case TypeBuilderKind.Class:
+                            return createClassTypeBuilder(builder, add);
+                        case TypeBuilderKind.Interface:
+                            return createInterfaceTypeBuilder(builder, add);
+                        case TypeBuilderKind.Anonymous:
+                            return createAnonymousTypeBuilder(builder, add);
+                        case TypeBuilderKind.Intersection:
+                            return createIntersectionTypeBuilder(builder, add);
+                        case TypeBuilderKind.Union:
+                            return createUnionTypeBuilder(builder, add);
+                        default:
+                            Debug.fail("An extends type of a class may only be a class or interface type");
+                            return;
+                    }
+
+                    function add(type: () => Type) {
+                        builder.setBaseType(type);
+                    }
+                }) as ({
+                    (kind: TypeBuilderKind.Class): ClassTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Union): UnionTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<LocalBuilder>,
+                }),
+                addImplementsType(type: Lazy<Type>) {
+                    implementsTypes.push(type);
+                    return builder;
+                },
+                buildImplementsType: ((kind: TypeBuilderKind): ClassTypeBuilder<LocalBuilder> | InterfaceTypeBuilder<LocalBuilder> | AnonymousTypeBuilder<LocalBuilder> | UnionTypeBuilder<LocalBuilder> | IntersectionTypeBuilder<LocalBuilder> => {
+                    switch (kind) {
+                        case TypeBuilderKind.Class:
+                            return createClassTypeBuilder(builder, add);
+                        case TypeBuilderKind.Interface:
+                            return createInterfaceTypeBuilder(builder, add);
+                        case TypeBuilderKind.Anonymous:
+                            return createAnonymousTypeBuilder(builder, add);
+                        case TypeBuilderKind.Intersection:
+                            return createIntersectionTypeBuilder(builder, add);
+                        case TypeBuilderKind.Union:
+                            return createUnionTypeBuilder(builder, add);
+                        default:
+                            Debug.fail("An implements type of a class may only be a class or interface type");
+                            return;
+                    }
+
+                    function add(type: () => Type) {
+                        builder.addImplementsType(type);
+                    }
+                }) as ({
+                    (kind: TypeBuilderKind.Class): ClassTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Union): UnionTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<LocalBuilder>,
+                }),
+                addMember(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    members.push({ name, flags, type });
+                    return builder;
+                },
+                buildMember: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "An interface member cannot be an enum literal", (type, name, flags) => builder.addMember(name, flags, type), getBuilder),
+                addTypeParameter(typeOrName: string | Lazy<TypeParameter>, constraint: Lazy<Type> = noConstraintType) {
+                    if (typeof typeOrName === "string") {
+                        const name = typeOrName;
+                        typeParams.push(() => createTypeParameter(name, constraint));
+                    }
+                    else {
+                        typeParams.push(typeOrName);
+                    }
+                    return builder;
+                },
+                buildTypeParameter: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A type parameter constraint cannot be an enum", (type, name) => builder.addTypeParameter(name, type), getBuilder),
+                addStatic(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    statics.push({ name, flags, type });
+                    return builder;
+                },
+                buildStatic: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A class cannot have an enum as a static member", (type, name, flags) => builder.addStatic(name, flags, type), getBuilder),
+                addConstructSignature(sig: Lazy<Signature>) {
+                    constructSignatures.push(sig);
+                    return builder;
+                },
+                buildConstructSignature() {
+                    return createSignatureBuilder(builder, (sig: () => Signature) => {
+                        builder.addConstructSignature(sig);
+                    });
+                },
+            };
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            // TODO (weswig): How do you name the index info key?
+            function finalizeType(): InterfaceType {
+                builder.finish = poisonedFinish;
+                const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Class, name) as TransientSymbol;
+                const type = createType(TypeFlags.Class) as InterfaceType;
+                type.typeParameters = possiblyCall(typeParams);
+                (type as GenericType).instantiations = {};
+                (type as GenericType).instantiations[getTypeListId(type.typeParameters)] = type as GenericType;
+                (type as GenericType).target = type as GenericType;
+                (type as GenericType).typeArguments = type.typeParameters;
+                type.thisType = createType(TypeFlags.TypeParameter | TypeFlags.ThisType) as TypeParameter;
+                type.thisType.symbol = symbol;
+                type.thisType.constraint = type;
+                const base = possiblyCall(baseType);
+                type.resolvedBaseTypes = base ? [base, ...possiblyCall(implementsTypes)] : possiblyCall(implementsTypes);
+                type.symbol = symbol;
+                symbol.declaredType = type;
+                symbol.type = type;
+                symbol.declarations = emptyArray;
+                symbol.members = createSymbolTable(map(members, ({name, flags, type}) => {
+                    const memberSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Property, name) as TransientSymbol;
+                    memberSymbol.declarations = emptyArray;
+                    const memberType = possiblyCall(type);
+                    memberSymbol.type = memberType;
+                    memberSymbol.declarationFlags = builderFlagsToNodeFlags(flags);
+                    return memberSymbol;
+                }));
+                symbol.exports = createSymbolTable(map(statics, ({name, flags, type}) => {
+                    const staticSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Export | SymbolFlags.Property, name) as TransientSymbol;
+                    staticSymbol.declarations = emptyArray;
+                    const staticType = possiblyCall(type);
+                    staticSymbol.type = staticType;
+                    staticSymbol.declarationFlags = builderFlagsToNodeFlags(flags) | NodeFlags.Static;
+                    return staticSymbol;
+                }));
+                (type as InterfaceTypeWithDeclaredMembers).declaredConstructSignatures = possiblyCall(constructSignatures);
+                (type as InterfaceTypeWithDeclaredMembers).declaredProperties = getNamedMembers(symbol.members);
+
+                return type;
+            }
+
+            function getBuilder() {
+                return builder;
+            }
+        }
+
+        function createInterfaceTypeBuilder(): InterfaceTypeBuilder<InterfaceType>;
+        function createInterfaceTypeBuilder<T>(parent: T, parentCallback: (finalize: () => InterfaceType) => void): InterfaceTypeBuilder<T>;
+        function createInterfaceTypeBuilder<T>(parent?: T, parentCallback?: (finalize: () => InterfaceType) => void): InterfaceTypeBuilder<T> | InterfaceTypeBuilder<InterfaceType> {
+            type LocalBuilder = InterfaceTypeBuilder<InterfaceType>;
+            let name = "<interface>";
+            const baseTypes: Lazy<Type>[] = [];
+            const callSignatures: Lazy<Signature>[] = [];
+            const constructSignatures: Lazy<Signature>[] = [];
+            let stringIndex: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>};
+            let numberIndex: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>};
+            const members: {name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>}[] = [];
+            const typeParams: Lazy<TypeParameter>[] = [];
+
+            const builder: LocalBuilder = {
+                finish: finalizeType,
+                setName(newName: string) {
+                    name = newName;
+                    return builder;
+                },
+                addBaseType(type: Lazy<Type>) {
+                    baseTypes.push(type);
+                    return builder;
+                },
+                buildBaseType: ((kind: TypeBuilderKind): ClassTypeBuilder<LocalBuilder> | InterfaceTypeBuilder<LocalBuilder> | AnonymousTypeBuilder<LocalBuilder> | UnionTypeBuilder<LocalBuilder> | IntersectionTypeBuilder<LocalBuilder> => {
+                    switch (kind) {
+                        case TypeBuilderKind.Class:
+                            return createClassTypeBuilder(builder, add);
+                        case TypeBuilderKind.Interface:
+                            return createInterfaceTypeBuilder(builder, add);
+                        case TypeBuilderKind.Anonymous:
+                            return createAnonymousTypeBuilder(builder, add);
+                        case TypeBuilderKind.Intersection:
+                            return createIntersectionTypeBuilder(builder, add);
+                        case TypeBuilderKind.Union:
+                            return createUnionTypeBuilder(builder, add);
+                        default:
+                            Debug.fail("An implements type of a class may only be a class or interface type");
+                            return;
+                    }
+
+                    function add(type: () => Type) {
+                        builder.addBaseType(type);
+                    }
+                }) as ({
+                    (kind: TypeBuilderKind.Class): ClassTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Union): UnionTypeBuilder<LocalBuilder>,
+                    (kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<LocalBuilder>,
+                }),
+                addCallSignature(sig: Lazy<Signature>) {
+                    callSignatures.push(sig);
+                    return builder;
+                },
+                buildCallSignature() {
+                    return createSignatureBuilder(builder, (sig: () => Signature) => {
+                        builder.addCallSignature(sig);
+                    });
+                },
+                addConstructSignature(sig: Lazy<Signature>) {
+                    constructSignatures.push(sig);
+                    return builder;
+                },
+                buildConstructSignature() {
+                    return createSignatureBuilder(builder, (sig: () => Signature) => {
+                        builder.addConstructSignature(sig);
+                    });
+                },
+                addStringIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    Debug.assert(!stringIndex, "String index already set!");
+                    Debug.assert(flags === BuilderMemberModifierFlags.None || flags === BuilderMemberModifierFlags.Readonly, "An index signature may not have any modifiers other than readonly.");
+                    stringIndex = { name, type, flags };
+                    return builder;
+                },
+                buildStringIndexType: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A string index type cannot be an enum literal.", (type, name, flags) => builder.addStringIndexType(name, flags, type), getBuilder),
+                addNumberIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    Debug.assert(!numberIndex, "Number index already set!");
+                    Debug.assert(flags === BuilderMemberModifierFlags.None || flags === BuilderMemberModifierFlags.Readonly, "An index signature may not have any modifiers other than readonly.");
+                    numberIndex = { name, type, flags };
+                    return builder;
+                },
+                buildNumberIndexType: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A string index type cannot be an enum literal.", (type, name, flags) => builder.addNumberIndexType(name, flags, type), getBuilder),
+                addMember(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>) {
+                    members.push({ name, flags, type });
+                    return builder;
+                },
+                buildMember: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "An interface member cannot be an enum literal", (type, name, flags) => builder.addMember(name, flags, type), getBuilder),
+                addTypeParameter(typeOrName: string | Lazy<TypeParameter>, constraint: Lazy<Type> = noConstraintType) {
+                    if (typeof typeOrName === "string") {
+                        const name = typeOrName;
+                        typeParams.push(() => createTypeParameter(name, constraint));
+                    }
+                    else {
+                        typeParams.push(typeOrName);
+                    }
+                    return builder;
+                },
+                buildTypeParameter: buildParameterizedTypeBuilderMethod(kind => kind !== TypeBuilderKind.Enum, "A type parameter constraint cannot be an enum", (type, name) => builder.addTypeParameter(name, type), getBuilder),
+            };
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            // TODO (weswig): How to represent public/private/protected?!?!
+            // TODO (weswig): How do you name the index info key?
+            function finalizeType(): InterfaceType {
+                builder.finish = poisonedFinish;
+                const symbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Interface, name) as TransientSymbol;
+                symbol.declarations = emptyArray;
+                const type = createType(TypeFlags.Interface) as InterfaceType;
+                type.typeParameters = possiblyCall(typeParams);
+                (type as GenericType).instantiations = {};
+                (type as GenericType).instantiations[getTypeListId(type.typeParameters)] = type as GenericType;
+                (type as GenericType).target = type as GenericType;
+                (type as GenericType).typeArguments = type.typeParameters;
+                type.thisType = <TypeParameter>createType(TypeFlags.TypeParameter | TypeFlags.ThisType);
+                type.thisType.symbol = symbol;
+                type.thisType.constraint = type;
+                type.resolvedBaseTypes = possiblyCall(baseTypes);
+                type.symbol = symbol;
+                symbol.declaredType = type;
+                symbol.type = type;
+                symbol.members = createSymbolTable(map(members, ({name, flags, type}) => {
+                    const memberSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Property, name) as TransientSymbol;
+                    memberSymbol.declarations = emptyArray;
+                    const memberType = possiblyCall(type);
+                    memberSymbol.type = memberType;
+                    memberSymbol.declarationFlags = builderFlagsToNodeFlags(flags);
+                    return memberSymbol;
+                }));
+                const declaredInterface = type as InterfaceTypeWithDeclaredMembers;
+                declaredInterface.declaredCallSignatures = possiblyCall(callSignatures);
+                declaredInterface.declaredConstructSignatures = possiblyCall(constructSignatures);
+                declaredInterface.declaredProperties = getNamedMembers(symbol.members);
+                declaredInterface.declaredNumberIndexInfo = numberIndex && createIndexInfo(possiblyCall(numberIndex.type), !!(numberIndex.flags & BuilderMemberModifierFlags.Readonly));
+                declaredInterface.declaredStringIndexInfo = stringIndex && createIndexInfo(possiblyCall(stringIndex.type), !!(stringIndex.flags & BuilderMemberModifierFlags.Readonly));
+                if (declaredInterface.declaredCallSignatures && declaredInterface.declaredCallSignatures.length) {
+                    const callSymbol = symbol.members["__call"] = createSymbol(SymbolFlags.Transient, "__call") as TransientSymbol;
+                    callSymbol.declarations = emptyArray;
+                    callSymbol.resolvedSignatures = declaredInterface.declaredCallSignatures;
+                }
+                if (declaredInterface.declaredConstructSignatures && declaredInterface.declaredConstructSignatures.length) {
+                    const constructSymbol = symbol.members["__new"] = createSymbol(SymbolFlags.Transient, "__new") as TransientSymbol;
+                    constructSymbol.declarations = emptyArray;
+                    constructSymbol.resolvedSignatures = declaredInterface.declaredConstructSignatures;
+                }
+                if (declaredInterface.declaredNumberIndexInfo || declaredInterface.declaredStringIndexInfo) {
+                    const indexSymbol = symbol.members["__index"] = createSymbol(SymbolFlags.Transient, "__index") as TransientSymbol;
+                    indexSymbol.declarations = emptyArray;
+                    indexSymbol.resolvedIndexInfos = {};
+                    if (declaredInterface.declaredNumberIndexInfo) {
+                        indexSymbol.resolvedIndexInfos[IndexKind.Number] = declaredInterface.declaredNumberIndexInfo;
+                    }
+                    if (declaredInterface.declaredStringIndexInfo) {
+                        indexSymbol.resolvedIndexInfos[IndexKind.String] = declaredInterface.declaredStringIndexInfo;
+                    }
+                }
+
+                return type;
+            }
+
+            function getBuilder() {
+                return builder;
+            }
+        }
+
+        function builderFlagsToNodeFlags(flags: BuilderMemberModifierFlags) {
+            let node = NodeFlags.None;
+            if (flags & BuilderMemberModifierFlags.Private) node |= NodeFlags.Private;
+            if (flags & BuilderMemberModifierFlags.Protected) node |= NodeFlags.Protected;
+            if (flags & BuilderMemberModifierFlags.Public) node |= NodeFlags.Public;
+            if (flags & BuilderMemberModifierFlags.Readonly) node |= NodeFlags.Readonly;
+            return node;
+        }
+
+        function createCollectionTypeBuilder<TFunc extends ( (types: Type[]) => Type ), TargetType extends Type>(factory: TFunc, minimumMembers: number, friendlyName: string) {
+            return <T>(parent?: T, parentMethod?: (finalize: () => TargetType) => void) => {
+                const types: (Type | (() => Type))[] = [];
+                type ThisBuilder = CollectionTypeBuilder<TargetType>;
+                const builder: ThisBuilder = {
+                    addType(type: Type | (() => Type)) {
+                        types.push(type);
+                        return builder;
+                    },
+                    buildMemberType: buildTypeBuilderMethod((kind) => kind !== TypeBuilderKind.Enum, `${friendlyName} cannot have enum members.`, (type) => builder.addType(type), getBuilder),
+                    finish: finalizeType,
+                };
+                return maybePatchFinish(builder, parent, parentMethod);
+
+                function finalizeType(): TargetType {
+                    builder.finish = poisonedFinish;
+                    Debug.assert(types.length >= minimumMembers, `${friendlyName} must have at least ${minimumMembers} member(s).`);
+                    return factory(possiblyCall(types)) as TargetType;
+                }
+
+                function getBuilder() {
+                    return builder;
+                }
+            };
+        }
+
+        function createEnumTypeBuilder(): EnumTypeBuilder<Type>;
+        function createEnumTypeBuilder<T>(parent: T, parentCallback: (finalize: () => Type) => void): EnumTypeBuilder<T>;
+        function createEnumTypeBuilder<T>(parent?: T, parentCallback?: (finalize: () => Type) => void): EnumTypeBuilder<T> | EnumTypeBuilder<Type> {
+            let name = "<enum>";
+            const members: {name: string, value: number}[] = [];
+            let isConst = false;
+            let currentValue = 0;
+            type LocalBuilder = EnumTypeBuilder<Type>;
+            const builder: LocalBuilder = {
+                addMember(this: LocalBuilder, name: string, value?: number) {
+                    if (value) {
+                        currentValue = value;
+                    }
+                    members.push({ name, value: currentValue });
+                    currentValue++;
+                    return builder;
+                },
+                isConst(this: LocalBuilder, flag: boolean) {
+                    isConst = flag;
+                    return builder;
+                },
+                setName(this: LocalBuilder, newName: string) {
+                    name = newName;
+                    return builder;
+                },
+                finish: finalizeType,
+            };
+            return maybePatchFinish(builder, parent, parentCallback);
+
+            function finalizeType() {
+                builder.finish = poisonedFinish;
+                const newSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.Enum, name) as TransientSymbol;
+                newSymbol.declarations = emptyArray;
+                newSymbol.transientEnumIsConst = isConst;
+                const enumType = getDeclaredTypeOfEnum(newSymbol);
+                for (let i = 0; i < members.length; i++) {
+                    const childSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.EnumMember, members[i].name) as TransientSymbol;
+                    childSymbol.parent = newSymbol;
+                    childSymbol.declarations = emptyArray;
+                    childSymbol.transientEnumMemberValue = members[i].value;
+                }
+                return enumType;
+            }
+        }
+
+        function poisonedFinish(): any {
+            throw new Error("Cannot `finish` the same type twice!");
+        }
+
+        function maybePatchFinish<T, U, W extends BaseTypeBuilder<any>>(builder: W, parent: T | undefined, parentCallback: ((arg: () => U) => void) | undefined) {
+            if (parent) {
+                const finalize = builder.finish;
+                builder.finish = (): any => {
+                    parentCallback(finalize);
+                    return parent;
+                };
+            }
+            return builder;
+        }
+
+        function buildParameterizedTypeBuilderMethod<T>(assertCb: (kind: TypeBuilderKind) => boolean, assertText: string, resultCb: (type: () => Type, ...args: any[]) => void, getParent: () => T) {
+            return (...args: any[]): any => {
+                const kind = args.pop();
+                Debug.assert(kind !== TypeBuilderKind.Namespace, "Unhandled namespace kind - namespaces must be explicitly parented.");
+                Debug.assert(assertCb(kind), assertText);
+                if (kind === TypeBuilderKind.Signature) {
+                    // Special case signature to allow the same kind of shorthand you can do in code
+                    // ie, (() => void) really means ({ (): void }).
+                    return createSpecificTypeBuilder(kind, getParent(), (sig: () => Signature) => {
+                        resultCb(() => getOrCreateTypeFromSignature(sig()), ...args);
+                    });
+                }
+                return createSpecificTypeBuilder(kind, getParent(), t => resultCb(t, ...args));
+            };
+        }
+
+        function buildTypeBuilderMethod<T>(assertCb: (kind: TypeBuilderKind) => boolean, assertText: string, resultCb: (type: () => Type) => void, getParent: () => T) {
+            return (kind: TypeBuilderKind): any => {
+                Debug.assert(kind !== TypeBuilderKind.Namespace, "Unhandled namespace kind - namespaces must be explicitly parented.");
+                Debug.assert(assertCb(kind), assertText);
+                if (kind === TypeBuilderKind.Signature) {
+                    // Special case signature to allow the same kind of shorthand you can do in code
+                    // ie, (() => void) really means ({ (): void }).
+                    return createSpecificTypeBuilder(kind, getParent(), (sig: () => Signature) => {
+                        resultCb(() => getOrCreateTypeFromSignature(sig()));
+                    });
+                }
+                return createSpecificTypeBuilder(kind, getParent(), resultCb);
+            };
+        }
+
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Anonymous, parent: T, parentMethod: (member: () => AnonymousType) => void): AnonymousTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Class, parent: T, parentMethod: (member: () => InterfaceType) => void): ClassTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Enum, parent: T, parentMethod: (member: () => Type) => void): EnumTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Interface, parent: T, parentMethod: (member: () => InterfaceType) => void): InterfaceTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Intersection, parent: T, parentMethod: (member: () => IntersectionType) => void): IntersectionTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Namespace, parent: T, parentMethod: (member: () => Symbol) => void): NamespaceBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Signature, parent: T, parentMethod: (member: () => Signature) => void): SignatureBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Tuple, parent: T, parentMethod: (member: () => TupleType) => void): TupleTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind.Union, parent: T, parentMethod: (member: () => UnionType) => void): UnionTypeBuilder<T>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind, parent: T, parentMethod: (member: () => (AnonymousType | InterfaceType | Type | InterfaceType | IntersectionType | Symbol | Signature | TupleType | UnionType)) => void): UnionTypeBuilder<T> | TupleTypeBuilder<T> | SignatureBuilder<T> | NamespaceBuilder<T> | IntersectionTypeBuilder<T> | InterfaceTypeBuilder<T> | EnumTypeBuilder<T> | ClassTypeBuilder<T> | AnonymousTypeBuilder<T>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<AnonymousType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Class): ClassTypeBuilder<InterfaceType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Enum): EnumTypeBuilder<Type>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<InterfaceType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<IntersectionType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Namespace): NamespaceBuilder<Symbol>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Signature): SignatureBuilder<Signature>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Tuple): TupleTypeBuilder<TupleType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind.Union): UnionTypeBuilder<UnionType>;
+        function createSpecificTypeBuilder(kind: TypeBuilderKind): UnionTypeBuilder<UnionType> | TupleTypeBuilder<TupleType> | SignatureBuilder<Signature> | NamespaceBuilder<Symbol> | IntersectionTypeBuilder<IntersectionType> | InterfaceTypeBuilder<InterfaceType> | EnumTypeBuilder<Type> | ClassTypeBuilder<InterfaceType> | AnonymousTypeBuilder<AnonymousType>;
+        function createSpecificTypeBuilder<T>(kind: TypeBuilderKind, parent?: T, parentMethod?: () => void): BaseTypeBuilder<T> {
+            switch (kind) {
+                case TypeBuilderKind.Anonymous: return createAnonymousTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Class: return createClassTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Enum: return createEnumTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Interface: return createInterfaceTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Intersection: return createIntersectionTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Namespace: return createNamespaceBuilder(parent, parentMethod);
+                case TypeBuilderKind.Signature: return createSignatureBuilder(parent, parentMethod);
+                case TypeBuilderKind.Tuple: return createTupleTypeBuilder(parent, parentMethod);
+                case TypeBuilderKind.Union: return createUnionTypeBuilder(parent, parentMethod);
+            }
+        }
+
+        function createTypeParameter(name: string, constraint: Lazy<Type> = noConstraintType) {
+            const paramSymbol = createSymbol(SymbolFlags.Transient | SymbolFlags.TypeParameter, name) as TransientSymbol;
+            paramSymbol.declarations = emptyArray;
+            const type = createType(TypeFlags.TypeParameter) as TypeParameter;
+            type.symbol = paramSymbol;
+            type.constraint = possiblyCall(constraint);
+            paramSymbol.type = type;
+            paramSymbol.declaredType = type;
+            return getDeclaredTypeOfTypeParameter(paramSymbol);
+        }
+
+        function getTypeBuilder() {
+            return {
+                getAnyType,
+                getStringType,
+                getNumberType,
+                getBooleanType,
+                getVoidType,
+                getUndefinedType,
+                getNullType,
+                getNeverType,
+                getESSymbolType,
+                getUnknownType,
+
+                startNamespace: createNamespaceBuilder,
+                startSignature: createSignatureBuilder,
+                startAnonymousType: createAnonymousTypeBuilder,
+                startClassType: createClassTypeBuilder,
+                startInterfaceType: createInterfaceTypeBuilder,
+                startTupleType: createTupleTypeBuilder,
+                startUnionType: createUnionTypeBuilder,
+                startIntersectionType: createIntersectionTypeBuilder,
+                startEnumType: createEnumTypeBuilder,
+
+                getStringLiteralType: getStringLiteralTypeForText,
+                createTypeParameter,
+                createTypeAlias(name: string, typeArguments: TypeParameter[], type: Type) {
+                    const result = createTransientSymbol(type.symbol, type);
+                    result.name = name;
+                    result.declaredType = type;
+                    result.flags |= SymbolFlags.TypeAlias;
+                    result.declarations = emptyArray;
+                    if (typeArguments && typeArguments.length) {
+                        result.typeParameters = typeArguments;
+                        result.instantiations = {};
+                        result.instantiations[getTypeListId(typeArguments)] = type;
+                    }
+                    return result;
+                },
+                getTypeReferenceFor(type: GenericType, ...typeArguments: Type[]) {
+                    return createTypeReference(type, typeArguments);
+                },
+                lookupGlobalType(name: string) {
+                    const symbol = getGlobalTypeSymbol(name);
+                    if (symbol) {
+                        return getDeclaredTypeOfSymbol(symbol);
+                    }
+                    else {
+                        return unknownType;
+                    }
+                },
+                instantiateType(type: Type, params: TypeParameter[], targets: Type[]) {
+                    return instantiateType(type, createTypeMapper(params, targets));
+                },
+                mergeSymbols: mergeSymbol,
+            };
+        }
 
         function getEmitResolver(sourceFile: SourceFile, cancellationToken: CancellationToken) {
             // Ensure we have all the type information in place for this file so that all the
@@ -4586,37 +5507,41 @@ namespace ts {
 
         function getSignaturesOfSymbol(symbol: Symbol): Signature[] {
             if (!symbol) return emptyArray;
-            const result: Signature[] = [];
-            for (let i = 0, len = symbol.declarations.length; i < len; i++) {
-                const node = symbol.declarations[i];
-                switch (node.kind) {
-                    case SyntaxKind.FunctionType:
-                    case SyntaxKind.ConstructorType:
-                    case SyntaxKind.FunctionDeclaration:
-                    case SyntaxKind.MethodDeclaration:
-                    case SyntaxKind.MethodSignature:
-                    case SyntaxKind.Constructor:
-                    case SyntaxKind.CallSignature:
-                    case SyntaxKind.ConstructSignature:
-                    case SyntaxKind.IndexSignature:
-                    case SyntaxKind.GetAccessor:
-                    case SyntaxKind.SetAccessor:
-                    case SyntaxKind.FunctionExpression:
-                    case SyntaxKind.ArrowFunction:
-                    case SyntaxKind.JSDocFunctionType:
-                        // Don't include signature if node is the implementation of an overloaded function. A node is considered
-                        // an implementation node if it has a body and the previous node is of the same kind and immediately
-                        // precedes the implementation node (i.e. has the same parent and ends where the implementation starts).
-                        if (i > 0 && (<FunctionLikeDeclaration>node).body) {
-                            const previous = symbol.declarations[i - 1];
-                            if (node.parent === previous.parent && node.kind === previous.kind && node.pos === previous.end) {
-                                break;
+            const links = getSymbolLinks(symbol);
+            if (!links.resolvedSignatures) {
+                const result: Signature[] = [];
+                for (let i = 0, len = symbol.declarations.length; i < len; i++) {
+                    const node = symbol.declarations[i];
+                    switch (node.kind) {
+                        case SyntaxKind.FunctionType:
+                        case SyntaxKind.ConstructorType:
+                        case SyntaxKind.FunctionDeclaration:
+                        case SyntaxKind.MethodDeclaration:
+                        case SyntaxKind.MethodSignature:
+                        case SyntaxKind.Constructor:
+                        case SyntaxKind.CallSignature:
+                        case SyntaxKind.ConstructSignature:
+                        case SyntaxKind.IndexSignature:
+                        case SyntaxKind.GetAccessor:
+                        case SyntaxKind.SetAccessor:
+                        case SyntaxKind.FunctionExpression:
+                        case SyntaxKind.ArrowFunction:
+                        case SyntaxKind.JSDocFunctionType:
+                            // Don't include signature if node is the implementation of an overloaded function. A node is considered
+                            // an implementation node if it has a body and the previous node is of the same kind and immediately
+                            // precedes the implementation node (i.e. has the same parent and ends where the implementation starts).
+                            if (i > 0 && (<FunctionLikeDeclaration>node).body) {
+                                const previous = symbol.declarations[i - 1];
+                                if (node.parent === previous.parent && node.kind === previous.kind && node.pos === previous.end) {
+                                    break;
+                                }
                             }
-                        }
-                        result.push(getSignatureFromDeclaration(<SignatureDeclaration>node));
+                            result.push(getSignatureFromDeclaration(<SignatureDeclaration>node));
+                    }
                 }
+                links.resolvedSignatures = result;
             }
-            return result;
+            return links.resolvedSignatures;
         }
 
         function resolveExternalModuleTypeByLiteral(name: StringLiteral) {
@@ -4736,12 +5661,21 @@ namespace ts {
         }
 
         function getIndexInfoOfSymbol(symbol: Symbol, kind: IndexKind): IndexInfo {
-            const declaration = getIndexDeclarationOfSymbol(symbol, kind);
-            if (declaration) {
-                return createIndexInfo(declaration.type ? getTypeFromTypeNode(declaration.type) : anyType,
-                    (declaration.flags & NodeFlags.Readonly) !== 0, declaration);
+            if (!symbol) return undefined;
+            if (!symbol.members) return undefined;
+            const indexSymbol = getIndexSymbol(symbol);
+            if (!indexSymbol) return undefined;
+            const links = getSymbolLinks(indexSymbol);
+            if (!links.resolvedIndexInfos) {
+                // TODO (weswig): Consider cacheing the result
+                const declaration = getIndexDeclarationOfSymbol(symbol, kind);
+                if (declaration) {
+                    return createIndexInfo(declaration.type ? getTypeFromTypeNode(declaration.type) : anyType,
+                        (declaration.flags & NodeFlags.Readonly) !== 0, declaration);
+                }
+                return undefined;
             }
-            return undefined;
+            return links.resolvedIndexInfos[kind];
         }
 
         function getConstraintDeclaration(type: TypeParameter) {
@@ -10103,7 +11037,11 @@ namespace ts {
         }
 
         function getDeclarationFlagsFromSymbol(s: Symbol): NodeFlags {
-            return s.valueDeclaration ? getCombinedNodeFlags(s.valueDeclaration) : s.flags & SymbolFlags.Prototype ? NodeFlags.Public | NodeFlags.Static : 0;
+            const links = getSymbolLinks(s);
+            if (!links.declarationFlags) {
+                links.declarationFlags = s.valueDeclaration ? getCombinedNodeFlags(s.valueDeclaration) : s.flags & SymbolFlags.Prototype ? NodeFlags.Public | NodeFlags.Static : 0;
+            }
+            return links.declarationFlags;
         }
 
         /**
@@ -17896,6 +18834,11 @@ namespace ts {
 
             const symbol = getNodeLinks(node).resolvedSymbol;
             if (symbol && (symbol.flags & SymbolFlags.EnumMember)) {
+                if (symbol.flags & SymbolFlags.Transient && symbol.parent && symbol.parent.flags & SymbolFlags.Transient) {
+                    if ((symbol.parent as TransientSymbol).transientEnumIsConst) {
+                        return (symbol as TransientSymbol).transientEnumMemberValue;
+                    }
+                }
                 // inline property\index accesses only for const enums
                 if (isConstEnumDeclaration(symbol.valueDeclaration.parent)) {
                     return getEnumMemberValue(<EnumMember>symbol.valueDeclaration);
@@ -18221,6 +19164,10 @@ namespace ts {
             const symbol = getGlobalSymbol("ReadonlyArray", SymbolFlags.Type, /*diagnostic*/ undefined);
             globalReadonlyArrayType = symbol && <GenericType>getTypeOfGlobalSymbol(symbol, /*arity*/ 1);
             anyReadonlyArrayType = globalReadonlyArrayType ? createTypeFromGenericGlobalType(globalReadonlyArrayType, [anyType]) : anyArrayType;
+
+            createTupleTypeBuilder = createCollectionTypeBuilder(createTupleType, 1, "Tuples") as typeof createTupleTypeBuilder;
+            createUnionTypeBuilder = createCollectionTypeBuilder(getUnionType, 2, "Union types") as typeof createUnionTypeBuilder;
+            createIntersectionTypeBuilder = createCollectionTypeBuilder(getIntersectionType, 2, "Intersection types") as typeof createIntersectionTypeBuilder;
         }
 
         function createInstantiatedPromiseLikeType(): ObjectType {

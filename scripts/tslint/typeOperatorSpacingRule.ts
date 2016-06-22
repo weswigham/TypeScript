@@ -13,15 +13,19 @@ export class Rule extends Lint.Rules.AbstractRule {
 class TypeOperatorSpacingWalker extends Lint.RuleWalker {
     public visitNode(node: ts.Node) {
         if (node.kind === ts.SyntaxKind.UnionType || node.kind === ts.SyntaxKind.IntersectionType) {
-            const types = (<ts.UnionOrIntersectionTypeNode>node).types;
-            let expectedStart = types[0].end + 2; // space, | or &
-            for (let i = 1; i < types.length; i++) {
-                const currentType = types[i];
-                if (expectedStart !== currentType.pos || currentType.getLeadingTriviaWidth() !== 1) {
-                    const failure = this.createFailure(currentType.pos, currentType.getWidth(), Rule.FAILURE_STRING);
-                    this.addFailure(failure);
+            const {line: start} = ts.getLineAndCharacterOfPosition(this.getSourceFile(), node.getStart());
+            const {line: end} = ts.getLineAndCharacterOfPosition(this.getSourceFile(), node.getEnd());
+            if (start === end) {
+                const types = (<ts.UnionOrIntersectionTypeNode>node).types;
+                let expectedStart = types[0].end + 2; // space, | or &
+                for (let i = 1; i < types.length; i++) {
+                    const currentType = types[i];
+                    if (expectedStart !== currentType.pos || currentType.getLeadingTriviaWidth() !== 1) {
+                        const failure = this.createFailure(currentType.pos, currentType.getWidth(), Rule.FAILURE_STRING);
+                        this.addFailure(failure);
+                    }
+                    expectedStart = currentType.end + 2;
                 }
-                expectedStart = currentType.end + 2;
             }
         }
         super.visitNode(node);

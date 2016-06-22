@@ -228,6 +228,24 @@ namespace ts {
         return array[array.length - 1];
     }
 
+    // Recursively un-lazy a thing
+    export function possiblyCall<T>(array: Lazy<T>[]): T[];
+    export function possiblyCall<T>(array: Lazy<T>): T;
+    export function possiblyCall<T>(array: Lazy<T> | Lazy<T>[]): T | T[] {
+        if (!array) {
+            return array as T;
+        }
+        if (array instanceof Array) {
+            return map(array, possiblyCall);
+        }
+        else if (typeof array === "function") {
+            return (array as () => T)();
+        }
+        else {
+            return array;
+        }
+    }
+
     /**
      * Performs a binary search, finding the index at which 'value' occurs in 'array'.
      * If no such index is found, returns the 2's-complement of first index at which

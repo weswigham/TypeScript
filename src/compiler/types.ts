@@ -1823,6 +1823,7 @@ namespace ts {
     export interface TypeChecker {
         getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type;
         getDeclaredTypeOfSymbol(symbol: Symbol): Type;
+        getTypeOfSymbol(symbol: Symbol): Type;
         getPropertiesOfType(type: Type): Symbol[];
         getPropertyOfType(type: Type, propertyName: string): Symbol;
         getSignaturesOfType(type: Type, kind: SignatureKind): Signature[];
@@ -1870,6 +1871,286 @@ namespace ts {
         /* @internal */ getIdentifierCount(): number;
         /* @internal */ getSymbolCount(): number;
         /* @internal */ getTypeCount(): number;
+
+        getTypeBuilder(): TypeBuilder;
+    }
+
+    export interface TypeBuilder {
+        getAnyType(): Type;
+        getStringType(): Type;
+        getNumberType(): Type;
+        getBooleanType(): Type;
+        getVoidType(): Type;
+        getUndefinedType(): Type;
+        getNullType(): Type;
+        getESSymbolType(): Type;
+        getNeverType(): Type;
+        getUnknownType(): Type;
+
+        startEnumType(): EnumTypeBuilder<Type>;
+        startClassType(): ClassTypeBuilder<Type>;
+        startInterfaceType(): InterfaceTypeBuilder<Type>;
+        startTupleType(): TupleTypeBuilder<Type>;
+        startUnionType(): UnionTypeBuilder<Type>;
+        startIntersectionType(): IntersectionTypeBuilder<Type>;
+        startAnonymousType(): AnonymousTypeBuilder<Type>;
+        startNamespace(): NamespaceBuilder<Symbol>;
+        startSignature(): SignatureBuilder<Signature>;
+
+        lookupGlobalType(name: string): Type | undefined;
+        getStringLiteralType(text: string): StringLiteralType;
+
+        createTypeParameter(name: string, constraint?: Lazy<Type>): TypeParameter;
+        createTypeAlias(name: string, params: TypeParameter[], type: Type): Symbol;
+        getTypeReferenceFor(type: GenericType, ...typeArguments: Type[]): TypeReference;
+        instantiateType(type: Type, params: TypeParameter[], targets: Type[]): Type;
+        mergeSymbols(symbolA: Symbol, symbolB: Symbol): void;
+    }
+
+    export const enum BuilderMemberModifierFlags {
+        None        = 0,
+        Public      = 1 << 0,
+        Protected   = 1 << 1,
+        Private     = 1 << 2,
+        Readonly    = 1 << 3
+    }
+
+    export namespace TypeBuilderKind {
+        export type Namespace = "Namespace";
+        export const Namespace: Namespace = "Namespace";
+
+        export type Signature = "Signature";
+        export const Signature: Signature = "Signature";
+
+        export type Anonymous = "Anonymous";
+        export const Anonymous: Anonymous = "Anonymous";
+
+        export type Interface = "Interface";
+        export const Interface: Interface = "Interface";
+
+        export type Class = "Class";
+        export const Class: Class = "Class";
+
+        export type Tuple = "Tuple";
+        export const Tuple: Tuple = "Tuple";
+
+        export type Union = "Union";
+        export const Union: Union = "Union";
+
+        export type Intersection = "Intersection";
+        export const Intersection: Intersection = "Intersection";
+
+        export type Enum = "Enum";
+        export const Enum: Enum = "Enum";
+    }
+    export type TypeBuilderKind = TypeBuilderKind.Namespace
+        | TypeBuilderKind.Signature
+        | TypeBuilderKind.Anonymous
+        | TypeBuilderKind.Interface
+        | TypeBuilderKind.Class
+        | TypeBuilderKind.Tuple
+        | TypeBuilderKind.Union
+        | TypeBuilderKind.Intersection
+        | TypeBuilderKind.Enum;
+
+    export type Lazy<T> = T | (() => T);
+
+    export interface BaseTypeBuilder<FinishReturnType> {
+        finish(): FinishReturnType;
+    }
+
+    export interface EnumTypeBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType> {
+        addMember(name: string, value: number): this;
+        addMember(name: string): this;
+        isConst(flag: boolean): this;
+        setName(name: string): this;
+    }
+
+    export interface StructuredTypeBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType> {
+        addMember(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>): this;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Enum): EnumTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Namespace): NamespaceBuilder<this>;
+        buildMember(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+    }
+
+    export interface ClassTypeBuilder<FinishReturnType> extends StructuredTypeBuilder<FinishReturnType>, TypeParameterBuilder {
+        setName(name: string): this;
+
+        setBaseType(type: Lazy<Type>): this;
+        buildBaseType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildBaseType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildBaseType(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildBaseType(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildBaseType(kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+
+        addImplementsType(type: Lazy<Type>): this;
+        buildImplementsType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildImplementsType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildImplementsType(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildImplementsType(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildImplementsType(kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+
+        addStatic(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>): this;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+        // buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Enum): EnumTypeBuilder<this>;
+        // buildStatic(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Namespace): NamespaceBuilder<this>;
+
+        addConstructSignature(sig: Lazy<Signature>): this;
+        buildConstructSignature(): SignatureBuilder<this>;
+    }
+
+    export interface ObjectTypeBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType> {
+        addCallSignature(sig: Lazy<Signature>): this;
+        buildCallSignature(): SignatureBuilder<this>;
+
+        addConstructSignature(sig: Lazy<Signature>): this;
+        buildConstructSignature(): SignatureBuilder<this>;
+
+        addStringIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>): this;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildStringIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+
+        addNumberIndexType(name: string, flags: BuilderMemberModifierFlags, type: Lazy<Type>): this;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildNumberIndexType(name: string, flags: BuilderMemberModifierFlags, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+    }
+
+    export interface TypeParameterBuilder {
+        // This overload is useful for making a TypeParameter yourself and threading it back in (as a type)
+        // elsewhere in order to flow generics through a generated type
+        addTypeParameter(type: Lazy<TypeParameter>): this;
+        addTypeParameter(name: string, constraint?: Lazy<Type>): this;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildTypeParameter(name: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+    }
+
+    export interface InterfaceTypeBuilder<FinishReturnType> extends ObjectTypeBuilder<FinishReturnType>, TypeParameterBuilder, StructuredTypeBuilder<FinishReturnType> {
+        setName(name: string): this;
+
+        addBaseType(type: Lazy<Type>): this;
+        buildBaseType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildBaseType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+    }
+
+    export interface CollectionTypeBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType> {
+        addType(type: Lazy<Type>): this;
+        // buildMemberType(kind: TypeBuilderKind.Namespace): NamespaceBuilder<this>;
+        // buildMemberType(kind: TypeBuilderKind.Enum): EnumTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildMemberType(kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+    }
+
+    export interface TupleTypeBuilder<FinishReturnType> extends CollectionTypeBuilder<FinishReturnType> {}
+    export interface UnionTypeBuilder<FinishReturnType> extends CollectionTypeBuilder<FinishReturnType> {}
+    export interface IntersectionTypeBuilder<FinishReturnType> extends CollectionTypeBuilder<FinishReturnType> {}
+    export interface AnonymousTypeBuilder<FinishReturnType> extends ObjectTypeBuilder<FinishReturnType> {
+        addMember(name: string, type: Lazy<Type>): this;
+        buildMember(name: string, kind: TypeBuilderKind.Enum): EnumTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Namespace): NamespaceBuilder<this>;
+        buildMember(name: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+    }
+
+    export interface NamespaceBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType> {
+        setName(name: string): this;
+
+        addExport(symbol: Lazy<Symbol>): this;
+        addExport(name: string, type: Lazy<Type>): this;
+        buildExport(name: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Enum): EnumTypeBuilder<this>;
+        buildExport(name: string, kind: TypeBuilderKind.Namespace): NamespaceBuilder<this>;
+    }
+    export interface SignatureBuilder<FinishReturnType> extends BaseTypeBuilder<FinishReturnType>, TypeParameterBuilder {
+        setName(name: string): this;
+        setConstructor(flag: boolean): this;
+
+        addParameter(name: string, type: Lazy<Type>): this;
+        buildParameter(name: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildParameter(name: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+
+        setRestParameter(name: string, type: Lazy<Type>): this;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildRestParameter(name: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+
+        setReturnType(type: Lazy<Type>): this;
+        buildReturnType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildReturnType(kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+
+        setThisType(type: Lazy<Type>): this;
+        buildThisType(kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildThisType(kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
+
+        setPredicateType(argument: string, constraint: Lazy<Type>): this;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Class): ClassTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Interface): InterfaceTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Tuple): TupleTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Union): UnionTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Intersection): IntersectionTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Anonymous): AnonymousTypeBuilder<this>;
+        buildPredicateType(argument: string, kind: TypeBuilderKind.Signature): SignatureBuilder<this>;
     }
 
     export interface SymbolDisplayBuilder {
@@ -2153,6 +2434,11 @@ namespace ts {
         isDeclarationWithCollidingName?: boolean;    // True if symbol is block scoped redeclaration
         bindingElement?: BindingElement;    // Binding element associated with property symbol
         exportsSomeValue?: boolean;         // True if module exports some value (not just types)
+        transientEnumIsConst?: boolean;     // True if the transient enum should be const
+        transientEnumMemberValue?: number;  // The actual numeric value of a transient enum member symbol (for inlining)
+        declarationFlags?: NodeFlags;       // Accumulated declaration flags of the symbol
+        resolvedSignatures?: Signature[];   // Resolved signatures
+        resolvedIndexInfos?: Map<IndexInfo>;    // Resolved index infos
     }
 
     /* @internal */
