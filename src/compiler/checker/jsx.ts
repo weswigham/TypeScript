@@ -6,7 +6,6 @@ namespace ts {
         error: (location: Node, message: DiagnosticMessage, arg0?: any, arg1?: any, arg2?: any) => void,
         grammarErrorOnNode: (node: Node, message: DiagnosticMessage, arg0?: any, arg1?: any, arg2?: any) => boolean,
         checkExpression: (node: Expression) => Type,
-        isTypeAny: (type: Type) => boolean,
         getPropertyOfType: (type: Type, propname: string) => Symbol,
         getTypeOfSymbol: (symbol: Symbol) => Type,
         getIndexTypeOfType: (type: Type, index: IndexKind) => Type,
@@ -47,7 +46,7 @@ namespace ts {
         let anyType: IntrinsicType;
         let emptyObjectType: Type;
         let unknownType: IntrinsicType;
-        let booleanType: IntrinsicType;
+        let booleanType: IntrinsicType & UnionType;
         let unknownSymbol: Symbol;
 
         return {
@@ -62,7 +61,7 @@ namespace ts {
             onInitializeTypeChecker
         };
 
-        function onInitializeTypeChecker(any: IntrinsicType, empty: Type, unknown: IntrinsicType, boolean: IntrinsicType, unknownSym: Symbol) {
+        function onInitializeTypeChecker(any: IntrinsicType, empty: Type, unknown: IntrinsicType, boolean: IntrinsicType & UnionType, unknownSym: Symbol) {
             anyType = any;
             emptyObjectType = empty;
             unknownType = unknown;
