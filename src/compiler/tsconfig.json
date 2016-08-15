@@ -19,6 +19,7 @@
         "parser.ts",
         "utilities.ts",
         "binder.ts",
+        "checker/jsx.ts",
         "checker.ts",
         "sourcemap.ts",
         "declarationEmitter.ts",
