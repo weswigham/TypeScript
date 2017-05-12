@@ -3446,7 +3446,8 @@ namespace ts {
         /*@internal*/ plugins?: PluginImport[];
         preserveConstEnums?: boolean;
         project?: string;
-        /* @internal */ pretty?: DiagnosticStyle;
+        /*@internal*/ diagnosticStyle?: DiagnosticStyle;
+        /*@internal*/ pretty?: boolean;
         reactNamespace?: string;
         jsxFactory?: string;
         removeComments?: boolean;
@@ -3547,9 +3548,10 @@ namespace ts {
         JSX,
     }
 
-    /* @internal */
+    /** @internal */
     export const enum DiagnosticStyle {
-        Simple,
+        Auto,
+        Terse,
         Pretty,
     }
 

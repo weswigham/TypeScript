@@ -362,7 +362,9 @@ namespace ts {
                 compilerHost.fileExists = cachedFileExists;
             }
 
-            if (compilerOptions.pretty) {
+            if (compilerOptions.pretty
+            || compilerOptions.diagnosticStyle === DiagnosticStyle.Pretty
+            || (compilerOptions.diagnosticStyle === DiagnosticStyle.Auto && sys.supportsOutputColor && sys.supportsOutputColor())) {
                 reportDiagnosticWorker = reportDiagnosticWithColorAndContext;
             }
 

@@ -43,6 +43,7 @@ namespace ts {
         /*@internal*/ tryEnableSourceMapsForHost?(): void;
         setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         clearTimeout?(timeoutId: any): void;
+        supportsOutputColor?(): boolean;
     }
 
     export interface FileWatcher {
@@ -437,7 +438,32 @@ namespace ts {
                     }
                 },
                 setTimeout,
-                clearTimeout
+                clearTimeout,
+                supportsOutputColor() {
+                    // If it's not a TTY, it won't support color
+                    if (process.stdout && !process.stdout.isTTY) {
+                        return false;
+                    }
+                    // Windows TTYs all support basic color
+                    if (process.platform === "win32") {
+                        return true;
+                    }
+                    // Certain CI providers support color output
+                    if (process.env.CI) {
+                        if (process.env.TRAVIS || process.env.CI === "Travis") {
+                            return true;
+                        }
+                    }
+                    // Inspect the TERM variable for common terminals with color support
+                    if (/^screen|^xterm|^vt100|color|ansi|cygwin|linux/i.test(process.env.TERM)) {
+                        return true;
+                    }
+                    // If the 'COLORTERM' environment var exists, it indicates a color terminal
+                    if (process.env.COLORTERM) {
+                        return true;
+                    }
+                    return false;
+                }
             };
             return nodeSystem;
         }

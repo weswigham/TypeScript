@@ -2781,7 +2781,7 @@
         "category": "Message",
         "code": 6072
     },
-    "Stylize errors and messages using color and context (experimental).": {
+    "[Deprecated] Use '--diagnosticStyle pretty' instead. Stylize errors and messages using color and context.": {
         "category": "Message",
         "code": 6073
     },
@@ -3224,6 +3224,10 @@
     "Reusing module resolutions originating in '{0}' since resolutions are unchanged from old program.": {
         "category": "Message",
         "code": 6184
+    },
+    "Controls formatting style of error messages. Default: auto": {
+        "category": "Message",
+        "code": 6185
     },
     "Variable '{0}' implicitly has an '{1}' type.": {
         "category": "Error",

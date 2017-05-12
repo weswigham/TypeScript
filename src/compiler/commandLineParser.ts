@@ -58,9 +58,20 @@ namespace ts {
         {
             name: "pretty",
             type: "boolean",
+            showInSimplifiedHelpView: false,
+            category: Diagnostics.Command_line_Options,
+            description: Diagnostics.Deprecated_Use_diagnosticStyle_pretty_instead_Stylize_errors_and_messages_using_color_and_context
+        },
+        {
+            name: "diagnosticStyle",
+            type: createMapFromTemplate({
+                "auto": DiagnosticStyle.Auto,
+                "pretty": DiagnosticStyle.Pretty,
+                "terse": DiagnosticStyle.Terse,
+            }),
             showInSimplifiedHelpView: true,
             category: Diagnostics.Command_line_Options,
-            description: Diagnostics.Stylize_errors_and_messages_using_color_and_context_experimental
+            description: Diagnostics.Controls_formatting_style_of_error_messages_Default_Colon_auto
         },
         {
             name: "watch",
