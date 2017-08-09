@@ -327,7 +327,7 @@ namespace ts {
         let deferredNodes: Node[];
         let deferredUnusedIdentifierNodes: Node[];
 
-        let flowLoopStart = 0;
+        const flowLoopStart = 0;
         let flowLoopCount = 0;
         let visitedFlowCount = 0;
 
@@ -11426,6 +11426,7 @@ namespace ts {
             if (reference.parent.kind === SyntaxKind.NonNullExpression && getTypeWithFacts(resultType, TypeFacts.NEUndefinedOrNull).flags & TypeFlags.Never) {
                 return declaredType;
             }
+            Debug.assert(!isIncomplete(resultType), "Incomplete type leaked from flow analysis!");
             return resultType;
 
             function getTypeAtFlowNode(flow: FlowNode): FlowType {
@@ -17783,13 +17784,7 @@ namespace ts {
         function checkExpressionCached(node: Expression | QualifiedName): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
-                // When computing a type that we're going to cache, we need to ignore any ongoing control flow
-                // analysis because variables may have transient types in indeterminable states. Moving flowLoopStart
-                // to the top of the stack ensures all transient types are computed from a known point.
-                // const saveFlowLoopStart = flowLoopStart;
-                // flowLoopStart = flowLoopCount;
                 links.resolvedType = checkExpression(node, CheckMode.Normal);
-                // flowLoopStart = saveFlowLoopStart;
             }
             return links.resolvedType;
         }
