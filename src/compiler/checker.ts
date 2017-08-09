@@ -4513,7 +4513,7 @@ namespace ts {
                 }
                 // Handle export default expressions
                 if (declaration.kind === SyntaxKind.ExportAssignment) {
-                    return links.type = checkExpression((<ExportAssignment>declaration).expression);
+                    return links.type = checkExpressionCached((<ExportAssignment>declaration).expression);
                 }
                 if (isInJavaScriptFile(declaration) && isJSDocPropertyLikeTag(declaration) && declaration.typeExpression) {
                     return links.type = getTypeFromTypeNode(declaration.typeExpression.type);
@@ -4884,7 +4884,7 @@ namespace ts {
                 if (!pushTypeResolution(type, TypeSystemPropertyName.ResolvedBaseConstructorType)) {
                     return unknownType;
                 }
-                const baseConstructorType = checkExpression(baseTypeNode.expression);
+                const baseConstructorType = checkExpressionCached(baseTypeNode.expression);
                 if (baseConstructorType.flags & (TypeFlags.Object | TypeFlags.Intersection)) {
                     // Resolving the members of a class requires us to resolve the base class of that class.
                     // We force resolution here such that we catch circularities now.
@@ -6986,7 +6986,7 @@ namespace ts {
                 // The expression is processed as an identifier expression (section 4.3)
                 // or property access expression(section 4.10),
                 // the widened type(section 3.9) of which becomes the result.
-                links.resolvedType = getWidenedType(checkExpression(node.exprName));
+                links.resolvedType = getWidenedType(checkExpressionCached(node.exprName));
             }
             return links.resolvedType;
         }
@@ -7891,7 +7891,7 @@ namespace ts {
         function getTypeFromLiteralTypeNode(node: LiteralTypeNode): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
-                links.resolvedType = getRegularTypeOfLiteralType(checkExpression(node.literal));
+                links.resolvedType = getRegularTypeOfLiteralType(checkExpressionCached(node.literal));
             }
             return links.resolvedType;
         }
@@ -12094,7 +12094,7 @@ namespace ts {
                 declaration.kind === SyntaxKind.Parameter &&
                 declaration.initializer &&
                 getFalsyFlags(declaredType) & TypeFlags.Undefined &&
-                !(getFalsyFlags(checkExpression(declaration.initializer)) & TypeFlags.Undefined);
+                !(getFalsyFlags(checkExpressionCached(declaration.initializer)) & TypeFlags.Undefined);
             return annotationIncludesUndefined ? getTypeWithFacts(declaredType, TypeFacts.NEUndefined) : declaredType;
         }
 
@@ -12492,7 +12492,7 @@ namespace ts {
                         .left as PropertyAccessExpression)       // x.prototype.y
                         .expression as PropertyAccessExpression) // x.prototype
                         .expression;                             // x
-                    const classSymbol = checkExpression(className).symbol;
+                    const classSymbol = checkExpressionCached(className).symbol;
                     if (classSymbol && classSymbol.members && (classSymbol.flags & SymbolFlags.Function)) {
                         return getInferredClassType(classSymbol);
                     }
@@ -12814,7 +12814,7 @@ namespace ts {
                     if (parameter.dotDotDotToken) {
                         const restTypes: Type[] = [];
                         for (let i = indexOfParameter; i < iife.arguments.length; i++) {
-                            restTypes.push(getWidenedLiteralType(checkExpression(iife.arguments[i])));
+                            restTypes.push(getWidenedLiteralType(checkExpressionCached(iife.arguments[i])));
                         }
                         return restTypes.length ? createArrayType(getUnionType(restTypes)) : undefined;
                     }
@@ -12822,7 +12822,7 @@ namespace ts {
                     const cached = links.resolvedSignature;
                     links.resolvedSignature = anySignature;
                     const type = indexOfParameter < iife.arguments.length ?
-                        getWidenedLiteralType(checkExpression(iife.arguments[indexOfParameter])) :
+                        getWidenedLiteralType(checkExpressionCached(iife.arguments[indexOfParameter])) :
                         parameter.initializer ? undefined : undefinedWideningType;
                     links.resolvedSignature = cached;
                     return type;
@@ -13433,7 +13433,7 @@ namespace ts {
         function checkComputedPropertyName(node: ComputedPropertyName): Type {
             const links = getNodeLinks(node.expression);
             if (!links.resolvedType) {
-                links.resolvedType = checkExpression(node.expression);
+                links.resolvedType = checkExpressionCached(node.expression);
                 // This will allow types number, string, symbol or any. It will also allow enums, the unknown
                 // type, and any union of these types (like string | number).
                 if (links.resolvedType.flags & TypeFlags.Nullable ||
@@ -13559,7 +13559,7 @@ namespace ts {
                         hasComputedNumberProperty = false;
                         typeFlags = 0;
                     }
-                    const type = checkExpression((memberDecl as SpreadAssignment).expression);
+                    const type = checkExpressionCached((memberDecl as SpreadAssignment).expression);
                     if (!isValidSpreadType(type)) {
                         error(memberDecl, Diagnostics.Spread_types_may_only_be_created_from_object_types);
                         return unknownType;
@@ -13663,7 +13663,7 @@ namespace ts {
                 getIntrinsicTagSymbol(node.closingElement);
             }
             else {
-                checkExpression(node.closingElement.tagName);
+                checkExpressionCached(node.closingElement.tagName);
             }
 
             return getJsxGlobalElementType() || anyType;
@@ -13740,7 +13740,7 @@ namespace ts {
                         attributesArray = [];
                         attributesTable = createSymbolTable();
                     }
-                    const exprType = checkExpression(attributeDecl.expression);
+                    const exprType = checkExpressionCached(attributeDecl.expression);
                     if (isTypeAny(exprType)) {
                         hasSpreadAnyType = true;
                     }
@@ -14102,7 +14102,7 @@ namespace ts {
          */
         function resolveCustomJsxElementAttributesType(openingLikeElement: JsxOpeningLikeElement,
             shouldIncludeAllStatelessAttributesType: boolean,
-            elementType: Type = checkExpression(openingLikeElement.tagName),
+            elementType: Type = checkExpressionCached(openingLikeElement.tagName),
             elementClassType?: Type): Type {
 
             if (elementType.flags & TypeFlags.Union) {
@@ -14562,7 +14562,7 @@ namespace ts {
         }
 
         function checkNonNullExpression(node: Expression | QualifiedName) {
-            return checkNonNullType(checkExpression(node), node);
+            return checkNonNullType(checkExpressionCached(node), node);
         }
 
         function checkNonNullType(type: Type, errorNode: Node): Type {
@@ -14784,7 +14784,7 @@ namespace ts {
                 ? (<PropertyAccessExpression>node).expression
                 : (<QualifiedName>node).left;
 
-            return isValidPropertyAccessWithType(node, left, propertyName, getWidenedType(checkExpression(left)));
+            return isValidPropertyAccessWithType(node, left, propertyName, getWidenedType(checkExpressionCached(left)));
         }
 
         function isValidPropertyAccessWithType(
@@ -14882,7 +14882,7 @@ namespace ts {
                 return unknownType;
             }
 
-            const indexType = isForInVariableForNumericPropertyNames(indexExpression) ? numberType : checkExpression(indexExpression);
+            const indexType = isForInVariableForNumericPropertyNames(indexExpression) ? numberType : checkExpressionCached(indexExpression);
 
             if (objectType === unknownType || objectType === silentNeverType) {
                 return objectType;
@@ -14951,11 +14951,11 @@ namespace ts {
             }
 
             if (node.kind === SyntaxKind.TaggedTemplateExpression) {
-                checkExpression((<TaggedTemplateExpression>node).template);
+                checkExpressionCached((<TaggedTemplateExpression>node).template);
             }
             else if (node.kind !== SyntaxKind.Decorator) {
                 forEach((<CallExpression>node).arguments, argument => {
-                    checkExpression(argument);
+                    checkExpressionCached(argument);
                 });
             }
             return anySignature;
@@ -15184,7 +15184,7 @@ namespace ts {
             const thisType = getThisTypeOfSignature(signature);
             if (thisType) {
                 const thisArgumentNode = getThisArgumentOfCall(node);
-                const thisArgumentType = thisArgumentNode ? checkExpression(thisArgumentNode) : voidType;
+                const thisArgumentType = thisArgumentNode ? checkExpressionCached(thisArgumentNode) : voidType;
                 inferTypes(context.inferences, thisArgumentType, thisType);
             }
 
@@ -15309,7 +15309,7 @@ namespace ts {
                 // If the signature's 'this' type is voidType, then the check is skipped -- anything is compatible.
                 // If the expression is a new expression, then the check is skipped.
                 const thisArgumentNode = getThisArgumentOfCall(node);
-                const thisArgumentType = thisArgumentNode ? checkExpression(thisArgumentNode) : voidType;
+                const thisArgumentType = thisArgumentNode ? checkExpressionCached(thisArgumentNode) : voidType;
                 const errorNode = reportErrors ? (thisArgumentNode || node) : undefined;
                 const headMessage = Diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1;
                 if (!checkTypeRelatedTo(thisArgumentType, getThisTypeOfSignature(signature), relation, errorNode, headMessage)) {
@@ -16130,7 +16130,7 @@ namespace ts {
         }
 
         function resolveTaggedTemplateExpression(node: TaggedTemplateExpression, candidatesOutArray: Signature[]): Signature {
-            const tagType = checkExpression(node.tag);
+            const tagType = checkExpressionCached(node.tag);
             const apparentType = getApparentType(tagType);
 
             if (apparentType === unknownType) {
@@ -16179,7 +16179,7 @@ namespace ts {
          * Resolves a decorator as if it were a call expression.
          */
         function resolveDecorator(node: Decorator, candidatesOutArray: Signature[]): Signature {
-            const funcType = checkExpression(node.expression);
+            const funcType = checkExpressionCached(node.expression);
             const apparentType = getApparentType(funcType);
             if (apparentType === unknownType) {
                 return resolveErrorCall(node);
@@ -16261,7 +16261,7 @@ namespace ts {
                 case SyntaxKind.JsxOpeningElement:
                 case SyntaxKind.JsxSelfClosingElement:
                     // This code-path is called by language service
-                    return resolveStatelessJsxOpeningLikeElement(<JsxOpeningLikeElement>node, checkExpression((<JsxOpeningLikeElement>node).tagName), candidatesOutArray);
+                    return resolveStatelessJsxOpeningLikeElement(<JsxOpeningLikeElement>node, checkExpressionCached((<JsxOpeningLikeElement>node).tagName), candidatesOutArray);
             }
             Debug.fail("Branch in 'resolveSignature' should be unreachable.");
         }
@@ -16357,7 +16357,7 @@ namespace ts {
                     // In this case, using getResolvedSymbol directly is required to avoid losing the members from the declaration.
                     let funcSymbol = node.expression.kind === SyntaxKind.Identifier ?
                         getResolvedSymbol(node.expression as Identifier) :
-                        checkExpression(node.expression).symbol;
+                        checkExpressionCached(node.expression).symbol;
                     if (funcSymbol && isDeclarationOfFunctionOrClassExpression(funcSymbol)) {
                         funcSymbol = getSymbolOfNode((<VariableDeclaration>funcSymbol.valueDeclaration).initializer);
                     }
@@ -16484,7 +16484,7 @@ namespace ts {
         }
 
         function checkNonNullAssertion(node: NonNullExpression) {
-            return getNonNullableType(checkExpression(node.expression));
+            return getNonNullableType(checkExpressionCached(node.expression));
         }
 
         function checkMetaProperty(node: MetaProperty) {
@@ -16633,7 +16633,7 @@ namespace ts {
             const functionFlags = getFunctionFlags(func);
             let type: Type;
             if (func.body.kind !== SyntaxKind.Block) {
-                type = checkExpressionCached(<Expression>func.body, checkMode);
+                type = checkMode ? checkExpression(<Expression>func.body, checkMode) : checkExpressionCached(<Expression>func.body);
                 if (functionFlags & FunctionFlags.Async) {
                     // From within an async function you can return either a non-promise value or a promise. Any
                     // Promise/A+ compatible implementation will always assimilate any foreign promise, so the
@@ -16708,7 +16708,7 @@ namespace ts {
             forEachYieldExpression(<Block>func.body, yieldExpression => {
                 const expr = yieldExpression.expression;
                 if (expr) {
-                    let type = checkExpressionCached(expr, checkMode);
+                    let type = checkMode ? checkExpression(expr, checkMode) : checkExpressionCached(expr);
                     if (yieldExpression.asteriskToken) {
                         // A yield* expression effectively yields everything that its operand yields
                         type = checkIteratedTypeOrElementType(type, yieldExpression.expression, /*allowStringInput*/ false, (functionFlags & FunctionFlags.Async) !== 0);
@@ -16761,7 +16761,7 @@ namespace ts {
             forEachReturnStatement(<Block>func.body, returnStatement => {
                 const expr = returnStatement.expression;
                 if (expr) {
-                    let type = checkExpressionCached(expr, checkMode);
+                    let type = checkMode ? checkExpression(expr, checkMode) : checkExpressionCached(expr);
                     if (functionFlags & FunctionFlags.Async) {
                         // From within an async function you can return either a non-promise value or a promise. Any
                         // Promise/A+ compatible implementation will always assimilate any foreign promise, so the
@@ -16940,7 +16940,7 @@ namespace ts {
                     // should not be checking assignability of a promise to the return type. Instead, we need to
                     // check assignability of the awaited type of the expression body against the promised type of
                     // its return type annotation.
-                    const exprType = checkExpression(<Expression>node.body);
+                    const exprType = checkExpressionCached(<Expression>node.body);
                     if (returnOrPromisedType) {
                         if ((functionFlags & FunctionFlags.AsyncGenerator) === FunctionFlags.Async) { // Async function
                             const awaitedType = checkAwaitedType(exprType, node.body, Diagnostics.The_return_type_of_an_async_function_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member);
@@ -17023,7 +17023,7 @@ namespace ts {
         }
 
         function checkDeleteExpression(node: DeleteExpression): Type {
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
             const expr = skipParentheses(node.expression);
             if (expr.kind !== SyntaxKind.PropertyAccessExpression && expr.kind !== SyntaxKind.ElementAccessExpression) {
                 error(expr, Diagnostics.The_operand_of_a_delete_operator_must_be_a_property_reference);
@@ -17038,12 +17038,12 @@ namespace ts {
         }
 
         function checkTypeOfExpression(node: TypeOfExpression): Type {
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
             return typeofType;
         }
 
         function checkVoidExpression(node: VoidExpression): Type {
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
             return undefinedWideningType;
         }
 
@@ -17059,12 +17059,12 @@ namespace ts {
                 }
             }
 
-            const operandType = checkExpression(node.expression);
+            const operandType = checkExpressionCached(node.expression);
             return checkAwaitedType(operandType, node, Diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member);
         }
 
         function checkPrefixUnaryExpression(node: PrefixUnaryExpression): Type {
-            const operandType = checkExpression(node.operand);
+            const operandType = checkExpressionCached(node.operand);
             if (operandType === silentNeverType) {
                 return silentNeverType;
             }
@@ -17104,7 +17104,7 @@ namespace ts {
         }
 
         function checkPostfixUnaryExpression(node: PostfixUnaryExpression): Type {
-            const operandType = checkExpression(node.operand);
+            const operandType = checkExpressionCached(node.operand);
             if (operandType === silentNeverType) {
                 return silentNeverType;
             }
@@ -17291,7 +17291,7 @@ namespace ts {
                     else {
                         // We still need to check element expression here because we may need to set appropriate flag on the expression
                         // such as NodeCheckFlags.LexicalThis on "this"expression.
-                        checkExpression(element);
+                        checkExpressionCached(element);
                         if (isTupleType(sourceType)) {
                             error(element, Diagnostics.Tuple_type_0_with_length_1_cannot_be_assigned_to_tuple_with_length_2, typeToString(sourceType), getTypeReferenceArity(<TypeReference>sourceType), elements.length);
                         }
@@ -17326,7 +17326,7 @@ namespace ts {
                     // In strict null checking mode, if a default value of a non-undefined type is specified, remove
                     // undefined from the final type.
                     if (strictNullChecks &&
-                        !(getFalsyFlags(checkExpression(prop.objectAssignmentInitializer)) & TypeFlags.Undefined)) {
+                        !(getFalsyFlags(checkExpressionCached(prop.objectAssignmentInitializer)) & TypeFlags.Undefined)) {
                         sourceType = getTypeWithFacts(sourceType, TypeFacts.NEUndefined);
                     }
                     checkBinaryLikeExpression(prop.name, prop.equalsToken, prop.objectAssignmentInitializer, checkMode);
@@ -17732,7 +17732,7 @@ namespace ts {
         }
 
         function checkConditionalExpression(node: ConditionalExpression, checkMode?: CheckMode): Type {
-            checkExpression(node.condition);
+            checkExpressionCached(node.condition);
             const type1 = checkExpression(node.whenTrue, checkMode);
             const type2 = checkExpression(node.whenFalse, checkMode);
             return getBestChoiceType(type1, type2);
@@ -17761,7 +17761,7 @@ namespace ts {
             // A place where we actually *are* concerned with the expressions' types are
             // in tagged templates.
             forEach((<TemplateExpression>node).templateSpans, templateSpan => {
-                checkExpression(templateSpan.expression);
+                checkExpressionCached(templateSpan.expression);
             });
 
             return stringType;
@@ -17780,16 +17780,16 @@ namespace ts {
             return result;
         }
 
-        function checkExpressionCached(node: Expression, checkMode?: CheckMode): Type {
+        function checkExpressionCached(node: Expression | QualifiedName): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
                 // When computing a type that we're going to cache, we need to ignore any ongoing control flow
                 // analysis because variables may have transient types in indeterminable states. Moving flowLoopStart
                 // to the top of the stack ensures all transient types are computed from a known point.
-                const saveFlowLoopStart = flowLoopStart;
-                flowLoopStart = flowLoopCount;
-                links.resolvedType = checkExpression(node, checkMode);
-                flowLoopStart = saveFlowLoopStart;
+                // const saveFlowLoopStart = flowLoopStart;
+                // flowLoopStart = flowLoopCount;
+                links.resolvedType = checkExpression(node, CheckMode.Normal);
+                // flowLoopStart = saveFlowLoopStart;
             }
             return links.resolvedType;
         }
@@ -17890,7 +17890,7 @@ namespace ts {
             // Otherwise simply call checkExpression. Ideally, the entire family of checkXXX functions
             // should have a parameter that indicates whether full error checking is required such that
             // we can perform the optimizations locally.
-            return cache ? checkExpressionCached(node) : checkExpression(node);
+            return cache ? checkExpressionCached(node) : checkExpression(node, CheckMode.Normal);
         }
 
         /**
@@ -17915,7 +17915,7 @@ namespace ts {
         // object, it serves as an indicator that all contained function and arrow expressions should be considered to
         // have the wildcard function type; this form of type check is used during overload resolution to exclude
         // contextually typed function and arrow expressions in the initial phase.
-        function checkExpression(node: Expression | QualifiedName, checkMode?: CheckMode): Type {
+        function checkExpression(node: Expression | QualifiedName, checkMode: CheckMode): Type {
             let type: Type;
             if (node.kind === SyntaxKind.QualifiedName) {
                 type = checkQualifiedName(<QualifiedName>node);
@@ -20296,14 +20296,14 @@ namespace ts {
             // Grammar checking
             checkGrammarStatementInAmbientContext(node);
 
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
         }
 
         function checkIfStatement(node: IfStatement) {
             // Grammar checking
             checkGrammarStatementInAmbientContext(node);
 
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
             checkSourceElement(node.thenStatement);
 
             if (node.thenStatement.kind === SyntaxKind.EmptyStatement) {
@@ -20318,14 +20318,14 @@ namespace ts {
             checkGrammarStatementInAmbientContext(node);
 
             checkSourceElement(node.statement);
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
         }
 
         function checkWhileStatement(node: WhileStatement) {
             // Grammar checking
             checkGrammarStatementInAmbientContext(node);
 
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
             checkSourceElement(node.statement);
         }
 
@@ -20342,12 +20342,12 @@ namespace ts {
                     forEach((<VariableDeclarationList>node.initializer).declarations, checkVariableDeclaration);
                 }
                 else {
-                    checkExpression(<Expression>node.initializer);
+                    checkExpressionCached(<Expression>node.initializer);
                 }
             }
 
-            if (node.condition) checkExpression(node.condition);
-            if (node.incrementor) checkExpression(node.incrementor);
+            if (node.condition) checkExpressionCached(node.condition);
+            if (node.incrementor) checkExpressionCached(node.incrementor);
             checkSourceElement(node.statement);
             if (node.locals) {
                 registerForUnusedIdentifiersCheck(node);
@@ -20391,7 +20391,7 @@ namespace ts {
                     checkDestructuringAssignment(varExpr, iteratedType || unknownType);
                 }
                 else {
-                    const leftType = checkExpression(varExpr);
+                    const leftType = checkExpressionCached(varExpr);
                     checkReferenceExpression(varExpr, Diagnostics.The_left_hand_side_of_a_for_of_statement_must_be_a_variable_or_a_property_access);
 
                     // iteratedType will be undefined if the rightType was missing properties/signatures
@@ -20433,7 +20433,7 @@ namespace ts {
                 //   Var must be an expression classified as a reference of type Any or the String primitive type,
                 //   and Expr must be an expression of type Any, an object type, or a type parameter type.
                 const varExpr = <Expression>node.initializer;
-                const leftType = checkExpression(varExpr);
+                const leftType = checkExpressionCached(varExpr);
                 if (varExpr.kind === SyntaxKind.ArrayLiteralExpression || varExpr.kind === SyntaxKind.ObjectLiteralExpression) {
                     error(varExpr, Diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_a_destructuring_pattern);
                 }
@@ -20864,7 +20864,7 @@ namespace ts {
                 }
             }
 
-            checkExpression(node.expression);
+            checkExpressionCached(node.expression);
 
             const sourceFile = getSourceFileOfNode(node);
             if (!hasParseDiagnostics(sourceFile)) {
@@ -20881,7 +20881,7 @@ namespace ts {
             let firstDefaultClause: CaseOrDefaultClause;
             let hasDuplicateDefaultClause = false;
 
-            const expressionType = checkExpression(node.expression);
+            const expressionType = checkExpressionCached(node.expression);
             const expressionIsLiteral = isLiteralType(expressionType);
             forEach(node.caseBlock.clauses, clause => {
                 // Grammar check for duplicate default clauses, skip if we already report duplicate default clause
@@ -20903,7 +20903,7 @@ namespace ts {
                     // TypeScript 1.0 spec (April 2014): 5.9
                     // In a 'switch' statement, each 'case' expression must be of a type that is comparable
                     // to or from the type of the 'switch' expression.
-                    let caseType = checkExpression(caseClause.expression);
+                    let caseType = checkExpressionCached(caseClause.expression);
                     const caseIsLiteral = isLiteralType(caseType);
                     let comparedExpressionType = expressionType;
                     if (!caseIsLiteral || !expressionIsLiteral) {
@@ -20951,7 +20951,7 @@ namespace ts {
             }
 
             if (node.expression) {
-                checkExpression(node.expression);
+                checkExpressionCached(node.expression);
             }
         }
 
@@ -21579,7 +21579,7 @@ namespace ts {
             }
             else {
                 // Only here do we need to check that the initializer is assignable to the enum type.
-                checkTypeAssignableTo(checkExpression(initializer), getDeclaredTypeOfSymbol(getSymbolOfNode(member.parent)), initializer, /*headMessage*/ undefined);
+                checkTypeAssignableTo(checkExpressionCached(initializer), getDeclaredTypeOfSymbol(getSymbolOfNode(member.parent)), initializer, /*headMessage*/ undefined);
             }
             return value;
 
