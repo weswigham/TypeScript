@@ -311,7 +311,7 @@ namespace ts.Completions {
             const symbol = forEach(symbols, s => getCompletionEntryDisplayNameForSymbol(s, compilerOptions.target, /*performCharacterChecks*/ false) === entryName ? s : undefined);
 
             if (symbol) {
-                const { displayParts, documentation, symbolKind, tags } = SymbolDisplay.getSymbolDisplayPartsDocumentationAndSymbolKind(typeChecker, symbol, sourceFile, location, location, SemanticMeaning.All);
+                const { displayParts, documentation, symbolKind, tags } = SymbolDisplay.getSymbolDisplayPartsDocumentationAndSymbolKind(typeChecker, symbol, sourceFile, location, location);
                 return {
                     name: entryName,
                     kindModifiers: SymbolDisplay.getSymbolModifiers(symbol),
@@ -494,6 +494,10 @@ namespace ts.Completions {
                     // or leading into a '...' token. Just bail out instead.
                     return undefined;
                 }
+            }
+            else if (contextToken.kind === SyntaxKind.ColonToken && isToken(location)) {
+                // A colon token followed by another token indicates a type position - return the colon as the position instead
+                location = contextToken;
             }
             else if (sourceFile.languageVariant === LanguageVariant.JSX) {
                 // <UI.Test /* completion position */ />

@@ -89,7 +89,6 @@ namespace ts.SymbolDisplay {
             : ScriptElementKindModifier.none;
     }
 
-    // TODO(drosen): Currently completion entry details passes the SemanticMeaning.All instead of using semanticMeaning of location
     export function getSymbolDisplayPartsDocumentationAndSymbolKind(typeChecker: TypeChecker, symbol: Symbol, sourceFile: SourceFile, enclosingDeclaration: Node,
         location: Node, semanticMeaning = getMeaningFromLocation(location)) {
 
@@ -379,52 +378,49 @@ namespace ts.SymbolDisplay {
                 }
             });
         }
-        if (!hasAddedSymbolInfo) {
-            if (symbolKind !== ScriptElementKind.unknown) {
-                if (type) {
-                    if (isThisExpression) {
-                        addNewLineIfDisplayPartsExist();
-                        displayParts.push(keywordPart(SyntaxKind.ThisKeyword));
-                    }
-                    else {
-                        addPrefixForAnyFunctionOrVar(symbol, symbolKind);
-                    }
-
-                    // For properties, variables and local vars: show the type
-                    if (symbolKind === ScriptElementKind.memberVariableElement ||
-                        symbolKind === ScriptElementKind.jsxAttribute ||
-                        symbolFlags & SymbolFlags.Variable ||
-                        symbolKind === ScriptElementKind.localVariableElement ||
-                        isThisExpression) {
-                        displayParts.push(punctuationPart(SyntaxKind.ColonToken));
-                        displayParts.push(spacePart());
-                        // If the type is type parameter, format it specially
-                        if (type.symbol && type.symbol.flags & SymbolFlags.TypeParameter) {
-                            const typeParameterParts = mapToDisplayParts(writer => {
-                                typeChecker.getSymbolDisplayBuilder().buildTypeParameterDisplay(<TypeParameter>type, writer, enclosingDeclaration);
-                            });
-                            addRange(displayParts, typeParameterParts);
-                        }
-                        else {
-                            addRange(displayParts, typeToDisplayParts(typeChecker, type, enclosingDeclaration));
-                        }
-                    }
-                    else if (symbolFlags & SymbolFlags.Function ||
-                        symbolFlags & SymbolFlags.Method ||
-                        symbolFlags & SymbolFlags.Constructor ||
-                        symbolFlags & SymbolFlags.Signature ||
-                        symbolFlags & SymbolFlags.Accessor ||
-                        symbolKind === ScriptElementKind.memberFunctionElement) {
-                        const allSignatures = type.getNonNullableType().getCallSignatures();
-                        if (allSignatures.length) {
-                            addSignatureDisplayParts(allSignatures[0], allSignatures);
-                        }
-                    }
-                }
+        if (!hasAddedSymbolInfo && !(semanticMeaning & SemanticMeaning.Type) && symbolKind !== ScriptElementKind.unknown && type) {
+            if (isThisExpression) {
+                addNewLineIfDisplayPartsExist();
+                displayParts.push(keywordPart(SyntaxKind.ThisKeyword));
             }
             else {
-                symbolKind = getSymbolKind(typeChecker, symbol, location);
+                addPrefixForAnyFunctionOrVar(symbol, symbolKind);
             }
+
+            // For properties, variables and local vars: show the type
+            if (symbolKind === ScriptElementKind.memberVariableElement ||
+                symbolKind === ScriptElementKind.jsxAttribute ||
+                symbolFlags & SymbolFlags.Variable ||
+                symbolKind === ScriptElementKind.localVariableElement ||
+                isThisExpression) {
+                displayParts.push(punctuationPart(SyntaxKind.ColonToken));
+                displayParts.push(spacePart());
+                // If the type is type parameter, format it specially
+                if (type.symbol && type.symbol.flags & SymbolFlags.TypeParameter) {
+                    const typeParameterParts = mapToDisplayParts(writer => {
+                        typeChecker.getSymbolDisplayBuilder().buildTypeParameterDisplay(<TypeParameter>type, writer, enclosingDeclaration);
+                    });
+                    addRange(displayParts, typeParameterParts);
+                }
+                else {
+                    addRange(displayParts, typeToDisplayParts(typeChecker, type, enclosingDeclaration));
+                }
+            }
+            else if (symbolFlags & SymbolFlags.Function ||
+                symbolFlags & SymbolFlags.Method ||
+                symbolFlags & SymbolFlags.Constructor ||
+                symbolFlags & SymbolFlags.Signature ||
+                symbolFlags & SymbolFlags.Accessor ||
+                symbolKind === ScriptElementKind.memberFunctionElement) {
+                const allSignatures = type.getNonNullableType().getCallSignatures();
+                if (allSignatures.length) {
+                    addSignatureDisplayParts(allSignatures[0], allSignatures);
+                }
+            }
+        }
+
+        if (!symbolKind) {
+            symbolKind = getSymbolKind(typeChecker, symbol, location);
         }
 
         if (!documentation) {

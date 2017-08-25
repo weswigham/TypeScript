@@ -20,4 +20,5 @@
 //// <SFCComp /**/ />
 
 goTo.marker();
+debugger;
 verify.completionListContains("x", "(property) x: number | boolean");

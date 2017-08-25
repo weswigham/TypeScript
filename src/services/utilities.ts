@@ -74,6 +74,39 @@ namespace ts {
         return SemanticMeaning.All;
     }
 
+    export type TypeAnnotatedNode =
+        | FunctionLike
+        | ParameterDeclaration
+        | PropertySignature
+        | VariableDeclaration;
+
+    function isNonFunctionAnnotatedKind(kind: SyntaxKind): boolean {
+        switch (kind) {
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+        }
+        return false;
+    }
+
+    export function isTypeAnnotatedKind(kind: SyntaxKind): boolean {
+        return isFunctionLikeKind(kind) || isNonFunctionAnnotatedKind(kind);
+    }
+
+    export function couldHaveTypeAnnotation(node: Node): node is TypeAnnotatedNode {
+        return isTypeAnnotatedKind(node.kind);
+    }
+
+    function isInTypeAnnotation(node: Node): boolean {
+        // This is frequently the case when completions are requested after a colon
+        if (node.kind === SyntaxKind.ColonToken) {
+            return couldHaveTypeAnnotation(node.parent);
+        }
+        return false;
+    }
+
     export function getMeaningFromLocation(node: Node): SemanticMeaning {
         if (node.kind === SyntaxKind.SourceFile) {
             return SemanticMeaning.Value;
@@ -95,6 +128,9 @@ namespace ts {
         }
         else if (isTypeParameterDeclaration(node.parent)) {
             Debug.assert(isJSDocTemplateTag(node.parent.parent)); // Else would be handled by isDeclarationName
+            return SemanticMeaning.Type;
+        }
+        else if (isInTypeAnnotation(node)) {
             return SemanticMeaning.Type;
         }
         else {
