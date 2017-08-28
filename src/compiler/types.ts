@@ -4078,7 +4078,7 @@ namespace ts {
         ContainsPropertyInitializer = 1 << 13,
         ContainsLexicalThis = 1 << 14,
         ContainsCapturedLexicalThis = 1 << 15,
-        ContainsLexicalThisInComputedPropertyName = 1 << 16,
+        ContainsLexicalThisOrArgumentsInComputedPropertyName = 1 << 16,
         ContainsDefaultValueAssignments = 1 << 17,
         ContainsParameterPropertyAssignments = 1 << 18,
         ContainsSpread = 1 << 19,
@@ -4091,6 +4091,8 @@ namespace ts {
         ContainsYield = 1 << 24,
         ContainsHoistedDeclarationOrCompletion = 1 << 25,
         ContainsDynamicImport = 1 << 26,
+        ContainsLexicalArguments = 1 << 27,
+        ContainsCapturedLexicalArguments = 1 << 28,
 
         // Please leave this as 1 << 29.
         // It is the maximum bit we can set before we outgrow the size of a v8 small integer (SMI) on an x86 system.
@@ -4112,14 +4114,14 @@ namespace ts {
         // - Bitmasks that exclude flags from propagating out of a specific context
         //   into the subtree flags of their container.
         NodeExcludes = TypeScript | ES2015 | DestructuringAssignment | Generator | HasComputedFlags,
-        ArrowFunctionExcludes = NodeExcludes | ContainsDecorators | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsParameterPropertyAssignments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
-        FunctionExcludes = NodeExcludes | ContainsDecorators | ContainsDefaultValueAssignments | ContainsCapturedLexicalThis | ContainsLexicalThis | ContainsParameterPropertyAssignments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
-        ConstructorExcludes = NodeExcludes | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsCapturedLexicalThis | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
-        MethodOrAccessorExcludes = NodeExcludes | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsCapturedLexicalThis | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
-        ClassExcludes = NodeExcludes | ContainsDecorators | ContainsPropertyInitializer | ContainsLexicalThis | ContainsCapturedLexicalThis | ContainsComputedPropertyName | ContainsParameterPropertyAssignments | ContainsLexicalThisInComputedPropertyName,
-        ModuleExcludes = NodeExcludes | ContainsDecorators | ContainsLexicalThis | ContainsCapturedLexicalThis | ContainsBlockScopedBinding | ContainsHoistedDeclarationOrCompletion,
+        ArrowFunctionExcludes = NodeExcludes | ContainsDecorators | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsLexicalArguments | ContainsParameterPropertyAssignments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
+        FunctionExcludes = NodeExcludes | ContainsDecorators | ContainsDefaultValueAssignments | ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsLexicalThis | ContainsLexicalArguments | ContainsParameterPropertyAssignments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
+        ConstructorExcludes = NodeExcludes | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsLexicalArguments | ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
+        MethodOrAccessorExcludes = NodeExcludes | ContainsDefaultValueAssignments | ContainsLexicalThis | ContainsLexicalArguments | ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsBlockScopedBinding | ContainsYield | ContainsHoistedDeclarationOrCompletion | ContainsBindingPattern | ContainsObjectRest,
+        ClassExcludes = NodeExcludes | ContainsDecorators | ContainsPropertyInitializer | ContainsLexicalThis | ContainsLexicalArguments | ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsComputedPropertyName | ContainsParameterPropertyAssignments | ContainsLexicalThisOrArgumentsInComputedPropertyName,
+        ModuleExcludes = NodeExcludes | ContainsDecorators | ContainsLexicalThis | ContainsLexicalArguments | ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsBlockScopedBinding | ContainsHoistedDeclarationOrCompletion,
         TypeExcludes = ~ContainsTypeScript,
-        ObjectLiteralExcludes = NodeExcludes | ContainsDecorators | ContainsComputedPropertyName | ContainsLexicalThisInComputedPropertyName | ContainsObjectSpread,
+        ObjectLiteralExcludes = NodeExcludes | ContainsDecorators | ContainsComputedPropertyName | ContainsLexicalThisOrArgumentsInComputedPropertyName | ContainsObjectSpread,
         ArrayLiteralOrCallOrNewExcludes = NodeExcludes | ContainsSpread,
         VariableDeclarationListExcludes = NodeExcludes | ContainsBindingPattern | ContainsObjectRest,
         ParameterExcludes = NodeExcludes,
@@ -4129,7 +4131,7 @@ namespace ts {
         // Masks
         // - Additional bitmasks
         TypeScriptClassSyntaxMask = ContainsParameterPropertyAssignments | ContainsPropertyInitializer | ContainsDecorators,
-        ES2015FunctionSyntaxMask = ContainsCapturedLexicalThis | ContainsDefaultValueAssignments,
+        ES2015FunctionSyntaxMask = ContainsCapturedLexicalThis | ContainsCapturedLexicalArguments | ContainsDefaultValueAssignments,
     }
 
     export interface SourceMapRange extends TextRange {
@@ -4187,6 +4189,7 @@ namespace ts {
         Iterator = 1 << 23,                     // The expression to a `yield*` should be treated as an Iterator when down-leveling, not an Iterable.
         NoAsciiEscaping = 1 << 24,              // When synthesizing nodes that lack an original node or textSourceNode, we want to write the text on the node with ASCII escaping substitutions.
         /*@internal*/ TypeScriptClassWrapper = 1 << 25, // The node is an IIFE class wrapper created by the ts transform.
+        CapturesArguments = 1 << 26,            // The function captures a lexical `arguments`
     }
 
     export interface EmitHelper {

@@ -1,0 +1,16 @@
+=== tests/cases/compiler/capturesLexicalArguments.ts ===
+(function () {
+>(function () {    const foo = () => {        void arguments;    };}()) : void
+>function () {    const foo = () => {        void arguments;    };}() : void
+>function () {    const foo = () => {        void arguments;    };} : () => void
+
+    const foo = () => {
+>foo : () => void
+>() => {        void arguments;    } : () => void
+
+        void arguments;
+>void arguments : undefined
+>arguments : IArguments
+
+    };
+}());

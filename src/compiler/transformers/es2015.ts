@@ -9,6 +9,8 @@ namespace ts {
         CapturedThis = 1 << 0,
         /** Enables substitutions for block-scoped bindings. */
         BlockScopedBindings = 1 << 1,
+        /** Enables substitutions for captured `arguments` */
+        CapturedArguments = 1 << 2,
     }
 
     /**
@@ -117,6 +119,11 @@ namespace ts {
         containsLexicalThis?: boolean;
 
         /*
+         * set to true if node contains lexical 'arguments' so we can mark function that wraps convered loop body as 'CapturedArguments' for subsequent substitution.
+         */
+        containsLexicalArguments?: boolean;
+
+        /*
          * list of non-block scoped variable declarations that appear inside converted loop
          * such variable declarations should be moved outside the loop body
          * for (let x;;) {
@@ -187,13 +194,15 @@ namespace ts {
         ForInOrForOfStatement = 1 << 11,        // Enclosing block-scoped container is a ForInStatement or ForOfStatement
         ConstructorWithCapturedSuper = 1 << 12, // Enclosed in a constructor that captures 'this' for use with 'super'
         ComputedPropertyName = 1 << 13,         // Enclosed in a computed property name
+        CapturesArguments = 1 << 14,                  // Enclosed in a function that captures the lexical 'arguments' (used in substitution)
+
         // NOTE: do not add more ancestor flags without also updating AncestorFactsMask below.
 
         //
         // Ancestor masks
         //
 
-        AncestorFactsMask = (ComputedPropertyName << 1) - 1,
+        AncestorFactsMask = (CapturesArguments << 1) - 1,
 
         // We are always in *some* kind of block scope, but only specific block-scope containers are
         // top-level or Blocks.
@@ -206,7 +215,7 @@ namespace ts {
 
         // Functions, methods, and accessors are both new lexical scopes and new block scopes.
         FunctionIncludes = Function | TopLevel,
-        FunctionExcludes = BlockScopeExcludes & ~TopLevel | ArrowFunction | AsyncFunctionBody | CapturesThis | NonStaticClassElement | ConstructorWithCapturedSuper | ComputedPropertyName,
+        FunctionExcludes = BlockScopeExcludes & ~TopLevel | ArrowFunction | AsyncFunctionBody | CapturesThis | CapturesArguments | NonStaticClassElement | ConstructorWithCapturedSuper | ComputedPropertyName,
 
         AsyncFunctionBodyIncludes = FunctionIncludes | AsyncFunctionBody,
         AsyncFunctionBodyExcludes = FunctionExcludes & ~NonStaticClassElement,
@@ -249,8 +258,8 @@ namespace ts {
         //
         // Subtree facts
         //
-        NewTarget = 1 << 14,                        // Contains a 'new.target' meta-property
-        NewTargetInComputedPropertyName = 1 << 15,  // Contains a 'new.target' meta-property in a computed property name.
+        NewTarget = 1 << 15,                        // Contains a 'new.target' meta-property
+        NewTargetInComputedPropertyName = 1 << 16,  // Contains a 'new.target' meta-property in a computed property name.
 
 
         //
@@ -517,7 +526,8 @@ namespace ts {
             const statements: Statement[] = [];
             startLexicalEnvironment();
             let statementOffset = addStandardPrologue(statements, node.statements, /*ensureUseStrict*/ false);
-            addCaptureThisForNodeIfNeeded(statements, node);
+            addCaptureThisForNodeIfNeeded(statements, node); // We issue an error on usage of a top-level `arguments`, but will emit "correctly" anyway
+            addCaptureArgumentsForNodeIfNeeded(statements, node);
             statementOffset = addCustomPrologue(statements, node.statements, statementOffset, visitor);
             addRange(statements, visitNodes(node.statements, visitor, isStatement, statementOffset));
             addRange(statements, endLexicalEnvironment());
@@ -581,6 +591,8 @@ namespace ts {
                 if (hierarchyFacts & HierarchyFacts.ArrowFunction) {
                     // if the enclosing function is an ArrowFunction then we use the captured 'this' keyword.
                     convertedLoopState.containsLexicalThis = true;
+                    // if the enclosing function is an ArrowFunction then we use the captured 'arguments' identifier.
+                    convertedLoopState.containsLexicalArguments = true;
                     return node;
                 }
                 return convertedLoopState.thisName || (convertedLoopState.thisName = createUniqueName("this"));
@@ -1040,6 +1052,7 @@ namespace ts {
             if (!isDerivedClass) {
                 if (ctor) {
                     addCaptureThisForNodeIfNeeded(statements, ctor);
+                    addCaptureArgumentsForNodeIfNeeded(statements, ctor);
                 }
                 return SuperCaptureResult.NoReplacement;
             }
@@ -1431,6 +1444,18 @@ namespace ts {
             }
         }
 
+        /**
+         * Adds a statement to capture the `arguments` of a function declaration if it is needed.
+         *
+         * @param statements The statements for the new function body.
+         * @param node A node.
+         */
+        function addCaptureArgumentsForNodeIfNeeded(statements: Statement[], node: Node): void {
+            if (node.transformFlags & TransformFlags.ContainsCapturedLexicalArguments && node.kind !== SyntaxKind.ArrowFunction) {
+                captureArgumentsForNode(statements, node, createIdentifier("arguments"));
+            }
+        }
+
         function captureThisForNode(statements: Statement[], node: Node, initializer: Expression | undefined, originalStatement?: Statement): void {
             enableSubstitutionsForCapturedThis();
             const captureThisStatement = createVariableStatement(
@@ -1447,6 +1472,24 @@ namespace ts {
             setTextRange(captureThisStatement, originalStatement);
             setSourceMapRange(captureThisStatement, node);
             statements.push(captureThisStatement);
+        }
+
+        function captureArgumentsForNode(statements: Statement[], node: Node, initializer: Expression | undefined, originalStatement?: Statement): void {
+            enableSubstitutionsForCapturedArguments();
+            const captureArgumentsStatement = createVariableStatement(
+                /*modifiers*/ undefined,
+                createVariableDeclarationList([
+                    createVariableDeclaration(
+                        "_arguments",
+                        /*type*/ undefined,
+                        initializer
+                    )
+                ])
+            );
+            setEmitFlags(captureArgumentsStatement, EmitFlags.NoComments | EmitFlags.CustomPrologue);
+            setTextRange(captureArgumentsStatement, originalStatement);
+            setSourceMapRange(captureArgumentsStatement, node);
+            statements.push(captureArgumentsStatement);
         }
 
         function prependCaptureNewTargetIfNeeded(statements: Statement[], node: FunctionLikeDeclaration, copyOnWrite: boolean): Statement[] {
@@ -1686,6 +1729,9 @@ namespace ts {
             if (node.transformFlags & TransformFlags.ContainsLexicalThis) {
                 enableSubstitutionsForCapturedThis();
             }
+            if (node.transformFlags & TransformFlags.ContainsLexicalArguments) {
+                enableSubstitutionsForCapturedArguments();
+            }
             const savedConvertedLoopState = convertedLoopState;
             convertedLoopState = undefined;
             const ancestorFacts = enterSubtree(HierarchyFacts.ArrowFunctionExcludes, HierarchyFacts.ArrowFunctionIncludes);
@@ -1833,6 +1879,7 @@ namespace ts {
             }
 
             addCaptureThisForNodeIfNeeded(statements, node);
+            addCaptureArgumentsForNodeIfNeeded(statements, node);
             addDefaultValueAssignmentsIfNeeded(statements, node);
             addRestParameterIfNeeded(statements, node, /*inConstructorWithSynthesizedSuper*/ false);
 
@@ -2725,6 +2772,10 @@ namespace ts {
             let loopBodyFlags: EmitFlags = 0;
             if (currentState.containsLexicalThis) {
                 loopBodyFlags |= EmitFlags.CapturesThis;
+            }
+
+            if (currentState.containsLexicalArguments) {
+                loopBodyFlags |= EmitFlags.CapturesArguments;
             }
 
             if (isAsyncBlockContainingAwait) {
@@ -3816,12 +3867,18 @@ namespace ts {
          */
         function onEmitNode(hint: EmitHint, node: Node, emitCallback: (hint: EmitHint, node: Node) => void) {
             if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedThis && isFunctionLike(node)) {
-                // If we are tracking a captured `this`, keep track of the enclosing function.
+                // If we are tracking a captured `this` or `arguments`, keep track of the enclosing function.
+                const flags = getEmitFlags(node);
+                let facts = HierarchyFacts.FunctionIncludes;
+                if (flags & EmitFlags.CapturesThis) {
+                    facts |= HierarchyFacts.CapturesThis;
+                }
+                if (flags & EmitFlags.CapturesArguments) {
+                    facts |= HierarchyFacts.CapturesArguments;
+                }
                 const ancestorFacts = enterSubtree(
                     HierarchyFacts.FunctionExcludes,
-                    getEmitFlags(node) & EmitFlags.CapturesThis
-                        ? HierarchyFacts.FunctionIncludes | HierarchyFacts.CapturesThis
-                        : HierarchyFacts.FunctionIncludes);
+                    facts);
                 previousOnEmitNode(hint, node, emitCallback);
                 exitSubtree(ancestorFacts, HierarchyFacts.None, HierarchyFacts.None);
                 return;
@@ -3859,6 +3916,17 @@ namespace ts {
         }
 
         /**
+         * Enables a more costly code path for substitutions when we determine a source file
+         * contains a captured `arguments`.
+         */
+        function enableSubstitutionsForCapturedArguments() {
+            if ((enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments) === 0) {
+                enabledSubstitutions |= ES2015SubstitutionFlags.CapturedArguments;
+                context.enableSubstitution(SyntaxKind.Identifier);
+            }
+        }
+
+        /**
          * Hooks node substitutions.
          *
          * @param hint The context for the emitter.
@@ -3888,6 +3956,15 @@ namespace ts {
                 const original = getParseTreeNode(node, isIdentifier);
                 if (original && isNameOfDeclarationWithCollidingName(original)) {
                     return setTextRange(getGeneratedNameForNode(original), node);
+                }
+            }
+
+            // Only substitute the identifier `arguments` if we have enabled substitutions for captured
+            // arguments.
+            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments && !isInternalName(node)) {
+                const original = getParseTreeNode(node, isIdentifier);
+                if (original && original.escapedText === "arguments") {
+                    return setTextRange(createIdentifier("_arguments"), node);
                 }
             }
 
@@ -3941,6 +4018,17 @@ namespace ts {
                 const declaration = resolver.getReferencedDeclarationWithCollidingName(node);
                 if (declaration && !(isClassLike(declaration) && isPartOfClassBody(declaration, node))) {
                     return setTextRange(getGeneratedNameForNode(getNameOfDeclaration(declaration)), node);
+                }
+            }
+
+            // Only substitute the identifier `arguments` if we have enabled substitutions for captured
+            // arguments.
+            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments 
+                && hierarchyFacts & HierarchyFacts.CapturesArguments
+                && !isInternalName(node)) {
+                const original = getParseTreeNode(node, isIdentifier);
+                if (original && original.escapedText === "arguments") {
+                    return setTextRange(createIdentifier("_arguments"), node);
                 }
             }
 

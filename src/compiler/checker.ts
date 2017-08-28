@@ -1062,7 +1062,6 @@ namespace ts {
                     case SyntaxKind.GetAccessor:
                     case SyntaxKind.SetAccessor:
                     case SyntaxKind.FunctionDeclaration:
-                    case SyntaxKind.ArrowFunction:
                         if (meaning & SymbolFlags.Variable && name === "arguments") {
                             result = argumentsSymbol;
                             break loop;
@@ -12189,22 +12188,11 @@ namespace ts {
 
             // As noted in ECMAScript 6 language spec, arrow functions never have an arguments objects.
             // Although in down-level emit of arrow function, we emit it using function expression which means that
-            // arguments objects will be bound to the inner object; emitting arrow function natively in ES6, arguments objects
-            // will be bound to non-arrow function that contain this arrow function. This results in inconsistent behavior.
-            // To avoid that we will give an error to users if they use arguments objects in arrow function so that they
-            // can explicitly bound arguments objects
+            // arguments objects will be bound to the inner object - we capture the arguments object to avoid this.
+            // When emitting arrow function natively in ES6, arguments objects will be bound to the
+            // non-arrow function that contain this arrow function.
             if (symbol === argumentsSymbol) {
-                const container = getContainingFunction(node);
-                if (languageVersion < ScriptTarget.ES2015) {
-                    if (container.kind === SyntaxKind.ArrowFunction) {
-                        error(node, Diagnostics.The_arguments_object_cannot_be_referenced_in_an_arrow_function_in_ES3_and_ES5_Consider_using_a_standard_function_expression);
-                    }
-                    else if (hasModifier(container, ModifierFlags.Async)) {
-                        error(node, Diagnostics.The_arguments_object_cannot_be_referenced_in_an_async_function_or_method_in_ES3_and_ES5_Consider_using_a_standard_function_or_method);
-                    }
-                }
-
-                getNodeLinks(container).flags |= NodeCheckFlags.CaptureArguments;
+                getNodeLinks(getContainingFunction(node)).flags |= NodeCheckFlags.CaptureArguments;
                 return getTypeOfSymbol(symbol);
             }
 

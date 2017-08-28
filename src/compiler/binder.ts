@@ -2844,10 +2844,11 @@ namespace ts {
                 transformFlags |= TransformFlags.AssertTypeScript;
             }
 
-            if (subtreeFlags & TransformFlags.ContainsLexicalThisInComputedPropertyName) {
+            if (subtreeFlags & TransformFlags.ContainsLexicalThisOrArgumentsInComputedPropertyName) {
                 // A computed property name containing `this` might need to be rewritten,
                 // so propagate the ContainsLexicalThis flag upward.
                 transformFlags |= TransformFlags.ContainsLexicalThis;
+                transformFlags |= TransformFlags.ContainsLexicalArguments;
             }
         }
 
@@ -2866,10 +2867,11 @@ namespace ts {
             transformFlags |= TransformFlags.AssertTypeScript;
         }
 
-        if (subtreeFlags & TransformFlags.ContainsLexicalThisInComputedPropertyName) {
+        if (subtreeFlags & TransformFlags.ContainsLexicalThisOrArgumentsInComputedPropertyName) {
             // A computed property name containing `this` might need to be rewritten,
             // so propagate the ContainsLexicalThis flag upward.
             transformFlags |= TransformFlags.ContainsLexicalThis;
+            transformFlags |= TransformFlags.ContainsLexicalArguments;
         }
 
         node.transformFlags = transformFlags | TransformFlags.HasComputedFlags;
@@ -3045,7 +3047,7 @@ namespace ts {
             }
 
             // If a FunctionDeclaration's subtree has marked the container as needing to capture the
-            // lexical this, or the function contains parameters with initializers, then this node is
+            // lexical this, lexical arguments, or the function contains parameters with initializers, then this node is
             // ES6 syntax.
             if (subtreeFlags & TransformFlags.ES2015FunctionSyntaxMask) {
                 transformFlags |= TransformFlags.AssertES2015;
@@ -3130,6 +3132,11 @@ namespace ts {
         // If an ArrowFunction contains a lexical this, its container must capture the lexical this.
         if (subtreeFlags & TransformFlags.ContainsLexicalThis) {
             transformFlags |= TransformFlags.ContainsCapturedLexicalThis;
+        }
+
+        // If an ArrowFunction contains a lexical arguments, its container must capture the lexical arguments.
+        if (subtreeFlags & TransformFlags.ContainsLexicalArguments) {
+            transformFlags |= TransformFlags.ContainsCapturedLexicalArguments;
         }
 
         node.transformFlags = transformFlags | TransformFlags.HasComputedFlags;
@@ -3379,7 +3386,7 @@ namespace ts {
                 // This is so that they can flow through PropertyName transforms unaffected.
                 // Instead, we mark the container as ES6, so that it can properly handle the transform.
                 transformFlags |= TransformFlags.ContainsComputedPropertyName;
-                if (subtreeFlags & TransformFlags.ContainsLexicalThis) {
+                if (subtreeFlags & (TransformFlags.ContainsLexicalThis | TransformFlags.ContainsLexicalArguments)) {
                     // A computed method name like `[this.getName()](x: string) { ... }` needs to
                     // distinguish itself from the normal case of a method body containing `this`:
                     // `this` inside a method doesn't need to be rewritten (the method provides `this`),
@@ -3388,7 +3395,7 @@ namespace ts {
                     // `_this = this; () => class K { [_this.getName()]() { ... } }`
                     // To make this distinction, use ContainsLexicalThisInComputedPropertyName
                     // instead of ContainsLexicalThis for computed property names
-                    transformFlags |= TransformFlags.ContainsLexicalThisInComputedPropertyName;
+                    transformFlags |= TransformFlags.ContainsLexicalThisOrArgumentsInComputedPropertyName;
                 }
                 break;
 
@@ -3443,10 +3450,11 @@ namespace ts {
                     transformFlags |= TransformFlags.AssertES2015;
                 }
 
-                if (subtreeFlags & TransformFlags.ContainsLexicalThisInComputedPropertyName) {
+                if (subtreeFlags & TransformFlags.ContainsLexicalThisOrArgumentsInComputedPropertyName) {
                     // A computed property name containing `this` might need to be rewritten,
                     // so propagate the ContainsLexicalThis flag upward.
                     transformFlags |= TransformFlags.ContainsLexicalThis;
+                    transformFlags |= TransformFlags.ContainsLexicalArguments;
                 }
 
                 if (subtreeFlags & TransformFlags.ContainsObjectSpread) {
@@ -3490,6 +3498,11 @@ namespace ts {
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.BreakStatement:
                 transformFlags |= TransformFlags.ContainsHoistedDeclarationOrCompletion;
+                break;
+            case SyntaxKind.Identifier:
+                if ((node as Identifier).escapedText === "arguments") {
+                    transformFlags |= TransformFlags.ContainsLexicalArguments;
+                }
                 break;
         }
 

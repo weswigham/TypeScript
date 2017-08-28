@@ -1,0 +1,10 @@
+=== tests/cases/compiler/capturesLexicalArguments.ts ===
+(function () {
+    const foo = () => {
+>foo : Symbol(foo, Decl(capturesLexicalArguments.ts, 1, 9))
+
+        void arguments;
+>arguments : Symbol(arguments)
+
+    };
+}());
