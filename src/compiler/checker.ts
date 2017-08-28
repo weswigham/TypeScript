@@ -22244,7 +22244,8 @@ namespace ts {
 
             checkExternalModuleExports(container);
 
-            if (node.isExportEquals && !isInAmbientContext(node)) {
+            const inAmbientContext = isInAmbientContext(node);
+            if (node.isExportEquals && !inAmbientContext) {
                 if (modulekind === ModuleKind.ES2015) {
                     // export assignment is not supported in es6 modules
                     grammarErrorOnNode(node, Diagnostics.Export_assignment_cannot_be_used_when_targeting_ECMAScript_2015_modules_Consider_using_export_default_or_another_module_format_instead);
@@ -22253,6 +22254,9 @@ namespace ts {
                     // system modules does not support export assignment
                     grammarErrorOnNode(node, Diagnostics.Export_assignment_is_not_supported_when_module_flag_is_system);
                 }
+            }
+            if (inAmbientContext && node.expression && node.expression.kind !== SyntaxKind.Identifier) {
+                grammarErrorOnNode(node.expression, Diagnostics._0_expected, formatSyntaxKind(SyntaxKind.Identifier));
             }
         }
 
