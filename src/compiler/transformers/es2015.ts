@@ -969,6 +969,9 @@ namespace ts {
                     hierarchyFacts |= HierarchyFacts.ConstructorWithCapturedSuper;
                 }
 
+                if (addCaptureArgumentsForNodeIfNeeded(statements, constructor)) {
+                    statementOffset++;
+                }
                 addRange(statements, visitNodes(constructor.body.statements, visitor, isStatement, /*start*/ statementOffset));
             }
 
@@ -1052,7 +1055,6 @@ namespace ts {
             if (!isDerivedClass) {
                 if (ctor) {
                     addCaptureThisForNodeIfNeeded(statements, ctor);
-                    addCaptureArgumentsForNodeIfNeeded(statements, ctor);
                 }
                 return SuperCaptureResult.NoReplacement;
             }
@@ -1067,10 +1069,9 @@ namespace ts {
 
             // The constructor exists, but it and the 'super()' call it contains were generated
             // for something like property initializers.
-            // Create a captured '_this' variable and assume it will subsequently be used.
+            // Create a captured '_this' and '_arguments' variable and assume it will subsequently be used.
             if (hasSynthesizedSuper) {
                 captureThisForNode(statements, ctor, createDefaultSuperCallOrThis());
-                enableSubstitutionsForCapturedThis();
                 return SuperCaptureResult.ReplaceSuperCapture;
             }
 
@@ -1450,10 +1451,12 @@ namespace ts {
          * @param statements The statements for the new function body.
          * @param node A node.
          */
-        function addCaptureArgumentsForNodeIfNeeded(statements: Statement[], node: Node): void {
+        function addCaptureArgumentsForNodeIfNeeded(statements: Statement[], node: Node): boolean {
             if (node.transformFlags & TransformFlags.ContainsCapturedLexicalArguments && node.kind !== SyntaxKind.ArrowFunction) {
                 captureArgumentsForNode(statements, node, createIdentifier("arguments"));
+                return true;
             }
+            return false;
         }
 
         function captureThisForNode(statements: Statement[], node: Node, initializer: Expression | undefined, originalStatement?: Statement): void {
@@ -3238,7 +3241,7 @@ namespace ts {
             convertedLoopState = undefined;
             const ancestorFacts = enterSubtree(HierarchyFacts.FunctionExcludes, HierarchyFacts.FunctionIncludes);
             let updated: AccessorDeclaration;
-            if (node.transformFlags & TransformFlags.ContainsCapturedLexicalThis) {
+            if (node.transformFlags & (TransformFlags.ContainsCapturedLexicalThis | TransformFlags.ContainsCapturedLexicalArguments)) {
                 const parameters = visitParameterList(node.parameters, visitor, context);
                 const body = transformFunctionBody(node);
                 if (node.kind === SyntaxKind.GetAccessor) {
@@ -3961,7 +3964,9 @@ namespace ts {
 
             // Only substitute the identifier `arguments` if we have enabled substitutions for captured
             // arguments.
-            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments && !isInternalName(node)) {
+            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments
+                && hierarchyFacts & HierarchyFacts.CapturesArguments
+                && !isInternalName(node)) {
                 const original = getParseTreeNode(node, isIdentifier);
                 if (original && original.escapedText === "arguments") {
                     return setTextRange(createIdentifier("_arguments"), node);
@@ -4023,7 +4028,7 @@ namespace ts {
 
             // Only substitute the identifier `arguments` if we have enabled substitutions for captured
             // arguments.
-            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments 
+            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments
                 && hierarchyFacts & HierarchyFacts.CapturesArguments
                 && !isInternalName(node)) {
                 const original = getParseTreeNode(node, isIdentifier);

@@ -212,7 +212,7 @@ namespace ts {
             const nodeType = original.type;
             const promiseConstructor = languageVersion < ScriptTarget.ES2015 ? getPromiseConstructor(nodeType) : undefined;
             const isArrowFunction = node.kind === SyntaxKind.ArrowFunction;
-            const hasLexicalArguments = (resolver.getNodeCheckFlags(node) & NodeCheckFlags.CaptureArguments) !== 0;
+            const hasLexicalArguments = (node.transformFlags & TransformFlags.ContainsLexicalArguments) !== 0;
 
             // An async function is emit as an outer function that calls an inner
             // generator function. To preserve lexical bindings, we pass the current

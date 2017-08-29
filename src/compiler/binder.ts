@@ -3488,7 +3488,7 @@ namespace ts {
                 break;
 
             case SyntaxKind.SourceFile:
-                if (subtreeFlags & TransformFlags.ContainsCapturedLexicalThis) {
+                if (subtreeFlags & (TransformFlags.ContainsCapturedLexicalThis | TransformFlags.ContainsCapturedLexicalArguments)) {
                     transformFlags |= TransformFlags.AssertES2015;
                 }
 
@@ -3500,7 +3500,7 @@ namespace ts {
                 transformFlags |= TransformFlags.ContainsHoistedDeclarationOrCompletion;
                 break;
             case SyntaxKind.Identifier:
-                if ((node as Identifier).escapedText === "arguments") {
+                if ((node as Identifier).escapedText === "arguments" && isPartOfExpression(node)) {
                     transformFlags |= TransformFlags.ContainsLexicalArguments;
                 }
                 break;

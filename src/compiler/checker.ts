@@ -6463,34 +6463,7 @@ namespace ts {
         }
 
         function containsArgumentsReference(declaration: SignatureDeclaration): boolean {
-            const links = getNodeLinks(declaration);
-            if (links.containsArgumentsReference === undefined) {
-                if (links.flags & NodeCheckFlags.CaptureArguments) {
-                    links.containsArgumentsReference = true;
-                }
-                else {
-                    links.containsArgumentsReference = traverse((declaration as FunctionLikeDeclaration).body);
-                }
-            }
-            return links.containsArgumentsReference;
-
-            function traverse(node: Node): boolean {
-                if (!node) return false;
-                switch (node.kind) {
-                    case SyntaxKind.Identifier:
-                        return (<Identifier>node).escapedText === "arguments" && isPartOfExpression(node);
-
-                    case SyntaxKind.PropertyDeclaration:
-                    case SyntaxKind.MethodDeclaration:
-                    case SyntaxKind.GetAccessor:
-                    case SyntaxKind.SetAccessor:
-                        return (<NamedDeclaration>node).name.kind === SyntaxKind.ComputedPropertyName
-                            && traverse((<NamedDeclaration>node).name);
-
-                    default:
-                        return !nodeStartsNewLexicalEnvironment(node) && !isPartOfTypeNode(node) && forEachChild(node, traverse);
-                }
-            }
+            return !!(declaration.transformFlags & TransformFlags.ContainsLexicalArguments);
         }
 
         function getSignaturesOfSymbol(symbol: Symbol): Signature[] {
@@ -12192,7 +12165,6 @@ namespace ts {
             // When emitting arrow function natively in ES6, arguments objects will be bound to the
             // non-arrow function that contain this arrow function.
             if (symbol === argumentsSymbol) {
-                getNodeLinks(getContainingFunction(node)).flags |= NodeCheckFlags.CaptureArguments;
                 return getTypeOfSymbol(symbol);
             }
 
