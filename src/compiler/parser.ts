@@ -822,6 +822,10 @@ namespace ts {
             setContextFlag(val, NodeFlags.AwaitContext);
         }
 
+        function setExpressionContext(val: boolean) {
+            setContextFlag(val, NodeFlags.ExpressionContext);
+        }
+
         function doOutsideOfContext<T>(context: NodeFlags, func: () => T): T {
             // contextFlagsToClear will contain only the context flags that are
             // currently set that we need to temporarily clear
@@ -877,7 +881,8 @@ namespace ts {
         }
 
         function doInDecoratorContext<T>(func: () => T): T {
-            return doInsideOfContext(NodeFlags.DecoratorContext, func);
+            // All decorator contexts are also expression contexts
+            return doInsideOfContext(NodeFlags.DecoratorContext | NodeFlags.ExpressionContext, func);
         }
 
         function doInAwaitContext<T>(func: () => T): T {
@@ -890,6 +895,10 @@ namespace ts {
 
         function doInYieldAndAwaitContext<T>(func: () => T): T {
             return doInsideOfContext(NodeFlags.YieldContext | NodeFlags.AwaitContext, func);
+        }
+
+        function doInExpressionContext<T>(func: () => T): T {
+            return doInsideOfContext(NodeFlags.ExpressionContext, func);
         }
 
         function inContext(flags: NodeFlags) {
@@ -910,6 +919,10 @@ namespace ts {
 
         function inAwaitContext() {
             return inContext(NodeFlags.AwaitContext);
+        }
+
+        function inExpressionContext() {
+            return inContext(NodeFlags.ExpressionContext);
         }
 
         function parseErrorAtCurrentToken(message: DiagnosticMessage, arg0?: any): void {
@@ -2012,20 +2025,24 @@ namespace ts {
         function parseTemplateExpression(): TemplateExpression {
             const template = <TemplateExpression>createNode(SyntaxKind.TemplateExpression);
 
-            template.head = parseTemplateHead();
-            Debug.assert(template.head.kind === SyntaxKind.TemplateHead, "Template head has wrong token kind");
-
-            const templateSpans = createNodeArray<TemplateSpan>();
-
-            do {
-                templateSpans.push(parseTemplateSpan());
-            }
-            while (lastOrUndefined(templateSpans).literal.kind === SyntaxKind.TemplateMiddle);
-
-            templateSpans.end = getNodeEnd();
-            template.templateSpans = templateSpans;
+            doOutsideOfContext(NodeFlags.ExpressionContext, parseTemplateExpressionWorker);
 
             return finishNode(template);
+
+            function parseTemplateExpressionWorker() {
+                template.head = parseTemplateHead();
+                Debug.assert(template.head.kind === SyntaxKind.TemplateHead, "Template head has wrong token kind");
+
+                const templateSpans = createNodeArray<TemplateSpan>();
+
+                do {
+                    templateSpans.push(parseTemplateSpan());
+                }
+                while (lastOrUndefined(templateSpans).literal.kind === SyntaxKind.TemplateMiddle);
+
+                templateSpans.end = getNodeEnd();
+                template.templateSpans = templateSpans;
+            }
         }
 
         function parseTemplateSpan(): TemplateSpan {
@@ -2185,8 +2202,12 @@ namespace ts {
         function parseTypeQuery(): TypeQueryNode {
             const node = <TypeQueryNode>createNode(SyntaxKind.TypeQuery);
             parseExpected(SyntaxKind.TypeOfKeyword);
-            node.exprName = parseEntityName(/*allowReservedWords*/ true);
+            node.exprName = doInExpressionContext(parseEntityNameWithReservedWords);
             return finishNode(node);
+        }
+
+        function parseEntityNameWithReservedWords() {
+            return parseEntityName(/*allowReservedWords*/ true);
         }
 
         function parseTypeParameter(): TypeParameterDeclaration {
@@ -2286,27 +2307,31 @@ namespace ts {
             returnToken: SyntaxKind.ColonToken | SyntaxKind.EqualsGreaterThanToken,
             flags: SignatureFlags,
             signature: SignatureDeclaration): void {
-            if (!(flags & SignatureFlags.JSDoc)) {
-                signature.typeParameters = parseTypeParameters();
-            }
-            signature.parameters = parseParameterList(flags);
+            doOutsideOfContext(NodeFlags.ExpressionContext, fillSignatureWorker);
 
-            const returnTokenRequired = returnToken === SyntaxKind.EqualsGreaterThanToken;
-            if (returnTokenRequired) {
-                parseExpected(returnToken);
-                signature.type = parseTypeOrTypePredicate();
-            }
-            else if (parseOptional(returnToken)) {
-                signature.type = parseTypeOrTypePredicate();
-            }
-            else if (flags & SignatureFlags.Type) {
-                const start = scanner.getTokenPos();
-                const length = scanner.getTextPos() - start;
-                const backwardToken = parseOptional(returnToken === SyntaxKind.ColonToken ? SyntaxKind.EqualsGreaterThanToken : SyntaxKind.ColonToken);
-                if (backwardToken) {
-                    // This is easy to get backward, especially in type contexts, so parse the type anyway
+            function fillSignatureWorker() {
+                if (!(flags & SignatureFlags.JSDoc)) {
+                    signature.typeParameters = parseTypeParameters();
+                }
+                signature.parameters = parseParameterList(flags);
+
+                const returnTokenRequired = returnToken === SyntaxKind.EqualsGreaterThanToken;
+                if (returnTokenRequired) {
+                    parseExpected(returnToken);
                     signature.type = parseTypeOrTypePredicate();
-                    parseErrorAtPosition(start, length, Diagnostics._0_expected, tokenToString(returnToken));
+                }
+                else if (parseOptional(returnToken)) {
+                    signature.type = parseTypeOrTypePredicate();
+                }
+                else if (flags & SignatureFlags.Type) {
+                    const start = scanner.getTokenPos();
+                    const length = scanner.getTextPos() - start;
+                    const backwardToken = parseOptional(returnToken === SyntaxKind.ColonToken ? SyntaxKind.EqualsGreaterThanToken : SyntaxKind.ColonToken);
+                    if (backwardToken) {
+                        // This is easy to get backward, especially in type contexts, so parse the type anyway
+                        signature.type = parseTypeOrTypePredicate();
+                        parseErrorAtPosition(start, length, Diagnostics._0_expected, tokenToString(returnToken));
+                    }
                 }
             }
         }
@@ -3002,12 +3027,20 @@ namespace ts {
                 setDecoratorContext(/*val*/ false);
             }
 
+            const saveExpressionContext = inExpressionContext();
+            if (!saveExpressionContext) {
+                setExpressionContext(/*val*/ true);
+            }
+
             let expr = parseAssignmentExpressionOrHigher();
             let operatorToken: BinaryOperatorToken;
             while ((operatorToken = parseOptionalToken(SyntaxKind.CommaToken))) {
                 expr = makeBinaryExpression(expr, operatorToken, parseAssignmentExpressionOrHigher());
             }
 
+            if (!saveExpressionContext) {
+                setExpressionContext(/*val*/ false);
+            }
             if (saveDecoratorContext) {
                 setDecoratorContext(/*val*/ true);
             }
@@ -3039,6 +3072,10 @@ namespace ts {
         }
 
         function parseAssignmentExpressionOrHigher(): Expression {
+            return doInExpressionContext(parseAssignmentExpressionOrHigherNoContextSet);
+        }
+
+        function parseAssignmentExpressionOrHigherNoContextSet(): Expression {
             //  AssignmentExpression[in,yield]:
             //      1) ConditionalExpression[?in,?yield]
             //      2) LeftHandSideExpression = AssignmentExpression[?in,?yield]
@@ -3170,17 +3207,21 @@ namespace ts {
                 node = <ArrowFunction>createNode(SyntaxKind.ArrowFunction, identifier.pos);
             }
 
-            const parameter = <ParameterDeclaration>createNode(SyntaxKind.Parameter, identifier.pos);
-            parameter.name = identifier;
-            finishNode(parameter);
-
-            node.parameters = createNodeArray<ParameterDeclaration>([parameter], parameter.pos);
-            node.parameters.end = parameter.end;
-
-            node.equalsGreaterThanToken = parseExpectedToken(SyntaxKind.EqualsGreaterThanToken, /*reportAtCurrentPosition*/ false, Diagnostics._0_expected, "=>");
-            node.body = parseArrowFunctionExpressionBody(/*isAsync*/ !!asyncModifier);
+            doOutsideOfContext(NodeFlags.ExpressionContext, parseSimpleArrowFunctionExpressionBody);
 
             return addJSDocComment(finishNode(node));
+
+            function parseSimpleArrowFunctionExpressionBody() {
+                const parameter = <ParameterDeclaration>createNode(SyntaxKind.Parameter, identifier.pos);
+                parameter.name = identifier;
+                finishNode(parameter);
+
+                node.parameters = createNodeArray<ParameterDeclaration>([parameter], parameter.pos);
+                node.parameters.end = parameter.end;
+
+                node.equalsGreaterThanToken = parseExpectedToken(SyntaxKind.EqualsGreaterThanToken, /*reportAtCurrentPosition*/ false, Diagnostics._0_expected, "=>");
+                node.body = parseArrowFunctionExpressionBody(/*isAsync*/ !!asyncModifier);
+            }
         }
 
         function tryParseParenthesizedArrowFunctionExpression(): Expression | undefined {
@@ -3467,6 +3508,10 @@ namespace ts {
         }
 
         function parseBinaryExpressionOrHigher(precedence: number): Expression {
+            return doInExpressionContext(() => parseBinaryExpressionOrHigherNoContextSet(precedence));
+        }
+
+        function parseBinaryExpressionOrHigherNoContextSet(precedence: number): Expression {
             const leftOperand = parseUnaryExpressionOrHigher();
             return parseBinaryExpressionRest(precedence, leftOperand);
         }
@@ -3665,6 +3710,10 @@ namespace ts {
          *
          */
         function parseUnaryExpressionOrHigher(): UnaryExpression | BinaryExpression {
+            return doInExpressionContext(parseUnaryExpressionOrHigherNoContextSet);
+        }
+
+        function parseUnaryExpressionOrHigherNoContextSet(): UnaryExpression | BinaryExpression {
             /**
              * ES7 UpdateExpression:
              *      1) LeftHandSideExpression[?Yield]
@@ -3794,6 +3843,10 @@ namespace ts {
          * In TypeScript (2), (3) are parsed as PostfixUnaryExpression. (4), (5) are parsed as PrefixUnaryExpression
          */
         function parseUpdateExpression(): UpdateExpression {
+            return doInExpressionContext(parseUpdateExpressionNoContextSet);
+        }
+
+        function parseUpdateExpressionNoContextSet(): UpdateExpression {
             if (token() === SyntaxKind.PlusPlusToken || token() === SyntaxKind.MinusMinusToken) {
                 const node = <PrefixUnaryExpression>createNode(SyntaxKind.PrefixUnaryExpression);
                 node.operator = <PrefixUnaryOperator>token();
@@ -3821,6 +3874,10 @@ namespace ts {
         }
 
         function parseLeftHandSideExpressionOrHigher(): LeftHandSideExpression {
+            return doInExpressionContext(parseLeftHandSideExpressionOrHigherNoContextSet);
+        }
+
+        function parseLeftHandSideExpressionOrHigherNoContextSet(): LeftHandSideExpression {
             // Original Ecma:
             // LeftHandSideExpression: See 11.2
             //      NewExpression
@@ -4069,7 +4126,7 @@ namespace ts {
             parseExpected(SyntaxKind.LessThanToken);
 
             const tagName = parseJsxElementName();
-            const attributes = parseJsxAttributes();
+            const attributes = doOutsideOfContext(NodeFlags.ExpressionContext, parseJsxAttributes);
 
             let node: JsxOpeningLikeElement;
 
@@ -4098,7 +4155,11 @@ namespace ts {
             return finishNode(node);
         }
 
-        function parseJsxElementName(): JsxTagNameExpression {
+        function parseJsxElementName() {
+            return doInExpressionContext(parseJsxElementNameNoContext);
+        }
+
+        function parseJsxElementNameNoContext(): JsxTagNameExpression {
             scanJsxIdentifier();
             // JsxElement can have name in the form of
             //      propertyAccessExpression
@@ -4339,6 +4400,10 @@ namespace ts {
         }
 
         function parsePrimaryExpression(): PrimaryExpression {
+            return doInExpressionContext(parsePrimaryExpressionNoContext);
+        }
+
+        function parsePrimaryExpressionNoContext(): PrimaryExpression {
             switch (token()) {
                 case SyntaxKind.NumericLiteral:
                 case SyntaxKind.StringLiteral:
@@ -4401,7 +4466,7 @@ namespace ts {
 
         function parseArgumentOrArrayLiteralElement(): Expression {
             return token() === SyntaxKind.DotDotDotToken ? parseSpreadElement() :
-                token() === SyntaxKind.CommaToken ? <Expression>createNode(SyntaxKind.OmittedExpression) :
+                token() === SyntaxKind.CommaToken ? <Expression>doInExpressionContext(parseOmittedExpression) :
                     parseAssignmentExpressionOrHigher();
         }
 
@@ -4494,7 +4559,14 @@ namespace ts {
                 node.multiLine = true;
             }
 
+            const saveExpressionContext = inExpressionContext();
+            if (saveExpressionContext) {
+                setExpressionContext(/*val*/ false);
+            }
             node.properties = parseDelimitedList(ParsingContext.ObjectLiteralMembers, parseObjectLiteralElement, /*considerSemicolonAsDelimiter*/ true);
+            if (saveExpressionContext) {
+                setExpressionContext(/*val*/ true);
+            }
             parseExpected(SyntaxKind.CloseBraceToken);
             return finishNode(node);
         }
@@ -4511,6 +4583,12 @@ namespace ts {
             }
 
             const node = <FunctionExpression>createNode(SyntaxKind.FunctionExpression);
+
+            const saveExpressionContext = inExpressionContext();
+            if (saveExpressionContext) {
+                setExpressionContext(/*val*/ false);
+            }
+
             node.modifiers = parseModifiers();
             parseExpected(SyntaxKind.FunctionKeyword);
             node.asteriskToken = parseOptionalToken(SyntaxKind.AsteriskToken);
@@ -4525,6 +4603,10 @@ namespace ts {
 
             fillSignature(SyntaxKind.ColonToken, isGenerator | isAsync, node);
             node.body = parseFunctionBlock(isGenerator | isAsync);
+
+            if (saveExpressionContext) {
+                setExpressionContext(/*val*/ true);
+            }
 
             if (saveDecoratorContext) {
                 setDecoratorContext(/*val*/ true);
@@ -4548,7 +4630,7 @@ namespace ts {
             }
 
             const node = <NewExpression>createNode(SyntaxKind.NewExpression, fullStart);
-            node.expression = parseMemberExpressionOrHigher();
+            node.expression = doInExpressionContext(parseMemberExpressionOrHigher);
             node.typeArguments = tryParse(parseTypeArgumentsInExpression);
             if (node.typeArguments || token() === SyntaxKind.OpenParenToken) {
                 node.arguments = parseArgumentList();
@@ -4580,6 +4662,11 @@ namespace ts {
             const savedAwaitContext = inAwaitContext();
             setAwaitContext(!!(flags & SignatureFlags.Await));
 
+            const savedExpressionContext = inExpressionContext();
+            if (savedExpressionContext) {
+                setExpressionContext(/*val*/ false);
+            }
+
             // We may be in a [Decorator] context when parsing a function expression or
             // arrow function. The body of the function is not in [Decorator] context.
             const saveDecoratorContext = inDecoratorContext();
@@ -4589,6 +4676,9 @@ namespace ts {
 
             const block = parseBlock(!!(flags & SignatureFlags.IgnoreMissingOpenBrace), diagnosticMessage);
 
+            if (savedExpressionContext) {
+                setExpressionContext(/*val*/ true);
+            }
             if (saveDecoratorContext) {
                 setDecoratorContext(/*val*/ true);
             }
@@ -5015,6 +5105,10 @@ namespace ts {
         }
 
         function parseStatement(): Statement {
+            return doOutsideOfContext(NodeFlags.ExpressionContext, parseStatementNoContextSet);
+        }
+
+        function parseStatementNoContextSet(): Statement {
             switch (token()) {
                 case SyntaxKind.SemicolonToken:
                     return parseEmptyStatement();
@@ -5150,9 +5244,14 @@ namespace ts {
 
         // DECLARATIONS
 
+        function parseOmittedExpression() {
+            return finishNode(<OmittedExpression>createNode(SyntaxKind.OmittedExpression));
+        }
+
         function parseArrayBindingElement(): ArrayBindingElement {
             if (token() === SyntaxKind.CommaToken) {
-                return <OmittedExpression>createNode(SyntaxKind.OmittedExpression);
+                // Omitted expressions are considered expression parts, even when they do not appear in expressions - there is no great reason for this
+                return doInExpressionContext(parseOmittedExpression);
             }
             const node = <BindingElement>createNode(SyntaxKind.BindingElement);
             node.dotDotDotToken = parseOptionalToken(SyntaxKind.DotDotDotToken);
@@ -5585,22 +5684,26 @@ namespace ts {
             const node = <ClassLikeDeclaration>createNode(kind, fullStart);
             node.decorators = decorators;
             node.modifiers = modifiers;
-            parseExpected(SyntaxKind.ClassKeyword);
-            node.name = parseNameOfClassDeclarationOrExpression();
-            node.typeParameters = parseTypeParameters();
-            node.heritageClauses = parseHeritageClauses();
-
-            if (parseExpected(SyntaxKind.OpenBraceToken)) {
-                // ClassTail[Yield,Await] : (Modified) See 14.5
-                //      ClassHeritage[?Yield,?Await]opt { ClassBody[?Yield,?Await]opt }
-                node.members = parseClassMembers();
-                parseExpected(SyntaxKind.CloseBraceToken);
-            }
-            else {
-                node.members = createMissingList<ClassElement>();
-            }
+            doOutsideOfContext(NodeFlags.ExpressionContext, parseClassBody);
 
             return addJSDocComment(finishNode(node));
+
+            function parseClassBody() {
+                parseExpected(SyntaxKind.ClassKeyword);
+                node.name = parseNameOfClassDeclarationOrExpression();
+                node.typeParameters = parseTypeParameters();
+                node.heritageClauses = parseHeritageClauses();
+
+                if (parseExpected(SyntaxKind.OpenBraceToken)) {
+                    // ClassTail[Yield,Await] : (Modified) See 14.5
+                    //      ClassHeritage[?Yield,?Await]opt { ClassBody[?Yield,?Await]opt }
+                    node.members = parseClassMembers();
+                    parseExpected(SyntaxKind.CloseBraceToken);
+                }
+                else {
+                    node.members = createMissingList<ClassElement>();
+                }
+            }
         }
 
         function parseNameOfClassDeclarationOrExpression(): Identifier | undefined {
