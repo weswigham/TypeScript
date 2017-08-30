@@ -894,7 +894,7 @@ namespace ts {
 
             setTextRange(constructorFunction, constructor || node);
             if (extendsClauseElement) {
-                setEmitFlags(constructorFunction, EmitFlags.CapturesThis);
+                setEmitFlags(constructorFunction, EmitFlags.CapturesThis | EmitFlags.CapturesArguments);
             }
 
             statements.push(constructorFunction);
@@ -1749,7 +1749,7 @@ namespace ts {
             );
             setTextRange(func, node);
             setOriginalNode(func, node);
-            setEmitFlags(func, EmitFlags.CapturesThis);
+            setEmitFlags(func, EmitFlags.CapturesArguments | EmitFlags.CapturesThis);
             exitSubtree(ancestorFacts, HierarchyFacts.None, HierarchyFacts.None);
             convertedLoopState = savedConvertedLoopState;
             return func;
@@ -3869,7 +3869,7 @@ namespace ts {
          * @param emitCallback The callback used to emit the node.
          */
         function onEmitNode(hint: EmitHint, node: Node, emitCallback: (hint: EmitHint, node: Node) => void) {
-            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedThis && isFunctionLike(node)) {
+            if (enabledSubstitutions & (ES2015SubstitutionFlags.CapturedThis | ES2015SubstitutionFlags.CapturedArguments) && isFunctionLike(node)) {
                 // If we are tracking a captured `this` or `arguments`, keep track of the enclosing function.
                 const flags = getEmitFlags(node);
                 let facts = HierarchyFacts.FunctionIncludes;
@@ -3926,6 +3926,13 @@ namespace ts {
             if ((enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments) === 0) {
                 enabledSubstitutions |= ES2015SubstitutionFlags.CapturedArguments;
                 context.enableSubstitution(SyntaxKind.Identifier);
+                context.enableEmitNotification(SyntaxKind.Constructor);
+                context.enableEmitNotification(SyntaxKind.MethodDeclaration);
+                context.enableEmitNotification(SyntaxKind.GetAccessor);
+                context.enableEmitNotification(SyntaxKind.SetAccessor);
+                context.enableEmitNotification(SyntaxKind.ArrowFunction);
+                context.enableEmitNotification(SyntaxKind.FunctionExpression);
+                context.enableEmitNotification(SyntaxKind.FunctionDeclaration);
             }
         }
 
@@ -3962,18 +3969,7 @@ namespace ts {
                 }
             }
 
-            // Only substitute the identifier `arguments` if we have enabled substitutions for captured
-            // arguments.
-            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments
-                && hierarchyFacts & HierarchyFacts.CapturesArguments
-                && !isInternalName(node)) {
-                const original = getParseTreeNode(node, isIdentifier);
-                if (original && original.escapedText === "arguments") {
-                    return setTextRange(createIdentifier("_arguments"), node);
-                }
-            }
-
-            return node;
+            return substituteLexicalArguments(node);
         }
 
         /**
@@ -4013,6 +4009,24 @@ namespace ts {
             return node;
         }
 
+        function substituteLexicalArguments(node: Identifier): Identifier {
+            // Only substitute the identifier `arguments` if we have enabled substitutions for captured
+            // arguments.
+            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments
+                && hierarchyFacts & HierarchyFacts.CapturesArguments
+                && !isInternalName(node)) {
+                const original = getParseTreeNode(node, isIdentifier);
+                if (original && original.escapedText === "arguments" && !isDeclarationNameOrPropertyName(original)) {
+                    return setTextRange(createIdentifier("_arguments"), node);
+                }
+            }
+            return node;
+        }
+
+        function isDeclarationNameOrPropertyName(name: Identifier): boolean {
+            return (isDeclaration(name.parent) || isPropertyAccessExpression(name.parent)) && name.parent.name === name;
+        }
+
         /**
          * Substitutes an expression identifier.
          *
@@ -4026,18 +4040,7 @@ namespace ts {
                 }
             }
 
-            // Only substitute the identifier `arguments` if we have enabled substitutions for captured
-            // arguments.
-            if (enabledSubstitutions & ES2015SubstitutionFlags.CapturedArguments
-                && hierarchyFacts & HierarchyFacts.CapturesArguments
-                && !isInternalName(node)) {
-                const original = getParseTreeNode(node, isIdentifier);
-                if (original && original.escapedText === "arguments") {
-                    return setTextRange(createIdentifier("_arguments"), node);
-                }
-            }
-
-            return node;
+            return substituteLexicalArguments(node);
         }
 
         function isPartOfClassBody(declaration: ClassLikeDeclaration, node: Identifier) {

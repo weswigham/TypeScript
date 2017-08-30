@@ -1174,6 +1174,10 @@ namespace ts {
     }
 
     export function isPartOfExpression(node: Node): boolean {
+        node = getParseTreeNode(node);
+        if (!node) {
+            return false;
+        }
         switch (node.kind) {
             case SyntaxKind.SuperKeyword:
             case SyntaxKind.NullKeyword:

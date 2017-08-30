@@ -451,7 +451,6 @@ namespace ts {
         /* @internal */
         PossiblyContainsDynamicImport = 1 << 19,
         JSDoc =              1 << 20, // If node was parsed inside jsdoc
-        ExpressionContext =  1 << 21, // If the node was parsed within an expression context
 
         BlockScoped = Let | Const,
 
@@ -459,10 +458,10 @@ namespace ts {
         ReachabilityAndEmitFlags = ReachabilityCheckFlags | HasAsyncFunctions,
 
         // Parsing context flags
-        ContextFlags = DisallowInContext | YieldContext | DecoratorContext | AwaitContext | JavaScriptFile | ExpressionContext,
+        ContextFlags = DisallowInContext | YieldContext | DecoratorContext | AwaitContext | JavaScriptFile,
 
         // Exclude these flags when parsing a Type
-        TypeExcludesFlags = YieldContext | AwaitContext | ExpressionContext,
+        TypeExcludesFlags = YieldContext | AwaitContext,
     }
 
     export const enum ModifierFlags {

@@ -5,13 +5,13 @@ var a = () => {
 
 var b = function () {
     var a = () => {
-        var arg = arguments[0];  // error
+        var arg = arguments[0];  // no error
     }
 }
 
 function baz() {
 	() => {
-		var arg = arguments[0];
+		var arg = arguments[0]; // no error
 	}
 }
 

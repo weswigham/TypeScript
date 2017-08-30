@@ -12215,6 +12215,7 @@ namespace ts {
 
             checkCollisionWithCapturedSuperVariable(node, node);
             checkCollisionWithCapturedThisVariable(node, node);
+            checkCollisionWithCapturedArgumentsVariable(node, node);
             checkCollisionWithCapturedNewTargetVariable(node, node);
             checkNestedBlockScopedBinding(node, symbol);
 
@@ -19935,6 +19936,12 @@ namespace ts {
 
         function checkCollisionWithCapturedThisVariable(node: Node, name: Identifier): void {
             if (needCollisionCheckForIdentifier(node, name, "_this")) {
+                potentialThisCollisions.push(node);
+            }
+        }
+
+        function checkCollisionWithCapturedArgumentsVariable(node: Node, name: Identifier): void {
+            if (needCollisionCheckForIdentifier(node, name, "_arguments")) {
                 potentialThisCollisions.push(node);
             }
         }

@@ -9,6 +9,6 @@
 (function () {
     var _arguments = arguments;
     var foo = function () {
-        void arguments;
+        void _arguments;
     };
 }());
