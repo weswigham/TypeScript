@@ -1006,7 +1006,7 @@ namespace ts.Completions {
                     const typeForObject = typeChecker.getTypeAtLocation(objectLikeContainer);
                     if (!typeForObject) return false;
                     // In a binding pattern, get only known properties. Everywhere else we will get all possible properties.
-                    typeMembers = typeChecker.getPropertiesOfType(typeForObject).filter((symbol) => !(getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlags.NonPublicAccessibilityModifier));
+                    typeMembers = typeChecker.getPropertiesOfType(typeForObject).filter((symbol) => !(typeChecker.getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlags.NonPublicAccessibilityModifier));
                     existingMembers = (<ObjectBindingPattern>objectLikeContainer).elements;
                 }
             }
@@ -1584,7 +1584,7 @@ namespace ts.Completions {
             function isValidProperty(propertySymbol: Symbol, inValidModifierFlags: ModifierFlags) {
                 return !existingMemberNames.get(propertySymbol.escapedName) &&
                     propertySymbol.getDeclarations() &&
-                    !(getDeclarationModifierFlagsFromSymbol(propertySymbol) & inValidModifierFlags);
+                    !(typeChecker.getDeclarationModifierFlagsFromSymbol(propertySymbol) & inValidModifierFlags);
             }
         }
 

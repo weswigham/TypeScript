@@ -252,6 +252,16 @@ namespace ts {
                 return resolveName(location, escapeLeadingUnderscores(name), meaning, /*nameNotFoundMessage*/ undefined, /*nameArg*/ undefined, /*isUse*/ false);
             },
             getJsxNamespace: () => unescapeLeadingUnderscores(getJsxNamespace()),
+            getDeclarationModifierFlagsFromSymbol,
+            setTypeOfSymbol(symbol, type) {
+                setSymbolLink(symbol, "type", type);
+            },
+            isSyntheticSymbol(symbol) {
+                return !!(getSymbolLink(symbol, "checkFlags") & CheckFlags.Synthetic);
+            },
+            getTargetOfSymbol(symbol) {
+                return getSymbolLink(symbol, "target");
+            }
         };
 
         const tupleTypes: GenericType[] = [];
@@ -395,6 +405,8 @@ namespace ts {
             type: [],
             typeParameters: [],
             typeParametersChecked: [],
+            checkFlags: [],
+            isRestParameter: [],
         };
         const nodeLinks: {[K in keyof NodeLinks]: NodeLinks[K][]} = {
             containsArgumentsReference: [],
@@ -576,6 +588,29 @@ namespace ts {
 
         return checker;
 
+        function getCheckFlags(symbol: Symbol): CheckFlags {
+            return symbol.flags & SymbolFlags.Transient ? getSymbolLink(symbol, "checkFlags") : 0;
+        }
+
+        function getDeclarationModifierFlagsFromSymbol(s: Symbol): ModifierFlags {
+            if (s.valueDeclaration) {
+                const flags = getCombinedModifierFlags(s.valueDeclaration);
+                return s.parent && s.parent.flags & SymbolFlags.Class ? flags : flags & ~ModifierFlags.AccessibilityModifier;
+            }
+            if (getCheckFlags(s) & CheckFlags.Synthetic) {
+                const checkFlags = getSymbolLink(s, "checkFlags");
+                const accessModifier = checkFlags & CheckFlags.ContainsPrivate ? ModifierFlags.Private :
+                    checkFlags & CheckFlags.ContainsPublic ? ModifierFlags.Public :
+                        ModifierFlags.Protected;
+                const staticModifier = checkFlags & CheckFlags.ContainsStatic ? ModifierFlags.Static : 0;
+                return accessModifier | staticModifier;
+            }
+            if (s.flags & SymbolFlags.Prototype) {
+                return ModifierFlags.Public | ModifierFlags.Static;
+            }
+            return 0;
+        }
+
         function getJsxNamespace(): __String {
             if (!_jsxNamespace) {
                 _jsxNamespace = "React" as __String;
@@ -608,12 +643,11 @@ namespace ts {
 
         function createSymbol(flags: SymbolFlags, name: __String) {
             symbolCount++;
-            const symbol = <TransientSymbol>(new Symbol(flags | SymbolFlags.Transient, name));
-            symbol.checkFlags = 0;
+            const symbol = new Symbol(flags | SymbolFlags.Transient, name);
             return symbol;
         }
 
-        function isTransientSymbol(symbol: Symbol): symbol is TransientSymbol {
+        function isTransientSymbol(symbol: Symbol): boolean {
             return (symbol.flags & SymbolFlags.Transient) !== 0;
         }
 
@@ -769,12 +803,12 @@ namespace ts {
         }
 
         function getSymbolLink<K extends keyof SymbolLinks>(symbol: Symbol, prop: K): SymbolLinks[K] {
-            if (symbol.flags & SymbolFlags.Transient) return (<TransientSymbol>symbol)[prop];
+            // if (symbol.flags & SymbolFlags.Transient) return (<TransientSymbol>symbol)[prop];
             return symbolLinks[prop][getSymbolId(symbol)];
         }
 
         function setSymbolLink<K extends keyof SymbolLinks>(symbol: Symbol, prop: K, value: SymbolLinks[K]): SymbolLinks[K] {
-            if (symbol.flags & SymbolFlags.Transient) return (<TransientSymbol>symbol)[prop] = value;
+            // if (symbol.flags & SymbolFlags.Transient) return (<TransientSymbol>symbol)[prop] = value;
             return symbolLinks[prop][getSymbolId(symbol)] = value;
         }
 
@@ -2976,12 +3010,12 @@ namespace ts {
 
             function symbolToParameterDeclaration(parameterSymbol: Symbol, context: NodeBuilderContext): ParameterDeclaration {
                 const parameterDeclaration = getDeclarationOfKind<ParameterDeclaration>(parameterSymbol, SyntaxKind.Parameter);
-                if (isTransientSymbol(parameterSymbol) && parameterSymbol.isRestParameter) {
+                if (isTransientSymbol(parameterSymbol) && getSymbolLink(parameterSymbol, "isRestParameter")) {
                     // special-case synthetic rest parameters in JS files
                     return createParameter(
                         /*decorators*/ undefined,
                         /*modifiers*/ undefined,
-                        parameterSymbol.isRestParameter ? createToken(SyntaxKind.DotDotDotToken) : undefined,
+                        getSymbolLink(parameterSymbol, "isRestParameter") ? createToken(SyntaxKind.DotDotDotToken) : undefined,
                         "args",
                         /*questionToken*/ undefined,
                         typeToTypeNodeHelper(anyArrayType, context),
@@ -3201,8 +3235,9 @@ namespace ts {
                         return "(Anonymous function)";
                 }
             }
-            if ((symbol as TransientSymbol).syntheticLiteralTypeOrigin) {
-                const stringValue = (symbol as TransientSymbol).syntheticLiteralTypeOrigin.value;
+            const syntheticLiteralTypeOrigin = getSymbolLink(symbol, "syntheticLiteralTypeOrigin");
+            if (syntheticLiteralTypeOrigin) {
+                const stringValue = syntheticLiteralTypeOrigin.value;
                 if (!isIdentifierText(stringValue, compilerOptions.target)) {
                     return `"${escapeString(stringValue, CharacterCodes.doubleQuote)}"`;
                 }
@@ -3258,7 +3293,7 @@ namespace ts {
                         if (flags & SymbolFormatFlags.WriteTypeParametersOrArguments) {
                             if (getCheckFlags(symbol) & CheckFlags.Instantiated) {
                                 const params = getTypeParametersOfClassOrInterface(parentSymbol.flags & SymbolFlags.Alias ? resolveAlias(parentSymbol) : parentSymbol);
-                                buildDisplayForTypeArgumentsAndDelimiters(params, (<TransientSymbol>symbol).mapper, writer, enclosingDeclaration);
+                                buildDisplayForTypeArgumentsAndDelimiters(params, getSymbolLink(symbol, "mapper"), writer, enclosingDeclaration);
                             }
                             else {
                                 buildTypeParameterDisplayFromSymbol(parentSymbol, writer, enclosingDeclaration);
@@ -3746,7 +3781,7 @@ namespace ts {
             function buildParameterDisplay(p: Symbol, writer: SymbolWriter, enclosingDeclaration?: Node, flags?: TypeFormatFlags, symbolStack?: Symbol[]) {
                 const parameterNode = <ParameterDeclaration>p.valueDeclaration;
 
-                if (parameterNode ? isRestParameter(parameterNode) : isTransientSymbol(p) && p.isRestParameter) {
+                if (parameterNode ? isRestParameter(parameterNode) : isTransientSymbol(p) && getSymbolLink(p, "isRestParameter")) {
                     writePunctuation(writer, SyntaxKind.DotDotDotToken);
                 }
                 if (parameterNode && isBindingPattern(parameterNode.name)) {
@@ -4519,8 +4554,8 @@ namespace ts {
                 const text = getTextOfPropertyName(name);
                 const flags = SymbolFlags.Property | (e.initializer ? SymbolFlags.Optional : 0);
                 const symbol = createSymbol(flags, text);
-                symbol.type = getTypeFromBindingElement(e, includePatternInType, reportErrors);
-                symbol.bindingElement = e;
+                setSymbolLink(symbol, "type", getTypeFromBindingElement(e, includePatternInType, reportErrors));
+                setSymbolLink(symbol, "bindingElement", e);
                 members.set(symbol.escapedName, symbol);
             });
             const result = createAnonymousType(undefined, members, emptyArray, emptyArray, stringIndexInfo, undefined);
@@ -5867,13 +5902,13 @@ namespace ts {
                     const modifiersProp = getPropertyOfType(modifiersType, propName);
                     const isOptional = templateOptional || !!(modifiersProp && modifiersProp.flags & SymbolFlags.Optional);
                     const prop = createSymbol(SymbolFlags.Property | (isOptional ? SymbolFlags.Optional : 0), propName);
-                    prop.checkFlags = templateReadonly || modifiersProp && isReadonlySymbol(modifiersProp) ? CheckFlags.Readonly : 0;
-                    prop.type = propType;
+                    setSymbolLink(prop, "checkFlags", templateReadonly || modifiersProp && isReadonlySymbol(modifiersProp) ? CheckFlags.Readonly : 0);
+                    setSymbolLink(prop, "type", propType);
                     if (propertySymbol) {
-                        prop.syntheticOrigin = propertySymbol;
+                        setSymbolLink(prop, "syntheticOrigin", propertySymbol);
                         prop.declarations = propertySymbol.declarations;
                     }
-                    prop.syntheticLiteralTypeOrigin = t as StringLiteralType;
+                    setSymbolLink(prop, "syntheticLiteralTypeOrigin", t as StringLiteralType);
                     members.set(propName, prop);
                 }
                 else if (t.flags & TypeFlags.String) {
@@ -6246,10 +6281,10 @@ namespace ts {
                 propTypes.push(type);
             }
             const result = createSymbol(SymbolFlags.Property | commonFlags, name);
-            result.checkFlags = syntheticFlag | checkFlags;
-            result.containingType = containingType;
+            setSymbolLink(result, "checkFlags", syntheticFlag | checkFlags);
+            setSymbolLink(result, "containingType", containingType);
             result.declarations = declarations;
-            result.type = isUnion ? getUnionType(propTypes) : getIntersectionType(propTypes);
+            setSymbolLink(result, "type", isUnion ? getUnionType(propTypes) : getIntersectionType(propTypes));
             return result;
         }
 
@@ -6570,8 +6605,8 @@ namespace ts {
                 if (!hasRestLikeParameter && isInJavaScriptFile(declaration) && containsArgumentsReference(declaration)) {
                     hasRestLikeParameter = true;
                     const syntheticArgsSymbol = createSymbol(SymbolFlags.Variable, "args" as __String);
-                    syntheticArgsSymbol.type = anyArrayType;
-                    syntheticArgsSymbol.isRestParameter = true;
+                    setSymbolLink(syntheticArgsSymbol, "type", anyArrayType);
+                    setSymbolLink(syntheticArgsSymbol, "isRestParameter", true);
                     parameters.push(syntheticArgsSymbol);
                 }
 
@@ -7333,7 +7368,7 @@ namespace ts {
                 const typeParameter = <TypeParameter>createType(TypeFlags.TypeParameter);
                 typeParameters.push(typeParameter);
                 const property = createSymbol(SymbolFlags.Property, "" + i as __String);
-                property.type = typeParameter;
+                setSymbolLink(property, "type", typeParameter);
                 properties.push(property);
             }
             const type = <GenericType & InterfaceTypeWithDeclaredMembers>createObjectType(ObjectFlags.Tuple | ObjectFlags.Reference);
@@ -8014,9 +8049,9 @@ namespace ts {
                         const declarations: Declaration[] = concatenate(leftProp.declarations, rightProp.declarations);
                         const flags = SymbolFlags.Property | (leftProp.flags & SymbolFlags.Optional);
                         const result = createSymbol(flags, leftProp.escapedName);
-                        result.type = getUnionType([getTypeOfSymbol(leftProp), getTypeWithFacts(rightType, TypeFacts.NEUndefined)]);
-                        result.leftSpread = leftProp;
-                        result.rightSpread = rightProp;
+                        setSymbolLink(result, "type", getUnionType([getTypeOfSymbol(leftProp), getTypeWithFacts(rightType, TypeFacts.NEUndefined)]));
+                        setSymbolLink(result, "leftSpread", leftProp);
+                        setSymbolLink(result, "rightSpread", rightProp);
                         result.declarations = declarations;
                         members.set(leftProp.escapedName, result);
                     }
@@ -8040,9 +8075,9 @@ namespace ts {
             }
             const flags = SymbolFlags.Property | (prop.flags & SymbolFlags.Optional);
             const result = createSymbol(flags, prop.escapedName);
-            result.type = getTypeOfSymbol(prop);
+            setSymbolLink(result, "type", getTypeOfSymbol(prop));
             result.declarations = prop.declarations;
-            result.syntheticOrigin = prop;
+            setSymbolLink(result, "syntheticOrigin", prop);
             return result;
         }
 
@@ -8342,16 +8377,17 @@ namespace ts {
             // Keep the flags from the symbol we're instantiating.  Mark that is instantiated, and
             // also transient so that we can just store data on it directly.
             const result = createSymbol(symbol.flags, symbol.escapedName);
-            result.checkFlags = CheckFlags.Instantiated;
+            setSymbolLink(result, "checkFlags", CheckFlags.Instantiated);
             result.declarations = symbol.declarations;
             result.parent = symbol.parent;
-            result.target = symbol;
-            result.mapper = mapper;
+            setSymbolLink(result, "target", symbol);
+            setSymbolLink(result, "mapper", mapper);
             if (symbol.valueDeclaration) {
                 result.valueDeclaration = symbol.valueDeclaration;
             }
-            if ((symbol as TransientSymbol).isRestParameter) {
-                result.isRestParameter = (symbol as TransientSymbol).isRestParameter;
+            const isRestParameter = getSymbolLink(symbol, "isRestParameter");
+            if (isRestParameter) {
+                setSymbolLink(result, "isRestParameter", isRestParameter);
             }
             return result;
         }
@@ -10098,7 +10134,7 @@ namespace ts {
         // value that isn't undefined.
         function forEachProperty<T>(prop: Symbol, callback: (p: Symbol) => T): T {
             if (getCheckFlags(prop) & CheckFlags.Synthetic) {
-                for (const t of (<TransientSymbol>prop).containingType.types) {
+                for (const t of getSymbolLink(prop, "containingType").types) {
                     const p = getPropertyOfType(t, prop.escapedName);
                     const result = p && forEachProperty(p, callback);
                     if (result) {
@@ -10445,8 +10481,8 @@ namespace ts {
             const symbol = createSymbol(source.flags, source.escapedName);
             symbol.declarations = source.declarations;
             symbol.parent = source.parent;
-            symbol.type = type;
-            symbol.target = source;
+            setSymbolLink(symbol, "type", type);
+            setSymbolLink(symbol, "target", source);
             if (source.valueDeclaration) {
                 symbol.valueDeclaration = source.valueDeclaration;
             }
@@ -10727,9 +10763,9 @@ namespace ts {
                     return undefined;
                 }
                 const inferredProp = createSymbol(SymbolFlags.Property | prop.flags & optionalMask, prop.escapedName);
-                inferredProp.checkFlags = readonlyMask && isReadonlySymbol(prop) ? CheckFlags.Readonly : 0;
+                setSymbolLink(inferredProp, "checkFlags", readonlyMask && isReadonlySymbol(prop) ? CheckFlags.Readonly : 0);
                 inferredProp.declarations = prop.declarations;
-                inferredProp.type = inferredPropType;
+                setSymbolLink(inferredProp, "type", inferredPropType);
                 members.set(prop.escapedName, inferredProp);
             }
             if (indexInfo) {
@@ -11285,10 +11321,11 @@ namespace ts {
             if (type && type.flags & TypeFlags.Union) {
                 const prop = getUnionOrIntersectionProperty(<UnionType>type, name);
                 if (prop && getCheckFlags(prop) & CheckFlags.SyntheticProperty) {
-                    if ((<TransientSymbol>prop).isDiscriminantProperty === undefined) {
-                        (<TransientSymbol>prop).isDiscriminantProperty = (<TransientSymbol>prop).checkFlags & CheckFlags.HasNonUniformType && isLiteralType(getTypeOfSymbol(prop));
+                    const isDiscriminantProperty = getSymbolLink(prop, "isDiscriminantProperty");
+                    if (isDiscriminantProperty === undefined) {
+                        return setSymbolLink(prop, "isDiscriminantProperty", getSymbolLink(prop, "checkFlags") & CheckFlags.HasNonUniformType && isLiteralType(getTypeOfSymbol(prop)));
                     }
-                    return (<TransientSymbol>prop).isDiscriminantProperty;
+                    return isDiscriminantProperty;
                 }
             }
             return false;
@@ -14001,8 +14038,8 @@ namespace ts {
                         prop.valueDeclaration = member.valueDeclaration;
                     }
 
-                    prop.type = type;
-                    prop.target = member;
+                    setSymbolLink(prop, "type", type);
+                    setSymbolLink(prop, "target", member);
                     member = prop;
                 }
                 else if (memberDecl.kind === SyntaxKind.SpreadAssignment) {
@@ -14056,7 +14093,7 @@ namespace ts {
                 for (const prop of getPropertiesOfType(contextualType)) {
                     if (!propertiesTable.get(prop.escapedName)) {
                         if (!(prop.flags & SymbolFlags.Optional)) {
-                            error(prop.valueDeclaration || (<TransientSymbol>prop).bindingElement,
+                            error(prop.valueDeclaration || getSymbolLink(prop, "bindingElement"),
                                 Diagnostics.Initializer_provides_no_value_for_this_binding_element_and_the_binding_element_has_no_default_value);
                         }
                         propertiesTable.set(prop.escapedName, prop);
@@ -14171,14 +14208,14 @@ namespace ts {
                         checkExpression(attributeDecl.initializer, checkMode) :
                         trueType;  // <Elem attr /> is sugar for <Elem attr={true} />
 
-                    const attributeSymbol = <TransientSymbol>createSymbol(SymbolFlags.Property | SymbolFlags.Transient | member.flags, member.escapedName);
+                    const attributeSymbol = createSymbol(SymbolFlags.Property | SymbolFlags.Transient | member.flags, member.escapedName);
                     attributeSymbol.declarations = member.declarations;
                     attributeSymbol.parent = member.parent;
                     if (member.valueDeclaration) {
                         attributeSymbol.valueDeclaration = member.valueDeclaration;
                     }
-                    attributeSymbol.type = exprType;
-                    attributeSymbol.target = member;
+                    setSymbolLink(attributeSymbol, "type", exprType);
+                    setSymbolLink(attributeSymbol, "target", member);
                     attributesTable.set(attributeSymbol.escapedName, attributeSymbol);
                     attributesArray.push(attributeSymbol);
                     if (attributeDecl.name.escapedText === jsxChildrenPropertyName) {
@@ -14249,9 +14286,9 @@ namespace ts {
 
                     // If there are children in the body of JSX element, create dummy attribute "children" with anyType so that it will pass the attribute checking process
                     const childrenPropSymbol = createSymbol(SymbolFlags.Property | SymbolFlags.Transient, jsxChildrenPropertyName);
-                    childrenPropSymbol.type = childrenTypes.length === 1 ?
+                    setSymbolLink(childrenPropSymbol, "type", childrenTypes.length === 1 ?
                         childrenTypes[0] :
-                        createArrayType(getUnionType(childrenTypes,  /*subtypeReduction*/ false));
+                        createArrayType(getUnionType(childrenTypes,  /*subtypeReduction*/ false)));
                     attributesTable.set(jsxChildrenPropertyName, childrenPropSymbol);
                 }
             }
@@ -16963,11 +17000,11 @@ namespace ts {
                     if (!getPropertyOfType(type, InternalSymbolName.Default)) {
                         const memberTable = createSymbolTable();
                         const newSymbol = createSymbol(SymbolFlags.Alias, InternalSymbolName.Default);
-                        newSymbol.target = resolveSymbol(symbol);
+                        setSymbolLink(newSymbol, "target", resolveSymbol(symbol));
                         memberTable.set(InternalSymbolName.Default, newSymbol);
                         const anonymousSymbol = createSymbol(SymbolFlags.TypeLiteral, InternalSymbolName.Type);
                         const defaultContainingObject = createAnonymousType(anonymousSymbol, memberTable, emptyArray, emptyArray, /*stringIndexInfo*/ undefined, /*numberIndexInfo*/ undefined);
-                        anonymousSymbol.type = defaultContainingObject;
+                        setSymbolLink(anonymousSymbol, "type", defaultContainingObject);
                         synthType.syntheticType = getIntersectionType([type, defaultContainingObject]);
                     }
                     else {
@@ -21918,7 +21955,7 @@ namespace ts {
         function getTargetSymbol(s: Symbol) {
             // if symbol is instantiated its flags are not copied from the 'target'
             // so we'll need to get back original 'target' symbol to work with correct set of flags
-            return getCheckFlags(s) & CheckFlags.Instantiated ? (<TransientSymbol>s).target : s;
+            return getCheckFlags(s) & CheckFlags.Instantiated ? getSymbolLink(s, "target") : s;
         }
 
         function getClassLikeDeclarationOfSymbol(symbol: Symbol): Declaration {
@@ -23706,12 +23743,13 @@ namespace ts {
                 return symbols;
             }
             else if (symbol.flags & SymbolFlags.Transient) {
-                const transient = symbol as TransientSymbol;
-                if (transient.leftSpread) {
-                    return [...getRootSymbols(transient.leftSpread), ...getRootSymbols(transient.rightSpread)];
+                const leftSpread = getSymbolLink(symbol, "leftSpread");
+                if (leftSpread) {
+                    return [...getRootSymbols(leftSpread), ...getRootSymbols(getSymbolLink(symbol, "rightSpread"))];
                 }
-                if (transient.syntheticOrigin) {
-                    return getRootSymbols(transient.syntheticOrigin);
+                const syntheticOrigin = getSymbolLink(symbol, "syntheticOrigin");
+                if (syntheticOrigin) {
+                    return getRootSymbols(syntheticOrigin);
                 }
 
                 let target: Symbol;

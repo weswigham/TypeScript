@@ -603,7 +603,7 @@ namespace ts.FindAllReferences.Core {
         if (propSymbol && propSymbol.flags & SymbolFlags.Accessor) {
             // See GH#16922
             Debug.assert(!!(propSymbol.flags & SymbolFlags.Transient));
-            return (propSymbol as TransientSymbol).target;
+            return checker.getTargetOfSymbol(propSymbol);
         }
         return propSymbol;
     }

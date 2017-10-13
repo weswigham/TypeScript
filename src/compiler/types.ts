@@ -2710,7 +2710,7 @@ namespace ts {
 
         /* @internal */ createAnonymousType(symbol: Symbol, members: SymbolTable, callSignatures: Signature[], constructSignatures: Signature[], stringIndexInfo: IndexInfo, numberIndexInfo: IndexInfo): Type;
         /* @internal */ createSignature(declaration: SignatureDeclaration, typeParameters: TypeParameter[], thisParameter: Symbol | undefined, parameters: Symbol[], resolvedReturnType: Type, typePredicate: TypePredicate, minArgumentCount: number, hasRestParameter: boolean, hasLiteralTypes: boolean): Signature;
-        /* @internal */ createSymbol(flags: SymbolFlags, name: __String): TransientSymbol;
+        /* @internal */ createSymbol(flags: SymbolFlags, name: __String): Symbol;
         /* @internal */ createIndexInfo(type: Type, isReadonly: boolean, declaration?: SignatureDeclaration): IndexInfo;
         /* @internal */ isSymbolAccessible(symbol: Symbol, enclosingDeclaration: Node, meaning: SymbolFlags, shouldComputeAliasToMarkVisible: boolean): SymbolAccessibilityResult;
         /* @internal */ tryFindAmbientModuleWithoutAugmentations(moduleName: string): Symbol | undefined;
@@ -2736,6 +2736,11 @@ namespace ts {
         /* @internal */ getAllPossiblePropertiesOfTypes(type: ReadonlyArray<Type>): Symbol[];
         /* @internal */ resolveName(name: string, location: Node, meaning: SymbolFlags): Symbol | undefined;
         /* @internal */ getJsxNamespace(): string;
+
+        /* @internal */ getDeclarationModifierFlagsFromSymbol(symbol: Symbol): ModifierFlags;
+        /* @internal */ setTypeOfSymbol(symbol: Symbol, type: Type): void;
+        /* @internal */ isSyntheticSymbol(symbol: Symbol): boolean;
+        /* @internal */ getTargetOfSymbol(symbol: Symbol): Symbol;
     }
 
     export enum NodeBuilderFlags {
@@ -3072,6 +3077,8 @@ namespace ts {
         bindingElement?: BindingElement;    // Binding element associated with property symbol
         exportsSomeValue?: boolean;         // True if module exports some value (not just types)
         enumKind?: EnumKind;                // Enum declaration classification
+        checkFlags: CheckFlags;
+        isRestParameter?: boolean;
     }
 
     /* @internal */
@@ -3093,12 +3100,6 @@ namespace ts {
         ContainsPrivate   = 1 << 8,         // Synthetic property with private constituent(s)
         ContainsStatic    = 1 << 9,         // Synthetic property with static constituent(s)
         Synthetic = SyntheticProperty | SyntheticMethod
-    }
-
-    /* @internal */
-    export interface TransientSymbol extends Symbol, SymbolLinks {
-        checkFlags: CheckFlags;
-        isRestParameter?: boolean;
     }
 
     export const enum InternalSymbolName {

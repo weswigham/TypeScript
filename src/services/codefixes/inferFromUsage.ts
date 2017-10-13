@@ -575,7 +575,7 @@ namespace ts.codefix {
                 if (usageContext.properties) {
                     usageContext.properties.forEach((context, name) => {
                         const symbol = checker.createSymbol(SymbolFlags.Property, name);
-                        symbol.type = getTypeFromUsageContext(context, checker);
+                        checker.setTypeOfSymbol(symbol, getTypeFromUsageContext(context, checker));
                         members.set(name, symbol);
                     });
                 }
@@ -633,7 +633,7 @@ namespace ts.codefix {
             const parameters: Symbol[] = [];
             for (let i = 0; i < callContext.argumentTypes.length; i++) {
                 const symbol = checker.createSymbol(SymbolFlags.FunctionScopedVariable, escapeLeadingUnderscores(`arg${i}`));
-                symbol.type = checker.getWidenedType(checker.getBaseTypeOfLiteralType(callContext.argumentTypes[i]));
+                checker.setTypeOfSymbol(symbol, checker.getWidenedType(checker.getBaseTypeOfLiteralType(callContext.argumentTypes[i])));
                 parameters.push(symbol);
             }
             const returnType = getTypeFromUsageContext(callContext.returnType, checker);
