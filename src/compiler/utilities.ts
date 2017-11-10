@@ -4039,7 +4039,7 @@ namespace ts {
      * @param node The original node.
      * @returns The original parse tree node if found; otherwise, undefined.
      */
-    export function getParseTreeNode(node: Node): Node;
+    export function getParseTreeNode(node: Node): Bound<Node>;
 
     /**
      * Gets the original parse tree node for a node.
@@ -4048,7 +4048,7 @@ namespace ts {
      * @param nodeTest A callback used to ensure the correct type of parse tree node is returned.
      * @returns The original parse tree node if found; otherwise, undefined.
      */
-    export function getParseTreeNode<T extends Node>(node: Node, nodeTest?: (node: Node) => node is T): T;
+    export function getParseTreeNode<T extends Node>(node: Node, nodeTest?: (node: Node) => node is T): Bound<T>;
     export function getParseTreeNode(node: Node, nodeTest?: (node: Node) => boolean): Node {
         if (node === undefined || isParseTreeNode(node)) {
             return node;
@@ -4150,7 +4150,7 @@ namespace ts {
         return declaration.name || nameForNamelessJSDocTypedef(declaration as JSDocTypedefTag);
     }
 
-    export function getNameOfDeclaration(declaration: Declaration | Expression): DeclarationName | undefined {
+    export function getNameOfDeclaration(declaration: Declaration | Expression): Bound<DeclarationName> | undefined {
         if (!declaration) {
             return undefined;
         }

@@ -2,8 +2,308 @@
 /// <reference path="utilities.ts"/>
 
 namespace ts {
-    function createSynthesizedNode(kind: SyntaxKind): Node {
-        const node = createNode(kind, -1, -1);
+    const typeMap = {
+        [SyntaxKind.Unknown]: undefined as Token<SyntaxKind.Unknown>,
+        [SyntaxKind.EndOfFileToken]: undefined as Token<SyntaxKind.EndOfFileToken>,
+        [SyntaxKind.SingleLineCommentTrivia]: undefined as Token<SyntaxKind.SingleLineCommentTrivia>,
+        [SyntaxKind.MultiLineCommentTrivia]: undefined as Token<SyntaxKind.MultiLineCommentTrivia>,
+        [SyntaxKind.NewLineTrivia]: undefined as Token<SyntaxKind.NewLineTrivia>,
+        [SyntaxKind.WhitespaceTrivia]: undefined as Token<SyntaxKind.WhitespaceTrivia>,
+        [SyntaxKind.ShebangTrivia]: undefined as Token<SyntaxKind.ShebangTrivia>,
+        [SyntaxKind.ConflictMarkerTrivia]: undefined as Token<SyntaxKind.ConflictMarkerTrivia>,
+        [SyntaxKind.NumericLiteral]: undefined as NumericLiteral,
+        [SyntaxKind.StringLiteral]: undefined as StringLiteral,
+        [SyntaxKind.JsxText]: undefined as JsxText,
+        [SyntaxKind.JsxTextAllWhiteSpaces]: undefined as Token<SyntaxKind.JsxTextAllWhiteSpaces>,
+        [SyntaxKind.RegularExpressionLiteral]: undefined as RegularExpressionLiteral,
+        [SyntaxKind.NoSubstitutionTemplateLiteral]: undefined as NoSubstitutionTemplateLiteral,
+        [SyntaxKind.TemplateHead]: undefined as TemplateHead,
+        [SyntaxKind.TemplateMiddle]: undefined as TemplateMiddle,
+        [SyntaxKind.TemplateTail]: undefined as TemplateTail,
+        [SyntaxKind.OpenBraceToken]: undefined as Token<SyntaxKind.OpenBraceToken>,
+        [SyntaxKind.CloseBraceToken]: undefined as Token<SyntaxKind.CloseBraceToken>,
+        [SyntaxKind.OpenParenToken]: undefined as Token<SyntaxKind.OpenParenToken>,
+        [SyntaxKind.CloseParenToken]: undefined as Token<SyntaxKind.CloseParenToken>,
+        [SyntaxKind.OpenBracketToken]: undefined as Token<SyntaxKind.OpenBracketToken>,
+        [SyntaxKind.CloseBracketToken]: undefined as Token<SyntaxKind.CloseBracketToken>,
+        [SyntaxKind.DotToken]: undefined as Token<SyntaxKind.DotToken>,
+        [SyntaxKind.DotDotDotToken]: undefined as Token<SyntaxKind.DotDotDotToken>,
+        [SyntaxKind.SemicolonToken]: undefined as Token<SyntaxKind.SemicolonToken>,
+        [SyntaxKind.CommaToken]: undefined as Token<SyntaxKind.CommaToken>,
+        [SyntaxKind.LessThanToken]: undefined as Token<SyntaxKind.LessThanToken>,
+        [SyntaxKind.LessThanSlashToken]: undefined as Token<SyntaxKind.LessThanSlashToken>,
+        [SyntaxKind.GreaterThanToken]: undefined as Token<SyntaxKind.GreaterThanToken>,
+        [SyntaxKind.LessThanEqualsToken]: undefined as Token<SyntaxKind.LessThanEqualsToken>,
+        [SyntaxKind.GreaterThanEqualsToken]: undefined as Token<SyntaxKind.GreaterThanEqualsToken>,
+        [SyntaxKind.EqualsEqualsToken]: undefined as Token<SyntaxKind.EqualsEqualsToken>,
+        [SyntaxKind.ExclamationEqualsToken]: undefined as Token<SyntaxKind.ExclamationEqualsToken>,
+        [SyntaxKind.EqualsEqualsEqualsToken]: undefined as Token<SyntaxKind.EqualsEqualsEqualsToken>,
+        [SyntaxKind.ExclamationEqualsEqualsToken]: undefined as Token<SyntaxKind.ExclamationEqualsEqualsToken>,
+        [SyntaxKind.EqualsGreaterThanToken]: undefined as Token<SyntaxKind.EqualsGreaterThanToken>,
+        [SyntaxKind.PlusToken]: undefined as Token<SyntaxKind.PlusToken>,
+        [SyntaxKind.MinusToken]: undefined as Token<SyntaxKind.MinusToken>,
+        [SyntaxKind.AsteriskToken]: undefined as Token<SyntaxKind.AsteriskToken>,
+        [SyntaxKind.AsteriskAsteriskToken]: undefined as Token<SyntaxKind.AsteriskAsteriskToken>,
+        [SyntaxKind.SlashToken]: undefined as Token<SyntaxKind.SlashToken>,
+        [SyntaxKind.PercentToken]: undefined as Token<SyntaxKind.PercentToken>,
+        [SyntaxKind.PlusPlusToken]: undefined as Token<SyntaxKind.PlusPlusToken>,
+        [SyntaxKind.MinusMinusToken]: undefined as Token<SyntaxKind.MinusMinusToken>,
+        [SyntaxKind.LessThanLessThanToken]: undefined as Token<SyntaxKind.LessThanLessThanToken>,
+        [SyntaxKind.GreaterThanGreaterThanToken]: undefined as Token<SyntaxKind.GreaterThanGreaterThanToken>,
+        [SyntaxKind.GreaterThanGreaterThanGreaterThanToken]: undefined as Token<SyntaxKind.GreaterThanGreaterThanGreaterThanToken>,
+        [SyntaxKind.AmpersandToken]: undefined as Token<SyntaxKind.AmpersandToken>,
+        [SyntaxKind.BarToken]: undefined as Token<SyntaxKind.BarToken>,
+        [SyntaxKind.CaretToken]: undefined as Token<SyntaxKind.CaretToken>,
+        [SyntaxKind.ExclamationToken]: undefined as Token<SyntaxKind.ExclamationToken>,
+        [SyntaxKind.TildeToken]: undefined as Token<SyntaxKind.TildeToken>,
+        [SyntaxKind.AmpersandAmpersandToken]: undefined as Token<SyntaxKind.AmpersandAmpersandToken>,
+        [SyntaxKind.BarBarToken]: undefined as Token<SyntaxKind.BarBarToken>,
+        [SyntaxKind.QuestionToken]: undefined as Token<SyntaxKind.QuestionToken>,
+        [SyntaxKind.ColonToken]: undefined as Token<SyntaxKind.ColonToken>,
+        [SyntaxKind.AtToken]: undefined as Token<SyntaxKind.AtToken>,
+        [SyntaxKind.EqualsToken]: undefined as Token<SyntaxKind.EqualsToken>,
+        [SyntaxKind.PlusEqualsToken]: undefined as Token<SyntaxKind.PlusEqualsToken>,
+        [SyntaxKind.MinusEqualsToken]: undefined as Token<SyntaxKind.MinusEqualsToken>,
+        [SyntaxKind.AsteriskEqualsToken]: undefined as Token<SyntaxKind.AsteriskEqualsToken>,
+        [SyntaxKind.AsteriskAsteriskEqualsToken]: undefined as Token<SyntaxKind.AsteriskAsteriskEqualsToken>,
+        [SyntaxKind.SlashEqualsToken]: undefined as Token<SyntaxKind.SlashEqualsToken>,
+        [SyntaxKind.PercentEqualsToken]: undefined as Token<SyntaxKind.PercentEqualsToken>,
+        [SyntaxKind.LessThanLessThanEqualsToken]: undefined as Token<SyntaxKind.LessThanLessThanEqualsToken>,
+        [SyntaxKind.GreaterThanGreaterThanEqualsToken]: undefined as Token<SyntaxKind.GreaterThanGreaterThanEqualsToken>,
+        [SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken]: undefined as Token<SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken>,
+        [SyntaxKind.AmpersandEqualsToken]: undefined as Token<SyntaxKind.AmpersandEqualsToken>,
+        [SyntaxKind.BarEqualsToken]: undefined as Token<SyntaxKind.BarEqualsToken>,
+        [SyntaxKind.CaretEqualsToken]: undefined as Token<SyntaxKind.CaretEqualsToken>,
+        [SyntaxKind.Identifier]: undefined as Identifier,
+        [SyntaxKind.BreakKeyword]: undefined as Token<SyntaxKind.BreakKeyword>,
+        [SyntaxKind.CaseKeyword]: undefined as Token<SyntaxKind.CaseKeyword>,
+        [SyntaxKind.CatchKeyword]: undefined as Token<SyntaxKind.CatchKeyword>,
+        [SyntaxKind.ClassKeyword]: undefined as Token<SyntaxKind.ClassKeyword>,
+        [SyntaxKind.ConstKeyword]: undefined as Token<SyntaxKind.ConstKeyword>,
+        [SyntaxKind.ContinueKeyword]: undefined as Token<SyntaxKind.ContinueKeyword>,
+        [SyntaxKind.DebuggerKeyword]: undefined as Token<SyntaxKind.DebuggerKeyword>,
+        [SyntaxKind.DefaultKeyword]: undefined as Token<SyntaxKind.DefaultKeyword>,
+        [SyntaxKind.DeleteKeyword]: undefined as Token<SyntaxKind.DeleteKeyword>,
+        [SyntaxKind.DoKeyword]: undefined as Token<SyntaxKind.DoKeyword>,
+        [SyntaxKind.ElseKeyword]: undefined as Token<SyntaxKind.ElseKeyword>,
+        [SyntaxKind.EnumKeyword]: undefined as Token<SyntaxKind.EnumKeyword>,
+        [SyntaxKind.ExportKeyword]: undefined as Token<SyntaxKind.ExportKeyword>,
+        [SyntaxKind.ExtendsKeyword]: undefined as Token<SyntaxKind.ExtendsKeyword>,
+        [SyntaxKind.FalseKeyword]: undefined as Token<SyntaxKind.FalseKeyword>,
+        [SyntaxKind.FinallyKeyword]: undefined as Token<SyntaxKind.FinallyKeyword>,
+        [SyntaxKind.ForKeyword]: undefined as Token<SyntaxKind.ForKeyword>,
+        [SyntaxKind.FunctionKeyword]: undefined as Token<SyntaxKind.FunctionKeyword>,
+        [SyntaxKind.IfKeyword]: undefined as Token<SyntaxKind.IfKeyword>,
+        [SyntaxKind.ImportKeyword]: undefined as ImportExpression,
+        [SyntaxKind.InKeyword]: undefined as Token<SyntaxKind.InKeyword>,
+        [SyntaxKind.InstanceOfKeyword]: undefined as Token<SyntaxKind.InstanceOfKeyword>,
+        [SyntaxKind.NewKeyword]: undefined as Token<SyntaxKind.NewKeyword>,
+        [SyntaxKind.NullKeyword]: undefined as NullLiteral,
+        [SyntaxKind.ReturnKeyword]: undefined as Token<SyntaxKind.ReturnKeyword>,
+        [SyntaxKind.SuperKeyword]: undefined as SuperExpression,
+        [SyntaxKind.SwitchKeyword]: undefined as Token<SyntaxKind.SwitchKeyword>,
+        [SyntaxKind.ThisKeyword]: undefined as ThisExpression,
+        [SyntaxKind.ThrowKeyword]: undefined as Token<SyntaxKind.ThrowKeyword>,
+        [SyntaxKind.TrueKeyword]: undefined as Token<SyntaxKind.TrueKeyword>,
+        [SyntaxKind.TryKeyword]: undefined as Token<SyntaxKind.TryKeyword>,
+        [SyntaxKind.TypeOfKeyword]: undefined as Token<SyntaxKind.TypeOfKeyword>,
+        [SyntaxKind.VarKeyword]: undefined as Token<SyntaxKind.VarKeyword>,
+        [SyntaxKind.VoidKeyword]: undefined as Token<SyntaxKind.VoidKeyword>,
+        [SyntaxKind.WhileKeyword]: undefined as Token<SyntaxKind.WhileKeyword>,
+        [SyntaxKind.WithKeyword]: undefined as Token<SyntaxKind.WithKeyword>,
+        [SyntaxKind.ImplementsKeyword]: undefined as Token<SyntaxKind.ImplementsKeyword>,
+        [SyntaxKind.InterfaceKeyword]: undefined as Token<SyntaxKind.InterfaceKeyword>,
+        [SyntaxKind.LetKeyword]: undefined as Token<SyntaxKind.LetKeyword>,
+        [SyntaxKind.PackageKeyword]: undefined as Token<SyntaxKind.PackageKeyword>,
+        [SyntaxKind.PrivateKeyword]: undefined as Token<SyntaxKind.PrivateKeyword>,
+        [SyntaxKind.ProtectedKeyword]: undefined as Token<SyntaxKind.ProtectedKeyword>,
+        [SyntaxKind.PublicKeyword]: undefined as Token<SyntaxKind.PublicKeyword>,
+        [SyntaxKind.StaticKeyword]: undefined as Token<SyntaxKind.StaticKeyword>,
+        [SyntaxKind.YieldKeyword]: undefined as Token<SyntaxKind.YieldKeyword>,
+        [SyntaxKind.AbstractKeyword]: undefined as Token<SyntaxKind.AbstractKeyword>,
+        [SyntaxKind.AsKeyword]: undefined as Token<SyntaxKind.AsKeyword>,
+        [SyntaxKind.AnyKeyword]: undefined as Token<SyntaxKind.AnyKeyword>,
+        [SyntaxKind.AsyncKeyword]: undefined as Token<SyntaxKind.AsyncKeyword>,
+        [SyntaxKind.AwaitKeyword]: undefined as Token<SyntaxKind.AwaitKeyword>,
+        [SyntaxKind.BooleanKeyword]: undefined as Token<SyntaxKind.BooleanKeyword>,
+        [SyntaxKind.ConstructorKeyword]: undefined as Token<SyntaxKind.ConstructorKeyword>,
+        [SyntaxKind.DeclareKeyword]: undefined as Token<SyntaxKind.DeclareKeyword>,
+        [SyntaxKind.GetKeyword]: undefined as Token<SyntaxKind.GetKeyword>,
+        [SyntaxKind.IsKeyword]: undefined as Token<SyntaxKind.IsKeyword>,
+        [SyntaxKind.KeyOfKeyword]: undefined as Token<SyntaxKind.KeyOfKeyword>,
+        [SyntaxKind.ModuleKeyword]: undefined as Token<SyntaxKind.ModuleKeyword>,
+        [SyntaxKind.NamespaceKeyword]: undefined as Token<SyntaxKind.NamespaceKeyword>,
+        [SyntaxKind.NeverKeyword]: undefined as Token<SyntaxKind.NeverKeyword>,
+        [SyntaxKind.ReadonlyKeyword]: undefined as Token<SyntaxKind.ReadonlyKeyword>,
+        [SyntaxKind.RequireKeyword]: undefined as Token<SyntaxKind.RequireKeyword>,
+        [SyntaxKind.NumberKeyword]: undefined as Token<SyntaxKind.NumberKeyword>,
+        [SyntaxKind.ObjectKeyword]: undefined as Token<SyntaxKind.ObjectKeyword>,
+        [SyntaxKind.SetKeyword]: undefined as Token<SyntaxKind.SetKeyword>,
+        [SyntaxKind.StringKeyword]: undefined as Token<SyntaxKind.StringKeyword>,
+        [SyntaxKind.SymbolKeyword]: undefined as Token<SyntaxKind.SymbolKeyword>,
+        [SyntaxKind.TypeKeyword]: undefined as Token<SyntaxKind.TypeKeyword>,
+        [SyntaxKind.UndefinedKeyword]: undefined as Token<SyntaxKind.UndefinedKeyword>,
+        [SyntaxKind.FromKeyword]: undefined as Token<SyntaxKind.FromKeyword>,
+        [SyntaxKind.GlobalKeyword]: undefined as Token<SyntaxKind.GlobalKeyword>,
+        [SyntaxKind.OfKeyword]: undefined as Token<SyntaxKind.OfKeyword>,
+        [SyntaxKind.QualifiedName]: undefined as QualifiedName,
+        [SyntaxKind.ComputedPropertyName]: undefined as ComputedPropertyName,
+        [SyntaxKind.TypeParameter]: undefined as TypeParameterDeclaration,
+        [SyntaxKind.Parameter]: undefined as ParameterDeclaration,
+        [SyntaxKind.Decorator]: undefined as Decorator,
+        [SyntaxKind.PropertySignature]: undefined as PropertySignature,
+        [SyntaxKind.PropertyDeclaration]: undefined as PropertyDeclaration,
+        [SyntaxKind.MethodSignature]: undefined as MethodSignature,
+        [SyntaxKind.MethodDeclaration]: undefined as MethodDeclaration,
+        [SyntaxKind.Constructor]: undefined as ConstructorDeclaration,
+        [SyntaxKind.GetAccessor]: undefined as GetAccessorDeclaration,
+        [SyntaxKind.SetAccessor]: undefined as SetAccessorDeclaration,
+        [SyntaxKind.CallSignature]: undefined as CallSignatureDeclaration,
+        [SyntaxKind.ConstructSignature]: undefined as ConstructSignatureDeclaration,
+        [SyntaxKind.IndexSignature]: undefined as IndexSignatureDeclaration,
+        [SyntaxKind.TypePredicate]: undefined as TypePredicateNode,
+        [SyntaxKind.TypeReference]: undefined as TypeReferenceNode,
+        [SyntaxKind.FunctionType]: undefined as FunctionTypeNode,
+        [SyntaxKind.ConstructorType]: undefined as ConstructorTypeNode,
+        [SyntaxKind.TypeQuery]: undefined as TypeQueryNode,
+        [SyntaxKind.TypeLiteral]: undefined as TypeLiteralNode,
+        [SyntaxKind.ArrayType]: undefined as ArrayTypeNode,
+        [SyntaxKind.TupleType]: undefined as TupleTypeNode,
+        [SyntaxKind.UnionType]: undefined as UnionTypeNode,
+        [SyntaxKind.IntersectionType]: undefined as IntersectionTypeNode,
+        [SyntaxKind.ParenthesizedType]: undefined as ParenthesizedTypeNode,
+        [SyntaxKind.ThisType]: undefined as ThisTypeNode,
+        [SyntaxKind.TypeOperator]: undefined as TypeOperatorNode,
+        [SyntaxKind.IndexedAccessType]: undefined as IndexedAccessTypeNode,
+        [SyntaxKind.MappedType]: undefined as MappedTypeNode,
+        [SyntaxKind.LiteralType]: undefined as LiteralTypeNode,
+        [SyntaxKind.ObjectBindingPattern]: undefined as ObjectBindingPattern,
+        [SyntaxKind.ArrayBindingPattern]: undefined as ArrayBindingPattern,
+        [SyntaxKind.BindingElement]: undefined as BindingElement,
+        [SyntaxKind.ArrayLiteralExpression]: undefined as ArrayLiteralExpression,
+        [SyntaxKind.ObjectLiteralExpression]: undefined as ObjectLiteralExpression,
+        [SyntaxKind.PropertyAccessExpression]: undefined as PropertyAccessExpression,
+        [SyntaxKind.ElementAccessExpression]: undefined as ElementAccessExpression,
+        [SyntaxKind.CallExpression]: undefined as CallExpression,
+        [SyntaxKind.NewExpression]: undefined as NewExpression,
+        [SyntaxKind.TaggedTemplateExpression]: undefined as TaggedTemplateExpression,
+        [SyntaxKind.TypeAssertionExpression]: undefined as TypeAssertion,
+        [SyntaxKind.ParenthesizedExpression]: undefined as ParenthesizedExpression,
+        [SyntaxKind.FunctionExpression]: undefined as FunctionExpression,
+        [SyntaxKind.ArrowFunction]: undefined as ArrowFunction,
+        [SyntaxKind.DeleteExpression]: undefined as DeleteExpression,
+        [SyntaxKind.TypeOfExpression]: undefined as TypeOfExpression,
+        [SyntaxKind.VoidExpression]: undefined as VoidExpression,
+        [SyntaxKind.AwaitExpression]: undefined as AwaitExpression,
+        [SyntaxKind.PrefixUnaryExpression]: undefined as PrefixUnaryExpression,
+        [SyntaxKind.PostfixUnaryExpression]: undefined as PostfixUnaryExpression,
+        [SyntaxKind.BinaryExpression]: undefined as BinaryExpression,
+        [SyntaxKind.ConditionalExpression]: undefined as ConditionalExpression,
+        [SyntaxKind.TemplateExpression]: undefined as TemplateExpression,
+        [SyntaxKind.YieldExpression]: undefined as YieldExpression,
+        [SyntaxKind.SpreadElement]: undefined as SpreadElement,
+        [SyntaxKind.ClassExpression]: undefined as ClassExpression,
+        [SyntaxKind.OmittedExpression]: undefined as OmittedExpression,
+        [SyntaxKind.ExpressionWithTypeArguments]: undefined as ExpressionWithTypeArguments,
+        [SyntaxKind.AsExpression]: undefined as AsExpression,
+        [SyntaxKind.NonNullExpression]: undefined as NonNullExpression,
+        [SyntaxKind.MetaProperty]: undefined as MetaProperty,
+        [SyntaxKind.TemplateSpan]: undefined as TemplateSpan,
+        [SyntaxKind.SemicolonClassElement]: undefined as SemicolonClassElement,
+        [SyntaxKind.Block]: undefined as Block,
+        [SyntaxKind.VariableStatement]: undefined as VariableStatement,
+        [SyntaxKind.EmptyStatement]: undefined as EmptyStatement,
+        [SyntaxKind.ExpressionStatement]: undefined as ExpressionStatement,
+        [SyntaxKind.IfStatement]: undefined as IfStatement,
+        [SyntaxKind.DoStatement]: undefined as DoStatement,
+        [SyntaxKind.WhileStatement]: undefined as WhileStatement,
+        [SyntaxKind.ForStatement]: undefined as ForStatement,
+        [SyntaxKind.ForInStatement]: undefined as ForInStatement,
+        [SyntaxKind.ForOfStatement]: undefined as ForOfStatement,
+        [SyntaxKind.ContinueStatement]: undefined as ContinueStatement,
+        [SyntaxKind.BreakStatement]: undefined as BreakStatement,
+        [SyntaxKind.ReturnStatement]: undefined as ReturnStatement,
+        [SyntaxKind.WithStatement]: undefined as WithStatement,
+        [SyntaxKind.SwitchStatement]: undefined as SwitchStatement,
+        [SyntaxKind.LabeledStatement]: undefined as LabeledStatement,
+        [SyntaxKind.ThrowStatement]: undefined as ThrowStatement,
+        [SyntaxKind.TryStatement]: undefined as TryStatement,
+        [SyntaxKind.DebuggerStatement]: undefined as DebuggerStatement,
+        [SyntaxKind.VariableDeclaration]: undefined as VariableDeclaration,
+        [SyntaxKind.VariableDeclarationList]: undefined as VariableDeclarationList,
+        [SyntaxKind.FunctionDeclaration]: undefined as FunctionDeclaration,
+        [SyntaxKind.ClassDeclaration]: undefined as ClassDeclaration,
+        [SyntaxKind.InterfaceDeclaration]: undefined as InterfaceDeclaration,
+        [SyntaxKind.TypeAliasDeclaration]: undefined as TypeAliasDeclaration,
+        [SyntaxKind.EnumDeclaration]: undefined as EnumDeclaration,
+        [SyntaxKind.ModuleDeclaration]: undefined as ModuleDeclaration,
+        [SyntaxKind.ModuleBlock]: undefined as ModuleBlock,
+        [SyntaxKind.CaseBlock]: undefined as CaseBlock,
+        [SyntaxKind.NamespaceExportDeclaration]: undefined as NamespaceExportDeclaration,
+        [SyntaxKind.ImportEqualsDeclaration]: undefined as ImportEqualsDeclaration,
+        [SyntaxKind.ImportDeclaration]: undefined as ImportDeclaration,
+        [SyntaxKind.ImportClause]: undefined as ImportClause,
+        [SyntaxKind.NamespaceImport]: undefined as NamespaceImport,
+        [SyntaxKind.NamedImports]: undefined as NamedImports,
+        [SyntaxKind.ImportSpecifier]: undefined as ImportSpecifier,
+        [SyntaxKind.ExportAssignment]: undefined as ExportAssignment,
+        [SyntaxKind.ExportDeclaration]: undefined as ExportDeclaration,
+        [SyntaxKind.NamedExports]: undefined as NamedExports,
+        [SyntaxKind.ExportSpecifier]: undefined as ExportSpecifier,
+        [SyntaxKind.MissingDeclaration]: undefined as MissingDeclaration,
+        [SyntaxKind.ExternalModuleReference]: undefined as ExternalModuleReference,
+        [SyntaxKind.JsxElement]: undefined as JsxElement,
+        [SyntaxKind.JsxSelfClosingElement]: undefined as JsxSelfClosingElement,
+        [SyntaxKind.JsxOpeningElement]: undefined as JsxOpeningElement,
+        [SyntaxKind.JsxClosingElement]: undefined as JsxClosingElement,
+        [SyntaxKind.JsxFragment]: undefined as JsxFragment,
+        [SyntaxKind.JsxOpeningFragment]: undefined as JsxOpeningFragment,
+        [SyntaxKind.JsxClosingFragment]: undefined as JsxClosingFragment,
+        [SyntaxKind.JsxAttribute]: undefined as JsxAttribute,
+        [SyntaxKind.JsxAttributes]: undefined as JsxAttributes,
+        [SyntaxKind.JsxSpreadAttribute]: undefined as JsxSpreadAttribute,
+        [SyntaxKind.JsxExpression]: undefined as JsxExpression,
+        [SyntaxKind.CaseClause]: undefined as CaseClause,
+        [SyntaxKind.DefaultClause]: undefined as DefaultClause,
+        [SyntaxKind.HeritageClause]: undefined as HeritageClause,
+        [SyntaxKind.CatchClause]: undefined as CatchClause,
+        [SyntaxKind.PropertyAssignment]: undefined as PropertyAssignment,
+        [SyntaxKind.ShorthandPropertyAssignment]: undefined as ShorthandPropertyAssignment,
+        [SyntaxKind.SpreadAssignment]: undefined as SpreadAssignment,
+        [SyntaxKind.EnumMember]: undefined as EnumMember,
+        [SyntaxKind.SourceFile]: undefined as SourceFile,
+        [SyntaxKind.Bundle]: undefined as Bundle,
+        [SyntaxKind.JSDocTypeExpression]: undefined as JSDocTypeExpression,
+        [SyntaxKind.JSDocAllType]: undefined as JSDocAllType,
+        [SyntaxKind.JSDocUnknownType]: undefined as JSDocUnknownType,
+        [SyntaxKind.JSDocNullableType]: undefined as JSDocNullableType,
+        [SyntaxKind.JSDocNonNullableType]: undefined as JSDocNonNullableType,
+        [SyntaxKind.JSDocOptionalType]: undefined as JSDocOptionalType,
+        [SyntaxKind.JSDocFunctionType]: undefined as JSDocFunctionType,
+        [SyntaxKind.JSDocVariadicType]: undefined as JSDocVariadicType,
+        [SyntaxKind.JSDocComment]: undefined as JSDoc,
+        [SyntaxKind.JSDocTag]: undefined as JSDocUnknownTag,
+        [SyntaxKind.JSDocAugmentsTag]: undefined as JSDocAugmentsTag,
+        [SyntaxKind.JSDocClassTag]: undefined as JSDocClassTag,
+        [SyntaxKind.JSDocParameterTag]: undefined as JSDocParameterTag,
+        [SyntaxKind.JSDocReturnTag]: undefined as JSDocReturnTag,
+        [SyntaxKind.JSDocTypeTag]: undefined as JSDocTypeTag,
+        [SyntaxKind.JSDocTemplateTag]: undefined as JSDocTemplateTag,
+        [SyntaxKind.JSDocTypedefTag]: undefined as Token<SyntaxKind.JSDocTypedefTag>,
+        [SyntaxKind.JSDocPropertyTag]: undefined as JSDocPropertyTag,
+        [SyntaxKind.JSDocTypeLiteral]: undefined as JSDocTypeLiteral,
+        [SyntaxKind.SyntaxList]: undefined as Token<SyntaxKind.SyntaxList>,
+        [SyntaxKind.NotEmittedStatement]: undefined as NotEmittedStatement,
+        [SyntaxKind.PartiallyEmittedExpression]: undefined as PartiallyEmittedExpression,
+        [SyntaxKind.CommaListExpression]: undefined as CommaListExpression,
+        [SyntaxKind.MergeDeclarationMarker]: undefined as MergeDeclarationMarker,
+        [SyntaxKind.EndOfDeclarationMarker]: undefined as EndOfDeclarationMarker,
+    };
+    type TypeMap = typeof typeMap & {[key: number]: Node};
+
+
+    function createSynthesizedNode<T extends SyntaxKind>(kind: T): Unbound<TypeMap[T]> {
+        const node = createNode(kind, -1, -1) as Unbound<TypeMap[T]>;
         node.flags |= NodeFlags.Synthesized;
         return node;
     }
@@ -44,7 +344,7 @@ namespace ts {
      * Creates a shallow, memberwise clone of a node with no source map location.
      */
     /* @internal */
-    export function getSynthesizedClone<T extends Node>(node: T | undefined): T | undefined {
+    export function getSynthesizedClone<T extends Node>(node: T | undefined): Unbound<T> | undefined {
         // We don't use "clone" from core.ts here, as we need to preserve the prototype chain of
         // the original node. We also need to exclude specific properties and only include own-
         // properties (to skip members already defined on the shared prototype).
@@ -53,7 +353,7 @@ namespace ts {
             return undefined;
         }
 
-        const clone = <T>createSynthesizedNode(node.kind);
+        const clone = <Unbound<T>>createSynthesizedNode(node.kind);
         clone.flags |= node.flags;
         setOriginalNode(clone, node);
 
@@ -71,11 +371,11 @@ namespace ts {
     // Literals
 
     /** If a node is passed, creates a string literal whose source text is read from a source node during emit. */
-    export function createLiteral(value: string | StringLiteral | NumericLiteral | Identifier): StringLiteral;
-    export function createLiteral(value: number): NumericLiteral;
-    export function createLiteral(value: boolean): BooleanLiteral;
-    export function createLiteral(value: string | number | boolean): PrimaryExpression;
-    export function createLiteral(value: string | number | boolean | StringLiteral | NumericLiteral | Identifier): PrimaryExpression {
+    export function createLiteral(value: string | StringLiteral | NumericLiteral | Identifier): Unbound<StringLiteral>;
+    export function createLiteral(value: number): Unbound<NumericLiteral>;
+    export function createLiteral(value: boolean): Unbound<BooleanLiteral>;
+    export function createLiteral(value: string | number | boolean): Unbound<PrimaryExpression>;
+    export function createLiteral(value: string | number | boolean | StringLiteral | NumericLiteral | Identifier): Unbound<PrimaryExpression> {
         if (typeof value === "number") {
             return createNumericLiteral(value + "");
         }
@@ -88,20 +388,20 @@ namespace ts {
         return createLiteralFromNode(value);
     }
 
-    export function createNumericLiteral(value: string): NumericLiteral {
-        const node = <NumericLiteral>createSynthesizedNode(SyntaxKind.NumericLiteral);
+    export function createNumericLiteral(value: string): Unbound<NumericLiteral> {
+        const node = <Unbound<NumericLiteral>>createSynthesizedNode(SyntaxKind.NumericLiteral);
         node.text = value;
         node.numericLiteralFlags = 0;
         return node;
     }
 
-    function createStringLiteral(text: string): StringLiteral {
-        const node = <StringLiteral>createSynthesizedNode(SyntaxKind.StringLiteral);
+    function createStringLiteral(text: string): Unbound<StringLiteral> {
+        const node = <Unbound<StringLiteral>>createSynthesizedNode(SyntaxKind.StringLiteral);
         node.text = text;
         return node;
     }
 
-    function createLiteralFromNode(sourceNode: StringLiteral | NumericLiteral | Identifier): StringLiteral {
+    function createLiteralFromNode(sourceNode: StringLiteral | NumericLiteral | Identifier): Unbound<StringLiteral> {
         const node = createStringLiteral(getTextOfIdentifierOrLiteral(sourceNode));
         node.textSourceNode = sourceNode;
         return node;
@@ -110,12 +410,12 @@ namespace ts {
 
     // Identifiers
 
-    export function createIdentifier(text: string): Identifier;
+    export function createIdentifier(text: string): Unbound<Identifier>;
     /* @internal */
     // tslint:disable-next-line unified-signatures
-    export function createIdentifier(text: string, typeArguments: ReadonlyArray<TypeNode>): Identifier;
-    export function createIdentifier(text: string, typeArguments?: ReadonlyArray<TypeNode>): Identifier {
-        const node = <Identifier>createSynthesizedNode(SyntaxKind.Identifier);
+    export function createIdentifier(text: string, typeArguments: ReadonlyArray<TypeNode>): Unbound<Identifier>;
+    export function createIdentifier(text: string, typeArguments?: ReadonlyArray<TypeNode>): Unbound<Identifier> {
+        const node = <Unbound<Identifier>>createSynthesizedNode(SyntaxKind.Identifier);
         node.escapedText = escapeLeadingUnderscores(text);
         node.originalKeywordKind = text ? stringToToken(text) : SyntaxKind.Unknown;
         node.autoGenerateKind = GeneratedIdentifierKind.None;
@@ -135,7 +435,7 @@ namespace ts {
     let nextAutoGenerateId = 0;
 
     /** Create a unique temporary variable. */
-    export function createTempVariable(recordTempVariable: ((node: Identifier) => void) | undefined): Identifier {
+    export function createTempVariable(recordTempVariable: ((node: Identifier) => void) | undefined): Unbound<Identifier> {
         const name = createIdentifier("");
         name.autoGenerateKind = GeneratedIdentifierKind.Auto;
         name.autoGenerateId = nextAutoGenerateId;
@@ -147,7 +447,7 @@ namespace ts {
     }
 
     /** Create a unique temporary variable for use in a loop. */
-    export function createLoopVariable(): Identifier {
+    export function createLoopVariable(): Unbound<Identifier> {
         const name = createIdentifier("");
         name.autoGenerateKind = GeneratedIdentifierKind.Loop;
         name.autoGenerateId = nextAutoGenerateId;
@@ -156,7 +456,7 @@ namespace ts {
     }
 
     /** Create a unique name based on the supplied text. */
-    export function createUniqueName(text: string): Identifier {
+    export function createUniqueName(text: string): Unbound<Identifier> {
         const name = createIdentifier(text);
         name.autoGenerateKind = GeneratedIdentifierKind.Unique;
         name.autoGenerateId = nextAutoGenerateId;
@@ -165,10 +465,10 @@ namespace ts {
     }
 
     /** Create a unique name generated for a node. */
-    export function getGeneratedNameForNode(node: Node): Identifier;
+    export function getGeneratedNameForNode(node: Node): Unbound<Identifier>;
     // tslint:disable-next-line unified-signatures
-    /*@internal*/ export function getGeneratedNameForNode(node: Node, shouldSkipNameGenerationScope?: boolean): Identifier;
-    export function getGeneratedNameForNode(node: Node, shouldSkipNameGenerationScope?: boolean): Identifier {
+    /*@internal*/ export function getGeneratedNameForNode(node: Node, shouldSkipNameGenerationScope?: boolean): Unbound<Identifier>;
+    export function getGeneratedNameForNode(node: Node, shouldSkipNameGenerationScope?: boolean): Unbound<Identifier> {
         const name = createIdentifier("");
         name.autoGenerateKind = GeneratedIdentifierKind.Node;
         name.autoGenerateId = nextAutoGenerateId;
@@ -181,35 +481,35 @@ namespace ts {
     // Punctuation
 
     export function createToken<TKind extends SyntaxKind>(token: TKind) {
-        return <Token<TKind>>createSynthesizedNode(token);
+        return createSynthesizedNode(token);
     }
 
     // Reserved words
 
     export function createSuper() {
-        return <SuperExpression>createSynthesizedNode(SyntaxKind.SuperKeyword);
+        return createSynthesizedNode(SyntaxKind.SuperKeyword);
     }
 
     export function createThis() {
-        return <ThisExpression & Token<SyntaxKind.ThisKeyword>>createSynthesizedNode(SyntaxKind.ThisKeyword);
+        return createSynthesizedNode(SyntaxKind.ThisKeyword);
     }
 
     export function createNull() {
-        return <NullLiteral & Token<SyntaxKind.NullKeyword>>createSynthesizedNode(SyntaxKind.NullKeyword);
+        return createSynthesizedNode(SyntaxKind.NullKeyword);
     }
 
     export function createTrue() {
-        return <BooleanLiteral & Token<SyntaxKind.TrueKeyword>>createSynthesizedNode(SyntaxKind.TrueKeyword);
+        return <Unbound<BooleanLiteral & Token<SyntaxKind.TrueKeyword>>>createSynthesizedNode(SyntaxKind.TrueKeyword);
     }
 
     export function createFalse() {
-        return <BooleanLiteral & Token<SyntaxKind.FalseKeyword>>createSynthesizedNode(SyntaxKind.FalseKeyword);
+        return <Unbound<BooleanLiteral & Token<SyntaxKind.FalseKeyword>>>createSynthesizedNode(SyntaxKind.FalseKeyword);
     }
 
     // Names
 
     export function createQualifiedName(left: EntityName, right: string | Identifier) {
-        const node = <QualifiedName>createSynthesizedNode(SyntaxKind.QualifiedName);
+        const node = createSynthesizedNode(SyntaxKind.QualifiedName);
         node.left = left;
         node.right = asName(right);
         return node;
@@ -223,7 +523,7 @@ namespace ts {
     }
 
     export function createComputedPropertyName(expression: Expression) {
-        const node = <ComputedPropertyName>createSynthesizedNode(SyntaxKind.ComputedPropertyName);
+        const node = createSynthesizedNode(SyntaxKind.ComputedPropertyName);
         node.expression = expression;
         return node;
     }
@@ -260,7 +560,7 @@ namespace ts {
         questionToken?: QuestionToken,
         type?: TypeNode,
         initializer?: Expression) {
-        const node = <ParameterDeclaration>createSynthesizedNode(SyntaxKind.Parameter);
+        const node = createSynthesizedNode(SyntaxKind.Parameter);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.dotDotDotToken = dotDotDotToken;
@@ -292,7 +592,7 @@ namespace ts {
     }
 
     export function createDecorator(expression: Expression) {
-        const node = <Decorator>createSynthesizedNode(SyntaxKind.Decorator);
+        const node = createSynthesizedNode(SyntaxKind.Decorator);
         node.expression = parenthesizeForAccess(expression);
         return node;
     }
@@ -344,7 +644,7 @@ namespace ts {
         questionToken: QuestionToken | undefined,
         type: TypeNode | undefined,
         initializer: Expression | undefined) {
-        const node = <PropertyDeclaration>createSynthesizedNode(SyntaxKind.PropertyDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.PropertyDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -404,7 +704,7 @@ namespace ts {
         parameters: ReadonlyArray<ParameterDeclaration>,
         type: TypeNode | undefined,
         body: Block | undefined) {
-        const node = <MethodDeclaration>createSynthesizedNode(SyntaxKind.MethodDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.MethodDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.asteriskToken = asteriskToken;
@@ -442,7 +742,7 @@ namespace ts {
     }
 
     export function createConstructor(decorators: ReadonlyArray<Decorator> | undefined, modifiers: ReadonlyArray<Modifier> | undefined, parameters: ReadonlyArray<ParameterDeclaration>, body: Block | undefined) {
-        const node = <ConstructorDeclaration>createSynthesizedNode(SyntaxKind.Constructor);
+        const node = createSynthesizedNode(SyntaxKind.Constructor);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.typeParameters = undefined;
@@ -473,7 +773,7 @@ namespace ts {
         parameters: ReadonlyArray<ParameterDeclaration>,
         type: TypeNode | undefined,
         body: Block | undefined) {
-        const node = <GetAccessorDeclaration>createSynthesizedNode(SyntaxKind.GetAccessor);
+        const node = createSynthesizedNode(SyntaxKind.GetAccessor);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -508,7 +808,7 @@ namespace ts {
         name: string | PropertyName,
         parameters: ReadonlyArray<ParameterDeclaration>,
         body: Block | undefined) {
-        const node = <SetAccessorDeclaration>createSynthesizedNode(SyntaxKind.SetAccessor);
+        const node = createSynthesizedNode(SyntaxKind.SetAccessor);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -597,7 +897,7 @@ namespace ts {
     // Types
 
     export function createKeywordTypeNode(kind: KeywordTypeNode["kind"]) {
-        return <KeywordTypeNode>createSynthesizedNode(kind);
+        return createSynthesizedNode(kind) as Unbound<KeywordTypeNode>;
     }
 
     export function createTypePredicateNode(parameterName: Identifier | ThisTypeNode | string, type: TypeNode) {
@@ -721,7 +1021,7 @@ namespace ts {
     }
 
     export function createParenthesizedType(type: TypeNode) {
-        const node = <ParenthesizedTypeNode>createSynthesizedNode(SyntaxKind.ParenthesizedType);
+        const node = createSynthesizedNode(SyntaxKind.ParenthesizedType);
         node.type = type;
         return node;
     }
@@ -733,7 +1033,7 @@ namespace ts {
     }
 
     export function createThisTypeNode() {
-        return <ThisTypeNode>createSynthesizedNode(SyntaxKind.ThisType);
+        return createSynthesizedNode(SyntaxKind.ThisType);
     }
 
     export function createTypeOperatorNode(type: TypeNode) {
@@ -794,7 +1094,7 @@ namespace ts {
     // Binding Patterns
 
     export function createObjectBindingPattern(elements: ReadonlyArray<BindingElement>) {
-        const node = <ObjectBindingPattern>createSynthesizedNode(SyntaxKind.ObjectBindingPattern);
+        const node = createSynthesizedNode(SyntaxKind.ObjectBindingPattern);
         node.elements = createNodeArray(elements);
         return node;
     }
@@ -806,7 +1106,7 @@ namespace ts {
     }
 
     export function createArrayBindingPattern(elements: ReadonlyArray<ArrayBindingElement>) {
-        const node = <ArrayBindingPattern>createSynthesizedNode(SyntaxKind.ArrayBindingPattern);
+        const node = createSynthesizedNode(SyntaxKind.ArrayBindingPattern);
         node.elements = createNodeArray(elements);
         return node;
     }
@@ -818,7 +1118,7 @@ namespace ts {
     }
 
     export function createBindingElement(dotDotDotToken: DotDotDotToken | undefined, propertyName: string | PropertyName | undefined, name: string | BindingName, initializer?: Expression) {
-        const node = <BindingElement>createSynthesizedNode(SyntaxKind.BindingElement);
+        const node = createSynthesizedNode(SyntaxKind.BindingElement);
         node.dotDotDotToken = dotDotDotToken;
         node.propertyName = asName(propertyName);
         node.name = asName(name);
@@ -838,7 +1138,7 @@ namespace ts {
     // Expression
 
     export function createArrayLiteral(elements?: ReadonlyArray<Expression>, multiLine?: boolean) {
-        const node = <ArrayLiteralExpression>createSynthesizedNode(SyntaxKind.ArrayLiteralExpression);
+        const node = createSynthesizedNode(SyntaxKind.ArrayLiteralExpression);
         node.elements = parenthesizeListElements(createNodeArray(elements));
         if (multiLine) node.multiLine = true;
         return node;
@@ -851,7 +1151,7 @@ namespace ts {
     }
 
     export function createObjectLiteral(properties?: ReadonlyArray<ObjectLiteralElementLike>, multiLine?: boolean) {
-        const node = <ObjectLiteralExpression>createSynthesizedNode(SyntaxKind.ObjectLiteralExpression);
+        const node = createSynthesizedNode(SyntaxKind.ObjectLiteralExpression);
         node.properties = createNodeArray(properties);
         if (multiLine) node.multiLine = true;
         return node;
@@ -864,7 +1164,7 @@ namespace ts {
     }
 
     export function createPropertyAccess(expression: Expression, name: string | Identifier) {
-        const node = <PropertyAccessExpression>createSynthesizedNode(SyntaxKind.PropertyAccessExpression);
+        const node = createSynthesizedNode(SyntaxKind.PropertyAccessExpression);
         node.expression = parenthesizeForAccess(expression);
         node.name = asName(name);
         setEmitFlags(node, EmitFlags.NoIndentation);
@@ -881,7 +1181,7 @@ namespace ts {
     }
 
     export function createElementAccess(expression: Expression, index: number | Expression) {
-        const node = <ElementAccessExpression>createSynthesizedNode(SyntaxKind.ElementAccessExpression);
+        const node = createSynthesizedNode(SyntaxKind.ElementAccessExpression);
         node.expression = parenthesizeForAccess(expression);
         node.argumentExpression = asExpression(index);
         return node;
@@ -895,7 +1195,7 @@ namespace ts {
     }
 
     export function createCall(expression: Expression, typeArguments: ReadonlyArray<TypeNode> | undefined, argumentsArray: ReadonlyArray<Expression>) {
-        const node = <CallExpression>createSynthesizedNode(SyntaxKind.CallExpression);
+        const node = createSynthesizedNode(SyntaxKind.CallExpression);
         node.expression = parenthesizeForAccess(expression);
         node.typeArguments = asNodeArray(typeArguments);
         node.arguments = parenthesizeListElements(createNodeArray(argumentsArray));
@@ -911,7 +1211,7 @@ namespace ts {
     }
 
     export function createNew(expression: Expression, typeArguments: ReadonlyArray<TypeNode> | undefined, argumentsArray: ReadonlyArray<Expression> | undefined) {
-        const node = <NewExpression>createSynthesizedNode(SyntaxKind.NewExpression);
+        const node = createSynthesizedNode(SyntaxKind.NewExpression);
         node.expression = parenthesizeForNew(expression);
         node.typeArguments = asNodeArray(typeArguments);
         node.arguments = argumentsArray ? parenthesizeListElements(createNodeArray(argumentsArray)) : undefined;
@@ -927,7 +1227,7 @@ namespace ts {
     }
 
     export function createTaggedTemplate(tag: Expression, template: TemplateLiteral) {
-        const node = <TaggedTemplateExpression>createSynthesizedNode(SyntaxKind.TaggedTemplateExpression);
+        const node = createSynthesizedNode(SyntaxKind.TaggedTemplateExpression);
         node.tag = parenthesizeForAccess(tag);
         node.template = template;
         return node;
@@ -941,7 +1241,7 @@ namespace ts {
     }
 
     export function createTypeAssertion(type: TypeNode, expression: Expression) {
-        const node = <TypeAssertion>createSynthesizedNode(SyntaxKind.TypeAssertionExpression);
+        const node = createSynthesizedNode(SyntaxKind.TypeAssertionExpression);
         node.type = type;
         node.expression = parenthesizePrefixOperand(expression);
         return node;
@@ -955,7 +1255,7 @@ namespace ts {
     }
 
     export function createParen(expression: Expression) {
-        const node = <ParenthesizedExpression>createSynthesizedNode(SyntaxKind.ParenthesizedExpression);
+        const node = createSynthesizedNode(SyntaxKind.ParenthesizedExpression);
         node.expression = expression;
         return node;
     }
@@ -974,7 +1274,7 @@ namespace ts {
         parameters: ReadonlyArray<ParameterDeclaration>,
         type: TypeNode | undefined,
         body: Block) {
-        const node = <FunctionExpression>createSynthesizedNode(SyntaxKind.FunctionExpression);
+        const node = createSynthesizedNode(SyntaxKind.FunctionExpression);
         node.modifiers = asNodeArray(modifiers);
         node.asteriskToken = asteriskToken;
         node.name = asName(name);
@@ -1012,7 +1312,7 @@ namespace ts {
         type: TypeNode | undefined,
         equalsGreaterThanToken: EqualsGreaterThanToken | undefined,
         body: ConciseBody) {
-        const node = <ArrowFunction>createSynthesizedNode(SyntaxKind.ArrowFunction);
+        const node = createSynthesizedNode(SyntaxKind.ArrowFunction);
         node.modifiers = asNodeArray(modifiers);
         node.typeParameters = asNodeArray(typeParameters);
         node.parameters = createNodeArray(parameters);
@@ -1069,7 +1369,7 @@ namespace ts {
     }
 
     export function createDelete(expression: Expression) {
-        const node = <DeleteExpression>createSynthesizedNode(SyntaxKind.DeleteExpression);
+        const node = createSynthesizedNode(SyntaxKind.DeleteExpression);
         node.expression = parenthesizePrefixOperand(expression);
         return node;
     }
@@ -1081,7 +1381,7 @@ namespace ts {
     }
 
     export function createTypeOf(expression: Expression) {
-        const node = <TypeOfExpression>createSynthesizedNode(SyntaxKind.TypeOfExpression);
+        const node = createSynthesizedNode(SyntaxKind.TypeOfExpression);
         node.expression = parenthesizePrefixOperand(expression);
         return node;
     }
@@ -1093,7 +1393,7 @@ namespace ts {
     }
 
     export function createVoid(expression: Expression) {
-        const node = <VoidExpression>createSynthesizedNode(SyntaxKind.VoidExpression);
+        const node = createSynthesizedNode(SyntaxKind.VoidExpression);
         node.expression = parenthesizePrefixOperand(expression);
         return node;
     }
@@ -1105,7 +1405,7 @@ namespace ts {
     }
 
     export function createAwait(expression: Expression) {
-        const node = <AwaitExpression>createSynthesizedNode(SyntaxKind.AwaitExpression);
+        const node = createSynthesizedNode(SyntaxKind.AwaitExpression);
         node.expression = parenthesizePrefixOperand(expression);
         return node;
     }
@@ -1117,7 +1417,7 @@ namespace ts {
     }
 
     export function createPrefix(operator: PrefixUnaryOperator, operand: Expression) {
-        const node = <PrefixUnaryExpression>createSynthesizedNode(SyntaxKind.PrefixUnaryExpression);
+        const node = createSynthesizedNode(SyntaxKind.PrefixUnaryExpression);
         node.operator = operator;
         node.operand = parenthesizePrefixOperand(operand);
         return node;
@@ -1130,7 +1430,7 @@ namespace ts {
     }
 
     export function createPostfix(operand: Expression, operator: PostfixUnaryOperator) {
-        const node = <PostfixUnaryExpression>createSynthesizedNode(SyntaxKind.PostfixUnaryExpression);
+        const node = createSynthesizedNode(SyntaxKind.PostfixUnaryExpression);
         node.operand = parenthesizePostfixOperand(operand);
         node.operator = operator;
         return node;
@@ -1143,7 +1443,7 @@ namespace ts {
     }
 
     export function createBinary(left: Expression, operator: BinaryOperator | BinaryOperatorToken, right: Expression) {
-        const node = <BinaryExpression>createSynthesizedNode(SyntaxKind.BinaryExpression);
+        const node = createSynthesizedNode(SyntaxKind.BinaryExpression);
         const operatorToken = asToken(operator);
         const operatorKind = operatorToken.kind;
         node.left = parenthesizeBinaryOperand(operatorKind, left, /*isLeftSideOfBinary*/ true, /*leftOperand*/ undefined);
@@ -1162,7 +1462,7 @@ namespace ts {
     export function createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression): ConditionalExpression;
     export function createConditional(condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression;
     export function createConditional(condition: Expression, questionTokenOrWhenTrue: QuestionToken | Expression, whenTrueOrWhenFalse: Expression, colonToken?: ColonToken, whenFalse?: Expression) {
-        const node = <ConditionalExpression>createSynthesizedNode(SyntaxKind.ConditionalExpression);
+        const node = createSynthesizedNode(SyntaxKind.ConditionalExpression);
         node.condition = parenthesizeForConditionalHead(condition);
         node.questionToken = whenFalse ? <QuestionToken>questionTokenOrWhenTrue : createToken(SyntaxKind.QuestionToken);
         node.whenTrue = parenthesizeSubexpressionOfConditionalExpression(whenFalse ? whenTrueOrWhenFalse : <Expression>questionTokenOrWhenTrue);
@@ -1200,7 +1500,7 @@ namespace ts {
     }
 
     export function createTemplateExpression(head: TemplateHead, templateSpans: ReadonlyArray<TemplateSpan>) {
-        const node = <TemplateExpression>createSynthesizedNode(SyntaxKind.TemplateExpression);
+        const node = createSynthesizedNode(SyntaxKind.TemplateExpression);
         node.head = head;
         node.templateSpans = createNodeArray(templateSpans);
         return node;
@@ -1214,25 +1514,25 @@ namespace ts {
     }
 
     export function createTemplateHead(text: string) {
-        const node = <TemplateHead>createSynthesizedNode(SyntaxKind.TemplateHead);
+        const node = createSynthesizedNode(SyntaxKind.TemplateHead);
         node.text = text;
         return node;
     }
 
     export function createTemplateMiddle(text: string) {
-        const node = <TemplateMiddle>createSynthesizedNode(SyntaxKind.TemplateMiddle);
+        const node = createSynthesizedNode(SyntaxKind.TemplateMiddle);
         node.text = text;
         return node;
     }
 
     export function createTemplateTail(text: string) {
-        const node = <TemplateTail>createSynthesizedNode(SyntaxKind.TemplateTail);
+        const node = createSynthesizedNode(SyntaxKind.TemplateTail);
         node.text = text;
         return node;
     }
 
     export function createNoSubstitutionTemplateLiteral(text: string) {
-        const node = <NoSubstitutionTemplateLiteral>createSynthesizedNode(SyntaxKind.NoSubstitutionTemplateLiteral);
+        const node = createSynthesizedNode(SyntaxKind.NoSubstitutionTemplateLiteral);
         node.text = text;
         return node;
     }
@@ -1240,7 +1540,7 @@ namespace ts {
     export function createYield(expression?: Expression): YieldExpression;
     export function createYield(asteriskToken: AsteriskToken, expression: Expression): YieldExpression;
     export function createYield(asteriskTokenOrExpression?: AsteriskToken | Expression, expression?: Expression) {
-        const node = <YieldExpression>createSynthesizedNode(SyntaxKind.YieldExpression);
+        const node = createSynthesizedNode(SyntaxKind.YieldExpression);
         node.asteriskToken = asteriskTokenOrExpression && asteriskTokenOrExpression.kind === SyntaxKind.AsteriskToken ? <AsteriskToken>asteriskTokenOrExpression : undefined;
         node.expression = asteriskTokenOrExpression && asteriskTokenOrExpression.kind !== SyntaxKind.AsteriskToken ? <Expression>asteriskTokenOrExpression : expression;
         return node;
@@ -1254,7 +1554,7 @@ namespace ts {
     }
 
     export function createSpread(expression: Expression) {
-        const node = <SpreadElement>createSynthesizedNode(SyntaxKind.SpreadElement);
+        const node = createSynthesizedNode(SyntaxKind.SpreadElement);
         node.expression = parenthesizeExpressionForList(expression);
         return node;
     }
@@ -1271,7 +1571,7 @@ namespace ts {
         typeParameters: ReadonlyArray<TypeParameterDeclaration> | undefined,
         heritageClauses: ReadonlyArray<HeritageClause>,
         members: ReadonlyArray<ClassElement>) {
-        const node = <ClassExpression>createSynthesizedNode(SyntaxKind.ClassExpression);
+        const node = createSynthesizedNode(SyntaxKind.ClassExpression);
         node.decorators = undefined;
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1298,11 +1598,11 @@ namespace ts {
     }
 
     export function createOmittedExpression() {
-        return <OmittedExpression>createSynthesizedNode(SyntaxKind.OmittedExpression);
+        return createSynthesizedNode(SyntaxKind.OmittedExpression);
     }
 
     export function createExpressionWithTypeArguments(typeArguments: ReadonlyArray<TypeNode>, expression: Expression) {
-        const node = <ExpressionWithTypeArguments>createSynthesizedNode(SyntaxKind.ExpressionWithTypeArguments);
+        const node = createSynthesizedNode(SyntaxKind.ExpressionWithTypeArguments);
         node.expression = parenthesizeForAccess(expression);
         node.typeArguments = asNodeArray(typeArguments);
         return node;
@@ -1316,7 +1616,7 @@ namespace ts {
     }
 
     export function createAsExpression(expression: Expression, type: TypeNode) {
-        const node = <AsExpression>createSynthesizedNode(SyntaxKind.AsExpression);
+        const node = createSynthesizedNode(SyntaxKind.AsExpression);
         node.expression = expression;
         node.type = type;
         return node;
@@ -1330,7 +1630,7 @@ namespace ts {
     }
 
     export function createNonNullExpression(expression: Expression) {
-        const node = <NonNullExpression>createSynthesizedNode(SyntaxKind.NonNullExpression);
+        const node = createSynthesizedNode(SyntaxKind.NonNullExpression);
         node.expression = parenthesizeForAccess(expression);
         return node;
     }
@@ -1342,7 +1642,7 @@ namespace ts {
     }
 
     export function createMetaProperty(keywordToken: MetaProperty["keywordToken"], name: Identifier) {
-        const node = <MetaProperty>createSynthesizedNode(SyntaxKind.MetaProperty);
+        const node = createSynthesizedNode(SyntaxKind.MetaProperty);
         node.keywordToken = keywordToken;
         node.name = name;
         return node;
@@ -1357,7 +1657,7 @@ namespace ts {
     // Misc
 
     export function createTemplateSpan(expression: Expression, literal: TemplateMiddle | TemplateTail) {
-        const node = <TemplateSpan>createSynthesizedNode(SyntaxKind.TemplateSpan);
+        const node = createSynthesizedNode(SyntaxKind.TemplateSpan);
         node.expression = expression;
         node.literal = literal;
         return node;
@@ -1371,13 +1671,13 @@ namespace ts {
     }
 
     export function createSemicolonClassElement() {
-        return <SemicolonClassElement>createSynthesizedNode(SyntaxKind.SemicolonClassElement);
+        return createSynthesizedNode(SyntaxKind.SemicolonClassElement);
     }
 
     // Element
 
     export function createBlock(statements: ReadonlyArray<Statement>, multiLine?: boolean): Block {
-        const block = <Block>createSynthesizedNode(SyntaxKind.Block);
+        const block = createSynthesizedNode(SyntaxKind.Block);
         block.statements = createNodeArray(statements);
         if (multiLine) block.multiLine = multiLine;
         return block;
@@ -1390,7 +1690,7 @@ namespace ts {
     }
 
     export function createVariableStatement(modifiers: ReadonlyArray<Modifier> | undefined, declarationList: VariableDeclarationList | ReadonlyArray<VariableDeclaration>) {
-        const node = <VariableStatement>createSynthesizedNode(SyntaxKind.VariableStatement);
+        const node = createSynthesizedNode(SyntaxKind.VariableStatement);
         node.decorators = undefined;
         node.modifiers = asNodeArray(modifiers);
         node.declarationList = isArray(declarationList) ? createVariableDeclarationList(declarationList) : declarationList;
@@ -1405,11 +1705,11 @@ namespace ts {
     }
 
     export function createEmptyStatement() {
-        return <EmptyStatement>createSynthesizedNode(SyntaxKind.EmptyStatement);
+        return createSynthesizedNode(SyntaxKind.EmptyStatement);
     }
 
     export function createStatement(expression: Expression) {
-        const node = <ExpressionStatement>createSynthesizedNode(SyntaxKind.ExpressionStatement);
+        const node = createSynthesizedNode(SyntaxKind.ExpressionStatement);
         node.expression = parenthesizeExpressionForExpressionStatement(expression);
         return node;
     }
@@ -1421,7 +1721,7 @@ namespace ts {
     }
 
     export function createIf(expression: Expression, thenStatement: Statement, elseStatement?: Statement) {
-        const node = <IfStatement>createSynthesizedNode(SyntaxKind.IfStatement);
+        const node = createSynthesizedNode(SyntaxKind.IfStatement);
         node.expression = expression;
         node.thenStatement = thenStatement;
         node.elseStatement = elseStatement;
@@ -1437,7 +1737,7 @@ namespace ts {
     }
 
     export function createDo(statement: Statement, expression: Expression) {
-        const node = <DoStatement>createSynthesizedNode(SyntaxKind.DoStatement);
+        const node = createSynthesizedNode(SyntaxKind.DoStatement);
         node.statement = statement;
         node.expression = expression;
         return node;
@@ -1451,7 +1751,7 @@ namespace ts {
     }
 
     export function createWhile(expression: Expression, statement: Statement) {
-        const node = <WhileStatement>createSynthesizedNode(SyntaxKind.WhileStatement);
+        const node = createSynthesizedNode(SyntaxKind.WhileStatement);
         node.expression = expression;
         node.statement = statement;
         return node;
@@ -1465,7 +1765,7 @@ namespace ts {
     }
 
     export function createFor(initializer: ForInitializer | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Statement) {
-        const node = <ForStatement>createSynthesizedNode(SyntaxKind.ForStatement);
+        const node = createSynthesizedNode(SyntaxKind.ForStatement);
         node.initializer = initializer;
         node.condition = condition;
         node.incrementor = incrementor;
@@ -1483,7 +1783,7 @@ namespace ts {
     }
 
     export function createForIn(initializer: ForInitializer, expression: Expression, statement: Statement) {
-        const node = <ForInStatement>createSynthesizedNode(SyntaxKind.ForInStatement);
+        const node = createSynthesizedNode(SyntaxKind.ForInStatement);
         node.initializer = initializer;
         node.expression = expression;
         node.statement = statement;
@@ -1499,7 +1799,7 @@ namespace ts {
     }
 
     export function createForOf(awaitModifier: AwaitKeywordToken, initializer: ForInitializer, expression: Expression, statement: Statement) {
-        const node = <ForOfStatement>createSynthesizedNode(SyntaxKind.ForOfStatement);
+        const node = createSynthesizedNode(SyntaxKind.ForOfStatement);
         node.awaitModifier = awaitModifier;
         node.initializer = initializer;
         node.expression = expression;
@@ -1517,7 +1817,7 @@ namespace ts {
     }
 
     export function createContinue(label?: string | Identifier): ContinueStatement {
-        const node = <ContinueStatement>createSynthesizedNode(SyntaxKind.ContinueStatement);
+        const node = createSynthesizedNode(SyntaxKind.ContinueStatement);
         node.label = asName(label);
         return node;
     }
@@ -1529,7 +1829,7 @@ namespace ts {
     }
 
     export function createBreak(label?: string | Identifier): BreakStatement {
-        const node = <BreakStatement>createSynthesizedNode(SyntaxKind.BreakStatement);
+        const node = createSynthesizedNode(SyntaxKind.BreakStatement);
         node.label = asName(label);
         return node;
     }
@@ -1541,7 +1841,7 @@ namespace ts {
     }
 
     export function createReturn(expression?: Expression): ReturnStatement {
-        const node = <ReturnStatement>createSynthesizedNode(SyntaxKind.ReturnStatement);
+        const node = createSynthesizedNode(SyntaxKind.ReturnStatement);
         node.expression = expression;
         return node;
     }
@@ -1553,7 +1853,7 @@ namespace ts {
     }
 
     export function createWith(expression: Expression, statement: Statement) {
-        const node = <WithStatement>createSynthesizedNode(SyntaxKind.WithStatement);
+        const node = createSynthesizedNode(SyntaxKind.WithStatement);
         node.expression = expression;
         node.statement = statement;
         return node;
@@ -1567,7 +1867,7 @@ namespace ts {
     }
 
     export function createSwitch(expression: Expression, caseBlock: CaseBlock): SwitchStatement {
-        const node = <SwitchStatement>createSynthesizedNode(SyntaxKind.SwitchStatement);
+        const node = createSynthesizedNode(SyntaxKind.SwitchStatement);
         node.expression = parenthesizeExpressionForList(expression);
         node.caseBlock = caseBlock;
         return node;
@@ -1581,7 +1881,7 @@ namespace ts {
     }
 
     export function createLabel(label: string | Identifier, statement: Statement) {
-        const node = <LabeledStatement>createSynthesizedNode(SyntaxKind.LabeledStatement);
+        const node = createSynthesizedNode(SyntaxKind.LabeledStatement);
         node.label = asName(label);
         node.statement = statement;
         return node;
@@ -1595,7 +1895,7 @@ namespace ts {
     }
 
     export function createThrow(expression: Expression) {
-        const node = <ThrowStatement>createSynthesizedNode(SyntaxKind.ThrowStatement);
+        const node = createSynthesizedNode(SyntaxKind.ThrowStatement);
         node.expression = expression;
         return node;
     }
@@ -1607,7 +1907,7 @@ namespace ts {
     }
 
     export function createTry(tryBlock: Block, catchClause: CatchClause | undefined, finallyBlock: Block | undefined) {
-        const node = <TryStatement>createSynthesizedNode(SyntaxKind.TryStatement);
+        const node = createSynthesizedNode(SyntaxKind.TryStatement);
         node.tryBlock = tryBlock;
         node.catchClause = catchClause;
         node.finallyBlock = finallyBlock;
@@ -1623,11 +1923,11 @@ namespace ts {
     }
 
     export function createDebuggerStatement() {
-        return <DebuggerStatement>createSynthesizedNode(SyntaxKind.DebuggerStatement);
+        return createSynthesizedNode(SyntaxKind.DebuggerStatement);
     }
 
     export function createVariableDeclaration(name: string | BindingName, type?: TypeNode, initializer?: Expression) {
-        const node = <VariableDeclaration>createSynthesizedNode(SyntaxKind.VariableDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.VariableDeclaration);
         node.name = asName(name);
         node.type = type;
         node.initializer = initializer !== undefined ? parenthesizeExpressionForList(initializer) : undefined;
@@ -1643,7 +1943,7 @@ namespace ts {
     }
 
     export function createVariableDeclarationList(declarations: ReadonlyArray<VariableDeclaration>, flags?: NodeFlags) {
-        const node = <VariableDeclarationList>createSynthesizedNode(SyntaxKind.VariableDeclarationList);
+        const node = createSynthesizedNode(SyntaxKind.VariableDeclarationList);
         node.flags |= flags & NodeFlags.BlockScoped;
         node.declarations = createNodeArray(declarations);
         return node;
@@ -1664,7 +1964,7 @@ namespace ts {
         parameters: ReadonlyArray<ParameterDeclaration>,
         type: TypeNode | undefined,
         body: Block | undefined) {
-        const node = <FunctionDeclaration>createSynthesizedNode(SyntaxKind.FunctionDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.FunctionDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.asteriskToken = asteriskToken;
@@ -1705,7 +2005,7 @@ namespace ts {
         typeParameters: ReadonlyArray<TypeParameterDeclaration> | undefined,
         heritageClauses: ReadonlyArray<HeritageClause>,
         members: ReadonlyArray<ClassElement>) {
-        const node = <ClassDeclaration>createSynthesizedNode(SyntaxKind.ClassDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.ClassDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1740,7 +2040,7 @@ namespace ts {
         typeParameters: ReadonlyArray<TypeParameterDeclaration> | undefined,
         heritageClauses: ReadonlyArray<HeritageClause> | undefined,
         members: ReadonlyArray<TypeElement>) {
-        const node = <InterfaceDeclaration>createSynthesizedNode(SyntaxKind.InterfaceDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.InterfaceDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1774,7 +2074,7 @@ namespace ts {
         name: string | Identifier,
         typeParameters: ReadonlyArray<TypeParameterDeclaration> | undefined,
         type: TypeNode) {
-        const node = <TypeAliasDeclaration>createSynthesizedNode(SyntaxKind.TypeAliasDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.TypeAliasDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1804,7 +2104,7 @@ namespace ts {
         modifiers: ReadonlyArray<Modifier> | undefined,
         name: string | Identifier,
         members: ReadonlyArray<EnumMember>) {
-        const node = <EnumDeclaration>createSynthesizedNode(SyntaxKind.EnumDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.EnumDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1827,7 +2127,7 @@ namespace ts {
     }
 
     export function createModuleDeclaration(decorators: ReadonlyArray<Decorator> | undefined, modifiers: ReadonlyArray<Modifier> | undefined, name: ModuleName, body: ModuleBody | undefined, flags?: NodeFlags) {
-        const node = <ModuleDeclaration>createSynthesizedNode(SyntaxKind.ModuleDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.ModuleDeclaration);
         node.flags |= flags & (NodeFlags.Namespace | NodeFlags.NestedNamespace | NodeFlags.GlobalAugmentation);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
@@ -1846,7 +2146,7 @@ namespace ts {
     }
 
     export function createModuleBlock(statements: ReadonlyArray<Statement>) {
-        const node = <ModuleBlock>createSynthesizedNode(SyntaxKind.ModuleBlock);
+        const node = createSynthesizedNode(SyntaxKind.ModuleBlock);
         node.statements = createNodeArray(statements);
         return node;
     }
@@ -1858,7 +2158,7 @@ namespace ts {
     }
 
     export function createCaseBlock(clauses: ReadonlyArray<CaseOrDefaultClause>): CaseBlock {
-        const node = <CaseBlock>createSynthesizedNode(SyntaxKind.CaseBlock);
+        const node = createSynthesizedNode(SyntaxKind.CaseBlock);
         node.clauses = createNodeArray(clauses);
         return node;
     }
@@ -1870,7 +2170,7 @@ namespace ts {
     }
 
     export function createNamespaceExportDeclaration(name: string | Identifier) {
-        const node = <NamespaceExportDeclaration>createSynthesizedNode(SyntaxKind.NamespaceExportDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.NamespaceExportDeclaration);
         node.name = asName(name);
         return node;
     }
@@ -1882,7 +2182,7 @@ namespace ts {
     }
 
     export function createImportEqualsDeclaration(decorators: ReadonlyArray<Decorator> | undefined, modifiers: ReadonlyArray<Modifier> | undefined, name: string | Identifier, moduleReference: ModuleReference) {
-        const node = <ImportEqualsDeclaration>createSynthesizedNode(SyntaxKind.ImportEqualsDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.ImportEqualsDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.name = asName(name);
@@ -1904,7 +2204,7 @@ namespace ts {
         modifiers: ReadonlyArray<Modifier> | undefined,
         importClause: ImportClause | undefined,
         moduleSpecifier?: Expression): ImportDeclaration {
-        const node = <ImportDeclaration>createSynthesizedNode(SyntaxKind.ImportDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.ImportDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.importClause = importClause;
@@ -1927,7 +2227,7 @@ namespace ts {
     }
 
     export function createImportClause(name: Identifier | undefined, namedBindings: NamedImportBindings | undefined): ImportClause {
-        const node = <ImportClause>createSynthesizedNode(SyntaxKind.ImportClause);
+        const node = createSynthesizedNode(SyntaxKind.ImportClause);
         node.name = name;
         node.namedBindings = namedBindings;
         return node;
@@ -1941,7 +2241,7 @@ namespace ts {
     }
 
     export function createNamespaceImport(name: Identifier): NamespaceImport {
-        const node = <NamespaceImport>createSynthesizedNode(SyntaxKind.NamespaceImport);
+        const node = createSynthesizedNode(SyntaxKind.NamespaceImport);
         node.name = name;
         return node;
     }
@@ -1953,7 +2253,7 @@ namespace ts {
     }
 
     export function createNamedImports(elements: ReadonlyArray<ImportSpecifier>): NamedImports {
-        const node = <NamedImports>createSynthesizedNode(SyntaxKind.NamedImports);
+        const node = createSynthesizedNode(SyntaxKind.NamedImports);
         node.elements = createNodeArray(elements);
         return node;
     }
@@ -1965,7 +2265,7 @@ namespace ts {
     }
 
     export function createImportSpecifier(propertyName: Identifier | undefined, name: Identifier) {
-        const node = <ImportSpecifier>createSynthesizedNode(SyntaxKind.ImportSpecifier);
+        const node = createSynthesizedNode(SyntaxKind.ImportSpecifier);
         node.propertyName = propertyName;
         node.name = name;
         return node;
@@ -1979,7 +2279,7 @@ namespace ts {
     }
 
     export function createExportAssignment(decorators: ReadonlyArray<Decorator> | undefined, modifiers: ReadonlyArray<Modifier> | undefined, isExportEquals: boolean, expression: Expression) {
-        const node = <ExportAssignment>createSynthesizedNode(SyntaxKind.ExportAssignment);
+        const node = createSynthesizedNode(SyntaxKind.ExportAssignment);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.isExportEquals = isExportEquals;
@@ -1996,7 +2296,7 @@ namespace ts {
     }
 
     export function createExportDeclaration(decorators: ReadonlyArray<Decorator> | undefined, modifiers: ReadonlyArray<Modifier> | undefined, exportClause: NamedExports | undefined, moduleSpecifier?: Expression) {
-        const node = <ExportDeclaration>createSynthesizedNode(SyntaxKind.ExportDeclaration);
+        const node = createSynthesizedNode(SyntaxKind.ExportDeclaration);
         node.decorators = asNodeArray(decorators);
         node.modifiers = asNodeArray(modifiers);
         node.exportClause = exportClause;
@@ -2019,7 +2319,7 @@ namespace ts {
     }
 
     export function createNamedExports(elements: ReadonlyArray<ExportSpecifier>) {
-        const node = <NamedExports>createSynthesizedNode(SyntaxKind.NamedExports);
+        const node = createSynthesizedNode(SyntaxKind.NamedExports);
         node.elements = createNodeArray(elements);
         return node;
     }
@@ -2031,7 +2331,7 @@ namespace ts {
     }
 
     export function createExportSpecifier(propertyName: string | Identifier | undefined, name: string | Identifier) {
-        const node = <ExportSpecifier>createSynthesizedNode(SyntaxKind.ExportSpecifier);
+        const node = createSynthesizedNode(SyntaxKind.ExportSpecifier);
         node.propertyName = asName(propertyName);
         node.name = asName(name);
         return node;
@@ -2047,7 +2347,7 @@ namespace ts {
     // Module references
 
     export function createExternalModuleReference(expression: Expression) {
-        const node = <ExternalModuleReference>createSynthesizedNode(SyntaxKind.ExternalModuleReference);
+        const node = createSynthesizedNode(SyntaxKind.ExternalModuleReference);
         node.expression = expression;
         return node;
     }
@@ -2061,7 +2361,7 @@ namespace ts {
     // JSX
 
     export function createJsxElement(openingElement: JsxOpeningElement, children: ReadonlyArray<JsxChild>, closingElement: JsxClosingElement) {
-        const node = <JsxElement>createSynthesizedNode(SyntaxKind.JsxElement);
+        const node = createSynthesizedNode(SyntaxKind.JsxElement);
         node.openingElement = openingElement;
         node.children = createNodeArray(children);
         node.closingElement = closingElement;
@@ -2077,7 +2377,7 @@ namespace ts {
     }
 
     export function createJsxSelfClosingElement(tagName: JsxTagNameExpression, attributes: JsxAttributes) {
-        const node = <JsxSelfClosingElement>createSynthesizedNode(SyntaxKind.JsxSelfClosingElement);
+        const node = createSynthesizedNode(SyntaxKind.JsxSelfClosingElement);
         node.tagName = tagName;
         node.attributes = attributes;
         return node;
@@ -2091,7 +2391,7 @@ namespace ts {
     }
 
     export function createJsxOpeningElement(tagName: JsxTagNameExpression, attributes: JsxAttributes) {
-        const node = <JsxOpeningElement>createSynthesizedNode(SyntaxKind.JsxOpeningElement);
+        const node = createSynthesizedNode(SyntaxKind.JsxOpeningElement);
         node.tagName = tagName;
         node.attributes = attributes;
         return node;
@@ -2105,7 +2405,7 @@ namespace ts {
     }
 
     export function createJsxClosingElement(tagName: JsxTagNameExpression) {
-        const node = <JsxClosingElement>createSynthesizedNode(SyntaxKind.JsxClosingElement);
+        const node = createSynthesizedNode(SyntaxKind.JsxClosingElement);
         node.tagName = tagName;
         return node;
     }
@@ -2117,7 +2417,7 @@ namespace ts {
     }
 
     export function createJsxFragment(openingFragment: JsxOpeningFragment, children: ReadonlyArray<JsxChild>, closingFragment: JsxClosingFragment) {
-        const node = <JsxFragment>createSynthesizedNode(SyntaxKind.JsxFragment);
+        const node = createSynthesizedNode(SyntaxKind.JsxFragment);
         node.openingFragment = openingFragment;
         node.children = createNodeArray(children);
         node.closingFragment = closingFragment;
@@ -2133,7 +2433,7 @@ namespace ts {
     }
 
     export function createJsxAttribute(name: Identifier, initializer: StringLiteral | JsxExpression) {
-        const node = <JsxAttribute>createSynthesizedNode(SyntaxKind.JsxAttribute);
+        const node = createSynthesizedNode(SyntaxKind.JsxAttribute);
         node.name = name;
         node.initializer = initializer;
         return node;
@@ -2147,7 +2447,7 @@ namespace ts {
     }
 
     export function createJsxAttributes(properties: ReadonlyArray<JsxAttributeLike>) {
-        const node = <JsxAttributes>createSynthesizedNode(SyntaxKind.JsxAttributes);
+        const node = createSynthesizedNode(SyntaxKind.JsxAttributes);
         node.properties = createNodeArray(properties);
         return node;
     }
@@ -2159,7 +2459,7 @@ namespace ts {
     }
 
     export function createJsxSpreadAttribute(expression: Expression) {
-        const node = <JsxSpreadAttribute>createSynthesizedNode(SyntaxKind.JsxSpreadAttribute);
+        const node = createSynthesizedNode(SyntaxKind.JsxSpreadAttribute);
         node.expression = expression;
         return node;
     }
@@ -2171,7 +2471,7 @@ namespace ts {
     }
 
     export function createJsxExpression(dotDotDotToken: DotDotDotToken | undefined, expression: Expression | undefined) {
-        const node = <JsxExpression>createSynthesizedNode(SyntaxKind.JsxExpression);
+        const node = createSynthesizedNode(SyntaxKind.JsxExpression);
         node.dotDotDotToken = dotDotDotToken;
         node.expression = expression;
         return node;
@@ -2186,7 +2486,7 @@ namespace ts {
     // Clauses
 
     export function createCaseClause(expression: Expression, statements: ReadonlyArray<Statement>) {
-        const node = <CaseClause>createSynthesizedNode(SyntaxKind.CaseClause);
+        const node = createSynthesizedNode(SyntaxKind.CaseClause);
         node.expression = parenthesizeExpressionForList(expression);
         node.statements = createNodeArray(statements);
         return node;
@@ -2200,7 +2500,7 @@ namespace ts {
     }
 
     export function createDefaultClause(statements: ReadonlyArray<Statement>) {
-        const node = <DefaultClause>createSynthesizedNode(SyntaxKind.DefaultClause);
+        const node = createSynthesizedNode(SyntaxKind.DefaultClause);
         node.statements = createNodeArray(statements);
         return node;
     }
@@ -2212,7 +2512,7 @@ namespace ts {
     }
 
     export function createHeritageClause(token: HeritageClause["token"], types: ReadonlyArray<ExpressionWithTypeArguments>) {
-        const node = <HeritageClause>createSynthesizedNode(SyntaxKind.HeritageClause);
+        const node = createSynthesizedNode(SyntaxKind.HeritageClause);
         node.token = token;
         node.types = createNodeArray(types);
         return node;
@@ -2225,7 +2525,7 @@ namespace ts {
     }
 
     export function createCatchClause(variableDeclaration: string | VariableDeclaration | undefined, block: Block) {
-        const node = <CatchClause>createSynthesizedNode(SyntaxKind.CatchClause);
+        const node = createSynthesizedNode(SyntaxKind.CatchClause);
         node.variableDeclaration = isString(variableDeclaration) ? createVariableDeclaration(variableDeclaration) : variableDeclaration;
         node.block = block;
         return node;
@@ -2241,7 +2541,7 @@ namespace ts {
     // Property assignments
 
     export function createPropertyAssignment(name: string | PropertyName, initializer: Expression) {
-        const node = <PropertyAssignment>createSynthesizedNode(SyntaxKind.PropertyAssignment);
+        const node = createSynthesizedNode(SyntaxKind.PropertyAssignment);
         node.name = asName(name);
         node.questionToken = undefined;
         node.initializer = initializer !== undefined ? parenthesizeExpressionForList(initializer) : undefined;
@@ -2256,7 +2556,7 @@ namespace ts {
     }
 
     export function createShorthandPropertyAssignment(name: string | Identifier, objectAssignmentInitializer?: Expression) {
-        const node = <ShorthandPropertyAssignment>createSynthesizedNode(SyntaxKind.ShorthandPropertyAssignment);
+        const node = createSynthesizedNode(SyntaxKind.ShorthandPropertyAssignment);
         node.name = asName(name);
         node.objectAssignmentInitializer = objectAssignmentInitializer !== undefined ? parenthesizeExpressionForList(objectAssignmentInitializer) : undefined;
         return node;
@@ -2270,7 +2570,7 @@ namespace ts {
     }
 
     export function createSpreadAssignment(expression: Expression) {
-        const node = <SpreadAssignment>createSynthesizedNode(SyntaxKind.SpreadAssignment);
+        const node = createSynthesizedNode(SyntaxKind.SpreadAssignment);
         node.expression = expression !== undefined ? parenthesizeExpressionForList(expression) : undefined;
         return node;
     }
@@ -2284,7 +2584,7 @@ namespace ts {
     // Enum
 
     export function createEnumMember(name: string | PropertyName, initializer?: Expression) {
-        const node = <EnumMember>createSynthesizedNode(SyntaxKind.EnumMember);
+        const node = createSynthesizedNode(SyntaxKind.EnumMember);
         node.name = asName(name);
         node.initializer = initializer && parenthesizeExpressionForList(initializer);
         return node;
@@ -2301,7 +2601,7 @@ namespace ts {
 
     export function updateSourceFileNode(node: SourceFile, statements: ReadonlyArray<Statement>) {
         if (node.statements !== statements) {
-            const updated = <SourceFile>createSynthesizedNode(SyntaxKind.SourceFile);
+            const updated = createSynthesizedNode(SyntaxKind.SourceFile);
             updated.flags |= node.flags;
             updated.statements = createNodeArray(statements);
             updated.endOfFileToken = node.endOfFileToken;
@@ -2341,7 +2641,7 @@ namespace ts {
     /**
      * Creates a shallow, memberwise clone of a node for mutation.
      */
-    export function getMutableClone<T extends Node>(node: T): T {
+    export function getMutableClone<T extends Node>(node: T): Unbound<T> {
         const clone = getSynthesizedClone(node);
         clone.pos = node.pos;
         clone.end = node.end;
@@ -2358,7 +2658,7 @@ namespace ts {
      * @param original The original statement.
      */
     export function createNotEmittedStatement(original: Node) {
-        const node = <NotEmittedStatement>createSynthesizedNode(SyntaxKind.NotEmittedStatement);
+        const node = createSynthesizedNode(SyntaxKind.NotEmittedStatement);
         node.original = original;
         setTextRange(node, original);
         return node;
@@ -2370,7 +2670,7 @@ namespace ts {
      */
     /* @internal */
     export function createEndOfDeclarationMarker(original: Node) {
-        const node = <EndOfDeclarationMarker>createSynthesizedNode(SyntaxKind.EndOfDeclarationMarker);
+        const node = createSynthesizedNode(SyntaxKind.EndOfDeclarationMarker);
         node.emitNode = {};
         node.original = original;
         return node;
@@ -2382,7 +2682,7 @@ namespace ts {
      */
     /* @internal */
     export function createMergeDeclarationMarker(original: Node) {
-        const node = <MergeDeclarationMarker>createSynthesizedNode(SyntaxKind.MergeDeclarationMarker);
+        const node = createSynthesizedNode(SyntaxKind.MergeDeclarationMarker);
         node.emitNode = {};
         node.original = original;
         return node;
@@ -2397,7 +2697,7 @@ namespace ts {
      * @param location The location for the expression. Defaults to the positions from "original" if provided.
      */
     export function createPartiallyEmittedExpression(expression: Expression, original?: Node) {
-        const node = <PartiallyEmittedExpression>createSynthesizedNode(SyntaxKind.PartiallyEmittedExpression);
+        const node = createSynthesizedNode(SyntaxKind.PartiallyEmittedExpression);
         node.expression = expression;
         node.original = original;
         setTextRange(node, original);
@@ -2424,7 +2724,7 @@ namespace ts {
     }
 
     export function createCommaList(elements: ReadonlyArray<Expression>) {
-        const node = <CommaListExpression>createSynthesizedNode(SyntaxKind.CommaListExpression);
+        const node = createSynthesizedNode(SyntaxKind.CommaListExpression);
         node.elements = createNodeArray(sameFlatMap(elements, flattenCommaElements));
         return node;
     }
@@ -2450,8 +2750,8 @@ namespace ts {
 
     // Compound nodes
 
-    export function createImmediatelyInvokedFunctionExpression(statements: Statement[]): CallExpression;
-    export function createImmediatelyInvokedFunctionExpression(statements: Statement[], param: ParameterDeclaration, paramValue: Expression): CallExpression;
+    export function createImmediatelyInvokedFunctionExpression(statements: Statement[]): Unbound<CallExpression>;
+    export function createImmediatelyInvokedFunctionExpression(statements: Statement[], param: ParameterDeclaration, paramValue: Expression): Unbound<CallExpression>;
     export function createImmediatelyInvokedFunctionExpression(statements: Statement[], param?: ParameterDeclaration, paramValue?: Expression) {
         return createCall(
             createFunctionExpression(
@@ -2468,8 +2768,8 @@ namespace ts {
         );
     }
 
-    export function createImmediatelyInvokedArrowFunction(statements: Statement[]): CallExpression;
-    export function createImmediatelyInvokedArrowFunction(statements: Statement[], param: ParameterDeclaration, paramValue: Expression): CallExpression;
+    export function createImmediatelyInvokedArrowFunction(statements: Statement[]): Unbound<CallExpression>;
+    export function createImmediatelyInvokedArrowFunction(statements: Statement[], param: ParameterDeclaration, paramValue: Expression): Unbound<CallExpression>;
     export function createImmediatelyInvokedArrowFunction(statements: Statement[], param?: ParameterDeclaration, paramValue?: Expression) {
         return createCall(
             createArrowFunction(
@@ -2494,8 +2794,8 @@ namespace ts {
         return <Expression>createBinary(left, SyntaxKind.LessThanToken, right);
     }
 
-    export function createAssignment(left: ObjectLiteralExpression | ArrayLiteralExpression, right: Expression): DestructuringAssignment;
-    export function createAssignment(left: Expression, right: Expression): BinaryExpression;
+    export function createAssignment(left: ObjectLiteralExpression | ArrayLiteralExpression, right: Expression): Unbound<DestructuringAssignment>;
+    export function createAssignment(left: Expression, right: Expression): Unbound<BinaryExpression>;
     export function createAssignment(left: Expression, right: Expression) {
         return createBinary(left, SyntaxKind.EqualsToken, right);
     }
@@ -2564,7 +2864,7 @@ namespace ts {
     }
 
     function asToken<TKind extends SyntaxKind>(value: TKind | Token<TKind>): Token<TKind> {
-        return typeof value === "number" ? createToken(value) : value;
+        return typeof value === "number" ? createToken(value) as Unbound<Node> as Token<TKind> : value;
     }
 
     /**
@@ -3552,7 +3852,7 @@ namespace ts {
      * @param allowComments A value indicating whether comments may be emitted for the name.
      * @param allowSourceMaps A value indicating whether source maps may be emitted for the name.
      */
-    export function getExportName(node: Declaration, allowComments?: boolean, allowSourceMaps?: boolean): Identifier {
+    export function getExportName(node: Declaration, allowComments?: boolean, allowSourceMaps?: boolean): Unbound<Identifier> {
         return getName(node, allowComments, allowSourceMaps, EmitFlags.ExportName);
     }
 
@@ -4315,11 +4615,11 @@ namespace ts {
     /**
      * Get the name of that target module from an import or export declaration
      */
-    export function getLocalNameForExternalImport(node: ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration, sourceFile: SourceFile): Identifier {
+    export function getLocalNameForExternalImport(node: ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration, sourceFile: SourceFile): Unbound<Identifier> {
         const namespaceDeclaration = getNamespaceDeclarationNode(node);
         if (namespaceDeclaration && !isDefaultImport(node)) {
             const name = namespaceDeclaration.name;
-            return isGeneratedIdentifier(name) ? name : createIdentifier(getSourceTextOfNodeFromSourceFile(sourceFile, name) || idText(name));
+            return isGeneratedIdentifier(name) ? name as Unbound<Identifier> : createIdentifier(getSourceTextOfNodeFromSourceFile(sourceFile, name) || idText(name));
         }
         if (node.kind === SyntaxKind.ImportDeclaration && (<ImportDeclaration>node).importClause) {
             return getGeneratedNameForNode(node);

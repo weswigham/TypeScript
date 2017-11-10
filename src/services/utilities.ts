@@ -1371,7 +1371,7 @@ namespace ts {
      * WARNING: This is an expensive operation and is only intended to be used in refactorings
      * and code fixes (because those are triggered by explicit user actions).
      */
-    export function getSynthesizedDeepClone<T extends Node>(node: T | undefined): T | undefined {
+    export function getSynthesizedDeepClone<T extends Node>(node: T | undefined): Unbound<T> | undefined {
         if (node === undefined) {
             return undefined;
         }
@@ -1397,7 +1397,7 @@ namespace ts {
 
         visited.parent = undefined;
 
-        return visited;
+        return visited as Unbound<Node> as Unbound<T>;
     }
 
     /**

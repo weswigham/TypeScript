@@ -977,7 +977,7 @@ namespace ts.refactor.extractSymbol {
                 return undefined;
             }
 
-            const clone = getSynthesizedDeepClone(typeNode);
+            const clone: TypeNode = getSynthesizedDeepClone(typeNode);
             let withoutParens = clone;
             while (isParenthesizedTypeNode(withoutParens)) {
                 withoutParens = withoutParens.type;

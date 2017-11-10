@@ -526,6 +526,7 @@ namespace ts {
     }
 
     export interface Node extends TextRange {
+        " bound"?: boolean;
         kind: SyntaxKind;
         flags: NodeFlags;
         /* @internal */ modifierFlagsCache?: ModifierFlags;
@@ -544,6 +545,9 @@ namespace ts {
         /* @internal */ contextualType?: Type;                // Used to temporarily assign a contextual type during overload resolution
         /* @internal */ contextualMapper?: TypeMapper;        // Mapper for contextual type
     }
+
+    export type Bound<T extends Node> = T & { " bound": true };
+    export type Unbound<T extends Node> = T & { " bound": false };
 
     export interface JSDocContainer {
         /* @internal */ jsDoc?: JSDoc[];                      // JSDoc that directly precedes this node

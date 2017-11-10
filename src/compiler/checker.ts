@@ -2935,7 +2935,7 @@ namespace ts {
                         typeToTypeNodeHelper(anyArrayType, context),
                         /*initializer*/ undefined);
                 }
-                const modifiers = parameterDeclaration.modifiers && parameterDeclaration.modifiers.map(getSynthesizedClone);
+                const modifiers = parameterDeclaration.modifiers && parameterDeclaration.modifiers.map(getSynthesizedClone) as ReadonlyArray<Modifier>;
                 const dotDotDotToken = isRestParameter(parameterDeclaration) ? createToken(SyntaxKind.DotDotDotToken) : undefined;
                 const name = parameterDeclaration.name ?
                     parameterDeclaration.name.kind === SyntaxKind.Identifier ?
