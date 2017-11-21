@@ -217,38 +217,38 @@ function f6() {
 >f6 : () => void
 
     var [x = 0, y = ""] = [1, "hello"];
->x : number
+>x : 1 | 0
 >0 : 0
->y : string
+>y : "hello" | ""
 >"" : ""
 >[1, "hello"] : [1, "hello"]
 >1 : 1
 >"hello" : "hello"
 
     var x: number;
->x : number
+>x : 1 | 0
 
     var y: string;
->y : string
+>y : "hello" | ""
 }
 
 function f7() {
 >f7 : () => void
 
     var [x = 0, y = 1] = [1, "hello"];  // Error, initializer for y must be string
->x : number
+>x : 1 | 0
 >0 : 0
->y : string | number
+>y : string | 1
 >1 : 1
 >[1, "hello"] : [1, string]
 >1 : 1
 >"hello" : "hello"
 
     var x: number;
->x : number
+>x : 1 | 0
 
     var y: string;
->y : string | number
+>y : string | 1
 }
 
 function f8() {

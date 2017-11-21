@@ -1,11 +1,13 @@
 tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(4,13): error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
+tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(5,15): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' has type 'number' at tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts 3:12, but here has type '0'.
 tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(5,15): error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
+tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(6,18): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' has type 'number' at tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts 3:12, but here has type '0'.
 tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(6,18): error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
 tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(7,15): error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
 tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(8,18): error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
 
 
-==== tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts (5 errors) ====
+==== tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts (7 errors) ====
     if (true) {
         let x;
         if (true) {
@@ -14,8 +16,12 @@ tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts(8,18): error TS24
 !!! error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
             var { x = 0 } = { x: 0 }; // Error
                   ~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' has type 'number' at tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts 3:12, but here has type '0'.
+                  ~
 !!! error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
             var { x: x = 0 } = { x: 0 }; // Error
+                     ~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' has type 'number' at tests/cases/compiler/shadowingViaLocalValueOrBindingElement.ts 3:12, but here has type '0'.
                      ~
 !!! error TS2481: Cannot initialize outer scoped variable 'x' in the same scope as block scoped declaration 'x'.
             var { x } = { x: 0 }; // Error

@@ -4307,10 +4307,9 @@ namespace ts {
             if (strictNullChecks && declaration.initializer && !(getFalsyFlags(checkExpressionCached(declaration.initializer)) & TypeFlags.Undefined)) {
                 type = getTypeWithFacts(type, TypeFacts.NEUndefined);
             }
-            type = declaration.initializer ?
+            return declaration.initializer ?
                 getUnionType([type, checkExpressionCached(declaration.initializer)], /*subtypeReduction*/ true) :
                 type;
-            return shouldKeepLiteralType(declaration) ? type : getWidenedLiteralType(type);
         }
 
         function getTypeForDeclarationFromJSDocComment(declaration: Node) {
