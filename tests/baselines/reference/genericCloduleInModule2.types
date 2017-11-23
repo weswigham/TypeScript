@@ -27,13 +27,13 @@ module A {
 }
 
 var b: A.B;
->b : any
+>b : A.B<{}>
 >A : any
 >B : A.B<T>
 
 b.foo();
->b.foo() : any
->b.foo : any
->b : any
->foo : any
+>b.foo() : void
+>b.foo : () => void
+>b : A.B<{}>
+>foo : () => void
 

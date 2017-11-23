@@ -8,11 +8,11 @@ class C<T> { }
 >T : T
 
 var i: I;
->i : any
+>i : I<{}>
 >I : I<T>
 
 var c: C<I>;
->c : C<any>
+>c : C<I<{}>>
 >C : C<T>
 >I : I<T>
 

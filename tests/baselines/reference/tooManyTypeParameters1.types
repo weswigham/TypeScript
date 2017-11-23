@@ -32,6 +32,6 @@ interface I<T> {}
 >T : T
 
 var i: I<number,number>;
->i : any
+>i : I<number>
 >I : I<T>
 

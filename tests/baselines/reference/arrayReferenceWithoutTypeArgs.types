@@ -3,7 +3,7 @@ class X {
 >X : X
 
     public f(a: Array) { }
->f : (a: any) => void
->a : any
+>f : (a: {}[]) => void
+>a : {}[]
 >Array : T[]
 }

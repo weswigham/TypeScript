@@ -17,10 +17,10 @@ function foo(a) {
 foo((arg: Foo) => { return arg.x; });
 >foo((arg: Foo) => { return arg.x; }) : any
 >foo : (a: any) => any
->(arg: Foo) => { return arg.x; } : (arg: any) => any
->arg : any
+>(arg: Foo) => { return arg.x; } : (arg: Foo<{}>) => {}
+>arg : Foo<{}>
 >Foo : Foo<T>
->arg.x : any
->arg : any
->x : any
+>arg.x : {}
+>arg : Foo<{}>
+>x : {}
 

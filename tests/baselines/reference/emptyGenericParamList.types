@@ -4,6 +4,6 @@ class I<T> {}
 >T : T
 
 var x: I<>;
->x : any
+>x : I<{}>
 >I : I<T>
 

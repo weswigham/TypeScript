@@ -15,14 +15,14 @@ class A<T1, T2> {
 
 class B extends A<number> {
 >B : B
->A : typeof A
+>A : A<number, {}>
 
     constructor() { super(value => String(value)); }
 >super(value => String(value)) : void
->super : any
->value => String(value) : (value: any) => string
->value : any
+>super : typeof A
+>value => String(value) : (value: number) => string
+>value : number
 >String(value) : string
 >String : StringConstructor
->value : any
+>value : number
 }

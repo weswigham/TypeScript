@@ -12,54 +12,54 @@ interface I<T> {
 }
 
 var c: I;
->c : any
+>c : I<{}>
 >I : I<T>
 
 var a: { x: I };
->a : { x: any; }
->x : any
+>a : { x: I<{}>; }
+>x : I<{}>
 >I : I<T>
 
 var b: { (x: I): I };
->b : (x: any) => any
->x : any
+>b : (x: I<{}>) => I<{}>
+>x : I<{}>
 >I : I<T>
 >I : I<T>
 
 var d: { [x: I]: I };
 >d : {}
->x : any
+>x : I<{}>
 >I : I<T>
 >I : I<T>
 
 var e = (x: I) => { var y: I; return y; }
->e : (x: any) => any
->(x: I) => { var y: I; return y; } : (x: any) => any
->x : any
+>e : (x: I<{}>) => I<{}>
+>(x: I) => { var y: I; return y; } : (x: I<{}>) => I<{}>
+>x : I<{}>
 >I : I<T>
->y : any
+>y : I<{}>
 >I : I<T>
->y : any
+>y : I<{}>
 
 function f(x: I): I { var y: I; return y; }
->f : (x: any) => any
->x : any
+>f : (x: I<{}>) => I<{}>
+>x : I<{}>
 >I : I<T>
 >I : I<T>
->y : any
+>y : I<{}>
 >I : I<T>
->y : any
+>y : I<{}>
 
 var g = function f(x: I): I { var y: I; return y; }
->g : (x: any) => any
->function f(x: I): I { var y: I; return y; } : (x: any) => any
->f : (x: any) => any
->x : any
+>g : (x: I<{}>) => I<{}>
+>function f(x: I): I { var y: I; return y; } : (x: I<{}>) => I<{}>
+>f : (x: I<{}>) => I<{}>
+>x : I<{}>
 >I : I<T>
 >I : I<T>
->y : any
+>y : I<{}>
 >I : I<T>
->y : any
+>y : I<{}>
 
 class D extends I {
 >D : D
@@ -99,14 +99,14 @@ interface I2 extends M.C { }
 >C : No type information available!
 
 function h<T extends I>(x: T) { }
->h : <T extends any>(x: T) => void
+>h : <T extends I<{}>>(x: T) => void
 >T : T
 >I : I<T>
 >x : T
 >T : T
 
 function i<T extends M.E>(x: T) { }
->i : <T extends any>(x: T) => void
+>i : <T extends M.E<{}>>(x: T) => void
 >T : T
 >M : any
 >E : M.E<T>
@@ -120,8 +120,8 @@ var j = <C>null;
 >null : null
 
 var k = <M.E>null;
->k : any
-><M.E>null : any
+>k : M.E<{}>
+><M.E>null : M.E<{}>
 >M : any
 >E : M.E<T>
 >null : null

@@ -13,7 +13,7 @@ class C<T> {
 >T : T
 
     get x(): A {
->x : any
+>x : A<{}>
 >A : A<T>
 
         return this.data;

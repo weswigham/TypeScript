@@ -15,18 +15,18 @@ declare class abc<T> extends base<T> {
 }
 declare class xyz extends abc {
 >xyz : xyz
->abc : typeof abc
+>abc : abc<{}>
 }
 
 var bar = new xyz(); // Error: Invalid 'new' expression.
->bar : any
->new xyz() : any
+>bar : xyz
+>new xyz() : xyz
 >xyz : typeof xyz
 
 var r: xyz = bar.foo;
 >r : xyz
 >xyz : xyz
->bar.foo : any
->bar : any
->foo : any
+>bar.foo : xyz
+>bar : xyz
+>foo : xyz
 

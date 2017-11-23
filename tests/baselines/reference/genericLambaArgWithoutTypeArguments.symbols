@@ -17,5 +17,7 @@ foo((arg: Foo) => { return arg.x; });
 >foo : Symbol(foo, Decl(genericLambaArgWithoutTypeArguments.ts, 2, 1))
 >arg : Symbol(arg, Decl(genericLambaArgWithoutTypeArguments.ts, 6, 5))
 >Foo : Symbol(Foo, Decl(genericLambaArgWithoutTypeArguments.ts, 0, 0))
+>arg.x : Symbol(Foo.x, Decl(genericLambaArgWithoutTypeArguments.ts, 0, 18))
 >arg : Symbol(arg, Decl(genericLambaArgWithoutTypeArguments.ts, 6, 5))
+>x : Symbol(Foo.x, Decl(genericLambaArgWithoutTypeArguments.ts, 0, 18))
 
