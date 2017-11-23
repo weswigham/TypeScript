@@ -31,5 +31,7 @@ var b: A.B;
 >B : Symbol(A.B, Decl(genericCloduleInModule2.ts, 0, 10), Decl(genericCloduleInModule2.ts, 7, 10))
 
 b.foo();
+>b.foo : Symbol(A.B.foo, Decl(genericCloduleInModule2.ts, 1, 23))
 >b : Symbol(b, Decl(genericCloduleInModule2.ts, 13, 3))
+>foo : Symbol(A.B.foo, Decl(genericCloduleInModule2.ts, 1, 23))
 

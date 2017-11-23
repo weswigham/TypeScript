@@ -94,9 +94,11 @@ module TypeScript {
 >_elementType : Symbol(PullTypeSymbol._elementType, Decl(genericRecursiveImplicitConstructorErrors3.ts, 11, 59))
 
                 this._elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
+>this._elementType.getScopedNameEx : Symbol(PullTypeSymbol.getScopedNameEx, Decl(genericRecursiveImplicitConstructorErrors3.ts, 16, 9))
 >this._elementType : Symbol(PullTypeSymbol._elementType, Decl(genericRecursiveImplicitConstructorErrors3.ts, 11, 59))
 >this : Symbol(PullTypeSymbol, Decl(genericRecursiveImplicitConstructorErrors3.ts, 10, 5))
 >_elementType : Symbol(PullTypeSymbol._elementType, Decl(genericRecursiveImplicitConstructorErrors3.ts, 11, 59))
+>getScopedNameEx : Symbol(PullTypeSymbol.getScopedNameEx, Decl(genericRecursiveImplicitConstructorErrors3.ts, 16, 9))
 >scopeSymbol : Symbol(scopeSymbol, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 38))
 >getPrettyTypeName : Symbol(getPrettyTypeName, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 94))
 >getTypeParamMarkerInfo : Symbol(getTypeParamMarkerInfo, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 123))

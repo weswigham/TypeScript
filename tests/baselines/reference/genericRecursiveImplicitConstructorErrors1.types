@@ -48,7 +48,7 @@ export declare module TypeScript {
 >A : A
 >B : B
 >C : C
->PullTypeSymbol : typeof PullTypeSymbol
+>PullTypeSymbol : PullTypeSymbol<{}, {}, {}>
   }
 }
  

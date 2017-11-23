@@ -6,4 +6,8 @@
 ////
 //// class C implements I { } 
 
-verify.not.codeFixAvailable();
+/**
+ * The code fix is available despite the error in the the class extends clause file,
+ *  since I is instantiated as I<{}> (in TS) or I<any> (in JS)
+ */
+verify.codeFixAvailable();

@@ -25,5 +25,7 @@ var bar = new xyz(); // Error: Invalid 'new' expression.
 var r: xyz = bar.foo;
 >r : Symbol(r, Decl(recursiveBaseConstructorCreation3.ts, 9, 3))
 >xyz : Symbol(xyz, Decl(recursiveBaseConstructorCreation3.ts, 4, 1))
+>bar.foo : Symbol(abc.foo, Decl(recursiveBaseConstructorCreation3.ts, 2, 38))
 >bar : Symbol(bar, Decl(recursiveBaseConstructorCreation3.ts, 8, 3))
+>foo : Symbol(abc.foo, Decl(recursiveBaseConstructorCreation3.ts, 2, 38))
 

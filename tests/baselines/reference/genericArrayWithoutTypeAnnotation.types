@@ -7,8 +7,8 @@ class Bar {
 >Bar : Bar
 
     public getBar(foo: IFoo[]) {
->getBar : (foo: any[]) => void
->foo : any[]
+>getBar : (foo: IFoo<{}>[]) => void
+>foo : IFoo<{}>[]
 >IFoo : IFoo<T>
     }
 }

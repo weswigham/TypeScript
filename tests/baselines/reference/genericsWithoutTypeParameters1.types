@@ -19,42 +19,42 @@ interface I<T> {
 }
 
 var c1: C;
->c1 : any
+>c1 : C<{}>
 >C : C<T>
 
 var i1: I;
->i1 : any
+>i1 : I<{}>
 >I : I<T>
 
 var c2: C<I>;
->c2 : C<any>
+>c2 : C<I<{}>>
 >C : C<T>
 >I : I<T>
 
 var i2: I<C>;
->i2 : I<any>
+>i2 : I<C<{}>>
 >I : I<T>
 >C : C<T>
 
 function foo(x: C, y: I) { }
->foo : (x: any, y: any) => void
->x : any
+>foo : (x: C<{}>, y: I<{}>) => void
+>x : C<{}>
 >C : C<T>
->y : any
+>y : I<{}>
 >I : I<T>
 
 function foo2(x: C<I>, y: I<C>) { }
->foo2 : (x: C<any>, y: I<any>) => void
->x : C<any>
+>foo2 : (x: C<I<{}>>, y: I<C<{}>>) => void
+>x : C<I<{}>>
 >C : C<T>
 >I : I<T>
->y : I<any>
+>y : I<C<{}>>
 >I : I<T>
 >C : C<T>
 
 var x: { a: C } = { a: new C<number>() };
->x : { a: any; }
->a : any
+>x : { a: C<{}>; }
+>a : C<{}>
 >C : C<T>
 >{ a: new C<number>() } : { a: C<number>; }
 >a : C<number>
@@ -62,8 +62,8 @@ var x: { a: C } = { a: new C<number>() };
 >C : typeof C
 
 var x2: { a: I } = { a: { bar() { return 1 } } };
->x2 : { a: any; }
->a : any
+>x2 : { a: I<{}>; }
+>a : I<{}>
 >I : I<T>
 >{ a: { bar() { return 1 } } } : { a: { bar(): number; }; }
 >a : { bar(): number; }
@@ -76,11 +76,11 @@ class D<T> {
 >T : T
 
     x: C;
->x : any
+>x : C<{}>
 >C : C<T>
 
     y: D;
->y : any
+>y : D<{}>
 >D : D<T>
 }
 
@@ -89,11 +89,11 @@ interface J<T> {
 >T : T
 
     x: I;
->x : any
+>x : I<{}>
 >I : I<T>
 
     y: J;
->y : any
+>y : J<{}>
 >J : J<T>
 }
 
@@ -102,7 +102,7 @@ class A<T> { }
 >T : T
 
 function f<T>(x: T): A {
->f : <T>(x: T) => any
+>f : <T>(x: T) => A<{}>
 >T : T
 >x : T
 >T : T

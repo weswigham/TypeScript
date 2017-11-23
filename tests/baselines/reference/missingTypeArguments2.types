@@ -4,21 +4,21 @@ class A<T> { }
 >T : T
 
 var x: () => A;
->x : () => any
+>x : () => A<{}>
 >A : A<T>
 
 (a: A) => { };
->(a: A) => { } : (a: any) => void
->a : any
+>(a: A) => { } : (a: A<{}>) => void
+>a : A<{}>
 >A : A<T>
 
 var y: A<A>;
->y : A<any>
+>y : A<A<{}>>
 >A : A<T>
 >A : A<T>
 
 (): A => null;
->(): A => null : () => any
+>(): A => null : () => A<{}>
 >A : A<T>
 >null : null
 
