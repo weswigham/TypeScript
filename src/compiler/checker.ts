@@ -4987,10 +4987,17 @@ namespace ts {
             return getClassExtendsHeritageClauseElement(decl);
         }
 
+        function getConstructorsForTypeArguments(type: Type, typeArgumentNodes: ReadonlyArray<TypeNode>, location: Node): Signature[] {
+            const typeArgCount = length(typeArgumentNodes);
+            const isJavaScript = isInJavaScriptFile(location);
+            return filter(getSignaturesOfType(type, SignatureKind.Construct),
+                sig => (isJavaScript || typeArgCount >= getMinTypeArgumentCount(sig.typeParameters)) && typeArgCount <= length(sig.typeParameters));
+        }
+
         function getInstantiatedConstructorsForTypeArguments(type: Type, typeArgumentNodes: ReadonlyArray<TypeNode>, location: Node): Signature[] {
-            const signatures = getSignaturesOfType(type, SignatureKind.Construct);
+            const signatures = getConstructorsForTypeArguments(type, typeArgumentNodes, location);
             const typeArguments = map(typeArgumentNodes, getTypeFromTypeNode);
-            return sameMap(signatures, sig => some(sig.typeParameters) ? getSignatureInstantiation(sig, typeArguments, isInJavaScriptFile(location), /*arityErrorLocation*/ undefined) : sig);
+            return sameMap(signatures, sig => some(sig.typeParameters) ? getSignatureInstantiation(sig, typeArguments, isInJavaScriptFile(location), /*errorArityLocation*/ undefined) : sig);
         }
 
         /**
@@ -16998,7 +17005,16 @@ namespace ts {
                     // with the type arguments specified in the extends clause.
                     const baseTypeNode = getClassExtendsHeritageClauseElement(getContainingClass(node));
                     if (baseTypeNode) {
-                        const baseConstructors = getInstantiatedConstructorsForTypeArguments(superType, baseTypeNode.typeArguments, baseTypeNode);
+                        let baseConstructors = getInstantiatedConstructorsForTypeArguments(superType, baseTypeNode.typeArguments, baseTypeNode);
+                        if (!some(baseConstructors)) {
+                            // Attempt some graceful error recovery if there are no constructors of appropriate arity by falling back to a different arity
+                            baseConstructors = sameMap(
+                                getSignaturesOfType(superType, SignatureKind.Construct),
+                                sig => some(sig.typeParameters)
+                                    ? getSignatureInstantiation(sig, map(baseTypeNode.typeArguments, getTypeFromTypeNode), isInJavaScriptFile(baseTypeNode), /*errorArityLocation*/ undefined)
+                                    : sig
+                            );
+                        }
                         return resolveCall(node, baseConstructors, candidatesOutArray);
                     }
                 }
@@ -22467,14 +22483,7 @@ namespace ts {
                         // that all instantiated base constructor signatures return the same type. We can simply compare the type
                         // references (as opposed to checking the structure of the types) because elsewhere we have already checked
                         // that the base type is a class or interface type (and not, for example, an anonymous object type).
-                        const typeArgCount = length(baseTypeNode.typeArguments);
-                        const constructors = filter(getInstantiatedConstructorsForTypeArguments(staticBaseType, baseTypeNode.typeArguments, baseTypeNode),
-                            // TODO: Constructors of differing generic arity to the base type _should_ also be required to match the base type!
-                            //  This is a workaround to preserve old behavior where only signatures of compatable arity are considered;
-                            //  If/when this check is removed, minimally `Array` in lib will need to have its arity-0 signature replaced/merged with a `T = any`
-                            //  signature so that its return type is `T[]` and matches the other overloads
-                            ctor => typeArgCount >= getMinTypeArgumentCount(getTypeParametersFromDeclaration(ctor.declaration)) && typeArgCount <= length(ctor.typeParameters)
-                        );
+                        const constructors = getInstantiatedConstructorsForTypeArguments(staticBaseType, baseTypeNode.typeArguments, baseTypeNode);
                         if (forEach(constructors, sig => getReturnTypeOfSignature(sig) !== baseType)) {
                             error(baseTypeNode.expression, Diagnostics.Base_constructors_must_all_have_the_same_return_type);
                         }

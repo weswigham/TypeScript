@@ -7,5 +7,5 @@
 
 verify.quickInfos({
     1: "var i: I<any>",
-    2: "var c: C<any>"
+    2: "var c: C<I<{}>>" // I is missing a type argument, so is instantiated as I<{}> and marked as an error
 });
