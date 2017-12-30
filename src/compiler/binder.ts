@@ -983,7 +983,7 @@ namespace ts {
             addAntecedent(postLoopLabel, currentFlow);
             bind(node.initializer);
             if (node.initializer.kind !== SyntaxKind.VariableDeclarationList) {
-                bindAssignmentTargetFlow(<Expression>node.initializer);
+                bindAssignmentTargetFlow(<Expression>node.initializer, isArrayLiteralExpression(node.initializer) || isObjectLiteralExpression(node.initializer));
             }
             bindIterativeStatement(node.statement, postLoopLabel, preLoopLabel);
             addAntecedent(preLoopLabel, currentFlow);
@@ -1211,39 +1211,42 @@ namespace ts {
             }
         }
 
-        function bindDestructuringTargetFlow(node: Expression) {
+        function bindDestructuringTargetFlow(node: Expression, inDestructuringPattern: boolean) {
             if (node.kind === SyntaxKind.BinaryExpression && (<BinaryExpression>node).operatorToken.kind === SyntaxKind.EqualsToken) {
-                bindAssignmentTargetFlow((<BinaryExpression>node).left);
+                bindAssignmentTargetFlow((<BinaryExpression>node).left, /*destructuringTarget*/ true);
             }
             else {
-                bindAssignmentTargetFlow(node);
+                bindAssignmentTargetFlow(node, inDestructuringPattern);
             }
         }
 
-        function bindAssignmentTargetFlow(node: Expression) {
+        function bindAssignmentTargetFlow(node: Expression, destructuringTarget: boolean) {
             if (isNarrowableReference(node)) {
                 currentFlow = createFlowAssignment(currentFlow, node);
+                if (destructuringTarget) {
+                    node.flowNode = currentFlow; // `node.flowNode` will have been set by `bindWorker` to the flow nodes preceeding these nodes, since these weren't made yet
+                }
             }
             else if (node.kind === SyntaxKind.ArrayLiteralExpression) {
                 for (const e of (<ArrayLiteralExpression>node).elements) {
                     if (e.kind === SyntaxKind.SpreadElement) {
-                        bindAssignmentTargetFlow((<SpreadElement>e).expression);
+                        bindAssignmentTargetFlow((<SpreadElement>e).expression, destructuringTarget);
                     }
                     else {
-                        bindDestructuringTargetFlow(e);
+                        bindDestructuringTargetFlow(e, destructuringTarget);
                     }
                 }
             }
             else if (node.kind === SyntaxKind.ObjectLiteralExpression) {
                 for (const p of (<ObjectLiteralExpression>node).properties) {
                     if (p.kind === SyntaxKind.PropertyAssignment) {
-                        bindDestructuringTargetFlow((<PropertyAssignment>p).initializer);
+                        bindDestructuringTargetFlow((<PropertyAssignment>p).initializer, destructuringTarget);
                     }
                     else if (p.kind === SyntaxKind.ShorthandPropertyAssignment) {
-                        bindAssignmentTargetFlow((<ShorthandPropertyAssignment>p).name);
+                        bindAssignmentTargetFlow((<ShorthandPropertyAssignment>p).name, destructuringTarget);
                     }
                     else if (p.kind === SyntaxKind.SpreadAssignment) {
-                        bindAssignmentTargetFlow((<SpreadAssignment>p).expression);
+                        bindAssignmentTargetFlow((<SpreadAssignment>p).expression, destructuringTarget);
                     }
                 }
             }
@@ -1274,7 +1277,7 @@ namespace ts {
             else {
                 bindEachChild(node);
                 if (node.operator === SyntaxKind.PlusPlusToken || node.operator === SyntaxKind.MinusMinusToken) {
-                    bindAssignmentTargetFlow(node.operand);
+                    bindAssignmentTargetFlow(node.operand, /*destructuring*/ false);
                 }
             }
         }
@@ -1282,7 +1285,7 @@ namespace ts {
         function bindPostfixUnaryExpressionFlow(node: PostfixUnaryExpression) {
             bindEachChild(node);
             if (node.operator === SyntaxKind.PlusPlusToken || node.operator === SyntaxKind.MinusMinusToken) {
-                bindAssignmentTargetFlow(node.operand);
+                bindAssignmentTargetFlow(node.operand, /*destructuring*/ false);
             }
         }
 
@@ -1301,7 +1304,7 @@ namespace ts {
             else {
                 bindEachChild(node);
                 if (isAssignmentOperator(operator) && !isAssignmentTarget(node)) {
-                    bindAssignmentTargetFlow(node.left);
+                    bindAssignmentTargetFlow(node.left, isArrayLiteralExpression(node.left) || isObjectLiteralExpression(node.left));
                     if (operator === SyntaxKind.EqualsToken && node.left.kind === SyntaxKind.ElementAccessExpression) {
                         const elementAccess = <ElementAccessExpression>node.left;
                         if (isNarrowableOperand(elementAccess.expression)) {
@@ -1315,7 +1318,7 @@ namespace ts {
         function bindDeleteExpressionFlow(node: DeleteExpression) {
             bindEachChild(node);
             if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
-                bindAssignmentTargetFlow(node.expression);
+                bindAssignmentTargetFlow(node.expression, /*destructuring*/ false);
             }
         }
 

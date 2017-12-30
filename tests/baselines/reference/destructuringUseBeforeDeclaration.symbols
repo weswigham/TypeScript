@@ -1,0 +1,7 @@
+=== tests/cases/compiler/destructuringUseBeforeDeclaration.ts ===
+let bar: {};
+>bar : Symbol(bar, Decl(destructuringUseBeforeDeclaration.ts, 0, 3))
+
+({ ...bar } = {});
+>bar : Symbol(bar, Decl(destructuringUseBeforeDeclaration.ts, 0, 3))
+

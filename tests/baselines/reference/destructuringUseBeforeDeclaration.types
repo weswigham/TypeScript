@@ -1,0 +1,11 @@
+=== tests/cases/compiler/destructuringUseBeforeDeclaration.ts ===
+let bar: {};
+>bar : {}
+
+({ ...bar } = {});
+>({ ...bar } = {}) : {}
+>{ ...bar } = {} : {}
+>{ ...bar } : {}
+>bar : {}
+>{} : {}
+
