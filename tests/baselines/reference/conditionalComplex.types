@@ -1,0 +1,155 @@
+=== tests/cases/compiler/conditionalComplex.ts ===
+type Cond<T, U> = T extends U ? true : false;
+>Cond : Cond<T, U>
+>T : T
+>U : U
+>T : T
+>U : U
+>true : true
+>false : false
+
+type Shapes = 
+>Shapes : Shapes
+
+    | { kind: "circle", radius: number }
+>kind : "circle"
+>radius : number
+
+    | { kind: "square", side: number }
+>kind : "square"
+>side : number
+
+    | { kind: "parallelogram", major: number, minor: number };
+>kind : "parallelogram"
+>major : number
+>minor : number
+
+declare function isSquare<T extends Shapes>(s: T): Cond<T, { kind: "square" }>;
+>isSquare : <T extends Shapes>(s: T) => Cond<T, { kind: "square"; }>
+>T : T
+>Shapes : Shapes
+>s : T
+>T : T
+>Cond : Cond<T, U>
+>T : T
+>kind : "square"
+
+const a = isSquare({ kind: "circle", radius: 12 });
+>a : false
+>isSquare({ kind: "circle", radius: 12 }) : false
+>isSquare : <T extends Shapes>(s: T) => Cond<T, { kind: "square"; }>
+>{ kind: "circle", radius: 12 } : { kind: "circle"; radius: number; }
+>kind : "circle"
+>"circle" : "circle"
+>radius : number
+>12 : 12
+
+const b = isSquare({ kind: "square", side: 12 });
+>b : true
+>isSquare({ kind: "square", side: 12 }) : true
+>isSquare : <T extends Shapes>(s: T) => Cond<T, { kind: "square"; }>
+>{ kind: "square", side: 12 } : { kind: "square"; side: number; }
+>kind : "square"
+>"square" : "square"
+>side : number
+>12 : 12
+
+const c = isSquare(Math.random() > 0.5 ? { kind: "circle", radius: 12 } : { kind: "square", side: 12 });
+>c : boolean
+>isSquare(Math.random() > 0.5 ? { kind: "circle", radius: 12 } : { kind: "square", side: 12 }) : boolean
+>isSquare : <T extends Shapes>(s: T) => Cond<T, { kind: "square"; }>
+>Math.random() > 0.5 ? { kind: "circle", radius: 12 } : { kind: "square", side: 12 } : { kind: "circle"; radius: number; } | { kind: "square"; side: number; }
+>Math.random() > 0.5 : boolean
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+>0.5 : 0.5
+>{ kind: "circle", radius: 12 } : { kind: "circle"; radius: number; }
+>kind : "circle"
+>"circle" : "circle"
+>radius : number
+>12 : 12
+>{ kind: "square", side: 12 } : { kind: "square"; side: number; }
+>kind : "square"
+>"square" : "square"
+>side : number
+>12 : 12
+
+declare function objHasField<F extends string>(a: F): Cond<{x: number, y: number}, {[K in F]: any}>;
+>objHasField : <F extends string>(a: F) => Cond<{ x: number; y: number; }, { [K in F]: any; }>
+>F : F
+>a : F
+>F : F
+>Cond : Cond<T, U>
+>x : number
+>y : number
+>K : K
+>F : F
+
+const d = objHasField("x");
+>d : true
+>objHasField("x") : true
+>objHasField : <F extends string>(a: F) => Cond<{ x: number; y: number; }, { [K in F]: any; }>
+>"x" : "x"
+
+const e = objHasField("z");
+>e : false
+>objHasField("z") : false
+>objHasField : <F extends string>(a: F) => Cond<{ x: number; y: number; }, { [K in F]: any; }>
+>"z" : "z"
+
+
+// return type should reduce to `false`
+declare function f2<F extends string>(a: F): Cond<{x: number, y: number}, {y: F}>;
+>f2 : <F extends string>(a: F) => false
+>F : F
+>a : F
+>F : F
+>Cond : Cond<T, U>
+>x : number
+>y : number
+>y : F
+>F : F
+
+// return type should reduce to `true`
+declare function f3<F extends string>(a: F): Cond<{x: number, y: number, z: any}, {x: number, y: number, z: F}>;
+>f3 : <F extends string>(a: F) => true
+>F : F
+>a : F
+>F : F
+>Cond : Cond<T, U>
+>x : number
+>y : number
+>z : any
+>x : number
+>y : number
+>z : F
+>F : F
+
+// return type should reduce to `false`
+declare function f4<F extends string>(a: F): Cond<{x: F}, {x: number, y: number}>;
+>f4 : <F extends string>(a: F) => false
+>F : F
+>a : F
+>F : F
+>Cond : Cond<T, U>
+>x : F
+>F : F
+>x : number
+>y : number
+
+// return type should reduce to `true`
+declare function f5<F extends string>(a: F): Cond<{x: number, y: number, z: F}, {x: number, y: number}>;
+>f5 : <F extends string>(a: F) => true
+>F : F
+>a : F
+>F : F
+>Cond : Cond<T, U>
+>x : number
+>y : number
+>z : F
+>F : F
+>x : number
+>y : number
+

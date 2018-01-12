@@ -1,0 +1,130 @@
+=== tests/cases/compiler/conditionalComplex.ts ===
+type Cond<T, U> = T extends U ? true : false;
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>T : Symbol(T, Decl(conditionalComplex.ts, 0, 10))
+>U : Symbol(U, Decl(conditionalComplex.ts, 0, 12))
+>T : Symbol(T, Decl(conditionalComplex.ts, 0, 10))
+>U : Symbol(U, Decl(conditionalComplex.ts, 0, 12))
+
+type Shapes = 
+>Shapes : Symbol(Shapes, Decl(conditionalComplex.ts, 0, 45))
+
+    | { kind: "circle", radius: number }
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 3, 7))
+>radius : Symbol(radius, Decl(conditionalComplex.ts, 3, 23))
+
+    | { kind: "square", side: number }
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 4, 7))
+>side : Symbol(side, Decl(conditionalComplex.ts, 4, 23))
+
+    | { kind: "parallelogram", major: number, minor: number };
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 5, 7))
+>major : Symbol(major, Decl(conditionalComplex.ts, 5, 30))
+>minor : Symbol(minor, Decl(conditionalComplex.ts, 5, 45))
+
+declare function isSquare<T extends Shapes>(s: T): Cond<T, { kind: "square" }>;
+>isSquare : Symbol(isSquare, Decl(conditionalComplex.ts, 5, 62))
+>T : Symbol(T, Decl(conditionalComplex.ts, 7, 26))
+>Shapes : Symbol(Shapes, Decl(conditionalComplex.ts, 0, 45))
+>s : Symbol(s, Decl(conditionalComplex.ts, 7, 44))
+>T : Symbol(T, Decl(conditionalComplex.ts, 7, 26))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>T : Symbol(T, Decl(conditionalComplex.ts, 7, 26))
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 7, 60))
+
+const a = isSquare({ kind: "circle", radius: 12 });
+>a : Symbol(a, Decl(conditionalComplex.ts, 9, 5))
+>isSquare : Symbol(isSquare, Decl(conditionalComplex.ts, 5, 62))
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 9, 20))
+>radius : Symbol(radius, Decl(conditionalComplex.ts, 9, 36))
+
+const b = isSquare({ kind: "square", side: 12 });
+>b : Symbol(b, Decl(conditionalComplex.ts, 10, 5))
+>isSquare : Symbol(isSquare, Decl(conditionalComplex.ts, 5, 62))
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 10, 20))
+>side : Symbol(side, Decl(conditionalComplex.ts, 10, 36))
+
+const c = isSquare(Math.random() > 0.5 ? { kind: "circle", radius: 12 } : { kind: "square", side: 12 });
+>c : Symbol(c, Decl(conditionalComplex.ts, 11, 5))
+>isSquare : Symbol(isSquare, Decl(conditionalComplex.ts, 5, 62))
+>Math.random : Symbol(Math.random, Decl(lib.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.d.ts, --, --), Decl(lib.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.d.ts, --, --))
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 11, 42))
+>radius : Symbol(radius, Decl(conditionalComplex.ts, 11, 58))
+>kind : Symbol(kind, Decl(conditionalComplex.ts, 11, 75))
+>side : Symbol(side, Decl(conditionalComplex.ts, 11, 91))
+
+declare function objHasField<F extends string>(a: F): Cond<{x: number, y: number}, {[K in F]: any}>;
+>objHasField : Symbol(objHasField, Decl(conditionalComplex.ts, 11, 104))
+>F : Symbol(F, Decl(conditionalComplex.ts, 13, 29))
+>a : Symbol(a, Decl(conditionalComplex.ts, 13, 47))
+>F : Symbol(F, Decl(conditionalComplex.ts, 13, 29))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>x : Symbol(x, Decl(conditionalComplex.ts, 13, 60))
+>y : Symbol(y, Decl(conditionalComplex.ts, 13, 70))
+>K : Symbol(K, Decl(conditionalComplex.ts, 13, 85))
+>F : Symbol(F, Decl(conditionalComplex.ts, 13, 29))
+
+const d = objHasField("x");
+>d : Symbol(d, Decl(conditionalComplex.ts, 14, 5))
+>objHasField : Symbol(objHasField, Decl(conditionalComplex.ts, 11, 104))
+
+const e = objHasField("z");
+>e : Symbol(e, Decl(conditionalComplex.ts, 15, 5))
+>objHasField : Symbol(objHasField, Decl(conditionalComplex.ts, 11, 104))
+
+
+// return type should reduce to `false`
+declare function f2<F extends string>(a: F): Cond<{x: number, y: number}, {y: F}>;
+>f2 : Symbol(f2, Decl(conditionalComplex.ts, 15, 27))
+>F : Symbol(F, Decl(conditionalComplex.ts, 19, 20))
+>a : Symbol(a, Decl(conditionalComplex.ts, 19, 38))
+>F : Symbol(F, Decl(conditionalComplex.ts, 19, 20))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>x : Symbol(x, Decl(conditionalComplex.ts, 19, 51))
+>y : Symbol(y, Decl(conditionalComplex.ts, 19, 61))
+>y : Symbol(y, Decl(conditionalComplex.ts, 19, 75))
+>F : Symbol(F, Decl(conditionalComplex.ts, 19, 20))
+
+// return type should reduce to `true`
+declare function f3<F extends string>(a: F): Cond<{x: number, y: number, z: any}, {x: number, y: number, z: F}>;
+>f3 : Symbol(f3, Decl(conditionalComplex.ts, 19, 82))
+>F : Symbol(F, Decl(conditionalComplex.ts, 22, 20))
+>a : Symbol(a, Decl(conditionalComplex.ts, 22, 38))
+>F : Symbol(F, Decl(conditionalComplex.ts, 22, 20))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>x : Symbol(x, Decl(conditionalComplex.ts, 22, 51))
+>y : Symbol(y, Decl(conditionalComplex.ts, 22, 61))
+>z : Symbol(z, Decl(conditionalComplex.ts, 22, 72))
+>x : Symbol(x, Decl(conditionalComplex.ts, 22, 83))
+>y : Symbol(y, Decl(conditionalComplex.ts, 22, 93))
+>z : Symbol(z, Decl(conditionalComplex.ts, 22, 104))
+>F : Symbol(F, Decl(conditionalComplex.ts, 22, 20))
+
+// return type should reduce to `false`
+declare function f4<F extends string>(a: F): Cond<{x: F}, {x: number, y: number}>;
+>f4 : Symbol(f4, Decl(conditionalComplex.ts, 22, 112))
+>F : Symbol(F, Decl(conditionalComplex.ts, 25, 20))
+>a : Symbol(a, Decl(conditionalComplex.ts, 25, 38))
+>F : Symbol(F, Decl(conditionalComplex.ts, 25, 20))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>x : Symbol(x, Decl(conditionalComplex.ts, 25, 51))
+>F : Symbol(F, Decl(conditionalComplex.ts, 25, 20))
+>x : Symbol(x, Decl(conditionalComplex.ts, 25, 59))
+>y : Symbol(y, Decl(conditionalComplex.ts, 25, 69))
+
+// return type should reduce to `true`
+declare function f5<F extends string>(a: F): Cond<{x: number, y: number, z: F}, {x: number, y: number}>;
+>f5 : Symbol(f5, Decl(conditionalComplex.ts, 25, 82))
+>F : Symbol(F, Decl(conditionalComplex.ts, 28, 20))
+>a : Symbol(a, Decl(conditionalComplex.ts, 28, 38))
+>F : Symbol(F, Decl(conditionalComplex.ts, 28, 20))
+>Cond : Symbol(Cond, Decl(conditionalComplex.ts, 0, 0))
+>x : Symbol(x, Decl(conditionalComplex.ts, 28, 51))
+>y : Symbol(y, Decl(conditionalComplex.ts, 28, 61))
+>z : Symbol(z, Decl(conditionalComplex.ts, 28, 72))
+>F : Symbol(F, Decl(conditionalComplex.ts, 28, 20))
+>x : Symbol(x, Decl(conditionalComplex.ts, 28, 81))
+>y : Symbol(y, Decl(conditionalComplex.ts, 28, 91))
+

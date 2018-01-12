@@ -61,6 +61,18 @@ namespace ts {
 
         const emptySymbols = createSymbolTable();
         const identityMapper: (type: Type) => Type = identity;
+        const constraintMapper: (type: Type) => Type = t => {
+            if (t.flags & TypeFlags.TypeVariable) {
+                return getResolvedBaseConstraint(t);
+            }
+            return t;
+        };
+        const neverMapper: (type: Type) => Type = t => {
+            if (t.flags & TypeFlags.TypeVariable) {
+                return neverType;
+            }
+            return t;
+        };
 
         const compilerOptions = host.getCompilerOptions();
         const languageVersion = getEmitScriptTarget(compilerOptions);
@@ -8428,15 +8440,15 @@ namespace ts {
             return links.resolvedType;
         }
 
-        function isGenericExtendsType(type: Type) {
-            return maybeTypeOfKind(type, TypeFlags.Instantiable | TypeFlags.GenericMappedType);
-        }
-
         function createExtendsType(checkType: Type, extendsType: Type) {
             const type = <ExtendsType>createType(TypeFlags.Extends);
             type.checkType = checkType;
             type.extendsType = extendsType;
             return type;
+        }
+
+        function isDefinitelyNotAssignable(source: Type, target: Type) {
+            return !isTypeAssignableTo(instantiateType(source, neverMapper), instantiateType(target, constraintMapper));
         }
 
         function getExtendsType(checkType: Type, extendsType: Type): Type {
@@ -8447,8 +8459,11 @@ namespace ts {
             if (checkType.flags & TypeFlags.Any) {
                 return booleanType;
             }
-            if (!isGenericExtendsType(checkType) && !isGenericExtendsType(extendsType)) {
-                return isTypeAssignableTo(checkType, extendsType) ? trueType : falseType;
+            if (isTypeAssignableTo(checkType, extendsType)) {
+                return trueType;
+            }
+            if (isDefinitelyNotAssignable(checkType, extendsType)) {
+                return falseType;
             }
             const id = checkType.id + "," + extendsType.id;
             let type = extendsTypes.get(id);
