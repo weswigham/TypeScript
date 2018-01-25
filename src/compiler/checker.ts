@@ -10,6 +10,8 @@ namespace ts {
     let nextNodeId = 1;
     let nextMergeId = 1;
     let nextFlowId = 1;
+    export const typeBreakdown: {[index: string]: number} = {};
+    export const objectTypeBreakdown: {[index: string]: number} = {};
 
     export function getNodeId(node: Node): number {
         if (!node.id) {
@@ -340,10 +342,9 @@ namespace ts {
         const emptyGenericType = <GenericType><ObjectType>createAnonymousType(undefined, emptySymbols, emptyArray, emptyArray, undefined, undefined);
         emptyGenericType.instantiations = createMap<TypeReference>();
 
-        const anyFunctionType = createAnonymousType(undefined, emptySymbols, emptyArray, emptyArray, undefined, undefined);
         // The anyFunctionType contains the anyFunctionType by definition. The flag is further propagated
         // in getPropagatingFlagsOfTypes, and it is checked in inferFromTypes.
-        anyFunctionType.flags |= TypeFlags.ContainsAnyFunctionType;
+        const anyFunctionType = createAnonymousType(undefined, emptySymbols, emptyArray, emptyArray, undefined, undefined, 0, TypeFlags.ContainsAnyFunctionType);
 
         const noConstraintType = createAnonymousType(undefined, emptySymbols, emptyArray, emptyArray, undefined, undefined);
         const circularConstraintType = createAnonymousType(undefined, emptySymbols, emptyArray, emptyArray, undefined, undefined);
@@ -2318,6 +2319,13 @@ namespace ts {
         function createType(flags: TypeFlags): Type {
             const result = new Type(checker, flags);
             typeCount++;
+            do {
+                const highBitPos = Math.floor((Math as any).log2(flags));
+                const flag = 1 << highBitPos;
+                const flagName = ((ts as any).TypeFlags)[flag];
+                typeBreakdown[flagName] = (typeBreakdown[flagName] || 0) + 1;
+                flags &= ~flag;
+            } while (flags > 0);
             result.id = typeCount;
             return result;
         }
@@ -2335,10 +2343,20 @@ namespace ts {
             return type;
         }
 
-        function createObjectType(objectFlags: ObjectFlags, symbol?: Symbol): ObjectType {
-            const type = <ObjectType>createType(TypeFlags.Object);
+        function createObjectType(objectFlags: ObjectFlags, symbol?: Symbol, extraFlags?: TypeFlags): ObjectType {
+            const type = <ObjectType>createType(TypeFlags.Object | extraFlags);
             type.objectFlags = objectFlags;
             type.symbol = symbol;
+            do {
+                const highBitPos = Math.floor((Math as any).log2(objectFlags));
+                const flag = 1 << highBitPos;
+                let flagName = ((ts as any).ObjectFlags)[flag];
+                if (!flagName) {
+                    flagName = "Unknown bit: " + flag;
+                }
+                objectTypeBreakdown[flagName] = (objectTypeBreakdown[flagName] || 0) + 1;
+                objectFlags &= ~flag;
+            } while (objectFlags > 0);
             return type;
         }
 
@@ -2380,8 +2398,8 @@ namespace ts {
             return <ResolvedType>type;
         }
 
-        function createAnonymousType(symbol: Symbol, members: SymbolTable, callSignatures: Signature[], constructSignatures: Signature[], stringIndexInfo: IndexInfo, numberIndexInfo: IndexInfo): ResolvedType {
-            return setStructuredTypeMembers(createObjectType(ObjectFlags.Anonymous, symbol),
+        function createAnonymousType(symbol: Symbol, members: SymbolTable, callSignatures: Signature[], constructSignatures: Signature[], stringIndexInfo: IndexInfo, numberIndexInfo: IndexInfo, extraObjectFlags?: ObjectFlags, extraFlags?: TypeFlags): ResolvedType {
+            return setStructuredTypeMembers(createObjectType(ObjectFlags.Anonymous | extraObjectFlags, symbol, extraFlags),
                 members, callSignatures, constructSignatures, stringIndexInfo, numberIndexInfo);
         }
 
@@ -6935,11 +6953,12 @@ namespace ts {
             return result & TypeFlags.PropagatingFlags;
         }
 
-        function createTypeReference(target: GenericType, typeArguments: Type[]): TypeReference {
+        function createTypeReference(target: GenericType, typeArguments: Type[], extraFlags?: TypeFlags): TypeReference {
+            // TODO (weswig) - IF EXTRA FLAGS IS PRESENT, IT IS NOT SAFE TO USE THE CACHE
             const id = getTypeListId(typeArguments);
             let type = target.instantiations.get(id);
             if (!type) {
-                type = <TypeReference>createObjectType(ObjectFlags.Reference, target.symbol);
+                type = <TypeReference>createObjectType(ObjectFlags.Reference, target.symbol, extraFlags);
                 target.instantiations.set(id, type);
                 type.flags |= typeArguments ? getPropagatingFlagsOfTypes(typeArguments, /*excludeKinds*/ 0) : 0;
                 type.target = target;
@@ -8140,9 +8159,7 @@ namespace ts {
                 emptyArray,
                 emptyArray,
                 getNonReadonlyIndexSignature(stringIndexInfo),
-                getNonReadonlyIndexSignature(numberIndexInfo));
-            spread.flags |= propagatedFlags | TypeFlags.ContainsObjectLiteral;
-            (spread as ObjectType).objectFlags |= (ObjectFlags.ObjectLiteral | ObjectFlags.ContainsSpread);
+                getNonReadonlyIndexSignature(numberIndexInfo), ObjectFlags.ObjectLiteral | ObjectFlags.ContainsSpread, propagatedFlags | TypeFlags.ContainsObjectLiteral);
             return spread;
         }
 
@@ -10164,8 +10181,7 @@ namespace ts {
         // Return a type reference where the source type parameter is replaced with the target marker
         // type, and flag the result as a marker type reference.
         function getMarkerTypeReference(type: GenericType, source: TypeParameter, target: Type) {
-            const result = createTypeReference(type, map(type.typeParameters, t => t === source ? target : t));
-            result.flags |= TypeFlags.MarkerType;
+            const result = createTypeReference(type, map(type.typeParameters, t => t === source ? target : t), TypeFlags.MarkerType);
             return result;
         }
 
@@ -10681,9 +10697,7 @@ namespace ts {
                 resolved.callSignatures,
                 resolved.constructSignatures,
                 resolved.stringIndexInfo,
-                resolved.numberIndexInfo);
-            regularNew.flags = resolved.flags & ~TypeFlags.FreshLiteral;
-            regularNew.objectFlags |= ObjectFlags.ObjectLiteral;
+                resolved.numberIndexInfo, ObjectFlags.ObjectLiteral, resolved.flags & ~TypeFlags.FreshLiteral);
             (<FreshObjectLiteralType>type).regularType = regularNew;
             return regularNew;
         }
@@ -14492,13 +14506,8 @@ namespace ts {
             function createObjectLiteralType() {
                 const stringIndexInfo = isJSObjectLiteral ? jsObjectLiteralIndexInfo : hasComputedStringProperty ? getObjectLiteralIndexInfo(node.properties, offset, propertiesArray, IndexKind.String) : undefined;
                 const numberIndexInfo = hasComputedNumberProperty && !isJSObjectLiteral ? getObjectLiteralIndexInfo(node.properties, offset, propertiesArray, IndexKind.Number) : undefined;
-                const result = createAnonymousType(node.symbol, propertiesTable, emptyArray, emptyArray, stringIndexInfo, numberIndexInfo);
                 const freshObjectLiteralFlag = compilerOptions.suppressExcessPropertyErrors ? 0 : TypeFlags.FreshLiteral;
-                result.flags |= TypeFlags.ContainsObjectLiteral | freshObjectLiteralFlag | (typeFlags & TypeFlags.PropagatingFlags);
-                result.objectFlags |= ObjectFlags.ObjectLiteral;
-                if (patternWithComputedProperties) {
-                    result.objectFlags |= ObjectFlags.ObjectLiteralPatternWithComputedProperties;
-                }
+                const result = createAnonymousType(node.symbol, propertiesTable, emptyArray, emptyArray, stringIndexInfo, numberIndexInfo, ObjectFlags.ObjectLiteral | (patternWithComputedProperties && ObjectFlags.ObjectLiteralPatternWithComputedProperties), TypeFlags.ContainsObjectLiteral | freshObjectLiteralFlag | (typeFlags & TypeFlags.PropagatingFlags));
                 if (inDestructuringPattern) {
                     result.pattern = node;
                 }
@@ -14674,9 +14683,7 @@ namespace ts {
              * @param attributesTable a symbol table of attributes property
              */
             function createJsxAttributesType() {
-                const result = createAnonymousType(attributes.symbol, attributesTable, emptyArray, emptyArray, /*stringIndexInfo*/ undefined, /*numberIndexInfo*/ undefined);
-                result.flags |= TypeFlags.JsxAttributes | TypeFlags.ContainsObjectLiteral;
-                result.objectFlags |= ObjectFlags.ObjectLiteral;
+                const result = createAnonymousType(attributes.symbol, attributesTable, emptyArray, emptyArray, /*stringIndexInfo*/ undefined, /*numberIndexInfo*/ undefined, ObjectFlags.ObjectLiteral, TypeFlags.JsxAttributes | TypeFlags.ContainsObjectLiteral);
                 return result;
             }
         }

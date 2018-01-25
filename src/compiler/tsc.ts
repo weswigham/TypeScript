@@ -211,6 +211,12 @@ namespace ts {
             const emitTime = performance.getDuration("Emit");
             if (compilerOptions.extendedDiagnostics) {
                 performance.forEachMeasure((name, duration) => reportTimeStatistic(`${name} time`, duration));
+                for (const key in ts.typeBreakdown) {
+                    reportCountStatistic(`${key} Types`, ts.typeBreakdown[key]);
+                }
+                for (const key in ts.objectTypeBreakdown) {
+                    reportCountStatistic(`${key} Object Types`, ts.objectTypeBreakdown[key]);
+                }
             }
             else {
                 // Individual component times.
