@@ -749,12 +749,10 @@ namespace ts {
             return _jsxNamespace;
         }
 
-        function getEmitResolver(sourceFile: SourceFile, cancellationToken: CancellationToken, ignoreDiagnostics?: boolean) {
+        function getEmitResolver(sourceFile: SourceFile, cancellationToken: CancellationToken) {
             // Ensure we have all the type information in place for this file so that all the
             // emitter questions of this resolver will return the right information.
-            if (!ignoreDiagnostics) {
-                getDiagnostics(sourceFile, cancellationToken);
-            }
+            getDiagnostics(sourceFile, cancellationToken);
             return emitResolver;
         }
 
@@ -21031,6 +21029,7 @@ namespace ts {
                             }
                             break;
                         case SyntaxKind.IndexSignature:
+                        case SyntaxKind.SemicolonClassElement:
                             // Can't be private
                             break;
                         default:
