@@ -61,6 +61,8 @@ namespace ts {
 
         const emptySymbols = createSymbolTable();
         const identityMapper: (type: Type) => Type = identity;
+        // This is identical to identityMapper, but is a different function so they inside `checkExpressionWithContextualType`, it doesn't cause CheckMode.SkipContextSensitive
+        const noMapper: (type: Type) => Type = a => a;
 
         const compilerOptions = host.getCompilerOptions();
         const languageVersion = getEmitScriptTarget(compilerOptions);
@@ -13973,13 +13975,10 @@ namespace ts {
                         }
                         return restTypes.length ? createArrayType(getUnionType(restTypes)) : undefined;
                     }
-                    const links = getNodeLinks(iife);
-                    const cached = links.resolvedSignature;
-                    links.resolvedSignature = anySignature;
+                    // We must check expression w/o context here, since we're inverting the normal context and would circularly check expressions to form contextual types otherwise
                     const type = indexOfParameter < iife.arguments.length ?
-                        getWidenedLiteralType(checkExpression(iife.arguments[indexOfParameter])) :
+                        getWidenedLiteralType(checkExpressionWithContextualType(iife.arguments[indexOfParameter], unknownType, noMapper)) :
                         parameter.initializer ? undefined : undefinedWideningType;
-                    links.resolvedSignature = cached;
                     return type;
                 }
                 const contextualSignature = getContextualSignature(func);
@@ -14114,15 +14113,32 @@ namespace ts {
             return undefined;
         }
 
+        function getContextualSignaturesForCallLikeExpression(node: CallExpression | NewExpression | TaggedTemplateExpression): Signature[] {
+            switch (node.kind) {
+                case SyntaxKind.CallExpression:
+                    return getSignaturesOfType(checkNonNullExpression(node.expression), SignatureKind.Call);
+                case SyntaxKind.NewExpression:
+                    return getSignaturesOfType(checkNonNullExpression(node.expression), SignatureKind.Construct);
+                case SyntaxKind.TaggedTemplateExpression:
+                    return getSignaturesOfType(checkNonNullExpression(node.tag), SignatureKind.Call);
+            }
+            Debug.assertNever(node, "Branch in 'getContextualSignaturesForCallLikeExpression' should be unreachable.");
+        }
+
         // In a typed function call, an argument or substitution expression is contextually typed by the type of the corresponding parameter.
-        function getContextualTypeForArgument(callTarget: CallLikeExpression, arg: Expression): Type {
+        function getContextualTypeForArgument(callTarget: TaggedTemplateExpression | CallExpression | NewExpression, arg: Expression): Type {
             const args = getEffectiveCallArguments(callTarget);
             const argIndex = args.indexOf(arg);
             if (argIndex >= 0) {
-                // If we're already in the process of resolving the given signature, don't resolve again as
-                // that could cause infinite recursion. Instead, return anySignature.
-                const signature = getNodeLinks(callTarget).resolvedSignature === resolvingSignature ? resolvingSignature : getResolvedSignature(callTarget);
-                return getTypeAtPosition(signature, argIndex);
+                const signatures = getContextualSignaturesForCallLikeExpression(callTarget);
+                if (signatures && signatures.length > 0) {
+                    if (signatures.length === 1) {
+                        return getTypeAtPosition(signatures[0], argIndex);
+                    }
+                    else {
+                        return getUnionType(map(signatures, s => getTypeAtPosition(s, argIndex)), UnionReduction.None);
+                    }
+                }
             }
             return undefined;
         }
