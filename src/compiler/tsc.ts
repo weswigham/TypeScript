@@ -139,9 +139,21 @@ namespace ts {
         }
     }
 
+    interface IncrementalCacheData {
+        rootFileNames: string[];
+        includedFileNames: string[];
+        resolutionCache: SerializedResolutionCache;
+    }
+
     function performCompilation(rootFileNames: string[], compilerOptions: CompilerOptions) {
         const compilerHost = createCompilerHost(compilerOptions);
         enableStatistics(compilerOptions);
+
+        if (compilerOptions.incremental) {
+            const incrCache = combinePaths(compilerHost.getCurrentDirectory(), ".tscache");
+            
+            return;
+        }
 
         const program = createProgram(rootFileNames, compilerOptions, compilerHost);
         const exitStatus = emitFilesAndReportErrors(program, reportDiagnostic, s => sys.write(s + sys.newLine));

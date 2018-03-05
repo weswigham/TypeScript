@@ -77,6 +77,14 @@ namespace ts {
             category: Diagnostics.Command_line_Options,
             description: Diagnostics.Watch_input_files,
         },
+        {
+            name: "incremental",
+            shortName: "i",
+            type: "boolean",
+            showInSimplifiedHelpView: true,
+            category: Diagnostics.Command_line_Options,
+            description: Diagnostics.Read_and_save_incremental_compilation_metadata_to_improve_subsequent_incremental_build_times,
+        },
 
         // Basic
         {

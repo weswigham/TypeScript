@@ -4145,6 +4145,7 @@ namespace ts {
         /*@internal*/ version?: boolean;
         /*@internal*/ watch?: boolean;
         esModuleInterop?: boolean;
+        incremental?: boolean;
 
         [option: string]: CompilerOptionsValue | JsonSourceFile | undefined;
     }

@@ -2844,6 +2844,10 @@
         "category": "Message",
         "code": 6020
     },
+    "Read and save incremental compilation metadata to improve subsequent incremental build times.": {
+        "category": "Message",
+        "code": 6021
+    },
     "Syntax: {0}": {
         "category": "Message",
         "code": 6023
