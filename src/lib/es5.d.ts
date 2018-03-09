@@ -1362,84 +1362,34 @@ type NonNullable<T> = T extends null | undefined ? never : T;
 
 declare namespace TypeFacts {
   /**
-   * Effectively replaces a `T` with a `T extends string`
-   */
-  export type IsString<T extends string> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends number`
-   */
-  export type IsNumber<T extends number> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends boolean`
-   */
-  export type IsBoolean<T extends boolean> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends symbol`
-   */
-  export type IsSymbol<T extends symbol> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends object`
-   */
-  export type IsObject<T extends object> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends (...args: any[]) => any`
-   */
-  export type IsFunction<T extends (...args: any[]) => any> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends undefined | void`
-   */
-  export type IsUndefined<T extends undefined | void> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends null`
-   */
-  export type IsNull<T extends null> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends undefined | null | void`
-   */
-  export type IsUndefinedOrNull<T extends undefined | null | void> = T;
-
-  /**
-   * Effectively replaces a `T` with a `T extends false | null | undefined | void | 0 | ""`
-   */
-  export type IsFalsy<T extends false | null | undefined | void | 0 | ""> = T;
-
-  /**
    * Include only string from T
    */
-  export type EQString<T> = T extends IsString<infer U> ? T&U : never;
+  export type EQString<T> = T extends string ? T & string : never;
 
   /**
    * Include only number from T
    */
-  export type EQNumber<T> = T extends IsNumber<infer U> ? T&U : never;
+  export type EQNumber<T> = T extends number ? T & number : never;
 
   /**
    * Include only boolean from T
    */
-  export type EQBoolean<T> = T extends IsBoolean<infer U> ? T&U : never;
+  export type EQBoolean<T> = T extends boolean ? T & boolean : never;
 
   /**
    * Include only symbol from T
    */
-  export type EQSymbol<T> = T extends IsSymbol<infer U> ? T&U : never;
+  export type EQSymbol<T> = T extends symbol ? T & symbol : never;
 
   /**
    * Include only object from T
    */
-  export type EQObject<T> = T extends IsObject<infer U> ? T&U : never;
+  export type EQObject<T> = T extends object ? T & object : never;
 
   /**
    * Include only functions from T
    */
-  export type EQFunction<T> = T extends IsFunction<infer U> ? T&U : never;
+  export type EQFunction<T> = T extends (...args: any[]) => any ? T & (() => void) : never;
 
   /**
    * Exclude only string from T
@@ -1474,17 +1424,17 @@ declare namespace TypeFacts {
   /**
    * Include only undefined from T
    */
-  export type EQUndefined<T> = T extends IsUndefined<infer U> ? T&U : never;
+  export type EQUndefined<T> = T extends undefined | void ? T & (undefined | void) : never;
 
   /**
    * Include only null from T
    */
-  export type EQNull<T> = T extends IsNull<infer U> ? T&U : never;
+  export type EQNull<T> = T extends null ? T & null : never;
 
   /**
    * Include only null and undefined from T
    */
-  export type EQUndefinedOrNull<T> = T extends IsUndefinedOrNull<infer U> ? T&U : never;
+  export type EQUndefinedOrNull<T> = T extends undefined | null | void ? T & (undefined | null | void) : never;
 
   /**
    * Exclude only undefined from T
@@ -1509,7 +1459,7 @@ declare namespace TypeFacts {
   /**
    * Include falsy from T
    */
-  export type Falsy<T> = T extends IsFalsy<infer U> ? T&U : never;
+  export type Falsy<T> = T extends false | null | undefined | void | 0 | "" ? T & (false | null | undefined | void | 0 | "") : never;
 }
 
 /**
