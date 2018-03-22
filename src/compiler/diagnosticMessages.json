@@ -4018,5 +4018,9 @@
     "Add definite assignment assertion to property '{0}'": {
         "category": "Message",
         "code": 95020
+    },
+    "Export private name": {
+        "category": "Message",
+        "code": 95021
     }
 }
