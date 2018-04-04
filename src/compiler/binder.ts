@@ -245,7 +245,11 @@ namespace ts {
 
         // Should not be called on a declaration with a computed property name,
         // unless it is a well known Symbol.
-        function getDeclarationName(node: Declaration): __String {
+        function getDeclarationName(node: Declaration, exportName?: boolean): __String {
+            const isDefaultExport = hasModifier(node, ModifierFlags.Default);
+            if (isDefaultExport && exportName) {
+                return InternalSymbolName.Default;
+            }
             if (node.kind === SyntaxKind.ExportAssignment) {
                 return (<ExportAssignment>node).isExportEquals ? InternalSymbolName.ExportEquals : InternalSymbolName.Default;
             }
@@ -291,7 +295,7 @@ namespace ts {
 
                 case SyntaxKind.FunctionDeclaration:
                 case SyntaxKind.ClassDeclaration:
-                    return (hasModifier(node, ModifierFlags.Default) ? InternalSymbolName.Default : undefined);
+                    return undefined;
                 case SyntaxKind.JSDocFunctionType:
                     return (isJSDocConstructSignature(node) ? InternalSymbolName.New : InternalSymbolName.Call);
                 case SyntaxKind.Parameter:
@@ -322,10 +326,8 @@ namespace ts {
         function declareSymbol(symbolTable: SymbolTable, parent: Symbol, node: Declaration, includes: SymbolFlags, excludes: SymbolFlags, isReplaceableByMethod?: boolean): Symbol {
             Debug.assert(!hasDynamicName(node));
 
-            const isDefaultExport = hasModifier(node, ModifierFlags.Default);
-
             // The exported symbol for an export default function/class node is always named "default"
-            const name = isDefaultExport && parent ? InternalSymbolName.Default : getDeclarationName(node);
+            const name = getDeclarationName(node, !!parent);
 
             let symbol: Symbol;
             if (name === undefined) {
@@ -394,6 +396,7 @@ namespace ts {
                             // If the current node is a default export of some sort, then check if
                             // there are any other default exports that we need to error on.
                             // We'll know whether we have other default exports depending on if `symbol` already has a declaration list set.
+                            const isDefaultExport = hasModifier(node, ModifierFlags.Default);
                             if (isDefaultExport) {
                                 message = Diagnostics.A_module_cannot_have_multiple_default_exports;
                             }

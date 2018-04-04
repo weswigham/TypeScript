@@ -500,8 +500,10 @@ namespace ts.FindAllReferences.Core {
             // Note: getLocalSymbolForExportDefault handles `export default class C {}`, but not `export default C` or `export { C as default }`.
             // The other two forms seem to be handled downstream (e.g. in `skipPastExportOrImportSpecifier`), so special-casing the first form
             // here appears to be intentional).
+            const localSymbol = getLocalSymbolForExportDefault(symbol);
+            const nameSymbol = localSymbol && localSymbol.escapedName !== InternalSymbolName.Missing ? localSymbol : symbol;
             const {
-                text = stripQuotes(unescapeLeadingUnderscores((getLocalSymbolForExportDefault(symbol) || symbol).escapedName)),
+                text = stripQuotes(unescapeLeadingUnderscores(nameSymbol.escapedName)),
                 allSearchSymbols,
             } = searchOptions;
             const escapedText = escapeLeadingUnderscores(text);

@@ -56,6 +56,7 @@
         "../services/patternMatcher.ts",
         "../services/pathCompletions.ts",
         "../services/completions.ts",
+        "../services/findAllReferences.ts",
         "../services/services.ts",
         "../services/shims.ts",
         "../services/signatureHelp.ts",

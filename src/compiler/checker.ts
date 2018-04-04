@@ -1292,6 +1292,11 @@ namespace ts {
                         }
 
                         if (result = lookup(moduleExports, name, meaning & SymbolFlags.ModuleMember)) {
+                            const localSymbol = getLocalSymbolForExportDefault(result);
+                            if (localSymbol && localSymbol.escapedName !== name) {
+                                result = undefined;
+                                break;
+                            }
                             break loop;
                         }
                         break;
