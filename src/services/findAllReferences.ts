@@ -119,7 +119,7 @@ namespace ts.FindAllReferences {
                     const { node } = def;
                     const symbol = checker.getSymbolAtLocation(node);
                     const displayParts = symbol && SymbolDisplay.getSymbolDisplayPartsDocumentationAndSymbolKind(
-                        checker, symbol, node.getSourceFile(), getContainerNode(node), node).displayParts;
+                        checker, symbol, node.getSourceFile(), getContainerNode(node), node).displayParts || [textPart("this")];
                     return { node, name: "this", kind: ScriptElementKind.variableElement, displayParts };
                 }
                 case "string": {
@@ -272,6 +272,8 @@ namespace ts.FindAllReferences.Core {
             case SyntaxKind.ImportDeclaration:
             case SyntaxKind.ExportDeclaration:
                 return true;
+            case SyntaxKind.LiteralType:
+                return isImportTypeNode(node.parent.parent);
             case SyntaxKind.CallExpression:
                 return isRequireCall(node.parent as CallExpression, /*checkArgumentIsStringLiteralLike*/ false) || isImportCall(node.parent as CallExpression);
             default:
@@ -407,7 +409,6 @@ namespace ts.FindAllReferences.Core {
         return firstDefined(symbol.declarations, decl => {
             if (!decl.parent) {
                 // Assertions for GH#21814. We should be handling SourceFile symbols in `getReferencedSymbolsForModule` instead of getting here.
-                Debug.assert(decl.kind === SyntaxKind.SourceFile);
                 Debug.fail(`Unexpected symbol at ${Debug.showSyntaxKind(node)}: ${Debug.showSymbol(symbol)}`);
             }
             return isTypeLiteralNode(decl.parent) && isUnionTypeNode(decl.parent.parent)
@@ -559,7 +560,8 @@ namespace ts.FindAllReferences.Core {
             const addRef = state.referenceAdder(exportSymbol);
             for (const singleRef of singleReferences) {
                 // At `default` in `import { default as x }` or `export { default as x }`, do add a reference, but do not rename.
-                if (!(state.options.isForRename && (isExportSpecifier(singleRef.parent) || isImportSpecifier(singleRef.parent)) && singleRef.escapedText === InternalSymbolName.Default)) {
+                if (hasMatchingMeaning(singleRef, state) &&
+                    !(state.options.isForRename && (isExportSpecifier(singleRef.parent) || isImportSpecifier(singleRef.parent)) && singleRef.escapedText === InternalSymbolName.Default)) {
                     addRef(singleRef);
                 }
             }
@@ -612,27 +614,19 @@ namespace ts.FindAllReferences.Core {
             checker.getPropertySymbolOfDestructuringAssignment(<Identifier>location);
     }
 
-    function getObjectBindingElementWithoutPropertyName(symbol: Symbol): BindingElement | undefined {
+    function getObjectBindingElementWithoutPropertyName(symbol: Symbol): BindingElement & { name: Identifier } | undefined {
         const bindingElement = getDeclarationOfKind<BindingElement>(symbol, SyntaxKind.BindingElement);
         if (bindingElement &&
             bindingElement.parent.kind === SyntaxKind.ObjectBindingPattern &&
+            isIdentifier(bindingElement.name) &&
             !bindingElement.propertyName) {
-            return bindingElement;
+            return bindingElement as BindingElement & { name: Identifier };
         }
     }
 
     function getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol: Symbol, checker: TypeChecker): Symbol | undefined {
         const bindingElement = getObjectBindingElementWithoutPropertyName(symbol);
-        if (!bindingElement) return undefined;
-
-        const typeOfPattern = checker.getTypeAtLocation(bindingElement.parent);
-        const propSymbol = typeOfPattern && checker.getPropertyOfType(typeOfPattern, (<Identifier>bindingElement.name).text);
-        if (propSymbol && propSymbol.flags & SymbolFlags.Accessor) {
-            // See GH#16922
-            Debug.assert(!!(propSymbol.flags & SymbolFlags.Transient));
-            return (propSymbol as TransientSymbol).target;
-        }
-        return propSymbol;
+        return bindingElement && getPropertySymbolFromBindingElement(checker, bindingElement);
     }
 
     /**
@@ -822,6 +816,10 @@ namespace ts.FindAllReferences.Core {
         }
     }
 
+    function hasMatchingMeaning(referenceLocation: Node, state: State): boolean {
+        return !!(getMeaningFromLocation(referenceLocation) & state.searchMeaning);
+    }
+
     function getReferencesAtLocation(sourceFile: SourceFile, position: number, search: Search, state: State, addReferencesHere: boolean): void {
         const referenceLocation = getTouchingPropertyName(sourceFile, position, /*includeJsDocComment*/ true);
 
@@ -840,9 +838,7 @@ namespace ts.FindAllReferences.Core {
             return;
         }
 
-        if (!(getMeaningFromLocation(referenceLocation) & state.searchMeaning)) {
-            return;
-        }
+        if (!hasMatchingMeaning(referenceLocation, state)) return;
 
         const referenceSymbol = state.checker.getSymbolAtLocation(referenceLocation);
         if (!referenceSymbol) {

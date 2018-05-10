@@ -177,10 +177,10 @@ namespace ts.textChanges {
     }
 
     function getAdjustedEndPosition(sourceFile: SourceFile, node: Node, options: ConfigurableEnd) {
+        const { end } = node;
         if (options.useNonAdjustedEndPosition || isExpression(node)) {
-            return node.getEnd();
+            return end;
         }
-        const end = node.getEnd();
         const newEnd = skipTrivia(sourceFile.text, end, /*stopAfterLineBreak*/ true);
         return newEnd !== end && isLineBreak(sourceFile.text.charCodeAt(newEnd - 1))
             ? newEnd
@@ -211,9 +211,9 @@ namespace ts.textChanges {
 
     export class ChangeTracker {
         private readonly changes: Change[] = [];
+        private readonly newFiles: { readonly oldFile: SourceFile, readonly fileName: string, readonly statements: ReadonlyArray<Statement> }[] = [];
         private readonly deletedNodesInLists: true[] = []; // Stores ids of nodes in lists that we already deleted. Used to avoid deleting `, ` twice in `a, b`.
-        // Map from class id to nodes to insert at the start
-        private readonly nodesInsertedAtClassStarts = createMap<{ sourceFile: SourceFile, cls: ClassLikeDeclaration, members: ClassElement[] }>();
+        private readonly classesWithNodesInsertedAtStart = createMap<ClassDeclaration>(); // Set<ClassDeclaration> implemented as Map<node id, ClassDeclaration>
 
         public static fromContext(context: TextChangesContext): ChangeTracker {
             return new ChangeTracker(getNewLineOrDefaultFromHost(context.host, context.formatContext.options), context.formatContext);
@@ -343,8 +343,7 @@ namespace ts.textChanges {
         }
 
         public insertNodeBefore(sourceFile: SourceFile, before: Node, newNode: Node, blankLineBetween = false) {
-            const pos = getAdjustedStartPosition(sourceFile, before, {}, Position.Start);
-            return this.replaceRange(sourceFile, { pos, end: pos }, newNode, this.getOptionsForInsertNodeBefore(before, blankLineBetween));
+            this.insertNodeAt(sourceFile, getAdjustedStartPosition(sourceFile, before, {}, Position.Start), newNode, this.getOptionsForInsertNodeBefore(before, blankLineBetween));
         }
 
         public insertModifierBefore(sourceFile: SourceFile, modifier: SyntaxKind, before: Node): void {
@@ -443,24 +442,39 @@ namespace ts.textChanges {
         }
 
         public insertNodeAtClassStart(sourceFile: SourceFile, cls: ClassLikeDeclaration, newElement: ClassElement): void {
-            const firstMember = firstOrUndefined(cls.members);
-            if (!firstMember) {
-                const id = getNodeId(cls).toString();
-                const newMembers = this.nodesInsertedAtClassStarts.get(id);
-                if (newMembers) {
-                    Debug.assert(newMembers.sourceFile === sourceFile && newMembers.cls === cls);
-                    newMembers.members.push(newElement);
+            const clsStart = cls.getStart(sourceFile);
+            const indentation = formatting.SmartIndenter.findFirstNonWhitespaceColumn(getLineStartPositionForPosition(clsStart, sourceFile), clsStart, sourceFile, this.formatContext.options)
+                + this.formatContext.options.indentSize;
+            this.insertNodeAt(sourceFile, cls.members.pos, newElement, { indentation, ...this.getInsertNodeAtClassStartPrefixSuffix(sourceFile, cls) });
+        }
+
+        private getInsertNodeAtClassStartPrefixSuffix(sourceFile: SourceFile, cls: ClassLikeDeclaration): { prefix: string, suffix: string } {
+            if (cls.members.length === 0) {
+                if (addToSeen(this.classesWithNodesInsertedAtStart, getNodeId(cls), cls)) {
+                    // For `class C {\n}`, don't add the trailing "\n"
+                    const shouldSuffix = (positionsAreOnSameLine as any)(...getClassBraceEnds(cls, sourceFile), sourceFile); // TODO: GH#4130 remove 'as any'
+                    return { prefix: this.newLineCharacter, suffix: shouldSuffix ? this.newLineCharacter : "" };
                 }
                 else {
-                    this.nodesInsertedAtClassStarts.set(id, { sourceFile, cls, members: [newElement] });
+                    return { prefix: "", suffix: this.newLineCharacter };
                 }
             }
             else {
-                this.insertNodeBefore(sourceFile, firstMember, newElement);
+                return { prefix: this.newLineCharacter, suffix: "" };
             }
         }
 
-        public insertNodeAfter(sourceFile: SourceFile, after: Node, newNode: Node): this {
+        public insertNodeAfter(sourceFile: SourceFile, after: Node, newNode: Node): void {
+            const endPosition = this.insertNodeAfterWorker(sourceFile, after, newNode);
+            this.insertNodeAt(sourceFile, endPosition, newNode, this.getInsertNodeAfterOptions(sourceFile, after));
+        }
+
+        public insertNodesAfter(sourceFile: SourceFile, after: Node, newNodes: ReadonlyArray<Node>): void {
+            const endPosition = this.insertNodeAfterWorker(sourceFile, after, first(newNodes));
+            this.insertNodesAt(sourceFile, endPosition, newNodes, this.getInsertNodeAfterOptions(sourceFile, after));
+        }
+
+        private insertNodeAfterWorker(sourceFile: SourceFile, after: Node, newNode: Node): number {
             if (needSemicolonBetween(after, newNode)) {
                 // check if previous statement ends with semicolon
                 // if not - insert semicolon to preserve the code from changing the meaning due to ASI
@@ -469,10 +483,17 @@ namespace ts.textChanges {
                 }
             }
             const endPosition = getAdjustedEndPosition(sourceFile, after, {});
-            return this.replaceRange(sourceFile, createTextRange(endPosition), newNode, this.getInsertNodeAfterOptions(after));
+            return endPosition;
         }
 
-        private getInsertNodeAfterOptions(node: Node): InsertNodeOptions {
+        private getInsertNodeAfterOptions(sourceFile: SourceFile, after: Node) {
+            const options = this.getInsertNodeAfterOptionsWorker(after);
+            return {
+                ...options,
+                prefix: after.end === sourceFile.end && isStatement(after) ? (options.prefix ? `\n${options.prefix}` : "\n") : options.prefix,
+            };
+        }
+        private getInsertNodeAfterOptionsWorker(node: Node): InsertNodeOptions {
             if (isClassDeclaration(node) || isModuleDeclaration(node)) {
                 return { prefix: this.newLineCharacter, suffix: this.newLineCharacter };
             }
@@ -520,13 +541,16 @@ namespace ts.textChanges {
             }
         }
 
+        public insertExportModifier(sourceFile: SourceFile, node: DeclarationStatement | VariableStatement): void {
+            this.insertText(sourceFile, node.getStart(sourceFile), "export ");
+        }
+
         /**
          * This function should be used to insert nodes in lists when nodes don't carry separators as the part of the node range,
          * i.e. arguments in arguments lists, parameters in parameter lists etc.
          * Note that separators are part of the node in statements and class elements.
          */
-        public insertNodeInListAfter(sourceFile: SourceFile, after: Node, newNode: Node) {
-            const containingList = formatting.SmartIndenter.getContainingList(after, sourceFile);
+        public insertNodeInListAfter(sourceFile: SourceFile, after: Node, newNode: Node, containingList = formatting.SmartIndenter.getContainingList(after, sourceFile)) {
             if (!containingList) {
                 Debug.fail("node is not a list element");
                 return this;
@@ -638,12 +662,14 @@ namespace ts.textChanges {
             return this;
         }
 
-        private finishInsertNodeAtClassStart(): void {
-            this.nodesInsertedAtClassStarts.forEach(({ sourceFile, cls, members }) => {
-                const newCls = cls.kind === SyntaxKind.ClassDeclaration
-                    ? updateClassDeclaration(cls, cls.decorators, cls.modifiers, cls.name, cls.typeParameters, cls.heritageClauses, members)
-                    : updateClassExpression(cls, cls.modifiers, cls.name, cls.typeParameters, cls.heritageClauses, members);
-                this.replaceNode(sourceFile, cls, newCls);
+        private finishClassesWithNodesInsertedAtStart(): void {
+            this.classesWithNodesInsertedAtStart.forEach(cls => {
+                const sourceFile = cls.getSourceFile();
+                const [openBraceEnd, closeBraceEnd] = getClassBraceEnds(cls, sourceFile);
+                // For `class C { }` remove the whitespace inside the braces.
+                if (positionsAreOnSameLine(openBraceEnd, closeBraceEnd, sourceFile) && openBraceEnd !== closeBraceEnd - 1) {
+                    this.deleteRange(sourceFile, createTextRange(openBraceEnd, closeBraceEnd - 1));
+                }
             });
         }
 
@@ -654,9 +680,21 @@ namespace ts.textChanges {
          *    so we can only call this once and can't get the non-formatted text separately.
          */
         public getChanges(validate?: ValidateNonFormattedText): FileTextChanges[] {
-            this.finishInsertNodeAtClassStart();
-            return changesToText.getTextChangesFromChanges(this.changes, this.newLineCharacter, this.formatContext, validate);
+            this.finishClassesWithNodesInsertedAtStart();
+            const changes = changesToText.getTextChangesFromChanges(this.changes, this.newLineCharacter, this.formatContext, validate);
+            for (const { oldFile, fileName, statements } of this.newFiles) {
+                changes.push(changesToText.newFileChanges(oldFile, fileName, statements, this.newLineCharacter));
+            }
+            return changes;
         }
+
+        public createNewFile(oldFile: SourceFile, fileName: string, statements: ReadonlyArray<Statement>) {
+            this.newFiles.push({ oldFile, fileName, statements });
+        }
+    }
+
+    function getClassBraceEnds(cls: ClassLikeDeclaration, sourceFile: SourceFile): [number, number] {
+        return [findChildOfKind(cls, SyntaxKind.OpenBraceToken, sourceFile).end, findChildOfKind(cls, SyntaxKind.CloseBraceToken, sourceFile).end];
     }
 
     export type ValidateNonFormattedText = (node: Node, text: string) => void;
@@ -666,7 +704,8 @@ namespace ts.textChanges {
             return group(changes, c => c.sourceFile.path).map(changesInFile => {
                 const sourceFile = changesInFile[0].sourceFile;
                 // order changes by start position
-                const normalized = stableSort(changesInFile, (a, b) => a.range.pos - b.range.pos);
+                // If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
+                const normalized = stableSort(changesInFile, (a, b) => (a.range.pos - b.range.pos) || (a.range.end - b.range.end));
                 // verify that change intervals do not overlap, except possibly at end points.
                 for (let i = 0; i < normalized.length - 1; i++) {
                     Debug.assert(normalized[i].range.end <= normalized[i + 1].range.pos, "Changes overlap", () =>
@@ -676,6 +715,11 @@ namespace ts.textChanges {
                     createTextChange(createTextSpanFromRange(c.range), computeNewText(c, sourceFile, newLineCharacter, formatContext, validate)));
                 return { fileName: sourceFile.fileName, textChanges };
             });
+        }
+
+        export function newFileChanges(oldFile: SourceFile, fileName: string, statements: ReadonlyArray<Statement>, newLineCharacter: string): FileTextChanges {
+            const text = statements.map(s => getNonformattedText(s, oldFile, newLineCharacter).text).join(newLineCharacter);
+            return { fileName, textChanges: [createTextChange(createTextSpan(0, 0), text)] };
         }
 
         function computeNewText(change: Change, sourceFile: SourceFile, newLineCharacter: string, formatContext: formatting.FormatContext, validate: ValidateNonFormattedText): string {

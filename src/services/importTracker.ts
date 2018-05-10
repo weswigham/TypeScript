@@ -99,6 +99,9 @@ namespace ts.FindAllReferences {
                             }
                             break;
 
+                        case SyntaxKind.Identifier: // for 'const x = require("y");
+                            break; // TODO: GH#23879
+
                         case SyntaxKind.ImportEqualsDeclaration:
                             handleNamespaceImport(direct, direct.name, hasModifier(direct, ModifierFlags.Export));
                             break;
@@ -130,6 +133,19 @@ namespace ts.FindAllReferences {
                                 directImports.push(direct);
                             }
                             break;
+
+                        case SyntaxKind.ImportType:
+                            if (direct.qualifier) {
+                                // `import("foo").x` named import
+                                directImports.push(direct);
+                            }
+                            else {
+                                // TODO: GH#23879
+                            }
+                            break;
+
+                        default:
+                            Debug.assertNever(direct, `Unexpected import kind: ${Debug.showSyntaxKind(direct)}`);
                     }
                 }
             }
@@ -216,6 +232,9 @@ namespace ts.FindAllReferences {
             }
 
             if (decl.kind === SyntaxKind.ImportType) {
+                if (decl.qualifier) { // TODO: GH#23879
+                    singleReferences.push(decl.qualifier.kind === SyntaxKind.Identifier ? decl.qualifier : decl.qualifier.right);
+                }
                 return;
             }
 
@@ -248,7 +267,7 @@ namespace ts.FindAllReferences {
                 const { name } = importClause;
                 // If a default import has the same name as the default export, allow to rename it.
                 // Given `import f` and `export default function f`, we will rename both, but for `import g` we will rename just that.
-                if (name && (!isForRename || name.escapedText === symbolName(exportSymbol))) {
+                if (name && (!isForRename || name.escapedText === symbolEscapedNameNoDefault(exportSymbol))) {
                     const defaultImportAlias = checker.getSymbolAtLocation(name);
                     addSearch(name, defaultImportAlias);
                 }
@@ -313,16 +332,10 @@ namespace ts.FindAllReferences {
         const namespaceImportSymbol = checker.getSymbolAtLocation(name);
 
         return forEachPossibleImportOrExportStatement(sourceFileLike, statement => {
-            if (statement.kind !== SyntaxKind.ExportDeclaration) return;
-
-            const { exportClause, moduleSpecifier } = statement as ExportDeclaration;
-            if (moduleSpecifier || !exportClause) return;
-
-            for (const element of exportClause.elements) {
-                if (checker.getExportSpecifierLocalTargetSymbol(element) === namespaceImportSymbol) {
-                    return true;
-                }
-            }
+            if (!isExportDeclaration(statement)) return;
+            const { exportClause, moduleSpecifier } = statement;
+            return !moduleSpecifier && exportClause &&
+                exportClause.elements.some(element => checker.getExportSpecifierLocalTargetSymbol(element) === namespaceImportSymbol);
         });
     }
 
@@ -485,6 +498,9 @@ namespace ts.FindAllReferences {
                 else if (isBinaryExpression(parent.parent)) {
                     return getSpecialPropertyExport(parent.parent, /*useLhsSymbol*/ true);
                 }
+                else if (isJSDocTypedefTag(parent)) {
+                    return exportInfo(symbol, ExportKind.Named);
+                }
             }
 
             function getExportAssignmentExport(ex: ExportAssignment): ExportedSymbol {
@@ -534,7 +550,7 @@ namespace ts.FindAllReferences {
             // If the import has a different name than the export, do not continue searching.
             // If `importedName` is undefined, do continue searching as the export is anonymous.
             // (All imports returned from this function will be ignored anyway if we are in rename and this is a not a named export.)
-            const importedName = symbolName(importedSymbol);
+            const importedName = symbolEscapedNameNoDefault(importedSymbol);
             if (importedName === undefined || importedName === InternalSymbolName.Default || importedName === symbol.escapedName) {
                 return { kind: ImportExport.Import, symbol: importedSymbol, ...isImport };
             }
@@ -604,17 +620,6 @@ namespace ts.FindAllReferences {
         const exportingModuleSymbol = checker.getMergedSymbol(moduleSymbol); // Need to get merged symbol in case there's an augmentation.
         // `export` may appear in a namespace. In that case, just rely on global search.
         return isExternalModuleSymbol(exportingModuleSymbol) ? { exportingModuleSymbol, exportKind } : undefined;
-    }
-
-    function symbolName(symbol: Symbol): __String | undefined {
-        if (symbol.escapedName !== InternalSymbolName.Default) {
-            return symbol.escapedName;
-        }
-
-        return forEach(symbol.declarations, decl => {
-            const name = getNameOfDeclaration(decl);
-            return name && name.kind === SyntaxKind.Identifier && name.escapedText;
-        });
     }
 
     /** If at an export specifier, go to the symbol it refers to. */
