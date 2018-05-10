@@ -1,5 +1,6 @@
 import cp = require("child_process");
 import Octokit = require("@octokit/rest");
+import { StringDecoder } from "string_decoder";
 
 const opts = { timeout: 100_000, shell: true, stdio: "inherit" }
 function runSequence(tasks: [string, string[]][]) {
@@ -10,16 +11,22 @@ function runSequence(tasks: [string, string[]][]) {
     }
 }
 
+function padNum(number: number) {
+    const str = "" + number;
+    return str.length >= 2 ? str : "0" + str;
+}
+
 const userName = "weswigham";
-const reviewers = ["weswigham", "sandersn", "mhegazy"]
+const reviewers = ["weswigham"/*, "sandersn", "mhegazy"*/]
 const now = new Date();
-const branchName = `user-update-${now.getFullYear()}${now.getMonth().toFixed(2)}${now.getDay().toFixed(2)}`;
+const branchName = `user-update-${now.getFullYear()}${padNum(now.getMonth())}${padNum(now.getDay())}`;
 const remoteUrl = `https://github.com/${userName}/TypeScript.git`;
 runSequence([
     ["git", ["checkout", "."]], // reset any changes
     ["node", ["./node_modules/jake/bin/cli.js", "baseline-accept"]], // accept baselines
     ["git", ["checkout", "-b", branchName]], // create a branch
     ["git", ["add", "."]], // Add all changes
+    ["git", ["commit", "-m", `"Update user baselines"`]], // Commit all changes
     ["git", ["remote", "add", "fork", remoteUrl]], // Add the remote fork
     ["git", ["push", "--set-upstream", "fork", branchName]] // push the branch
 ]);
@@ -30,7 +37,7 @@ gh.authenticate({
     token: process.env.GH_TOKEN
 });
 gh.pullRequests.create({
-    owner: "Microsoft",
+    owner: process.env.TARGET_FORK,
     repo: "TypeScript",
     maintainer_can_modify: true,
     title: `🤖 User test baselines have changed`,
@@ -44,7 +51,7 @@ cc ${reviewers.map(r => "@" + r).join(" ")}`,
     const num = r.data.number;
     console.log(`Pull request ${num} created.`);
     return gh.pullRequests.createReviewRequest({
-        owner: "Microsoft",
+        owner: process.env.TARGET_FORK,
         repo: "TypeScript",
         number: num,
         reviewers,
