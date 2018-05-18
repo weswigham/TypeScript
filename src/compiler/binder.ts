@@ -776,7 +776,7 @@ namespace ts {
                 case SyntaxKind.CommaToken:
                     return isNarrowingExpression(expr.right);
             }
-            return false;
+            return isNarrowableOperand(expr);
         }
 
         function isNarrowableOperand(expr: Expression): boolean {
@@ -788,6 +788,7 @@ namespace ts {
                         case SyntaxKind.EqualsToken:
                             return isNarrowableOperand((<BinaryExpression>expr).left);
                         case SyntaxKind.CommaToken:
+                        case SyntaxKind.AmpersandAmpersandToken:
                             return isNarrowableOperand((<BinaryExpression>expr).right);
                     }
             }

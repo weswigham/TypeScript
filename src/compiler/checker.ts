@@ -13288,6 +13288,7 @@ namespace ts {
                         case SyntaxKind.EqualsToken:
                             return getReferenceCandidate((<BinaryExpression>node).left);
                         case SyntaxKind.CommaToken:
+                        case SyntaxKind.AmpersandAmpersandToken:
                             return getReferenceCandidate((<BinaryExpression>node).right);
                     }
             }
@@ -13726,7 +13727,7 @@ namespace ts {
             function getTypeAtSwitchClause(flow: FlowSwitchClause): FlowType {
                 const flowType = getTypeAtFlowNode(flow.antecedent);
                 let type = getTypeFromFlowType(flowType);
-                const expr = flow.switchStatement.expression;
+                const expr = getReferenceCandidate(flow.switchStatement.expression);
                 if (isMatchingReference(reference, expr)) {
                     type = narrowTypeBySwitchOnDiscriminant(type, flow.switchStatement, flow.clauseStart, flow.clauseEnd);
                 }
