@@ -467,8 +467,8 @@ namespace ts {
         let suggestionCount = 0;
         const maximumSuggestionCount = 10;
         const mergedSymbols: Symbol[] = [];
-        const symbolLinks: SymbolLinks[] = [];
-        const nodeLinks: NodeLinks[] = [];
+        let symbolLinks: SymbolLinks[] = [];
+        let nodeLinks: NodeLinks[] = [];
         const flowLoopCaches: Map<Type>[] = [];
         const flowLoopNodes: FlowNode[] = [];
         const flowLoopKeys: string[] = [];
@@ -12287,6 +12287,8 @@ namespace ts {
             context.inferences = inferences;
             context.flags = flags;
             context.compareTypes = compareTypes || compareTypesAssignable;
+            context.originalCache = symbolLinks;
+            context.originalNodeCache = nodeLinks;
             return context;
 
             function mapper(t: Type): Type {
@@ -17799,6 +17801,9 @@ namespace ts {
                     inference.inferredType = undefined;
                 }
             }
+
+            symbolLinks = context.originalCache.slice();
+            nodeLinks = context.originalNodeCache.slice();
 
             // If a contextual type is available, infer from that type to the return type of the call expression. For
             // example, given a 'function wrap<T, U>(cb: (x: T) => U): (x: T) => U' and a call expression

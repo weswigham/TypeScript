@@ -4164,6 +4164,8 @@ namespace ts {
         inferences: InferenceInfo[];        // Inferences made for each type parameter
         flags: InferenceFlags;              // Inference flags
         compareTypes: TypeComparer;         // Type comparer function
+        originalCache: SymbolLinks[];       // A reference to the original symbolLinks cache from when inference began
+        originalNodeCache: NodeLinks[];     // A reference to the original nodeLinks from when inference began
     }
 
     /* @internal */
