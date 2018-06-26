@@ -1,6 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const del = require("del");
+const fs = require("fs") as typeof import("fs");
+const path = require("path") as typeof import("path");
+const del = require("del") as typeof import("del");
+const cp = require("child_process") as typeof import("child_process");
 
 interface ExecResult {
     stdout: Buffer;
@@ -9,7 +10,10 @@ interface ExecResult {
 }
 
 interface UserConfig {
-    types: string[];
+    types?: string[];
+    monorepo?: {
+        [packageName: string]: string;
+    }; // Mappings of local package paths to published package names, eg `packages/foobar` to `@repo/foobar`
 }
 
 abstract class ExternalCompileRunnerBase extends RunnerBase {
@@ -18,6 +22,7 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
     enumerateTestFiles() {
         return Harness.IO.getDirectories(this.testDir);
     }
+    private timeout = 600_000; // 10 minutes
     /** Setup the runner's tests so that they are ready to be executed by the harness
      *  The first test should be a describe/it block that sets up the harness's compiler instance appropriately
      */
@@ -28,62 +33,90 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
         // tslint:disable-next-line:no-this-assignment
         const cls = this;
         describe(`${this.kind()} code samples`, function(this: Mocha.ISuiteCallbackContext) {
-            this.timeout(600_000); // 10 minutes
+            this.timeout(cls.timeout);
             for (const test of testList) {
                 cls.runTest(typeof test === "string" ? test : test.file);
             }
         });
     }
     private runTest(directoryName: string) {
+        const timeout = this.timeout;
         // tslint:disable-next-line:no-this-assignment
         const cls = this;
-        const timeout = 600_000; // 10 minutes
         describe(directoryName, function(this: Mocha.ISuiteCallbackContext) {
             this.timeout(timeout);
-            const cp = require("child_process");
+            let cwd = path.join(Harness.IO.getWorkspaceRoot(), cls.testDir, directoryName);
+            const originalCwd = cwd;
+            let types: string[] | undefined;
+            const stdio = isWorker ? "pipe" : "inherit";
+            if (fs.existsSync(path.join(cwd, "test.json"))) {
+                const submoduleDir = path.join(cwd, directoryName);
+                const reset = cp.spawnSync("git", ["reset", "HEAD", "--hard"], { cwd: submoduleDir, timeout, shell: true, stdio });
+                if (reset.status !== 0) throw new Error(`git reset for ${directoryName} failed: ${reset.stderr.toString()}`);
+                const clean = cp.spawnSync("git", ["clean", "-f"], { cwd: submoduleDir, timeout, shell: true, stdio });
+                if (clean.status !== 0) throw new Error(`git clean for ${directoryName} failed: ${clean.stderr.toString()}`);
+                const update = cp.spawnSync("git", ["submodule", "update", "--remote", "."], { cwd: submoduleDir, timeout, shell: true, stdio });
+                if (update.status !== 0) throw new Error(`git submodule update for ${directoryName} failed: ${update.stderr.toString()}`);
+
+                const config = JSON.parse(fs.readFileSync(path.join(cwd, "test.json"), { encoding: "utf8" })) as UserConfig;
+                ts.Debug.assert(!!config.types || !!config.monorepo, "Bad format from test.json: 'types' or 'monorepo' field must be present.");
+                types = config.types;
+
+                cwd = submoduleDir;
+                if (config.monorepo) {
+                    const packagesList = Object.keys(config.monorepo);
+                    // setup `link`s for all projects into the deps of this one (even if they're not all required)
+                    for (const packagePath of packagesList) {
+                        const moduleDir = path.join(cwd, packagePath, "node_modules");
+                        try {
+                            fs.mkdirSync(moduleDir);
+                        }
+                        catch {}
+                        for (const otherPackagePath of packagesList) {
+                            const otherPath = path.join(cwd, otherPackagePath);
+                            const modulePath = path.join(moduleDir, config.monorepo[otherPackagePath]);
+                            fs.symlinkSync(otherPath, modulePath);
+                        }
+                    }
+                    // Add tests
+                    for (const packageName of packagesList) {
+                        it(`should build ${packageName} successfully`, () => {
+                            cls.executeBuildErrorsBaselineTest(directoryName, path.join(cwd, packageName), originalCwd, types);
+                        });
+                    }
+                    return;
+                }
+            }
 
             it("should build successfully", () => {
-                let cwd = path.join(Harness.IO.getWorkspaceRoot(), cls.testDir, directoryName);
-                const originalCwd = cwd;
-                const stdio = isWorker ? "pipe" : "inherit";
-                let types: string[] | undefined;
-                if (fs.existsSync(path.join(cwd, "test.json"))) {
-                    const submoduleDir = path.join(cwd, directoryName);
-                    const reset = cp.spawnSync("git", ["reset", "HEAD", "--hard"], { cwd: submoduleDir, timeout, shell: true, stdio });
-                    if (reset.status !== 0) throw new Error(`git reset for ${directoryName} failed: ${reset.stderr.toString()}`);
-                    const clean = cp.spawnSync("git", ["clean", "-f"], { cwd: submoduleDir, timeout, shell: true, stdio });
-                    if (clean.status !== 0) throw new Error(`git clean for ${directoryName} failed: ${clean.stderr.toString()}`);
-                    const update = cp.spawnSync("git", ["submodule", "update", "--remote", "."], { cwd: submoduleDir, timeout, shell: true, stdio });
-                    if (update.status !== 0) throw new Error(`git submodule update for ${directoryName} failed: ${update.stderr.toString()}`);
-
-                    const config = JSON.parse(fs.readFileSync(path.join(cwd, "test.json"), { encoding: "utf8" })) as UserConfig;
-                    ts.Debug.assert(!!config.types, "Bad format from test.json: Types field must be present.");
-                    types = config.types;
-
-                    cwd = submoduleDir;
-                }
-                if (fs.existsSync(path.join(cwd, "package.json"))) {
-                    if (fs.existsSync(path.join(cwd, "package-lock.json"))) {
-                        fs.unlinkSync(path.join(cwd, "package-lock.json"));
-                    }
-                    if (fs.existsSync(path.join(cwd, "node_modules"))) {
-                        del.sync(path.join(cwd, "node_modules"), { force: true });
-                    }
-                    const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
-                    if (install.status !== 0) throw new Error(`NPM Install for ${directoryName} failed: ${install.stderr.toString()}`);
-                }
-                const args = [path.join(Harness.IO.getWorkspaceRoot(), "built/local/tsc.js")];
-                if (types) {
-                    args.push("--types", types.join(","));
-                    // Also actually install those types (for, eg, the js projects which need node)
-                    const install = cp.spawnSync(`npm`, ["i", ...types.map(t => `@types/${t}`), "--no-save", "--ignore-scripts"], { cwd: originalCwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
-                    if (install.status !== 0) throw new Error(`NPM Install types for ${directoryName} failed: ${install.stderr.toString()}`);
-                }
-                args.push("--noEmit");
-                Harness.Baseline.runBaseline(`${cls.kind()}/${directoryName}.log`, () => {
-                    return cls.report(cp.spawnSync(`node`, args, { cwd, timeout, shell: true }), cwd);
-                });
+                cls.executeBuildErrorsBaselineTest(directoryName, cwd, originalCwd, types);
             });
+        });
+    }
+
+    private executeBuildErrorsBaselineTest(directoryName: string, cwd: string, originalCwd: string, types: string[] | undefined) {
+        const timeout = this.timeout;
+        const stdio = isWorker ? "pipe" : "inherit";
+        if (fs.existsSync(path.join(cwd, "package.json"))) {
+            if (fs.existsSync(path.join(cwd, "package-lock.json"))) {
+                fs.unlinkSync(path.join(cwd, "package-lock.json"));
+            }
+            if (fs.existsSync(path.join(cwd, "node_modules"))) {
+                del.sync(path.join(cwd, "node_modules"), { force: true });
+            }
+            const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
+            if (install.status !== 0) throw new Error(`NPM Install for ${directoryName} failed: ${install.stderr.toString()}`);
+        }
+        const args = [path.join(Harness.IO.getWorkspaceRoot(), "built/local/tsc.js")];
+        if (types) {
+            args.push("--types", types.join(","));
+            // Also actually install those types (for, eg, the js projects which need node)
+            const install = cp.spawnSync(`npm`, ["i", ...types.map(t => `@types/${t}`), "--no-save", "--ignore-scripts"], { cwd: originalCwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
+            if (install.status !== 0) throw new Error(`NPM Install types for ${directoryName} failed: ${install.stderr.toString()}`);
+        }
+        args.push("--noEmit");
+        Harness.Baseline.runBaseline(`${this.kind()}/${directoryName}.log`, () => {
+            return this.report(cp.spawnSync(`node`, args, { cwd, timeout, shell: true }), cwd);
         });
     }
 }
