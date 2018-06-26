@@ -72,13 +72,31 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
 
                 cwd = submoduleDir;
                 if (config.monorepo) {
-                    const packagesList = Object.keys(config.monorepo);
-                    // Add tests
-                    for (const packageName of packagesList) {
-                        it(`should build ${packageName} successfully`, () => {
-                            cls.executeBuildErrorsBaselineTest(`${directoryName}/${packageName.replace("/", "_")}`, path.join(cwd, packageName), originalCwd, types, cls.installMonorepo(submoduleDir, packagesList, config.monorepo!));
-                        });
-                    }
+                    it(`should build successfully`, () => {
+                        const packagesList = Object.keys(config.monorepo!);
+                        const orderedList = cls.reorderDeps(packagesList, submoduleDir, config.monorepo!);
+                        const errors: Error[] = [];
+                        // Add tests
+                        for (const packageName of orderedList) {
+                            // Only test/build packages which are TS (other entries may be needed to symlink to satisfy npm)
+                            if (fs.existsSync(path.join(submoduleDir, packageName, "tsconfig.json"))) {
+                                try {
+                                    cls.executeBuildErrorsBaselineTest(`${directoryName}/${packageName.replace("/", "_")}`, path.join(cwd, packageName), submoduleDir, types, cls.installMonorepo(submoduleDir, orderedList, config.monorepo!), /*emit*/ true);
+                                }
+                                catch (e) {
+                                    errors.push(e);
+                                }
+                            }
+                        }
+                        if (errors.length) {
+                            if (errors.length === 1) {
+                                throw errors[0];
+                            }
+                            else {
+                                throw new Error(`Multiple subprojects have differences in their failing baseline or encountered problems:${"\n"}${errors.map(e => e.message).join("\n")}`)
+                            }
+                        }
+                    });
                     return;
                 }
             }
@@ -87,6 +105,52 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
                 cls.executeBuildErrorsBaselineTest(directoryName, cwd, originalCwd, types, cls.installNormal());
             });
         });
+    }
+
+    private invertMap(map: {[index: string]: string}): {[index: string]: string} {
+        const keys = Object.keys(map);
+        const result: {[index: string]: string} = {};
+        for (const key of keys) {
+            result[map[key]] = key;
+        }
+        return result;
+    }
+
+    private lookupImmediateDeps(entry: string, cwd: string, mapping: {[index: string]: string}): string[] {
+        const jsonPath = path.join(cwd, entry, "package.json");
+        if (fs.existsSync(jsonPath)) {
+            let deps: string[] | undefined;
+            try {
+                const doc = require(jsonPath);
+                deps = Object.keys(doc.dependencies);
+            }
+            catch {}
+            return ts.mapDefined(deps, d => mapping[d]) || [];
+        }
+        return [];
+    }
+
+    private calculateDepOrder(entry: string, cwd: string, mapping: {[index: string]: string}, prereqs: string[] = []): string[] {
+        if (prereqs.indexOf(entry) !== -1) {
+            return prereqs;
+        }
+        const deps = this.lookupImmediateDeps(entry, cwd, mapping);
+        for (const d of deps) {
+            this.calculateDepOrder(d, cwd, mapping, prereqs);
+        }
+        if (prereqs.indexOf(entry) === -1) {
+            prereqs.push(entry);
+        }
+        return prereqs;
+    }
+
+    private reorderDeps(list: string[], cwd: string, initialMapping: {[index: string]: string}) {
+        const inversedMap = this.invertMap(initialMapping);
+        const result: string[] = [];
+        for (const elem of list) {
+            this.calculateDepOrder(elem, cwd, inversedMap, result);
+        }
+        return result;
     }
 
     private linkDeps<T extends {[index: string]: string}>(cwd: string, submoduleDir: string, packagesList: (keyof T & string)[], monorepoMap: T) {
@@ -112,6 +176,8 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
             // setup `link`s for all projects into the deps of this one (even if they're not all required)
             this.linkDeps(cwd, submoduleDir, packagesList, monorepoMap);
             baseInstall(directoryName, cwd);
+            // Then do it again because `npm` is going to munge them/replace them with public versions in an attempt to create the an efficient tree
+            this.linkDeps(cwd, submoduleDir, packagesList, monorepoMap);
         }
     }
 
@@ -122,12 +188,12 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
             if (cleanModules && fs.existsSync(path.join(cwd, "node_modules"))) {
                 del.sync(path.join(cwd, "node_modules"), { force: true });
             }
-            const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts", "--no-save", "--link"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
+            const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts", "--no-save"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
             if (install.status !== 0) throw new Error(`NPM Install for ${directoryName} failed: ${install.stderr && install.stderr.toString()}`);
         }
     }
 
-    private executeBuildErrorsBaselineTest(directoryName: string, cwd: string, originalCwd: string, types: string[] | undefined, installer: (dirname: string, cwd: string) => void) {
+    private executeBuildErrorsBaselineTest(directoryName: string, cwd: string, originalCwd: string, types: string[] | undefined, installer: (dirname: string, cwd: string) => void, emit?: boolean) {
         const timeout = this.timeout;
         const stdio = isWorker ? "pipe" : "inherit";
         if (fs.existsSync(path.join(cwd, "package.json"))) {
@@ -143,9 +209,18 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
             const install = cp.spawnSync(`npm`, ["i", ...types.map(t => `@types/${t}`), "--no-save", "--ignore-scripts"], { cwd: originalCwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
             if (install.status !== 0) throw new Error(`NPM Install types for ${directoryName} failed: ${install.stderr && install.stderr.toString()}`);
         }
-        args.push("--noEmit");
+        if (!emit) {
+            args.push("--noEmit");
+        }
+        else {
+            args.push("--noEmitOnError", "false");
+        }
         Harness.Baseline.runBaseline(`${this.kind()}/${directoryName}.log`, () => {
-            return this.report(cp.spawnSync(`node`, args, { cwd, timeout, shell: true }), cwd);
+            const report = this.report(cp.spawnSync(`node`, args, { cwd, timeout, shell: true }), cwd);
+            if (fs.existsSync(path.join(cwd, "node_modules"))) { // cleanup `node_modules` once done so symlinks dont find nested module folders
+                del.sync(path.join(cwd, "node_modules"), { force: true });
+            }
+            return report;
         });
     }
 }

@@ -15,7 +15,6 @@
         "apps/fabric-website-resources": "@uifabric/fabric-website-resources",
         "apps/fabric-website": "@uifabric/fabric-website",
         "packages/icons": "@uifabric/icons",
-        "scripts": "@uifabric/build",
         "packages/office-ui-fabric-react-tslint": "office-ui-fabric-react-tslint"
     }
 }
