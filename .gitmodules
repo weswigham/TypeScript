@@ -38,3 +38,7 @@
 	path = tests/cases/user/prettier/prettier
 	url = https://github.com/prettier/prettier.git
         ignore = all
+[submodule "tests/cases/user/office-ui-fabric-react/office-ui-fabric-react"]
+	path = tests/cases/user/office-ui-fabric-react/office-ui-fabric-react
+	url = https://github.com/OfficeDev/office-ui-fabric-react.git
+        ignore = all

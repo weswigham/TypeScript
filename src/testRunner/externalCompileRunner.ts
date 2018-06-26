@@ -1,6 +1,7 @@
 const fs = require("fs") as typeof import("fs");
 const path = require("path") as typeof import("path");
 const del = require("del") as typeof import("del");
+const mkdirp = require("mkdirp") as typeof import("mkdirp");
 const cp = require("child_process") as typeof import("child_process");
 
 interface ExecResult {
@@ -49,14 +50,21 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
             const originalCwd = cwd;
             let types: string[] | undefined;
             const stdio = isWorker ? "pipe" : "inherit";
+
+            before(() => {
+                if (fs.existsSync(path.join(cwd, "test.json"))) {
+                    const submoduleDir = path.join(cwd, directoryName);
+                    const reset = cp.spawnSync("git", ["reset", "HEAD", "--hard"], { cwd: submoduleDir, timeout, shell: true, stdio });
+                    if (reset.status !== 0) throw new Error(`git reset for ${directoryName} failed: ${reset.stderr && reset.stderr.toString()}`);
+                    const clean = cp.spawnSync("git", ["clean", "-f"], { cwd: submoduleDir, timeout, shell: true, stdio });
+                    if (clean.status !== 0) throw new Error(`git clean for ${directoryName} failed: ${clean.stderr && clean.stderr.toString()}`);
+                    const update = cp.spawnSync("git", ["submodule", "update", "--remote", "."], { cwd: submoduleDir, timeout, shell: true, stdio });
+                    if (update.status !== 0) throw new Error(`git submodule update for ${directoryName} failed: ${update.stderr && update.stderr.toString()}`);
+                }
+            })
+
             if (fs.existsSync(path.join(cwd, "test.json"))) {
                 const submoduleDir = path.join(cwd, directoryName);
-                const reset = cp.spawnSync("git", ["reset", "HEAD", "--hard"], { cwd: submoduleDir, timeout, shell: true, stdio });
-                if (reset.status !== 0) throw new Error(`git reset for ${directoryName} failed: ${reset.stderr.toString()}`);
-                const clean = cp.spawnSync("git", ["clean", "-f"], { cwd: submoduleDir, timeout, shell: true, stdio });
-                if (clean.status !== 0) throw new Error(`git clean for ${directoryName} failed: ${clean.stderr.toString()}`);
-                const update = cp.spawnSync("git", ["submodule", "update", "--remote", "."], { cwd: submoduleDir, timeout, shell: true, stdio });
-                if (update.status !== 0) throw new Error(`git submodule update for ${directoryName} failed: ${update.stderr.toString()}`);
 
                 const config = JSON.parse(fs.readFileSync(path.join(cwd, "test.json"), { encoding: "utf8" })) as UserConfig;
                 ts.Debug.assert(!!config.types || !!config.monorepo, "Bad format from test.json: 'types' or 'monorepo' field must be present.");
@@ -65,23 +73,10 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
                 cwd = submoduleDir;
                 if (config.monorepo) {
                     const packagesList = Object.keys(config.monorepo);
-                    // setup `link`s for all projects into the deps of this one (even if they're not all required)
-                    for (const packagePath of packagesList) {
-                        const moduleDir = path.join(cwd, packagePath, "node_modules");
-                        try {
-                            fs.mkdirSync(moduleDir);
-                        }
-                        catch {}
-                        for (const otherPackagePath of packagesList) {
-                            const otherPath = path.join(cwd, otherPackagePath);
-                            const modulePath = path.join(moduleDir, config.monorepo[otherPackagePath]);
-                            fs.symlinkSync(otherPath, modulePath);
-                        }
-                    }
                     // Add tests
                     for (const packageName of packagesList) {
                         it(`should build ${packageName} successfully`, () => {
-                            cls.executeBuildErrorsBaselineTest(directoryName, path.join(cwd, packageName), originalCwd, types);
+                            cls.executeBuildErrorsBaselineTest(`${directoryName}/${packageName.replace("/", "_")}`, path.join(cwd, packageName), originalCwd, types, cls.installMonorepo(submoduleDir, packagesList, config.monorepo!));
                         });
                     }
                     return;
@@ -89,30 +84,64 @@ abstract class ExternalCompileRunnerBase extends RunnerBase {
             }
 
             it("should build successfully", () => {
-                cls.executeBuildErrorsBaselineTest(directoryName, cwd, originalCwd, types);
+                cls.executeBuildErrorsBaselineTest(directoryName, cwd, originalCwd, types, cls.installNormal());
             });
         });
     }
 
-    private executeBuildErrorsBaselineTest(directoryName: string, cwd: string, originalCwd: string, types: string[] | undefined) {
+    private linkDeps<T extends {[index: string]: string}>(cwd: string, submoduleDir: string, packagesList: (keyof T & string)[], monorepoMap: T) {
+        const moduleDir = path.join(cwd, "node_modules");
+        mkdirp.sync(moduleDir);
+        for (const otherPackagePath of packagesList) {
+            const otherPath = path.join(submoduleDir, otherPackagePath);
+            const modulePath = path.join(moduleDir, monorepoMap[otherPackagePath]);
+            if (fs.existsSync(modulePath)) {
+                del.sync(modulePath, { force: true });
+            }
+            mkdirp.sync(path.dirname(modulePath));
+            fs.symlinkSync(otherPath, modulePath, "junction");
+        }
+    }
+
+    private installMonorepo<T extends {[index: string]: string}>(submoduleDir: string, packagesList: (keyof T & string)[], monorepoMap: T) {
+        const baseInstall = this.installNormal(/*cleanModules*/ false);
+        return (directoryName: string, cwd: string) => {
+            if (fs.existsSync(path.join(cwd, "node_modules"))) {
+                del.sync(path.join(cwd, "node_modules"), { force: true });
+            }
+            // setup `link`s for all projects into the deps of this one (even if they're not all required)
+            this.linkDeps(cwd, submoduleDir, packagesList, monorepoMap);
+            baseInstall(directoryName, cwd);
+        }
+    }
+
+    private installNormal(cleanModules = true) {
+        return (directoryName: string, cwd: string) => {
+            const timeout = this.timeout;
+            const stdio = isWorker ? "pipe" : "inherit";
+            if (cleanModules && fs.existsSync(path.join(cwd, "node_modules"))) {
+                del.sync(path.join(cwd, "node_modules"), { force: true });
+            }
+            const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts", "--no-save", "--link"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
+            if (install.status !== 0) throw new Error(`NPM Install for ${directoryName} failed: ${install.stderr && install.stderr.toString()}`);
+        }
+    }
+
+    private executeBuildErrorsBaselineTest(directoryName: string, cwd: string, originalCwd: string, types: string[] | undefined, installer: (dirname: string, cwd: string) => void) {
         const timeout = this.timeout;
         const stdio = isWorker ? "pipe" : "inherit";
         if (fs.existsSync(path.join(cwd, "package.json"))) {
             if (fs.existsSync(path.join(cwd, "package-lock.json"))) {
                 fs.unlinkSync(path.join(cwd, "package-lock.json"));
             }
-            if (fs.existsSync(path.join(cwd, "node_modules"))) {
-                del.sync(path.join(cwd, "node_modules"), { force: true });
-            }
-            const install = cp.spawnSync(`npm`, ["i", "--ignore-scripts"], { cwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
-            if (install.status !== 0) throw new Error(`NPM Install for ${directoryName} failed: ${install.stderr.toString()}`);
+            installer(directoryName, cwd);
         }
         const args = [path.join(Harness.IO.getWorkspaceRoot(), "built/local/tsc.js")];
         if (types) {
             args.push("--types", types.join(","));
             // Also actually install those types (for, eg, the js projects which need node)
             const install = cp.spawnSync(`npm`, ["i", ...types.map(t => `@types/${t}`), "--no-save", "--ignore-scripts"], { cwd: originalCwd, timeout: timeout / 2, shell: true, stdio }); // NPM shouldn't take the entire timeout - if it takes a long time, it should be terminated and we should log the failure
-            if (install.status !== 0) throw new Error(`NPM Install types for ${directoryName} failed: ${install.stderr.toString()}`);
+            if (install.status !== 0) throw new Error(`NPM Install types for ${directoryName} failed: ${install.stderr && install.stderr.toString()}`);
         }
         args.push("--noEmit");
         Harness.Baseline.runBaseline(`${this.kind()}/${directoryName}.log`, () => {
