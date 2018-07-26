@@ -14768,6 +14768,18 @@ namespace ts {
                 if (!assumeTrue) {
                     return filterType(type, t => !isRelated(t, candidate));
                 }
+                // If the current type is a union type, and the target type is a union type,
+                // then take all elements of the current type which have an element in the candidate to which
+                // they are assignable
+                if (type.flags & TypeFlags.Union && candidate.flags & TypeFlags.Union) {
+                    const possibleType = filterType(candidate, t => isRelated(t, type));
+                    if (!(possibleType.flags & TypeFlags.Never)) {
+                        const assignableType = filterType(type, t => isRelated(t, possibleType));
+                        if (!(assignableType.flags & TypeFlags.Never)) {
+                            return assignableType;
+                        }
+                    }
+                }
                 // If the current type is a union type, remove all constituents that couldn't be instances of
                 // the candidate type. If one or more constituents remain, return a union of those.
                 if (type.flags & TypeFlags.Union) {
