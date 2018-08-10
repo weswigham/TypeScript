@@ -1139,7 +1139,7 @@ namespace ts {
 
     export interface InferTypeNode extends TypeNode {
         kind: SyntaxKind.InferType;
-        typeParameter: TypeParameterDeclaration;
+        typeParameter?: TypeParameterDeclaration;
     }
 
     export interface ParenthesizedTypeNode extends TypeNode {
@@ -3550,6 +3550,7 @@ namespace ts {
         ReverseMapped     = 1 << 11,        // Property of reverse-inferred homomorphic mapped type
         OptionalParameter = 1 << 12,        // Optional parameter
         RestParameter     = 1 << 13,        // Rest parameter
+        InferTypeArgument = 1 << 14,        // `infer` type argument
         Synthetic = SyntheticProperty | SyntheticMethod
     }
 

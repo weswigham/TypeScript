@@ -419,6 +419,7 @@ namespace ts {
         const markerSubType = <TypeParameter>createType(TypeFlags.TypeParameter);
         markerSubType.constraint = markerSuperType;
         const markerOtherType = <TypeParameter>createType(TypeFlags.TypeParameter);
+        const declaredSyntheticInferType = <TypeParameter>createType(TypeFlags.TypeParameter);
 
         const noTypePredicate = createIdentifierTypePredicate("<<unresolved>>", 0, anyType);
 
@@ -9494,7 +9495,7 @@ namespace ts {
         function getTypeFromInferTypeNode(node: InferTypeNode): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
-                links.resolvedType = getDeclaredTypeOfTypeParameter(getSymbolOfNode(node.typeParameter));
+                links.resolvedType = node.typeParameter ? getDeclaredTypeOfTypeParameter(getSymbolOfNode(node.typeParameter)) : declaredSyntheticInferType;
             }
             return links.resolvedType;
         }
@@ -17092,10 +17093,10 @@ namespace ts {
             const instantiatedSignatures = [];
             let candidateForTypeArgumentError: Signature | undefined;
             let hasTypeArgumentError: boolean = !!node.typeArguments;
+            const isJavascript = isInJavaScriptFile(node);
             for (const signature of signatures) {
                 if (signature.typeParameters) {
-                    const isJavascript = isInJavaScriptFile(node);
-                    const typeArgumentInstantiated = getJsxSignatureTypeArgumentInstantiation(signature, node, isJavascript, /*reportErrors*/ false);
+                    const typeArgumentInstantiated = getJsxSignatureTypeArgumentInstantiation(signature, node, isJavascript);
                     if (typeArgumentInstantiated) {
                         hasTypeArgumentError = false;
                         instantiatedSignatures.push(typeArgumentInstantiated);
@@ -17115,7 +17116,7 @@ namespace ts {
             }
             if (node.typeArguments && hasTypeArgumentError) {
                 if (candidateForTypeArgumentError) {
-                    checkTypeArguments(candidateForTypeArgumentError, node.typeArguments, /*reportErrors*/ true);
+                    checkTypeArgumentsWithPartialInference(candidateForTypeArgumentError, node.typeArguments, isJavascript, performJsxInferenceHandler, /*reportErrors*/ true);
                 }
                 // Length check to avoid issuing an arity error on length=0, the "Type argument list cannot be empty" grammar error alone is fine
                 else if (node.typeArguments.length !== 0) {
@@ -17123,20 +17124,28 @@ namespace ts {
                 }
             }
             return instantiatedSignatures;
+
+            function performJsxInferenceHandler(candidate: Signature, context: InferenceContext) {
+                return inferJsxTypeArguments(candidate, node, context);
+            }
         }
 
-        function getJsxSignatureTypeArgumentInstantiation(signature: Signature, node: JsxOpeningLikeElement, isJavascript: boolean, reportErrors = false) {
+        function getJsxSignatureTypeArgumentInstantiation(signature: Signature, node: JsxOpeningLikeElement, isJavascript: boolean) {
             if (!node.typeArguments) {
                 return;
             }
             if (!hasCorrectTypeArgumentArity(signature, node.typeArguments)) {
                 return;
             }
-            const args = checkTypeArguments(signature, node.typeArguments, reportErrors);
+            const args = checkTypeArgumentsWithPartialInference(signature, node.typeArguments, isJavascript, performJsxInferenceHandler, /*reportErrors*/ false);
             if (!args) {
                 return;
             }
             return getSignatureInstantiation(signature, args, isJavascript);
+
+            function performJsxInferenceHandler(candidate: Signature, context: InferenceContext) {
+                return inferJsxTypeArguments(candidate, node, context);
+            }
         }
 
         function getJsxNamespaceAt(location: Node | undefined): Symbol {
@@ -18650,6 +18659,20 @@ namespace ts {
             const isJavascript = isInJavaScriptFile(signature.declaration);
             const typeParameters = signature.typeParameters!;
             const typeArgumentTypes = fillMissingTypeArguments(map(typeArgumentNodes, getTypeFromTypeNode), typeParameters, getMinTypeArgumentCount(typeParameters), isJavascript);
+            for (let i = 0; i < typeArgumentNodes.length; i++) {
+                if (typeArgumentTypes[i] === declaredSyntheticInferType) {
+                    typeArgumentTypes[i] = getSyntheticInferType(typeParameters[i]);
+                }
+            }
+            return checkTypeArgumentTypes(signature, typeArgumentTypes, typeArgumentNodes, reportErrors, headMessage);
+        }
+
+        function checkTypeArgumentTypes(signature: Signature, typeArgumentTypes: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] | false {
+            if (some(typeArgumentTypes, isSyntheticInferType)) {
+                // Do validation once partial inference is complete
+                return typeArgumentTypes;
+            }
+            const typeParameters = signature.typeParameters!;
             let mapper: TypeMapper | undefined;
             for (let i = 0; i < typeArgumentNodes.length; i++) {
                 Debug.assert(typeParameters[i] !== undefined, "Should not call checkTypeArguments with too many type arguments");
@@ -18672,6 +18695,71 @@ namespace ts {
                 }
             }
             return typeArgumentTypes;
+        }
+
+        function checkTypeArgumentsWithPartialInference(
+            candidate: Signature,
+            typeArguments: ReadonlyArray<TypeNode>,
+            isJavascript: boolean,
+            inferTypes: InferenceHandler,
+            reportErrors: boolean,
+            headMessage?: DiagnosticMessage
+        ): Type[] | false {
+            let typeArgumentResult = checkTypeArguments(candidate, typeArguments, reportErrors, headMessage);
+            if (typeArgumentResult) {
+                typeArgumentResult = getPartialInferenceResult(typeArgumentResult, typeArguments, candidate, isJavascript, inferTypes, reportErrors, headMessage);
+            }
+            return typeArgumentResult;
+        }
+
+        function isSyntheticInferType(type: Type) {
+            return !!(type.symbol && (getCheckFlags(type.symbol) & CheckFlags.InferTypeArgument));
+        }
+
+        function getSyntheticInferType(target: TypeParameter): TypeParameter {
+            // This type is just used as a marker that inference must occur for these positions and should never *actually* be checked
+            // - getPartialInferenceResult should ensure they're always mapped out of the resulting list.
+            const param = createType(TypeFlags.TypeParameter) as TypeParameter;
+            param.target = target;
+            const symbol = createSymbol(SymbolFlags.TypeParameter, target.symbol.escapedName, CheckFlags.InferTypeArgument);
+            param.symbol = symbol;
+            symbol.declaredType = param;
+            return param;
+        }
+
+        function getPartialInferenceContext(originalParams: ReadonlyArray<TypeParameter>, typeArgumentResult: ReadonlyArray<Type>, uninferedInstantiation: Signature, isJavascript: boolean) {
+            const context = createInferenceContext(originalParams, uninferedInstantiation, isJavascript ? InferenceFlags.AnyDefault : InferenceFlags.None);
+            for (let i = 0; i < context.inferences.length; i++) {
+                const correspondingArgument = typeArgumentResult[i];
+                if (!isSyntheticInferType(correspondingArgument)) {
+                    const inference = context.inferences[i];
+                    inference.inferredType = correspondingArgument;
+                    inference.isFixed = true;
+                    inference.priority = 0;
+                }
+            }
+            return context;
+        }
+        type InferenceHandler = (signature: Signature, context: InferenceContext) => Type[];
+        function getPartialInferenceResult(typeArgumentResult: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, candidate: Signature, isJavascript: boolean, inferTypes: InferenceHandler, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] {
+            if (some(typeArgumentResult, isSyntheticInferType)) {
+                // There are implied inferences we must make, despite having type arguments
+                const originalParams = candidate.typeParameters;
+                const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams![i] : r);
+                const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
+                const context = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
+                const newResults = inferTypes(uninferedInstantiation, context);
+                // Only accept a partial inference whose results abide by the type parameter constraints
+                if (checkTypeArgumentTypes(candidate, newResults, typeArgumentNodes, reportErrors, headMessage)) {
+                    return newResults;
+                }
+                else {
+                    // Create an inference context where all infer types have no inferences (ie, failure) and everything else maps to itself, then get the result and return it
+                    const context = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
+                    return getInferredTypes(context);
+                }
+            }
+            return typeArgumentResult;
         }
 
         /**
@@ -19284,7 +19372,14 @@ namespace ts {
                 diagnostics.add(getArgumentArityError(node, [candidateForArgumentArityError], args!));
             }
             else if (candidateForTypeArgumentError) {
-                checkTypeArguments(candidateForTypeArgumentError, (node as CallExpression | TaggedTemplateExpression).typeArguments!, /*reportErrors*/ true, fallbackError);
+                checkTypeArgumentsWithPartialInference(
+                    candidateForTypeArgumentError,
+                    (node as CallExpression | TaggedTemplateExpression).typeArguments!,
+                    isInJavaScriptFile(node),
+                    performStandardInferenceHandler,
+                    /*reportErrors*/ true,
+                    fallbackError
+                );
             }
             else if (typeArguments && every(signatures, sig => typeArguments!.length < getMinTypeArgumentCount(sig.typeParameters) || typeArguments!.length > length(sig.typeParameters))) {
                 diagnostics.add(getTypeArgumentArityError(node, signatures, typeArguments));
@@ -19330,8 +19425,9 @@ namespace ts {
                         candidate = originalCandidate;
                         if (candidate.typeParameters) {
                             let typeArgumentTypes: Type[];
+                            const isJavascript = isInJavaScriptFile(candidate.declaration);
                             if (typeArguments) {
-                                const typeArgumentResult = checkTypeArguments(candidate, typeArguments, /*reportErrors*/ false);
+                                const typeArgumentResult = checkTypeArgumentsWithPartialInference(candidate, typeArguments, isJavascript, performStandardInferenceHandler, /*reportErrors*/ false);
                                 if (typeArgumentResult) {
                                     typeArgumentTypes = typeArgumentResult;
                                 }
@@ -19343,7 +19439,6 @@ namespace ts {
                             else {
                                 typeArgumentTypes = inferTypeArguments(node, candidate, args!, excludeArgument, inferenceContext!);
                             }
-                            const isJavascript = isInJavaScriptFile(candidate.declaration);
                             candidate = getSignatureInstantiation(candidate, typeArgumentTypes, isJavascript);
                             // If the original signature has a generic rest type, instantiation may produce a
                             // signature with different arity and we need to perform another arity check.
@@ -19371,6 +19466,10 @@ namespace ts {
                 }
 
                 return undefined;
+            }
+
+            function performStandardInferenceHandler(signature: Signature, context: InferenceContext) {
+                return inferTypeArguments(node, signature, args!, excludeArgument, context);
             }
         }
 
@@ -21678,7 +21777,7 @@ namespace ts {
         }
 
         function getContextNode(node: Expression): Node {
-            if (node.kind === SyntaxKind.JsxAttributes) {
+            if (node.kind === SyntaxKind.JsxAttributes && node.parent.kind === SyntaxKind.JsxOpeningElement) {
                 return node.parent.parent; // Needs to be the root JsxElement, so it encompasses the attributes _and_ the children (which are essentially part of the attributes)
             }
             return node;
@@ -22757,9 +22856,21 @@ namespace ts {
             forEachChild(node, checkSourceElement);
         }
 
+        function isInTopOfTypeArgumentList(node: TypeNode) {
+            const p = node.parent;
+            if (!(isCallExpression(p) || isNewExpression(p) || isJsxOpeningElement(p) || isJsxSelfClosingElement(p) || isTaggedTemplateExpression(p))) return false;
+            return some(p.typeArguments, a => a === node);
+        }
+
         function checkInferType(node: InferTypeNode) {
+            if (!node.typeParameter) {
+                if (!isInTopOfTypeArgumentList(node)) {
+                    grammarErrorOnNode(node, Diagnostics.infer_declarations_without_a_name_are_only_permitted_in_the_top_of_a_type_argument_list);
+                }
+                return;
+            }
             if (!findAncestor(node, n => n.parent && n.parent.kind === SyntaxKind.ConditionalType && (<ConditionalTypeNode>n.parent).extendsType === n)) {
-                grammarErrorOnNode(node, Diagnostics.infer_declarations_are_only_permitted_in_the_extends_clause_of_a_conditional_type);
+                grammarErrorOnNode(node, Diagnostics.infer_declarations_with_a_name_are_only_permitted_in_the_extends_clause_of_a_conditional_type);
             }
             checkSourceElement(node.typeParameter);
             registerForUnusedIdentifiersCheck(node);
@@ -23894,7 +24005,7 @@ namespace ts {
 
             if (node.kind === SyntaxKind.InferType) {
                 const { typeParameter } = node;
-                if (isTypeParameterUnused(typeParameter)) {
+                if (typeParameter && isTypeParameterUnused(typeParameter)) {
                     addDiagnostic(node, UnusedKind.Parameter, createDiagnosticForNode(node, Diagnostics._0_is_declared_but_its_value_is_never_read, idText(typeParameter.name)));
                 }
             }

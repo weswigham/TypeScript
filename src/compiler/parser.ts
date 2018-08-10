@@ -3042,9 +3042,11 @@ namespace ts {
         function parseInferType(): InferTypeNode {
             const node = <InferTypeNode>createNode(SyntaxKind.InferType);
             parseExpected(SyntaxKind.InferKeyword);
-            const typeParameter = <TypeParameterDeclaration>createNode(SyntaxKind.TypeParameter);
-            typeParameter.name = parseIdentifier();
-            node.typeParameter = finishNode(typeParameter);
+            if (token() === SyntaxKind.Identifier) {
+                const typeParameter = <TypeParameterDeclaration>createNode(SyntaxKind.TypeParameter);
+                typeParameter.name = parseIdentifier();
+                node.typeParameter = finishNode(typeParameter);
+            }
             return finishNode(node);
         }
 
