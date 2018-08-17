@@ -233,3 +233,34 @@ x.b;
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 41, 5))
 >b : Symbol(Foo2.b, Decl(inferPartialTypeArguments.tsx, 39, 29))
 
+type Box<T> = { value: T };
+>Box : Symbol(Box, Decl(inferPartialTypeArguments.tsx, 44, 4))
+>T : Symbol(T, Decl(inferPartialTypeArguments.tsx, 46, 9))
+>value : Symbol(value, Decl(inferPartialTypeArguments.tsx, 46, 15))
+>T : Symbol(T, Decl(inferPartialTypeArguments.tsx, 46, 9))
+
+type HasBoxedNumber = Box<number>;
+>HasBoxedNumber : Symbol(HasBoxedNumber, Decl(inferPartialTypeArguments.tsx, 46, 27))
+>Box : Symbol(Box, Decl(inferPartialTypeArguments.tsx, 44, 4))
+
+declare function extractBox<T extends Box<S>, S>(arg: T): S;
+>extractBox : Symbol(extractBox, Decl(inferPartialTypeArguments.tsx, 48, 34))
+>T : Symbol(T, Decl(inferPartialTypeArguments.tsx, 50, 28))
+>Box : Symbol(Box, Decl(inferPartialTypeArguments.tsx, 44, 4))
+>S : Symbol(S, Decl(inferPartialTypeArguments.tsx, 50, 45))
+>S : Symbol(S, Decl(inferPartialTypeArguments.tsx, 50, 45))
+>arg : Symbol(arg, Decl(inferPartialTypeArguments.tsx, 50, 49))
+>T : Symbol(T, Decl(inferPartialTypeArguments.tsx, 50, 28))
+>S : Symbol(S, Decl(inferPartialTypeArguments.tsx, 50, 45))
+
+declare const hbn: HasBoxedNumber;
+>hbn : Symbol(hbn, Decl(inferPartialTypeArguments.tsx, 52, 13))
+>HasBoxedNumber : Symbol(HasBoxedNumber, Decl(inferPartialTypeArguments.tsx, 46, 27))
+
+extractBox<HasBoxedNumber, *>(hbn).toFixed();
+>extractBox<HasBoxedNumber, *>(hbn).toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
+>extractBox : Symbol(extractBox, Decl(inferPartialTypeArguments.tsx, 48, 34))
+>HasBoxedNumber : Symbol(HasBoxedNumber, Decl(inferPartialTypeArguments.tsx, 46, 27))
+>hbn : Symbol(hbn, Decl(inferPartialTypeArguments.tsx, 52, 13))
+>toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
+

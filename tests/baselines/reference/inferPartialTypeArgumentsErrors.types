@@ -45,12 +45,12 @@ const expectAllowed2 = testConstraints2<"x" | "y", *> ({ b: ["x"] }); // OK { a:
 >"x" : "x"
 
 const expectError2 = testConstraints2<*, "z"> ({ a: ["x", "y"] }); // error - `A` infers as `"x" | "y"` which `"z"` does not satisfy
->expectError2 : any
->testConstraints2<*, "z"> ({ a: ["x", "y"] }) : any
+>expectError2 : { a: ("z" | "x" | "y")[]; b: "z"[]; }
+>testConstraints2<*, "z"> ({ a: ["x", "y"] }) : { a: ("z" | "x" | "y")[]; b: "z"[]; }
 >testConstraints2 : <A extends string, B extends A>(arg?: { a?: A[]; b?: B[]; }) => { a: A[]; b: B[]; }
->{ a: ["x", "y"] } : { a: string[]; }
->a : string[]
->["x", "y"] : string[]
+>{ a: ["x", "y"] } : { a: ("x" | "y")[]; }
+>a : ("x" | "y")[]
+>["x", "y"] : ("x" | "y")[]
 >"x" : "x"
 >"y" : "y"
 
@@ -90,12 +90,12 @@ const expectAllowed4 = complexConstraints<"x" | "y" | "z", *, *> ({ a: ["x"], c:
 
 // Fails because B inferred to be "x" but that conflicts with C as "x" | "y"
 const expectError4 = complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]});
->expectError4 : any
->complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]}) : any
+>expectError4 : { a: ("z" | "x" | "y")[]; b: ("x" | "y")[]; c: ("x" | "y")[]; }
+>complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]}) : { a: ("z" | "x" | "y")[]; b: ("x" | "y")[]; c: ("x" | "y")[]; }
 >complexConstraints : <A extends string, B extends A, C extends B>(arg: { a?: A[]; b?: B[]; c?: C[]; }) => { a: A[]; b: B[]; c: C[]; }
->{b: ["x"]} : { b: string[]; }
->b : string[]
->["x"] : string[]
+>{b: ["x"]} : { b: "x"[]; }
+>b : "x"[]
+>["x"] : "x"[]
 >"x" : "x"
 
 const expectError5 = complexConstraints<"x", *, *>({c: ["y"]}); // error "y" does not extend "x"

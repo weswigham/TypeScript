@@ -245,3 +245,25 @@ x.b;
 >x : Foo2<{ x: string; y: number; }, string>
 >b : string
 
+type Box<T> = { value: T };
+>Box : Box<T>
+>value : T
+
+type HasBoxedNumber = Box<number>;
+>HasBoxedNumber : Box<number>
+
+declare function extractBox<T extends Box<S>, S>(arg: T): S;
+>extractBox : <T extends Box<S>, S>(arg: T) => S
+>arg : T
+
+declare const hbn: HasBoxedNumber;
+>hbn : Box<number>
+
+extractBox<HasBoxedNumber, *>(hbn).toFixed();
+>extractBox<HasBoxedNumber, *>(hbn).toFixed() : string
+>extractBox<HasBoxedNumber, *>(hbn).toFixed : (fractionDigits?: number) => string
+>extractBox<HasBoxedNumber, *>(hbn) : number
+>extractBox : <T extends Box<S>, S>(arg: T) => S
+>hbn : Box<number>
+>toFixed : (fractionDigits?: number) => string
+

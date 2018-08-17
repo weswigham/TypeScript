@@ -45,6 +45,15 @@ x.a.x;
 x.a.y;
 x.b;
 
+type Box<T> = { value: T };
+
+type HasBoxedNumber = Box<number>;
+
+declare function extractBox<T extends Box<S>, S>(arg: T): S;
+
+declare const hbn: HasBoxedNumber;
+
+extractBox<HasBoxedNumber, *>(hbn).toFixed();
 
 //// [inferPartialTypeArguments.js]
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
@@ -93,3 +102,4 @@ var x = new Foo2();
 x.a.x;
 x.a.y;
 x.b;
+extractBox(hbn).toFixed();

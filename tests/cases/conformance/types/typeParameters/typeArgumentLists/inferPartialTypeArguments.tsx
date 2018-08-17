@@ -44,3 +44,13 @@ const x = new Foo2<*, string>();
 x.a.x;
 x.a.y;
 x.b;
+
+type Box<T> = { value: T };
+
+type HasBoxedNumber = Box<number>;
+
+declare function extractBox<T extends Box<S>, S>(arg: T): S;
+
+declare const hbn: HasBoxedNumber;
+
+extractBox<HasBoxedNumber, *>(hbn).toFixed();

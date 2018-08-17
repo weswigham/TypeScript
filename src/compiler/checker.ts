@@ -18768,6 +18768,19 @@ namespace ts {
             }
             return context;
         }
+
+        function inferFromPartialConstraints(context: InferenceContext, typeParameters: ReadonlyArray<TypeParameter> | undefined, typeArguments: Type[]) {
+            if (!length(typeParameters)) return;
+            for (let i = 0; i < typeParameters!.length; i++) {
+                const input = typeArguments[i];
+                if (input && !isSyntheticInferType(input)) {
+                    const constraint = getConstraintFromTypeParameter(typeParameters![i]);
+                    if (!constraint) continue;
+                    inferTypes(context.inferences, input, constraint);
+                }
+            }
+        }
+
         type InferenceHandler = (signature: Signature, context: InferenceContext) => Type[];
         function getPartialInferenceResult(typeArgumentResult: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, candidate: Signature, isJavascript: boolean, inferTypes: InferenceHandler, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] | undefined {
             if (some(typeArgumentResult, isSyntheticInferType)) {
@@ -18776,6 +18789,7 @@ namespace ts {
                 const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams![i] : r);
                 const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
                 const context = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
+                inferFromPartialConstraints(context, originalParams, typeArgumentResult);
                 const newResults = inferTypes(uninferedInstantiation, context);
                 // Only accept a partial inference whose results abide by the type parameter constraints
                 if (checkTypeArgumentTypes(candidate, newResults, typeArgumentNodes, reportErrors, headMessage)) {
