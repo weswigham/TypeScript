@@ -9516,10 +9516,18 @@ namespace ts {
             return links.resolvedType;
         }
 
+        function getTypeFromJSDocAllTypeNode(node: JSDocAllType): Type {
+            const links = getNodeLinks(node);
+            if (!links.resolvedType) {
+                links.resolvedType = isInTopOfTypescriptExpressionTypeArgumentList(node) ? declaredSyntheticInferType : anyType;
+            }
+            return links.resolvedType;
+        }
+
         function getTypeFromInferTypeNode(node: InferTypeNode): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
-                links.resolvedType = node.typeParameter ? getDeclaredTypeOfTypeParameter(getSymbolOfNode(node.typeParameter)) : declaredSyntheticInferType;
+                links.resolvedType = getDeclaredTypeOfTypeParameter(getSymbolOfNode(node.typeParameter));
             }
             return links.resolvedType;
         }
@@ -9831,9 +9839,10 @@ namespace ts {
         function getTypeFromTypeNode(node: TypeNode): Type {
             switch (node.kind) {
                 case SyntaxKind.AnyKeyword:
-                case SyntaxKind.JSDocAllType:
                 case SyntaxKind.JSDocUnknownType:
                     return anyType;
+                case SyntaxKind.JSDocAllType:
+                    return getTypeFromJSDocAllTypeNode(node as JSDocAllType);
                 case SyntaxKind.UnknownKeyword:
                     return unknownType;
                 case SyntaxKind.StringKeyword:
@@ -22665,21 +22674,9 @@ namespace ts {
             forEachChild(node, checkSourceElement);
         }
 
-        function isInTopOfTypeArgumentList(node: TypeNode) {
-            const p = node.parent;
-            if (!(isCallExpression(p) || isNewExpression(p) || isJsxOpeningElement(p) || isJsxSelfClosingElement(p) || isTaggedTemplateExpression(p))) return false;
-            return some(p.typeArguments, a => a === node);
-        }
-
         function checkInferType(node: InferTypeNode) {
-            if (!node.typeParameter) {
-                if (!isInTopOfTypeArgumentList(node)) {
-                    grammarErrorOnNode(node, Diagnostics.infer_declarations_without_a_name_are_only_permitted_in_the_top_of_a_type_argument_list);
-                }
-                return;
-            }
             if (!findAncestor(node, n => n.parent && n.parent.kind === SyntaxKind.ConditionalType && (<ConditionalTypeNode>n.parent).extendsType === n)) {
-                grammarErrorOnNode(node, Diagnostics.infer_declarations_with_a_name_are_only_permitted_in_the_extends_clause_of_a_conditional_type);
+                grammarErrorOnNode(node, Diagnostics.infer_declarations_are_only_permitted_in_the_extends_clause_of_a_conditional_type);
             }
             checkSourceElement(node.typeParameter);
             registerForUnusedIdentifiersCheck(node);
@@ -26493,6 +26490,12 @@ namespace ts {
                     !!(declaration as FunctionDeclaration).body;
         }
 
+        function isInTopOfTypescriptExpressionTypeArgumentList(node: TypeNode) {
+            const p = node.parent;
+            if (isInJavaScriptFile(node) || !(isCallExpression(p) || isNewExpression(p) || isJsxOpeningElement(p) || isJsxSelfClosingElement(p) || isTaggedTemplateExpression(p))) return false;
+            return some(p.typeArguments, a => a === node);
+        }
+
         function checkSourceElement(node: Node | undefined): void {
             if (!node) {
                 return;
@@ -26582,11 +26585,15 @@ namespace ts {
                     // falls through
                 case SyntaxKind.JSDocNonNullableType:
                 case SyntaxKind.JSDocNullableType:
-                case SyntaxKind.JSDocAllType:
                 case SyntaxKind.JSDocUnknownType:
                 case SyntaxKind.JSDocTypeLiteral:
                     checkJSDocTypeIsInJsFile(node);
                     forEachChild(node, checkSourceElement);
+                    return;
+                case SyntaxKind.JSDocAllType:
+                    if (!isInTopOfTypescriptExpressionTypeArgumentList(node as JSDocAllType)) {
+                        checkJSDocTypeIsInJsFile(node);
+                    }
                     return;
                 case SyntaxKind.JSDocVariadicType:
                     checkJSDocVariadicType(node as JSDocVariadicType);

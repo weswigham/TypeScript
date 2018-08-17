@@ -48,7 +48,7 @@ namespace ts.codefix {
 
             if (token.kind === SyntaxKind.InferKeyword) {
                 const changes = textChanges.ChangeTracker.with(context, t => changeInferToUnknown(t, sourceFile, token));
-                const name = cast(token.parent, isInferTypeNode).typeParameter!.name.text;
+                const name = cast(token.parent, isInferTypeNode).typeParameter.name.text;
                 result.push(createCodeFixAction(fixName, changes, [Diagnostics.Replace_infer_0_with_unknown, name], fixIdInfer, Diagnostics.Replace_all_unused_infer_with_unknown));
             }
             else {
@@ -150,7 +150,7 @@ namespace ts.codefix {
         // Don't offer to prefix a property.
         if (errorCode === Diagnostics.Property_0_is_declared_but_its_value_is_never_read.code) return;
         if (token.kind === SyntaxKind.InferKeyword) {
-            token = cast(token.parent, isInferTypeNode).typeParameter!.name;
+            token = cast(token.parent, isInferTypeNode).typeParameter.name;
         }
         if (isIdentifier(token) && canPrefix(token)) {
             changes.replaceNode(sourceFile, token, createIdentifier(`_${token.text}`));

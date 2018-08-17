@@ -1140,7 +1140,7 @@ namespace ts {
 
     export interface InferTypeNode extends TypeNode {
         kind: SyntaxKind.InferType;
-        typeParameter?: TypeParameterDeclaration;
+        typeParameter: TypeParameterDeclaration;
     }
 
     export interface ParenthesizedTypeNode extends TypeNode {

@@ -820,13 +820,13 @@ namespace ts {
             : node;
     }
 
-    export function createInferTypeNode(typeParameter?: TypeParameterDeclaration) {
+    export function createInferTypeNode(typeParameter: TypeParameterDeclaration) {
         const node = <InferTypeNode>createSynthesizedNode(SyntaxKind.InferType);
         node.typeParameter = typeParameter;
         return node;
     }
 
-    export function updateInferTypeNode(node: InferTypeNode, typeParameter?: TypeParameterDeclaration) {
+    export function updateInferTypeNode(node: InferTypeNode, typeParameter: TypeParameterDeclaration) {
         return node.typeParameter !== typeParameter
             ? updateNode(createInferTypeNode(typeParameter), node)
             : node;
