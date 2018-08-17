@@ -3,18 +3,21 @@ tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeA
     Type '("x" | "y")[]' is not assignable to type '"z"[]'.
       Type '"x" | "y"' is not assignable to type '"z"'.
         Type '"x"' is not assignable to type '"z"'.
+tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts(7,42): error TS2344: Type '"z"' does not satisfy the constraint '"x" | "y"'.
 tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts(8,54): error TS2345: Argument of type '{ b: ("z" | "x" | "y")[]; }' is not assignable to parameter of type '{ a?: ("x" | "y")[]; b?: ("x" | "y")[]; }'.
   Types of property 'b' are incompatible.
     Type '("z" | "x" | "y")[]' is not assignable to type '("x" | "y")[]'.
       Type '"z" | "x" | "y"' is not assignable to type '"x" | "y"'.
         Type '"z"' is not assignable to type '"x" | "y"'.
-tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts(15,52): error TS2345: Argument of type '{ c: "y"[]; }' is not assignable to parameter of type '{ a?: "x"[]; b?: "x"[]; c?: "x"[]; }'.
+tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts(13,61): error TS2344: Type '"x" | "y"' does not satisfy the constraint '"x"'.
+  Type '"y"' is not assignable to type '"x"'.
+tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts(14,52): error TS2345: Argument of type '{ c: "y"[]; }' is not assignable to parameter of type '{ a?: "x"[]; b?: "x"[]; c?: "x"[]; }'.
   Types of property 'c' are incompatible.
     Type '"y"[]' is not assignable to type '"x"[]'.
       Type '"y"' is not assignable to type '"x"'.
 
 
-==== tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts (3 errors) ====
+==== tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeArgumentsErrors.ts (5 errors) ====
     declare function testConstraints1<A extends B, B extends string>(arg?: { a?: A[], b?: B[] }): { a: A[], b: B[] }
     const expectError1 = testConstraints1<*, "z"> ({ a: ["x", "y"] });
                                                    ~~~~~~~~~~~~~~~~~
@@ -27,8 +30,10 @@ tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeA
     declare function testConstraints2<A extends string, B extends A>(arg?: { a?: A[], b?: B[] }): { a: A[], b: B[] }
     const expectAllowed1 = testConstraints2<*, "x"> ({ a: ["x", "y"] }); // OK { a: string[], b: "x"[] }
     const expectAllowed2 = testConstraints2<"x" | "y", *> ({ b: ["x"] }); // OK { a: ("x" | "y")[], b: ("x" | "y")[] }
-    const expectAllowed3 = testConstraints2<*, "z"> ({ a: ["x", "y"] }); // OK - inference fails, but that just makes A = string, which still passes
-    const expectError2 = testConstraints2<"x" | "y", *> ({ b: ["x", "y", "z"] }); // error "z" not in "x" | "y"
+    const expectError2 = testConstraints2<*, "z"> ({ a: ["x", "y"] }); // error - `A` infers as `"x" | "y"` which `"z"` does not satisfy
+                                             ~~~
+!!! error TS2344: Type '"z"' does not satisfy the constraint '"x" | "y"'.
+    const expectError3 = testConstraints2<"x" | "y", *> ({ b: ["x", "y", "z"] }); // error "z" not in "x" | "y"
                                                          ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2345: Argument of type '{ b: ("z" | "x" | "y")[]; }' is not assignable to parameter of type '{ a?: ("x" | "y")[]; b?: ("x" | "y")[]; }'.
 !!! error TS2345:   Types of property 'b' are incompatible.
@@ -38,10 +43,12 @@ tests/cases/conformance/types/typeParameters/typeArgumentLists/inferPartialTypeA
     
     declare function complexConstraints<A extends string, B extends A, C extends B>(arg: { a?: A[], b?: B[], c?: C[] }): { a: A[], b: B[], c: C[] };
     const expectAllowed4 = complexConstraints<"x" | "y" | "z", *, *> ({ a: ["x"], c: ["x", "y"] }); // OK { a: ("x" | "y" | "z")[], b: ("x" | "y" | "z")[], c: ("x" | "y")[] }
-    // OK because B inferred to be "x" but that conflicts with C as "x" | "y" so inference fails - A and C are provided,
-    // B becomes its constraint, A, or "x" | "y" | "z", and the call successfully resolves
-    const expectAlllowed5 = complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]});
-    const expectError3 = complexConstraints<"x", *, *>({c: ["y"]}); // error "y" does not extend "x"
+    // Fails because B inferred to be "x" but that conflicts with C as "x" | "y"
+    const expectError4 = complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]});
+                                                                ~~~~~~~~~
+!!! error TS2344: Type '"x" | "y"' does not satisfy the constraint '"x"'.
+!!! error TS2344:   Type '"y"' is not assignable to type '"x"'.
+    const expectError5 = complexConstraints<"x", *, *>({c: ["y"]}); // error "y" does not extend "x"
                                                        ~~~~~~~~~~
 !!! error TS2345: Argument of type '{ c: "y"[]; }' is not assignable to parameter of type '{ a?: "x"[]; b?: "x"[]; c?: "x"[]; }'.
 !!! error TS2345:   Types of property 'c' are incompatible.

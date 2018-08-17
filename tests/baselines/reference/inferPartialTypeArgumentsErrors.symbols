@@ -44,13 +44,13 @@ const expectAllowed2 = testConstraints2<"x" | "y", *> ({ b: ["x"] }); // OK { a:
 >testConstraints2 : Symbol(testConstraints2, Decl(inferPartialTypeArgumentsErrors.ts, 1, 66))
 >b : Symbol(b, Decl(inferPartialTypeArgumentsErrors.ts, 5, 56))
 
-const expectAllowed3 = testConstraints2<*, "z"> ({ a: ["x", "y"] }); // OK - inference fails, but that just makes A = string, which still passes
->expectAllowed3 : Symbol(expectAllowed3, Decl(inferPartialTypeArgumentsErrors.ts, 6, 5))
+const expectError2 = testConstraints2<*, "z"> ({ a: ["x", "y"] }); // error - `A` infers as `"x" | "y"` which `"z"` does not satisfy
+>expectError2 : Symbol(expectError2, Decl(inferPartialTypeArgumentsErrors.ts, 6, 5))
 >testConstraints2 : Symbol(testConstraints2, Decl(inferPartialTypeArgumentsErrors.ts, 1, 66))
->a : Symbol(a, Decl(inferPartialTypeArgumentsErrors.ts, 6, 50))
+>a : Symbol(a, Decl(inferPartialTypeArgumentsErrors.ts, 6, 48))
 
-const expectError2 = testConstraints2<"x" | "y", *> ({ b: ["x", "y", "z"] }); // error "z" not in "x" | "y"
->expectError2 : Symbol(expectError2, Decl(inferPartialTypeArgumentsErrors.ts, 7, 5))
+const expectError3 = testConstraints2<"x" | "y", *> ({ b: ["x", "y", "z"] }); // error "z" not in "x" | "y"
+>expectError3 : Symbol(expectError3, Decl(inferPartialTypeArgumentsErrors.ts, 7, 5))
 >testConstraints2 : Symbol(testConstraints2, Decl(inferPartialTypeArgumentsErrors.ts, 1, 66))
 >b : Symbol(b, Decl(inferPartialTypeArgumentsErrors.ts, 7, 54))
 
@@ -81,16 +81,15 @@ const expectAllowed4 = complexConstraints<"x" | "y" | "z", *, *> ({ a: ["x"], c:
 >a : Symbol(a, Decl(inferPartialTypeArgumentsErrors.ts, 10, 67))
 >c : Symbol(c, Decl(inferPartialTypeArgumentsErrors.ts, 10, 77))
 
-// OK because B inferred to be "x" but that conflicts with C as "x" | "y" so inference fails - A and C are provided,
-// B becomes its constraint, A, or "x" | "y" | "z", and the call successfully resolves
-const expectAlllowed5 = complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]});
->expectAlllowed5 : Symbol(expectAlllowed5, Decl(inferPartialTypeArgumentsErrors.ts, 13, 5))
+// Fails because B inferred to be "x" but that conflicts with C as "x" | "y"
+const expectError4 = complexConstraints<"x" | "y" | "z", *, "x" | "y">({b: ["x"]});
+>expectError4 : Symbol(expectError4, Decl(inferPartialTypeArgumentsErrors.ts, 12, 5))
 >complexConstraints : Symbol(complexConstraints, Decl(inferPartialTypeArgumentsErrors.ts, 7, 77))
->b : Symbol(b, Decl(inferPartialTypeArgumentsErrors.ts, 13, 75))
+>b : Symbol(b, Decl(inferPartialTypeArgumentsErrors.ts, 12, 72))
 
-const expectError3 = complexConstraints<"x", *, *>({c: ["y"]}); // error "y" does not extend "x"
->expectError3 : Symbol(expectError3, Decl(inferPartialTypeArgumentsErrors.ts, 14, 5))
+const expectError5 = complexConstraints<"x", *, *>({c: ["y"]}); // error "y" does not extend "x"
+>expectError5 : Symbol(expectError5, Decl(inferPartialTypeArgumentsErrors.ts, 13, 5))
 >complexConstraints : Symbol(complexConstraints, Decl(inferPartialTypeArgumentsErrors.ts, 7, 77))
->c : Symbol(c, Decl(inferPartialTypeArgumentsErrors.ts, 14, 52))
+>c : Symbol(c, Decl(inferPartialTypeArgumentsErrors.ts, 13, 52))
 
 

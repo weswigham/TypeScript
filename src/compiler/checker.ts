@@ -18703,11 +18703,6 @@ namespace ts {
             const isJavascript = isInJavaScriptFile(signature.declaration);
             const typeParameters = signature.typeParameters!;
             const typeArgumentTypes = fillMissingTypeArguments(map(typeArgumentNodes, getTypeFromTypeNode), typeParameters, getMinTypeArgumentCount(typeParameters), isJavascript);
-            for (let i = 0; i < typeArgumentNodes.length; i++) {
-                if (typeArgumentTypes[i] === declaredSyntheticInferType) {
-                    typeArgumentTypes[i] = getSyntheticInferType(typeParameters[i]);
-                }
-            }
             return checkTypeArgumentTypes(signature, typeArgumentTypes, typeArgumentNodes, reportErrors, headMessage);
         }
 
@@ -18757,18 +18752,7 @@ namespace ts {
         }
 
         function isSyntheticInferType(type: Type) {
-            return !!(type.symbol && (getCheckFlags(type.symbol) & CheckFlags.InferTypeArgument));
-        }
-
-        function getSyntheticInferType(target: TypeParameter): TypeParameter {
-            // This type is just used as a marker that inference must occur for these positions and should never *actually* be checked
-            // - getPartialInferenceResult should ensure they're always mapped out of the resulting list.
-            const param = createType(TypeFlags.TypeParameter) as TypeParameter;
-            param.target = target;
-            const symbol = createSymbol(SymbolFlags.TypeParameter, target.symbol.escapedName, CheckFlags.InferTypeArgument);
-            param.symbol = symbol;
-            symbol.declaredType = param;
-            return param;
+            return type === declaredSyntheticInferType;
         }
 
         function getPartialInferenceContext(originalParams: ReadonlyArray<TypeParameter>, typeArgumentResult: ReadonlyArray<Type>, uninferedInstantiation: Signature, isJavascript: boolean) {
@@ -18785,7 +18769,7 @@ namespace ts {
             return context;
         }
         type InferenceHandler = (signature: Signature, context: InferenceContext) => Type[];
-        function getPartialInferenceResult(typeArgumentResult: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, candidate: Signature, isJavascript: boolean, inferTypes: InferenceHandler, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] {
+        function getPartialInferenceResult(typeArgumentResult: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, candidate: Signature, isJavascript: boolean, inferTypes: InferenceHandler, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] | undefined {
             if (some(typeArgumentResult, isSyntheticInferType)) {
                 // There are implied inferences we must make, despite having type arguments
                 const originalParams = candidate.typeParameters;
@@ -18798,9 +18782,7 @@ namespace ts {
                     return newResults;
                 }
                 else {
-                    // Create an inference context where all infer types have no inferences (ie, failure) and everything else maps to itself, then get the result and return it
-                    const context = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
-                    return getInferredTypes(context);
+                    return undefined;
                 }
             }
             return typeArgumentResult;
