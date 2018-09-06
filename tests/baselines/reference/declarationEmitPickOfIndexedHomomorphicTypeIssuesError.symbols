@@ -1,0 +1,52 @@
+=== tests/cases/compiler/declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts ===
+export type Omit<T, K extends keyof T> = Pick<T, 
+>Omit : Symbol(Omit, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 0))
+>T : Symbol(T, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 17))
+>K : Symbol(K, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 19))
+>T : Symbol(T, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 17))
+>Pick : Symbol(Pick, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 17))
+
+    ({ [P in keyof T]: P } & { [P in K]: never } )[keyof T]>;
+>P : Symbol(P, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 1, 8))
+>T : Symbol(T, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 17))
+>P : Symbol(P, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 1, 8))
+>P : Symbol(P, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 1, 32))
+>K : Symbol(K, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 19))
+>T : Symbol(T, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 17))
+
+export interface IOmitTest {
+>IOmitTest : Symbol(IOmitTest, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 1, 61))
+
+	(): { notSupposedToHappen: Omit<IXProps, "unwantedProp"> }
+>notSupposedToHappen : Symbol(notSupposedToHappen, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 4, 6))
+>Omit : Symbol(Omit, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 0))
+>IXProps : Symbol(IXProps, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 5, 1))
+}
+
+export interface IXProps {
+>IXProps : Symbol(IXProps, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 5, 1))
+
+    optionalProp?: string
+>optionalProp : Symbol(IXProps.optionalProp, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 7, 26))
+
+    unwantedProp: string
+>unwantedProp : Symbol(IXProps.unwantedProp, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 8, 25))
+}
+
+const Y: IOmitTest = null as any;
+>Y : Symbol(Y, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 12, 5))
+>IOmitTest : Symbol(IOmitTest, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 1, 61))
+
+export const Z = Y();
+>Z : Symbol(Z, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 13, 12))
+>Y : Symbol(Y, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 12, 5))
+
+export interface IMouseOver {
+>IMouseOver : Symbol(IMouseOver, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 13, 21))
+
+    wrong: Omit<IXProps, "unwantedProp">
+>wrong : Symbol(IMouseOver.wrong, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 15, 29))
+>Omit : Symbol(Omit, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 0, 0))
+>IXProps : Symbol(IXProps, Decl(declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts, 5, 1))
+}

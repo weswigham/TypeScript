@@ -425,7 +425,7 @@ type A<T, V, E> =
   T extends object
 >T : Symbol(T, Decl(conditionalTypes2.ts, 123, 7))
 
-    ? { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: A<T[Q], V, E>; }
+    ? { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: A<T[Q], V, E>; }
 >Q : Symbol(Q, Decl(conditionalTypes2.ts, 125, 9))
 >P : Symbol(P, Decl(conditionalTypes2.ts, 125, 17))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 123, 7))
@@ -454,7 +454,7 @@ type B<T, V> =
   T extends object
 >T : Symbol(T, Decl(conditionalTypes2.ts, 128, 7))
 
-    ? { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: B<T[Q], V>; }
+    ? { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: B<T[Q], V>; }
 >Q : Symbol(Q, Decl(conditionalTypes2.ts, 130, 9))
 >P : Symbol(P, Decl(conditionalTypes2.ts, 130, 17))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 128, 7))
@@ -480,7 +480,7 @@ type C<T, V, E> =
 >V : Symbol(V, Decl(conditionalTypes2.ts, 133, 9))
 >E : Symbol(E, Decl(conditionalTypes2.ts, 133, 12))
 
-  { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: C<T[Q], V, E>; };
+  { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: C<T[Q], V, E>; };
 >Q : Symbol(Q, Decl(conditionalTypes2.ts, 134, 5))
 >P : Symbol(P, Decl(conditionalTypes2.ts, 134, 13))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 133, 7))
@@ -499,7 +499,7 @@ type C<T, V, E> =
 // Repro from #23100
 
 type A2<T, V, E> =
->A2 : Symbol(A2, Decl(conditionalTypes2.ts, 134, 82))
+>A2 : Symbol(A2, Decl(conditionalTypes2.ts, 134, 84))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 138, 8))
 >V : Symbol(V, Decl(conditionalTypes2.ts, 138, 10))
 >E : Symbol(E, Decl(conditionalTypes2.ts, 138, 13))
@@ -510,7 +510,7 @@ type A2<T, V, E> =
 >T : Symbol(T, Decl(conditionalTypes2.ts, 138, 8))
 >Q : Symbol(Q, Decl(conditionalTypes2.ts, 139, 48))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 138, 8))
->A2 : Symbol(A2, Decl(conditionalTypes2.ts, 134, 82))
+>A2 : Symbol(A2, Decl(conditionalTypes2.ts, 134, 84))
 >T : Symbol(T, Decl(conditionalTypes2.ts, 138, 8))
 >Q : Symbol(Q, Decl(conditionalTypes2.ts, 139, 48))
 >V : Symbol(V, Decl(conditionalTypes2.ts, 138, 10))

@@ -533,7 +533,7 @@ class B extends A<{ x: number}> {
 // Repro from #13749
 
 class Form<T> {
-    private childFormFactories: {[K in keyof T]: (v: T[K]) => Form<T[K]>}
+    private childFormFactories: {[K in keyof T]-?: (v: T[K]) => Form<T[K]>}
 
     public set<K extends keyof T>(prop: K, value: T[K]) {
         this.childFormFactories[prop](value)
@@ -582,11 +582,11 @@ type Predicates<TaggedRecord> = {
 
 // Repros from #23592
 
-type Example<T extends { [K in keyof T]: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
+type Example<T extends { [K in keyof T]-?: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
 type Result = Example<{ a: { prop: string }; b: { prop: number } }>;
 
-type Helper2<T> = { [K in keyof T]: Extract<T[K], { prop: any }> };
-type Example2<T> = { [K in keyof Helper2<T>]: Helper2<T>[K]["prop"] };
+type Helper2<T> = { [K in keyof T]-?: Extract<T[K], { prop: any }> };
+type Example2<T> = { [K in keyof Helper2<T>]-?: Helper2<T>[K]["prop"] };
 type Result2 = Example2<{ 1: { prop: string }; 2: { prop: number } }>;
 
 // Repro from #23618
@@ -1368,7 +1368,7 @@ declare type Predicates<TaggedRecord> = {
     [T in keyof TaggedRecord]: (variant: TaggedRecord[keyof TaggedRecord]) => variant is TaggedRecord[T];
 };
 declare type Example<T extends {
-    [K in keyof T]: {
+    [K in keyof T]-?: {
         prop: any;
     };
 }> = {
@@ -1383,12 +1383,12 @@ declare type Result = Example<{
     };
 }>;
 declare type Helper2<T> = {
-    [K in keyof T]: Extract<T[K], {
+    [K in keyof T]-?: Extract<T[K], {
         prop: any;
     }>;
 };
 declare type Example2<T> = {
-    [K in keyof Helper2<T>]: Helper2<T>[K]["prop"];
+    [K in keyof Helper2<T>]-?: Helper2<T>[K]["prop"];
 };
 declare type Result2 = Example2<{
     1: {

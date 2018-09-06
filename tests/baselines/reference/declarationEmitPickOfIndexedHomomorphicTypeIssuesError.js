@@ -1,0 +1,48 @@
+//// [declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts]
+export type Omit<T, K extends keyof T> = Pick<T, 
+    ({ [P in keyof T]: P } & { [P in K]: never } )[keyof T]>;
+
+export interface IOmitTest {
+	(): { notSupposedToHappen: Omit<IXProps, "unwantedProp"> }
+}
+
+export interface IXProps {
+    optionalProp?: string
+    unwantedProp: string
+}
+
+const Y: IOmitTest = null as any;
+export const Z = Y();
+
+export interface IMouseOver {
+    wrong: Omit<IXProps, "unwantedProp">
+}
+
+//// [declarationEmitPickOfIndexedHomomorphicTypeIssuesError.js]
+"use strict";
+exports.__esModule = true;
+var Y = null;
+exports.Z = Y();
+
+
+//// [declarationEmitPickOfIndexedHomomorphicTypeIssuesError.d.ts]
+export declare type Omit<T, K extends keyof T> = Pick<T, ({
+    [P in keyof T]: P;
+} & {
+    [P in K]: never;
+})[keyof T]>;
+export interface IOmitTest {
+    (): {
+        notSupposedToHappen: Omit<IXProps, "unwantedProp">;
+    };
+}
+export interface IXProps {
+    optionalProp?: string;
+    unwantedProp: string;
+}
+export declare const Z: {
+    notSupposedToHappen: Pick<IXProps, "optionalProp" | undefined>;
+};
+export interface IMouseOver {
+    wrong: Omit<IXProps, "unwantedProp">;
+}

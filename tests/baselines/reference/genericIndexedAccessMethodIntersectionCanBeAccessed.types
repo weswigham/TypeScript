@@ -2,7 +2,7 @@
 type ExtendedService<T> = {
 >ExtendedService : ExtendedService<T>
 
-    [K in keyof T]: T[K] & {
+    [K in keyof T]-?: T[K] & {
         __$daemonMode?: string;
 >__$daemonMode : string | undefined
 
@@ -15,7 +15,7 @@ type ExtendedService<T> = {
 type Service<T> = {
 >Service : Service<T>
 
-    [K in keyof T]: T[K] & {id?: string};
+    [K in keyof T]-?: T[K] & {id?: string};
 >id : string | undefined
 
 };

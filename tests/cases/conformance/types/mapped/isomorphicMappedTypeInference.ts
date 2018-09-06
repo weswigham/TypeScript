@@ -7,7 +7,7 @@ type Box<T> = {
 }
 
 type Boxified<T> = {
-    [P in keyof T]: Box<T[P]>;
+    [P in keyof T]-?: Box<T[P]>;
 }
 
 function box<T>(x: T): Box<T> {

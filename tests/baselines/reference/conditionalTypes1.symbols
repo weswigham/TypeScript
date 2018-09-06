@@ -320,7 +320,7 @@ interface Part {
 >newName : Symbol(newName, Decl(conditionalTypes1.ts, 89, 15))
 }
 
-type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
+type FunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? K : never }[keyof T];
 >FunctionPropertyNames : Symbol(FunctionPropertyNames, Decl(conditionalTypes1.ts, 90, 1))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 92, 27))
 >K : Symbol(K, Decl(conditionalTypes1.ts, 92, 35))
@@ -332,14 +332,14 @@ type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? K : ne
 >T : Symbol(T, Decl(conditionalTypes1.ts, 92, 27))
 
 type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
->FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 95))
+>FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 97))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 93, 24))
 >Pick : Symbol(Pick, Decl(lib.es5.d.ts, --, --))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 93, 24))
 >FunctionPropertyNames : Symbol(FunctionPropertyNames, Decl(conditionalTypes1.ts, 90, 1))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 93, 24))
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+type NonFunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? never : K }[keyof T];
 >NonFunctionPropertyNames : Symbol(NonFunctionPropertyNames, Decl(conditionalTypes1.ts, 93, 63))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 95, 30))
 >K : Symbol(K, Decl(conditionalTypes1.ts, 95, 38))
@@ -351,7 +351,7 @@ type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? nev
 >T : Symbol(T, Decl(conditionalTypes1.ts, 95, 30))
 
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
->NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 98))
+>NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 100))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 96, 27))
 >Pick : Symbol(Pick, Decl(lib.es5.d.ts, --, --))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 96, 27))
@@ -360,12 +360,12 @@ type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
 type T30 = FunctionProperties<Part>;
 >T30 : Symbol(T30, Decl(conditionalTypes1.ts, 96, 69))
->FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 95))
+>FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 97))
 >Part : Symbol(Part, Decl(conditionalTypes1.ts, 83, 34))
 
 type T31 = NonFunctionProperties<Part>;
 >T31 : Symbol(T31, Decl(conditionalTypes1.ts, 98, 36))
->NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 98))
+>NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 100))
 >Part : Symbol(Part, Decl(conditionalTypes1.ts, 83, 34))
 
 function f7<T>(x: T, y: FunctionProperties<T>, z: NonFunctionProperties<T>) {
@@ -374,10 +374,10 @@ function f7<T>(x: T, y: FunctionProperties<T>, z: NonFunctionProperties<T>) {
 >x : Symbol(x, Decl(conditionalTypes1.ts, 101, 15))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 101, 12))
 >y : Symbol(y, Decl(conditionalTypes1.ts, 101, 20))
->FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 95))
+>FunctionProperties : Symbol(FunctionProperties, Decl(conditionalTypes1.ts, 92, 97))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 101, 12))
 >z : Symbol(z, Decl(conditionalTypes1.ts, 101, 46))
->NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 98))
+>NonFunctionProperties : Symbol(NonFunctionProperties, Decl(conditionalTypes1.ts, 95, 100))
 >T : Symbol(T, Decl(conditionalTypes1.ts, 101, 12))
 
     x = y;  // Error

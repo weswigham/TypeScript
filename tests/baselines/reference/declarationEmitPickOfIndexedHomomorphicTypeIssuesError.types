@@ -1,0 +1,33 @@
+=== tests/cases/compiler/declarationEmitPickOfIndexedHomomorphicTypeIssuesError.ts ===
+export type Omit<T, K extends keyof T> = Pick<T, 
+>Omit : Pick<T, ({ [P in keyof T]: P; } & { [P in K]: never; })[keyof T]>
+
+    ({ [P in keyof T]: P } & { [P in K]: never } )[keyof T]>;
+
+export interface IOmitTest {
+	(): { notSupposedToHappen: Omit<IXProps, "unwantedProp"> }
+>notSupposedToHappen : Pick<IXProps, "optionalProp" | undefined>
+}
+
+export interface IXProps {
+    optionalProp?: string
+>optionalProp : string | undefined
+
+    unwantedProp: string
+>unwantedProp : string
+}
+
+const Y: IOmitTest = null as any;
+>Y : IOmitTest
+>null as any : any
+>null : null
+
+export const Z = Y();
+>Z : { notSupposedToHappen: Pick<IXProps, "optionalProp" | undefined>; }
+>Y() : { notSupposedToHappen: Pick<IXProps, "optionalProp" | undefined>; }
+>Y : IOmitTest
+
+export interface IMouseOver {
+    wrong: Omit<IXProps, "unwantedProp">
+>wrong : Pick<IXProps, "optionalProp" | undefined>
+}

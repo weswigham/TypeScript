@@ -1877,8 +1877,8 @@ class B extends A<{ x: number}> {
 class Form<T> {
 >Form : Form<T>
 
-    private childFormFactories: {[K in keyof T]: (v: T[K]) => Form<T[K]>}
->childFormFactories : { [K in keyof T]: (v: T[K]) => Form<T[K]>; }
+    private childFormFactories: {[K in keyof T]-?: (v: T[K]) => Form<T[K]>}
+>childFormFactories : { [K in keyof T]-?: (v: T[K]) => Form<T[K]>; }
 >v : T[K]
 
     public set<K extends keyof T>(prop: K, value: T[K]) {
@@ -1888,10 +1888,10 @@ class Form<T> {
 
         this.childFormFactories[prop](value)
 >this.childFormFactories[prop](value) : Form<T[K]>
->this.childFormFactories[prop] : { [K in keyof T]: (v: T[K]) => Form<T[K]>; }[K]
->this.childFormFactories : { [K in keyof T]: (v: T[K]) => Form<T[K]>; }
+>this.childFormFactories[prop] : { [K in keyof T]-?: (v: T[K]) => Form<T[K]>; }[K]
+>this.childFormFactories : { [K in keyof T]-?: (v: T[K]) => Form<T[K]>; }
 >this : this
->childFormFactories : { [K in keyof T]: (v: T[K]) => Form<T[K]>; }
+>childFormFactories : { [K in keyof T]-?: (v: T[K]) => Form<T[K]>; }
 >prop : K
 >value : T[K]
     }
@@ -2006,7 +2006,7 @@ type Predicates<TaggedRecord> = {
 
 // Repros from #23592
 
-type Example<T extends { [K in keyof T]: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
+type Example<T extends { [K in keyof T]-?: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
 >Example : Example<T>
 >prop : any
 
@@ -2017,11 +2017,11 @@ type Result = Example<{ a: { prop: string }; b: { prop: number } }>;
 >b : { prop: number; }
 >prop : number
 
-type Helper2<T> = { [K in keyof T]: Extract<T[K], { prop: any }> };
+type Helper2<T> = { [K in keyof T]-?: Extract<T[K], { prop: any }> };
 >Helper2 : Helper2<T>
 >prop : any
 
-type Example2<T> = { [K in keyof Helper2<T>]: Helper2<T>[K]["prop"] };
+type Example2<T> = { [K in keyof Helper2<T>]-?: Helper2<T>[K]["prop"] };
 >Example2 : Example2<T>
 
 type Result2 = Example2<{ 1: { prop: string }; 2: { prop: number } }>;

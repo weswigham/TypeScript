@@ -934,7 +934,7 @@ namespace ts {
     export function sum<T extends Record<K, number>, K extends string>(array: ReadonlyArray<T>, prop: K): number {
         let result = 0;
         for (const v of array) {
-            result += v[prop];
+            result += v[prop] as number;
         }
         return result;
     }

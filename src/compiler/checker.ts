@@ -9351,7 +9351,10 @@ namespace ts {
         function substituteIndexedMappedType(objectType: MappedType, type: IndexedAccessType) {
             const mapper = createTypeMapper([getTypeParameterFromMappedType(objectType)], [type.indexType]);
             const templateMapper = combineTypeMappers(objectType.mapper, mapper);
-            return instantiateType(getTemplateTypeFromMappedType(objectType), templateMapper);
+            const instantiated = instantiateType(getTemplateTypeFromMappedType(objectType), templateMapper);
+            // if it results into an index into the same modifiers type, don't bother to check to add undefined - the index operation will include it implicitly
+            if (instantiated.flags & TypeFlags.IndexedAccess && getModifiersTypeFromMappedType(objectType) === (instantiated as IndexedAccessType).objectType) return instantiated;
+            return addOptionality(instantiated, getCombinedMappedTypeOptionality(objectType) >= (getModifiersTypeFromMappedType(objectType) !== emptyObjectType ? 0 : 1));
         }
 
         function getIndexedAccessType(objectType: Type, indexType: Type, accessNode?: ElementAccessExpression | IndexedAccessTypeNode, missingType = accessNode ? errorType : unknownType): Type {

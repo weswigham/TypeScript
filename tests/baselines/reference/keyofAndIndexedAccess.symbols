@@ -1911,11 +1911,11 @@ class Form<T> {
 >Form : Symbol(Form, Decl(keyofAndIndexedAccess.ts, 529, 1))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 533, 11))
 
-    private childFormFactories: {[K in keyof T]: (v: T[K]) => Form<T[K]>}
+    private childFormFactories: {[K in keyof T]-?: (v: T[K]) => Form<T[K]>}
 >childFormFactories : Symbol(Form.childFormFactories, Decl(keyofAndIndexedAccess.ts, 533, 15))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 534, 34))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 533, 11))
->v : Symbol(v, Decl(keyofAndIndexedAccess.ts, 534, 50))
+>v : Symbol(v, Decl(keyofAndIndexedAccess.ts, 534, 52))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 533, 11))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 534, 34))
 >Form : Symbol(Form, Decl(keyofAndIndexedAccess.ts, 529, 1))
@@ -1923,7 +1923,7 @@ class Form<T> {
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 534, 34))
 
     public set<K extends keyof T>(prop: K, value: T[K]) {
->set : Symbol(Form.set, Decl(keyofAndIndexedAccess.ts, 534, 73))
+>set : Symbol(Form.set, Decl(keyofAndIndexedAccess.ts, 534, 75))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 536, 15))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 533, 11))
 >prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 536, 34))
@@ -2072,26 +2072,26 @@ type Predicates<TaggedRecord> = {
 
 // Repros from #23592
 
-type Example<T extends { [K in keyof T]: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
+type Example<T extends { [K in keyof T]-?: { prop: any } }> = { [K in keyof T]: T[K]["prop"] };
 >Example : Symbol(Example, Decl(keyofAndIndexedAccess.ts, 579, 1))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 583, 13))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 583, 26))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 583, 13))
->prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 583, 42))
->K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 583, 63))
+>prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 583, 44))
+>K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 583, 65))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 583, 13))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 583, 13))
->K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 583, 63))
+>K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 583, 65))
 
 type Result = Example<{ a: { prop: string }; b: { prop: number } }>;
->Result : Symbol(Result, Decl(keyofAndIndexedAccess.ts, 583, 93))
+>Result : Symbol(Result, Decl(keyofAndIndexedAccess.ts, 583, 95))
 >Example : Symbol(Example, Decl(keyofAndIndexedAccess.ts, 579, 1))
 >a : Symbol(a, Decl(keyofAndIndexedAccess.ts, 584, 23))
 >prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 584, 28))
 >b : Symbol(b, Decl(keyofAndIndexedAccess.ts, 584, 44))
 >prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 584, 49))
 
-type Helper2<T> = { [K in keyof T]: Extract<T[K], { prop: any }> };
+type Helper2<T> = { [K in keyof T]-?: Extract<T[K], { prop: any }> };
 >Helper2 : Symbol(Helper2, Decl(keyofAndIndexedAccess.ts, 584, 68))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 586, 13))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 586, 21))
@@ -2099,10 +2099,10 @@ type Helper2<T> = { [K in keyof T]: Extract<T[K], { prop: any }> };
 >Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 586, 13))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 586, 21))
->prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 586, 51))
+>prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 586, 53))
 
-type Example2<T> = { [K in keyof Helper2<T>]: Helper2<T>[K]["prop"] };
->Example2 : Symbol(Example2, Decl(keyofAndIndexedAccess.ts, 586, 67))
+type Example2<T> = { [K in keyof Helper2<T>]-?: Helper2<T>[K]["prop"] };
+>Example2 : Symbol(Example2, Decl(keyofAndIndexedAccess.ts, 586, 69))
 >T : Symbol(T, Decl(keyofAndIndexedAccess.ts, 587, 14))
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 587, 22))
 >Helper2 : Symbol(Helper2, Decl(keyofAndIndexedAccess.ts, 584, 68))
@@ -2112,8 +2112,8 @@ type Example2<T> = { [K in keyof Helper2<T>]: Helper2<T>[K]["prop"] };
 >K : Symbol(K, Decl(keyofAndIndexedAccess.ts, 587, 22))
 
 type Result2 = Example2<{ 1: { prop: string }; 2: { prop: number } }>;
->Result2 : Symbol(Result2, Decl(keyofAndIndexedAccess.ts, 587, 70))
->Example2 : Symbol(Example2, Decl(keyofAndIndexedAccess.ts, 586, 67))
+>Result2 : Symbol(Result2, Decl(keyofAndIndexedAccess.ts, 587, 72))
+>Example2 : Symbol(Example2, Decl(keyofAndIndexedAccess.ts, 586, 69))
 >1 : Symbol(1, Decl(keyofAndIndexedAccess.ts, 588, 25))
 >prop : Symbol(prop, Decl(keyofAndIndexedAccess.ts, 588, 30))
 >2 : Symbol(2, Decl(keyofAndIndexedAccess.ts, 588, 46))

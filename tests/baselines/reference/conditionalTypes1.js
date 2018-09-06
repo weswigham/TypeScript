@@ -91,10 +91,10 @@ interface Part {
     updatePart(newName: string): void;
 }
 
-type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
+type FunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? K : never }[keyof T];
 type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+type NonFunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? never : K }[keyof T];
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
 type T30 = FunctionProperties<Part>;
@@ -539,11 +539,11 @@ interface Part {
     updatePart(newName: string): void;
 }
 declare type FunctionPropertyNames<T> = {
-    [K in keyof T]: T[K] extends Function ? K : never;
+    [K in keyof T]-?: T[K] extends Function ? K : never;
 }[keyof T];
 declare type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
 declare type NonFunctionPropertyNames<T> = {
-    [K in keyof T]: T[K] extends Function ? never : K;
+    [K in keyof T]-?: T[K] extends Function ? never : K;
 }[keyof T];
 declare type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 declare type T30 = FunctionProperties<Part>;

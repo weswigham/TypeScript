@@ -124,16 +124,16 @@ function foo<T>(value: T) {
 
 type A<T, V, E> =
   T extends object
-    ? { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: A<T[Q], V, E>; }
+    ? { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: A<T[Q], V, E>; }
     : T extends V ? T : never;
 
 type B<T, V> =
   T extends object
-    ? { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: B<T[Q], V>; }
+    ? { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: B<T[Q], V>; }
     : T extends V ? T : never;
 
 type C<T, V, E> =
-  { [Q in { [P in keyof T]: T[P] extends V ? P : P; }[keyof T]]: C<T[Q], V, E>; };
+  { [Q in { [P in keyof T]-?: T[P] extends V ? P : P; }[keyof T]]: C<T[Q], V, E>; };
 
 // Repro from #23100
 
@@ -282,17 +282,17 @@ declare function toString2(value: Function): string;
 declare function foo<T>(value: T): void;
 declare type A<T, V, E> = T extends object ? {
     [Q in {
-        [P in keyof T]: T[P] extends V ? P : P;
+        [P in keyof T]-?: T[P] extends V ? P : P;
     }[keyof T]]: A<T[Q], V, E>;
 } : T extends V ? T : never;
 declare type B<T, V> = T extends object ? {
     [Q in {
-        [P in keyof T]: T[P] extends V ? P : P;
+        [P in keyof T]-?: T[P] extends V ? P : P;
     }[keyof T]]: B<T[Q], V>;
 } : T extends V ? T : never;
 declare type C<T, V, E> = {
     [Q in {
-        [P in keyof T]: T[P] extends V ? P : P;
+        [P in keyof T]-?: T[P] extends V ? P : P;
     }[keyof T]]: C<T[Q], V, E>;
 };
 declare type A2<T, V, E> = T extends object ? T extends any[] ? T : {

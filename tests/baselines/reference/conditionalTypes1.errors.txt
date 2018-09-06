@@ -13,14 +13,14 @@ tests/cases/conformance/types/conditional/conditionalTypes1.ts(29,5): error TS23
 tests/cases/conformance/types/conditional/conditionalTypes1.ts(30,9): error TS2322: Type 'T["x"]' is not assignable to type 'string'.
   Type 'string | undefined' is not assignable to type 'string'.
     Type 'undefined' is not assignable to type 'string'.
-tests/cases/conformance/types/conditional/conditionalTypes1.ts(103,5): error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'T'.
-tests/cases/conformance/types/conditional/conditionalTypes1.ts(104,5): error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'T'.
-tests/cases/conformance/types/conditional/conditionalTypes1.ts(106,5): error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>'.
+tests/cases/conformance/types/conditional/conditionalTypes1.ts(103,5): error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'T'.
+tests/cases/conformance/types/conditional/conditionalTypes1.ts(104,5): error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'T'.
+tests/cases/conformance/types/conditional/conditionalTypes1.ts(106,5): error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>'.
   Type 'T[keyof T] extends Function ? keyof T : never' is not assignable to type 'T[keyof T] extends Function ? never : keyof T'.
     Type 'keyof T' is not assignable to type 'never'.
       Type 'string | number | symbol' is not assignable to type 'never'.
         Type 'string' is not assignable to type 'never'.
-tests/cases/conformance/types/conditional/conditionalTypes1.ts(108,5): error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>'.
+tests/cases/conformance/types/conditional/conditionalTypes1.ts(108,5): error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>'.
   Type 'T[keyof T] extends Function ? never : keyof T' is not assignable to type 'T[keyof T] extends Function ? keyof T : never'.
     Type 'keyof T' is not assignable to type 'never'.
 tests/cases/conformance/types/conditional/conditionalTypes1.ts(114,5): error TS2322: Type 'keyof T' is not assignable to type 'T[keyof T] extends Function ? keyof T : never'.
@@ -166,10 +166,10 @@ tests/cases/conformance/types/conditional/conditionalTypes1.ts(288,43): error TS
         updatePart(newName: string): void;
     }
     
-    type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
+    type FunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? K : never }[keyof T];
     type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
     
-    type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+    type NonFunctionPropertyNames<T> = { [K in keyof T]-?: T[K] extends Function ? never : K }[keyof T];
     type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
     
     type T30 = FunctionProperties<Part>;
@@ -178,14 +178,14 @@ tests/cases/conformance/types/conditional/conditionalTypes1.ts(288,43): error TS
     function f7<T>(x: T, y: FunctionProperties<T>, z: NonFunctionProperties<T>) {
         x = y;  // Error
         ~
-!!! error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'T'.
+!!! error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'T'.
         x = z;  // Error
         ~
-!!! error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'T'.
+!!! error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'T'.
         y = x;
         y = z;  // Error
         ~
-!!! error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>'.
+!!! error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>'.
 !!! error TS2322:   Type 'T[keyof T] extends Function ? keyof T : never' is not assignable to type 'T[keyof T] extends Function ? never : keyof T'.
 !!! error TS2322:     Type 'keyof T' is not assignable to type 'never'.
 !!! error TS2322:       Type 'string | number | symbol' is not assignable to type 'never'.
@@ -193,7 +193,7 @@ tests/cases/conformance/types/conditional/conditionalTypes1.ts(288,43): error TS
         z = x;
         z = y;  // Error
         ~
-!!! error TS2322: Type 'Pick<T, { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]: T[K] extends Function ? never : K; }[keyof T]>'.
+!!! error TS2322: Type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? K : never; }[keyof T]>' is not assignable to type 'Pick<T, { [K in keyof T]-?: T[K] extends Function ? never : K; }[keyof T]>'.
 !!! error TS2322:   Type 'T[keyof T] extends Function ? never : keyof T' is not assignable to type 'T[keyof T] extends Function ? keyof T : never'.
 !!! error TS2322:     Type 'keyof T' is not assignable to type 'never'.
     }

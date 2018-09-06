@@ -3,14 +3,14 @@ type ExtendedService<T> = {
 >ExtendedService : Symbol(ExtendedService, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 0, 0))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 0, 21))
 
-    [K in keyof T]: T[K] & {
+    [K in keyof T]-?: T[K] & {
 >K : Symbol(K, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 1, 5))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 0, 21))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 0, 21))
 >K : Symbol(K, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 1, 5))
 
         __$daemonMode?: string;
->__$daemonMode : Symbol(__$daemonMode, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 1, 28))
+>__$daemonMode : Symbol(__$daemonMode, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 1, 30))
 
         __$action?: string;
 >__$action : Symbol(__$action, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 2, 31))
@@ -22,12 +22,12 @@ type Service<T> = {
 >Service : Symbol(Service, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 5, 2))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 7, 13))
 
-    [K in keyof T]: T[K] & {id?: string};
+    [K in keyof T]-?: T[K] & {id?: string};
 >K : Symbol(K, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 8, 5))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 7, 13))
 >T : Symbol(T, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 7, 13))
 >K : Symbol(K, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 8, 5))
->id : Symbol(id, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 8, 28))
+>id : Symbol(id, Decl(genericIndexedAccessMethodIntersectionCanBeAccessed.ts, 8, 30))
 
 };
 
