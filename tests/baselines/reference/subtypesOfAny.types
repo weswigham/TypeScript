@@ -51,7 +51,7 @@ interface I6 {
 >x : string
 
     foo: RegExp;
->foo : RegExp
+>foo : RegExp<string>
 }
 
 

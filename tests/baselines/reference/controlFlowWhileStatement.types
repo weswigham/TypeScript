@@ -135,11 +135,11 @@ function f() {
 >f : () => void
 
     let x: string | number | boolean | RegExp | Function;
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 
     x = "";
 >x = "" : ""
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >"" : ""
 
     while (cond) {
@@ -150,7 +150,7 @@ function f() {
 
             x = 42;
 >x = 42 : 42
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >42 : 42
 
             break;
@@ -160,28 +160,28 @@ function f() {
 
             x = true;
 >x = true : true
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >true : true
 
             continue;
         }
         x = /a/;
->x = /a/ : RegExp
->x : string | number | boolean | Function | RegExp
->/a/ : RegExp
+>x = /a/ : RegExp</a/>
+>x : string | number | boolean | Function | RegExp<string>
+>/a/ : RegExp</a/>
     }
     x; // string | number | boolean | RegExp
->x : string | number | true | RegExp
+>x : string | number | true | RegExp<string>
 }
 function g() {
 >g : () => void
 
     let x: string | number | boolean | RegExp | Function;
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 
     x = "";
 >x = "" : ""
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >"" : ""
 
     while (true) {
@@ -192,7 +192,7 @@ function g() {
 
             x = 42;
 >x = 42 : 42
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >42 : 42
 
             break;
@@ -202,15 +202,15 @@ function g() {
 
             x = true;
 >x = true : true
->x : string | number | boolean | Function | RegExp
+>x : string | number | boolean | Function | RegExp<string>
 >true : true
 
             continue;
         }
         x = /a/;
->x = /a/ : RegExp
->x : string | number | boolean | Function | RegExp
->/a/ : RegExp
+>x = /a/ : RegExp</a/>
+>x : string | number | boolean | Function | RegExp<string>
+>/a/ : RegExp</a/>
     }
     x; // number
 >x : number

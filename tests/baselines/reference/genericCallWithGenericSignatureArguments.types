@@ -178,7 +178,7 @@ function foo2<T extends Date>(a: (x: T) => T, b: (x: T) => T) {
 }
 
 function other3<T extends RegExp>(x: T) {
->other3 : <T extends RegExp>(x: T) => void
+>other3 : <T extends RegExp<string>>(x: T) => void
 >x : T
 
     var r8 = foo2((a: Date) => a, (b: Date) => b); // Date => Date

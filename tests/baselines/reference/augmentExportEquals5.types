@@ -23,7 +23,7 @@ declare module "express" {
 
         interface IRouterMatcher<T> {
             (name: string|RegExp, ...handlers: RequestHandler[]): T;
->name : string | RegExp
+>name : string | RegExp<string>
 >handlers : RequestHandler[]
         }
 

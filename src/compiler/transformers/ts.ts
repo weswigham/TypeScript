@@ -1894,6 +1894,7 @@ namespace ts {
                 case SyntaxKind.LiteralType:
                     switch ((<LiteralTypeNode>node).literal.kind) {
                         case SyntaxKind.StringLiteral:
+                        case SyntaxKind.RegularExpressionLiteral:
                             return createIdentifier("String");
 
                         case SyntaxKind.NumericLiteral:

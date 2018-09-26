@@ -78,7 +78,7 @@ module onlyT {
     }
 
     function other3<T extends RegExp>(x: T) {
->other3 : <T extends RegExp>(x: T) => void
+>other3 : <T extends RegExp<string>>(x: T) => void
 >x : T
 
         var r7 = foo2((a: T) => a, (b: T) => b); // error
@@ -222,7 +222,7 @@ module TU {
     }
 
     function other3<T extends RegExp>(x: T) {
->other3 : <T extends RegExp>(x: T) => void
+>other3 : <T extends RegExp<string>>(x: T) => void
 >x : T
 
         var r7 = foo2((a: T) => a, (b: T) => b); 

@@ -42,7 +42,7 @@ switch (x) {
 >Object : ObjectConstructor
 
     case /[a-z]/:
->/[a-z]/ : RegExp
+>/[a-z]/ : RegExp</[a-z]/>
 
     case[]:
 >[] : undefined[]
@@ -145,7 +145,7 @@ switch (new Object()) { }
 >Object : ObjectConstructor
 
 switch (/[a-z]/) { }
->/[a-z]/ : RegExp
+>/[a-z]/ : RegExp</[a-z]/>
 
 switch ([]) { }
 >[] : undefined[]

@@ -4,6 +4,6 @@ var foo: { [index: any]; }; // expect an error here
 >index : any
 
 var foo2: { [index: RegExp]; }; // expect an error here
->foo2 : { [index: RegExp]: any; }
->index : RegExp
+>foo2 : { [index: RegExp<string>]: any; }
+>index : RegExp<string>
 

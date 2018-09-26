@@ -2840,7 +2840,7 @@ namespace ts {
             return token() === SyntaxKind.DotToken ? undefined : node;
         }
 
-        function parseLiteralTypeNode(negative?: boolean): LiteralTypeNode {
+        function parseLiteralTypeNode(literalToken: SyntaxKind, negative?: boolean): LiteralTypeNode {
             const node = createNode(SyntaxKind.LiteralType) as LiteralTypeNode;
             let unaryMinusExpression!: PrefixUnaryExpression;
             if (negative) {
@@ -2848,9 +2848,9 @@ namespace ts {
                 unaryMinusExpression.operator = SyntaxKind.MinusToken;
                 nextToken();
             }
-            let expression: BooleanLiteral | LiteralExpression | PrefixUnaryExpression = token() === SyntaxKind.TrueKeyword || token() === SyntaxKind.FalseKeyword
+            let expression: BooleanLiteral | LiteralExpression | PrefixUnaryExpression = literalToken === SyntaxKind.TrueKeyword || literalToken === SyntaxKind.FalseKeyword
                 ? parseTokenNode<BooleanLiteral>()
-                : parseLiteralLikeNode(token()) as LiteralExpression;
+                : parseLiteralLikeNode(literalToken) as LiteralExpression;
             if (negative) {
                 unaryMinusExpression.operand = expression;
                 finishNode(unaryMinusExpression);
@@ -2914,9 +2914,18 @@ namespace ts {
                 case SyntaxKind.NumericLiteral:
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                    return parseLiteralTypeNode();
+                case SyntaxKind.RegularExpressionLiteral:
+                    return parseLiteralTypeNode(token());
+                case SyntaxKind.SlashEqualsToken:
+                case SyntaxKind.SlashToken:
+                    if (reScanSlashToken() === SyntaxKind.RegularExpressionLiteral) {
+                        return parseLiteralTypeNode(SyntaxKind.RegularExpressionLiteral);
+                    }
+                    else {
+                        return parseTypeReference();
+                    }
                 case SyntaxKind.MinusToken:
-                    return lookAhead(nextTokenIsNumericLiteral) ? parseLiteralTypeNode(/*negative*/ true) : parseTypeReference();
+                    return lookAhead(nextTokenIsNumericLiteral) ? parseLiteralTypeNode(SyntaxKind.NumericLiteral, /*negative*/ true) : parseTypeReference();
                 case SyntaxKind.VoidKeyword:
                 case SyntaxKind.NullKeyword:
                     return parseTokenNode<TypeNode>();
@@ -2974,6 +2983,7 @@ namespace ts {
                 case SyntaxKind.QuestionToken:
                 case SyntaxKind.ExclamationToken:
                 case SyntaxKind.DotDotDotToken:
+                case SyntaxKind.SlashToken:
                 case SyntaxKind.InferKeyword:
                 case SyntaxKind.ImportKeyword:
                     return true;

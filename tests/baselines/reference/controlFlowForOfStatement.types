@@ -3,23 +3,23 @@ let obj: number[];
 >obj : number[]
 
 let x: string | number | boolean | RegExp;
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 
 function a() {
 >a : () => void
 
     x = true;
 >x = true : true
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >true : true
 
     for (x of obj) {
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >obj : number[]
 
         x = x.toExponential();
 >x = x.toExponential() : string
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >x.toExponential() : string
 >x.toExponential : (fractionDigits?: number) => string
 >x : number

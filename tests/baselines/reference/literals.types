@@ -100,13 +100,13 @@ var s = "foo\
     bar";
 
 var r: RegExp;
->r : RegExp
+>r : RegExp<string>
 
 var r = /what/;
->r : RegExp
->/what/ : RegExp
+>r : RegExp<string>
+>/what/ : RegExp</what/>
 
 var r = /\\\\/;
->r : RegExp
->/\\\\/ : RegExp
+>r : RegExp<string>
+>/\\\\/ : RegExp</\\\\/>
 

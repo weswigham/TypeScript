@@ -3,11 +3,11 @@ var x: Object;
 >x : Object
 
 var y: RegExp;
->y : RegExp
+>y : RegExp<string>
 
 y = x;
 >y = x : Object
->y : RegExp
+>y : RegExp<string>
 >x : Object
 
 var a: String = Object.create<Object>("");

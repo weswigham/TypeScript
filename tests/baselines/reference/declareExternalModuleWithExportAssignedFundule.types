@@ -19,8 +19,8 @@ declare module "express" {
 >name : string
 
             post(path: RegExp, handler: (req: Function) => void ): void;
->post : (path: RegExp, handler: (req: Function) => void) => void
->path : RegExp
+>post : (path: RegExp<string>, handler: (req: Function) => void) => void
+>path : RegExp<string>
 >handler : (req: Function) => void
 >req : Function
 

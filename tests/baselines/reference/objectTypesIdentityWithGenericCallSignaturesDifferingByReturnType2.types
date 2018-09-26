@@ -38,7 +38,7 @@ interface I<T extends Date> {
 
 interface I2 {
     foo<T extends Date>(x: T): RegExp;
->foo : <T extends Date>(x: T) => RegExp
+>foo : <T extends Date>(x: T) => RegExp<string>
 >x : T
 }
 

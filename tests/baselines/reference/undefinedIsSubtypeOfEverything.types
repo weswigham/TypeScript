@@ -82,7 +82,7 @@ class D4 extends Base {
 >Base : Base
 
     foo: RegExp;
->foo : RegExp
+>foo : RegExp<string>
 }
 
 class D5 extends Base {

@@ -2178,11 +2178,12 @@ declare namespace ts {
         Conditional = 4194304,
         Substitution = 8388608,
         NonPrimitive = 16777216,
+        RegularExpressionValidated = 1073741824,
         Literal = 448,
         Unit = 27072,
         StringOrNumberLiteral = 192,
         PossiblyFalsy = 29148,
-        StringLike = 68,
+        StringLike = 1073741892,
         NumberLike = 168,
         BooleanLike = 272,
         EnumLike = 544,
@@ -2195,7 +2196,7 @@ declare namespace ts {
         InstantiablePrimitive = 1048576,
         Instantiable = 15794176,
         StructuredOrInstantiable = 16711680,
-        Narrowable = 33492479,
+        Narrowable = 1107234303,
         NotUnionOrUnit = 16909315
     }
     type DestructuringPattern = BindingPattern | ObjectLiteralExpression | ArrayLiteralExpression;
@@ -2216,6 +2217,10 @@ declare namespace ts {
     }
     interface StringLiteralType extends LiteralType {
         value: string;
+    }
+    interface RegularExpressionValidatedLiteralType extends LiteralType {
+        value: string;
+        regex?: RegExp;
     }
     interface NumberLiteralType extends LiteralType {
         value: number;

@@ -23,5 +23,5 @@ const elem = <div className={class1, class2}/>;
 >className : string
 >class1 : "foo"
 >class2 : true
->/>; : RegExp
+>/>; : RegExp</>;>
 

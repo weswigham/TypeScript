@@ -4,8 +4,8 @@ class Rule {
 >Rule : Rule
 
     public regex: RegExp = new RegExp('');
->regex : RegExp
->new RegExp('') : RegExp
+>regex : RegExp<string>
+>new RegExp('') : RegExp<string>
 >RegExp : RegExpConstructor
 >'' : ""
 

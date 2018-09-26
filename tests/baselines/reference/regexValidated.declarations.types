@@ -1,0 +1,32 @@
+=== tests/cases/conformance/types/regexValidated/regexValidated.declarations.ts ===
+type Apple = /apple/i;
+>Apple : /apple/i
+>/apple/i : RegExp</apple/i>
+
+export type Banana = /banana/i;
+>Banana : /banana/i
+>/banana/i : RegExp</banana/i>
+
+const x = {
+>x : { a: /apple/i; b: /banana/i; c: /banana/i; }
+>{    a: "apple" as Apple,    b: "banana" as Banana,    c: "banana" as /banana/i} : { a: /apple/i; b: /banana/i; c: /banana/i; }
+
+    a: "apple" as Apple,
+>a : /apple/i
+>"apple" as Apple : /apple/i
+>"apple" : "apple"
+
+    b: "banana" as Banana,
+>b : /banana/i
+>"banana" as Banana : /banana/i
+>"banana" : "banana"
+
+    c: "banana" as /banana/i
+>c : /banana/i
+>"banana" as /banana/i : /banana/i
+>"banana" : "banana"
+>/banana/i : RegExp</banana/i>
+}
+export default x;
+>x : { a: /apple/i; b: /banana/i; c: /banana/i; }
+

@@ -14,10 +14,10 @@ for (aBoolean in {}) { }
 >{} : {}
 
 var aRegExp: RegExp;
->aRegExp : RegExp
+>aRegExp : RegExp<string>
 
 for (aRegExp in {}) { }
->aRegExp : RegExp
+>aRegExp : RegExp<string>
 >{} : {}
 
 for (var idx : number in {}) { }

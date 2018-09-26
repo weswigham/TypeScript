@@ -1,10 +1,10 @@
 === tests/cases/conformance/expressions/assignmentOperator/assignmentTypeNarrowing.ts ===
 let x: string | number | boolean | RegExp;
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 
 x = "";
 >x = "" : ""
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >"" : ""
 
 x; // string
@@ -12,8 +12,8 @@ x; // string
 
 [x] = [true];
 >[x] = [true] : [true]
->[x] : [string | number | boolean | RegExp]
->x : string | number | boolean | RegExp
+>[x] : [string | number | boolean | RegExp<string>]
+>x : string | number | boolean | RegExp<string>
 >[true] : [true]
 >true : true
 
@@ -24,7 +24,7 @@ x; // boolean
 >[x = ""] = [1] : [number]
 >[x = ""] : [string]
 >x = "" : ""
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >"" : ""
 >[1] : [number]
 >1 : 1
@@ -35,8 +35,8 @@ x; // string | number
 ({x} = {x: true});
 >({x} = {x: true}) : { x: true; }
 >{x} = {x: true} : { x: true; }
->{x} : { x: string | number | boolean | RegExp; }
->x : string | number | boolean | RegExp
+>{x} : { x: string | number | boolean | RegExp<string>; }
+>x : string | number | boolean | RegExp<string>
 >{x: true} : { x: true; }
 >x : true
 >true : true
@@ -47,9 +47,9 @@ x; // boolean
 ({y: x} = {y: 1});
 >({y: x} = {y: 1}) : { y: number; }
 >{y: x} = {y: 1} : { y: number; }
->{y: x} : { y: string | number | boolean | RegExp; }
->y : string | number | boolean | RegExp
->x : string | number | boolean | RegExp
+>{y: x} : { y: string | number | boolean | RegExp<string>; }
+>y : string | number | boolean | RegExp<string>
+>x : string | number | boolean | RegExp<string>
 >{y: 1} : { y: number; }
 >y : number
 >1 : 1
@@ -60,8 +60,8 @@ x; // number
 ({x = ""} = {x: true});
 >({x = ""} = {x: true}) : { x?: true; }
 >{x = ""} = {x: true} : { x?: true; }
->{x = ""} : { x?: string | number | boolean | RegExp; }
->x : string | number | boolean | RegExp
+>{x = ""} : { x?: string | number | boolean | RegExp<string>; }
+>x : string | number | boolean | RegExp<string>
 >"" : ""
 >{x: true} : { x?: true; }
 >x : true
@@ -73,23 +73,23 @@ x; // string | boolean
 ({y: x = /a/} = {y: 1});
 >({y: x = /a/} = {y: 1}) : { y?: number; }
 >{y: x = /a/} = {y: 1} : { y?: number; }
->{y: x = /a/} : { y?: RegExp; }
->y : RegExp
->x = /a/ : RegExp
->x : string | number | boolean | RegExp
->/a/ : RegExp
+>{y: x = /a/} : { y?: RegExp</a/>; }
+>y : RegExp</a/>
+>x = /a/ : RegExp</a/>
+>x : string | number | boolean | RegExp<string>
+>/a/ : RegExp</a/>
 >{y: 1} : { y?: number; }
 >y : number
 >1 : 1
 
 x; // number | RegExp
->x : number | RegExp
+>x : number | RegExp<string>
 
 let a: string[];
 >a : string[]
 
 for (x of a) {
->x : string | number | boolean | RegExp
+>x : string | number | boolean | RegExp<string>
 >a : string[]
 
     x; // string

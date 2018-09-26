@@ -111,7 +111,6 @@ namespace ts {
         return node;
     }
 
-
     // Identifiers
 
     export function createIdentifier(text: string): Identifier;

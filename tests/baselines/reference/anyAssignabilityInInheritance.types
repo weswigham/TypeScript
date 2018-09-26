@@ -69,11 +69,11 @@ var r3 = foo3(a); // any
 >a : any
 
 declare function foo6(x: RegExp): RegExp;
->foo6 : { (x: RegExp): RegExp; (x: any): any; }
->x : RegExp
+>foo6 : { (x: RegExp<string>): RegExp<string>; (x: any): any; }
+>x : RegExp<string>
 
 declare function foo6(x: any): any;
->foo6 : { (x: RegExp): RegExp; (x: any): any; }
+>foo6 : { (x: RegExp<string>): RegExp<string>; (x: any): any; }
 >x : any
 
 var r3 = foo3(a); // any

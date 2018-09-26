@@ -12,7 +12,7 @@ var d: Date;
 >d : Date
 
 var e: RegExp;
->e : RegExp
+>e : RegExp<string>
 
 a = b = c = d = e = null;
 >a = b = c = d = e = null : null
@@ -24,7 +24,7 @@ a = b = c = d = e = null;
 >d = e = null : null
 >d : Date
 >e = null : null
->e : RegExp
+>e : RegExp<string>
 >null : null
 
 
