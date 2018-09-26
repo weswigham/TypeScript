@@ -1,4 +1,4 @@
-/// <reference path="lib.es2015.symbol.d.ts" />
+/// <reference lib="es2015.symbol" />
 
 interface SymbolConstructor {
     /**
@@ -118,7 +118,7 @@ interface Set<T> {
     readonly [Symbol.toStringTag]: "Set";
 }
 
-interface WeakSet<T> {
+interface WeakSet<T extends object> {
     readonly [Symbol.toStringTag]: "WeakSet";
 }
 

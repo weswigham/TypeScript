@@ -6,15 +6,16 @@
 
 // @Filename: a.js
 ////let x = "";
-////x = 1;
-////x = true;
+////x = 1; x = true;
+////x = [];
 
 verify.codeFixAll({
     fixId: "disableJsDiagnostics",
+    fixAllDescription: "Add '@ts-ignore' to all error messages",
     newFileContent:
 `let x = "";
-// @ts-ignore\r
-x = 1;
-// @ts-ignore\r
-x = true;`,
+// @ts-ignore
+x = 1; x = true;
+// @ts-ignore
+x = [];`,
 });

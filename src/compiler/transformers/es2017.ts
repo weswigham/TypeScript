@@ -1,6 +1,3 @@
-/// <reference path="../factory.ts" />
-/// <reference path="../visitor.ts" />
-
 /*@internal*/
 namespace ts {
     type SuperContainer = ClassDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
@@ -12,9 +9,9 @@ namespace ts {
 
     export function transformES2017(context: TransformationContext) {
         const {
-            startLexicalEnvironment,
             resumeLexicalEnvironment,
-            endLexicalEnvironment
+            endLexicalEnvironment,
+            hoistVariableDeclaration
         } = context;
 
         const resolver = context.getEmitResolver();
@@ -33,6 +30,8 @@ namespace ts {
          */
         let enclosingSuperContainerFlags: NodeCheckFlags = 0;
 
+        let enclosingFunctionParameterNames: UnderscoreEscapedMap<true>;
+
         // Save the previous transformation hooks.
         const previousOnEmitNode = context.onEmitNode;
         const previousOnSubstituteNode = context.onSubstituteNode;
@@ -41,7 +40,7 @@ namespace ts {
         context.onEmitNode = onEmitNode;
         context.onSubstituteNode = onSubstituteNode;
 
-        return transformSourceFile;
+        return chainBundle(transformSourceFile);
 
         function transformSourceFile(node: SourceFile) {
             if (node.isDeclarationFile) {
@@ -81,6 +80,109 @@ namespace ts {
                 default:
                     return visitEachChild(node, visitor, context);
             }
+        }
+
+        function asyncBodyVisitor(node: Node): VisitResult<Node> {
+            if (isNodeWithPossibleHoistedDeclaration(node)) {
+                switch (node.kind) {
+                    case SyntaxKind.VariableStatement:
+                        return visitVariableStatementInAsyncBody(node);
+                    case SyntaxKind.ForStatement:
+                        return visitForStatementInAsyncBody(node);
+                    case SyntaxKind.ForInStatement:
+                        return visitForInStatementInAsyncBody(node);
+                    case SyntaxKind.ForOfStatement:
+                        return visitForOfStatementInAsyncBody(node);
+                    case SyntaxKind.CatchClause:
+                        return visitCatchClauseInAsyncBody(node);
+                    case SyntaxKind.Block:
+                    case SyntaxKind.SwitchStatement:
+                    case SyntaxKind.CaseBlock:
+                    case SyntaxKind.CaseClause:
+                    case SyntaxKind.DefaultClause:
+                    case SyntaxKind.TryStatement:
+                    case SyntaxKind.DoStatement:
+                    case SyntaxKind.WhileStatement:
+                    case SyntaxKind.IfStatement:
+                    case SyntaxKind.WithStatement:
+                    case SyntaxKind.LabeledStatement:
+                        return visitEachChild(node, asyncBodyVisitor, context);
+                    default:
+                        return Debug.assertNever(node, "Unhandled node.");
+                }
+            }
+            return visitor(node);
+        }
+
+        function visitCatchClauseInAsyncBody(node: CatchClause) {
+            const catchClauseNames = createUnderscoreEscapedMap<true>();
+            recordDeclarationName(node.variableDeclaration!, catchClauseNames); // TODO: GH#18217
+
+            // names declared in a catch variable are block scoped
+            let catchClauseUnshadowedNames: UnderscoreEscapedMap<true> | undefined;
+            catchClauseNames.forEach((_, escapedName) => {
+                if (enclosingFunctionParameterNames.has(escapedName)) {
+                    if (!catchClauseUnshadowedNames) {
+                        catchClauseUnshadowedNames = cloneMap(enclosingFunctionParameterNames);
+                    }
+                    catchClauseUnshadowedNames.delete(escapedName);
+                }
+            });
+
+            if (catchClauseUnshadowedNames) {
+                const savedEnclosingFunctionParameterNames = enclosingFunctionParameterNames;
+                enclosingFunctionParameterNames = catchClauseUnshadowedNames;
+                const result = visitEachChild(node, asyncBodyVisitor, context);
+                enclosingFunctionParameterNames = savedEnclosingFunctionParameterNames;
+                return result;
+            }
+            else {
+                return visitEachChild(node, asyncBodyVisitor, context);
+            }
+        }
+
+        function visitVariableStatementInAsyncBody(node: VariableStatement) {
+            if (isVariableDeclarationListWithCollidingName(node.declarationList)) {
+                const expression = visitVariableDeclarationListWithCollidingNames(node.declarationList, /*hasReceiver*/ false);
+                return expression ? createExpressionStatement(expression) : undefined;
+            }
+            return visitEachChild(node, visitor, context);
+        }
+
+        function visitForInStatementInAsyncBody(node: ForInStatement) {
+            return updateForIn(
+                node,
+                isVariableDeclarationListWithCollidingName(node.initializer)
+                    ? visitVariableDeclarationListWithCollidingNames(node.initializer, /*hasReceiver*/ true)!
+                    : visitNode(node.initializer, visitor, isForInitializer),
+                visitNode(node.expression, visitor, isExpression),
+                visitNode(node.statement, asyncBodyVisitor, isStatement, liftToBlock)
+            );
+        }
+
+        function visitForOfStatementInAsyncBody(node: ForOfStatement) {
+            return updateForOf(
+                node,
+                visitNode(node.awaitModifier, visitor, isToken),
+                isVariableDeclarationListWithCollidingName(node.initializer)
+                    ? visitVariableDeclarationListWithCollidingNames(node.initializer, /*hasReceiver*/ true)!
+                    : visitNode(node.initializer, visitor, isForInitializer),
+                visitNode(node.expression, visitor, isExpression),
+                visitNode(node.statement, asyncBodyVisitor, isStatement, liftToBlock)
+            );
+        }
+
+        function visitForStatementInAsyncBody(node: ForStatement) {
+            const initializer = node.initializer!; // TODO: GH#18217
+            return updateFor(
+                node,
+                isVariableDeclarationListWithCollidingName(initializer)
+                    ? visitVariableDeclarationListWithCollidingNames(initializer, /*hasReceiver*/ false)
+                    : visitNode(node.initializer, visitor, isForInitializer),
+                visitNode(node.condition, visitor, isExpression),
+                visitNode(node.incrementor, visitor, isExpression),
+                visitNode(node.statement, asyncBodyVisitor, isStatement, liftToBlock)
+            );
         }
 
         /**
@@ -197,6 +299,82 @@ namespace ts {
             );
         }
 
+        function recordDeclarationName({ name }: ParameterDeclaration | VariableDeclaration | BindingElement, names: UnderscoreEscapedMap<true>) {
+            if (isIdentifier(name)) {
+                names.set(name.escapedText, true);
+            }
+            else {
+                for (const element of name.elements) {
+                    if (!isOmittedExpression(element)) {
+                        recordDeclarationName(element, names);
+                    }
+                }
+            }
+        }
+
+        function isVariableDeclarationListWithCollidingName(node: ForInitializer): node is VariableDeclarationList {
+            return !!node
+                && isVariableDeclarationList(node)
+                && !(node.flags & NodeFlags.BlockScoped)
+                && node.declarations.some(collidesWithParameterName);
+        }
+
+        function visitVariableDeclarationListWithCollidingNames(node: VariableDeclarationList, hasReceiver: boolean) {
+            hoistVariableDeclarationList(node);
+
+            const variables = getInitializedVariables(node);
+            if (variables.length === 0) {
+                if (hasReceiver) {
+                    return visitNode(convertToAssignmentElementTarget(node.declarations[0].name), visitor, isExpression);
+                }
+                return undefined;
+            }
+
+            return inlineExpressions(map(variables, transformInitializedVariable));
+        }
+
+        function hoistVariableDeclarationList(node: VariableDeclarationList) {
+            forEach(node.declarations, hoistVariable);
+        }
+
+        function hoistVariable({ name }: VariableDeclaration | BindingElement) {
+            if (isIdentifier(name)) {
+                hoistVariableDeclaration(name);
+            }
+            else {
+                for (const element of name.elements) {
+                    if (!isOmittedExpression(element)) {
+                        hoistVariable(element);
+                    }
+                }
+            }
+        }
+
+        function transformInitializedVariable(node: VariableDeclaration) {
+            const converted = setSourceMapRange(
+                createAssignment(
+                    convertToAssignmentElementTarget(node.name),
+                    node.initializer!
+                ),
+                node
+            );
+            return visitNode(converted, visitor, isExpression);
+        }
+
+        function collidesWithParameterName({ name }: VariableDeclaration | BindingElement): boolean {
+            if (isIdentifier(name)) {
+                return enclosingFunctionParameterNames.has(name.escapedText);
+            }
+            else {
+                for (const element of name.elements) {
+                    if (!isOmittedExpression(element) && collidesWithParameterName(element)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         function transformAsyncFunctionBody(node: MethodDeclaration | AccessorDeclaration | FunctionDeclaration | FunctionExpression): FunctionBody;
         function transformAsyncFunctionBody(node: ArrowFunction): ConciseBody;
         function transformAsyncFunctionBody(node: FunctionLikeDeclaration): ConciseBody {
@@ -214,6 +392,13 @@ namespace ts {
             // passed to `__awaiter` is executed inside of the callback to the
             // promise constructor.
 
+            const savedEnclosingFunctionParameterNames = enclosingFunctionParameterNames;
+            enclosingFunctionParameterNames = createUnderscoreEscapedMap<true>();
+            for (const parameter of node.parameters) {
+                recordDeclarationName(parameter, enclosingFunctionParameterNames);
+            }
+
+            let result: ConciseBody;
             if (!isArrowFunction) {
                 const statements: Statement[] = [];
                 const statementOffset = addPrologue(statements, (<Block>node.body).statements, /*ensureUseStrict*/ false, visitor);
@@ -223,12 +408,12 @@ namespace ts {
                             context,
                             hasLexicalArguments,
                             promiseConstructor,
-                            transformFunctionBodyWorker(<Block>node.body, statementOffset)
+                            transformAsyncFunctionBodyWorker(<Block>node.body, statementOffset)
                         )
                     )
                 );
 
-                addRange(statements, endLexicalEnvironment());
+                addStatementsAfterPrologue(statements, endLexicalEnvironment());
 
                 const block = createBlock(statements, /*multiLine*/ true);
                 setTextRange(block, node.body);
@@ -246,39 +431,40 @@ namespace ts {
                     }
                 }
 
-                return block;
+                result = block;
             }
             else {
                 const expression = createAwaiterHelper(
                     context,
                     hasLexicalArguments,
                     promiseConstructor,
-                    transformFunctionBodyWorker(node.body)
+                    transformAsyncFunctionBodyWorker(node.body!)
                 );
 
                 const declarations = endLexicalEnvironment();
                 if (some(declarations)) {
                     const block = convertToFunctionBody(expression);
-                    return updateBlock(block, setTextRange(createNodeArray(concatenate(block.statements, declarations)), block.statements));
+                    result = updateBlock(block, setTextRange(createNodeArray(concatenate(declarations, block.statements)), block.statements));
                 }
-
-                return expression;
+                else {
+                    result = expression;
+                }
             }
+
+            enclosingFunctionParameterNames = savedEnclosingFunctionParameterNames;
+            return result;
         }
 
-        function transformFunctionBodyWorker(body: ConciseBody, start?: number) {
+        function transformAsyncFunctionBodyWorker(body: ConciseBody, start?: number) {
             if (isBlock(body)) {
-                return updateBlock(body, visitLexicalEnvironment(body.statements, visitor, context, start));
+                return updateBlock(body, visitNodes(body.statements, asyncBodyVisitor, isStatement, start));
             }
             else {
-                startLexicalEnvironment();
-                const visited = convertToFunctionBody(visitNode(body, visitor, isConciseBody));
-                const declarations = endLexicalEnvironment();
-                return updateBlock(visited, setTextRange(createNodeArray(concatenate(visited.statements, declarations)), visited.statements));
+                return convertToFunctionBody(visitNode(body, asyncBodyVisitor, isConciseBody));
             }
         }
 
-        function getPromiseConstructor(type: TypeNode) {
+        function getPromiseConstructor(type: TypeNode | undefined) {
             const typeName = type && getEntityNameFromTypeNode(type);
             if (typeName && isEntityName(typeName)) {
                 const serializationKind = resolver.getTypeReferenceSerializationKind(typeName);
@@ -412,7 +598,7 @@ namespace ts {
                 return setTextRange(
                     createPropertyAccess(
                         createCall(
-                            createIdentifier("_super"),
+                            createFileLevelUniqueName("_super"),
                             /*typeArguments*/ undefined,
                             [argumentExpression]
                         ),
@@ -424,7 +610,7 @@ namespace ts {
             else {
                 return setTextRange(
                     createCall(
-                        createIdentifier("_super"),
+                        createFileLevelUniqueName("_super"),
                         /*typeArguments*/ undefined,
                         [argumentExpression]
                     ),
@@ -449,7 +635,7 @@ namespace ts {
             };`
     };
 
-    function createAwaiterHelper(context: TransformationContext, hasLexicalArguments: boolean, promiseConstructor: EntityName | Expression, body: Block) {
+    function createAwaiterHelper(context: TransformationContext, hasLexicalArguments: boolean, promiseConstructor: EntityName | Expression | undefined, body: Block) {
         context.requestEmitHelper(awaiterHelper);
 
         const generatorFunc = createFunctionExpression(
@@ -463,7 +649,7 @@ namespace ts {
         );
 
         // Mark this node as originally an async function
-        (generatorFunc.emitNode || (generatorFunc.emitNode = {})).flags |= EmitFlags.AsyncFunctionBody | EmitFlags.ReuseTempVariableScope;
+        (generatorFunc.emitNode || (generatorFunc.emitNode = {} as EmitNode)).flags |= EmitFlags.AsyncFunctionBody | EmitFlags.ReuseTempVariableScope;
 
         return createCall(
             getHelperName("__awaiter"),
@@ -480,19 +666,17 @@ namespace ts {
     export const asyncSuperHelper: EmitHelper = {
         name: "typescript:async-super",
         scoped: true,
-        text: `
-            const _super = name => super[name];
-        `
+        text: helperString`
+            const ${"_super"} = name => super[name];`
     };
 
     export const advancedAsyncSuperHelper: EmitHelper = {
         name: "typescript:advanced-async-super",
         scoped: true,
-        text: `
-            const _super = (function (geti, seti) {
+        text: helperString`
+            const ${"_super"} = (function (geti, seti) {
                 const cache = Object.create(null);
                 return name => cache[name] || (cache[name] = { get value() { return geti(name); }, set value(v) { seti(name, v); } });
-            })(name => super[name], (name, value) => super[name] = value);
-        `
+            })(name => super[name], (name, value) => super[name] = value);`
     };
 }

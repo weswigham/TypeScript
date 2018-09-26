@@ -1,5 +1,7 @@
 /// <reference path="fourslash.ts" />
 
+// @module: esnext
+
 // @Filename: /global.d.ts
 // A local variable would prevent import completions (see `completionsImport_shadowedByLocal.ts`), but a global doesn't.
 ////declare var foo: number;
@@ -23,8 +25,7 @@ verify.applyCodeActionFromCompletion("", {
     name: "foo",
     source: "/b",
     description: `Import 'foo' from module "./b"`,
-    // TODO: GH#18445
-    newFileContent: `import { foo } from "./b";\r
-\r
+    newFileContent: `import { foo } from "./b";
+
 fo`,
 });

@@ -1,5 +1,6 @@
 /* @internal */
 namespace ts.codefix {
+    const fixId = "addRequiredLiteralCastToAssignToRegexpType";
     registerCodeFix({
         errorCodes: [
             Diagnostics.Type_0_is_not_assignable_to_type_1_1_is_not_an_executable_regular_expression_so_a_cast_must_be_performed.code,
@@ -8,14 +9,14 @@ namespace ts.codefix {
         getCodeActions: getActionsForInvalidLiteralUsage
     });
 
-    function getActionsForInvalidLiteralUsage(context: CodeFixContext): CodeAction[] | undefined {
+    function getActionsForInvalidLiteralUsage(context: CodeFixContext): CodeFixAction[] | undefined {
         const sourceFile = context.sourceFile;
 
-        const candidate = getTokenAtPosition(sourceFile, context.span.start, /*includeJsDocComment*/ false);
+        const candidate = getTokenAtPosition(sourceFile, context.span.start);
         if (
             isIdentifier(candidate) &&
             (isParameter(candidate.parent) || isVariableDeclaration(candidate.parent)) &&
-            candidate.parent.name === candidate) {
+            candidate.parent.name === candidate && candidate.parent.initializer) {
             return getCodeFixesForStringlyTypedExpression(context, candidate.parent.initializer, sourceFile);
         }
         else if (isExpressionNode(candidate)) {
@@ -29,7 +30,7 @@ namespace ts.codefix {
         const checker = context.program.getTypeChecker();
         const targetType = checker.getContextualType(node);
         const sourceType = checker.getTypeAtLocation(node);
-        const hasPotentiallyFixableError = sourceType.flags & TypeFlags.StringLiteral && targetType.flags & TypeFlags.RegularExpressionValidated && !getRegularExpressionValidatedTypeIsExecutable(targetType as RegularExpressionValidatedLiteralType);
+        const hasPotentiallyFixableError = targetType && sourceType.flags & TypeFlags.StringLiteral && targetType.flags & TypeFlags.RegularExpressionValidated && !getRegularExpressionValidatedTypeIsExecutable(targetType as RegularExpressionValidatedLiteralType);
         if (!hasPotentiallyFixableError) {
             // The contextual type won't always be the same type as that which causes the error;
             // in these cases we can't actually find the type which prodced the error to create a cast
@@ -37,18 +38,14 @@ namespace ts.codefix {
             return [];
         }
         const opts: [Expression, DiagnosticMessage][] = [
-            [createAsExpression(node, checker.typeToTypeNode(targetType)), Diagnostics.Add_as_style_cast],
-            [createTypeAssertion(checker.typeToTypeNode(targetType), node), Diagnostics.Add_style_cast]
+            [createAsExpression(node, checker.typeToTypeNode(targetType!) || createKeywordTypeNode(SyntaxKind.AnyKeyword)), Diagnostics.Add_as_style_cast],
+            [createTypeAssertion(checker.typeToTypeNode(targetType!) || createKeywordTypeNode(SyntaxKind.AnyKeyword), node), Diagnostics.Add_style_cast]
         ];
         return map(opts, ([replacement, message]) => {
             const changeTracker = textChanges.ChangeTracker.fromContext(context);
             changeTracker.replaceNode(sourceFile, node, replacement);
             const changes = changeTracker.getChanges();
-            const action: CodeAction = {
-                description: getLocaleSpecificMessage(message),
-                changes
-            };
-            return action;
+            return createCodeFixAction(fixId, changes, message, fixId, message);
         });
     }
 }

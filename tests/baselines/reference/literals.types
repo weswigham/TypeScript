@@ -101,7 +101,6 @@ var s = "foo\
 
 var r: RegExp;
 >r : RegExp<string>
->RegExp : RegExp<T>
 
 var r = /what/;
 >r : RegExp<string>

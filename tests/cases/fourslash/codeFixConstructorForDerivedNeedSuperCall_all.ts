@@ -9,15 +9,15 @@
 
 verify.codeFixAll({
     fixId: "constructorForDerivedNeedSuperCall",
-    // TODO: GH#18445
+    fixAllDescription: "Add all missing super calls",
     newFileContent: `class C extends Object {
-    constructor() {\r
-        super();\r
+    constructor() {
+        super();
     }
 }
 class D extends Object {
-    constructor() {\r
-        super();\r
+    constructor() {
+        super();
     }
 }`,
 });

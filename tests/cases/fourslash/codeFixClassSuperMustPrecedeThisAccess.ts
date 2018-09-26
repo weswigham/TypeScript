@@ -8,9 +8,9 @@
 ////        this.a = 12;
 ////        super();
 ////    |]}
+////    m() { this.a; } // avoid unused 'a'
 ////}
-// TODO: GH#18445
 verify.rangeAfterCodeFix(`
-        super();\r
+        super();
         this.a = 12;
     `, /*includeWhiteSpace*/ true);

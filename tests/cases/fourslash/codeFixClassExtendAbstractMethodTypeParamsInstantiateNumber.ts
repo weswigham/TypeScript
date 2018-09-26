@@ -8,15 +8,14 @@
 
 verify.codeFix({
     description: "Implement inherited abstract class",
-    // TODO: GH#18795
     newFileContent:
 `abstract class A<T> {
     abstract f(x: T): T;
 }
 
-class C extends A<number> {\r
-    f(x: number): number {\r
-        throw new Error("Method not implemented.");\r
-    }\r
+class C extends A<number> {
+    f(x: number): number {
+        throw new Error("Method not implemented.");
+    }
 }`
 });

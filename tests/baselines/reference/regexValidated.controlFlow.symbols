@@ -9,9 +9,9 @@ declare var s: string;
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
 
 if (isA.test(s)) {
->isA.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isA.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isA : Symbol(isA, Decl(regexValidated.controlFlow.ts, 0, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
 
     mustBeA = s;
@@ -26,9 +26,9 @@ let mustBeB: /b/i;
 >mustBeB : Symbol(mustBeB, Decl(regexValidated.controlFlow.ts, 8, 3))
 
 if (isB.test(s)) {
->isB.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isB.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isB : Symbol(isB, Decl(regexValidated.controlFlow.ts, 7, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
 
     mustBeB = s;
@@ -40,13 +40,13 @@ let mustBeBOrA: /b/i | /a/i;
 >mustBeBOrA : Symbol(mustBeBOrA, Decl(regexValidated.controlFlow.ts, 13, 3))
 
 if (isB.test(s) || isA.test(s)) {
->isB.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isB.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isB : Symbol(isB, Decl(regexValidated.controlFlow.ts, 7, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
->isA.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isA.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isA : Symbol(isA, Decl(regexValidated.controlFlow.ts, 0, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
 
     mustBeBOrA = s;
@@ -58,13 +58,13 @@ let mustBeBAndA: /b/i & /a/i;
 >mustBeBAndA : Symbol(mustBeBAndA, Decl(regexValidated.controlFlow.ts, 18, 3))
 
 if (isB.test(s) && isA.test(s)) {
->isB.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isB.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isB : Symbol(isB, Decl(regexValidated.controlFlow.ts, 7, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
->isA.test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>isA.test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >isA : Symbol(isA, Decl(regexValidated.controlFlow.ts, 0, 5))
->test : Symbol(RegExp.test, Decl(lib.d.ts, --, --))
+>test : Symbol(RegExp.test, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(regexValidated.controlFlow.ts, 2, 11))
 
     mustBeBOrA = s;

@@ -17,5 +17,13 @@
 // @Filename: /src/folder/b.ts
 ////import {} from "x//*2*/";
 
-verify.completionsAt("1", ["y", "x"]);
-verify.completionsAt("2", ["bar", "foo"]);
+// @Filename: /src/folder/c.ts
+////const foo = require("x//*3*/");
+
+// @Filename: /src/folder/4.ts
+////const foo = require(`x//*4*/`);
+
+verify.completions(
+    { marker: "1", exact: ["y", "x"], isNewIdentifierLocation: true },
+    { marker: ["2", "3", "4"], exact: ["bar", "foo"], isNewIdentifierLocation: true },
+);

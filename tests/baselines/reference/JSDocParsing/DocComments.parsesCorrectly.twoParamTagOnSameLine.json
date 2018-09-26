@@ -35,13 +35,12 @@
                 "escapedText": "name1"
             },
             "isNameFirst": false,
-            "isBracketed": false,
-            "comment": ""
+            "isBracketed": false
         },
         "1": {
             "kind": "JSDocParameterTag",
             "pos": 30,
-            "end": 52,
+            "end": 54,
             "atToken": {
                 "kind": "AtToken",
                 "pos": 30,
@@ -70,11 +69,10 @@
                 "escapedText": "name2"
             },
             "isNameFirst": false,
-            "isBracketed": false,
-            "comment": ""
+            "isBracketed": false
         },
         "length": 2,
         "pos": 8,
-        "end": 52
+        "end": 54
     }
 }

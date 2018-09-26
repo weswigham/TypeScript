@@ -4,31 +4,29 @@ type Apple = /apple/i;
 >/apple/i : RegExp</apple/i>
 
 export type Banana = /banana/i;
->Banana : Banana
->/banana/i : RegExp<Banana>
+>Banana : /banana/i
+>/banana/i : RegExp</banana/i>
 
 const x = {
->x : { a: /apple/i; b: Banana; c: Banana; }
->{    a: "apple" as Apple,    b: "banana" as Banana,    c: "banana" as /banana/i} : { a: /apple/i; b: Banana; c: Banana; }
+>x : { a: /apple/i; b: /banana/i; c: /banana/i; }
+>{    a: "apple" as Apple,    b: "banana" as Banana,    c: "banana" as /banana/i} : { a: /apple/i; b: /banana/i; c: /banana/i; }
 
     a: "apple" as Apple,
 >a : /apple/i
 >"apple" as Apple : /apple/i
 >"apple" : "apple"
->Apple : /apple/i
 
     b: "banana" as Banana,
->b : Banana
->"banana" as Banana : Banana
+>b : /banana/i
+>"banana" as Banana : /banana/i
 >"banana" : "banana"
->Banana : Banana
 
     c: "banana" as /banana/i
->c : Banana
->"banana" as /banana/i : Banana
+>c : /banana/i
+>"banana" as /banana/i : /banana/i
 >"banana" : "banana"
->/banana/i : RegExp<Banana>
+>/banana/i : RegExp</banana/i>
 }
 export default x;
->x : { a: /apple/i; b: Banana; c: Banana; }
+>x : { a: /apple/i; b: /banana/i; c: /banana/i; }
 

@@ -7,14 +7,13 @@
 
 verify.codeFix({
     description: "Implement interface 'A'",
-    // TODO: GH#18795
     newFileContent:
 `class A {
     f() {}
 }
-let B = class implements A {\r
-    f(): void {\r
-        throw new Error("Method not implemented.");\r
-    }\r
+let B = class implements A {
+    f(): void {
+        throw new Error("Method not implemented.");
+    }
 }`
 });

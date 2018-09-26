@@ -16,16 +16,17 @@
 
 verify.codeFixAll({
     fixId: "classSuperMustPrecedeThisAccess",
+    fixAllDescription: "Make all 'super()' calls the first statement in their constructor",
     newFileContent: `class C extends Object {
     constructor() {
-        super();\r
+        super();
         this;
         this;
     }
 }
 class D extends Object {
     constructor() {
-        super();\r
+        super();
         this;
     }
 }`,

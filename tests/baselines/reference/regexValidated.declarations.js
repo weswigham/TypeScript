@@ -23,7 +23,7 @@ exports["default"] = x;
 export declare type Banana = /banana/i;
 declare const x: {
     a: /apple/i;
-    b: Banana;
-    c: Banana;
+    b: /banana/i;
+    c: /banana/i;
 };
 export default x;

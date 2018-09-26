@@ -7,20 +7,58 @@
 ////        this.x = "";
 ////    }
 ////}
+////
+////class D extends C {}
+////class E extends D {
+////    method() {
+////        this.x = 0;
+////        this.ex = 0;
+////    }
+////}
+////
+////class Unrelated {
+////    method() {
+////        this.x = 0;
+////    }
+////}
+////
+////enum En {}
+////En.A;
 
 verify.codeFixAll({
     fixId: "addMissingMember",
+    fixAllDescription: "Add all missing members",
     newFileContent:
-    // TODO: GH#18445
 `class C {
-    x: number;\r
-    y(): any {\r
-        throw new Error("Method not implemented.");\r
-    }\r
+    x: number;
     method() {
         this.x = 0;
         this.y();
         this.x = "";
     }
-}`,
+    y(): any {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class D extends C {}
+class E extends D {
+    ex: number;
+    method() {
+        this.x = 0;
+        this.ex = 0;
+    }
+}
+
+class Unrelated {
+    x: number;
+    method() {
+        this.x = 0;
+    }
+}
+
+enum En {
+    A
+}
+En.A;`,
 });

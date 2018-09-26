@@ -1,8 +1,6 @@
 /// <reference path='fourslash.ts' />
 
 ////abstract class A {
-////    private _a: string;
-////
 ////    abstract get a(): number | string;
 ////    abstract get b(): this;
 ////    abstract get c(): A;
@@ -22,11 +20,8 @@
 
 verify.codeFix({
     description: "Implement inherited abstract class",
-    // TODO: GH#18795
     newFileContent:
 `abstract class A {
-    private _a: string;
-
     abstract get a(): number | string;
     abstract get b(): this;
     abstract get c(): A;
@@ -42,13 +37,13 @@ verify.codeFix({
 // Don't need to add anything in this case.
 abstract class B extends A {}
 
-class C extends A {\r
-    a: string | number;\r
-    b: this;\r
-    c: A;\r
-    d: string | number;\r
-    e: this;\r
-    f: A;\r
-    g: string;\r
+class C extends A {
+    a: string | number;
+    b: this;
+    c: A;
+    d: string | number;
+    e: this;
+    f: A;
+    g: string;
 }`
 });

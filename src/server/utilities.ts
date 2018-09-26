@@ -1,6 +1,3 @@
-/// <reference path="types.ts" />
-/// <reference path="shared.ts" />
-
 namespace ts.server {
     export enum LogLevel {
         terse,
@@ -20,7 +17,7 @@ namespace ts.server {
         startGroup(): void;
         endGroup(): void;
         msg(s: string, type?: Msg): void;
-        getLogFileName(): string;
+        getLogFileName(): string | undefined;
     }
 
     // TODO: Use a const enum (https://github.com/Microsoft/TypeScript/issues/16804)
@@ -34,19 +31,6 @@ namespace ts.server {
         export type Types = Msg;
     }
 
-    function getProjectRootPath(project: Project): Path {
-        switch (project.projectKind) {
-            case ProjectKind.Configured:
-                return <Path>getDirectoryPath(project.getProjectName());
-            case ProjectKind.Inferred:
-                // TODO: fixme
-                return <Path>"";
-            case ProjectKind.External:
-                const projectName = normalizeSlashes(project.getProjectName());
-                return <Path>getDirectoryPath(projectName);
-        }
-    }
-
     export function createInstallTypingsRequest(project: Project, typeAcquisition: TypeAcquisition, unresolvedImports: SortedReadonlyArray<string>, cachePath?: string): DiscoverTypings {
         return {
             projectName: project.getProjectName(),
@@ -54,7 +38,7 @@ namespace ts.server {
             compilerOptions: project.getCompilationSettings(),
             typeAcquisition,
             unresolvedImports,
-            projectRootPath: getProjectRootPath(project),
+            projectRootPath: project.getCurrentDirectory() as Path,
             cachePath,
             kind: "discover"
         };
@@ -96,14 +80,6 @@ namespace ts.server {
         };
     }
 
-    export function mergeMapLikes(target: MapLike<any>, source: MapLike<any>): void {
-        for (const key in source) {
-            if (hasProperty(source, key)) {
-                target[key] = source[key];
-            }
-        }
-    }
-
     export type NormalizedPath = string & { __normalizedPathTag: any };
 
     export function toNormalizedPath(fileName: string): NormalizedPath {
@@ -120,7 +96,7 @@ namespace ts.server {
     }
 
     export interface NormalizedPathMap<T> {
-        get(path: NormalizedPath): T;
+        get(path: NormalizedPath): T | undefined;
         set(path: NormalizedPath, value: T): void;
         contains(path: NormalizedPath): boolean;
         remove(path: NormalizedPath): void;
@@ -144,6 +120,7 @@ namespace ts.server {
         };
     }
 
+    /*@internal*/
     export interface ProjectOptions {
         configHasExtendsProperty: boolean;
         /**
@@ -152,14 +129,6 @@ namespace ts.server {
         configHasFilesProperty: boolean;
         configHasIncludeProperty: boolean;
         configHasExcludeProperty: boolean;
-        /**
-         * these fields can be present in the project file
-         */
-        files?: string[];
-        wildcardDirectories?: Map<WatchDirectoryFlags>;
-        compilerOptions?: CompilerOptions;
-        typeAcquisition?: TypeAcquisition;
-        compileOnSave?: boolean;
     }
 
     export function isInferredProjectName(name: string) {
@@ -172,7 +141,7 @@ namespace ts.server {
     }
 
     export function createSortedArray<T>(): SortedArray<T> {
-        return [] as SortedArray<T>;
+        return [] as any as SortedArray<T>; // TODO: GH#19873
     }
 }
 
@@ -182,7 +151,7 @@ namespace ts.server {
         private readonly pendingTimeouts: Map<any> = createMap<any>();
         private readonly logger?: Logger | undefined;
         constructor(private readonly host: ServerHost, logger: Logger) {
-            this.logger = logger.hasLevel(LogLevel.verbose) && logger;
+            this.logger = logger.hasLevel(LogLevel.verbose) ? logger : undefined;
         }
 
         /**
@@ -230,11 +199,11 @@ namespace ts.server {
             self.timerId = undefined;
 
             const log = self.logger.hasLevel(LogLevel.requestTime);
-            const before = log && self.host.getMemoryUsage();
+            const before = log && self.host.getMemoryUsage!(); // TODO: GH#18217
 
-            self.host.gc();
+            self.host.gc!(); // TODO: GH#18217
             if (log) {
-                const after = self.host.getMemoryUsage();
+                const after = self.host.getMemoryUsage!(); // TODO: GH#18217
                 self.logger.perftrc(`GC::before ${before}, after ${after}`);
             }
         }
@@ -243,18 +212,6 @@ namespace ts.server {
     export function getBaseConfigFileName(configFilePath: NormalizedPath): "tsconfig.json" | "jsconfig.json" | undefined {
         const base = getBaseFileName(configFilePath);
         return base === "tsconfig.json" || base === "jsconfig.json" ? base : undefined;
-    }
-
-    export function insertSorted<T>(array: SortedArray<T>, insert: T, compare: Comparer<T>): void {
-        if (array.length === 0) {
-            array.push(insert);
-            return;
-        }
-
-        const insertIndex = binarySearch(array, insert, identity, compare);
-        if (insertIndex < 0) {
-            array.splice(~insertIndex, 0, insert);
-        }
     }
 
     export function removeSorted<T>(array: SortedArray<T>, remove: T, compare: Comparer<T>): void {
@@ -287,36 +244,6 @@ namespace ts.server {
     }
     function isNonDuplicateInSortedArray<T>(value: T, index: number, array: T[]) {
         return index === 0 || value !== array[index - 1];
-    }
-
-    export function enumerateInsertsAndDeletes<T>(newItems: SortedReadonlyArray<T>, oldItems: SortedReadonlyArray<T>, inserted: (newItem: T) => void, deleted: (oldItem: T) => void, comparer: Comparer<T>) {
-        let newIndex = 0;
-        let oldIndex = 0;
-        const newLen = newItems.length;
-        const oldLen = oldItems.length;
-        while (newIndex < newLen && oldIndex < oldLen) {
-            const newItem = newItems[newIndex];
-            const oldItem = oldItems[oldIndex];
-            const compareResult = comparer(newItem, oldItem);
-            if (compareResult === Comparison.LessThan) {
-                inserted(newItem);
-                newIndex++;
-            }
-            else if (compareResult === Comparison.GreaterThan) {
-                deleted(oldItem);
-                oldIndex++;
-            }
-            else {
-                newIndex++;
-                oldIndex++;
-            }
-        }
-        while (newIndex < newLen) {
-            inserted(newItems[newIndex++]);
-        }
-        while (oldIndex < oldLen) {
-            deleted(oldItems[oldIndex++]);
-        }
     }
 
     /* @internal */

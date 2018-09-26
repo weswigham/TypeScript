@@ -1,23 +1,22 @@
-/// <reference path="formattingContext.ts" />
-/// <reference path="formattingScanner.ts" />
-/// <reference path="rule.ts" />
-/// <reference path="rulesMap.ts" />
-
 /* @internal */
 namespace ts.formatting {
     export interface FormatContext {
-        readonly options: ts.FormatCodeSettings;
-        readonly getRule: ts.formatting.RulesMap;
+        readonly options: FormatCodeSettings;
+        readonly getRule: RulesMap;
     }
 
     export interface TextRangeWithKind extends TextRange {
         kind: SyntaxKind;
     }
 
+    export interface TextRangeWithTriviaKind extends TextRange {
+        kind: TriviaKind;
+    }
+
     export interface TokenInfo {
-        leadingTrivia: TextRangeWithKind[];
+        leadingTrivia: TextRangeWithTriviaKind[] | undefined;
         token: TextRangeWithKind;
-        trailingTrivia: TextRangeWithKind[];
+        trailingTrivia: TextRangeWithTriviaKind[] | undefined;
     }
 
     const enum Constants {
@@ -64,11 +63,6 @@ namespace ts.formatting {
          * so indentation scope can adjust values of indentation and delta.
          */
         recomputeIndentation(lineAddedByFormatting: boolean): void;
-    }
-
-    interface Indentation {
-        indentation: number;
-        delta: number;
     }
 
     export function formatOnEnter(position: number, sourceFile: SourceFile, formatContext: FormatContext): TextChange[] {
@@ -126,7 +120,7 @@ namespace ts.formatting {
          * and we wouldn't want to move the closing brace.
          */
         const textRange: TextRange = {
-            pos: getLineStartPositionForPosition(outermostNode.getStart(sourceFile), sourceFile),
+            pos: getLineStartPositionForPosition(outermostNode!.getStart(sourceFile), sourceFile), // TODO: GH#18217
             end: position
         };
 
@@ -180,11 +174,11 @@ namespace ts.formatting {
      * Upon typing the closing curly, we want to format the entire `while`-statement, but not the preceding
      * variable declaration.
      */
-    function findOutermostNodeWithinListLevel(node: Node) {
+    function findOutermostNodeWithinListLevel(node: Node | undefined) {
         let current = node;
         while (current &&
             current.parent &&
-            current.parent.end === node.end &&
+            current.parent.end === node!.end &&
             !isListElement(current.parent, current)) {
             current = current.parent;
         }
@@ -201,7 +195,7 @@ namespace ts.formatting {
                 return rangeContainsRange((<InterfaceDeclaration>parent).members, node);
             case SyntaxKind.ModuleDeclaration:
                 const body = (<ModuleDeclaration>parent).body;
-                return body && body.kind === SyntaxKind.ModuleBlock && rangeContainsRange((<ModuleBlock>body).statements, node);
+                return !!body && body.kind === SyntaxKind.ModuleBlock && rangeContainsRange(body.statements, node);
             case SyntaxKind.SourceFile:
             case SyntaxKind.Block:
             case SyntaxKind.ModuleBlock:
@@ -234,15 +228,15 @@ namespace ts.formatting {
      * This function will return a predicate that for a given text range will tell
      * if there are any parse errors that overlap with the range.
      */
-    function prepareRangeContainsErrorFunction(errors: Diagnostic[], originalRange: TextRange): (r: TextRange) => boolean {
+    function prepareRangeContainsErrorFunction(errors: ReadonlyArray<Diagnostic>, originalRange: TextRange): (r: TextRange) => boolean {
         if (!errors.length) {
             return rangeHasNoErrors;
         }
 
         // pick only errors that fall in range
         const sorted = errors
-            .filter(d => rangeOverlapsWithStartEnd(originalRange, d.start, d.start + d.length))
-            .sort((e1, e2) => e1.start - e2.start);
+            .filter(d => rangeOverlapsWithStartEnd(originalRange, d.start!, d.start! + d.length!)) // TODO: GH#18217
+            .sort((e1, e2) => e1.start! - e2.start!);
 
         if (!sorted.length) {
             return rangeHasNoErrors;
@@ -260,12 +254,12 @@ namespace ts.formatting {
                 }
 
                 const error = sorted[index];
-                if (r.end <= error.start) {
+                if (r.end <= error.start!) {
                     // specified range ends before the error refered by 'index' - no error in range
                     return false;
                 }
 
-                if (startEndOverlapsWithStartEnd(r.pos, r.end, error.start, error.start + error.length)) {
+                if (startEndOverlapsWithStartEnd(r.pos, r.end, error.start!, error.start! + error.length!)) {
                     // specified range overlaps with error range
                     return true;
                 }
@@ -322,15 +316,15 @@ namespace ts.formatting {
      */
     function getOwnOrInheritedDelta(n: Node, options: FormatCodeSettings, sourceFile: SourceFile): number {
         let previousLine = Constants.Unknown;
-        let child: Node;
+        let child: Node | undefined;
         while (n) {
             const line = sourceFile.getLineAndCharacterOfPosition(n.getStart(sourceFile)).line;
             if (previousLine !== Constants.Unknown && line !== previousLine) {
                 break;
             }
 
-            if (SmartIndenter.shouldIndentChildNode(n, child)) {
-                return options.indentSize;
+            if (SmartIndenter.shouldIndentChildNode(options, n, child, sourceFile)) {
+                return options.indentSize!;
             }
 
             previousLine = line;
@@ -355,7 +349,7 @@ namespace ts.formatting {
             sourceFileLike));
     }
 
-    function formatNodeLines(node: Node, sourceFile: SourceFile, formatContext: FormatContext, requestKind: FormattingRequestKind): TextChange[] {
+    function formatNodeLines(node: Node | undefined, sourceFile: SourceFile, formatContext: FormatContext, requestKind: FormattingRequestKind): TextChange[] {
         if (!node) {
             return [];
         }
@@ -419,7 +413,7 @@ namespace ts.formatting {
         if (!formattingScanner.isOnToken()) {
             const leadingTrivia = formattingScanner.getCurrentLeadingTrivia();
             if (leadingTrivia) {
-                processTrivia(leadingTrivia, enclosingNode, enclosingNode, /*dynamicIndentation*/ undefined);
+                processTrivia(leadingTrivia, enclosingNode, enclosingNode, /*dynamicIndentation*/ undefined!); // TODO: GH#18217
                 trimTrailingWhitespacesForRemainingRange();
             }
         }
@@ -469,33 +463,35 @@ namespace ts.formatting {
             inheritedIndentation: number,
             parent: Node,
             parentDynamicIndentation: DynamicIndentation,
-            effectiveParentStartLine: number): Indentation {
-
-            let indentation = inheritedIndentation;
-            let delta = SmartIndenter.shouldIndentChildNode(node) ? options.indentSize : 0;
+            effectiveParentStartLine: number
+        ): { indentation: number, delta: number } {
+            const delta = SmartIndenter.shouldIndentChildNode(options, node) ? options.indentSize! : 0;
 
             if (effectiveParentStartLine === startLine) {
                 // if node is located on the same line with the parent
                 // - inherit indentation from the parent
                 // - push children if either parent of node itself has non-zero delta
-                indentation = startLine === lastIndentedLine
-                    ? indentationOnLastIndentedLine
-                    : parentDynamicIndentation.getIndentation();
-                delta = Math.min(options.indentSize, parentDynamicIndentation.getDelta(node) + delta);
+                return {
+                    indentation: startLine === lastIndentedLine ? indentationOnLastIndentedLine : parentDynamicIndentation.getIndentation(),
+                    delta: Math.min(options.indentSize!, parentDynamicIndentation.getDelta(node) + delta)
+                };
             }
-            else if (indentation === Constants.Unknown) {
-                if (SmartIndenter.childStartsOnTheSameLineWithElseInIfStatement(parent, node, startLine, sourceFile)) {
-                    indentation = parentDynamicIndentation.getIndentation();
+            else if (inheritedIndentation === Constants.Unknown) {
+                if (node.kind === SyntaxKind.OpenParenToken && startLine === lastIndentedLine) {
+                    // the is used for chaining methods formatting
+                    // - we need to get the indentation on last line and the delta of parent
+                    return { indentation: indentationOnLastIndentedLine, delta: parentDynamicIndentation.getDelta(node) };
+                }
+                else if (SmartIndenter.childStartsOnTheSameLineWithElseInIfStatement(parent, node, startLine, sourceFile)) {
+                    return { indentation: parentDynamicIndentation.getIndentation(), delta };
                 }
                 else {
-                    indentation = parentDynamicIndentation.getIndentation() + parentDynamicIndentation.getDelta(node);
+                    return { indentation: parentDynamicIndentation.getIndentation() + parentDynamicIndentation.getDelta(node), delta };
                 }
             }
-
-            return {
-                indentation,
-                delta
-            };
+            else {
+                return { indentation: inheritedIndentation, delta };
+            }
         }
 
         function getFirstNonDecoratorTokenOfNode(node: Node) {
@@ -513,10 +509,13 @@ namespace ts.formatting {
                     if ((<MethodDeclaration>node).asteriskToken) {
                         return SyntaxKind.AsteriskToken;
                     }
-                    // falls through
+                // falls through
                 case SyntaxKind.PropertyDeclaration:
                 case SyntaxKind.Parameter:
-                    return getNameOfDeclaration(<Declaration>node).kind;
+                    const name = getNameOfDeclaration(<Declaration>node);
+                    if (name) {
+                        return name.kind;
+                    }
             }
         }
 
@@ -531,72 +530,58 @@ namespace ts.formatting {
                         case SyntaxKind.CloseBraceToken:
                         case SyntaxKind.CloseBracketToken:
                         case SyntaxKind.CloseParenToken:
-                            return indentation + getEffectiveDelta(delta, container);
+                            return indentation + getDelta(container);
                     }
                     return tokenIndentation !== Constants.Unknown ? tokenIndentation : indentation;
                 },
-                getIndentationForToken: (line, kind, container) => {
-                    if (nodeStartLine !== line && node.decorators) {
-                        if (kind === getFirstNonDecoratorTokenOfNode(node)) {
-                            // if this token is the first token following the list of decorators, we do not need to indent
-                            return indentation;
-                        }
-                    }
-                    switch (kind) {
-                        // open and close brace, 'else' and 'while' (in do statement) tokens has indentation of the parent
-                        case SyntaxKind.OpenBraceToken:
-                        case SyntaxKind.CloseBraceToken:
-                        case SyntaxKind.OpenParenToken:
-                        case SyntaxKind.CloseParenToken:
-                        case SyntaxKind.ElseKeyword:
-                        case SyntaxKind.WhileKeyword:
-                        case SyntaxKind.AtToken:
-                            return indentation;
-                        case SyntaxKind.SlashToken:
-                        case SyntaxKind.GreaterThanToken: {
-                            if (container.kind === SyntaxKind.JsxOpeningElement ||
-                                container.kind === SyntaxKind.JsxClosingElement ||
-                                container.kind === SyntaxKind.JsxSelfClosingElement
-                            ) {
-                                return indentation;
-                            }
-                            break;
-                        }
-                        case SyntaxKind.OpenBracketToken:
-                        case SyntaxKind.CloseBracketToken: {
-                            if (container.kind !== SyntaxKind.MappedType) {
-                                return indentation;
-                            }
-                            break;
-                        }
-                    }
-                    // if token line equals to the line of containing node (this is a first token in the node) - use node indentation
-                    return nodeStartLine !== line ? indentation + getEffectiveDelta(delta, container) : indentation;
-                },
+                getIndentationForToken: (line, kind, container) =>
+                    shouldAddDelta(line, kind, container) ? indentation + getDelta(container) : indentation,
                 getIndentation: () => indentation,
-                getDelta: child => getEffectiveDelta(delta, child),
+                getDelta,
                 recomputeIndentation: lineAdded => {
-                    if (node.parent && SmartIndenter.shouldIndentChildNode(node.parent, node)) {
-                        if (lineAdded) {
-                            indentation += options.indentSize;
-                        }
-                        else {
-                            indentation -= options.indentSize;
-                        }
-
-                        if (SmartIndenter.shouldIndentChildNode(node)) {
-                            delta = options.indentSize;
-                        }
-                        else {
-                            delta = 0;
-                        }
+                    if (node.parent && SmartIndenter.shouldIndentChildNode(options, node.parent, node, sourceFile)) {
+                        indentation += lineAdded ? options.indentSize! : -options.indentSize!;
+                        delta = SmartIndenter.shouldIndentChildNode(options, node) ? options.indentSize! : 0;
                     }
                 }
             };
 
-            function getEffectiveDelta(delta: number, child: TextRangeWithKind) {
+            function shouldAddDelta(line: number, kind: SyntaxKind, container: Node): boolean {
+                switch (kind) {
+                    // open and close brace, 'else' and 'while' (in do statement) tokens has indentation of the parent
+                    case SyntaxKind.OpenBraceToken:
+                    case SyntaxKind.CloseBraceToken:
+                    case SyntaxKind.OpenParenToken:
+                    case SyntaxKind.CloseParenToken:
+                    case SyntaxKind.ElseKeyword:
+                    case SyntaxKind.WhileKeyword:
+                    case SyntaxKind.AtToken:
+                        return false;
+                    case SyntaxKind.SlashToken:
+                    case SyntaxKind.GreaterThanToken:
+                        switch (container.kind) {
+                            case SyntaxKind.JsxOpeningElement:
+                            case SyntaxKind.JsxClosingElement:
+                            case SyntaxKind.JsxSelfClosingElement:
+                                return false;
+                        }
+                        break;
+                    case SyntaxKind.OpenBracketToken:
+                    case SyntaxKind.CloseBracketToken:
+                        if (container.kind !== SyntaxKind.MappedType) {
+                            return false;
+                        }
+                        break;
+                }
+                // if token line equals to the line of containing node (this is a first token in the node) - use node indentation
+                return nodeStartLine !== line
+                    // if this token is the first token following the list of decorators, we do not need to indent
+                    && !(node.decorators && kind === getFirstNonDecoratorTokenOfNode(node));
+            }
+
+            function getDelta(child: TextRangeWithKind) {
                 // Delta value should be zero when the node explicitly prevents indentation of the child node
-                return SmartIndenter.nodeWillIndentChild(node, child, /*indentByDefault*/ true) ? delta : 0;
+                return SmartIndenter.nodeWillIndentChild(options, node, child, sourceFile, /*indentByDefault*/ true) ? delta : 0;
             }
         }
 
@@ -622,7 +607,7 @@ namespace ts.formatting {
             let childContextNode = contextNode;
 
             // if there are any tokens that logically belong to node and interleave child nodes
-            // such tokens will be consumed in processChildNode for for the child that follows them
+            // such tokens will be consumed in processChildNode for the child that follows them
             forEachChild(
                 node,
                 child => {
@@ -732,7 +717,6 @@ namespace ts.formatting {
                 Debug.assert(isNodeArray(nodes));
 
                 const listStartToken = getOpenTokenForList(parent, nodes);
-                const listEndToken = getCloseTokenForOpenToken(listStartToken);
 
                 let listDynamicIndentation = parentDynamicIndentation;
                 let startLine = parentStartLine;
@@ -767,17 +751,21 @@ namespace ts.formatting {
                     inheritedIndentation = processChildNode(child, inheritedIndentation, node, listDynamicIndentation, startLine, startLine, /*isListItem*/ true, /*isFirstListItem*/ i === 0);
                 }
 
-                if (listEndToken !== SyntaxKind.Unknown) {
-                    if (formattingScanner.isOnToken()) {
-                        const tokenInfo = formattingScanner.readTokenInfo(parent);
-                        // consume the list end token only if it is still belong to the parent
-                        // there might be the case when current token matches end token but does not considered as one
-                        // function (x: function) <--
-                        // without this check close paren will be interpreted as list end token for function expression which is wrong
-                        if (tokenInfo.token.kind === listEndToken && rangeContainsRange(parent, tokenInfo.token)) {
-                            // consume list end token
-                            consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent);
-                        }
+                const listEndToken = getCloseTokenForOpenToken(listStartToken);
+                if (listEndToken !== SyntaxKind.Unknown && formattingScanner.isOnToken()) {
+                    let tokenInfo = formattingScanner.readTokenInfo(parent);
+                    if (tokenInfo.token.kind === SyntaxKind.CommaToken && isCallLikeExpression(parent)) {
+                        formattingScanner.advance();
+                        tokenInfo = formattingScanner.readTokenInfo(parent);
+                    }
+
+                    // consume the list end token only if it is still belong to the parent
+                    // there might be the case when current token matches end token but does not considered as one
+                    // function (x: function) <--
+                    // without this check close paren will be interpreted as list end token for function expression which is wrong
+                    if (tokenInfo.token.kind === listEndToken && rangeContainsRange(parent, tokenInfo.token)) {
+                        // consume list end token
+                        consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent);
                     }
                 }
             }
@@ -873,6 +861,7 @@ namespace ts.formatting {
             }
         }
 
+        // TODO: GH#18217 use an enum instead of `boolean | undefined`
         function processRange(range: TextRangeWithKind,
             rangeStart: LineAndCharacter,
             parent: Node,
@@ -916,24 +905,25 @@ namespace ts.formatting {
             let trimTrailingWhitespaces: boolean;
             let lineAction = LineAction.None;
             if (rule) {
-                applyRuleEdits(rule, previousItem, previousStartLine, currentItem, currentStartLine);
-
-                if (rule.action & (RuleAction.Space | RuleAction.Delete) && currentStartLine !== previousStartLine) {
-                    lineAction = LineAction.LineRemoved;
-                    // Handle the case where the next line is moved to be the end of this line.
-                    // In this case we don't indent the next line in the next pass.
-                    if (currentParent.getStart(sourceFile) === currentItem.pos) {
-                        dynamicIndentation.recomputeIndentation(/*lineAddedByFormatting*/ false);
-                    }
-                }
-                else if (rule.action & RuleAction.NewLine && currentStartLine === previousStartLine) {
-                    lineAction = LineAction.LineAdded;
-                    // Handle the case where token2 is moved to the new line.
-                    // In this case we indent token2 in the next pass but we set
-                    // sameLineIndent flag to notify the indenter that the indentation is within the line.
-                    if (currentParent.getStart(sourceFile) === currentItem.pos) {
-                        dynamicIndentation.recomputeIndentation(/*lineAddedByFormatting*/ true);
-                    }
+                lineAction = applyRuleEdits(rule, previousItem, previousStartLine, currentItem, currentStartLine);
+                switch (lineAction) {
+                    case LineAction.LineRemoved:
+                        // Handle the case where the next line is moved to be the end of this line.
+                        // In this case we don't indent the next line in the next pass.
+                        if (currentParent.getStart(sourceFile) === currentItem.pos) {
+                            dynamicIndentation.recomputeIndentation(/*lineAddedByFormatting*/ false);
+                        }
+                        break;
+                    case LineAction.LineAdded:
+                        // Handle the case where token2 is moved to the new line.
+                        // In this case we indent token2 in the next pass but we set
+                        // sameLineIndent flag to notify the indenter that the indentation is within the line.
+                        if (currentParent.getStart(sourceFile) === currentItem.pos) {
+                            dynamicIndentation.recomputeIndentation(/*lineAddedByFormatting*/ true);
+                        }
+                        break;
+                    default:
+                        Debug.assert(lineAction === LineAction.None);
                 }
 
                 // We need to trim trailing whitespace between the tokens if they were on different lines, and no rule was applied to put them on the same line
@@ -951,7 +941,7 @@ namespace ts.formatting {
             return lineAction;
         }
 
-        function insertIndentation(pos: number, indentation: number, lineAdded: boolean): void {
+        function insertIndentation(pos: number, indentation: number, lineAdded: boolean | undefined): void {
             const indentationString = getIndentationString(indentation, options);
             if (lineAdded) {
                 // new line is added before the token by the formatting rules
@@ -971,7 +961,7 @@ namespace ts.formatting {
             let column = 0;
             for (let i = 0; i < characterInLine; i++) {
                 if (sourceFile.text.charCodeAt(startLinePosition + i) === CharacterCodes.tab) {
-                    column += options.tabSize - column % options.tabSize;
+                    column += options.tabSize! - column % options.tabSize!;
                 }
                 else {
                     column++;
@@ -988,7 +978,6 @@ namespace ts.formatting {
             // split comment in lines
             let startLine = sourceFile.getLineAndCharacterOfPosition(commentRange.pos).line;
             const endLine = sourceFile.getLineAndCharacterOfPosition(commentRange.end).line;
-            let parts: TextRange[];
             if (startLine === endLine) {
                 if (!firstLineIsIndented) {
                     // treat as single line comment
@@ -996,19 +985,20 @@ namespace ts.formatting {
                 }
                 return;
             }
-            else {
-                parts = [];
-                let startPos = commentRange.pos;
-                for (let line = startLine; line < endLine; line++) {
-                    const endOfLine = getEndLinePosition(line, sourceFile);
-                    parts.push({ pos: startPos, end: endOfLine });
-                    startPos = getStartPositionOfLine(line + 1, sourceFile);
-                }
 
-                if (indentFinalLine) {
-                    parts.push({ pos: startPos, end: commentRange.end });
-                }
+            const parts: TextRange[] = [];
+            let startPos = commentRange.pos;
+            for (let line = startLine; line < endLine; line++) {
+                const endOfLine = getEndLinePosition(line, sourceFile);
+                parts.push({ pos: startPos, end: endOfLine });
+                startPos = getStartPositionOfLine(line + 1, sourceFile);
             }
+
+            if (indentFinalLine) {
+                parts.push({ pos: startPos, end: commentRange.end });
+            }
+
+            if (parts.length === 0) return;
 
             const startLinePos = getStartPositionOfLine(startLine, sourceFile);
 
@@ -1090,19 +1080,15 @@ namespace ts.formatting {
             trimTrailingWhitespacesForLines(startLine, endLine + 1, previousRange);
         }
 
-        function newTextChange(start: number, len: number, newText: string): TextChange {
-            return { span: createTextSpan(start, len), newText };
-        }
-
         function recordDelete(start: number, len: number) {
             if (len) {
-                edits.push(newTextChange(start, len, ""));
+                edits.push(createTextChangeFromStartLength(start, len, ""));
             }
         }
 
         function recordReplace(start: number, len: number, newText: string) {
             if (len || newText) {
-                edits.push(newTextChange(start, len, newText));
+                edits.push(createTextChangeFromStartLength(start, len, newText));
             }
         }
 
@@ -1110,16 +1096,18 @@ namespace ts.formatting {
             previousRange: TextRangeWithKind,
             previousStartLine: number,
             currentRange: TextRangeWithKind,
-            currentStartLine: number): void {
-
+            currentStartLine: number,
+        ): LineAction {
+            const onLaterLine = currentStartLine !== previousStartLine;
             switch (rule.action) {
                 case RuleAction.Ignore:
                     // no action required
-                    return;
+                    return LineAction.None;
                 case RuleAction.Delete:
                     if (previousRange.end !== currentRange.pos) {
                         // delete characters starting from t1.end up to t2.pos exclusive
                         recordDelete(previousRange.end, currentRange.pos - previousRange.end);
+                        return onLaterLine ? LineAction.LineRemoved : LineAction.None;
                     }
                     break;
                 case RuleAction.NewLine:
@@ -1127,27 +1115,29 @@ namespace ts.formatting {
                     // if line1 and line2 are on subsequent lines then no edits are required - ok to exit
                     // if line1 and line2 are separated with more than one newline - ok to exit since we cannot delete extra new lines
                     if (rule.flags !== RuleFlags.CanDeleteNewLines && previousStartLine !== currentStartLine) {
-                        return;
+                        return LineAction.None;
                     }
 
                     // edit should not be applied if we have one line feed between elements
                     const lineDelta = currentStartLine - previousStartLine;
                     if (lineDelta !== 1) {
-                        recordReplace(previousRange.end, currentRange.pos - previousRange.end, options.newLineCharacter);
+                        recordReplace(previousRange.end, currentRange.pos - previousRange.end, options.newLineCharacter!);
+                        return onLaterLine ? LineAction.None : LineAction.LineAdded;
                     }
                     break;
                 case RuleAction.Space:
                     // exit early if we on different lines and rule cannot change number of newlines
                     if (rule.flags !== RuleFlags.CanDeleteNewLines && previousStartLine !== currentStartLine) {
-                        return;
+                        return LineAction.None;
                     }
 
                     const posDelta = currentRange.pos - previousRange.end;
                     if (posDelta !== 1 || sourceFile.text.charCodeAt(previousRange.end) !== CharacterCodes.space) {
                         recordReplace(previousRange.end, currentRange.pos - previousRange.end, " ");
+                        return onLaterLine ? LineAction.LineRemoved : LineAction.None;
                     }
-                    break;
             }
+            return LineAction.None;
         }
     }
 
@@ -1159,48 +1149,38 @@ namespace ts.formatting {
     export function getRangeOfEnclosingComment(
         sourceFile: SourceFile,
         position: number,
-        onlyMultiLine: boolean,
         precedingToken?: Node | null, // tslint:disable-line:no-null-keyword
-        tokenAtPosition = getTokenAtPosition(sourceFile, position, /*includeJsDocComment*/ false),
-        predicate?: (c: CommentRange) => boolean): CommentRange | undefined {
+        tokenAtPosition = getTokenAtPosition(sourceFile, position),
+    ): CommentRange | undefined {
+        const jsdoc = findAncestor(tokenAtPosition, isJSDoc);
+        if (jsdoc) tokenAtPosition = jsdoc.parent;
         const tokenStart = tokenAtPosition.getStart(sourceFile);
         if (tokenStart <= position && position < tokenAtPosition.getEnd()) {
             return undefined;
         }
 
-        if (precedingToken === undefined) {
-            precedingToken = findPrecedingToken(position, sourceFile);
-        }
+        precedingToken = precedingToken === null ? undefined : precedingToken === undefined ? findPrecedingToken(position, sourceFile) : precedingToken;
 
         // Between two consecutive tokens, all comments are either trailing on the former
         // or leading on the latter (and none are in both lists).
         const trailingRangesOfPreviousToken = precedingToken && getTrailingCommentRanges(sourceFile.text, precedingToken.end);
         const leadingCommentRangesOfNextToken = getLeadingCommentRangesOfNode(tokenAtPosition, sourceFile);
-        const commentRanges = trailingRangesOfPreviousToken && leadingCommentRangesOfNextToken ?
-            trailingRangesOfPreviousToken.concat(leadingCommentRangesOfNextToken) :
-            trailingRangesOfPreviousToken || leadingCommentRangesOfNextToken;
-        if (commentRanges) {
-            for (const range of commentRanges) {
-                // The end marker of a single-line comment does not include the newline character.
-                // With caret at `^`, in the following case, we are inside a comment (^ denotes the cursor position):
-                //
-                //    // asdf   ^\n
-                //
-                // But for closed multi-line comments, we don't want to be inside the comment in the following case:
-                //
-                //    /* asdf */^
-                //
-                // However, unterminated multi-line comments *do* contain their end.
-                //
-                // Internally, we represent the end of the comment at the newline and closing '/', respectively.
-                //
-                if ((range.pos < position && position < range.end ||
-                    position === range.end && (range.kind === SyntaxKind.SingleLineCommentTrivia || position === sourceFile.getFullWidth()))) {
-                    return (range.kind === SyntaxKind.MultiLineCommentTrivia || !onlyMultiLine) && (!predicate || predicate(range)) ? range : undefined;
-                }
-            }
-        }
-        return undefined;
+        const commentRanges = concatenate(trailingRangesOfPreviousToken, leadingCommentRangesOfNextToken);
+        return commentRanges && find(commentRanges, range => rangeContainsPositionExclusive(range, position) ||
+            // The end marker of a single-line comment does not include the newline character.
+            // With caret at `^`, in the following case, we are inside a comment (^ denotes the cursor position):
+            //
+            //    // asdf   ^\n
+            //
+            // But for closed multi-line comments, we don't want to be inside the comment in the following case:
+            //
+            //    /* asdf */^
+            //
+            // However, unterminated multi-line comments *do* contain their end.
+            //
+            // Internally, we represent the end of the comment at the newline and closing '/', respectively.
+            //
+            position === range.end && (range.kind === SyntaxKind.SingleLineCommentTrivia || position === sourceFile.getFullWidth()));
     }
 
     function getOpenTokenForList(node: Node, list: ReadonlyArray<Node>) {
@@ -1248,8 +1228,8 @@ namespace ts.formatting {
     }
 
     let internedSizes: { tabSize: number; indentSize: number };
-    let internedTabsIndentation: string[];
-    let internedSpacesIndentation: string[];
+    let internedTabsIndentation: string[] | undefined;
+    let internedSpacesIndentation: string[] | undefined;
 
     export function getIndentationString(indentation: number, options: EditorSettings): string {
         // reset interned strings if FormatCodeOptions were changed
@@ -1257,13 +1237,13 @@ namespace ts.formatting {
             !internedSizes || (internedSizes.tabSize !== options.tabSize || internedSizes.indentSize !== options.indentSize);
 
         if (resetInternedStrings) {
-            internedSizes = { tabSize: options.tabSize, indentSize: options.indentSize };
+            internedSizes = { tabSize: options.tabSize!, indentSize: options.indentSize! };
             internedTabsIndentation = internedSpacesIndentation = undefined;
         }
 
         if (!options.convertTabsToSpaces) {
-            const tabs = Math.floor(indentation / options.tabSize);
-            const spaces = indentation - tabs * options.tabSize;
+            const tabs = Math.floor(indentation / options.tabSize!);
+            const spaces = indentation - tabs * options.tabSize!;
 
             let tabString: string;
             if (!internedTabsIndentation) {
@@ -1271,40 +1251,31 @@ namespace ts.formatting {
             }
 
             if (internedTabsIndentation[tabs] === undefined) {
-                internedTabsIndentation[tabs] = tabString = repeat("\t", tabs);
+                internedTabsIndentation[tabs] = tabString = repeatString("\t", tabs);
             }
             else {
                 tabString = internedTabsIndentation[tabs];
             }
 
-            return spaces ? tabString + repeat(" ", spaces) : tabString;
+            return spaces ? tabString + repeatString(" ", spaces) : tabString;
         }
         else {
             let spacesString: string;
-            const quotient = Math.floor(indentation / options.indentSize);
-            const remainder = indentation % options.indentSize;
+            const quotient = Math.floor(indentation / options.indentSize!);
+            const remainder = indentation % options.indentSize!;
             if (!internedSpacesIndentation) {
                 internedSpacesIndentation = [];
             }
 
             if (internedSpacesIndentation[quotient] === undefined) {
-                spacesString = repeat(" ", options.indentSize * quotient);
+                spacesString = repeatString(" ", options.indentSize! * quotient);
                 internedSpacesIndentation[quotient] = spacesString;
             }
             else {
                 spacesString = internedSpacesIndentation[quotient];
             }
 
-            return remainder ? spacesString + repeat(" ", remainder) : spacesString;
-        }
-
-        function repeat(value: string, count: number): string {
-            let s = "";
-            for (let i = 0; i < count; i++) {
-                s += value;
-            }
-
-            return s;
+            return remainder ? spacesString + repeatString(" ", remainder) : spacesString;
         }
     }
 }

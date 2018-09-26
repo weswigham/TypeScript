@@ -6,7 +6,7 @@
         "0": {
             "kind": "JSDocParameterTag",
             "pos": 8,
-            "end": 30,
+            "end": 32,
             "atToken": {
                 "kind": "AtToken",
                 "pos": 8,
@@ -35,11 +35,10 @@
                 "escapedText": "name1"
             },
             "isNameFirst": false,
-            "isBracketed": false,
-            "comment": ""
+            "isBracketed": false
         },
         "length": 1,
         "pos": 8,
-        "end": 30
+        "end": 32
     }
 }
