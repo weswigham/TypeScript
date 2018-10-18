@@ -445,7 +445,8 @@ namespace ts {
         }
     }
 
-    class SignatureObject implements Signature {
+    class SignatureObject implements ConcreteSignature {
+        signatureType = CompositeSignatureKind.None;
         checker: TypeChecker;
         declaration: SignatureDeclaration;
         typeParameters?: TypeParameter[];

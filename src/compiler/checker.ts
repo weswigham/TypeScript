@@ -59,7 +59,7 @@ namespace ts {
         // tslint:disable variable-name
         const Symbol = objectAllocator.getSymbolConstructor();
         const Type = objectAllocator.getTypeConstructor();
-        const Signature = objectAllocator.getSignatureConstructor();
+        const ConcreteSignature = objectAllocator.getSignatureConstructor();
         // tslint:enable variable-name
 
         let typeCount = 0;
@@ -6451,8 +6451,8 @@ namespace ts {
             minArgumentCount: number,
             hasRestParameter: boolean,
             hasLiteralTypes: boolean,
-        ): Signature {
-            const sig = new Signature(checker);
+        ): ConcreteSignature {
+            const sig = new ConcreteSignature(checker);
             sig.declaration = declaration;
             sig.typeParameters = typeParameters;
             sig.parameters = parameters;
@@ -6467,12 +6467,12 @@ namespace ts {
             return sig;
         }
 
-        function cloneSignature(sig: Signature): Signature {
+        function cloneSignature(sig: ConcreteSignature): Signature {
             return createSignature(sig.declaration, sig.typeParameters, sig.thisParameter, sig.parameters, /*resolvedReturnType*/ undefined,
                 /*resolvedTypePredicate*/ undefined, sig.minArgumentCount, sig.hasRestParameter, sig.hasLiteralTypes);
         }
 
-        function getExpandedParameters(sig: Signature): ReadonlyArray<Symbol> {
+        function getExpandedParameters(sig: ConcreteSignature): ReadonlyArray<Symbol> {
             if (sig.hasRestParameter) {
                 const restIndex = sig.parameters.length - 1;
                 const restParameter = sig.parameters[restIndex];
@@ -6553,40 +6553,6 @@ namespace ts {
             return result;
         }
 
-        // The signatures of a union type are those signatures that are present in each of the constituent types.
-        // Generic signatures must match exactly, but non-generic signatures are allowed to have extra optional
-        // parameters and may differ in return types. When signatures differ in return types, the resulting return
-        // type is the union of the constituent return types.
-        function getUnionSignatures(types: ReadonlyArray<Type>, kind: SignatureKind): Signature[] {
-            const signatureLists = map(types, t => getSignaturesOfType(t, kind));
-            let result: Signature[] | undefined;
-            for (let i = 0; i < signatureLists.length; i++) {
-                for (const signature of signatureLists[i]) {
-                    // Only process signatures with parameter lists that aren't already in the result list
-                    if (!result || !findMatchingSignature(result, signature, /*partialMatch*/ false, /*ignoreThisTypes*/ true, /*ignoreReturnTypes*/ true)) {
-                        const unionSignatures = findMatchingSignatures(signatureLists, signature, i);
-                        if (unionSignatures) {
-                            let s = signature;
-                            // Union the result types when more than one signature matches
-                            if (unionSignatures.length > 1) {
-                                let thisParameter = signature.thisParameter;
-                                if (forEach(unionSignatures, sig => sig.thisParameter)) {
-                                    // TODO: GH#18217 We tested that *some* has thisParameter and now act as if *all* do
-                                    const thisType = getUnionType(map(unionSignatures, sig => sig.thisParameter ? getTypeOfSymbol(sig.thisParameter) : anyType), UnionReduction.Subtype);
-                                    thisParameter = createSymbolWithType(signature.thisParameter!, thisType);
-                                }
-                                s = cloneSignature(signature);
-                                s.thisParameter = thisParameter;
-                                s.unionSignatures = unionSignatures;
-                            }
-                            (result || (result = [])).push(s);
-                        }
-                    }
-                }
-            }
-            return result || emptyArray;
-        }
-
         function getUnionIndexInfo(types: ReadonlyArray<Type>, kind: IndexKind): IndexInfo | undefined {
             const indexTypes: Type[] = [];
             let isAnyReadonly = false;
@@ -6601,11 +6567,64 @@ namespace ts {
             return createIndexInfo(getUnionType(indexTypes, UnionReduction.Subtype), isAnyReadonly);
         }
 
+        function isInvokableType(t: Type, kind: SignatureKind): boolean {
+            const callCount = length(getSignaturesOfType(t, SignatureKind.Call));
+            const constructCount = length(getSignaturesOfType(t, SignatureKind.Construct));
+            return isUntypedFunctionCall(t, getApparentType(t), callCount, constructCount) || !!(kind === SignatureKind.Call ? callCount : constructCount);
+        }
+
+        function isCallableType(t: Type): boolean {
+            if (t.flags & TypeFlags.Union) {
+                return every((t as UnionType).types, isCallableType);
+            }
+            if (t.flags & TypeFlags.Intersection) {
+                return some((t as IntersectionType).types, isCallableType);
+            }
+            return isInvokableType(t, SignatureKind.Call);
+        }
+
+        function isNewableType(t: Type): boolean {
+            if (t.flags & TypeFlags.Union) {
+                return every((t as UnionType).types, isNewableType);
+            }
+            if (t.flags & TypeFlags.Intersection) {
+                return some((t as IntersectionType).types, isNewableType);
+            }
+            return isInvokableType(t, SignatureKind.Construct);
+        }
+
+        function createUnionSignatures(type: UnionType, kind: SignatureKind): Signature[] {
+            // We've already validated that every member is invokable; so if any member is missing signatures, it must be an untyped call target
+            // In a union, an untyped call target can effectively take `unknown` for any number of parameters and returns `unknown`;
+            // meaning that a union containing an untyped call has strong argument checking for the typed members, but always an `unknown` return type, since
+            // the untyped call may very well be the one handling the call at runtime.
+            return reduceLeft(type.types, (sigs: Signature[] | undefined, t) => {
+                const signatures = getSignaturesOfType(t, kind);
+                const signaturesLength = length(signatures);
+                if (sigs && sigs.length && signaturesLength) {
+                    let result: UnionSignature[] = [];
+                    for (const sig of sigs) {
+                        if (sig.signatureType === CompositeSignatureKind.Union) {
+                            result.push({ signatureType: CompositeSignatureKind.Union, underlyingSignatures: [...sig.underlyingSignatures, signatures.slice()] })
+                        }
+                        else {
+                            result.push({ signatureType: CompositeSignatureKind.Union, underlyingSignatures: [[sig], signatures.slice()] })
+                        }
+                    }
+                    return result;
+                }
+                else if (signaturesLength) {
+                    return signatures.slice();
+                }
+                return sigs;
+            }, undefined) || emptyArray;
+        }
+
         function resolveUnionTypeMembers(type: UnionType) {
             // The members and properties collections are empty for union types. To get all properties of a union
             // type use getPropertiesOfType (only the language service uses this).
-            const callSignatures = getUnionSignatures(type.types, SignatureKind.Call);
-            const constructSignatures = getUnionSignatures(type.types, SignatureKind.Construct);
+            const callSignatures = isCallableType(type) ? createUnionSignatures(type, SignatureKind.Call) : emptyArray;
+            const constructSignatures = isNewableType(type) ? createUnionSignatures(type, SignatureKind.Construct) : emptyArray;
             const stringIndexInfo = getUnionIndexInfo(type.types, IndexKind.String);
             const numberIndexInfo = getUnionIndexInfo(type.types, IndexKind.Number);
             setStructuredTypeMembers(type, emptySymbols, callSignatures, constructSignatures, stringIndexInfo, numberIndexInfo);
@@ -6627,47 +6646,68 @@ namespace ts {
                 getUnionType([info1.type, info2.type]), info1.isReadonly || info2.isReadonly);
         }
 
-        function includeMixinType(type: Type, types: ReadonlyArray<Type>, index: number): Type {
-            const mixedTypes: Type[] = [];
-            for (let i = 0; i < types.length; i++) {
-                if (i === index) {
-                    mixedTypes.push(type);
+        function createIntersectionSignatures(type: IntersectionType, kind: SignatureKind): Signature[] {
+            // The parameters we generate here are more restrictive than they need to be -
+            // Specifically, we union all parameter types with all possible parameter types for that position
+            // This means for every parameter, we create a set of parameters whose types are the power set of the input
+            // That's not what this signature actually represents, however! (Although it is useful to think of it that way in a number of places)
+            // Instead, an intersection signature represents that concept that any signature any of the underlying types of the appropriate kind
+            // will suffice for resolving this signature (as far as parameters go), and that as far as return types go, we shall have an
+            // intersection of all the possibilities. This creates an interesting conundrum when it comes to infered type parameters -
+            // if they appear in a return position, how should they be instantiated? The answer, IMO, is simple. The parameters for such a signature
+            // are resolved as best they can be, including type inference, but we skip any signature validity checking, and just instantiate the return type
+            // before adding it to the intersection. This means if, for example, the return value depends on a parameter we didn't actually
+            // provide, in the resulting intersection it'll be instantiated as it's default (or constraint if no default is present).
+            // This _does_ mean we're going to be performing quite a bit of inference, though; since we need the results from every underlying signature,
+            // (and this is, strictly speaking, not perfect due to contextual parameter type fixing locking down function types on the first inference pass)
+            // and that we won't have a fast-path bailout like overload resolution does!
+            // And on that note, it's worth mentioning here: Overload sets and intersection signatures are _distinct concepts_. An overload set is like
+            // a cascading match set of signatures with conditional return values based on the parameter set chosen, while intersected signatures build
+            // a return type from all signatures and resolve _all_ underlying signatures simultaneously. This both invites te question of what happens
+            // when overload sets are intersected and alludes to the answer. Given two types, `A={ (): {a: string} }` and `B={ (a: string): {b: string} (a: number): {b: number} }`
+            // for parameter checking, so long as the parameters provided resolve against A's signatures or B's signatures, they're fine. For the return type,
+            // we take the return type of resolving A's signatures and intersect it with the result of resolving B's signatures with the given params.
+            // So, say we call `(A&B)(string)` - this selects A's only signature, and B's "string" signature, producing a combined result of
+            // `{a: string} & {b: string}`. It's worth mentioning that our past special case code for "mixin signatures" falls out naturally from
+            // this formulation, and actually gains support for properly resolving overloaded mixin components!
+            // Additionally, we've already validated that every member is invokable; so if any member is missing signatures, it must be an untyped call target
+            // In an intersection, an untyped call target can effectively take `unknown` for any number of parameters and returns `unknown`;
+            // meaning that an intersection containing an untyped call has no argument checking for the typed members (anything | unknown is unknown), but
+            // always a strong return type, since the untyped call may very well be the one handling the call at runtime.
+            return reduceLeft(type.types, (sigs: Signature[] | undefined, t) => {
+                const signatures = getSignaturesOfType(t, kind);
+                const signaturesLength = length(signatures);
+                if (sigs && sigs.length && signaturesLength) {
+                    let result: IntersectionSignature[] = [];
+                    for (const sig of sigs) {
+                        for (const targetSig of signatures) {
+                            if (sig.signatureType === CompositeSignatureKind.Intersection) {
+                                result.push({ signatureType: CompositeSignatureKind.Intersection, underlyingSignatures: [...sig.underlyingSignatures, targetSig] })
+                            }
+                            else {
+                                result.push({ signatureType: CompositeSignatureKind.Intersection, underlyingSignatures: [sig, targetSig] })
+                            }
+                        }
+                    }
+                    return result;
                 }
-                else if (isMixinConstructorType(types[i])) {
-                    mixedTypes.push(getReturnTypeOfSignature(getSignaturesOfType(types[i], SignatureKind.Construct)[0]));
+                else if (signaturesLength) {
+                    return signatures.slice();
                 }
-            }
-            return getIntersectionType(mixedTypes);
+                return sigs;
+            }, undefined) || emptyArray;
         }
 
         function resolveIntersectionTypeMembers(type: IntersectionType) {
             // The members and properties collections are empty for intersection types. To get all properties of an
             // intersection type use getPropertiesOfType (only the language service uses this).
-            let callSignatures: ReadonlyArray<Signature> = emptyArray;
-            let constructSignatures: ReadonlyArray<Signature> = emptyArray;
+            const types = type.types;
+            const callSignatures: ReadonlyArray<Signature> = isCallableType(type) ? createIntersectionSignatures(type, SignatureKind.Call) : emptyArray;
+            const constructSignatures: ReadonlyArray<Signature> = isNewableType(type) ? createIntersectionSignatures(type, SignatureKind.Construct) : emptyArray;
             let stringIndexInfo: IndexInfo | undefined;
             let numberIndexInfo: IndexInfo | undefined;
-            const types = type.types;
-            const mixinCount = countWhere(types, isMixinConstructorType);
             for (let i = 0; i < types.length; i++) {
                 const t = type.types[i];
-                // When an intersection type contains mixin constructor types, the construct signatures from
-                // those types are discarded and their return types are mixed into the return types of all
-                // other construct signatures in the intersection type. For example, the intersection type
-                // '{ new(...args: any[]) => A } & { new(s: string) => B }' has a single construct signature
-                // 'new(s: string) => A & B'.
-                if (mixinCount === 0 || mixinCount === types.length && i === 0 || !isMixinConstructorType(t)) {
-                    let signatures = getSignaturesOfType(t, SignatureKind.Construct);
-                    if (signatures.length && mixinCount > 0) {
-                        signatures = map(signatures, s => {
-                            const clone = cloneSignature(s);
-                            clone.resolvedReturnType = includeMixinType(getReturnTypeOfSignature(s), types, i);
-                            return clone;
-                        });
-                    }
-                    constructSignatures = concatenate(constructSignatures, signatures);
-                }
-                callSignatures = concatenate(callSignatures, getSignaturesOfType(t, SignatureKind.Call));
                 stringIndexInfo = intersectIndexInfos(stringIndexInfo, getIndexInfoOfType(t, IndexKind.String));
                 numberIndexInfo = intersectIndexInfos(numberIndexInfo, getIndexInfoOfType(t, IndexKind.Number));
             }
@@ -7809,21 +7849,55 @@ namespace ts {
                     const targetTypePredicate = getTypePredicateOfSignature(signature.target);
                     signature.resolvedTypePredicate = targetTypePredicate ? instantiateTypePredicate(targetTypePredicate, signature.mapper!) : noTypePredicate;
                 }
-                else if (signature.unionSignatures) {
-                    signature.resolvedTypePredicate = getUnionTypePredicate(signature.unionSignatures) || noTypePredicate;
-                }
                 else {
-                    const type = signature.declaration && getEffectiveReturnTypeNode(signature.declaration);
-                    let jsdocPredicate: TypePredicate | undefined;
-                    if (!type && isInJSFile(signature.declaration)) {
-                        const jsdocSignature = getSignatureOfTypeTag(signature.declaration!);
-                        if (jsdocSignature && signature !== jsdocSignature) {
-                            jsdocPredicate = getTypePredicateOfSignature(jsdocSignature);
+                    switch (signature.signatureType) {
+                        case CompositeSignatureKind.None: {
+                            const type = signature.declaration && getEffectiveReturnTypeNode(signature.declaration);
+                            let jsdocPredicate: TypePredicate | undefined;
+                            if (!type && isInJSFile(signature.declaration)) {
+                                const jsdocSignature = getSignatureOfTypeTag(signature.declaration!);
+                                if (jsdocSignature && signature !== jsdocSignature) {
+                                    jsdocPredicate = getTypePredicateOfSignature(jsdocSignature);
+                                }
+                            }
+                            signature.resolvedTypePredicate = type && isTypePredicateNode(type) ?
+                                createTypePredicateFromTypePredicateNode(type, signature.declaration!) :
+                                jsdocPredicate || noTypePredicate;
+                            break;
                         }
+                        case CompositeSignatureKind.Union: {
+                            // For a union, all signatures must have identical type predicates for a call on the whole union to be considered as having a predicate
+                            let firstPredicate: TypePredicate | undefined;
+                            typeLoop: for (const type of signature.underlyingType.types) {
+                                const sigs = getSignaturesOfType(type, signature.specialization);
+                                for (const sig of sigs) {
+                                    const pred = getTypePredicateOfSignature(sig);
+                                    typePredicateKindsMatch
+                                    if (!pred || (firstPredicate && (!typePredicateKindsMatch(firstPredicate, pred) || !isTypeIdenticalTo(firstPredicate.type, pred.type)))) {
+                                        firstPredicate = undefined;
+                                        break typeLoop;
+                                    }
+                                    firstPredicate = pred;
+                                }
+                            }
+                            signature.resolvedTypePredicate = firstPredicate ? clone(firstPredicate) : noTypePredicate;
+                            break;
+                        }
+                        case CompositeSignatureKind.Intersection: {
+                            // While for an intersection, technically any member being a predicate makes the intersected signature a predicate
+                            // This is complicated by the fact that a predicate can't exist alongside a real return type, so one can write
+                            // `{(): this is {a: string}} & {(): string}`
+                            // and we should technically consider it as having a signature which both returns `string` and predicates `this`
+                            // based on the (boolean) result of the call; it doesn't make much sense. In the return type space, `boolean & string`
+                            // will eventually simplify to `never`
+                            // To make matters worse, when overloads are involved:
+                            // `{(): this is {a: string}} & {(x: string): void (): this is {b: string}}`
+                            // we should technically _allow_ a predicate, since when the overload is resolved, there's a good chance
+                            // that we hit an overload that has a compatible predicate! (Whose predicating type we then need to combine)
+                            break;
+                        }
+                        case CompositeSignatureKind.Error:
                     }
-                    signature.resolvedTypePredicate = type && isTypePredicateNode(type) ?
-                        createTypePredicateFromTypePredicateNode(type, signature.declaration!) :
-                        jsdocPredicate || noTypePredicate;
                 }
                 Debug.assert(!!signature.resolvedTypePredicate);
             }
@@ -17183,8 +17257,7 @@ namespace ts {
             // Result is union of signatures collected (return type is union of return types of this signature set)
             let result: Signature | undefined;
             if (signatureList) {
-                result = cloneSignature(signatureList[0]);
-                result.unionSignatures = signatureList;
+                return { signatureType: CompositeSignatureKind.Error, underlyingSignatures: signatureList };
             }
             return result;
         }
@@ -19745,7 +19818,7 @@ namespace ts {
          */
         function isUntypedFunctionCall(funcType: Type, apparentFuncType: Type, numCallSignatures: number, numConstructSignatures: number) {
             // We exclude union types because we may have a union of function types that happen to have no common signatures.
-            return isTypeAny(funcType) || isTypeAny(apparentFuncType) && funcType.flags & TypeFlags.TypeParameter ||
+            return isTypeAny(funcType) || isTypeAny(apparentFuncType) && !!(funcType.flags & TypeFlags.TypeParameter) ||
                 !numCallSignatures && !numConstructSignatures && !(apparentFuncType.flags & (TypeFlags.Union | TypeFlags.Never)) && isTypeAssignableTo(funcType, globalFunctionType);
         }
 

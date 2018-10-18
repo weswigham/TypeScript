@@ -6807,7 +6807,7 @@ namespace ts {
         getSourceFileConstructor(): new (kind: SyntaxKind.SourceFile, pos?: number, end?: number) => SourceFile;
         getSymbolConstructor(): new (flags: SymbolFlags, name: __String) => Symbol;
         getTypeConstructor(): new (checker: TypeChecker, flags: TypeFlags) => Type;
-        getSignatureConstructor(): new (checker: TypeChecker) => Signature;
+        getSignatureConstructor(): new (checker: TypeChecker) => ConcreteSignature;
         getSourceMapSourceConstructor(): new (fileName: string, text: string, skipTrivia?: (pos: number) => number) => SourceMapSource;
     }
 
@@ -6828,7 +6828,9 @@ namespace ts {
         }
     }
 
-    function Signature() {} // tslint:disable-line no-empty
+    function ConcreteSignature(this: ConcreteSignature) {
+        this.signatureType = CompositeSignatureKind.None;
+    }
 
     function Node(this: Node, kind: SyntaxKind, pos: number, end: number) {
         this.pos = pos;
@@ -6855,7 +6857,7 @@ namespace ts {
         getSourceFileConstructor: () => <any>Node,
         getSymbolConstructor: () => <any>Symbol,
         getTypeConstructor: () => <any>Type,
-        getSignatureConstructor: () => <any>Signature,
+        getSignatureConstructor: () => <any>ConcreteSignature,
         getSourceMapSourceConstructor: () => <any>SourceMapSource,
     };
 

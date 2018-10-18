@@ -4212,12 +4212,19 @@ namespace ts {
         Construct,
     }
 
-    export interface Signature {
-        declaration?: SignatureDeclaration | JSDocSignature; // Originating declaration
-        typeParameters?: ReadonlyArray<TypeParameter>;   // Type parameters (undefined if non-generic)
-        parameters: ReadonlyArray<Symbol>;               // Parameters
-        /* @internal */
-        thisParameter?: Symbol;             // symbol of this-type parameter
+    export type Signature = ConcreteSignature | CompositeSignature;
+
+    export type CompositeSignature = IntersectionSignature | UnionSignature | ErrorSignature;
+
+    export const enum CompositeSignatureKind {
+        None,
+        Intersection,
+        Union,
+        Error,
+    }
+
+    export interface SignatureBase {
+        signatureType: CompositeSignatureKind;
         /* @internal */
         // See comment in `instantiateSignature` for why these are set lazily.
         resolvedReturnType?: Type;          // Lazily set by `getReturnTypeOfSignature`.
@@ -4227,17 +4234,9 @@ namespace ts {
         // Uses a special `noTypePredicate` sentinel value to indicate that there is no type predicate. This looks like a TypePredicate at runtime to avoid polymorphism.
         resolvedTypePredicate?: TypePredicate;
         /* @internal */
-        minArgumentCount: number;           // Number of non-optional parameters
-        /* @internal */
-        hasRestParameter: boolean;          // True if last parameter is rest parameter
-        /* @internal */
-        hasLiteralTypes: boolean;           // True if specialized
-        /* @internal */
         target?: Signature;                 // Instantiation target
         /* @internal */
         mapper?: TypeMapper;                // Instantiation mapper
-        /* @internal */
-        unionSignatures?: Signature[];      // Underlying signatures of a union signature
         /* @internal */
         erasedSignatureCache?: Signature;   // Erased version of signature (deferred)
         /* @internal */
@@ -4246,6 +4245,38 @@ namespace ts {
         isolatedSignatureType?: ObjectType; // A manufactured type that just contains the signature for purposes of signature comparison
         /* @internal */
         instantiations?: Map<Signature>;    // Generic signature instantiation cache
+    }
+
+    export interface CompositeSignatureBase extends SignatureBase {
+        /* @internal */
+        underlyingSignatures: Signature[][];  // Underlying signatures of a composite signature
+    }
+
+    export interface IntersectionSignature extends CompositeSignatureBase {
+        signatureType: CompositeSignatureKind.Intersection;
+    }
+
+    export interface UnionSignature extends CompositeSignatureBase {
+        signatureType: CompositeSignatureKind.Union;
+    }
+
+    export interface ErrorSignature extends CompositeSignatureBase {
+        signatureType: CompositeSignatureKind.Error;
+    }
+
+    export interface ConcreteSignature extends SignatureBase {
+        signatureType: CompositeSignatureKind.None;
+        declaration?: SignatureDeclaration | JSDocSignature; // Originating declaration
+        typeParameters?: ReadonlyArray<TypeParameter>;   // Type parameters (undefined if non-generic)
+        parameters: ReadonlyArray<Symbol>;               // Parameters
+        /* @internal */
+        thisParameter?: Symbol;             // symbol of this-type parameter
+        /* @internal */
+        minArgumentCount: number;           // Number of non-optional parameters
+        /* @internal */
+        hasRestParameter: boolean;          // True if last parameter is rest parameter
+        /* @internal */
+        hasLiteralTypes: boolean;           // True if specialized
     }
 
     export const enum IndexKind {
