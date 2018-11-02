@@ -19230,20 +19230,6 @@ namespace ts {
             return type === declaredSyntheticInferType;
         }
 
-        function getPartialInferenceContext(originalParams: ReadonlyArray<TypeParameter>, typeArgumentResult: ReadonlyArray<Type>, uninferedInstantiation: Signature, isJavascript: boolean) {
-            const context = createInferenceContext(originalParams, uninferedInstantiation, isJavascript ? InferenceFlags.AnyDefault : InferenceFlags.None);
-            for (let i = 0; i < context.inferences.length; i++) {
-                const correspondingArgument = typeArgumentResult[i];
-                if (!isSyntheticInferType(correspondingArgument)) {
-                    const inference = context.inferences[i];
-                    inference.inferredType = correspondingArgument;
-                    inference.isFixed = true;
-                    inference.priority = 0;
-                }
-            }
-            return context;
-        }
-
         function getJsxReferenceKind(node: JsxOpeningLikeElement): JsxReferenceKind {
             if (isJsxIntrinsicIdentifier(node.tagName)) {
                 return JsxReferenceKind.Mixed;
@@ -19674,7 +19660,16 @@ namespace ts {
                                     const originalParams = candidate.typeParameters;
                                     const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams[i] : r);
                                     const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
-                                    inferenceContext = getPartialInferenceContext(originalParams, typeArgumentResult, uninferedInstantiation, isJavascript);
+                                    inferenceContext = createInferenceContext(originalParams, uninferedInstantiation, isInJSFile(node) ? InferenceFlags.AnyDefault : InferenceFlags.None);
+                                    for (let i = 0; i < inferenceContext.inferences.length; i++) {
+                                        const correspondingArgument = typeArgumentResult[i];
+                                        if (!isSyntheticInferType(correspondingArgument)) {
+                                            const inference = inferenceContext.inferences[i];
+                                            inference.inferredType = correspondingArgument;
+                                            inference.isFixed = true;
+                                            inference.priority = 0;
+                                        }
+                                    }
                                     typeArgumentResult = inferTypeArguments(node, uninferedInstantiation, args, excludeArgument, inferenceContext);
                                 }
                             }
