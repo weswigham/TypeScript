@@ -9708,14 +9708,6 @@ namespace ts {
             return links.resolvedType;
         }
 
-        function getTypeFromJSDocAllTypeNode(node: JSDocAllType): Type {
-            const links = getNodeLinks(node);
-            if (!links.resolvedType) {
-                links.resolvedType = isInTopOfTypescriptExpressionTypeArgumentList(node) ? declaredSyntheticInferType : anyType;
-            }
-            return links.resolvedType;
-        }
-
         function getTypeFromInferTypeNode(node: InferTypeNode): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
@@ -10053,10 +10045,9 @@ namespace ts {
         function getTypeFromTypeNode(node: TypeNode): Type {
             switch (node.kind) {
                 case SyntaxKind.AnyKeyword:
+                case SyntaxKind.JSDocAllType:
                 case SyntaxKind.JSDocUnknownType:
                     return anyType;
-                case SyntaxKind.JSDocAllType:
-                    return getTypeFromJSDocAllTypeNode(node as JSDocAllType);
                 case SyntaxKind.UnknownKeyword:
                     return unknownType;
                 case SyntaxKind.StringKeyword:
@@ -10077,6 +10068,8 @@ namespace ts {
                     return neverType;
                 case SyntaxKind.ObjectKeyword:
                     return node.flags & NodeFlags.JavaScriptFile ? anyType : nonPrimitiveType;
+                case SyntaxKind.PlaceholderType:
+                    return declaredSyntheticInferType;
                 case SyntaxKind.ThisType:
                 case SyntaxKind.ThisKeyword:
                     return getTypeFromThisTypeNode(node as ThisExpression | ThisTypeNode);
@@ -19205,15 +19198,10 @@ namespace ts {
             const isJavascript = isInJSFile(signature.declaration);
             const typeParameters = signature.typeParameters!;
             const typeArgumentTypes = fillMissingTypeArguments(map(typeArgumentNodes, getTypeFromTypeNode), typeParameters, getMinTypeArgumentCount(typeParameters), isJavascript);
-            return checkTypeArgumentTypes(signature, typeArgumentTypes, typeArgumentNodes, reportErrors, headMessage);
-        }
-
-        function checkTypeArgumentTypes(signature: Signature, typeArgumentTypes: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] | undefined {
             if (some(typeArgumentTypes, isSyntheticInferType)) {
                 // Do validation once partial inference is complete
                 return typeArgumentTypes;
             }
-            const typeParameters = signature.typeParameters!;
             let mapper: TypeMapper | undefined;
             for (let i = 0; i < typeArgumentNodes.length; i++) {
                 Debug.assert(typeParameters[i] !== undefined, "Should not call checkTypeArguments with too many type arguments");
@@ -27120,12 +27108,6 @@ namespace ts {
                     !!(declaration as FunctionDeclaration).body;
         }
 
-        function isInTopOfTypescriptExpressionTypeArgumentList(node: TypeNode) {
-            const p = node.parent;
-            if (isInJSFile(node) || !(isCallExpression(p) || isNewExpression(p) || isJsxOpeningElement(p) || isJsxSelfClosingElement(p) || isTaggedTemplateExpression(p))) return false;
-            return some(p.typeArguments, a => a === node);
-        }
-
         function checkSourceElement(node: Node | undefined): void {
             if (!node) {
                 return;
@@ -27215,15 +27197,11 @@ namespace ts {
                     // falls through
                 case SyntaxKind.JSDocNonNullableType:
                 case SyntaxKind.JSDocNullableType:
+                case SyntaxKind.JSDocAllType:
                 case SyntaxKind.JSDocUnknownType:
                 case SyntaxKind.JSDocTypeLiteral:
                     checkJSDocTypeIsInJsFile(node);
                     forEachChild(node, checkSourceElement);
-                    return;
-                case SyntaxKind.JSDocAllType:
-                    if (!isInTopOfTypescriptExpressionTypeArgumentList(node as JSDocAllType)) {
-                        checkJSDocTypeIsInJsFile(node);
-                    }
                     return;
                 case SyntaxKind.JSDocVariadicType:
                     checkJSDocVariadicType(node as JSDocVariadicType);

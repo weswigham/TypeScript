@@ -54,24 +54,24 @@ declare namespace React {
 >h : any
 }
 
-const instance1 = new Foo<number, *>(0, "");
+const instance1 = new Foo<number, _>(0, "");
 >instance1 : Foo<number, string>
->new Foo<number, *>(0, "") : Foo<number, string>
+>new Foo<number, _>(0, "") : Foo<number, string>
 >Foo : typeof Foo
 >0 : 0
 >"" : ""
 
-const result1 = foo<number, *>(0, "");
+const result1 = foo<number, _>(0, "");
 >result1 : [number, string]
->foo<number, *>(0, "") : [number, string]
+>foo<number, _>(0, "") : [number, string]
 >foo : <T, U>(x: T, y: U) => [T, U]
 >0 : 0
 >"" : ""
 
-// const tagged1 = tag<number, *>`tags ${12} ${""}`; // Because of how union inference works, this won't actually work
-const jsx1 = <Component<number, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+// const tagged1 = tag<number, _>`tags ${12} ${""}`; // Because of how union inference works, this won't actually work
+const jsx1 = <Component<number, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx1 : JSX.Element
-><Component<number, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
+><Component<number, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
 >Component : <T, U>(x: ComponentProps<T, U>) => JSX.Element
 >x : number
 >12 : 12
@@ -95,31 +95,31 @@ const jsx1 = <Component<number, *> x={12} y="" cb={props => void (props.x.toFixe
 >y : string
 >toUpperCase : () => string
 
-const instance2 = new Foo<*, string>(0, "");
+const instance2 = new Foo<_, string>(0, "");
 >instance2 : Foo<number, string>
->new Foo<*, string>(0, "") : Foo<number, string>
+>new Foo<_, string>(0, "") : Foo<number, string>
 >Foo : typeof Foo
 >0 : 0
 >"" : ""
 
-const result2 = foo<*, string>(0, "");
+const result2 = foo<_, string>(0, "");
 >result2 : [number, string]
->foo<*, string>(0, "") : [number, string]
+>foo<_, string>(0, "") : [number, string]
 >foo : <T, U>(x: T, y: U) => [T, U]
 >0 : 0
 >"" : ""
 
-const tagged2 = tag<*, string>`tags ${12} ${""}`; // this will, though! Just because the `*` comes first!
+const tagged2 = tag<_, string>`tags ${12} ${""}`; // this will, though! Just because the `*` comes first!
 >tagged2 : (string | number)[]
->tag<*, string>`tags ${12} ${""}` : (string | number)[]
+>tag<_, string>`tags ${12} ${""}` : (string | number)[]
 >tag : <T, U>(x: TemplateStringsArray, ...args: (T | U)[]) => (T | U)[]
 >`tags ${12} ${""}` : string
 >12 : 12
 >"" : ""
 
-const jsx2 = <Component<*, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+const jsx2 = <Component<_, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx2 : JSX.Element
-><Component<*, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
+><Component<_, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
 >Component : <T, U>(x: ComponentProps<T, U>) => JSX.Element
 >x : number
 >12 : 12
@@ -143,31 +143,31 @@ const jsx2 = <Component<*, string> x={12} y="" cb={props => void (props.x.toFixe
 >y : string
 >toUpperCase : () => string
 
-const instance3 = new Foo<*, *>(0, "");
+const instance3 = new Foo<_, _>(0, "");
 >instance3 : Foo<number, string>
->new Foo<*, *>(0, "") : Foo<number, string>
+>new Foo<_, _>(0, "") : Foo<number, string>
 >Foo : typeof Foo
 >0 : 0
 >"" : ""
 
-const result3 = foo<*, *>(0, "");
+const result3 = foo<_, _>(0, "");
 >result3 : [number, string]
->foo<*, *>(0, "") : [number, string]
+>foo<_, _>(0, "") : [number, string]
 >foo : <T, U>(x: T, y: U) => [T, U]
 >0 : 0
 >"" : ""
 
-const tagged3 = tag<*, *>`tags ${12} ${""}`;
+const tagged3 = tag<_, _>`tags ${12} ${""}`;
 >tagged3 : {}[]
->tag<*, *>`tags ${12} ${""}` : {}[]
+>tag<_, _>`tags ${12} ${""}` : {}[]
 >tag : <T, U>(x: TemplateStringsArray, ...args: (T | U)[]) => (T | U)[]
 >`tags ${12} ${""}` : string
 >12 : 12
 >"" : ""
 
-const jsx3 = <Component<*, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+const jsx3 = <Component<_, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx3 : JSX.Element
-><Component<*, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
+><Component<_, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} /> : JSX.Element
 >Component : <T, U>(x: ComponentProps<T, U>) => JSX.Element
 >x : number
 >12 : 12
@@ -203,9 +203,9 @@ declare function stillDefaultsIfNoInference<X, A = string, B = number, C = boole
 >c : C
 >x : X
 
-const result4 = stillDefaultsIfNoInference<*, *, *, object> ({ b: "test" }); // expect result1 type is {a: string, b: string, c: object, x: {}
+const result4 = stillDefaultsIfNoInference<_, _, _, object> ({ b: "test" }); // expect result1 type is {a: string, b: string, c: object, x: {}
 >result4 : { a: string; b: string; c: object; x: {}; }
->stillDefaultsIfNoInference<*, *, *, object> ({ b: "test" }) : { a: string; b: string; c: object; x: {}; }
+>stillDefaultsIfNoInference<_, _, _, object> ({ b: "test" }) : { a: string; b: string; c: object; x: {}; }
 >stillDefaultsIfNoInference : <X, A = string, B = number, C = boolean>(arg: { a?: A; b?: B; c?: C; x?: X; }) => { a: A; b: B; c: C; x: X; }
 >{ b: "test" } : { b: string; }
 >b : string
@@ -221,9 +221,9 @@ class Foo2<A extends {x: string} = {x: string, y: number}, B = number> {
 >a : A
 >b : B
 }
-const x = new Foo2<*, string>();
+const x = new Foo2<_, string>();
 >x : Foo2<{ x: string; y: number; }, string>
->new Foo2<*, string>() : Foo2<{ x: string; y: number; }, string>
+>new Foo2<_, string>() : Foo2<{ x: string; y: number; }, string>
 >Foo2 : typeof Foo2
 
 x.a.x;

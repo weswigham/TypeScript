@@ -80,16 +80,16 @@ declare namespace React {
     return <h></h>;
 }
 
-const instance1 = new Foo<number, *>(0, "");
+const instance1 = new Foo<number, _>(0, "");
 >instance1 : Symbol(instance1, Decl(inferPartialTypeArguments.tsx, 20, 5))
 >Foo : Symbol(Foo, Decl(inferPartialTypeArguments.tsx, 5, 1))
 
-const result1 = foo<number, *>(0, "");
+const result1 = foo<number, _>(0, "");
 >result1 : Symbol(result1, Decl(inferPartialTypeArguments.tsx, 21, 5))
 >foo : Symbol(foo, Decl(inferPartialTypeArguments.tsx, 8, 1))
 
-// const tagged1 = tag<number, *>`tags ${12} ${""}`; // Because of how union inference works, this won't actually work
-const jsx1 = <Component<number, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+// const tagged1 = tag<number, _>`tags ${12} ${""}`; // Because of how union inference works, this won't actually work
+const jsx1 = <Component<number, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx1 : Symbol(jsx1, Decl(inferPartialTypeArguments.tsx, 23, 5))
 >Component : Symbol(Component, Decl(inferPartialTypeArguments.tsx, 15, 1))
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 23, 34))
@@ -107,19 +107,19 @@ const jsx1 = <Component<number, *> x={12} y="" cb={props => void (props.x.toFixe
 >y : Symbol(ComponentProps.y, Decl(inferPartialTypeArguments.tsx, 12, 9))
 >toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
 
-const instance2 = new Foo<*, string>(0, "");
+const instance2 = new Foo<_, string>(0, "");
 >instance2 : Symbol(instance2, Decl(inferPartialTypeArguments.tsx, 25, 5))
 >Foo : Symbol(Foo, Decl(inferPartialTypeArguments.tsx, 5, 1))
 
-const result2 = foo<*, string>(0, "");
+const result2 = foo<_, string>(0, "");
 >result2 : Symbol(result2, Decl(inferPartialTypeArguments.tsx, 26, 5))
 >foo : Symbol(foo, Decl(inferPartialTypeArguments.tsx, 8, 1))
 
-const tagged2 = tag<*, string>`tags ${12} ${""}`; // this will, though! Just because the `*` comes first!
+const tagged2 = tag<_, string>`tags ${12} ${""}`; // this will, though! Just because the `*` comes first!
 >tagged2 : Symbol(tagged2, Decl(inferPartialTypeArguments.tsx, 27, 5))
 >tag : Symbol(tag, Decl(inferPartialTypeArguments.tsx, 9, 58))
 
-const jsx2 = <Component<*, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+const jsx2 = <Component<_, string> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx2 : Symbol(jsx2, Decl(inferPartialTypeArguments.tsx, 28, 5))
 >Component : Symbol(Component, Decl(inferPartialTypeArguments.tsx, 15, 1))
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 28, 34))
@@ -137,19 +137,19 @@ const jsx2 = <Component<*, string> x={12} y="" cb={props => void (props.x.toFixe
 >y : Symbol(ComponentProps.y, Decl(inferPartialTypeArguments.tsx, 12, 9))
 >toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
 
-const instance3 = new Foo<*, *>(0, "");
+const instance3 = new Foo<_, _>(0, "");
 >instance3 : Symbol(instance3, Decl(inferPartialTypeArguments.tsx, 30, 5))
 >Foo : Symbol(Foo, Decl(inferPartialTypeArguments.tsx, 5, 1))
 
-const result3 = foo<*, *>(0, "");
+const result3 = foo<_, _>(0, "");
 >result3 : Symbol(result3, Decl(inferPartialTypeArguments.tsx, 31, 5))
 >foo : Symbol(foo, Decl(inferPartialTypeArguments.tsx, 8, 1))
 
-const tagged3 = tag<*, *>`tags ${12} ${""}`;
+const tagged3 = tag<_, _>`tags ${12} ${""}`;
 >tagged3 : Symbol(tagged3, Decl(inferPartialTypeArguments.tsx, 32, 5))
 >tag : Symbol(tag, Decl(inferPartialTypeArguments.tsx, 9, 58))
 
-const jsx3 = <Component<*, *> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
+const jsx3 = <Component<_, _> x={12} y="" cb={props => void (props.x.toFixed() + props.y.toUpperCase())} />;
 >jsx3 : Symbol(jsx3, Decl(inferPartialTypeArguments.tsx, 33, 5))
 >Component : Symbol(Component, Decl(inferPartialTypeArguments.tsx, 15, 1))
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 33, 29))
@@ -191,7 +191,7 @@ declare function stillDefaultsIfNoInference<X, A = string, B = number, C = boole
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 35, 140))
 >X : Symbol(X, Decl(inferPartialTypeArguments.tsx, 35, 44))
 
-const result4 = stillDefaultsIfNoInference<*, *, *, object> ({ b: "test" }); // expect result1 type is {a: string, b: string, c: object, x: {}
+const result4 = stillDefaultsIfNoInference<_, _, _, object> ({ b: "test" }); // expect result1 type is {a: string, b: string, c: object, x: {}
 >result4 : Symbol(result4, Decl(inferPartialTypeArguments.tsx, 36, 5))
 >stillDefaultsIfNoInference : Symbol(stillDefaultsIfNoInference, Decl(inferPartialTypeArguments.tsx, 33, 108))
 >b : Symbol(b, Decl(inferPartialTypeArguments.tsx, 36, 62))
@@ -210,7 +210,7 @@ class Foo2<A extends {x: string} = {x: string, y: number}, B = number> {
 >b : Symbol(Foo2.b, Decl(inferPartialTypeArguments.tsx, 39, 29))
 >B : Symbol(B, Decl(inferPartialTypeArguments.tsx, 38, 58))
 }
-const x = new Foo2<*, string>();
+const x = new Foo2<_, string>();
 >x : Symbol(x, Decl(inferPartialTypeArguments.tsx, 41, 5))
 >Foo2 : Symbol(Foo2, Decl(inferPartialTypeArguments.tsx, 36, 76))
 
