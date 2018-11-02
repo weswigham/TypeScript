@@ -208,7 +208,7 @@ class CompilerTest {
     public verifyModuleResolution() {
         if (this.options.traceResolution) {
             Harness.Baseline.runBaseline(this.justName.replace(/\.tsx?$/, ".trace.json"),
-                utils.removeTestPathPrefixes(JSON.stringify(this.result.traces, undefined, 4)));
+                JSON.stringify(this.result.traces.map(utils.sanitizeTraceResolutionLogEntry), undefined, 4));
         }
     }
 
@@ -253,7 +253,13 @@ class CompilerTest {
         Harness.Compiler.doTypeAndSymbolBaseline(
             this.justName,
             this.result.program!,
-            this.toBeCompiled.concat(this.otherFiles).filter(file => !!this.result.program!.getSourceFile(file.unitName)));
+            this.toBeCompiled.concat(this.otherFiles).filter(file => !!this.result.program!.getSourceFile(file.unitName)),
+            /*opts*/ undefined,
+            /*multifile*/ undefined,
+            /*skipTypeBaselines*/ undefined,
+            /*skipSymbolBaselines*/ undefined,
+            !!ts.length(this.result.diagnostics)
+        );
     }
 
     private makeUnitName(name: string, root: string) {

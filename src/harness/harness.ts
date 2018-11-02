@@ -490,7 +490,7 @@ namespace Harness {
         getExecutingFilePath(): string;
         getWorkspaceRoot(): string;
         exit(exitCode?: number): void;
-        readDirectory(path: string, extension?: ReadonlyArray<string>, exclude?: ReadonlyArray<string>, include?: ReadonlyArray<string>, depth?: number): string[];
+        readDirectory(path: string, extension?: ReadonlyArray<string>, exclude?: ReadonlyArray<string>, include?: ReadonlyArray<string>, depth?: number): ReadonlyArray<string>;
         getAccessibleFileSystemEntries(dirname: string): ts.FileSystemEntries;
         tryEnableSourceMapsForHost?(): void;
         getEnvironmentVariable?(name: string): string;
@@ -1159,7 +1159,7 @@ namespace Harness {
                 }
                 // If not a primitive, the possible types are specified in what is effectively a map of options.
                 case "list":
-                    return ts.parseListTypeOption(<ts.CommandLineOptionOfListType>option, value, errors);
+                    return ts.parseListTypeOption(option, value, errors);
                 default:
                     return ts.parseCustomTypeOption(<ts.CommandLineOptionOfCustomType>option, value, errors);
             }
@@ -1325,6 +1325,9 @@ namespace Harness {
                 const [, content] = value;
                 outputLines += content;
             }
+            if (pretty) {
+                outputLines += ts.getErrorSummaryText(ts.getErrorCountForSummary(diagnostics), IO.newLine());
+            }
             return outputLines;
         }
 
@@ -1488,7 +1491,7 @@ namespace Harness {
                 !errors || (errors.length === 0) ? null : getErrorBaseline(inputFiles, errors, pretty));
         }
 
-        export function doTypeAndSymbolBaseline(baselinePath: string, program: ts.Program, allFiles: {unitName: string, content: string}[], opts?: Baseline.BaselineOptions, multifile?: boolean, skipTypeBaselines?: boolean, skipSymbolBaselines?: boolean) {
+        export function doTypeAndSymbolBaseline(baselinePath: string, program: ts.Program, allFiles: {unitName: string, content: string}[], opts?: Baseline.BaselineOptions, multifile?: boolean, skipTypeBaselines?: boolean, skipSymbolBaselines?: boolean, hasErrorBaseline?: boolean) {
             // The full walker simulates the types that you would get from doing a full
             // compile.  The pull walker simulates the types you get when you just do
             // a type query for a random node (like how the LS would do it).  Most of the
@@ -1504,7 +1507,7 @@ namespace Harness {
             // These types are equivalent, but depend on what order the compiler observed
             // certain parts of the program.
 
-            const fullWalker = new TypeWriterWalker(program, /*fullTypeCheck*/ true);
+            const fullWalker = new TypeWriterWalker(program, /*fullTypeCheck*/ true, !!hasErrorBaseline);
 
             // Produce baselines.  The first gives the types for all expressions.
             // The second gives symbols for all identifiers.
