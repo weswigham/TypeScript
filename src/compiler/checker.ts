@@ -19672,9 +19672,9 @@ namespace ts {
                                 if (some(typeArgumentResult, isSyntheticInferType)) {
                                     // There are implied inferences we must make, despite having type arguments
                                     const originalParams = candidate.typeParameters;
-                                    const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams![i] : r);
+                                    const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams[i] : r);
                                     const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
-                                    inferenceContext = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
+                                    inferenceContext = getPartialInferenceContext(originalParams, typeArgumentResult, uninferedInstantiation, isJavascript);
                                     typeArgumentResult = inferTypeArguments(node, uninferedInstantiation, args, excludeArgument, inferenceContext);
                                 }
                             }
