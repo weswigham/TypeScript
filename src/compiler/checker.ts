@@ -19238,21 +19238,6 @@ namespace ts {
             return typeArgumentTypes;
         }
 
-        function checkTypeArgumentsWithPartialInference(
-            candidate: Signature,
-            typeArguments: ReadonlyArray<TypeNode>,
-            isJavascript: boolean,
-            inferTypes: InferenceHandler,
-            reportErrors: boolean,
-            headMessage?: DiagnosticMessage
-        ): Type[] | undefined {
-            let typeArgumentResult = checkTypeArguments(candidate, typeArguments, reportErrors, headMessage);
-            if (typeArgumentResult) {
-                typeArgumentResult = getPartialInferenceResult(typeArgumentResult, typeArguments, candidate, isJavascript, inferTypes, reportErrors, headMessage);
-            }
-            return typeArgumentResult;
-        }
-
         function isSyntheticInferType(type: Type) {
             return type === declaredSyntheticInferType;
         }
@@ -19269,25 +19254,6 @@ namespace ts {
                 }
             }
             return context;
-        }
-        type InferenceHandler = (signature: Signature, context: InferenceContext) => Type[];
-        function getPartialInferenceResult(typeArgumentResult: Type[], typeArgumentNodes: ReadonlyArray<TypeNode>, candidate: Signature, isJavascript: boolean, inferTypes: InferenceHandler, reportErrors: boolean, headMessage?: DiagnosticMessage): Type[] | undefined {
-            if (some(typeArgumentResult, isSyntheticInferType)) {
-                // There are implied inferences we must make, despite having type arguments
-                const originalParams = candidate.typeParameters;
-                const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams![i] : r);
-                const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
-                const context = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
-                const newResults = inferTypes(uninferedInstantiation, context);
-                // Only accept a partial inference whose results abide by the type parameter constraints
-                if (checkTypeArgumentTypes(candidate, newResults, typeArgumentNodes, reportErrors, headMessage)) {
-                    return newResults;
-                }
-                else {
-                    return undefined;
-                }
-            }
-            return typeArgumentResult;
         }
 
         function getJsxReferenceKind(node: JsxOpeningLikeElement): JsxReferenceKind {
@@ -19713,7 +19679,18 @@ namespace ts {
                         let typeArgumentTypes: Type[];
                         const isJavascript = isInJSFile(candidate.declaration);
                         if (typeArguments) {
-                            const typeArgumentResult = checkTypeArgumentsWithPartialInference(candidate, typeArguments, isJavascript, performStandardInferenceHandler, /*reportErrors*/ false);
+                            let typeArgumentResult = checkTypeArguments(candidate, typeArguments, /*reportErrors*/ false);
+                            if (typeArgumentResult) {
+                                if (some(typeArgumentResult, isSyntheticInferType)) {
+                                    // There are implied inferences we must make, despite having type arguments
+                                    const originalParams = candidate.typeParameters;
+                                    const withOriginalArgs = map(typeArgumentResult, (r, i) => isSyntheticInferType(r) ? originalParams![i] : r);
+                                    const uninferedInstantiation = getSignatureInstantiation(candidate, withOriginalArgs, isJavascript);
+                                    inferenceContext = getPartialInferenceContext(originalParams!, typeArgumentResult, uninferedInstantiation, isJavascript);
+                                    typeArgumentResult = inferTypeArguments(node, uninferedInstantiation, args, excludeArgument, inferenceContext);
+                                }
+                            }
+
                             if (typeArgumentResult) {
                                 typeArgumentTypes = typeArgumentResult;
                             }
@@ -19726,7 +19703,7 @@ namespace ts {
                             inferenceContext = createInferenceContext(candidate.typeParameters, candidate, /*flags*/ isInJSFile(node) ? InferenceFlags.AnyDefault : InferenceFlags.None);
                             typeArgumentTypes = inferTypeArguments(node, candidate, args, excludeArgument, inferenceContext);
                         }
-                        checkCandidate = getSignatureInstantiation(candidate, typeArgumentTypes, isInJSFile(candidate.declaration));
+                        checkCandidate = getSignatureInstantiation(candidate, typeArgumentTypes, isJavascript);
                         // If the original signature has a generic rest type, instantiation may produce a
                         // signature with different arity and we need to perform another arity check.
                         if (getNonArrayRestType(candidate) && !hasCorrectArity(node, args, checkCandidate, signatureHelpTrailingComma)) {
@@ -19766,10 +19743,6 @@ namespace ts {
                 }
 
                 return undefined;
-            }
-
-            function performStandardInferenceHandler(signature: Signature, context: InferenceContext) {
-                return inferTypeArguments(node, signature, args, excludeArgument, context);
             }
         }
 
