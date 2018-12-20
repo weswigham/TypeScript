@@ -17261,13 +17261,65 @@ namespace ts {
         }
 
         function getContextualTypeForArgumentAtIndex(callTarget: CallLikeExpression, argIndex: number): Type {
-            // If we're already in the process of resolving the given signature, don't resolve again as
-            // that could cause infinite recursion. Instead, return anySignature.
-            const signature = getNodeLinks(callTarget).resolvedSignature === resolvingSignature ? resolvingSignature : getResolvedSignature(callTarget);
-            if (isJsxOpeningLikeElement(callTarget) && argIndex === 0) {
-                return getEffectiveFirstArgumentForJsxSignature(signature, callTarget);
+            let signatures: ReadonlyArray<Signature> | undefined;
+            switch (callTarget.kind) {
+                case SyntaxKind.JsxOpeningElement:
+                case SyntaxKind.JsxSelfClosingElement: {
+                    if (isJsxIntrinsicIdentifier(callTarget.tagName)) {
+                        const result = getIntrinsicAttributesTypeFromJsxOpeningLikeElement(callTarget);
+                        signatures = [createSignatureForJSXIntrinsic(callTarget, result)];
+                    }
+                    else {
+                        signatures = getUninstantiatedJsxSignaturesOfType(checkExpression(callTarget.tagName), callTarget);
+                    }
+                    break;
+                }
+                case SyntaxKind.Decorator:
+                case SyntaxKind.CallExpression: {
+                    signatures = getSignaturesOfType(checkExpression(callTarget.expression), SignatureKind.Call);
+                    break;
+                }
+                case SyntaxKind.NewExpression: {
+                    signatures = getSignaturesOfType(checkExpression(callTarget.expression), SignatureKind.Construct);
+                    break;
+                }
+                case SyntaxKind.TaggedTemplateExpression: {
+                    signatures = getSignaturesOfType(checkExpression(callTarget.tag), SignatureKind.Call);
+                    break;
+                }
+                default: return Debug.assertNever(callTarget);
             }
-            return getTypeAtPosition(signature, argIndex);
+            const typeArguments = isDecorator(callTarget) ? undefined : callTarget.typeArguments;
+            if (typeArguments) {
+                // Filter by valid type argument arity
+                signatures = filter(signatures, sig => hasCorrectTypeArgumentArity(sig, typeArguments));
+            }
+            const effectiveArgs = getEffectiveCallArguments(callTarget);
+            signatures = filter(signatures, sig => hasCorrectArity(callTarget, effectiveArgs, sig));
+            if (typeArguments) {
+                // Instantiate type arguments if present
+                signatures = mapDefined(signatures, sig => {
+                    const typeArgs = checkTypeArguments(sig, typeArguments, /*reportErrors*/ false);
+                    return typeArgs && getSignatureInstantiation(sig, typeArgs, isInJSFile(sig.declaration))
+                });
+            }
+            if (length(signatures) > 1) {
+                // Filter overload candidates by applicability (subtype first) just as normal resolution
+                for (const relation of [subtypeRelation, assignableRelation]) {
+                    const applicable = filter(signatures, sig => checkApplicableSignature(callTarget, effectiveArgs, sig, relation, /*excludeArgument*/ undefined, /*reportErrors*/ false));
+                    if (length(applicable)) {
+                        signatures = applicable;
+                        break;
+                    }
+                }
+            }
+            if (!length(signatures)) {
+                return unknownType;
+            }
+            if (isJsxOpeningLikeElement(callTarget) && argIndex === 0) {
+                return getUnionType(map(signatures, signature => getEffectiveFirstArgumentForJsxSignature(signature, callTarget)));
+            }
+            return getUnionType(map(signatures, signature => getTypeAtPosition(signature, argIndex)));
         }
 
         function getContextualTypeForSubstitutionExpression(template: TemplateExpression, substitutionExpression: Expression) {
