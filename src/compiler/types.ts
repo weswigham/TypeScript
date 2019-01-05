@@ -317,6 +317,7 @@ namespace ts {
         IndexedAccessType,
         MappedType,
         LiteralType,
+        NegatedType,
         ImportType,
         // Binding patterns
         ObjectBindingPattern,
@@ -673,6 +674,7 @@ namespace ts {
         | PropertyDeclaration
         | TypePredicateNode
         | ParenthesizedTypeNode
+        | NegatedTypeNode
         | TypeOperatorNode
         | MappedTypeNode
         | AssertionExpression
@@ -1240,6 +1242,11 @@ namespace ts {
     /* @internal */
     export interface UniqueTypeOperatorNode extends TypeOperatorNode {
         operator: SyntaxKind.UniqueKeyword;
+    }
+
+    export interface NegatedTypeNode extends TypeNode {
+        kind: SyntaxKind.NegatedType;
+        type: TypeNode;
     }
 
     export interface IndexedAccessTypeNode extends TypeNode {
@@ -3839,12 +3846,13 @@ namespace ts {
         Conditional             = 1 << 24,  // T extends U ? X : Y
         Substitution            = 1 << 25,  // Type parameter substitution
         NonPrimitive            = 1 << 26,  // intrinsic object type
+        Negated                 = 1 << 27,  // negated type
         /* @internal */
-        ContainsWideningType    = 1 << 27,  // Type is or contains undefined or null widening type
+        ContainsWideningType    = 1 << 28,  // Type is or contains undefined or null widening type
         /* @internal */
-        ContainsObjectLiteral   = 1 << 28,  // Type is or contains object literal type
+        ContainsObjectLiteral   = 1 << 29,  // Type is or contains object literal type
         /* @internal */
-        ContainsAnyFunctionType = 1 << 29,  // Type is or contains the anyFunctionType
+        ContainsAnyFunctionType = 1 << 30,  // Type is or contains the anyFunctionType
 
         /* @internal */
         AnyOrUnknown = Any | Unknown,
@@ -3875,7 +3883,7 @@ namespace ts {
         StructuredType = Object | Union | Intersection,
         TypeVariable = TypeParameter | IndexedAccess,
         InstantiableNonPrimitive = TypeVariable | Conditional | Substitution,
-        InstantiablePrimitive = Index,
+        InstantiablePrimitive = Index | Negated,
         Instantiable = InstantiableNonPrimitive | InstantiablePrimitive,
         StructuredOrInstantiable = StructuredType | Instantiable,
 
@@ -3964,6 +3972,11 @@ namespace ts {
 
     // Enum types (TypeFlags.Enum)
     export interface EnumType extends Type {
+    }
+
+    // Negated types (TypeFlags.Negated)
+    export interface NegatedType extends Type {
+        type: Type;
     }
 
     export const enum ObjectFlags {

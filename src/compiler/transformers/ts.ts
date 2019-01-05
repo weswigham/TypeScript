@@ -409,6 +409,7 @@ namespace ts {
                 case SyntaxKind.IntersectionType:
                 case SyntaxKind.ConditionalType:
                 case SyntaxKind.ParenthesizedType:
+                case SyntaxKind.NegatedType:
                 case SyntaxKind.ThisType:
                 case SyntaxKind.TypeOperator:
                 case SyntaxKind.IndexedAccessType:
@@ -1891,6 +1892,7 @@ namespace ts {
                     return createIdentifier("String");
 
                 case SyntaxKind.ObjectKeyword:
+                case SyntaxKind.NegatedType: // Can't serialize negated types
                     return createIdentifier("Object");
 
                 case SyntaxKind.LiteralType:

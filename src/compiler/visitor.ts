@@ -410,6 +410,10 @@ namespace ts {
                     (<ImportTypeNode>node).isTypeOf
                 );
 
+            case SyntaxKind.NegatedType:
+                return updateNegatedTypeNode(<NegatedTypeNode>node,
+                    visitNode((<NegatedTypeNode>node).type, visitor, isTypeNode));
+
             case SyntaxKind.ParenthesizedType:
                 return updateParenthesizedType(<ParenthesizedTypeNode>node,
                     visitNode((<ParenthesizedTypeNode>node).type, visitor, isTypeNode));

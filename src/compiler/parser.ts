@@ -193,7 +193,8 @@ namespace ts {
                     visitNodes(cbNode, cbNodes, (<ImportTypeNode>node).typeArguments);
             case SyntaxKind.ParenthesizedType:
             case SyntaxKind.TypeOperator:
-                return visitNode(cbNode, (<ParenthesizedTypeNode | TypeOperatorNode>node).type);
+            case SyntaxKind.NegatedType:
+                return visitNode(cbNode, (<ParenthesizedTypeNode | TypeOperatorNode | NegatedTypeNode>node).type);
             case SyntaxKind.IndexedAccessType:
                 return visitNode(cbNode, (<IndexedAccessTypeNode>node).objectType) ||
                     visitNode(cbNode, (<IndexedAccessTypeNode>node).indexType);
@@ -2949,9 +2950,18 @@ namespace ts {
                     return parseParenthesizedType();
                 case SyntaxKind.ImportKeyword:
                     return parseImportType();
+                case SyntaxKind.TildeToken:
+                    return parseNegatedType();
                 default:
                     return parseTypeReference();
             }
+        }
+
+        function parseNegatedType(): TypeNode {
+            const node = <NegatedTypeNode>createNode(SyntaxKind.NegatedType);
+            parseExpected(SyntaxKind.TildeToken);
+            node.type = parseTypeOperatorOrHigher();
+            return finishNode(node);
         }
 
         function isStartOfType(inStartOfParameter?: boolean): boolean {
@@ -2988,6 +2998,7 @@ namespace ts {
                 case SyntaxKind.DotDotDotToken:
                 case SyntaxKind.InferKeyword:
                 case SyntaxKind.ImportKeyword:
+                case SyntaxKind.TildeToken:
                     return true;
                 case SyntaxKind.FunctionKeyword:
                     return !inStartOfParameter;

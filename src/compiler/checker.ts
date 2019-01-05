@@ -375,6 +375,7 @@ namespace ts {
 
         const tupleTypes = createMap<GenericType>();
         const unionTypes = createMap<UnionType>();
+        const negatedTypes = createMap<NegatedType>();
         const intersectionTypes = createMap<IntersectionType>();
         const literalTypes = createMap<LiteralType>();
         const indexedAccessTypes = createMap<IndexedAccessType>();
@@ -3369,6 +3370,10 @@ namespace ts {
                     }
                     context.approximateLength += 4;
                     return createThis();
+                }
+                if (type.flags & TypeFlags.Negated) {
+                    context.approximateLength += 1;
+                    return createNegatedTypeNode(typeToTypeNodeHelper((type as NegatedType).type, context));
                 }
 
                 const objectFlags = getObjectFlags(type);
@@ -10095,6 +10100,35 @@ namespace ts {
             return links.resolvedType;
         }
 
+        function getNegatedType(type: Type): Type {
+            if (type.flags & TypeFlags.Negated) {
+                return (type as NegatedType).type;
+            }
+            if (type.flags & TypeFlags.Union) {
+                return getIntersectionType(map((type as UnionType).types, getNegatedType));
+            }
+            if (type.flags & TypeFlags.Intersection) {
+                return getUnionType(map((type as IntersectionType).types, getNegatedType));
+            }
+            const inputId = getTypeId(type);
+            const existing = negatedTypes.get("" + inputId);
+            if (existing) {
+                return existing;
+            }
+            const newNegated = createType(TypeFlags.Negated) as NegatedType;
+            newNegated.type = type;
+            negatedTypes.set("" + inputId, newNegated);
+            return newNegated;
+        }
+
+        function getTypeFromNegatedTypeNode(node: NegatedTypeNode): Type {
+            const links = getNodeLinks(node);
+            if (!links.resolvedType) {
+                links.resolvedType = getNegatedType(getTypeFromTypeNode(node.type));
+            }
+            return links.resolvedType;
+        }
+
         function getIdentifierChain(node: EntityName): Identifier[] {
             if (isIdentifier(node)) {
                 return [node];
@@ -10508,6 +10542,8 @@ namespace ts {
                     return getTypeFromConditionalTypeNode(<ConditionalTypeNode>node);
                 case SyntaxKind.InferType:
                     return getTypeFromInferTypeNode(<InferTypeNode>node);
+                case SyntaxKind.NegatedType:
+                    return getTypeFromNegatedTypeNode(<NegatedTypeNode>node);
                 case SyntaxKind.ImportType:
                     return getTypeFromImportTypeNode(<ImportTypeNode>node);
                 // This function assumes that an identifier or qualified name is a type expression
@@ -12383,6 +12419,9 @@ namespace ts {
                     if (flags & TypeFlags.Substitution) {
                         return isRelatedTo((<SubstitutionType>source).substitute, (<SubstitutionType>target).substitute, /*reportErrors*/ false);
                     }
+                    if (flags & TypeFlags.Negated) {
+                        return isRelatedTo((source as NegatedType).type, (target as NegatedType).type);
+                    }
                     return Ternary.False;
                 }
 
@@ -12473,6 +12512,22 @@ namespace ts {
                         errorInfo = saveErrorInfo;
                     }
                 }
+                else if (target.flags & TypeFlags.Negated) {
+                    if (source.flags & TypeFlags.Negated) {
+                        // ~S is a subset of ~T iff T is a subset of S
+                        return isRelatedTo((target as NegatedType).type, (source as NegatedType).type);
+                    }
+                    // Relationship check is S ⊂ T
+                    // A type S is a subset of ~T if S has no overlap with T (there exist no values within S which are in T) by definition
+                    //  however, checking this directly is pretty hard. So instead we rephrase it -
+                    // S ⊂ ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
+                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified), and !(S ⊂ T)
+                    if (!(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
+                        return Ternary.False;
+                    }
+                    const innerRelated = isRelatedTo(source, (target as NegatedType).type);
+                    return innerRelated === Ternary.Maybe ? innerRelated : innerRelated === Ternary.False ? Ternary.True : Ternary.False;
+                }
 
                 if (source.flags & TypeFlags.TypeVariable) {
                     if (source.flags & TypeFlags.IndexedAccess && target.flags & TypeFlags.IndexedAccess) {
@@ -12544,6 +12599,14 @@ namespace ts {
                             }
                         }
                     }
+                }
+                else if (source.flags & TypeFlags.Negated) {
+                    // ~S ⊂ T is true if S and T share no overlap - that overlap is their _intersection_.
+                    if (!(getUnionType([getIntersectionType([(source as NegatedType).type, target]), neverType]).flags & TypeFlags.Never)) {
+                        return Ternary.False;
+                    }
+                    // And if (S ⊂ T)
+                    return isRelatedTo((source as NegatedType).type, target);
                 }
                 else {
                     // An empty object type is related to any mapped type that includes a '?' modifier.

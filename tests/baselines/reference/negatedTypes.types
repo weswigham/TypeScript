@@ -1,0 +1,432 @@
+=== tests/cases/conformance/types/negated/negatedTypes.ts ===
+enum Literal {
+>Literal : Literal
+
+    ok = "ok"
+>ok : Literal.ok
+>"ok" : "ok"
+}
+
+enum NumLiteral {
+>NumLiteral : NumLiteral
+
+    Val
+>Val : NumLiteral.Val
+}
+
+function f1(
+>f1 : (notString: ~string, str: string, strlit: "ok", strenum: Literal, num: number, numlit: 0, numenum: NumLiteral, unknownVal: unknown, neverVal: never) => void
+
+    notString: ~string,
+>notString : ~string
+
+    str: string,
+>str : string
+
+    strlit: "ok",
+>strlit : "ok"
+
+    strenum: Literal,
+>strenum : Literal
+
+    num: number,
+>num : number
+
+    numlit: 0,
+>numlit : 0
+
+    numenum: NumLiteral,
+>numenum : NumLiteral
+
+    unknownVal: unknown,
+>unknownVal : unknown
+
+    neverVal: never
+>neverVal : never
+
+) {
+    notString = str;        // not ok
+>notString = str : string
+>notString : ~string
+>str : string
+
+    notString = strlit;     // not ok
+>notString = strlit : "ok"
+>notString : ~string
+>strlit : "ok"
+
+    notString = strenum;    // not ok
+>notString = strenum : Literal
+>notString : ~string
+>strenum : Literal
+
+    notString = num;        // ok
+>notString = num : number
+>notString : ~string
+>num : number
+
+    notString = numlit;     // ok
+>notString = numlit : 0
+>notString : ~string
+>numlit : 0
+
+    notString = numenum;    // ok
+>notString = numenum : NumLiteral
+>notString : ~string
+>numenum : NumLiteral
+
+    notString = unknownVal; // not ok (unknown is all values, includes string)
+>notString = unknownVal : unknown
+>notString : ~string
+>unknownVal : unknown
+
+    notString = neverVal;   // ok (never is empty set of types, doesn't include string)
+>notString = neverVal : never
+>notString : ~string
+>neverVal : never
+
+    str = notString;        // not ok
+>str = notString : ~string
+>str : string
+>notString : ~string
+
+    strlit = notString;     // not ok
+>strlit = notString : ~string
+>strlit : "ok"
+>notString : ~string
+
+    strenum = notString;    // not ok
+>strenum = notString : ~string
+>strenum : Literal
+>notString : ~string
+
+    num = notString;        // not ok
+>num = notString : ~string
+>num : number
+>notString : ~string
+
+    numlit = notString;     // not ok
+>numlit = notString : ~string
+>numlit : 0
+>notString : ~string
+
+    numenum = notString;    // not ok
+>numenum = notString : ~string
+>numenum : NumLiteral
+>notString : ~string
+
+    unknownVal = notString; // ok
+>unknownVal = notString : ~string
+>unknownVal : unknown
+>notString : ~string
+
+    neverVal = notString;   // not ok
+>neverVal = notString : ~string
+>neverVal : never
+>notString : ~string
+}
+
+function f2(
+>f2 : (x: { x: any; }, y: { y: any; }, xy: { x: any; y: any; }, nx: ~{ x: any; }, ny: ~{ y: any; }, nxy: ~{ x: any; y: any; }, neither: ~{ x: any; } & ~{ y: any; }, notBoth: ~{ x: any; } | ~{ y: any; }) => void
+
+    x: { x },
+>x : { x: any; }
+>x : any
+
+    y: { y },
+>y : { y: any; }
+>y : any
+
+    xy: {x, y},
+>xy : { x: any; y: any; }
+>x : any
+>y : any
+
+    nx: ~typeof x,
+>nx : ~{ x: any; }
+>x : { x: any; }
+
+    ny: ~typeof y,
+>ny : ~{ y: any; }
+>y : { y: any; }
+
+    nxy: ~typeof xy,
+>nxy : ~{ x: any; y: any; }
+>xy : { x: any; y: any; }
+
+    neither: ~(typeof x | typeof y),
+>neither : ~{ x: any; } & ~{ y: any; }
+>x : { x: any; }
+>y : { y: any; }
+
+    notBoth: ~(typeof x & typeof y)
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>x : { x: any; }
+>y : { y: any; }
+
+) {
+    x = y;          // not ok
+>x = y : { y: any; }
+>x : { x: any; }
+>y : { y: any; }
+
+    x = xy;         // ok
+>x = xy : { x: any; y: any; }
+>x : { x: any; }
+>xy : { x: any; y: any; }
+
+    x = nx;         // not ok
+>x = nx : ~{ x: any; }
+>x : { x: any; }
+>nx : ~{ x: any; }
+
+    x = ny;         // not ok
+>x = ny : ~{ y: any; }
+>x : { x: any; }
+>ny : ~{ y: any; }
+
+    x = nxy;        // not ok
+>x = nxy : ~{ x: any; y: any; }
+>x : { x: any; }
+>nxy : ~{ x: any; y: any; }
+
+    x = neither;    // not ok
+>x = neither : ~{ x: any; } & ~{ y: any; }
+>x : { x: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    x = notBoth;    // not ok
+>x = notBoth : ~{ x: any; } | ~{ y: any; }
+>x : { x: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    y = x;          // not ok
+>y = x : { x: any; }
+>y : { y: any; }
+>x : { x: any; }
+
+    y = xy;         // ok
+>y = xy : { x: any; y: any; }
+>y : { y: any; }
+>xy : { x: any; y: any; }
+
+    y = nx;         // not ok
+>y = nx : ~{ x: any; }
+>y : { y: any; }
+>nx : ~{ x: any; }
+
+    y = ny;         // not ok
+>y = ny : ~{ y: any; }
+>y : { y: any; }
+>ny : ~{ y: any; }
+
+    y = nxy;        // not ok
+>y = nxy : ~{ x: any; y: any; }
+>y : { y: any; }
+>nxy : ~{ x: any; y: any; }
+
+    y = neither;    // not ok
+>y = neither : ~{ x: any; } & ~{ y: any; }
+>y : { y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    y = notBoth;    // not ok
+>y = notBoth : ~{ x: any; } | ~{ y: any; }
+>y : { y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    xy = x;         // not ok
+>xy = x : { x: any; }
+>xy : { x: any; y: any; }
+>x : { x: any; }
+
+    xy = y;         // not ok
+>xy = y : { y: any; }
+>xy : { x: any; y: any; }
+>y : { y: any; }
+
+    xy = nx;        // not ok
+>xy = nx : ~{ x: any; }
+>xy : { x: any; y: any; }
+>nx : ~{ x: any; }
+
+    xy = ny;        // not ok
+>xy = ny : ~{ y: any; }
+>xy : { x: any; y: any; }
+>ny : ~{ y: any; }
+
+    xy = nxy;       // not ok
+>xy = nxy : ~{ x: any; y: any; }
+>xy : { x: any; y: any; }
+>nxy : ~{ x: any; y: any; }
+
+    xy = neither;   // not ok
+>xy = neither : ~{ x: any; } & ~{ y: any; }
+>xy : { x: any; y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    xy = notBoth;   // not ok
+>xy = notBoth : ~{ x: any; } | ~{ y: any; }
+>xy : { x: any; y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    nx = x;         // not ok
+>nx = x : { x: any; }
+>nx : ~{ x: any; }
+>x : { x: any; }
+
+    nx = y;         // not ok
+>nx = y : { y: any; }
+>nx : ~{ x: any; }
+>y : { y: any; }
+
+    nx = ny;        // not ok
+>nx = ny : ~{ y: any; }
+>nx : ~{ x: any; }
+>ny : ~{ y: any; }
+
+    nx = nxy;       // not ok
+>nx = nxy : ~{ x: any; y: any; }
+>nx : ~{ x: any; }
+>nxy : ~{ x: any; y: any; }
+
+    nx = neither;   // ok
+>nx = neither : ~{ x: any; } & ~{ y: any; }
+>nx : ~{ x: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    nx = notBoth;   // not ok
+>nx = notBoth : ~{ x: any; } | ~{ y: any; }
+>nx : ~{ x: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    ny = x;         // not ok
+>ny = x : { x: any; }
+>ny : ~{ y: any; }
+>x : { x: any; }
+
+    ny = y;         // not ok
+>ny = y : { y: any; }
+>ny : ~{ y: any; }
+>y : { y: any; }
+
+    ny = nx;        // not ok
+>ny = nx : ~{ x: any; }
+>ny : ~{ y: any; }
+>nx : ~{ x: any; }
+
+    ny = nxy;       // not ok
+>ny = nxy : ~{ x: any; y: any; }
+>ny : ~{ y: any; }
+>nxy : ~{ x: any; y: any; }
+
+    ny = neither;   // ok
+>ny = neither : ~{ x: any; } & ~{ y: any; }
+>ny : ~{ y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    ny = notBoth;   // not ok
+>ny = notBoth : ~{ x: any; } | ~{ y: any; }
+>ny : ~{ y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    nxy = x;        // not ok
+>nxy = x : { x: any; }
+>nxy : ~{ x: any; y: any; }
+>x : { x: any; }
+
+    nxy = y;        // not ok
+>nxy = y : { y: any; }
+>nxy : ~{ x: any; y: any; }
+>y : { y: any; }
+
+    nxy = xy;       // not ok
+>nxy = xy : { x: any; y: any; }
+>nxy : ~{ x: any; y: any; }
+>xy : { x: any; y: any; }
+
+    nxy = nx;       // ok
+>nxy = nx : ~{ x: any; }
+>nxy : ~{ x: any; y: any; }
+>nx : ~{ x: any; }
+
+    nxy = ny;       // ok
+>nxy = ny : ~{ y: any; }
+>nxy : ~{ x: any; y: any; }
+>ny : ~{ y: any; }
+
+    nxy = neither;  // ok
+>nxy = neither : ~{ x: any; } & ~{ y: any; }
+>nxy : ~{ x: any; y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+
+    nxy = notBoth;  // ok
+>nxy = notBoth : ~{ x: any; } | ~{ y: any; }
+>nxy : ~{ x: any; y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    neither = x;    // not ok
+>neither = x : { x: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>x : { x: any; }
+
+    neither = y;    // not ok
+>neither = y : { y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>y : { y: any; }
+
+    neither = xy;   // not ok
+>neither = xy : { x: any; y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>xy : { x: any; y: any; }
+
+    neither = nx;   // not ok
+>neither = nx : ~{ x: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>nx : ~{ x: any; }
+
+    neither = ny;   // not ok
+>neither = ny : ~{ y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>ny : ~{ y: any; }
+
+    neither = nxy;  // not ok
+>neither = nxy : ~{ x: any; y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>nxy : ~{ x: any; y: any; }
+
+    neither = notBoth; // not ok
+>neither = notBoth : ~{ x: any; } | ~{ y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+
+    notBoth = x;    // not ok
+>notBoth = x : { x: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>x : { x: any; }
+
+    notBoth = y;    // not ok
+>notBoth = y : { y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>y : { y: any; }
+
+    notBoth = xy;   // not ok
+>notBoth = xy : { x: any; y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>xy : { x: any; y: any; }
+
+    notBoth = nx;   // ok
+>notBoth = nx : ~{ x: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>nx : ~{ x: any; }
+
+    notBoth = ny;   // ok
+>notBoth = ny : ~{ y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>ny : ~{ y: any; }
+
+    notBoth = neither; // ok
+>notBoth = neither : ~{ x: any; } & ~{ y: any; }
+>notBoth : ~{ x: any; } | ~{ y: any; }
+>neither : ~{ x: any; } & ~{ y: any; }
+}

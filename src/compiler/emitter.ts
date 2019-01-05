@@ -806,6 +806,8 @@ namespace ts {
                         return emitMappedType(<MappedTypeNode>node);
                     case SyntaxKind.LiteralType:
                         return emitLiteralType(<LiteralTypeNode>node);
+                    case SyntaxKind.NegatedType:
+                        return emitNegatedType(<NegatedTypeNode>node);
                     case SyntaxKind.ImportType:
                         return emitImportTypeNode(<ImportTypeNode>node);
                     case SyntaxKind.JSDocAllType:
@@ -1576,6 +1578,11 @@ namespace ts {
 
         function emitLiteralType(node: LiteralTypeNode) {
             emitExpression(node.literal);
+        }
+
+        function emitNegatedType(node: NegatedTypeNode) {
+            writePunctuation("~");
+            emit(node.type);
         }
 
         function emitImportTypeNode(node: ImportTypeNode) {

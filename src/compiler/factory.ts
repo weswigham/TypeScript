@@ -871,6 +871,18 @@ namespace ts {
             : node;
     }
 
+    export function createNegatedTypeNode(type: TypeNode) {
+        const node = <NegatedTypeNode>createSynthesizedNode(SyntaxKind.NegatedType);
+        node.type = parenthesizeNegatedType(type);
+        return node;
+    }
+
+    export function updateNegatedTypeNode(node: NegatedTypeNode, type: TypeNode) {
+        return node.type !== type
+            ? updateNode(createNegatedTypeNode(type), node)
+            : node;
+    }
+
     export function createThisTypeNode() {
         return <ThisTypeNode>createSynthesizedNode(SyntaxKind.ThisType);
     }
@@ -4324,6 +4336,18 @@ namespace ts {
         }
 
         return expression;
+    }
+
+    export function parenthesizeNegatedType(member: TypeNode) {
+        switch (member.kind) {
+            case SyntaxKind.UnionType:
+            case SyntaxKind.IntersectionType:
+            case SyntaxKind.ConditionalType:
+            case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionType:
+                return createParenthesizedType(member);
+        }
+        return member;
     }
 
     export function parenthesizeConditionalTypeMember(member: TypeNode) {
