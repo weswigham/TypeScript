@@ -9504,6 +9504,41 @@ namespace ts {
             return true;
         }
 
+        function checkForUnsatisfiedNegatedType(typeSet: Type[]) {
+            const nonNegatedSet = filter(typeSet, t => !(t.flags & TypeFlags.Negated));
+            if (!length(nonNegatedSet)) {
+                return false;
+            }
+            const negatedBounds = getUnionType(map(filter(typeSet, t => !!(t.flags & TypeFlags.Negated)), t => (t as NegatedType).type));
+            for (const nonNegatedType of nonNegatedSet) {
+                if (isTypeSubtypeOf(nonNegatedType, negatedBounds)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        function removeNegatedSubtypes(types: Type[]) {
+            if (types.length === 0) {
+                return;
+            }
+            let i = types.length;
+            const nonNegatedBounds = filter(types, t => !(t.flags & TypeFlags.Negated));
+            if (!length(nonNegatedBounds)) {
+                return;
+            }
+            const nonNegativePart = getIntersectionType(nonNegatedBounds);
+            while (i > 0) {
+                i--;
+                if (types[i].flags & TypeFlags.Negated) {
+                    if (isTypeSubtypeOf(nonNegativePart, types[i])) {
+                        orderedRemoveItemAt(types, i);
+                    }
+                }
+            }
+        }
+
         // We normalize combinations of intersection and union types based on the distributive property of the '&'
         // operator. Specifically, because X & (A | B) is equivalent to X & A | X & B, we can transform intersection
         // types with union type constituents into equivalent union types with intersection type constituents and
@@ -9554,6 +9589,12 @@ namespace ts {
                 const unionType = <UnionType>typeSet[unionIndex];
                 return getUnionType(map(unionType.types, t => getIntersectionType(replaceElement(typeSet, unionIndex, t))),
                     UnionReduction.Literal, aliasSymbol, aliasTypeArguments);
+            }
+            if (includes & TypeFlags.Negated) {
+                if (checkForUnsatisfiedNegatedType(typeSet)) {
+                    return neverType;
+                }
+                removeNegatedSubtypes(typeSet);
             }
             const id = getTypeListId(typeSet);
             let type = intersectionTypes.get(id);
