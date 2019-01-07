@@ -7396,15 +7396,20 @@ namespace ts {
             return baseConstraint && baseConstraint !== type ? baseConstraint : undefined;
         }
 
+        function getSubstituteConstraint(possibleSubstitute: Type) {
+            return !(possibleSubstitute.flags & TypeFlags.Substitution)
+                ? possibleSubstitute
+                : ((<SubstitutionType>possibleSubstitute).substitute).flags & TypeFlags.AnyOrUnknown
+                    ? (<SubstitutionType>possibleSubstitute).typeVariable
+                    : getIntersectionType([(<SubstitutionType>possibleSubstitute).substitute, (<SubstitutionType>possibleSubstitute).typeVariable]);
+        }
+
         function getDefaultConstraintOfConditionalType(type: ConditionalType) {
             if (!type.resolvedDefaultConstraint) {
-                const rootTrueType = type.root.trueType;
-                const rootTrueConstraint = !(rootTrueType.flags & TypeFlags.Substitution)
-                    ? rootTrueType
-                    : ((<SubstitutionType>rootTrueType).substitute).flags & TypeFlags.AnyOrUnknown
-                        ? (<SubstitutionType>rootTrueType).typeVariable
-                        : getIntersectionType([(<SubstitutionType>rootTrueType).substitute, (<SubstitutionType>rootTrueType).typeVariable]);
-                type.resolvedDefaultConstraint = getUnionType([instantiateType(rootTrueConstraint, type.combinedMapper || type.mapper), getFalseTypeFromConditionalType(type)]);
+                type.resolvedDefaultConstraint = getUnionType([
+                    instantiateType(getSubstituteConstraint(type.root.trueType), type.combinedMapper || type.mapper),
+                    instantiateType(getSubstituteConstraint(type.root.falseType), type.mapper)
+                ]);
             }
             return type.resolvedDefaultConstraint;
         }
@@ -7445,11 +7450,6 @@ namespace ts {
                         constraint = getConstraintOfType(constraint);
                     }
                     if (constraint) {
-                        // A constraint that isn't a union type implies that the final type would be a non-union
-                        // type as well. Since non-union constraints are of no interest, we can exit here.
-                        if (!(constraint.flags & TypeFlags.Union)) {
-                            return undefined;
-                        }
                         constraints = append(constraints, constraint);
                     }
                 }
@@ -7469,7 +7469,12 @@ namespace ts {
                         }
                     }
                 }
-                return getIntersectionType(constraints);
+                const result = getIntersectionType(constraints);
+                // Since non-union constraints are of no interest, we can exit here.
+                if (!(result.flags & TypeFlags.Union)) {
+                    return undefined;
+                }
+                return result;
             }
             return undefined;
         }
@@ -8753,10 +8758,10 @@ namespace ts {
             let constraints: Type[] | undefined;
             while (node && !isStatement(node) && node.kind !== SyntaxKind.JSDocComment) {
                 const parent = node.parent;
-                if (parent.kind === SyntaxKind.ConditionalType && node === (<ConditionalTypeNode>parent).trueType) {
+                if (parent.kind === SyntaxKind.ConditionalType && (node === (<ConditionalTypeNode>parent).trueType || node === (<ConditionalTypeNode>parent).falseType)) {
                     const constraint = getImpliedConstraint(typeVariable, (<ConditionalTypeNode>parent).checkType, (<ConditionalTypeNode>parent).extendsType);
                     if (constraint) {
-                        constraints = append(constraints, constraint);
+                        constraints = append(constraints, node === (<ConditionalTypeNode>parent).trueType ? constraint : getNegatedType(constraint));
                     }
                 }
                 node = parent;
@@ -9518,7 +9523,6 @@ namespace ts {
             return false;
         }
 
-
         function removeNegatedSubtypes(types: Type[]) {
             if (types.length === 0) {
                 return;
@@ -9537,6 +9541,25 @@ namespace ts {
                     }
                 }
             }
+        }
+
+        function checkForUnsatisfiedTypeVariableConstraint(typeSet: Type[]) {
+            const nonVariablePart = filter(typeSet, t => !(t.flags & TypeFlags.TypeVariable));
+            if (!length(nonVariablePart)) {
+                return false;
+            }
+            const variables = filter(typeSet, t => !!(t.flags & TypeFlags.TypeVariable));
+            for (const toCheck of nonVariablePart) {
+                for (const variable of variables) {
+                    const constraint = getConstraintOfType(variable);
+                    if (constraint && (constraint.flags & TypeFlags.Primitive || constraint.flags && TypeFlags.Union && (constraint as UnionType).primitiveTypesOnly)) {
+                        if (!isTypeSubtypeOf(toCheck, constraint) && !isTypeSubtypeOf(constraint, toCheck)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         // We normalize combinations of intersection and union types based on the distributive property of the '&'
@@ -9570,12 +9593,6 @@ namespace ts {
             if (includes & TypeFlags.EmptyObject && includes & TypeFlags.Object) {
                 orderedRemoveItemAt(typeSet, findIndex(typeSet, isEmptyAnonymousObjectType));
             }
-            if (typeSet.length === 0) {
-                return unknownType;
-            }
-            if (typeSet.length === 1) {
-                return typeSet[0];
-            }
             if (includes & TypeFlags.Union) {
                 if (intersectUnionsOfPrimitiveTypes(typeSet)) {
                     // When the intersection creates a reduced set (which might mean that *all* union types have
@@ -9590,11 +9607,22 @@ namespace ts {
                 return getUnionType(map(unionType.types, t => getIntersectionType(replaceElement(typeSet, unionIndex, t))),
                     UnionReduction.Literal, aliasSymbol, aliasTypeArguments);
             }
+            if (includes & TypeFlags.TypeVariable) {
+                if (checkForUnsatisfiedTypeVariableConstraint(typeSet)) {
+                    return neverType;
+                }
+            }
             if (includes & TypeFlags.Negated) {
                 if (checkForUnsatisfiedNegatedType(typeSet)) {
                     return neverType;
                 }
                 removeNegatedSubtypes(typeSet);
+            }
+            if (typeSet.length === 0) {
+                return unknownType;
+            }
+            if (typeSet.length === 1) {
+                return typeSet[0];
             }
             const id = getTypeListId(typeSet);
             let type = intersectionTypes.get(id);
@@ -10150,6 +10178,15 @@ namespace ts {
             }
             if (type.flags & TypeFlags.Intersection) {
                 return getUnionType(map((type as IntersectionType).types, getNegatedType));
+            }
+            if (type.flags & TypeFlags.Any) {
+                return type;
+            }
+            if (type.flags & TypeFlags.Unknown) {
+                return neverType;
+            }
+            if (type.flags & TypeFlags.Never) {
+                return unknownType;
             }
             const inputId = getTypeId(type);
             const existing = negatedTypes.get("" + inputId);
