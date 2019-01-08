@@ -1,0 +1,41 @@
+tests/cases/conformance/types/negated/negatedTypesControlFlow.ts(15,17): error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'number'.
+  Type 'string' is not assignable to type 'number'.
+tests/cases/conformance/types/negated/negatedTypesControlFlow.ts(18,17): error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'string'.
+  Type 'number' is not assignable to type 'string'.
+tests/cases/conformance/types/negated/negatedTypesControlFlow.ts(21,17): error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'object'.
+  Type 'string' is not assignable to type 'object'.
+
+
+==== tests/cases/conformance/types/negated/negatedTypesControlFlow.ts (3 errors) ====
+    // broken by https://github.com/Microsoft/TypeScript/pull/29110 (`string & ~("a" | "b")` is non-literal)
+    // :(
+    
+    interface A { type: "a", data: number }
+    interface B { type: "b", data: string }
+    interface Unknown { type: string & ~("a"|"b"), data: object }
+    type ABU = A | B | Unknown;
+    declare function needsNumber(x: number): void;
+    declare function needsString(x: string): void;
+    declare function needsObject(x: object): void;
+    declare var x: ABU;
+    
+    if (x.type === "a") {
+        let y = x.data;
+        needsNumber(y);
+                    ~
+!!! error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'number'.
+!!! error TS2345:   Type 'string' is not assignable to type 'number'.
+    }
+    else if (x.type === "b") {
+        needsString(x.data);
+                    ~~~~~~
+!!! error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'string'.
+!!! error TS2345:   Type 'number' is not assignable to type 'string'.
+    }
+    else {
+        needsObject(x.data);
+                    ~~~~~~
+!!! error TS2345: Argument of type 'string | number | object' is not assignable to parameter of type 'object'.
+!!! error TS2345:   Type 'string' is not assignable to type 'object'.
+    }
+    

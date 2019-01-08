@@ -11077,6 +11077,9 @@ namespace ts {
             if (flags & TypeFlags.Conditional) {
                 return getConditionalTypeInstantiation(<ConditionalType>type, combineTypeMappers((<ConditionalType>type).mapper, mapper));
             }
+            if (flags & TypeFlags.Negated) {
+                return getNegatedType(instantiateType((type as NegatedType).type, mapper));
+            }
             if (flags & TypeFlags.Substitution) {
                 return instantiateType((<SubstitutionType>type).typeVariable, mapper);
             }
@@ -11827,6 +11830,7 @@ namespace ts {
             let expandingFlags = ExpandingFlags.None;
             let overflow = false;
             let suppressNextError = false;
+            let excessChecked = false;
 
             Debug.assert(relation !== identityRelation || !errorNode, "no error reporting in identity checking");
 
@@ -11989,8 +11993,7 @@ namespace ts {
                 if (relation === comparableRelation && !(target.flags & TypeFlags.Never) && isSimpleTypeRelatedTo(target, source, relation) ||
                     isSimpleTypeRelatedTo(source, target, relation, reportErrors ? reportError : undefined)) return Ternary.True;
 
-                const isComparingJsxAttributes = !!(getObjectFlags(source) & ObjectFlags.JsxAttributes);
-                if (isObjectLiteralType(source) && getObjectFlags(source) & ObjectFlags.FreshLiteral) {
+                if (isObjectLiteralType(source) && getObjectFlags(source) & ObjectFlags.FreshLiteral && !excessChecked) {
                     const discriminantType = target.flags & TypeFlags.Union ? findMatchingDiscriminantType(source, target as UnionType) : undefined;
                     if (hasExcessProperties(<FreshObjectLiteralType>source, target, discriminantType, reportErrors)) {
                         if (reportErrors) {
@@ -12003,7 +12006,7 @@ namespace ts {
                     // make the check again (as it might fail for a partial target type). Therefore we obtain
                     // the regular source type and proceed with that.
                     if (isUnionOrIntersectionTypeWithoutNullableConstituents(target) && !discriminantType) {
-                        source = getRegularTypeOfObjectLiteral(source);
+                        excessChecked = true;
                     }
                 }
 
@@ -12011,7 +12014,7 @@ namespace ts {
                     source.flags & (TypeFlags.Primitive | TypeFlags.Object | TypeFlags.Intersection) && source !== globalObjectType &&
                     target.flags & (TypeFlags.Object | TypeFlags.Intersection) && isWeakType(target) &&
                     (getPropertiesOfType(source).length > 0 || typeHasCallOrConstructSignatures(source)) &&
-                    !hasCommonProperties(source, target, isComparingJsxAttributes)) {
+                    !hasCommonProperties(source, target, !!(getObjectFlags(source) & ObjectFlags.JsxAttributes))) {
                     if (reportErrors) {
                         const calls = getSignaturesOfType(source, SignatureKind.Call);
                         const constructs = getSignaturesOfType(source, SignatureKind.Construct);
@@ -12095,7 +12098,7 @@ namespace ts {
                     else if (source.symbol && source.flags & TypeFlags.Object && globalObjectType === source) {
                         reportError(Diagnostics.The_Object_type_is_assignable_to_very_few_other_types_Did_you_mean_to_use_the_any_type_instead);
                     }
-                    else if (isComparingJsxAttributes && target.flags & TypeFlags.Intersection) {
+                    else if (!!(getObjectFlags(source) & ObjectFlags.JsxAttributes) && target.flags & TypeFlags.Intersection) {
                         const targetTypes = (target as IntersectionType).types;
                         const intrinsicAttributes = getJsxType(JsxNames.IntrinsicAttributes, errorNode);
                         const intrinsicClassAttributes = getJsxType(JsxNames.IntrinsicClassAttributes, errorNode);
@@ -12590,22 +12593,6 @@ namespace ts {
                         errorInfo = saveErrorInfo;
                     }
                 }
-                else if (target.flags & TypeFlags.Negated) {
-                    if (source.flags & TypeFlags.Negated) {
-                        // ~S is a subset of ~T iff T is a subset of S
-                        return isRelatedTo((target as NegatedType).type, (source as NegatedType).type);
-                    }
-                    // Relationship check is S ⊂ T
-                    // A type S is a subset of ~T if S has no overlap with T (there exist no values within S which are in T) by definition
-                    //  however, checking this directly is pretty hard. So instead we rephrase it -
-                    // S ⊂ ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
-                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified), and !(S ⊂ T)
-                    if (!(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
-                        return Ternary.False;
-                    }
-                    const innerRelated = isRelatedTo(source, (target as NegatedType).type);
-                    return innerRelated === Ternary.Maybe ? innerRelated : innerRelated === Ternary.False ? Ternary.True : Ternary.False;
-                }
 
                 if (source.flags & TypeFlags.TypeVariable) {
                     if (source.flags & TypeFlags.IndexedAccess && target.flags & TypeFlags.IndexedAccess) {
@@ -12677,6 +12664,23 @@ namespace ts {
                             }
                         }
                     }
+                }
+                else if (target.flags & TypeFlags.Negated) {
+                    if (source.flags & TypeFlags.Negated) {
+                        // ~S is a subset of ~T iff T is a subset of S
+                        return isRelatedTo((target as NegatedType).type, (source as NegatedType).type);
+                    }
+                    // Relationship check is S ⊂ T
+                    // A type S is a subset of ~T if S has no overlap with T (there exist no values within S which are in T) by definition
+                    //  however, checking this directly is pretty hard. So instead we rephrase it -
+                    // S ⊂ ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
+                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified), and !(S ⊂ T)
+                    // Fresh object literals get to skip this check, since they are effectively closed, having both an upper and lower bound of themselves
+                    if (!(getObjectFlags(source) & ObjectFlags.FreshLiteral) && !(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
+                        return Ternary.False;
+                    }
+                    const innerRelated = isRelatedTo(source, (target as NegatedType).type);
+                    return innerRelated === Ternary.Maybe ? innerRelated : innerRelated === Ternary.False ? Ternary.True : Ternary.False;
                 }
                 else if (source.flags & TypeFlags.Negated) {
                     // ~S ⊂ T is true if S and T share no overlap - that overlap is their _intersection_.
@@ -14434,6 +14438,11 @@ namespace ts {
                     inferFromTypes((<ConditionalType>source).extendsType, (<ConditionalType>target).extendsType);
                     inferFromTypes(getTrueTypeFromConditionalType(<ConditionalType>source), getTrueTypeFromConditionalType(<ConditionalType>target));
                     inferFromTypes(getFalseTypeFromConditionalType(<ConditionalType>source), getFalseTypeFromConditionalType(<ConditionalType>target));
+                }
+                else if (source.flags & TypeFlags.Negated && target.flags & TypeFlags.Negated) {
+                    contravariant = !contravariant;
+                    inferFromTypes((source as NegatedType).type, (target as NegatedType).type);
+                    contravariant = !contravariant;
                 }
                 else if (target.flags & TypeFlags.Conditional) {
                     inferFromTypes(source, getUnionType([getTrueTypeFromConditionalType(<ConditionalType>target), getFalseTypeFromConditionalType(<ConditionalType>target)]));
