@@ -7,7 +7,7 @@ enum NumLiteral {
 }
 
 function f1(
-    notString: ~string,
+    notString: not string,
     str: string,
     strlit: "ok",
     strenum: Literal,
@@ -40,11 +40,11 @@ function f2(
     x: { x },
     y: { y },
     xy: {x, y},
-    nx: ~typeof x,
-    ny: ~typeof y,
-    nxy: ~typeof xy,
-    neither: ~(typeof x | typeof y),
-    notBoth: ~(typeof x & typeof y)
+    nx: not typeof x,
+    ny: not typeof y,
+    nxy: not typeof xy,
+    neither: not (typeof x | typeof y),
+    notBoth: not (typeof x & typeof y)
 ) {
     x = y;          // not ok
     x = xy;         // ok

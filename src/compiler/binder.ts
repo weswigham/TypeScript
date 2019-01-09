@@ -3755,7 +3755,6 @@ namespace ts {
             case SyntaxKind.ConditionalType:
             case SyntaxKind.InferType:
             case SyntaxKind.ParenthesizedType:
-            case SyntaxKind.NegatedType:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.ThisType:

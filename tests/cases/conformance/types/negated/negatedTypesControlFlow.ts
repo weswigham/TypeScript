@@ -3,7 +3,7 @@
 
 interface A { type: "a", data: number }
 interface B { type: "b", data: string }
-interface Unknown { type: string & ~("a"|"b"), data: object }
+interface Unknown { type: string & not ("a"|"b"), data: object }
 type ABU = A | B | Unknown;
 declare function needsNumber(x: number): void;
 declare function needsString(x: string): void;

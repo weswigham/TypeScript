@@ -14,7 +14,7 @@ type Config = {
 >bar : Symbol(bar, Decl(negatedInMappedTypeDisablesExcessProperties.ts, 6, 16))
 
 } & {
-    [k in (string & ~("foo" | "bar"))]: string;
+    [k in (string & not ("foo" | "bar"))]: string;
 >k : Symbol(k, Decl(negatedInMappedTypeDisablesExcessProperties.ts, 9, 5))
 
 };

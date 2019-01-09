@@ -12,13 +12,13 @@ interface B { type: "b", data: string }
 >type : Symbol(B.type, Decl(negatedTypesControlFlow.ts, 4, 13))
 >data : Symbol(B.data, Decl(negatedTypesControlFlow.ts, 4, 24))
 
-interface Unknown { type: string & ~("a"|"b"), data: object }
+interface Unknown { type: string & not ("a"|"b"), data: object }
 >Unknown : Symbol(Unknown, Decl(negatedTypesControlFlow.ts, 4, 39))
 >type : Symbol(Unknown.type, Decl(negatedTypesControlFlow.ts, 5, 19))
->data : Symbol(Unknown.data, Decl(negatedTypesControlFlow.ts, 5, 46))
+>data : Symbol(Unknown.data, Decl(negatedTypesControlFlow.ts, 5, 49))
 
 type ABU = A | B | Unknown;
->ABU : Symbol(ABU, Decl(negatedTypesControlFlow.ts, 5, 61))
+>ABU : Symbol(ABU, Decl(negatedTypesControlFlow.ts, 5, 64))
 >A : Symbol(A, Decl(negatedTypesControlFlow.ts, 0, 0))
 >B : Symbol(B, Decl(negatedTypesControlFlow.ts, 3, 39))
 >Unknown : Symbol(Unknown, Decl(negatedTypesControlFlow.ts, 4, 39))
@@ -37,7 +37,7 @@ declare function needsObject(x: object): void;
 
 declare var x: ABU;
 >x : Symbol(x, Decl(negatedTypesControlFlow.ts, 10, 11))
->ABU : Symbol(ABU, Decl(negatedTypesControlFlow.ts, 5, 61))
+>ABU : Symbol(ABU, Decl(negatedTypesControlFlow.ts, 5, 64))
 
 if (x.type === "a") {
 >x.type : Symbol(type, Decl(negatedTypesControlFlow.ts, 3, 13), Decl(negatedTypesControlFlow.ts, 4, 13), Decl(negatedTypesControlFlow.ts, 5, 19))
@@ -46,9 +46,9 @@ if (x.type === "a") {
 
     let y = x.data;
 >y : Symbol(y, Decl(negatedTypesControlFlow.ts, 13, 7))
->x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 >x : Symbol(x, Decl(negatedTypesControlFlow.ts, 10, 11))
->data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 
     needsNumber(y);
 >needsNumber : Symbol(needsNumber, Decl(negatedTypesControlFlow.ts, 6, 27))
@@ -61,15 +61,15 @@ else if (x.type === "b") {
 
     needsString(x.data);
 >needsString : Symbol(needsString, Decl(negatedTypesControlFlow.ts, 7, 46))
->x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 >x : Symbol(x, Decl(negatedTypesControlFlow.ts, 10, 11))
->data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 }
 else {
     needsObject(x.data);
 >needsObject : Symbol(needsObject, Decl(negatedTypesControlFlow.ts, 8, 46))
->x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>x.data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 >x : Symbol(x, Decl(negatedTypesControlFlow.ts, 10, 11))
->data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 46))
+>data : Symbol(data, Decl(negatedTypesControlFlow.ts, 3, 24), Decl(negatedTypesControlFlow.ts, 4, 24), Decl(negatedTypesControlFlow.ts, 5, 49))
 }
 

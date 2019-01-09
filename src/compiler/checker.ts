@@ -3372,8 +3372,8 @@ namespace ts {
                     return createThis();
                 }
                 if (type.flags & TypeFlags.Negated) {
-                    context.approximateLength += 1;
-                    return createNegatedTypeNode(typeToTypeNodeHelper((type as NegatedType).type, context));
+                    context.approximateLength += 4;
+                    return createTypeOperatorNode(SyntaxKind.NotKeyword, typeToTypeNodeHelper((type as NegatedType).type, context));
                 }
 
                 const objectFlags = getObjectFlags(type);
@@ -9736,6 +9736,9 @@ namespace ts {
                     case SyntaxKind.KeyOfKeyword:
                         links.resolvedType = getIndexType(getTypeFromTypeNode(node.type));
                         break;
+                    case SyntaxKind.NotKeyword:
+                        links.resolvedType = getNegatedType(getTypeFromTypeNode(node.type));
+                        break;
                     case SyntaxKind.UniqueKeyword:
                         links.resolvedType = node.type.kind === SyntaxKind.SymbolKeyword
                             ? getESSymbolLikeTypeForNode(walkUpParenthesizedTypes(node.parent))
@@ -10202,14 +10205,6 @@ namespace ts {
             return newNegated;
         }
 
-        function getTypeFromNegatedTypeNode(node: NegatedTypeNode): Type {
-            const links = getNodeLinks(node);
-            if (!links.resolvedType) {
-                links.resolvedType = getNegatedType(getTypeFromTypeNode(node.type));
-            }
-            return links.resolvedType;
-        }
-
         function getIdentifierChain(node: EntityName): Identifier[] {
             if (isIdentifier(node)) {
                 return [node];
@@ -10622,8 +10617,6 @@ namespace ts {
                     return getTypeFromConditionalTypeNode(<ConditionalTypeNode>node);
                 case SyntaxKind.InferType:
                     return getTypeFromInferTypeNode(<InferTypeNode>node);
-                case SyntaxKind.NegatedType:
-                    return getTypeFromNegatedTypeNode(<NegatedTypeNode>node);
                 case SyntaxKind.ImportType:
                     return getTypeFromImportTypeNode(<ImportTypeNode>node);
                 // This function assumes that an identifier or qualified name is a type expression

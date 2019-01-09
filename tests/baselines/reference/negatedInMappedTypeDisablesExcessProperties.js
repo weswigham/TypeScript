@@ -8,7 +8,7 @@ type Config = {
     foo: number;
     bar: number;
 } & {
-    [k in (string & ~("foo" | "bar"))]: string;
+    [k in (string & not ("foo" | "bar"))]: string;
 };
 
 const conf: Config = {

@@ -2,7 +2,7 @@
 // inspired by a comment in https://github.com/Microsoft/TypeScript/issues/4196
 
 type AnyPromiseLikeObject = object & MyPromiseLike<any, any>;
-interface MyPromiseLike<T extends ~AnyPromiseLikeObject, E = Error> {
+interface MyPromiseLike<T extends not AnyPromiseLikeObject, E = Error> {
 	then(onResolve: (value: T) => any, onReject: (error: E) => any): any;
 }
     
@@ -13,20 +13,20 @@ type CoercePromiseLike<T> = MyPromise<T extends MyPromiseLike<any, any> ? AwaitV
 interface MyPromiseConstructor {
 	resolve<T>(value: T): CoercePromiseLike<T>;
 	reject<E = Error>(value: E): MyPromise<never, E>;
-	all<T, E = Error>(values: Iterable<T>): MyPromise<AwaitValue<T>[] & ~AnyPromiseLikeObject, E>;
+	all<T, E = Error>(values: Iterable<T>): MyPromise<AwaitValue<T>[] & not AnyPromiseLikeObject, E>;
 	race<T, E = Error>(values: Iterable<T>): MyPromise<AwaitValue<T>, E>;
 }
 declare var MyPromise: MyPromiseConstructor;
 
-interface MyPromise<T extends ~AnyPromiseLikeObject, E = Error> {
-	then(onResolve?: ~Function, onReject?: ~Function): MyPromise<T, E>;
-	catch(onReject?: ~Function): MyPromise<T, E>;
+interface MyPromise<T extends not AnyPromiseLikeObject, E = Error> {
+	then(onResolve?: not Function, onReject?: not Function): MyPromise<T, E>;
+	catch(onReject?: not Function): MyPromise<T, E>;
 	then<U, F = E>(
 		onResolve: (value: AwaitValue<T>) => U,
-		onReject?: ~Function,
+		onReject?: not Function,
 	): MyPromise<AwaitValue<U, F>, E | F>;
 	then<U, F = E>(
-		onResolve: ~Function,
+		onResolve: not Function,
 		onReject: (error: E) => U,
 	): MyPromise<T | AwaitValue<U, F>, F>;
 	then<U, F = E>(

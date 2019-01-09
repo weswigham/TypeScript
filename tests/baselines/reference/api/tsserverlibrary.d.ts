@@ -73,7 +73,7 @@ declare namespace ts {
         end: number;
     }
     type JsDocSyntaxKind = SyntaxKind.EndOfFileToken | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.NoSubstitutionTemplateLiteral | SyntaxKind.Unknown | KeywordSyntaxKind;
-    type KeywordSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AnyKeyword | SyntaxKind.AsKeyword | SyntaxKind.BigIntKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.BreakKeyword | SyntaxKind.CaseKeyword | SyntaxKind.CatchKeyword | SyntaxKind.ClassKeyword | SyntaxKind.ContinueKeyword | SyntaxKind.ConstKeyword | SyntaxKind.ConstructorKeyword | SyntaxKind.DebuggerKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.DeleteKeyword | SyntaxKind.DoKeyword | SyntaxKind.ElseKeyword | SyntaxKind.EnumKeyword | SyntaxKind.ExportKeyword | SyntaxKind.ExtendsKeyword | SyntaxKind.FalseKeyword | SyntaxKind.FinallyKeyword | SyntaxKind.ForKeyword | SyntaxKind.FromKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.GetKeyword | SyntaxKind.IfKeyword | SyntaxKind.ImplementsKeyword | SyntaxKind.ImportKeyword | SyntaxKind.InKeyword | SyntaxKind.InferKeyword | SyntaxKind.InstanceOfKeyword | SyntaxKind.InterfaceKeyword | SyntaxKind.IsKeyword | SyntaxKind.KeyOfKeyword | SyntaxKind.LetKeyword | SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NewKeyword | SyntaxKind.NullKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.PackageKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.RequireKeyword | SyntaxKind.GlobalKeyword | SyntaxKind.ReturnKeyword | SyntaxKind.SetKeyword | SyntaxKind.StaticKeyword | SyntaxKind.StringKeyword | SyntaxKind.SuperKeyword | SyntaxKind.SwitchKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.ThisKeyword | SyntaxKind.ThrowKeyword | SyntaxKind.TrueKeyword | SyntaxKind.TryKeyword | SyntaxKind.TypeKeyword | SyntaxKind.TypeOfKeyword | SyntaxKind.UndefinedKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VarKeyword | SyntaxKind.VoidKeyword | SyntaxKind.WhileKeyword | SyntaxKind.WithKeyword | SyntaxKind.YieldKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.AwaitKeyword | SyntaxKind.OfKeyword;
+    type KeywordSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AnyKeyword | SyntaxKind.AsKeyword | SyntaxKind.BigIntKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.BreakKeyword | SyntaxKind.CaseKeyword | SyntaxKind.CatchKeyword | SyntaxKind.ClassKeyword | SyntaxKind.ContinueKeyword | SyntaxKind.ConstKeyword | SyntaxKind.ConstructorKeyword | SyntaxKind.DebuggerKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.DeleteKeyword | SyntaxKind.DoKeyword | SyntaxKind.ElseKeyword | SyntaxKind.EnumKeyword | SyntaxKind.ExportKeyword | SyntaxKind.ExtendsKeyword | SyntaxKind.FalseKeyword | SyntaxKind.FinallyKeyword | SyntaxKind.ForKeyword | SyntaxKind.FromKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.GetKeyword | SyntaxKind.IfKeyword | SyntaxKind.ImplementsKeyword | SyntaxKind.ImportKeyword | SyntaxKind.InKeyword | SyntaxKind.InferKeyword | SyntaxKind.InstanceOfKeyword | SyntaxKind.InterfaceKeyword | SyntaxKind.IsKeyword | SyntaxKind.KeyOfKeyword | SyntaxKind.NotKeyword | SyntaxKind.LetKeyword | SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NewKeyword | SyntaxKind.NullKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.PackageKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.RequireKeyword | SyntaxKind.GlobalKeyword | SyntaxKind.ReturnKeyword | SyntaxKind.SetKeyword | SyntaxKind.StaticKeyword | SyntaxKind.StringKeyword | SyntaxKind.SuperKeyword | SyntaxKind.SwitchKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.ThisKeyword | SyntaxKind.ThrowKeyword | SyntaxKind.TrueKeyword | SyntaxKind.TryKeyword | SyntaxKind.TypeKeyword | SyntaxKind.TypeOfKeyword | SyntaxKind.UndefinedKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VarKeyword | SyntaxKind.VoidKeyword | SyntaxKind.WhileKeyword | SyntaxKind.WithKeyword | SyntaxKind.YieldKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.AwaitKeyword | SyntaxKind.OfKeyword;
     type JsxTokenSyntaxKind = SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFileToken | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken;
     enum SyntaxKind {
         Unknown = 0,
@@ -206,60 +206,60 @@ declare namespace ts {
         InferKeyword = 127,
         IsKeyword = 128,
         KeyOfKeyword = 129,
-        ModuleKeyword = 130,
-        NamespaceKeyword = 131,
-        NeverKeyword = 132,
-        ReadonlyKeyword = 133,
-        RequireKeyword = 134,
-        NumberKeyword = 135,
-        ObjectKeyword = 136,
-        SetKeyword = 137,
-        StringKeyword = 138,
-        SymbolKeyword = 139,
-        TypeKeyword = 140,
-        UndefinedKeyword = 141,
-        UniqueKeyword = 142,
-        UnknownKeyword = 143,
-        FromKeyword = 144,
-        GlobalKeyword = 145,
-        BigIntKeyword = 146,
-        OfKeyword = 147,
-        QualifiedName = 148,
-        ComputedPropertyName = 149,
-        TypeParameter = 150,
-        Parameter = 151,
-        Decorator = 152,
-        PropertySignature = 153,
-        PropertyDeclaration = 154,
-        MethodSignature = 155,
-        MethodDeclaration = 156,
-        Constructor = 157,
-        GetAccessor = 158,
-        SetAccessor = 159,
-        CallSignature = 160,
-        ConstructSignature = 161,
-        IndexSignature = 162,
-        TypePredicate = 163,
-        TypeReference = 164,
-        FunctionType = 165,
-        ConstructorType = 166,
-        TypeQuery = 167,
-        TypeLiteral = 168,
-        ArrayType = 169,
-        TupleType = 170,
-        OptionalType = 171,
-        RestType = 172,
-        UnionType = 173,
-        IntersectionType = 174,
-        ConditionalType = 175,
-        InferType = 176,
-        ParenthesizedType = 177,
-        ThisType = 178,
-        TypeOperator = 179,
-        IndexedAccessType = 180,
-        MappedType = 181,
-        LiteralType = 182,
-        NegatedType = 183,
+        NotKeyword = 130,
+        ModuleKeyword = 131,
+        NamespaceKeyword = 132,
+        NeverKeyword = 133,
+        ReadonlyKeyword = 134,
+        RequireKeyword = 135,
+        NumberKeyword = 136,
+        ObjectKeyword = 137,
+        SetKeyword = 138,
+        StringKeyword = 139,
+        SymbolKeyword = 140,
+        TypeKeyword = 141,
+        UndefinedKeyword = 142,
+        UniqueKeyword = 143,
+        UnknownKeyword = 144,
+        FromKeyword = 145,
+        GlobalKeyword = 146,
+        BigIntKeyword = 147,
+        OfKeyword = 148,
+        QualifiedName = 149,
+        ComputedPropertyName = 150,
+        TypeParameter = 151,
+        Parameter = 152,
+        Decorator = 153,
+        PropertySignature = 154,
+        PropertyDeclaration = 155,
+        MethodSignature = 156,
+        MethodDeclaration = 157,
+        Constructor = 158,
+        GetAccessor = 159,
+        SetAccessor = 160,
+        CallSignature = 161,
+        ConstructSignature = 162,
+        IndexSignature = 163,
+        TypePredicate = 164,
+        TypeReference = 165,
+        FunctionType = 166,
+        ConstructorType = 167,
+        TypeQuery = 168,
+        TypeLiteral = 169,
+        ArrayType = 170,
+        TupleType = 171,
+        OptionalType = 172,
+        RestType = 173,
+        UnionType = 174,
+        IntersectionType = 175,
+        ConditionalType = 176,
+        InferType = 177,
+        ParenthesizedType = 178,
+        ThisType = 179,
+        TypeOperator = 180,
+        IndexedAccessType = 181,
+        MappedType = 182,
+        LiteralType = 183,
         ImportType = 184,
         ObjectBindingPattern = 185,
         ArrayBindingPattern = 186,
@@ -397,15 +397,15 @@ declare namespace ts {
         FirstReservedWord = 73,
         LastReservedWord = 108,
         FirstKeyword = 73,
-        LastKeyword = 147,
+        LastKeyword = 148,
         FirstFutureReservedWord = 109,
         LastFutureReservedWord = 117,
-        FirstTypeNode = 163,
+        FirstTypeNode = 164,
         LastTypeNode = 184,
         FirstPunctuation = 18,
         LastPunctuation = 71,
         FirstToken = 0,
-        LastToken = 147,
+        LastToken = 148,
         FirstTriviaToken = 2,
         LastTriviaToken = 7,
         FirstLiteralToken = 8,
@@ -414,7 +414,7 @@ declare namespace ts {
         LastTemplateToken = 17,
         FirstBinaryOperator = 28,
         LastBinaryOperator = 71,
-        FirstNode = 148,
+        FirstNode = 149,
         FirstJSDocNode = 284,
         LastJSDocNode = 306,
         FirstJSDocTagNode = 295,
@@ -488,7 +488,7 @@ declare namespace ts {
     interface JSDocContainer {
     }
     type HasJSDoc = ParameterDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | PropertySignature | ArrowFunction | ParenthesizedExpression | SpreadAssignment | ShorthandPropertyAssignment | PropertyAssignment | FunctionExpression | LabeledStatement | ExpressionStatement | VariableStatement | FunctionDeclaration | ConstructorDeclaration | MethodDeclaration | PropertyDeclaration | AccessorDeclaration | ClassLikeDeclaration | InterfaceDeclaration | TypeAliasDeclaration | EnumMember | EnumDeclaration | ModuleDeclaration | ImportEqualsDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | ExportDeclaration | EndOfFileToken;
-    type HasType = SignatureDeclaration | VariableDeclaration | ParameterDeclaration | PropertySignature | PropertyDeclaration | TypePredicateNode | ParenthesizedTypeNode | NegatedTypeNode | TypeOperatorNode | MappedTypeNode | AssertionExpression | TypeAliasDeclaration | JSDocTypeExpression | JSDocNonNullableType | JSDocNullableType | JSDocOptionalType | JSDocVariadicType;
+    type HasType = SignatureDeclaration | VariableDeclaration | ParameterDeclaration | PropertySignature | PropertyDeclaration | TypePredicateNode | ParenthesizedTypeNode | TypeOperatorNode | MappedTypeNode | AssertionExpression | TypeAliasDeclaration | JSDocTypeExpression | JSDocNonNullableType | JSDocNullableType | JSDocOptionalType | JSDocVariadicType;
     type HasInitializer = HasExpressionInitializer | ForStatement | ForInStatement | ForOfStatement | JsxAttribute;
     type HasExpressionInitializer = VariableDeclaration | ParameterDeclaration | BindingElement | PropertySignature | PropertyDeclaration | PropertyAssignment | EnumMember;
     interface NodeArray<T extends Node> extends ReadonlyArray<T>, TextRange {
@@ -815,11 +815,7 @@ declare namespace ts {
     }
     interface TypeOperatorNode extends TypeNode {
         kind: SyntaxKind.TypeOperator;
-        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword;
-        type: TypeNode;
-    }
-    interface NegatedTypeNode extends TypeNode {
-        kind: SyntaxKind.NegatedType;
+        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword;
         type: TypeNode;
     }
     interface IndexedAccessTypeNode extends TypeNode {
@@ -3759,11 +3755,9 @@ declare namespace ts {
     function updateImportTypeNode(node: ImportTypeNode, argument: TypeNode, qualifier?: EntityName, typeArguments?: ReadonlyArray<TypeNode>, isTypeOf?: boolean): ImportTypeNode;
     function createParenthesizedType(type: TypeNode): ParenthesizedTypeNode;
     function updateParenthesizedType(node: ParenthesizedTypeNode, type: TypeNode): ParenthesizedTypeNode;
-    function createNegatedTypeNode(type: TypeNode): NegatedTypeNode;
-    function updateNegatedTypeNode(node: NegatedTypeNode, type: TypeNode): NegatedTypeNode;
     function createThisTypeNode(): ThisTypeNode;
     function createTypeOperatorNode(type: TypeNode): TypeOperatorNode;
-    function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword, type: TypeNode): TypeOperatorNode;
+    function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword, type: TypeNode): TypeOperatorNode;
     function updateTypeOperatorNode(node: TypeOperatorNode, type: TypeNode): TypeOperatorNode;
     function createIndexedAccessTypeNode(objectType: TypeNode, indexType: TypeNode): IndexedAccessTypeNode;
     function updateIndexedAccessTypeNode(node: IndexedAccessTypeNode, objectType: TypeNode, indexType: TypeNode): IndexedAccessTypeNode;

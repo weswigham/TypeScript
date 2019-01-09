@@ -10,8 +10,8 @@ interface B { type: "b", data: string }
 >type : "b"
 >data : string
 
-interface Unknown { type: string & ~("a"|"b"), data: object }
->type : string & ~"a" & ~"b"
+interface Unknown { type: string & not ("a"|"b"), data: object }
+>type : string & not "a" & not "b"
 >data : object
 
 type ABU = A | B | Unknown;
@@ -34,9 +34,9 @@ declare var x: ABU;
 
 if (x.type === "a") {
 >x.type === "a" : boolean
->x.type : "a" | "b" | (string & ~"a" & ~"b")
+>x.type : "a" | "b" | (string & not "a" & not "b")
 >x : ABU
->type : "a" | "b" | (string & ~"a" & ~"b")
+>type : "a" | "b" | (string & not "a" & not "b")
 >"a" : "a"
 
     let y = x.data;
@@ -52,9 +52,9 @@ if (x.type === "a") {
 }
 else if (x.type === "b") {
 >x.type === "b" : boolean
->x.type : "b" | (string & ~"a" & ~"b")
+>x.type : "b" | (string & not "a" & not "b")
 >x : ABU
->type : "b" | (string & ~"a" & ~"b")
+>type : "b" | (string & not "a" & not "b")
 >"b" : "b"
 
     needsString(x.data);

@@ -64,6 +64,7 @@ namespace ts {
         | SyntaxKind.InterfaceKeyword
         | SyntaxKind.IsKeyword
         | SyntaxKind.KeyOfKeyword
+        | SyntaxKind.NotKeyword
         | SyntaxKind.LetKeyword
         | SyntaxKind.ModuleKeyword
         | SyntaxKind.NamespaceKeyword
@@ -257,6 +258,7 @@ namespace ts {
         InferKeyword,
         IsKeyword,
         KeyOfKeyword,
+        NotKeyword,
         ModuleKeyword,
         NamespaceKeyword,
         NeverKeyword,
@@ -317,7 +319,6 @@ namespace ts {
         IndexedAccessType,
         MappedType,
         LiteralType,
-        NegatedType,
         ImportType,
         // Binding patterns
         ObjectBindingPattern,
@@ -674,7 +675,6 @@ namespace ts {
         | PropertyDeclaration
         | TypePredicateNode
         | ParenthesizedTypeNode
-        | NegatedTypeNode
         | TypeOperatorNode
         | MappedTypeNode
         | AssertionExpression
@@ -1235,18 +1235,13 @@ namespace ts {
 
     export interface TypeOperatorNode extends TypeNode {
         kind: SyntaxKind.TypeOperator;
-        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword;
+        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword;
         type: TypeNode;
     }
 
     /* @internal */
     export interface UniqueTypeOperatorNode extends TypeOperatorNode {
         operator: SyntaxKind.UniqueKeyword;
-    }
-
-    export interface NegatedTypeNode extends TypeNode {
-        kind: SyntaxKind.NegatedType;
-        type: TypeNode;
     }
 
     export interface IndexedAccessTypeNode extends TypeNode {

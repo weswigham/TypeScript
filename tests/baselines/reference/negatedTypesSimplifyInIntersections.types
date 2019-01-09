@@ -1,8 +1,8 @@
 === tests/cases/conformance/types/negated/negatedTypesSimplifyInIntersections.ts ===
-type A = boolean & ~true;   // false
+type A = boolean & not true;   // false
 >A : false
 >true : true
 
-type B = "w" & ~string;     // never
+type B = "w" & not string;     // never
 >B : never
 

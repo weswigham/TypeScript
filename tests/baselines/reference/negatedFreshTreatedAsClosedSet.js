@@ -1,6 +1,6 @@
 //// [negatedFreshTreatedAsClosedSet.ts]
 // from https://github.com/Microsoft/TypeScript/issues/4183
-type Distinct<A, B> = (A | B) & ~(A & B);
+type Distinct<A, B> = (A | B) & not (A & B);
 declare var o1: {x};
 declare var o2: {y};
 

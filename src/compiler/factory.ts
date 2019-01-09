@@ -871,25 +871,13 @@ namespace ts {
             : node;
     }
 
-    export function createNegatedTypeNode(type: TypeNode) {
-        const node = <NegatedTypeNode>createSynthesizedNode(SyntaxKind.NegatedType);
-        node.type = parenthesizeNegatedType(type);
-        return node;
-    }
-
-    export function updateNegatedTypeNode(node: NegatedTypeNode, type: TypeNode) {
-        return node.type !== type
-            ? updateNode(createNegatedTypeNode(type), node)
-            : node;
-    }
-
     export function createThisTypeNode() {
         return <ThisTypeNode>createSynthesizedNode(SyntaxKind.ThisType);
     }
 
     export function createTypeOperatorNode(type: TypeNode): TypeOperatorNode;
-    export function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword, type: TypeNode): TypeOperatorNode;
-    export function createTypeOperatorNode(operatorOrType: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | TypeNode, type?: TypeNode) {
+    export function createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword, type: TypeNode): TypeOperatorNode;
+    export function createTypeOperatorNode(operatorOrType: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword | TypeNode, type?: TypeNode) {
         const node = createSynthesizedNode(SyntaxKind.TypeOperator) as TypeOperatorNode;
         node.operator = typeof operatorOrType === "number" ? operatorOrType : SyntaxKind.KeyOfKeyword;
         node.type = parenthesizeElementTypeMember(typeof operatorOrType === "number" ? type! : operatorOrType);

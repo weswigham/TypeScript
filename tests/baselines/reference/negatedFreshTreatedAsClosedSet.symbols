@@ -1,6 +1,6 @@
 === tests/cases/conformance/types/negated/negatedFreshTreatedAsClosedSet.ts ===
 // from https://github.com/Microsoft/TypeScript/issues/4183
-type Distinct<A, B> = (A | B) & ~(A & B);
+type Distinct<A, B> = (A | B) & not (A & B);
 >Distinct : Symbol(Distinct, Decl(negatedFreshTreatedAsClosedSet.ts, 0, 0))
 >A : Symbol(A, Decl(negatedFreshTreatedAsClosedSet.ts, 1, 14))
 >B : Symbol(B, Decl(negatedFreshTreatedAsClosedSet.ts, 1, 16))
