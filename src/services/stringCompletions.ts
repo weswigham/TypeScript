@@ -211,7 +211,7 @@ namespace ts.Completions.StringCompletions {
         type = skipConstraint(type);
         return type.isUnion()
             ? flatMap(type.types, t => getStringLiteralTypes(t, uniques))
-            : type.isStringLiteral() && !(type.flags & TypeFlags.EnumLiteral) && addToSeen(uniques, type.value)
+            : type.isStringLiteral() && !isLiteralEnumMemberType(type) && addToSeen(uniques, type.value)
             ? [type]
             : emptyArray;
     }

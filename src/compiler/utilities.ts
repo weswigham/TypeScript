@@ -8609,4 +8609,20 @@ namespace ts {
     export function pseudoBigIntToString({negative, base10Value}: PseudoBigInt): string {
         return (negative && base10Value !== "0" ? "-" : "") + base10Value;
     }
+
+    export function isLiteralEnumMemberType(type: Type) {
+        return !!(type.flags & (TypeFlags.StringLiteral | TypeFlags.NumberLiteral)) && !!type.symbol && !!(type.symbol.flags & SymbolFlags.EnumMember);
+    }
+
+    export function isLiteralEnumUnionOrEnumMemberType(type: Type) {
+        return isLiteralEnumMemberType(type) || !!(type.flags & TypeFlags.Union && (type as UnionType).contentsFlags & UnionFlags.EnumMembers);
+    }
+
+    export function isEnumLike(type: Type) {
+        return !!(type.flags & TypeFlags.Enum) || isLiteralEnumUnionOrEnumMemberType(type);
+    }
+
+    export function isPrimitiveish(type: Type) {
+        return !!(type.flags & TypeFlags.Primitive || (type.flags & TypeFlags.Union && (type as UnionType).contentsFlags & UnionFlags.EnumMembers));
+    }
 }
