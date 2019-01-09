@@ -8611,7 +8611,8 @@ namespace ts {
     }
 
     export function isLiteralEnumMemberType(type: Type) {
-        return !!(type.flags & (TypeFlags.StringLiteral | TypeFlags.NumberLiteral)) && !!type.symbol && !!(type.symbol.flags & SymbolFlags.EnumMember);
+        // Any literal type with a symbol should be an enum member type
+        return !!(type.flags & (TypeFlags.StringLiteral | TypeFlags.NumberLiteral)) && !!type.symbol;
     }
 
     export function isLiteralEnumUnionOrEnumMemberType(type: Type) {
