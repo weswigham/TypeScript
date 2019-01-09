@@ -4326,18 +4326,6 @@ namespace ts {
         return expression;
     }
 
-    export function parenthesizeNegatedType(member: TypeNode) {
-        switch (member.kind) {
-            case SyntaxKind.UnionType:
-            case SyntaxKind.IntersectionType:
-            case SyntaxKind.ConditionalType:
-            case SyntaxKind.ConstructorType:
-            case SyntaxKind.FunctionType:
-                return createParenthesizedType(member);
-        }
-        return member;
-    }
-
     export function parenthesizeConditionalTypeMember(member: TypeNode) {
         return member.kind === SyntaxKind.ConditionalType ? createParenthesizedType(member) : member;
     }
