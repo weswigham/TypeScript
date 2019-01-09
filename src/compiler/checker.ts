@@ -12672,25 +12672,23 @@ namespace ts {
                         // ~S is a subset of ~T iff T is a subset of S
                         return isRelatedTo((target as NegatedType).type, (source as NegatedType).type);
                     }
+                    if (getObjectFlags(source) & ObjectFlags.FreshLiteral) {
+                        const result = isRelatedTo(source, (target as NegatedType).type);
+                        return result === Ternary.Maybe ? Ternary.Maybe : result ? Ternary.False : Ternary.True;
+                    }
                     // Relationship check is S ⊂ T
                     // A type S is a subset of ~T if S has no overlap with T (there exist no values within S which are in T) by definition
                     //  however, checking this directly is pretty hard. So instead we rephrase it -
                     // S ⊂ ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
-                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified), and !(S ⊂ T)
+                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified)
                     // Fresh object literals get to skip this check, since they are effectively closed, having both an upper and lower bound of themselves
-                    if (!(getObjectFlags(source) & ObjectFlags.FreshLiteral) && !(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
+                    if (!(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
                         return Ternary.False;
                     }
-                    const innerRelated = isRelatedTo(source, (target as NegatedType).type);
-                    return innerRelated === Ternary.Maybe ? innerRelated : innerRelated === Ternary.False ? Ternary.True : Ternary.False;
+                    return Ternary.True;
                 }
                 else if (source.flags & TypeFlags.Negated) {
-                    // ~S ⊂ T is true if S and T share no overlap - that overlap is their _intersection_.
-                    if (!(getUnionType([getIntersectionType([(source as NegatedType).type, target]), neverType]).flags & TypeFlags.Never)) {
-                        return Ternary.False;
-                    }
-                    // And if (S ⊂ T)
-                    return isRelatedTo((source as NegatedType).type, target);
+                    return Ternary.False;
                 }
                 else {
                     // An empty object type is related to any mapped type that includes a '?' modifier.
