@@ -8622,7 +8622,7 @@ namespace ts {
         return !!(type.flags & TypeFlags.Enum) || isLiteralEnumUnionOrEnumMemberType(type);
     }
 
-    export function isPrimitiveish(type: Type) {
+    export function isPrimitiveOrEnumLiteralUnion(type: Type) {
         return !!(type.flags & TypeFlags.Primitive || (type.flags & TypeFlags.Union && (type as UnionType).contentsFlags & UnionFlags.EnumMembers));
     }
 }

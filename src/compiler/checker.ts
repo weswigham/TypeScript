@@ -2483,7 +2483,7 @@ namespace ts {
             }
 
             const type = getTypeOfSymbol(exportEquals);
-            return isPrimitiveish(type) ? undefined : getPropertyOfType(type, memberName);
+            return isPrimitiveOrEnumLiteralUnion(type) ? undefined : getPropertyOfType(type, memberName);
         }
 
         function getExportsOfSymbol(symbol: Symbol): SymbolTable {
@@ -9555,7 +9555,7 @@ namespace ts {
             for (const toCheck of nonVariablePart) {
                 for (const variable of variables) {
                     const constraint = getConstraintOfType(variable);
-                    if (constraint && (isPrimitiveish(constraint) || constraint.flags && TypeFlags.Union && (constraint as UnionType).contentsFlags & UnionFlags.Primitives)) {
+                    if (constraint && (isPrimitiveOrEnumLiteralUnion(constraint) || constraint.flags && TypeFlags.Union && (constraint as UnionType).contentsFlags & UnionFlags.Primitives)) {
                         if (!isTypeSubtypeOf(toCheck, constraint) && !isTypeSubtypeOf(constraint, toCheck)) {
                             return true;
                         }
@@ -11060,7 +11060,7 @@ namespace ts {
                 }
                 return type;
             }
-            if (flags & TypeFlags.Union && !isPrimitiveish(type)) {
+            if (flags & TypeFlags.Union && !isPrimitiveOrEnumLiteralUnion(type)) {
                 const types = (<UnionType>type).types;
                 const newTypes = instantiateTypes(types, mapper);
                 return newTypes !== types ? getUnionType(newTypes, UnionReduction.Literal, type.aliasSymbol, instantiateTypes(type.aliasTypeArguments, mapper)) : type;
@@ -12040,12 +12040,12 @@ namespace ts {
                 // and we need to handle "each" relations before "some" relations for the same kind of type.
                 if (source.flags & TypeFlags.Union) {
                     result = relation === comparableRelation ?
-                        someTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveish(source)) :
-                        eachTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveish(source));
+                        someTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveOrEnumLiteralUnion(source)) :
+                        eachTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveOrEnumLiteralUnion(source));
                 }
                 else {
                     if (target.flags & TypeFlags.Union) {
-                        result = typeRelatedToSomeType(source, <UnionType>target, reportErrors && !isPrimitiveish(source) && !isPrimitiveish(target));
+                        result = typeRelatedToSomeType(source, <UnionType>target, reportErrors && !isPrimitiveOrEnumLiteralUnion(source) && !isPrimitiveOrEnumLiteralUnion(target));
                     }
                     else if (target.flags & TypeFlags.Intersection) {
                         isIntersectionConstituent = true; // set here to affect the following trio of checks
@@ -19301,7 +19301,7 @@ namespace ts {
         function reportNonexistentProperty(propNode: Identifier, containingType: Type) {
             let errorInfo: DiagnosticMessageChain | undefined;
             let relatedInfo: Diagnostic | undefined;
-            if (containingType.flags & TypeFlags.Union && !isPrimitiveish(containingType)) {
+            if (containingType.flags & TypeFlags.Union && !isPrimitiveOrEnumLiteralUnion(containingType)) {
                 for (const subtype of (containingType as UnionType).types) {
                     if (!getPropertyOfType(subtype, propNode.escapedText)) {
                         errorInfo = chainDiagnosticMessages(errorInfo, Diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), typeToString(subtype));
