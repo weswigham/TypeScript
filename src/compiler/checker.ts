@@ -9843,7 +9843,36 @@ namespace ts {
         }
 
         function getSimplifiedType(type: Type): Type {
-            return type.flags & TypeFlags.IndexedAccess ? getSimplifiedIndexedAccessType(<IndexedAccessType>type) : type;
+            return type.flags & TypeFlags.IndexedAccess ? getSimplifiedIndexedAccessType(<IndexedAccessType>type) :
+                type.flags & TypeFlags.Conditional ? getSimplifiedConditionalType(<ConditionalType>type) : type;
+        }
+
+        function getSimplifiedConditionalType(type: ConditionalType) {
+            if (type.simplified) {
+                return type.simplified === circularConstraintType ? type : type.simplified;
+            }
+            type.simplified = circularConstraintType;
+            const root = type.root;
+            const originalCheckType = getActualTypeVariable(root.checkType);
+            if (originalCheckType.flags & TypeFlags.TypeVariable && !root.inferTypeParameters) {
+                // Ideally, it's be nice if this could be instantiated to `never` (rather than requiring an original declaration of never)
+                // - but instantiating the true/false types can cause a stack overflow when the type self-references
+                const checkType = type.checkType;
+                const extendsType = type.extendsType;
+                const trueType = getTrueTypeFromConditionalType(type);
+                const falseType = getFalseTypeFromConditionalType(type);
+                if (falseType.flags & TypeFlags.Never &&
+                    getActualTypeVariable(root.trueType) === originalCheckType &&
+                    isTypeAssignableTo(getRestrictiveInstantiation(checkType), getRestrictiveInstantiation(extendsType))) {
+                    return type.simplified = trueType;
+                }
+                if (trueType.flags & TypeFlags.Never &&
+                    getActualTypeVariable(root.falseType) === originalCheckType &&
+                    getUnionType([getIntersectionType([checkType, extendsType]), neverType]).flags & TypeFlags.Never) {
+                    return type.simplified = falseType;
+                }
+            }
+            return type;
         }
 
         function distributeIndexOverObjectType(objectType: Type, indexType: Type) {
@@ -11865,10 +11894,10 @@ namespace ts {
                 if (target.flags & TypeFlags.Substitution) {
                     target = (<SubstitutionType>target).typeVariable;
                 }
-                if (source.flags & TypeFlags.IndexedAccess) {
+                if (source.flags & TypeFlags.Simplifiable) {
                     source = getSimplifiedType(source);
                 }
-                if (target.flags & TypeFlags.IndexedAccess) {
+                if (target.flags & TypeFlags.Simplifiable) {
                     target = getSimplifiedType(target);
                 }
 

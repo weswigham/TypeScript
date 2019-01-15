@@ -1,0 +1,69 @@
+=== tests/cases/compiler/conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts ===
+function f1<T>(x: Extract<T, T>) {
+>f1 : Symbol(f1, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 0))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 12))
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 15))
+>Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 12))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 12))
+
+    const y: T = x; // works
+>y : Symbol(y, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 1, 9))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 12))
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 15))
+
+    x = y; // should likewise work
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 0, 15))
+>y : Symbol(y, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 1, 9))
+}
+
+const fn2 = <Params>(
+>fn2 : Symbol(fn2, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 5))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 13))
+
+    params: Pick<Params, Extract<keyof Params, keyof Params>>,
+>params : Symbol(params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 21))
+>Pick : Symbol(Pick, Decl(lib.es5.d.ts, --, --))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 13))
+>Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 13))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 13))
+
+): Params => params; // should also work
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 13))
+>params : Symbol(params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 5, 21))
+
+// And the opposite:
+
+function f3<T>(x: Exclude<T, never>) {
+>f3 : Symbol(f3, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 7, 20))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 12))
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 15))
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 12))
+
+    const y: T = x; // works
+>y : Symbol(y, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 12, 9))
+>T : Symbol(T, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 12))
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 15))
+
+    x = y; // should likewise work
+>x : Symbol(x, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 11, 15))
+>y : Symbol(y, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 12, 9))
+}
+
+const fn4 = <Params>(
+>fn4 : Symbol(fn4, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 5))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 13))
+
+    params: Pick<Params, Exclude<keyof Params, never>>,
+>params : Symbol(params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 21))
+>Pick : Symbol(Pick, Decl(lib.es5.d.ts, --, --))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 13))
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 13))
+
+): Params => params; // should also work
+>Params : Symbol(Params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 13))
+>params : Symbol(params, Decl(conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts, 16, 21))
+

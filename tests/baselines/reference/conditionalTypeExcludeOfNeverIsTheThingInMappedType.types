@@ -1,0 +1,51 @@
+=== tests/cases/compiler/conditionalTypeExcludeOfNeverIsTheThingInMappedType.ts ===
+function f1<T>(x: Extract<T, T>) {
+>f1 : <T>(x: T) => void
+>x : T
+
+    const y: T = x; // works
+>y : T
+>x : T
+
+    x = y; // should likewise work
+>x = y : T
+>x : T
+>y : T
+}
+
+const fn2 = <Params>(
+>fn2 : <Params>(params: Pick<Params, keyof Params>) => Params
+><Params>(    params: Pick<Params, Extract<keyof Params, keyof Params>>,): Params => params : <Params>(params: Pick<Params, keyof Params>) => Params
+
+    params: Pick<Params, Extract<keyof Params, keyof Params>>,
+>params : Pick<Params, keyof Params>
+
+): Params => params; // should also work
+>params : Pick<Params, keyof Params>
+
+// And the opposite:
+
+function f3<T>(x: Exclude<T, never>) {
+>f3 : <T>(x: T) => void
+>x : T
+
+    const y: T = x; // works
+>y : T
+>x : T
+
+    x = y; // should likewise work
+>x = y : T
+>x : T
+>y : T
+}
+
+const fn4 = <Params>(
+>fn4 : <Params>(params: Pick<Params, keyof Params>) => Params
+><Params>(    params: Pick<Params, Exclude<keyof Params, never>>,): Params => params : <Params>(params: Pick<Params, keyof Params>) => Params
+
+    params: Pick<Params, Exclude<keyof Params, never>>,
+>params : Pick<Params, keyof Params>
+
+): Params => params; // should also work
+>params : Pick<Params, keyof Params>
+
