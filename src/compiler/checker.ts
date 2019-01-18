@@ -7566,7 +7566,18 @@ namespace ts {
                     const baseObjectType = getBaseConstraint((<IndexedAccessType>t).objectType);
                     const baseIndexType = getBaseConstraint((<IndexedAccessType>t).indexType);
                     const baseIndexedAccess = baseObjectType && baseIndexType ? getIndexedAccessType(baseObjectType, baseIndexType, /*accessNode*/ undefined, errorType) : undefined;
-                    return baseIndexedAccess && baseIndexedAccess !== errorType ? getBaseConstraint(baseIndexedAccess) : undefined;
+                    if (baseIndexedAccess && baseIndexedAccess !== errorType && baseIndexedAccess !== t) {
+                        return getBaseConstraint(baseIndexedAccess);
+                    }
+                    if (maybeTypeOfKind((<IndexedAccessType>t).objectType, TypeFlags.TypeParameter)) {
+                        return undefined;
+                    }
+                    const valueTypes = baseObjectType && mapType(baseObjectType, t => getUnionType(compact([
+                        getIndexTypeOfType(t, IndexKind.String),
+                        getIndexTypeOfType(t, IndexKind.Number),
+                        ...map(getPropertiesOfType(t), getTypeOfSymbol)
+                    ]) as Type[]));
+                    return !valueTypes || valueTypes.flags & TypeFlags.Never ? undefined : valueTypes;
                 }
                 if (t.flags & TypeFlags.Conditional) {
                     const constraint = getConstraintOfConditionalType(<ConditionalType>t);
@@ -12617,6 +12628,15 @@ namespace ts {
                             return result;
                         }
                     }
+                    //else if (source.flags & TypeFlags.IndexedAccess) {
+                    //    // If all types in `source`'s object type are assignable to `target`, then the relationship holds
+                    //    const apparentObj = getApparentType((source as IndexedAccessType).objectType);
+//
+                    //    if (result = isRelatedTo(valueTypes, target, reportErrors)) {
+                    //        errorInfo = saveErrorInfo;
+                    //        return result;
+                    //    }
+                    //}
                     const constraint = getConstraintOfType(<TypeParameter>source);
                     if (!constraint || (source.flags & TypeFlags.TypeParameter && constraint.flags & TypeFlags.Any)) {
                         // A type variable with no constraint is not related to the non-primitive object type.

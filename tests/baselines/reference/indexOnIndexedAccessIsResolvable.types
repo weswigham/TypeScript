@@ -1,0 +1,51 @@
+=== tests/cases/compiler/indexOnIndexedAccessIsResolvable.ts ===
+interface Foo {
+    a: { x: boolean };
+>a : { x: boolean; }
+>x : boolean
+
+    b: { y: boolean };
+>b : { y: boolean; }
+>y : boolean
+}
+
+function extractBoolean<K extends 'a' | 'b'>(foo: Foo, key: K, innerKey: keyof Foo[K]): boolean {
+>extractBoolean : <K extends "a" | "b">(foo: Foo, key: K, innerKey: keyof Foo[K]) => boolean
+>foo : Foo
+>key : K
+>innerKey : keyof Foo[K]
+
+    return foo[key][innerKey];
+>foo[key][innerKey] : Foo[K][keyof Foo[K]]
+>foo[key] : Foo[K]
+>foo : Foo
+>key : K
+>innerKey : keyof Foo[K]
+}
+
+interface Bar {
+    a: { x: string };
+>a : { x: string; }
+>x : string
+
+    b: { y: string };
+>b : { y: string; }
+>y : string
+}
+
+function fetchString<K extends 'a' | 'b'>(bar: Bar, key: K, innerKey: keyof Bar[K]): void {
+>fetchString : <K extends "a" | "b">(bar: Bar, key: K, innerKey: keyof Bar[K]) => void
+>bar : Bar
+>key : K
+>innerKey : keyof Bar[K]
+
+    bar[key][innerKey].toUpperCase();
+>bar[key][innerKey].toUpperCase() : string
+>bar[key][innerKey].toUpperCase : () => string
+>bar[key][innerKey] : Bar[K][keyof Bar[K]]
+>bar[key] : Bar[K]
+>bar : Bar
+>key : K
+>innerKey : keyof Bar[K]
+>toUpperCase : () => string
+}

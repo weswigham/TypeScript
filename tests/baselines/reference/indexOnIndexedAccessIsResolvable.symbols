@@ -1,0 +1,60 @@
+=== tests/cases/compiler/indexOnIndexedAccessIsResolvable.ts ===
+interface Foo {
+>Foo : Symbol(Foo, Decl(indexOnIndexedAccessIsResolvable.ts, 0, 0))
+
+    a: { x: boolean };
+>a : Symbol(Foo.a, Decl(indexOnIndexedAccessIsResolvable.ts, 0, 15))
+>x : Symbol(x, Decl(indexOnIndexedAccessIsResolvable.ts, 1, 8))
+
+    b: { y: boolean };
+>b : Symbol(Foo.b, Decl(indexOnIndexedAccessIsResolvable.ts, 1, 22))
+>y : Symbol(y, Decl(indexOnIndexedAccessIsResolvable.ts, 2, 8))
+}
+
+function extractBoolean<K extends 'a' | 'b'>(foo: Foo, key: K, innerKey: keyof Foo[K]): boolean {
+>extractBoolean : Symbol(extractBoolean, Decl(indexOnIndexedAccessIsResolvable.ts, 3, 1))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 24))
+>foo : Symbol(foo, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 45))
+>Foo : Symbol(Foo, Decl(indexOnIndexedAccessIsResolvable.ts, 0, 0))
+>key : Symbol(key, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 54))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 24))
+>innerKey : Symbol(innerKey, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 62))
+>Foo : Symbol(Foo, Decl(indexOnIndexedAccessIsResolvable.ts, 0, 0))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 24))
+
+    return foo[key][innerKey];
+>foo : Symbol(foo, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 45))
+>key : Symbol(key, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 54))
+>innerKey : Symbol(innerKey, Decl(indexOnIndexedAccessIsResolvable.ts, 5, 62))
+}
+
+interface Bar {
+>Bar : Symbol(Bar, Decl(indexOnIndexedAccessIsResolvable.ts, 7, 1))
+
+    a: { x: string };
+>a : Symbol(Bar.a, Decl(indexOnIndexedAccessIsResolvable.ts, 9, 15))
+>x : Symbol(x, Decl(indexOnIndexedAccessIsResolvable.ts, 10, 8))
+
+    b: { y: string };
+>b : Symbol(Bar.b, Decl(indexOnIndexedAccessIsResolvable.ts, 10, 21))
+>y : Symbol(y, Decl(indexOnIndexedAccessIsResolvable.ts, 11, 8))
+}
+
+function fetchString<K extends 'a' | 'b'>(bar: Bar, key: K, innerKey: keyof Bar[K]): void {
+>fetchString : Symbol(fetchString, Decl(indexOnIndexedAccessIsResolvable.ts, 12, 1))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 21))
+>bar : Symbol(bar, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 42))
+>Bar : Symbol(Bar, Decl(indexOnIndexedAccessIsResolvable.ts, 7, 1))
+>key : Symbol(key, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 51))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 21))
+>innerKey : Symbol(innerKey, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 59))
+>Bar : Symbol(Bar, Decl(indexOnIndexedAccessIsResolvable.ts, 7, 1))
+>K : Symbol(K, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 21))
+
+    bar[key][innerKey].toUpperCase();
+>bar[key][innerKey].toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+>bar : Symbol(bar, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 42))
+>key : Symbol(key, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 51))
+>innerKey : Symbol(innerKey, Decl(indexOnIndexedAccessIsResolvable.ts, 14, 59))
+>toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+}
