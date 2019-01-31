@@ -1235,7 +1235,7 @@ namespace ts {
 
     export interface TypeOperatorNode extends TypeNode {
         kind: SyntaxKind.TypeOperator;
-        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.NotKeyword;
+        operator: SyntaxKind.KeyOfKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.NotKeyword;
         type: TypeNode;
     }
 
@@ -2763,9 +2763,11 @@ namespace ts {
 
     export interface InputFiles extends Node {
         kind: SyntaxKind.InputFiles;
+        javascriptPath?: string;
         javascriptText: string;
         javascriptMapPath?: string;
         javascriptMapText?: string;
+        declarationPath?: string;
         declarationText: string;
         declarationMapPath?: string;
         declarationMapText?: string;
@@ -2773,6 +2775,7 @@ namespace ts {
 
     export interface UnparsedSource extends Node {
         kind: SyntaxKind.UnparsedSource;
+        fileName?: string;
         text: string;
         sourceMapPath?: string;
         sourceMapText?: string;
@@ -2829,7 +2832,7 @@ namespace ts {
         fileName: string,
         data: string,
         writeByteOrderMark: boolean,
-        onError: ((message: string) => void) | undefined,
+        onError?: (message: string) => void,
         sourceFiles?: ReadonlyArray<SourceFile>,
     ) => void;
 
@@ -3039,8 +3042,10 @@ namespace ts {
         /* @internal */ typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: NodeBuilderFlags, tracker?: SymbolTracker): TypeNode | undefined; // tslint:disable-line unified-signatures
         /** Note that the resulting nodes cannot be checked. */
         signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): SignatureDeclaration & {typeArguments?: NodeArray<TypeNode>} | undefined;
+        /* @internal */ signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags, tracker?: SymbolTracker): SignatureDeclaration & {typeArguments?: NodeArray<TypeNode>} | undefined;  // tslint:disable-line unified-signatures
         /** Note that the resulting nodes cannot be checked. */
         indexInfoToIndexSignatureDeclaration(indexInfo: IndexInfo, kind: IndexKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): IndexSignatureDeclaration | undefined;
+        /* @internal */ indexInfoToIndexSignatureDeclaration(indexInfo: IndexInfo, kind: IndexKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags, tracker?: SymbolTracker): IndexSignatureDeclaration | undefined;  // tslint:disable-line unified-signatures
         /** Note that the resulting nodes cannot be checked. */
         symbolToEntityName(symbol: Symbol, meaning: SymbolFlags, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): EntityName | undefined;
         /** Note that the resulting nodes cannot be checked. */
@@ -3917,7 +3922,9 @@ namespace ts {
         aliasTypeArguments?: ReadonlyArray<Type>;     // Alias type arguments (if any)
         /* @internal */ aliasTypeArgumentsContainsMarker?: boolean;   // Alias type arguments (if any)
         /* @internal */
-        wildcardInstantiation?: Type;    // Instantiation with type parameters mapped to wildcard type
+        permissiveInstantiation?: Type;  // Instantiation with type parameters mapped to wildcard type
+        /* @internal */
+        restrictiveInstantiation?: Type; // Instantiation with type parameters mapped to unconstrained form
         /* @internal */
         immediateBaseConstraint?: Type;  // Immediate base constraint cache
     }
@@ -3949,6 +3956,7 @@ namespace ts {
     // Unique symbol types (TypeFlags.UniqueESSymbol)
     export interface UniqueESSymbolType extends Type {
         symbol: Symbol;
+        escapedName: __String;
     }
 
     export interface StringLiteralType extends LiteralType {
@@ -4061,6 +4069,7 @@ namespace ts {
     export interface TupleType extends GenericType {
         minLength: number;
         hasRestElement: boolean;
+        readonly: boolean;
         associatedNames?: __String[];
     }
 
@@ -5010,7 +5019,6 @@ namespace ts {
         getDefaultLibLocation?(): string;
         writeFile: WriteFileCallback;
         getCurrentDirectory(): string;
-        getDirectories(path: string): string[];
         getCanonicalFileName(fileName: string): string;
         useCaseSensitiveFileNames(): boolean;
         getNewLine(): string;
@@ -5872,6 +5880,7 @@ namespace ts {
         /** Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js" */
         readonly importModuleSpecifierEnding?: "minimal" | "index" | "js";
         readonly allowTextChangesInNewFiles?: boolean;
+        readonly providePrefixAndSuffixTextForRename?: boolean;
     }
 
     /** Represents a bigint literal value without requiring bigint support */
