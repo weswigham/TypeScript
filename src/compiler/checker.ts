@@ -12836,11 +12836,11 @@ namespace ts {
                         const result = isRelatedTo(source, (target as NegatedType).type);
                         return result === Ternary.Maybe ? Ternary.Maybe : result ? Ternary.False : Ternary.True;
                     }
-                    // Relationship check is S ⊂ T
+                    // Relationship check is S contained in T
                     // A type S is a subset of ~T if S has no overlap with T (there exist no values within S which are in T) by definition
                     //  however, checking this directly is pretty hard. So instead we rephrase it -
-                    // S ⊂ ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
-                    // That S ⊂ ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified)
+                    // S contained in ~T is true if S and T share no overlap - that overlap is their _intersection_. This means
+                    // That S contained in ~T is true if (S & T) is `never` (or effectively `never`, since intersections are not eagerly simplified)
                     // Fresh object literals get to skip this check, since they are effectively closed, having both an upper and lower bound of themselves
                     if (!(getUnionType([getIntersectionType([source, (target as NegatedType).type]), neverType]).flags & TypeFlags.Never)) {
                         return Ternary.False;
