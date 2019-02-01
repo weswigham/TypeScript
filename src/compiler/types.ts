@@ -3927,6 +3927,8 @@ namespace ts {
         restrictiveInstantiation?: Type; // Instantiation with type parameters mapped to unconstrained form
         /* @internal */
         immediateBaseConstraint?: Type;  // Immediate base constraint cache
+        /* @internal */
+        simplified?: Type;               // A simpler form of the same type (or itself) if present
     }
 
     /* @internal */
@@ -4211,7 +4213,6 @@ namespace ts {
         objectType: Type;
         indexType: Type;
         constraint?: Type;
-        simplified?: Type;
     }
 
     export type TypeVariable = TypeParameter | IndexedAccessType;

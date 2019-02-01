@@ -376,7 +376,7 @@ namespace ts {
 
         const tupleTypes = createMap<GenericType>();
         const unionTypes = createMap<UnionType>();
-        const negatedTypes = createMap<NegatedType>();
+        const negations = createMap<Type>();
         const intersectionTypes = createMap<IntersectionType>();
         const literalTypes = createMap<LiteralType>();
         const indexedAccessTypes = createMap<IndexedAccessType>();
@@ -521,6 +521,7 @@ namespace ts {
         let deferredGlobalExcludeSymbol: Symbol;
         let deferredGlobalPickSymbol: Symbol;
         let deferredGlobalBigIntType: ObjectType;
+        let deferredGlobalTypefactsNamespace: Symbol;
 
         const allPotentiallyUnusedIdentifiers = createMap<PotentiallyUnusedIdentifier[]>(); // key is file name
 
@@ -630,6 +631,31 @@ namespace ts {
             EmptyObjectFacts = All,
         }
 
+        const typeFactsKeysWithTypes = [
+            ["EQString", TypeFacts.TypeofEQString],
+            ["EQNumber", TypeFacts.TypeofEQNumber],
+            ["EQBigInt", TypeFacts.TypeofEQBigInt],
+            ["EQBoolean", TypeFacts.TypeofEQBoolean],
+            ["EQSymbol", TypeFacts.TypeofEQSymbol],
+            ["EQObject", TypeFacts.TypeofEQObject],
+            ["EQFunction", TypeFacts.TypeofEQFunction],
+            ["NEString", TypeFacts.TypeofNEString],
+            ["NENumber", TypeFacts.TypeofNENumber],
+            ["NEBigInt", TypeFacts.TypeofNEBigInt],
+            ["NEBoolean", TypeFacts.TypeofNEBoolean],
+            ["NESymbol", TypeFacts.TypeofNESymbol],
+            ["NEObject", TypeFacts.TypeofNEObject],
+            ["NEFunction", TypeFacts.TypeofNEFunction],
+            ["EQUndefined", TypeFacts.EQUndefined],
+            ["EQNull", TypeFacts.EQNull],
+            ["EQUndefinedOrNull", TypeFacts.EQUndefinedOrNull],
+            ["NEUndefined", TypeFacts.NEUndefined],
+            ["NENull", TypeFacts.NENull],
+            ["NEUndefinedOrNull", TypeFacts.NEUndefinedOrNull],
+            ["Truthy", TypeFacts.Truthy],
+            ["Falsy", TypeFacts.Falsy],
+        ] as [__String, TypeFacts][];
+
         const typeofEQFacts = createMapFromTemplate({
             string: TypeFacts.TypeofEQString,
             number: TypeFacts.TypeofEQNumber,
@@ -679,6 +705,7 @@ namespace ts {
             ImmediateBaseConstraint,
             EnumTagType,
             JSDocTypeReference,
+            SimplifiedForm
         }
 
         const enum CheckMode {
@@ -4708,6 +4735,8 @@ namespace ts {
                     return !!(<Type>target).immediateBaseConstraint;
                 case TypeSystemPropertyName.JSDocTypeReference:
                     return !!getSymbolLinks(target as Symbol).resolvedJSDocType;
+                case TypeSystemPropertyName.SimplifiedForm:
+                    return !!(<Type>target).simplified;
             }
             return Debug.assertNever(propertyName);
         }
@@ -9031,6 +9060,21 @@ namespace ts {
             return deferredGlobalBigIntType || (deferredGlobalBigIntType = getGlobalType("BigInt" as __String, /*arity*/ 0, reportErrors)) || emptyObjectType;
         }
 
+        function getGlobalTypeFactsNamespace() {
+            if (!deferredGlobalTypefactsNamespace) {
+                deferredGlobalTypefactsNamespace = getGlobalSymbol("TypeFacts" as __String, SymbolFlags.Namespace, /*diagnostic*/ undefined) || unknownSymbol;
+            }
+            return deferredGlobalTypefactsNamespace;
+        }
+
+        function getFactType(ns: Symbol, factName: __String, type: Type): Type {
+            const alias = getExportOfModule(ns, factName, /*dontResolveAlias*/ false) || unknownSymbol;
+            if (!(alias.flags & SymbolFlags.TypeAlias)) {
+                return type; // Either invalid type or unknown symbol
+            }
+            return getTypeAliasInstantiation(alias, [type]);
+        }
+
         /**
          * Instantiates a global type that is generic with some element type, and returns that instantiation.
          */
@@ -9235,6 +9279,7 @@ namespace ts {
             if (!(flags & TypeFlags.Never || flags & TypeFlags.Intersection && isEmptyIntersectionType(<IntersectionType>type))) {
                 includes |= flags & ~TypeFlags.ConstructionFlags;
                 if (type === wildcardType) includes |= TypeFlags.Wildcard;
+                if (flags & TypeFlags.Intersection) includes |= maybeTypeOfKind(type, TypeFlags.Negated) ? TypeFlags.Negated : 0;
                 if (!strictNullChecks && flags & TypeFlags.Nullable) {
                     if (!(flags & TypeFlags.ContainsWideningType)) includes |= TypeFlags.NonWideningType;
                 }
@@ -9361,6 +9406,9 @@ namespace ts {
                         }
                         break;
                 }
+                if (includes & TypeFlags.Negated && includes & TypeFlags.Intersection && typeSet.length > 1) {
+                    return simplifyNegationsInUnionType(typeSet, includes, unionReduction, aliasSymbol, aliasTypeArguments);
+                }
                 if (typeSet.length === 0) {
                     return includes & TypeFlags.Null ? includes & TypeFlags.NonWideningType ? nullType : nullWideningType :
                         includes & TypeFlags.Undefined ? includes & TypeFlags.NonWideningType ? undefinedType : undefinedWideningType :
@@ -9368,6 +9416,34 @@ namespace ts {
                 }
             }
             return getUnionTypeFromSortedList(typeSet, !(includes & TypeFlags.NotPrimitiveUnion) ? UnionFlags.Primitives : 0, aliasSymbol, aliasTypeArguments);
+        }
+
+        function simplifyNegationsInUnionType(typeSet: Type[], includes: TypeFlags, unionReduction: UnionReduction, aliasSymbol?: Symbol, aliasTypeArguments?: ReadonlyArray<Type>): Type {
+            const unionType = getUnionTypeFromSortedList(typeSet, !(includes & TypeFlags.NotPrimitiveUnion) ? UnionFlags.Primitives : 0, aliasSymbol, aliasTypeArguments);
+            // Double negation triggers potential simplifications caused by the logical inverse of the intersection simplifications
+            // without needing to explicitly write those cases out :smile: (This also guarantees logical consistiency between unions and intersections)
+            // Naturally, types which don't simplify, but cause us to try to simplify will circularly
+            // reenter this code path - we simply detect when this occurs and return the unsimplifiable type.
+            if (unionType.simplified) {
+                return unionType.simplified;
+            }
+            if (!pushTypeResolution(unionType, TypeSystemPropertyName.SimplifiedForm)) {
+                return unionType.simplified || (unionType.simplified = unionType);
+            }
+            if (unionReduction !== UnionReduction.Subtype && unionType.flags & TypeFlags.Union) {
+                const newSet = typeSet.slice();
+                // Subtype reduction is an amazingly huge win for comparing Truthy/Falsy types - in fact
+                // it's almost completely unreasonable to do control flow narrowing for negated types without subtype reducing them all
+                removeSubtypes(newSet, !(includes & TypeFlags.StructuredOrInstantiable));
+                if (newSet.length !== typeSet.length) {
+                    return simplifyNegationsInUnionType(newSet, includes, UnionReduction.Subtype, aliasSymbol, aliasTypeArguments);
+                }
+            }
+            const simplified = getNegatedType(getNegatedType(unionType));
+            if (!popTypeResolution()) {
+                return unionType.simplified || (unionType.simplified = unionType);
+            }
+            return unionType.simplified = simplified;
         }
 
         function getUnionTypePredicate(signatures: ReadonlyArray<Signature>): TypePredicate | undefined {
@@ -9826,7 +9902,9 @@ namespace ts {
                 return some((type as IntersectionType).types, isJSLiteralType);
             }
             if (type.flags & TypeFlags.Instantiable) {
-                return isJSLiteralType(getResolvedBaseConstraint(type));
+                const constraint = getResolvedBaseConstraint(type);
+                if (constraint === type) return false;
+                return isJSLiteralType(constraint);
             }
             return false;
         }
@@ -10227,12 +10305,6 @@ namespace ts {
             if (type.flags & TypeFlags.Negated) {
                 return (type as NegatedType).type;
             }
-            if (type.flags & TypeFlags.Union) {
-                return getIntersectionType(map((type as UnionType).types, getNegatedType));
-            }
-            if (type.flags & TypeFlags.Intersection) {
-                return getUnionType(map((type as IntersectionType).types, getNegatedType));
-            }
             if (type.flags & TypeFlags.Any) {
                 return type;
             }
@@ -10243,13 +10315,23 @@ namespace ts {
                 return unknownType;
             }
             const inputId = getTypeId(type);
-            const existing = negatedTypes.get("" + inputId);
+            const existing = negations.get("" + inputId);
             if (existing) {
                 return existing;
             }
+            if (type.flags & TypeFlags.Union) {
+                const result = getIntersectionType(map((type as UnionType).types, getNegatedType));
+                negations.set("" + inputId, result);
+                return result;
+            }
+            if (type.flags & TypeFlags.Intersection) {
+                const result = getUnionType(map((type as IntersectionType).types, getNegatedType));
+                negations.set("" + inputId, result);
+                return result;
+            }
             const newNegated = createType(TypeFlags.Negated) as NegatedType;
             newNegated.type = type;
-            negatedTypes.set("" + inputId, newNegated);
+            negations.set("" + inputId, newNegated);
             return newNegated;
         }
 
@@ -11950,7 +12032,7 @@ namespace ts {
                 relation !== identityRelation && isSimpleTypeRelatedTo(source, target, relation)) {
                 return true;
             }
-            if (source.flags & TypeFlags.Object && target.flags & TypeFlags.Object) {
+            if (source.flags & TypeFlags.StructuredOrInstantiable || target.flags & TypeFlags.StructuredOrInstantiable) {
                 const related = relation.get(getRelationKey(source, target, relation));
                 if (related !== undefined) {
                     return related === RelationComparisonResult.Succeeded;
@@ -12279,6 +12361,12 @@ namespace ts {
                         return result;
                     }
                     reportRelationError(headMessage, source, target);
+                }
+                if (source.flags & TypeFlags.StructuredOrInstantiable || target.flags & TypeFlags.StructuredOrInstantiable) {
+                    const relationKey = getRelationKey(source, target, relation);
+                    if (!relation.has(relationKey)) {
+                        relation.set(relationKey, !result ? reportErrors ? RelationComparisonResult.FailedAndReported : RelationComparisonResult.Failed : RelationComparisonResult.Succeeded);
+                    }
                 }
                 return result;
             }
@@ -13794,7 +13882,9 @@ namespace ts {
                 type.flags & TypeFlags.NumberLiteral ? numberType :
                 type.flags & TypeFlags.BigIntLiteral ? bigintType :
                 type.flags & TypeFlags.BooleanLiteral ? booleanType :
+                type.flags & TypeFlags.Negated ? unknownType :
                 type.flags & TypeFlags.Union ? getUnionType(sameMap((<UnionType>type).types, getBaseTypeOfLiteralType)) :
+                type.flags & TypeFlags.Intersection ? getIntersectionType(sameMap((<IntersectionType>type).types, getBaseTypeOfLiteralType)) :
                 type;
         }
 
@@ -15282,6 +15372,13 @@ namespace ts {
 
         function getTypeFacts(type: Type): TypeFacts {
             const flags = type.flags;
+            if (flags & TypeFlags.Negated) {
+                // Type facts collect what something is - negated types only say what something isn't.
+                // TODO: `string & not ""` should not be marked "possibly falsey" - there's no great
+                // way to capture this using the `facts` system, though - because of this, we should
+                // prefer assignability checks.
+                return TypeFacts.None;
+            }
             if (flags & TypeFlags.String) {
                 return strictNullChecks ? TypeFacts.StringStrictFacts : TypeFacts.StringFacts;
             }
@@ -15346,6 +15443,19 @@ namespace ts {
         }
 
         function getTypeWithFacts(type: Type, include: TypeFacts) {
+            const ns = getGlobalTypeFactsNamespace();
+            if (ns === unknownSymbol) {
+                return filterTypeWithFacts(type, include);
+            }
+            for (const [name, flag] of typeFactsKeysWithTypes) {
+                if (include & flag) {
+                    type = getFactType(ns, name, type);
+                }
+            }
+            return type;
+        }
+
+        function filterTypeWithFacts(type: Type, include: TypeFacts) {
             return filterType(type, t => (getTypeFacts(t) & include) !== 0);
         }
 
