@@ -521,7 +521,6 @@ namespace ts {
         let deferredGlobalExcludeSymbol: Symbol;
         let deferredGlobalPickSymbol: Symbol;
         let deferredGlobalBigIntType: ObjectType;
-        let deferredGlobalTypefactsNamespace: Symbol;
 
         const allPotentiallyUnusedIdentifiers = createMap<PotentiallyUnusedIdentifier[]>(); // key is file name
 
@@ -632,29 +631,29 @@ namespace ts {
         }
 
         const typeFactsKeysWithTypes = [
-            ["EQString", TypeFacts.TypeofEQString],
-            ["EQNumber", TypeFacts.TypeofEQNumber],
-            ["EQBigInt", TypeFacts.TypeofEQBigInt],
-            ["EQBoolean", TypeFacts.TypeofEQBoolean],
-            ["EQSymbol", TypeFacts.TypeofEQSymbol],
-            ["EQObject", TypeFacts.TypeofEQObject],
-            ["EQFunction", TypeFacts.TypeofEQFunction],
-            ["NEString", TypeFacts.TypeofNEString],
-            ["NENumber", TypeFacts.TypeofNENumber],
-            ["NEBigInt", TypeFacts.TypeofNEBigInt],
-            ["NEBoolean", TypeFacts.TypeofNEBoolean],
-            ["NESymbol", TypeFacts.TypeofNESymbol],
-            ["NEObject", TypeFacts.TypeofNEObject],
-            ["NEFunction", TypeFacts.TypeofNEFunction],
-            ["EQUndefined", TypeFacts.EQUndefined],
-            ["EQNull", TypeFacts.EQNull],
-            ["EQUndefinedOrNull", TypeFacts.EQUndefinedOrNull],
-            ["NEUndefined", TypeFacts.NEUndefined],
-            ["NENull", TypeFacts.NENull],
-            ["NEUndefinedOrNull", TypeFacts.NEUndefinedOrNull],
-            ["Truthy", TypeFacts.Truthy],
-            ["Falsy", TypeFacts.Falsy],
-        ] as [__String, TypeFacts][];
+            [TypeFacts.TypeofEQString, stringType],
+            [TypeFacts.TypeofEQNumber, numberType],
+            [TypeFacts.TypeofEQBigInt, bigintType],
+            [TypeFacts.TypeofEQBoolean, booleanType],
+            [TypeFacts.TypeofEQSymbol, esSymbolType],
+            [TypeFacts.TypeofEQObject, nonPrimitiveType],
+            [TypeFacts.TypeofEQFunction, anyFunctionType],
+            [TypeFacts.TypeofNEString, getNegatedType(stringType)],
+            [TypeFacts.TypeofNENumber, getNegatedType(numberType)],
+            [TypeFacts.TypeofNEBigInt, getNegatedType(bigintType)],
+            [TypeFacts.TypeofNEBoolean, getNegatedType(booleanType)],
+            [TypeFacts.TypeofNESymbol, getNegatedType(esSymbolType)],
+            [TypeFacts.TypeofNEObject, getNegatedType(nonPrimitiveType)],
+            [TypeFacts.TypeofNEFunction, getNegatedType(anyFunctionType)],
+            [TypeFacts.EQUndefined, getUnionType([undefinedType, voidType])],
+            [TypeFacts.EQNull, nullType],
+            [TypeFacts.EQUndefinedOrNull, getUnionType([undefinedType, nullType, voidType])],
+            [TypeFacts.NEUndefined, getNegatedType(getUnionType([undefinedType, voidType]))],
+            [TypeFacts.NENull, getNegatedType(nullType)],
+            [TypeFacts.NEUndefinedOrNull, getNegatedType(getUnionType([undefinedType, nullType, voidType]))],
+            [TypeFacts.Truthy, getNegatedType(getUnionType([falseType, undefinedType, nullType, voidType, zeroType, zeroBigIntType, emptyStringType]))],
+            [TypeFacts.Falsy, getUnionType([falseType, undefinedType, nullType, voidType, zeroType, zeroBigIntType, emptyStringType])],
+        ] as [TypeFacts, Type][];
 
         const typeofEQFacts = createMapFromTemplate({
             string: TypeFacts.TypeofEQString,
@@ -7502,6 +7501,9 @@ namespace ts {
                         constraint = getConstraintOfType(constraint);
                     }
                     if (constraint) {
+                        if (t.flags & TypeFlags.Negated) {
+                            hasDisjointDomainType = true;
+                        }
                         constraints = append(constraints, constraint);
                     }
                 }
@@ -7521,12 +7523,7 @@ namespace ts {
                         }
                     }
                 }
-                const result = getIntersectionType(constraints);
-                // Since non-union constraints are of no interest, we can exit here.
-                if (!(result.flags & TypeFlags.Union)) {
-                    return undefined;
-                }
-                return result;
+                return getIntersectionType(constraints);
             }
             return undefined;
         }
@@ -9060,21 +9057,6 @@ namespace ts {
             return deferredGlobalBigIntType || (deferredGlobalBigIntType = getGlobalType("BigInt" as __String, /*arity*/ 0, reportErrors)) || emptyObjectType;
         }
 
-        function getGlobalTypeFactsNamespace() {
-            if (!deferredGlobalTypefactsNamespace) {
-                deferredGlobalTypefactsNamespace = getGlobalSymbol("TypeFacts" as __String, SymbolFlags.Namespace, /*diagnostic*/ undefined) || unknownSymbol;
-            }
-            return deferredGlobalTypefactsNamespace;
-        }
-
-        function getFactType(ns: Symbol, factName: __String, type: Type): Type {
-            const alias = getExportOfModule(ns, factName, /*dontResolveAlias*/ false) || unknownSymbol;
-            if (!(alias.flags & SymbolFlags.TypeAlias)) {
-                return type; // Either invalid type or unknown symbol
-            }
-            return getTypeAliasInstantiation(alias, [type]);
-        }
-
         /**
          * Instantiates a global type that is generic with some element type, and returns that instantiation.
          */
@@ -9537,6 +9519,11 @@ namespace ts {
                     if (type === wildcardType) includes |= TypeFlags.Wildcard;
                 }
                 else if ((strictNullChecks || !(flags & TypeFlags.Nullable)) && !contains(typeSet, type)) {
+                    if (type.symbol && ((type.flags & TypeFlags.StringLiteral && includes & TypeFlags.StringLiteral) ||
+                        (type.flags & TypeFlags.NumberLiteral && includes & TypeFlags.NumberLiteral))
+                    ) {
+                        orderedRemoveItem(typeSet, getLiteralType((type as LiteralType).value)); // Remove literal base of enum type from intersection, if present
+                    }
                     typeSet.push(type);
                 }
             }
@@ -9546,8 +9533,20 @@ namespace ts {
         // Add the given types to the given type set. Order is preserved, freshness is removed from literal
         // types, duplicates are removed, and nested types of the given kind are flattened into the set.
         function addTypesToIntersection(typeSet: Type[], includes: TypeFlags, types: ReadonlyArray<Type>) {
+            let deferredAdditions: Type[] | undefined;
             for (const type of types) {
-                includes = addTypeToIntersection(typeSet, includes, getRegularTypeOfLiteralType(type));
+                if (isLiteralEnumMemberType(type)) {
+                    // Append enums at the end, so we know we've already added their base types, if they are also present
+                    deferredAdditions = append(deferredAdditions, type);
+                }
+                else {
+                    includes = addTypeToIntersection(typeSet, includes, getRegularTypeOfLiteralType(type));
+                }
+            }
+            if (deferredAdditions) {
+                for(const type of deferredAdditions) {
+                    includes = addTypeToIntersection(typeSet, includes, getRegularTypeOfLiteralType(type));
+                }
             }
             return includes;
         }
@@ -9676,7 +9675,7 @@ namespace ts {
                 for (const variable of variables) {
                     const constraint = getConstraintOfType(variable);
                     if (constraint && (isPrimitiveOrEnumLiteralUnion(constraint) || constraint.flags && TypeFlags.Union && (constraint as UnionType).contentsFlags & UnionFlags.Primitives)) {
-                        if (!isTypeSubtypeOf(toCheck, constraint) && !isTypeSubtypeOf(constraint, toCheck)) {
+                        if (!isTypeComparableTo(constraint, toCheck) && !isTypeComparableTo(toCheck, constraint)) {
                             return true;
                         }
                     }
@@ -15443,20 +15442,12 @@ namespace ts {
         }
 
         function getTypeWithFacts(type: Type, include: TypeFacts) {
-            const ns = getGlobalTypeFactsNamespace();
-            if (ns === unknownSymbol) {
-                return filterTypeWithFacts(type, include);
-            }
-            for (const [name, flag] of typeFactsKeysWithTypes) {
+            for (const [flag, intersectableType] of typeFactsKeysWithTypes) {
                 if (include & flag) {
-                    type = getFactType(ns, name, type);
+                    type = intersectTypes(type, intersectableType);
                 }
             }
             return type;
-        }
-
-        function filterTypeWithFacts(type: Type, include: TypeFacts) {
-            return filterType(type, t => (getTypeFacts(t) & include) !== 0);
         }
 
         function getTypeWithDefault(type: Type, defaultExpression: Expression) {
