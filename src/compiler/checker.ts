@@ -645,14 +645,14 @@ namespace ts {
             [TypeFacts.TypeofNESymbol, getNegatedType(esSymbolType)],
             [TypeFacts.TypeofNEObject, getNegatedType(nonPrimitiveType)],
             [TypeFacts.TypeofNEFunction, getNegatedType(anyFunctionType)],
-            [TypeFacts.EQUndefined, getUnionType([undefinedType, voidType])],
+            [TypeFacts.EQUndefined, getUnionType([undefinedType])],
             [TypeFacts.EQNull, nullType],
-            [TypeFacts.EQUndefinedOrNull, getUnionType([undefinedType, nullType, voidType])],
-            [TypeFacts.NEUndefined, getNegatedType(getUnionType([undefinedType, voidType]))],
+            [TypeFacts.EQUndefinedOrNull, getUnionType([undefinedType, nullType])],
+            [TypeFacts.NEUndefined, getNegatedType(getUnionType([undefinedType]))],
             [TypeFacts.NENull, getNegatedType(nullType)],
-            [TypeFacts.NEUndefinedOrNull, getNegatedType(getUnionType([undefinedType, nullType, voidType]))],
-            [TypeFacts.Truthy, getNegatedType(getUnionType([falseType, undefinedType, nullType, voidType, zeroType, zeroBigIntType, emptyStringType]))],
-            [TypeFacts.Falsy, getUnionType([falseType, undefinedType, nullType, voidType, zeroType, zeroBigIntType, emptyStringType])],
+            [TypeFacts.NEUndefinedOrNull, getNegatedType(getUnionType([undefinedType, nullType]))],
+            [TypeFacts.Truthy, getNegatedType(getUnionType([falseType, undefinedType, nullType, zeroType, zeroBigIntType, emptyStringType]))],
+            [TypeFacts.Falsy, getUnionType([falseType, undefinedType, nullType, zeroType, zeroBigIntType, emptyStringType])],
         ] as [TypeFacts, Type][];
 
         const typeofEQFacts = createMapFromTemplate({
@@ -9228,12 +9228,17 @@ namespace ts {
         // a number-like type and a type known to be non-number-like, or
         // a symbol-like type and a type known to be non-symbol-like, or
         // a void-like type and a type known to be non-void-like, or
-        // a non-primitive type and a type known to be primitive.
+        // a non-primitive type and a type known to be primitive, or
+        // an array type and a type known to be a primitive.
         function isEmptyIntersectionType(type: IntersectionType) {
             let combined: TypeFlags = 0;
+            let hasArray = false;
             for (const t of type.types) {
                 if (t.flags & TypeFlags.Unit && combined & TypeFlags.Unit) {
                     return true;
+                }
+                if (isArrayLikeType(t) || isTupleType(t)) { // Forbid intersections of arrays and primitives
+                    hasArray = true;
                 }
                 combined |= t.flags;
                 if (combined & TypeFlags.Nullable && combined & (TypeFlags.Object | TypeFlags.NonPrimitive) ||
@@ -9242,7 +9247,8 @@ namespace ts {
                     combined & TypeFlags.NumberLike && combined & (TypeFlags.DisjointDomains & ~TypeFlags.NumberLike) ||
                     combined & TypeFlags.BigIntLike && combined & (TypeFlags.DisjointDomains & ~TypeFlags.BigIntLike) ||
                     combined & TypeFlags.ESSymbolLike && combined & (TypeFlags.DisjointDomains & ~TypeFlags.ESSymbolLike) ||
-                    combined & TypeFlags.VoidLike && combined & (TypeFlags.DisjointDomains & ~TypeFlags.VoidLike)) {
+                    combined & TypeFlags.VoidLike && combined & (TypeFlags.DisjointDomains & ~TypeFlags.VoidLike) ||
+                    combined & TypeFlags.Primitive && hasArray) {
                     return true;
                 }
             }
@@ -9388,7 +9394,7 @@ namespace ts {
                         }
                         break;
                 }
-                if (includes & TypeFlags.Negated && includes & TypeFlags.Intersection && typeSet.length > 1) {
+                if (includes & TypeFlags.Negated && typeSet.length > 1) {
                     return simplifyNegationsInUnionType(typeSet, includes, unionReduction, aliasSymbol, aliasTypeArguments);
                 }
                 if (typeSet.length === 0) {
@@ -9418,7 +9424,9 @@ namespace ts {
                 // it's almost completely unreasonable to do control flow narrowing for negated types without subtype reducing them all
                 removeSubtypes(newSet, !(includes & TypeFlags.StructuredOrInstantiable));
                 if (newSet.length !== typeSet.length) {
-                    return simplifyNegationsInUnionType(newSet, includes, UnionReduction.Subtype, aliasSymbol, aliasTypeArguments);
+                    const result = simplifyNegationsInUnionType(newSet, includes, UnionReduction.Subtype, aliasSymbol, aliasTypeArguments);
+                    popTypeResolution();
+                    return result;
                 }
             }
             const simplified = getNegatedType(getNegatedType(unionType));
@@ -12329,7 +12337,7 @@ namespace ts {
                     // variable V constrained to 'string | number', 'V & number' has a combined constraint of
                     // 'string & number | number & number' which reduces to just 'number'.
                     const constraint = getUnionConstraintOfIntersection(<IntersectionType>source, !!(target.flags & TypeFlags.Union));
-                    if (constraint) {
+                    if (constraint && constraint !== source) {
                         if (result = isRelatedTo(constraint, target, reportErrors, /*headMessage*/ undefined, isIntersectionConstituent)) {
                             errorInfo = saveErrorInfo;
                         }
@@ -23008,9 +23016,7 @@ namespace ts {
                         getUnionType([extractDefinitelyFalsyTypes(strictNullChecks ? leftType : getBaseTypeOfLiteralType(rightType)), rightType]) :
                         leftType;
                 case SyntaxKind.BarBarToken:
-                    return getTypeFacts(leftType) & TypeFacts.Falsy ?
-                        getUnionType([removeDefinitelyFalsyTypes(leftType), rightType], UnionReduction.Subtype) :
-                        leftType;
+                    return getUnionType([getTypeWithFacts(leftType, TypeFacts.Truthy), rightType], UnionReduction.Subtype);
                 case SyntaxKind.EqualsToken:
                     const declKind = isBinaryExpression(left.parent) ? getAssignmentDeclarationKind(left.parent) : AssignmentDeclarationKind.None;
                     checkAssignmentDeclaration(declKind, rightType);

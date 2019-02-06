@@ -1,0 +1,18 @@
+tests/cases/compiler/strictGenericNarrowingUsesNonFalsy.ts(6,9): error TS2322: Type 'T["x"] & not undefined & not void & not 0' is not assignable to type '0'.
+  Type 'number & not 0' is not assignable to type '0'.
+    Type 'not 0 & number' is not assignable to type '0'.
+
+
+==== tests/cases/compiler/strictGenericNarrowingUsesNonFalsy.ts (1 errors) ====
+    function f<T extends { x?: number }>(o: Readonly<T>) {
+        if (o.x) {
+            o.x.toExponential(); // Hover over 'x' shows number
+            const n: number = o.x; // Error. Hover over 'x' shows `T["x"]`
+            let x: 0 = 0;
+            x = o.x;
+            ~
+!!! error TS2322: Type 'T["x"] & not undefined & not void & not 0' is not assignable to type '0'.
+!!! error TS2322:   Type 'number & not 0' is not assignable to type '0'.
+!!! error TS2322:     Type 'not 0 & number' is not assignable to type '0'.
+        }
+    }

@@ -22,5 +22,16 @@ function f<T extends { x?: number }>(o: Readonly<T>) {
 >o.x : T["x"] & not undefined & not void & not 0
 >o : Readonly<T>
 >x : T["x"] & not undefined & not void & not 0
+
+        let x: 0 = 0;
+>x : 0
+>0 : 0
+
+        x = o.x;
+>x = o.x : T["x"] & not undefined & not void & not 0
+>x : 0
+>o.x : T["x"] & not undefined & not void & not 0
+>o : Readonly<T>
+>x : T["x"] & not undefined & not void & not 0
     }
 }

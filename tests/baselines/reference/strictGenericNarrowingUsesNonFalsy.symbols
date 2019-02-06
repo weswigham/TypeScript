@@ -24,5 +24,14 @@ function f<T extends { x?: number }>(o: Readonly<T>) {
 >o.x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 22))
 >o : Symbol(o, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 37))
 >x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 22))
+
+        let x: 0 = 0;
+>x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 4, 11))
+
+        x = o.x;
+>x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 4, 11))
+>o.x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 22))
+>o : Symbol(o, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 37))
+>x : Symbol(x, Decl(strictGenericNarrowingUsesNonFalsy.ts, 0, 22))
     }
 }
