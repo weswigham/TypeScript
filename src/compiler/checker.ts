@@ -31,6 +31,13 @@ namespace ts {
     }
 
     export function createTypeChecker(host: TypeCheckerHost, produceDiagnostics: boolean): TypeChecker {
+
+        // Create the permissive mapper all the way up here so we can set the `consumesAllTypes` flag on it
+        function permissiveMapper(type: Type) {
+            return type.flags & TypeFlags.TypeParameter ? wildcardType : type;
+        }
+        permissiveMapper.consumesAllTypes = true;
+
         const getPackagesSet: () => Map<true> = memoize(() => {
             const set = createMap<true>();
             host.getSourceFiles().forEach(sf => {
@@ -10266,29 +10273,12 @@ namespace ts {
             return result;
         }
 
-        function isPossiblyReferencedInConditionalType(tp: TypeParameter, node: Node) {
-            if (isTypeParameterPossiblyReferenced(tp, node)) {
-                return true;
-            }
-            while (node) {
-                if (node.kind === SyntaxKind.ConditionalType) {
-                    if (isTypeParameterPossiblyReferenced(tp, (<ConditionalTypeNode>node).extendsType)) {
-                        return true;
-                    }
-                }
-                node = node.parent;
-            }
-            return false;
-        }
-
         function getTypeFromConditionalTypeNode(node: ConditionalTypeNode): Type {
             const links = getNodeLinks(node);
             if (!links.resolvedType) {
                 const checkType = getTypeFromTypeNode(node.checkType);
                 const aliasSymbol = getAliasSymbolForTypeNode(node);
                 const aliasTypeArguments = getTypeArgumentsForAliasSymbol(aliasSymbol);
-                const allOuterTypeParameters = getOuterTypeParameters(node, /*includeThisTypes*/ true);
-                const outerTypeParameters = aliasTypeArguments ? allOuterTypeParameters : filter(allOuterTypeParameters, tp => isPossiblyReferencedInConditionalType(tp, node));
                 const root: ConditionalRoot = {
                     node,
                     checkType,
@@ -10297,16 +10287,10 @@ namespace ts {
                     falseType: getTypeFromTypeNode(node.falseType),
                     isDistributive: !!(checkType.flags & TypeFlags.TypeParameter),
                     inferTypeParameters: getInferTypeParameters(node),
-                    outerTypeParameters,
-                    instantiations: undefined,
                     aliasSymbol,
                     aliasTypeArguments
                 };
                 links.resolvedType = getConditionalType(root, /*mapper*/ undefined);
-                if (outerTypeParameters) {
-                    root.instantiations = createMap<Type>();
-                    root.instantiations.set(getTypeListId(outerTypeParameters), links.resolvedType);
-                }
             }
             return links.resolvedType;
         }
@@ -10814,15 +10798,16 @@ namespace ts {
         function combineTypeMappers(mapper1: TypeMapper, mapper2: TypeMapper): TypeMapper {
             if (!mapper1) return mapper2;
             if (!mapper2) return mapper1;
-            return t => instantiateType(mapper1(t), mapper2);
+            if (mapper1.consumesAllTypes) return mapper1;
+            const result: TypeMapper = t => instantiateType(mapper1(t), mapper2);
+            if (mapper2.consumesAllTypes) {
+                result.consumesAllTypes = true;
+            }
+            return result;
         }
 
         function createReplacementMapper(source: Type, target: Type, baseMapper: TypeMapper): TypeMapper {
             return t => t === source ? target : baseMapper(t);
-        }
-
-        function permissiveMapper(type: Type) {
-            return type.flags & TypeFlags.TypeParameter ? wildcardType : type;
         }
 
         function getRestrictiveTypeParameter(tp: TypeParameter) {
@@ -11092,22 +11077,7 @@ namespace ts {
         }
 
         function getConditionalTypeInstantiation(type: ConditionalType, mapper: TypeMapper): Type {
-            const root = type.root;
-            if (root.outerTypeParameters) {
-                // We are instantiating a conditional type that has one or more type parameters in scope. Apply the
-                // mapper to the type parameters to produce the effective list of type arguments, and compute the
-                // instantiation cache key from the type IDs of the type arguments.
-                const typeArguments = map(root.outerTypeParameters, mapper);
-                const id = getTypeListId(typeArguments);
-                let result = root.instantiations!.get(id);
-                if (!result) {
-                    const newMapper = createTypeMapper(root.outerTypeParameters, typeArguments);
-                    result = instantiateConditionalType(root, newMapper);
-                    root.instantiations!.set(id, result);
-                }
-                return result;
-            }
-            return type;
+            return instantiateConditionalType(type.root, mapper);
         }
 
         function instantiateConditionalType(root: ConditionalRoot, mapper: TypeMapper): Type {

@@ -4299,8 +4299,6 @@ namespace ts {
         falseType: Type;
         isDistributive: boolean;
         inferTypeParameters?: TypeParameter[];
-        outerTypeParameters?: TypeParameter[];
-        instantiations?: Map<Type>;
         aliasSymbol?: Symbol;
         aliasTypeArguments?: Type[];
     }
@@ -4393,7 +4391,11 @@ namespace ts {
     }
 
     /* @internal */
-    export type TypeMapper = (t: TypeParameter) => Type;
+    export interface TypeMapper {
+        (t: TypeParameter): Type;
+        /** flag indicating the type mapper consumes _all_ type parameters in types it instantiates (and does not replace them with more type params) */
+        consumesAllTypes?: boolean;
+    }
 
     export const enum InferencePriority {
         NakedTypeVariable           = 1 << 0,  // Naked type variable in union or intersection type

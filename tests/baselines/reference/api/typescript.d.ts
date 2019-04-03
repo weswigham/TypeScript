@@ -2373,8 +2373,6 @@ declare namespace ts {
         falseType: Type;
         isDistributive: boolean;
         inferTypeParameters?: TypeParameter[];
-        outerTypeParameters?: TypeParameter[];
-        instantiations?: Map<Type>;
         aliasSymbol?: Symbol;
         aliasTypeArguments?: Type[];
     }
