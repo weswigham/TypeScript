@@ -28942,6 +28942,7 @@ namespace ts {
                 if (skipTypeChecking(node, compilerOptions)) {
                     return;
                 }
+                sharedFlowTypes.clear(); // We clear this each time we start checking a file so memory usage doesn't grow too much due to flow result caching - we can't really fully clear at any smaller bounds (just erase subsets, if we wanted to track them)
 
                 // Grammar checking
                 checkGrammarSourceFile(node);
