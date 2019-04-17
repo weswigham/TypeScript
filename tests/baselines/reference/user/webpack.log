@@ -2,6 +2,9 @@ Exit Code: 1
 Standard output:
 ../../../../../built/local/lib.dom.d.ts(17676,19): error TS2451: Cannot redeclare block-scoped variable 'WebAssembly'.
 declarations.d.ts(258,15): error TS2451: Cannot redeclare block-scoped variable 'WebAssembly'.
+lib/optimize/MergeDuplicateChunksPlugin.js(44,28): error TS2532: Object is possibly 'undefined'.
+lib/optimize/MergeDuplicateChunksPlugin.js(47,12): error TS2532: Object is possibly 'undefined'.
+lib/optimize/MergeDuplicateChunksPlugin.js(51,14): error TS2532: Object is possibly 'undefined'.
 
 
 
