@@ -17,7 +17,7 @@ node_modules/uglify-js/lib/compress.js(1172,53): error TS2339: Property 'parent'
 node_modules/uglify-js/lib/compress.js(1213,112): error TS2454: Variable 'args' is used before being assigned.
 node_modules/uglify-js/lib/compress.js(1214,29): error TS2532: Object is possibly 'undefined'.
 node_modules/uglify-js/lib/compress.js(1223,87): error TS2322: Type 'false' is not assignable to type 'number'.
-node_modules/uglify-js/lib/compress.js(1231,29): error TS2322: Type 'false' is not assignable to type 'never'.
+node_modules/uglify-js/lib/compress.js(1231,39): error TS2339: Property 'single_use' does not exist on type 'never'.
 node_modules/uglify-js/lib/compress.js(1337,53): error TS2554: Expected 0 arguments, but got 1.
 node_modules/uglify-js/lib/compress.js(1438,38): error TS2339: Property 'parent' does not exist on type 'TreeTransformer'.
 node_modules/uglify-js/lib/compress.js(1548,42): error TS2554: Expected 0 arguments, but got 1.
