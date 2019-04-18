@@ -16115,7 +16115,7 @@ namespace ts {
                         // simply return the non-auto declared type to reduce follow-on errors.
                         type = convertAutoToAny(declaredType);
                     }
-                    if (flags & FlowFlags.Shared) {
+                    if (flags & FlowFlags.Shared && !isIncomplete(type)) {
                         // Record visited node and the associated type in the cache.
                         const flowId = `${refKey}@${getFlowNodeId(flow)}`;
                         sharedFlowTypes.set(flowId, type);

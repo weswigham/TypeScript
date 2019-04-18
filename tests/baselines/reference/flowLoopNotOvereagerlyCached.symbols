@@ -1,0 +1,122 @@
+=== tests/cases/compiler/iter.js ===
+var chunks = /** @type {{ modulesIterable: { chunksIterable: { getNumberOfModules(): number }[] }[], getNumberOfModules(): number, hasRuntime(): boolean }[]} */(/** @type {*} */(null));
+>chunks : Symbol(chunks, Decl(iter.js, 0, 3))
+
+const notDuplicates = new Set();
+>notDuplicates : Symbol(notDuplicates, Decl(iter.js, 1, 5))
+>Set : Symbol(Set, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+
+for (const chunk of chunks) {
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+>chunks : Symbol(chunks, Decl(iter.js, 0, 3))
+
+    let possibleDuplicates;
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+
+    for (const module of chunk.modulesIterable) {
+>module : Symbol(module, Decl(iter.js, 5, 14))
+>chunk.modulesIterable : Symbol(modulesIterable, Decl(iter.js, 0, 25))
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+>modulesIterable : Symbol(modulesIterable, Decl(iter.js, 0, 25))
+
+        if (possibleDuplicates === undefined) {
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>undefined : Symbol(undefined)
+
+            for (const dup of module.chunksIterable) {
+>dup : Symbol(dup, Decl(iter.js, 7, 22))
+>module.chunksIterable : Symbol(chunksIterable, Decl(iter.js, 0, 44))
+>module : Symbol(module, Decl(iter.js, 5, 14))
+>chunksIterable : Symbol(chunksIterable, Decl(iter.js, 0, 44))
+
+                if (
+                    dup !== chunk &&
+>dup : Symbol(dup, Decl(iter.js, 7, 22))
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+
+                    chunk.getNumberOfModules() === dup.getNumberOfModules() &&
+>chunk.getNumberOfModules : Symbol(getNumberOfModules, Decl(iter.js, 0, 100))
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+>getNumberOfModules : Symbol(getNumberOfModules, Decl(iter.js, 0, 100))
+>dup.getNumberOfModules : Symbol(getNumberOfModules, Decl(iter.js, 0, 62))
+>dup : Symbol(dup, Decl(iter.js, 7, 22))
+>getNumberOfModules : Symbol(getNumberOfModules, Decl(iter.js, 0, 62))
+
+                    !notDuplicates.has(dup)
+>notDuplicates.has : Symbol(Set.has, Decl(lib.es2015.collection.d.ts, --, --))
+>notDuplicates : Symbol(notDuplicates, Decl(iter.js, 1, 5))
+>has : Symbol(Set.has, Decl(lib.es2015.collection.d.ts, --, --))
+>dup : Symbol(dup, Decl(iter.js, 7, 22))
+
+                ) {
+                    if (possibleDuplicates === undefined) {
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>undefined : Symbol(undefined)
+
+                        possibleDuplicates = new Set();
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>Set : Symbol(Set, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+                    }
+                    possibleDuplicates.add(dup);
+>possibleDuplicates.add : Symbol(Set.add, Decl(lib.es2015.collection.d.ts, --, --))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>add : Symbol(Set.add, Decl(lib.es2015.collection.d.ts, --, --))
+>dup : Symbol(dup, Decl(iter.js, 7, 22))
+                }
+            }
+            if (possibleDuplicates === undefined) break;
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>undefined : Symbol(undefined)
+
+        } else {
+            for (const dup of possibleDuplicates) {
+>dup : Symbol(dup, Decl(iter.js, 21, 22))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+
+                if (!dup.containsModule(module)) {
+>dup : Symbol(dup, Decl(iter.js, 21, 22))
+>module : Symbol(module, Decl(iter.js, 5, 14))
+
+                    possibleDuplicates.delete(dup);
+>possibleDuplicates.delete : Symbol(Set.delete, Decl(lib.es2015.collection.d.ts, --, --))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>delete : Symbol(Set.delete, Decl(lib.es2015.collection.d.ts, --, --))
+>dup : Symbol(dup, Decl(iter.js, 21, 22))
+                }
+            }
+            if (possibleDuplicates.size === 0) break;
+>possibleDuplicates.size : Symbol(Set.size, Decl(lib.es2015.collection.d.ts, --, --))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>size : Symbol(Set.size, Decl(lib.es2015.collection.d.ts, --, --))
+        }
+    }
+
+    if (
+        possibleDuplicates !== undefined &&
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>undefined : Symbol(undefined)
+
+        possibleDuplicates.size > 0
+>possibleDuplicates.size : Symbol(Set.size, Decl(lib.es2015.collection.d.ts, --, --))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+>size : Symbol(Set.size, Decl(lib.es2015.collection.d.ts, --, --))
+
+    ) {
+        for (const otherChunk of possibleDuplicates) {
+>otherChunk : Symbol(otherChunk, Decl(iter.js, 34, 18))
+>possibleDuplicates : Symbol(possibleDuplicates, Decl(iter.js, 4, 7))
+
+            if (otherChunk.hasRuntime() !== chunk.hasRuntime()) continue;
+>otherChunk : Symbol(otherChunk, Decl(iter.js, 34, 18))
+>chunk.hasRuntime : Symbol(hasRuntime, Decl(iter.js, 0, 130))
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+>hasRuntime : Symbol(hasRuntime, Decl(iter.js, 0, 130))
+        }
+    }
+
+    notDuplicates.add(chunk);
+>notDuplicates.add : Symbol(Set.add, Decl(lib.es2015.collection.d.ts, --, --))
+>notDuplicates : Symbol(notDuplicates, Decl(iter.js, 1, 5))
+>add : Symbol(Set.add, Decl(lib.es2015.collection.d.ts, --, --))
+>chunk : Symbol(chunk, Decl(iter.js, 3, 10))
+}

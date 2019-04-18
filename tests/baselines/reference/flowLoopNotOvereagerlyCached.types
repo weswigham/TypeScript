@@ -1,0 +1,157 @@
+=== tests/cases/compiler/iter.js ===
+var chunks = /** @type {{ modulesIterable: { chunksIterable: { getNumberOfModules(): number }[] }[], getNumberOfModules(): number, hasRuntime(): boolean }[]} */(/** @type {*} */(null));
+>chunks : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }[]
+>(/** @type {*} */(null)) : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }[]
+>(null) : any
+>null : null
+
+const notDuplicates = new Set();
+>notDuplicates : Set<any>
+>new Set() : Set<any>
+>Set : SetConstructor
+
+for (const chunk of chunks) {
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+>chunks : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }[]
+
+    let possibleDuplicates;
+>possibleDuplicates : any
+
+    for (const module of chunk.modulesIterable) {
+>module : { chunksIterable: { getNumberOfModules(): number; }[]; }
+>chunk.modulesIterable : { chunksIterable: { getNumberOfModules(): number; }[]; }[]
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+>modulesIterable : { chunksIterable: { getNumberOfModules(): number; }[]; }[]
+
+        if (possibleDuplicates === undefined) {
+>possibleDuplicates === undefined : boolean
+>possibleDuplicates : Set<any>
+>undefined : undefined
+
+            for (const dup of module.chunksIterable) {
+>dup : { getNumberOfModules(): number; }
+>module.chunksIterable : { getNumberOfModules(): number; }[]
+>module : { chunksIterable: { getNumberOfModules(): number; }[]; }
+>chunksIterable : { getNumberOfModules(): number; }[]
+
+                if (
+                    dup !== chunk &&
+>dup !== chunk &&                    chunk.getNumberOfModules() === dup.getNumberOfModules() &&                    !notDuplicates.has(dup) : boolean
+>dup !== chunk &&                    chunk.getNumberOfModules() === dup.getNumberOfModules() : boolean
+>dup !== chunk : boolean
+>dup : { getNumberOfModules(): number; }
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+
+                    chunk.getNumberOfModules() === dup.getNumberOfModules() &&
+>chunk.getNumberOfModules() === dup.getNumberOfModules() : boolean
+>chunk.getNumberOfModules() : number
+>chunk.getNumberOfModules : () => number
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+>getNumberOfModules : () => number
+>dup.getNumberOfModules() : number
+>dup.getNumberOfModules : () => number
+>dup : { getNumberOfModules(): number; }
+>getNumberOfModules : () => number
+
+                    !notDuplicates.has(dup)
+>!notDuplicates.has(dup) : boolean
+>notDuplicates.has(dup) : boolean
+>notDuplicates.has : (value: any) => boolean
+>notDuplicates : Set<any>
+>has : (value: any) => boolean
+>dup : { getNumberOfModules(): number; }
+
+                ) {
+                    if (possibleDuplicates === undefined) {
+>possibleDuplicates === undefined : boolean
+>possibleDuplicates : Set<any>
+>undefined : undefined
+
+                        possibleDuplicates = new Set();
+>possibleDuplicates = new Set() : Set<any>
+>possibleDuplicates : any
+>new Set() : Set<any>
+>Set : SetConstructor
+                    }
+                    possibleDuplicates.add(dup);
+>possibleDuplicates.add(dup) : Set<any>
+>possibleDuplicates.add : (value: any) => Set<any>
+>possibleDuplicates : Set<any>
+>add : (value: any) => Set<any>
+>dup : { getNumberOfModules(): number; }
+                }
+            }
+            if (possibleDuplicates === undefined) break;
+>possibleDuplicates === undefined : boolean
+>possibleDuplicates : Set<any>
+>undefined : undefined
+
+        } else {
+            for (const dup of possibleDuplicates) {
+>dup : any
+>possibleDuplicates : Set<any>
+
+                if (!dup.containsModule(module)) {
+>!dup.containsModule(module) : boolean
+>dup.containsModule(module) : any
+>dup.containsModule : any
+>dup : any
+>containsModule : any
+>module : { chunksIterable: { getNumberOfModules(): number; }[]; }
+
+                    possibleDuplicates.delete(dup);
+>possibleDuplicates.delete(dup) : boolean
+>possibleDuplicates.delete : (value: any) => boolean
+>possibleDuplicates : Set<any>
+>delete : (value: any) => boolean
+>dup : any
+                }
+            }
+            if (possibleDuplicates.size === 0) break;
+>possibleDuplicates.size === 0 : boolean
+>possibleDuplicates.size : number
+>possibleDuplicates : Set<any>
+>size : number
+>0 : 0
+        }
+    }
+
+    if (
+        possibleDuplicates !== undefined &&
+>possibleDuplicates !== undefined &&        possibleDuplicates.size > 0 : boolean
+>possibleDuplicates !== undefined : boolean
+>possibleDuplicates : Set<any>
+>undefined : undefined
+
+        possibleDuplicates.size > 0
+>possibleDuplicates.size > 0 : boolean
+>possibleDuplicates.size : number
+>possibleDuplicates : Set<any>
+>size : number
+>0 : 0
+
+    ) {
+        for (const otherChunk of possibleDuplicates) {
+>otherChunk : any
+>possibleDuplicates : Set<any>
+
+            if (otherChunk.hasRuntime() !== chunk.hasRuntime()) continue;
+>otherChunk.hasRuntime() !== chunk.hasRuntime() : boolean
+>otherChunk.hasRuntime() : any
+>otherChunk.hasRuntime : any
+>otherChunk : any
+>hasRuntime : any
+>chunk.hasRuntime() : boolean
+>chunk.hasRuntime : () => boolean
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+>hasRuntime : () => boolean
+        }
+    }
+
+    notDuplicates.add(chunk);
+>notDuplicates.add(chunk) : Set<any>
+>notDuplicates.add : (value: any) => Set<any>
+>notDuplicates : Set<any>
+>add : (value: any) => Set<any>
+>chunk : { modulesIterable: { chunksIterable: { getNumberOfModules(): number; }[]; }[]; getNumberOfModules(): number; hasRuntime(): boolean; }
+}
