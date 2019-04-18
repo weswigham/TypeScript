@@ -15326,31 +15326,40 @@ namespace ts {
                 n => n.kind === SyntaxKind.TypeQuery ? true : n.kind === SyntaxKind.Identifier || n.kind === SyntaxKind.QualifiedName ? false : "quit");
         }
 
+
+        function getFlowCacheKey(node: Node): string | undefined {
+            const links = getNodeLinks(node);
+            if (links.flowCacheKey === undefined) {
+                links.flowCacheKey = getFlowCacheKeyWorker(node);
+            }
+            return links.flowCacheKey === false ? undefined : links.flowCacheKey;
+        }
+
         // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
         // separated by dots). The key consists of the id of the symbol referenced by the
         // leftmost identifier followed by zero or more property names separated by dots.
         // The result is undefined if the reference isn't a dotted name. We prefix nodes
         // occurring in an apparent type position with '@' because the control flow type
         // of such nodes may be based on the apparent type instead of the declared type.
-        function getFlowCacheKey(node: Node): string | undefined {
+        function getFlowCacheKeyWorker(node: Node): string | false {
             switch (node.kind) {
                 case SyntaxKind.Identifier:
                     const symbol = getResolvedSymbol(<Identifier>node);
-                    return symbol !== unknownSymbol ? (isConstraintPosition(node) ? "@" : "") + getSymbolId(symbol) : undefined;
+                    return symbol !== unknownSymbol ? (isConstraintPosition(node) ? "@" : "") + getSymbolId(symbol) : false;
                 case SyntaxKind.ThisKeyword:
                     return "0";
                 case SyntaxKind.NonNullExpression:
                 case SyntaxKind.ParenthesizedExpression:
-                    return getFlowCacheKey((<NonNullExpression | ParenthesizedExpression>node).expression);
+                    return getFlowCacheKeyWorker((<NonNullExpression | ParenthesizedExpression>node).expression);
                 case SyntaxKind.PropertyAccessExpression:
                 case SyntaxKind.ElementAccessExpression:
                     const propName = getAccessedPropertyName(<AccessExpression>node);
                     if (propName !== undefined) {
                         const key = getFlowCacheKey((<AccessExpression>node).expression);
-                        return key && key + "." + propName;
+                        return !key ? false : key + "." + propName;
                     }
             }
-            return undefined;
+            return false;
         }
 
         function isMatchingReference(source: Node, target: Node): boolean {

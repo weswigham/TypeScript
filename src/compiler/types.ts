@@ -3882,6 +3882,7 @@ namespace ts {
         contextFreeType?: Type;          // Cached context-free type used by the first pass of inference; used when a function's return is partially contextually sensitive
         deferredNodes?: Map<Node>; // Set of nodes whose checking has been deferred
         capturedBlockScopeBindings?: Symbol[]; // Block-scoped bindings captured beneath this part of an IterationStatement
+        flowCacheKey?: string | false; // Flow-control loop cache key for the reference indicated by this node
     }
 
     export const enum TypeFlags {
