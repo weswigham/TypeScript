@@ -3829,29 +3829,30 @@ namespace ts {
         StringLiteral           = 1 << 7,
         NumberLiteral           = 1 << 8,
         BooleanLiteral          = 1 << 9,
-        BigIntLiteral           = 1 << 10,
-        ESSymbol                = 1 << 11,  // Type of symbol primitive introduced in ES6
-        UniqueESSymbol          = 1 << 12,  // unique symbol
-        Void                    = 1 << 13,
-        Undefined               = 1 << 14,
-        Null                    = 1 << 15,
-        Never                   = 1 << 16,  // Never type
-        TypeParameter           = 1 << 17,  // Type parameter
-        Object                  = 1 << 18,  // Object type
-        Union                   = 1 << 19,  // Union (T | U)
-        Intersection            = 1 << 20,  // Intersection (T & U)
-        Index                   = 1 << 21,  // keyof T
-        IndexedAccess           = 1 << 22,  // T[K]
-        Conditional             = 1 << 23,  // T extends U ? X : Y
-        Substitution            = 1 << 24,  // Type parameter substitution
-        NonPrimitive            = 1 << 25,  // intrinsic object type
-        Negated                 = 1 << 26,  // negated type
+        EnumLiteral             = 1 << 10,  // Always combined with StringLiteral, NumberLiteral, or Union
+        BigIntLiteral           = 1 << 11,
+        ESSymbol                = 1 << 12,  // Type of symbol primitive introduced in ES6
+        UniqueESSymbol          = 1 << 13,  // unique symbol
+        Void                    = 1 << 14,
+        Undefined               = 1 << 15,
+        Null                    = 1 << 16,
+        Never                   = 1 << 17,  // Never type
+        TypeParameter           = 1 << 18,  // Type parameter
+        Object                  = 1 << 19,  // Object type
+        Union                   = 1 << 20,  // Union (T | U)
+        Intersection            = 1 << 21,  // Intersection (T & U)
+        Index                   = 1 << 22,  // keyof T
+        IndexedAccess           = 1 << 23,  // T[K]
+        Conditional             = 1 << 24,  // T extends U ? X : Y
+        Substitution            = 1 << 25,  // Type parameter substitution
+        NonPrimitive            = 1 << 26,  // intrinsic object type
+        Negated                 = 1 << 27,  // negated type
         /* @internal */
-        ContainsWideningType    = 1 << 27,  // Type is or contains undefined or null widening type
+        ContainsWideningType    = 1 << 28,  // Type is or contains undefined or null widening type
         /* @internal */
-        ContainsObjectLiteral   = 1 << 28,  // Type is or contains object literal type
+        ContainsObjectLiteral   = 1 << 29,  // Type is or contains object literal type
         /* @internal */
-        ContainsAnyFunctionType = 1 << 29,  // Type is or contains the anyFunctionType
+        ContainsAnyFunctionType = 1 << 30,  // Type is or contains the anyFunctionType
 
         /* @internal */
         AnyOrUnknown = Any | Unknown,
@@ -3868,11 +3869,12 @@ namespace ts {
         /* @internal */
         Intrinsic = Any | Unknown | String | Number | BigInt | Boolean | BooleanLiteral | ESSymbol | Void | Undefined | Null | Never | NonPrimitive,
         /* @internal */
-        Primitive = String | Number | BigInt | Boolean | Enum | ESSymbol | Void | Undefined | Null | Literal | UniqueESSymbol,
+        Primitive = String | Number | BigInt | Boolean | Enum | EnumLiteral | ESSymbol | Void | Undefined | Null | Literal | UniqueESSymbol,
         StringLike = String | StringLiteral,
         NumberLike = Number | NumberLiteral | Enum,
         BigIntLike = BigInt | BigIntLiteral,
         BooleanLike = Boolean | BooleanLiteral,
+        EnumLike = Enum | EnumLiteral,
         ESSymbolLike = ESSymbol | UniqueESSymbol,
         VoidLike = Void | Undefined,
         /* @internal */
@@ -4093,15 +4095,9 @@ namespace ts {
         couldContainTypeVariables: boolean;
     }
 
-    /* @internal */
-    export const enum UnionFlags {
-        Primitives = 1 << 0,
-        EnumMembers = 1 << 1,
-    }
-
     export interface UnionType extends UnionOrIntersectionType {
         /* @internal */
-        contentsFlags: UnionFlags;
+        primitiveTypesOnly: boolean;
     }
 
     export interface IntersectionType extends UnionOrIntersectionType {

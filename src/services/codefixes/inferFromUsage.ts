@@ -550,7 +550,7 @@ namespace ts.codefix {
                 case SyntaxKind.GreaterThanToken:
                 case SyntaxKind.GreaterThanEqualsToken:
                     const operandType = checker.getTypeAtLocation(parent.left === node ? parent.right : parent.left);
-                    if (isEnumLike(operandType)) {
+                    if (operandType.flags & TypeFlags.EnumLike) {
                         addCandidateType(usageContext, operandType);
                     }
                     else {
@@ -561,7 +561,7 @@ namespace ts.codefix {
                 case SyntaxKind.PlusEqualsToken:
                 case SyntaxKind.PlusToken:
                     const otherOperandType = checker.getTypeAtLocation(parent.left === node ? parent.right : parent.left);
-                    if (isEnumLike(otherOperandType)) {
+                    if (otherOperandType.flags & TypeFlags.EnumLike) {
                         addCandidateType(usageContext, otherOperandType);
                     }
                     else if (otherOperandType.flags & TypeFlags.NumberLike) {

@@ -2490,7 +2490,7 @@ namespace ts {
             }
 
             const type = getTypeOfSymbol(exportEquals);
-            return isPrimitiveish(type) ? undefined : getPropertyOfType(type, memberName);
+            return type.flags & TypeFlags.Primitive ? undefined : getPropertyOfType(type, memberName);
         }
 
         function getExportsOfSymbol(symbol: Symbol): SymbolTable {
@@ -3305,7 +3305,7 @@ namespace ts {
                     context.approximateLength += 7;
                     return createKeywordTypeNode(SyntaxKind.BooleanKeyword);
                 }
-                if (isLiteralEnumMemberType(type)) {
+                if (type.flags & TypeFlags.EnumLiteral && !(type.flags & TypeFlags.Union)) {
                     const parentSymbol = getParentOfSymbol(type.symbol)!;
                     const parentName = symbolToTypeNode(parentSymbol, context, SymbolFlags.Type);
                     const enumLiteralName = getDeclaredTypeOfSymbol(parentSymbol) === type
@@ -3316,7 +3316,7 @@ namespace ts {
                         );
                     return enumLiteralName;
                 }
-                if (type.flags & TypeFlags.Enum || (type.flags & TypeFlags.Union && (type as UnionType).contentsFlags & UnionFlags.EnumMembers)) {
+                if (type.flags & TypeFlags.EnumLike) {
                     return symbolToTypeNode(type.symbol, context, SymbolFlags.Type);
                 }
                 if (type.flags & TypeFlags.StringLiteral) {
@@ -4384,7 +4384,7 @@ namespace ts {
                 const t = types[i];
                 flags |= t.flags;
                 if (!(t.flags & TypeFlags.Nullable)) {
-                    if (t.flags & TypeFlags.BooleanLiteral || isLiteralEnumMemberType(t)) {
+                    if (t.flags & (TypeFlags.BooleanLiteral | TypeFlags.EnumLiteral)) {
                         const baseType = t.flags & TypeFlags.BooleanLiteral ? booleanType : getBaseTypeOfEnumLiteralType(<LiteralType>t);
                         if (baseType.flags & TypeFlags.Union) {
                             const count = (<UnionType>baseType).types.length;
@@ -6213,7 +6213,7 @@ namespace ts {
         }
 
         function getBaseTypeOfEnumLiteralType(type: Type) {
-            return isLiteralEnumMemberType(type) ? getDeclaredTypeOfSymbol(getParentOfSymbol(type.symbol)!) : type;
+            return type.flags & TypeFlags.EnumLiteral && !(type.flags & TypeFlags.Union) ? getDeclaredTypeOfSymbol(getParentOfSymbol(type.symbol)!) : type;
         }
 
         function getDeclaredTypeOfEnum(symbol: Symbol): Type {
@@ -6236,7 +6236,7 @@ namespace ts {
                 if (memberTypeList.length) {
                     const enumType = getUnionType(memberTypeList, UnionReduction.Literal, symbol, /*aliasTypeArguments*/ undefined);
                     if (enumType.flags & TypeFlags.Union) {
-                        (enumType as UnionType).contentsFlags |= UnionFlags.EnumMembers;
+                        enumType.flags |= TypeFlags.EnumLiteral;
                         enumType.symbol = symbol;
                     }
                     return links.declaredType = enumType;
@@ -7120,9 +7120,6 @@ namespace ts {
             }
             if (type.flags & TypeFlags.Conditional) {
                 return getLowerBoundOfConditionalType(<ConditionalType>type);
-            }
-            if (isLiteralEnumUnionOrEnumMemberType(type)) {
-                return type;
             }
             if (type.flags & TypeFlags.Union) {
                 return getUnionType(sameMap((<UnionType>type).types, getLowerBoundOfKeyType));
@@ -9260,11 +9257,11 @@ namespace ts {
 
         function isSetOfLiteralsFromSameEnum(types: ReadonlyArray<Type>): boolean {
             const first = types[0];
-            if (isLiteralEnumMemberType(first)) {
+            if (first.flags & TypeFlags.EnumLiteral) {
                 const firstEnum = getParentOfSymbol(first.symbol);
                 for (let i = 1; i < types.length; i++) {
                     const other = types[i];
-                    if (!isLiteralEnumMemberType(other) || (firstEnum !== getParentOfSymbol(other.symbol))) {
+                    if (!(other.flags & TypeFlags.EnumLiteral) || (firstEnum !== getParentOfSymbol(other.symbol))) {
                         return false;
                     }
                 }
@@ -9367,7 +9364,7 @@ namespace ts {
                             neverType;
                 }
             }
-            return getUnionTypeFromSortedList(typeSet, !(includes & TypeFlags.NotPrimitiveUnion) ? UnionFlags.Primitives : 0, aliasSymbol, aliasTypeArguments);
+            return getUnionTypeFromSortedList(typeSet, !(includes & TypeFlags.NotPrimitiveUnion), aliasSymbol, aliasTypeArguments);
         }
 
         function getUnionTypePredicate(signatures: ReadonlyArray<Signature>): TypePredicate | undefined {
@@ -9407,7 +9404,7 @@ namespace ts {
         }
 
         // This function assumes the constituent type list is sorted and deduplicated.
-        function getUnionTypeFromSortedList(types: Type[], contentsFlags: UnionFlags, aliasSymbol?: Symbol, aliasTypeArguments?: ReadonlyArray<Type>): Type {
+        function getUnionTypeFromSortedList(types: Type[], primitiveTypesOnly: boolean, aliasSymbol?: Symbol, aliasTypeArguments?: ReadonlyArray<Type>): Type {
             if (types.length === 0) {
                 return neverType;
             }
@@ -9421,7 +9418,7 @@ namespace ts {
                 type = <UnionType>createType(TypeFlags.Union | propagatedFlags);
                 unionTypes.set(id, type);
                 type.types = types;
-                type.contentsFlags = contentsFlags;
+                type.primitiveTypesOnly = primitiveTypesOnly;
                 /*
                 Note: This is the alias symbol (or lack thereof) that we see when we first encounter this union type.
                 For aliases of identical unions, eg `type T = A | B; type U = A | B`, the symbol of the first alias encountered is the aliasSymbol.
@@ -9516,7 +9513,7 @@ namespace ts {
         // other unions and return true. Otherwise, do nothing and return false.
         function intersectUnionsOfPrimitiveTypes(types: Type[]) {
             let unionTypes: UnionType[] | undefined;
-            const index = findIndex(types, t => !!(t.flags & TypeFlags.Union) && !!((<UnionType>t).contentsFlags & UnionFlags.Primitives));
+            const index = findIndex(types, t => !!(t.flags & TypeFlags.Union) && (<UnionType>t).primitiveTypesOnly);
             if (index < 0) {
                 return false;
             }
@@ -9525,7 +9522,7 @@ namespace ts {
             // the unionTypes array.
             while (i < types.length) {
                 const t = types[i];
-                if (t.flags & TypeFlags.Union && (<UnionType>t).contentsFlags & UnionFlags.Primitives) {
+                if (t.flags & TypeFlags.Union && (<UnionType>t).primitiveTypesOnly) {
                     (unionTypes || (unionTypes = [<UnionType>types[index]])).push(<UnionType>t);
                     orderedRemoveItemAt(types, i);
                 }
@@ -9552,7 +9549,7 @@ namespace ts {
                 }
             }
             // Finally replace the first union with the result
-            types[index] = getUnionTypeFromSortedList(result, UnionFlags.Primitives);
+            types[index] = getUnionTypeFromSortedList(result, /*primitiveTypesOnly*/ true);
             return true;
         }
 
@@ -9599,7 +9596,7 @@ namespace ts {
             for (const toCheck of nonVariablePart) {
                 for (const variable of variables) {
                     const constraint = getConstraintOfType(variable);
-                    if (constraint && (isPrimitiveish(constraint) || constraint.flags && TypeFlags.Union && (constraint as UnionType).contentsFlags & UnionFlags.Primitives)) {
+                    if (constraint && (constraint.flags & TypeFlags.Primitive || constraint.flags && TypeFlags.Union && (constraint as UnionType).primitiveTypesOnly)) {
                         if (!isTypeSubtypeOf(toCheck, constraint) && !isTypeSubtypeOf(constraint, toCheck)) {
                             return true;
                         }
@@ -10387,7 +10384,7 @@ namespace ts {
             if (right.flags & TypeFlags.Union) {
                 return mapType(right, t => getSpreadType(left, t, symbol, typeFlags, objectFlags, readonly));
             }
-            if (right.flags & (TypeFlags.BooleanLike | TypeFlags.NumberLike | TypeFlags.BigIntLike | TypeFlags.StringLike | TypeFlags.Enum | TypeFlags.NonPrimitive | TypeFlags.Index)) {
+            if (right.flags & (TypeFlags.BooleanLike | TypeFlags.NumberLike | TypeFlags.BigIntLike | TypeFlags.StringLike | TypeFlags.EnumLike | TypeFlags.NonPrimitive | TypeFlags.Index)) {
                 return left;
             }
 
@@ -10531,7 +10528,8 @@ namespace ts {
             let type = literalTypes.get(key);
             if (!type) {
                 const flags = (typeof value === "number" ? TypeFlags.NumberLiteral :
-                    typeof value === "string" ? TypeFlags.StringLiteral : TypeFlags.BigIntLiteral);
+                    typeof value === "string" ? TypeFlags.StringLiteral : TypeFlags.BigIntLiteral) |
+                    (enumId ? TypeFlags.EnumLiteral : 0);
                 literalTypes.set(key, type = createLiteralType(flags, value, symbol));
                 type.regularType = type;
             }
@@ -11115,7 +11113,7 @@ namespace ts {
                 }
                 return type;
             }
-            if (flags & TypeFlags.Union && !isPrimitiveish(type)) {
+            if (flags & TypeFlags.Union && !(flags & TypeFlags.Primitive)) {
                 const types = (<UnionType>type).types;
                 const newTypes = instantiateTypes(types, mapper);
                 return newTypes !== types ? getUnionType(newTypes, UnionReduction.Literal, type.aliasSymbol, instantiateTypes(type.aliasTypeArguments, mapper)) : type;
@@ -11907,18 +11905,18 @@ namespace ts {
             if (t & TypeFlags.AnyOrUnknown || s & TypeFlags.Never || source === wildcardType) return true;
             if (t & TypeFlags.Never) return false;
             if (s & TypeFlags.StringLike && t & TypeFlags.String) return true;
-            if (s & TypeFlags.StringLiteral && isLiteralEnumMemberType(source) &&
-                t & TypeFlags.StringLiteral && !isLiteralEnumMemberType(target) &&
-                (<StringLiteralType>source).value === (<StringLiteralType>target).value) return true;
+            if (s & TypeFlags.StringLiteral && s & TypeFlags.EnumLiteral &&
+                t & TypeFlags.StringLiteral && !(t & TypeFlags.EnumLiteral) &&
+                (<LiteralType>source).value === (<LiteralType>target).value) return true;
             if (s & TypeFlags.NumberLike && t & TypeFlags.Number) return true;
-            if (s & TypeFlags.NumberLiteral && isLiteralEnumMemberType(source) &&
-                t & TypeFlags.NumberLiteral && !isLiteralEnumMemberType(target) &&
-                (<NumberLiteralType>source).value === (<NumberLiteralType>target).value) return true;
+            if (s & TypeFlags.NumberLiteral && s & TypeFlags.EnumLiteral &&
+                t & TypeFlags.NumberLiteral && !(t & TypeFlags.EnumLiteral) &&
+                (<LiteralType>source).value === (<LiteralType>target).value) return true;
             if (s & TypeFlags.BigIntLike && t & TypeFlags.BigInt) return true;
             if (s & TypeFlags.BooleanLike && t & TypeFlags.Boolean) return true;
             if (s & TypeFlags.ESSymbolLike && t & TypeFlags.ESSymbol) return true;
             if (s & TypeFlags.Enum && t & TypeFlags.Enum && isEnumTypeRelatedTo(source.symbol, target.symbol, errorReporter)) return true;
-            if (isLiteralEnumUnionOrEnumMemberType(source) && isLiteralEnumUnionOrEnumMemberType(target)) {
+            if (s & TypeFlags.EnumLiteral && t & TypeFlags.EnumLiteral) {
                 if (s & TypeFlags.Union && t & TypeFlags.Union && isEnumTypeRelatedTo(source.symbol, target.symbol, errorReporter)) return true;
                 if (s & TypeFlags.Literal && t & TypeFlags.Literal &&
                     (<LiteralType>source).value === (<LiteralType>target).value &&
@@ -11932,8 +11930,8 @@ namespace ts {
                 // Type number or any numeric literal type is assignable to any numeric enum type or any
                 // numeric enum literal type. This rule exists for backwards compatibility reasons because
                 // bit-flag enum types sometimes look like literal enum types with numeric literal values.
-                if (s & (TypeFlags.Number | TypeFlags.NumberLiteral) && !isLiteralEnumMemberType(source) && (
-                    t & TypeFlags.Enum || t & TypeFlags.NumberLiteral && isLiteralEnumMemberType(target))) return true;
+                if (s & (TypeFlags.Number | TypeFlags.NumberLiteral) && !(s & TypeFlags.EnumLiteral) && (
+                    t & TypeFlags.Enum || t & TypeFlags.NumberLiteral && t & TypeFlags.EnumLiteral)) return true;
             }
             return false;
         }
@@ -12204,12 +12202,12 @@ namespace ts {
                 // and we need to handle "each" relations before "some" relations for the same kind of type.
                 if (source.flags & TypeFlags.Union) {
                     result = relation === comparableRelation ?
-                        someTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveish(source)) :
-                        eachTypeRelatedToType(source as UnionType, target, reportErrors && !isPrimitiveish(source));
+                        someTypeRelatedToType(source as UnionType, target, reportErrors && !(source.flags & TypeFlags.Primitive)) :
+                        eachTypeRelatedToType(source as UnionType, target, reportErrors && !(source.flags & TypeFlags.Primitive));
                 }
                 else {
                     if (target.flags & TypeFlags.Union) {
-                        result = typeRelatedToSomeType(source, <UnionType>target, reportErrors && !isPrimitiveish(source) && !isPrimitiveish(target));
+                        result = typeRelatedToSomeType(source, <UnionType>target, reportErrors && !(source.flags & TypeFlags.Primitive) && !(target.flags & TypeFlags.Primitive));
                     }
                     else if (target.flags & TypeFlags.Intersection) {
                         isIntersectionConstituent = true; // set here to affect the following trio of checks
@@ -13784,12 +13782,12 @@ namespace ts {
 
         function isLiteralType(type: Type): boolean {
             return type.flags & TypeFlags.Boolean ? true :
-                type.flags & TypeFlags.Union ? (type as UnionType).contentsFlags & UnionFlags.EnumMembers ? true : every((<UnionType>type).types, isUnitType) :
+                type.flags & TypeFlags.Union ? type.flags & TypeFlags.EnumLiteral ? true : every((<UnionType>type).types, isUnitType) :
                 isUnitType(type);
         }
 
         function getBaseTypeOfLiteralType(type: Type): Type {
-            return isLiteralEnumMemberType(type) ? getBaseTypeOfEnumLiteralType(<LiteralType>type) :
+            return type.flags & TypeFlags.EnumLiteral ? getBaseTypeOfEnumLiteralType(<LiteralType>type) :
                 type.flags & TypeFlags.StringLiteral ? stringType :
                 type.flags & TypeFlags.NumberLiteral ? numberType :
                 type.flags & TypeFlags.BigIntLiteral ? bigintType :
@@ -13799,7 +13797,7 @@ namespace ts {
         }
 
         function getWidenedLiteralType(type: Type): Type {
-            return isLiteralEnumMemberType(type) && isFreshLiteralType(type) ? getBaseTypeOfEnumLiteralType(<LiteralType>type) :
+            return type.flags & TypeFlags.EnumLiteral && isFreshLiteralType(type) ? getBaseTypeOfEnumLiteralType(<LiteralType>type) :
                 type.flags & TypeFlags.StringLiteral && isFreshLiteralType(type) ? stringType :
                 type.flags & TypeFlags.NumberLiteral && isFreshLiteralType(type) ? numberType :
                 type.flags & TypeFlags.BigIntLiteral && isFreshLiteralType(type) ? bigintType :
@@ -14462,8 +14460,7 @@ namespace ts {
                     }
                     return;
                 }
-                if (source.flags & TypeFlags.Union && target.flags & TypeFlags.Union &&
-                    !((source as UnionType).contentsFlags & UnionFlags.EnumMembers && (target as UnionType).contentsFlags & UnionFlags.EnumMembers) ||
+                if (source.flags & TypeFlags.Union && target.flags & TypeFlags.Union && !(source.flags & TypeFlags.EnumLiteral && target.flags & TypeFlags.EnumLiteral) ||
                     source.flags & TypeFlags.Intersection && target.flags & TypeFlags.Intersection) {
                     // Source and target are both unions or both intersections. If source and target
                     // are the same type, just relate each constituent type to itself.
@@ -15165,7 +15162,7 @@ namespace ts {
 
         function isDiscriminantType(type: Type): boolean {
             return !!(type.flags & TypeFlags.Union &&
-                (type.flags & TypeFlags.Boolean || (type as UnionType).contentsFlags & UnionFlags.EnumMembers || !isGenericIndexType(type)));
+                (type.flags & (TypeFlags.Boolean | TypeFlags.EnumLiteral) || !isGenericIndexType(type)));
         }
 
         function isDiscriminantProperty(type: Type | undefined, name: __String) {
@@ -15556,7 +15553,7 @@ namespace ts {
                 }
                 return true;
             }
-            if (isLiteralEnumMemberType(source) && getBaseTypeOfEnumLiteralType(<LiteralType>source) === target) {
+            if (source.flags & TypeFlags.EnumLiteral && getBaseTypeOfEnumLiteralType(<LiteralType>source) === target) {
                 return true;
             }
             return containsType(target.types, source);
@@ -15574,7 +15571,7 @@ namespace ts {
             if (type.flags & TypeFlags.Union) {
                 const types = (<UnionType>type).types;
                 const filtered = filter(types, f);
-                return filtered === types ? type : getUnionTypeFromSortedList(filtered, (<UnionType>type).contentsFlags & UnionFlags.Primitives);
+                return filtered === types ? type : getUnionTypeFromSortedList(filtered, (<UnionType>type).primitiveTypesOnly);
             }
             return f(type) ? type : neverType;
         }
@@ -19503,7 +19500,7 @@ namespace ts {
         function reportNonexistentProperty(propNode: Identifier, containingType: Type) {
             let errorInfo: DiagnosticMessageChain | undefined;
             let relatedInfo: Diagnostic | undefined;
-            if (containingType.flags & TypeFlags.Union && !isPrimitiveish(containingType)) {
+            if (containingType.flags & TypeFlags.Union && !(containingType.flags & TypeFlags.Primitive)) {
                 for (const subtype of (containingType as UnionType).types) {
                     if (!getPropertyOfType(subtype, propNode.escapedText)) {
                         errorInfo = chainDiagnosticMessages(errorInfo, Diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), typeToString(subtype));
@@ -29655,7 +29652,7 @@ namespace ts {
         }
 
         function literalTypeToNode(type: FreshableType, enclosing: Node, tracker: SymbolTracker): Expression {
-            const enumResult = isLiteralEnumMemberType(type) ? nodeBuilder.symbolToExpression(type.symbol, SymbolFlags.Value, enclosing, /*flags*/ undefined, tracker)
+            const enumResult = type.flags & TypeFlags.EnumLiteral ? nodeBuilder.symbolToExpression(type.symbol, SymbolFlags.Value, enclosing, /*flags*/ undefined, tracker)
                 : type === trueType ? createTrue() : type === falseType && createFalse();
             return enumResult || createLiteral((type as LiteralType).value);
         }
@@ -31041,7 +31038,7 @@ namespace ts {
             if (
                 (isPropertyAccessExpression(expr) || (isElementAccessExpression(expr) && isStringOrNumberLiteralExpression(expr.argumentExpression))) &&
                 isEntityNameExpression(expr.expression)
-            ) return !!isLiteralEnumUnionOrEnumMemberType(checkExpressionCached(expr));
+            ) return !!(checkExpressionCached(expr).flags & TypeFlags.EnumLiteral);
         }
 
         function checkAmbientInitializer(node: VariableDeclaration | PropertyDeclaration | PropertySignature) {
