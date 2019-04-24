@@ -33,7 +33,7 @@ namespace ts {
         reScanJsxToken(): JsxTokenSyntaxKind;
         reScanLessThanToken(): SyntaxKind;
         scanJsxToken(): JsxTokenSyntaxKind;
-        scanJSDocToken(): JsDocSyntaxKind;
+        scanJsDocToken(): JSDocSyntaxKind;
         scan(): SyntaxKind;
         getText(): string;
         // Sets the text for the scanner to scan.  An optional subrange starting point and length
@@ -624,13 +624,15 @@ namespace ts {
 
     const shebangTriviaRegex = /^#!.*/;
 
-    function isShebangTrivia(text: string, pos: number) {
+    /*@internal*/
+    export function isShebangTrivia(text: string, pos: number) {
         // Shebangs check must only be done at the start of the file
         Debug.assert(pos === 0);
         return shebangTriviaRegex.test(text);
     }
 
-    function scanShebangTrivia(text: string, pos: number) {
+    /*@internal*/
+    export function scanShebangTrivia(text: string, pos: number) {
         const shebang = shebangTriviaRegex.exec(text)![0];
         pos = pos + shebang.length;
         return pos;
@@ -885,7 +887,7 @@ namespace ts {
             reScanJsxToken,
             reScanLessThanToken,
             scanJsxToken,
-            scanJSDocToken,
+            scanJsDocToken,
             scan,
             getText,
             setText,
@@ -2012,6 +2014,7 @@ namespace ts {
                 pos++;
             }
 
+            tokenValue = text.substring(startPos, pos);
             return firstNonWhitespace === -1 ? SyntaxKind.JsxTextAllWhiteSpaces : SyntaxKind.JsxText;
         }
 
@@ -2048,7 +2051,7 @@ namespace ts {
             }
         }
 
-        function scanJSDocToken(): JsDocSyntaxKind {
+        function scanJsDocToken(): JSDocSyntaxKind {
             startPos = tokenPos = pos;
             tokenFlags = 0;
             if (pos >= end) {
@@ -2091,12 +2094,7 @@ namespace ts {
                 case CharacterCodes.dot:
                     return token = SyntaxKind.DotToken;
                 case CharacterCodes.backtick:
-                    while (pos < end && text.charCodeAt(pos) !== CharacterCodes.backtick) {
-                        pos++;
-                    }
-                    tokenValue = text.substring(tokenPos + 1, pos);
-                    pos++;
-                    return token = SyntaxKind.NoSubstitutionTemplateLiteral;
+                    return token = SyntaxKind.BacktickToken;
             }
 
             if (isIdentifierStart(ch, ScriptTarget.Latest)) {
