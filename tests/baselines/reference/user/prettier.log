@@ -27,8 +27,8 @@ src/doc/doc-printer.js(7,37): error TS2304: Cannot find name 'MODE'.
 src/doc/doc-printer.js(257,17): error TS2532: Object is possibly 'undefined'.
 src/doc/doc-printer.js(258,18): error TS2532: Object is possibly 'undefined'.
 src/doc/doc-printer.js(259,17): error TS2532: Object is possibly 'undefined'.
-src/doc/doc-printer.js(501,37): error TS2345: Argument of type 'any[][]' is not assignable to parameter of type 'never[]'.
-  Type 'any[]' is not assignable to type 'never'.
+src/doc/doc-printer.js(501,37): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'never[]'.
+  Type 'any' is not assignable to type 'never'.
 src/index.js(3,25): error TS2732: Cannot find module '../package.json'. Consider using '--resolveJsonModule' to import module with '.json' extension
 src/index.js(30,17): error TS2339: Property 'sync' does not exist on type '(...args: any[]) => any'.
 src/language-css/clean.js(3,30): error TS2307: Cannot find module 'html-tag-names'.

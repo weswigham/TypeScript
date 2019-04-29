@@ -363,6 +363,7 @@ node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(3
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(445,30): error TS2339: Property 'AnimationTimeline' does not exist on type '{ new (effect?: AnimationEffect, timeline?: AnimationTimeline): Animation; prototype: Animation; }'.
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(450,37): error TS2339: Property 'AnimationUI' does not exist on type '{ new (effect?: AnimationEffect, timeline?: AnimationTimeline): Animation; prototype: Animation; }'.
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(457,22): error TS2694: Namespace 'Common' has no exported member 'Event'.
+node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(481,49): error TS2532: Object is possibly 'undefined'.
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(484,36): error TS2339: Property 'millisToString' does not exist on type 'NumberConstructor'.
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(571,18): error TS2339: Property 'window' does not exist on type 'Element'.
 node_modules/chrome-devtools-frontend/front_end/animation/AnimationTimeline.js(587,44): error TS2339: Property 'millisToString' does not exist on type 'NumberConstructor'.
@@ -5990,6 +5991,7 @@ node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(116,40): error TS2339: Property 'keysArray' does not exist on type 'Map<any, any>'.
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(118,70): error TS2555: Expected at least 2 arguments, but got 1.
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(154,27): error TS2339: Property 'peekLast' does not exist on type 'MediaQueryUIModel[]'.
+node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(208,9): error TS2322: Type 'boolean' is not assignable to type 'never'.
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(215,25): error TS2339: Property 'removeChildren' does not exist on type 'Element'.
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(220,41): error TS2339: Property 'createChild' does not exist on type 'Element'.
 node_modules/chrome-devtools-frontend/front_end/emulation/MediaQueryInspector.js(223,11): error TS2339: Property '_model' does not exist on type 'Element'.
@@ -11744,6 +11746,7 @@ node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(968,62): error TS2339: Property 'offsetTop' does not exist on type 'Element'.
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1038,34): error TS2694: Namespace 'CodeMirror' has no exported member 'ChangeObject'.
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1052,104): error TS2339: Property 'widget' does not exist on type 'V'.
+node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1062,9): error TS2322: Type 'TextRange' is not assignable to type 'never'.
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1302,34): error TS2339: Property 'length' does not exist on type 'void'.
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1307,9): error TS1345: An expression of type 'void' cannot be tested for truthiness
 node_modules/chrome-devtools-frontend/front_end/text_editor/CodeMirrorTextEditor.js(1307,9): error TS1345: An expression of type 'void' cannot be tested for truthiness
@@ -11841,6 +11844,8 @@ node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(195,45
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(230,19): error TS2339: Property 'x' does not exist on type 'Event'.
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(230,45): error TS2339: Property 'totalOffsetLeft' does not exist on type 'Element'.
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(282,43): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(308,45): error TS2532: Object is possibly 'undefined'.
+node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(310,45): error TS2532: Object is possibly 'undefined'.
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(331,33): error TS2339: Property 'constrain' does not exist on type 'NumberConstructor'.
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(331,54): error TS2339: Property 'upperBound' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/CountersGraph.js(334,33): error TS2339: Property 'constrain' does not exist on type 'NumberConstructor'.
@@ -11957,11 +11962,11 @@ node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataP
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(246,64): error TS2339: Property 'id' does not exist on type 'VirtualThread'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(312,39): error TS2694: Namespace 'PerfUI.FlameChart' has no exported member 'GroupStyle'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(332,33): error TS2694: Namespace 'PerfUI.FlameChart' has no exported member 'GroupStyle'.
-node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(358,46): error TS2339: Property 'peekLast' does not exist on type 'Event[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(358,46): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(360,9): error TS2339: Property '_blackboxRoot' does not exist on type 'Event'.
-node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(362,33): error TS2339: Property 'peekLast' does not exist on type 'Event[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(362,33): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(365,11): error TS2339: Property '_blackboxRoot' does not exist on type 'Event'.
-node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(377,47): error TS2339: Property 'peekLast' does not exist on type 'Event[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(377,47): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(417,16): error TS2339: Property 'remove' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(418,16): error TS2339: Property 'remove' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartDataProvider.js(433,33): error TS2694: Namespace 'PerfUI.FlameChart' has no exported member 'GroupStyle'.
@@ -12003,7 +12008,7 @@ node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetwo
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(306,25): error TS2339: Property 'createChild' does not exist on type 'DocumentFragment'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(309,87): error TS2339: Property 'millisToString' does not exist on type 'NumberConstructor'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(313,69): error TS2694: Namespace 'Protocol' has no exported member 'Network'.
-node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(360,56): error TS2339: Property 'peekLast' does not exist on type 'number[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(360,56): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(391,64): error TS2339: Property 'constrain' does not exist on type 'NumberConstructor'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartNetworkDataProvider.js(408,19): error TS2339: Property 'preciseMillisToString' does not exist on type 'NumberConstructor'.
 node_modules/chrome-devtools-frontend/front_end/timeline/TimelineFlameChartView.js(49,52): error TS2339: Property 'createChild' does not exist on type 'Element'.
@@ -12532,8 +12537,7 @@ node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineJSProfile
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineJSProfile.js(292,50): error TS2694: Namespace 'SDK.TracingManager' has no exported member 'EventPayload'.
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(41,14): error TS7014: Function type, which lacks return-type annotation, implicitly has an 'any' return type.
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(42,14): error TS7014: Function type, which lacks return-type annotation, implicitly has an 'any' return type.
-node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(61,36): error TS2339: Property 'peekLast' does not exist on type 'Event[]'.
-node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(69,51): error TS2339: Property 'peekLast' does not exist on type 'Event[]'.
+node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(61,36): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(69,51): error TS2339: Property 'peekLast' does not exist on type 'any[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(81,24): error TS2339: Property 'upperBound' does not exist on type 'Event[]'.
 node_modules/chrome-devtools-frontend/front_end/timeline_model/TimelineModel.js(216,44): error TS2694: Namespace 'TimelineModel.TimelineModel' has no exported member 'MetadataEvents'.
