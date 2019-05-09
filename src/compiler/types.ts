@@ -4429,6 +4429,7 @@ namespace ts {
         LiteralKeyof                = 1 << 4,  // Inference made from a string literal to a keyof T
         NoConstraints               = 1 << 5,  // Don't infer from constraints of instantiable types
         AlwaysStrict                = 1 << 6,  // Always use strict rules for contravariant inferences
+        SkippedContextSensitive     = 1 << 7,  // Skipped context sensitive inference bits
 
         PriorityImpliesCombination  = ReturnType | MappedTypeConstraint | LiteralKeyof,  // These priorities imply that the resulting type should be a combination of all candidates
     }

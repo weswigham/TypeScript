@@ -20760,6 +20760,7 @@ namespace ts {
                 return inferJsxTypeArguments(node, signature, checkMode, context);
             }
 
+            const flag = checkMode & CheckMode.SkipContextSensitive ? InferencePriority.SkippedContextSensitive : 0;
             // If a contextual type is available, infer from that type to the return type of the call expression. For
             // example, given a 'function wrap<T, U>(cb: (x: T) => U): (x: T) => U' and a call expression
             // 'let f: (x: string) => number = wrap(s => s.length)', we infer from the declared type of 'f' to the
@@ -20785,7 +20786,7 @@ namespace ts {
                         instantiatedType;
                     const inferenceTargetType = getReturnTypeOfSignature(signature);
                      // Inferences made from return types have lower priority than all other inferences.
-                    inferTypes(context.inferences, inferenceSourceType, inferenceTargetType, InferencePriority.ReturnType);
+                    inferTypes(context.inferences, inferenceSourceType, inferenceTargetType, InferencePriority.ReturnType | flag);
                     // Create a type mapper for instantiating generic contextual types using the inferences made
                     // from the return type.
                     context.returnMapper = getMapperFromContext(cloneInferredPartOfContext(context));
@@ -20806,13 +20807,13 @@ namespace ts {
                 if (arg.kind !== SyntaxKind.OmittedExpression) {
                     const paramType = getTypeAtPosition(signature, i);
                     const argType = checkExpressionWithContextualType(arg, paramType, context, checkMode);
-                    inferTypes(context.inferences, argType, paramType);
+                    inferTypes(context.inferences, argType, paramType, flag);
                 }
             }
 
             if (restType) {
                 const spreadType = getSpreadArgumentType(args, argCount, args.length, restType, context);
-                inferTypes(context.inferences, spreadType, restType);
+                inferTypes(context.inferences, spreadType, restType, flag);
             }
 
             return getInferredTypes(context);
