@@ -4097,11 +4097,15 @@ namespace ts {
         ContainsObjectLiteral = 1 << 18, // Type is or contains object literal type
         /* @internal */
         NonInferrableType = 1 << 19, // Type is or contains anyFunctionType or silentNeverType
+        /* @internal */
+        ComputedNonPrimitive = 1 << 20, // Type should be considered a nonprimitive, or assignable to `object`
         ClassOrInterface = Class | Interface,
         /* @internal */
         RequiresWidening = ContainsWideningType | ContainsObjectLiteral,
         /* @internal */
-        PropagatingFlags = ContainsWideningType | ContainsObjectLiteral | NonInferrableType
+        PropagatingFlags = ContainsWideningType | ContainsObjectLiteral | NonInferrableType,
+        /* @internal */
+        ImpliesNonPrimitive = ObjectLiteral | JSLiteral | JsxAttributes | Class | Interface | EvolvingArray | Tuple | ComputedNonPrimitive,
     }
 
     /* @internal */

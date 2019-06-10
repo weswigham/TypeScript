@@ -2629,6 +2629,7 @@ namespace ts {
                             if (symbol.exports) result.exports = cloneMap(symbol.exports);
                             const resolvedModuleType = resolveStructuredTypeMembers(moduleType as StructuredType); // Should already be resolved from the signature checks above
                             result.type = createAnonymousType(result, resolvedModuleType.members, emptyArray, emptyArray, resolvedModuleType.stringIndexInfo, resolvedModuleType.numberIndexInfo);
+                            (result.type as ObjectType).objectFlags |= ObjectFlags.ComputedNonPrimitive;
                             return result;
                         }
                     }
@@ -5855,7 +5856,7 @@ namespace ts {
                     return type;
                 }
             }
-            const type = createObjectType(ObjectFlags.Anonymous, symbol);
+            const type = createObjectType(ObjectFlags.Anonymous | ObjectFlags.ComputedNonPrimitive, symbol);
             if (symbol.flags & SymbolFlags.Class) {
                 const baseTypeVariable = getBaseTypeVariableOfClass(symbol);
                 return baseTypeVariable ? getIntersectionType([type, baseTypeVariable]) : type;
@@ -8874,7 +8875,7 @@ namespace ts {
             const id = getTypeListId(typeArguments);
             let type = target.instantiations.get(id);
             if (!type) {
-                type = <TypeReference>createObjectType(ObjectFlags.Reference, target.symbol);
+                type = <TypeReference>createObjectType(ObjectFlags.Reference | (getObjectFlags(target) & ObjectFlags.ImpliesNonPrimitive ? ObjectFlags.ComputedNonPrimitive : 0), target.symbol);
                 target.instantiations.set(id, type);
                 type.objectFlags |= typeArguments ? getPropagatingFlagsOfTypes(typeArguments, /*excludeKinds*/ 0) : 0;
                 type.target = target;
@@ -12311,7 +12312,7 @@ namespace ts {
             }
             if (s & TypeFlags.Undefined && (!strictNullChecks || t & (TypeFlags.Undefined | TypeFlags.Void))) return true;
             if (s & TypeFlags.Null && (!strictNullChecks || t & TypeFlags.Null)) return true;
-            if (s & TypeFlags.Object && t & TypeFlags.NonPrimitive) return true;
+            if (s & TypeFlags.Object && getObjectFlags(source) & ObjectFlags.ImpliesNonPrimitive && t & TypeFlags.NonPrimitive) return true;
             if (relation === assignableRelation || relation === comparableRelation) {
                 if (s & TypeFlags.Any) return true;
                 // Type number or any numeric literal type is assignable to any numeric enum type or any
@@ -14759,7 +14760,7 @@ namespace ts {
             const result = createAnonymousType(type.symbol, members, emptyArray, emptyArray,
                 stringIndexInfo && createIndexInfo(getWidenedType(stringIndexInfo.type), stringIndexInfo.isReadonly),
                 numberIndexInfo && createIndexInfo(getWidenedType(numberIndexInfo.type), numberIndexInfo.isReadonly));
-            result.objectFlags |= (getObjectFlags(type) & (ObjectFlags.JSLiteral | ObjectFlags.NonInferrableType)); // Retain js literal flag through widening
+            result.objectFlags |= ObjectFlags.ComputedNonPrimitive | (getObjectFlags(type) & (ObjectFlags.JSLiteral | ObjectFlags.NonInferrableType)); // Retain js literal flag through widening
             return result;
         }
 
@@ -22262,7 +22263,9 @@ namespace ts {
         function getInferredClassType(symbol: Symbol) {
             const links = getSymbolLinks(symbol);
             if (!links.inferredClassType) {
-                links.inferredClassType = createAnonymousType(symbol, getMembersOfSymbol(symbol) || emptySymbols, emptyArray, emptyArray, /*stringIndexType*/ undefined, /*numberIndexType*/ undefined);
+                const classType = createAnonymousType(symbol, getMembersOfSymbol(symbol) || emptySymbols, emptyArray, emptyArray, /*stringIndexType*/ undefined, /*numberIndexType*/ undefined);;
+                classType.objectFlags |= ObjectFlags.ComputedNonPrimitive;
+                links.inferredClassType = classType;
             }
             return links.inferredClassType;
         }
@@ -22392,6 +22395,7 @@ namespace ts {
                         const anonymousSymbol = createSymbol(SymbolFlags.TypeLiteral, InternalSymbolName.Type);
                         const defaultContainingObject = createAnonymousType(anonymousSymbol, memberTable, emptyArray, emptyArray, /*stringIndexInfo*/ undefined, /*numberIndexInfo*/ undefined);
                         anonymousSymbol.type = defaultContainingObject;
+                        defaultContainingObject.objectFlags |= ObjectFlags.ComputedNonPrimitive;
                         synthType.syntheticType = isValidSpreadType(type) ? getSpreadType(type, defaultContainingObject, anonymousSymbol, /*objectFlags*/ 0, /*readonly*/ false) : defaultContainingObject;
                     }
                     else {
@@ -31015,7 +31019,7 @@ namespace ts {
             getSymbolLinks(undefinedSymbol).type = undefinedWideningType;
             getSymbolLinks(argumentsSymbol).type = getGlobalType("IArguments" as __String, /*arity*/ 0, /*reportErrors*/ true);
             getSymbolLinks(unknownSymbol).type = errorType;
-            getSymbolLinks(globalThisSymbol).type = createObjectType(ObjectFlags.Anonymous, globalThisSymbol);
+            getSymbolLinks(globalThisSymbol).type = createObjectType(ObjectFlags.Anonymous | ObjectFlags.ComputedNonPrimitive, globalThisSymbol);
 
             // Initialize special types
             globalArrayType = getGlobalType("Array" as __String, /*arity*/ 1, /*reportErrors*/ true);
