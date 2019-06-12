@@ -1,0 +1,20 @@
+{
+    "monorepo": {
+        "packages/office-ui-fabric-react": "office-ui-fabric-react",
+        "packages/webpack-utils": "@uifabric/webpack-utils",
+        "packages/experiments": "@uifabric/experiments",
+        "packages/charting": "@uifabric/charting",
+        "packages/dashboard-grid-layout": "@uifabric/dashboard-grid-layout",
+        "packages/merge-styles": "@uifabric/merge-styles",
+        "packages/jest-serializer-merge-styles": "@uifabric/jest-serializer-merge-styles",
+        "packages/utilities": "@uifabric/utilities",
+        "packages/example-app-base": "@uifabric/example-app-base",
+        "packages/styling": "@uifabric/styling",
+        "packages/variants": "@uifabric/variants",
+        "packages/file-type-icons": "@uifabric/file-type-icons",
+        "apps/fabric-website-resources": "@uifabric/fabric-website-resources",
+        "apps/fabric-website": "@uifabric/fabric-website",
+        "packages/icons": "@uifabric/icons",
+        "packages/office-ui-fabric-react-tslint": "office-ui-fabric-react-tslint"
+    }
+}
