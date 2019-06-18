@@ -14,27 +14,27 @@ Executing a maximum of 1 simultaneous processes...
 [@uifabric/tslint-rules] started
 2 of 40: [@uifabric/tslint-rules] completed successfully in ? seconds
 [@uifabric/codepen-loader] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/build] started
 4 of 40: [@uifabric/build] completed successfully in ? seconds
 [@uifabric/migration] started
 5 of 40: [@uifabric/migration] completed successfully in ? seconds
 [@uifabric/set-version] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/merge-styles] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/jest-serializer-merge-styles] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/test-utilities] started
 9 of 40: [@uifabric/test-utilities] completed successfully in ? seconds
 [@uifabric/utilities] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/styling] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 [@uifabric/file-type-icons] started
 12 of 40: [@uifabric/file-type-icons] completed successfully in ? seconds
 [@uifabric/foundation] started
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
   ● createFactory › passes componentProps without userProps
 
     RangeError: Invalid array length
@@ -289,22 +289,22 @@ SUCCESS (8)
 SUCCESS WITH WARNINGS (6)
 ================================
 @uifabric/codepen-loader (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 
 @uifabric/jest-serializer-merge-styles (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 
 @uifabric/merge-styles (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 
 @uifabric/set-version (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 
 @uifabric/styling (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 
 @uifabric/utilities (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
 ================================
 
 BLOCKED (25)
@@ -339,7 +339,7 @@ vr-tests
 FAILURE (1)
 ================================
 @uifabric/foundation (? seconds)
-ts-jest[versions] (WARN) Version 3.6.0-insiders.20190617 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
+ts-jest[versions] (WARN) Version 3.6.0-insiders.20190618 of typescript installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=2.7.0 <4.0.0). Please do not report issues in ts-jest if you are using unsupported versions.
   ● createFactory › passes componentProps without userProps
     RangeError: Invalid array length
 

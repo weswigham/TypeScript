@@ -41,11 +41,11 @@ Warning: You have changed the public API signature for this project. Updating re
 [@azure/keyvault-certificates] started
 15 of 18: [@azure/keyvault-certificates] completed successfully in ? seconds
 [@azure/keyvault-keys] started
-Warning: You have changed the public API signature for this project. Updating review/keyvault-keys.api.md
+16 of 18: [@azure/keyvault-keys] completed successfully in ? seconds
 [@azure/keyvault-secrets] started
-Warning: You have changed the public API signature for this project. Updating review/keyvault-secrets.api.md
+17 of 18: [@azure/keyvault-secrets] completed successfully in ? seconds
 
-SUCCESS (14)
+SUCCESS (16)
 ================================
 @azure/abort-controller (? seconds)
 @azure/core-http (? seconds)
@@ -55,6 +55,8 @@ SUCCESS (14)
 @azure/event-processor-host (? seconds)
 @azure/identity (? seconds)
 @azure/keyvault-certificates (? seconds)
+@azure/keyvault-keys (? seconds)
+@azure/keyvault-secrets (? seconds)
 @azure/storage-blob (? seconds)
 @azure/storage-datalake (? seconds)
 @azure/storage-file (? seconds)
@@ -63,14 +65,8 @@ SUCCESS (14)
 testhub (? seconds)
 ================================
 
-SUCCESS WITH WARNINGS (3)
+SUCCESS WITH WARNINGS (1)
 ================================
-@azure/keyvault-keys (? seconds)
-Warning: You have changed the public API signature for this project. Updating review/keyvault-keys.api.md
-
-@azure/keyvault-secrets (? seconds)
-Warning: You have changed the public API signature for this project. Updating review/keyvault-secrets.api.md
-
 @azure/service-bus (? seconds)
 Warning: You have changed the public API signature for this project. Updating review/service-bus.api.md
 ================================
@@ -96,6 +92,4 @@ Your version of Node.js (12.4.0) has not been tested with this release of Rush. 
 4 of 18: [@azure/service-bus] completed with warnings in ? seconds
 
 14 of 18: [@azure/core-amqp] failed to build!
-16 of 18: [@azure/keyvault-keys] completed with warnings in ? seconds
-17 of 18: [@azure/keyvault-secrets] completed with warnings in ? seconds
 [@azure/core-amqp] Returned error code: 2
