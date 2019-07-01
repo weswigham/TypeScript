@@ -1,8 +1,15 @@
 Exit Code: 1
 Standard output:
-../../../../../built/local/lib.dom.d.ts(17892,19): error TS2451: Cannot redeclare block-scoped variable 'WebAssembly'.
-declarations.d.ts(258,15): error TS2451: Cannot redeclare block-scoped variable 'WebAssembly'.
 
 
 
 Standard error:
+internal/modules/cjs/loader.js:670
+    throw err;
+    ^
+
+Error: Cannot find module '../../../built/local/tsc.js'
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:668:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:591:27)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:877:12)
+    at internal/main/run_main_module.js:21:11
