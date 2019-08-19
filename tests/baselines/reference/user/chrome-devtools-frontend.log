@@ -6611,7 +6611,7 @@ node_modules/chrome-devtools-frontend/front_end/main/Main.js(192,39): error TS25
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(193,39): error TS2555: Expected at least 2 arguments, but got 1.
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(194,39): error TS2555: Expected at least 2 arguments, but got 1.
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(195,39): error TS2555: Expected at least 2 arguments, but got 1.
-node_modules/chrome-devtools-frontend/front_end/main/Main.js(208,5): error TS2741: Property '_extensionAPITestHook' is missing in type 'ExtensionServer' but required in type 'typeof extensionServer'.
+node_modules/chrome-devtools-frontend/front_end/main/Main.js(208,5): error TS2741: Property '_extensionAPITestHook' is missing in type 'ExtensionServer' but required in type 'typeof Extensions.extensionServer'.
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(302,32): error TS2339: Property 'initializeExtensions' does not exist on type 'typeof extensionServer'.
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(360,53): error TS2555: Expected at least 2 arguments, but got 1.
 node_modules/chrome-devtools-frontend/front_end/main/Main.js(365,41): error TS2555: Expected at least 2 arguments, but got 1.
