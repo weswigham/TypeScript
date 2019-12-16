@@ -1,0 +1,789 @@
+import * as ts from "../ts";
+/* @internal */
+const refactorName = "Move to a new file";
+/* @internal */
+ts.refactor.registerRefactor(refactorName, {
+    getAvailableActions(context): readonly ts.ApplicableRefactorInfo[] {
+        if (!context.preferences.allowTextChangesInNewFiles || getStatementsToMove(context) === undefined)
+            return ts.emptyArray;
+        const description = ts.getLocaleSpecificMessage(ts.Diagnostics.Move_to_a_new_file);
+        return [{ name: refactorName, description, actions: [{ name: refactorName, description }] }];
+    },
+    getEditsForAction(context, actionName): ts.RefactorEditInfo {
+        ts.Debug.assert(actionName === refactorName, "Wrong refactor invoked");
+        const statements = ts.Debug.assertDefined(getStatementsToMove(context));
+        const edits = ts.textChanges.ChangeTracker.with(context, t => doChange(context.file, context.program, statements, t, context.host, context.preferences));
+        return { edits, renameFilename: undefined, renameLocation: undefined };
+    }
+});
+/* @internal */
+interface RangeToMove {
+    readonly toMove: readonly ts.Statement[];
+    readonly afterLast: ts.Statement | undefined;
+}
+/* @internal */
+function getRangeToMove(context: ts.RefactorContext): RangeToMove | undefined {
+    const { file } = context;
+    const range = ts.createTextRangeFromSpan(ts.getRefactorContextSpan(context));
+    const { statements } = file;
+    const startNodeIndex = ts.findIndex(statements, s => s.end > range.pos);
+    if (startNodeIndex === -1)
+        return undefined;
+    const startStatement = statements[startNodeIndex];
+    if (ts.isNamedDeclaration(startStatement) && startStatement.name && ts.rangeContainsRange(startStatement.name, range)) {
+        return { toMove: [statements[startNodeIndex]], afterLast: statements[startNodeIndex + 1] };
+    }
+    // Can't only partially include the start node or be partially into the next node
+    if (range.pos > startStatement.getStart(file))
+        return undefined;
+    const afterEndNodeIndex = ts.findIndex(statements, s => s.end > range.end, startNodeIndex);
+    // Can't be partially into the next node
+    if (afterEndNodeIndex !== -1 && (afterEndNodeIndex === 0 || statements[afterEndNodeIndex].getStart(file) < range.end))
+        return undefined;
+    return {
+        toMove: statements.slice(startNodeIndex, afterEndNodeIndex === -1 ? statements.length : afterEndNodeIndex),
+        afterLast: afterEndNodeIndex === -1 ? undefined : statements[afterEndNodeIndex],
+    };
+}
+/* @internal */
+function doChange(oldFile: ts.SourceFile, program: ts.Program, toMove: ToMove, changes: ts.textChanges.ChangeTracker, host: ts.LanguageServiceHost, preferences: ts.UserPreferences): void {
+    const checker = program.getTypeChecker();
+    const usage = getUsageInfo(oldFile, toMove.all, checker);
+    const currentDirectory = ts.getDirectoryPath(oldFile.fileName);
+    const extension = ts.extensionFromPath(oldFile.fileName);
+    const newModuleName = makeUniqueModuleName(getNewModuleName(usage.movedSymbols), extension, currentDirectory, host);
+    const newFileNameWithExtension = newModuleName + extension;
+    // If previous file was global, this is easy.
+    changes.createNewFile(oldFile, ts.combinePaths(currentDirectory, newFileNameWithExtension), getNewStatementsAndRemoveFromOldFile(oldFile, usage, changes, toMove, program, newModuleName, preferences));
+    addNewFileToTsconfig(program, changes, oldFile.fileName, newFileNameWithExtension, ts.hostGetCanonicalFileName(host));
+}
+/* @internal */
+interface StatementRange {
+    readonly first: ts.Statement;
+    readonly afterLast: ts.Statement | undefined;
+}
+/* @internal */
+interface ToMove {
+    readonly all: readonly ts.Statement[];
+    readonly ranges: readonly StatementRange[];
+}
+// Filters imports out of the range of statements to move. Imports will be copied to the new file anyway, and may still be needed in the old file.
+/* @internal */
+function getStatementsToMove(context: ts.RefactorContext): ToMove | undefined {
+    const rangeToMove = getRangeToMove(context);
+    if (rangeToMove === undefined)
+        return undefined;
+    const all: ts.Statement[] = [];
+    const ranges: StatementRange[] = [];
+    const { toMove, afterLast } = rangeToMove;
+    ts.getRangesWhere(toMove, s => !isPureImport(s), (start, afterEndIndex) => {
+        for (let i = start; i < afterEndIndex; i++)
+            all.push(toMove[i]);
+        ranges.push({ first: toMove[start], afterLast });
+    });
+    return all.length === 0 ? undefined : { all, ranges };
+}
+/* @internal */
+function isPureImport(node: ts.Node): boolean {
+    switch (node.kind) {
+        case ts.SyntaxKind.ImportDeclaration:
+            return true;
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return !ts.hasModifier(node, ts.ModifierFlags.Export);
+        case ts.SyntaxKind.VariableStatement:
+            return (node as ts.VariableStatement).declarationList.declarations.every(d => !!d.initializer && ts.isRequireCall(d.initializer, /*checkArgumentIsStringLiteralLike*/ true));
+        default:
+            return false;
+    }
+}
+/* @internal */
+function addNewFileToTsconfig(program: ts.Program, changes: ts.textChanges.ChangeTracker, oldFileName: string, newFileNameWithExtension: string, getCanonicalFileName: ts.GetCanonicalFileName): void {
+    const cfg = program.getCompilerOptions().configFile;
+    if (!cfg)
+        return;
+    const newFileAbsolutePath = ts.normalizePath(ts.combinePaths(oldFileName, "..", newFileNameWithExtension));
+    const newFilePath = ts.getRelativePathFromFile(cfg.fileName, newFileAbsolutePath, getCanonicalFileName);
+    const cfgObject = cfg.statements[0] && ts.tryCast(cfg.statements[0].expression, ts.isObjectLiteralExpression);
+    const filesProp = cfgObject && ts.find(cfgObject.properties, (prop): prop is ts.PropertyAssignment => ts.isPropertyAssignment(prop) && ts.isStringLiteral(prop.name) && prop.name.text === "files");
+    if (filesProp && ts.isArrayLiteralExpression(filesProp.initializer)) {
+        changes.insertNodeInListAfter(cfg, ts.last(filesProp.initializer.elements), ts.createLiteral(newFilePath), filesProp.initializer.elements);
+    }
+}
+/* @internal */
+function getNewStatementsAndRemoveFromOldFile(oldFile: ts.SourceFile, usage: UsageInfo, changes: ts.textChanges.ChangeTracker, toMove: ToMove, program: ts.Program, newModuleName: string, preferences: ts.UserPreferences): readonly ts.Statement[] {
+    const checker = program.getTypeChecker();
+    if (!oldFile.externalModuleIndicator && !oldFile.commonJsModuleIndicator) {
+        deleteMovedStatements(oldFile, toMove.ranges, changes);
+        return toMove.all;
+    }
+    const useEs6ModuleSyntax = !!oldFile.externalModuleIndicator;
+    const quotePreference = ts.getQuotePreference(oldFile, preferences);
+    const importsFromNewFile = createOldFileImportsFromNewFile(usage.oldFileImportsFromNewFile, newModuleName, useEs6ModuleSyntax, quotePreference);
+    if (importsFromNewFile) {
+        ts.insertImport(changes, oldFile, importsFromNewFile);
+    }
+    deleteUnusedOldImports(oldFile, toMove.all, changes, usage.unusedImportsFromOldFile, checker);
+    deleteMovedStatements(oldFile, toMove.ranges, changes);
+    updateImportsInOtherFiles(changes, program, oldFile, usage.movedSymbols, newModuleName);
+    return [
+        ...getNewFileImportsAndAddExportInOldFile(oldFile, usage.oldImportsNeededByNewFile, usage.newFileImportsFromOldFile, changes, checker, useEs6ModuleSyntax, quotePreference),
+        ...addExports(oldFile, toMove.all, usage.oldFileImportsFromNewFile, useEs6ModuleSyntax),
+    ];
+}
+/* @internal */
+function deleteMovedStatements(sourceFile: ts.SourceFile, moved: readonly StatementRange[], changes: ts.textChanges.ChangeTracker) {
+    for (const { first, afterLast } of moved) {
+        changes.deleteNodeRangeExcludingEnd(sourceFile, first, afterLast);
+    }
+}
+/* @internal */
+function deleteUnusedOldImports(oldFile: ts.SourceFile, toMove: readonly ts.Statement[], changes: ts.textChanges.ChangeTracker, toDelete: ReadonlySymbolSet, checker: ts.TypeChecker) {
+    for (const statement of oldFile.statements) {
+        if (ts.contains(toMove, statement))
+            continue;
+        forEachImportInStatement(statement, i => deleteUnusedImports(oldFile, i, changes, name => toDelete.has(checker.getSymbolAtLocation(name)!)));
+    }
+}
+/* @internal */
+function updateImportsInOtherFiles(changes: ts.textChanges.ChangeTracker, program: ts.Program, oldFile: ts.SourceFile, movedSymbols: ReadonlySymbolSet, newModuleName: string): void {
+    const checker = program.getTypeChecker();
+    for (const sourceFile of program.getSourceFiles()) {
+        if (sourceFile === oldFile)
+            continue;
+        for (const statement of sourceFile.statements) {
+            forEachImportInStatement(statement, importNode => {
+                if (checker.getSymbolAtLocation(moduleSpecifierFromImport(importNode)) !== oldFile.symbol)
+                    return;
+                const shouldMove = (name: ts.Identifier): boolean => {
+                    const symbol = ts.isBindingElement(name.parent)
+                        ? ts.getPropertySymbolFromBindingElement(checker, (name.parent as ts.ObjectBindingElementWithoutPropertyName))
+                        : ts.skipAlias((checker.getSymbolAtLocation(name)!), checker); // TODO: GH#18217
+                    return !!symbol && movedSymbols.has(symbol);
+                };
+                deleteUnusedImports(sourceFile, importNode, changes, shouldMove); // These will be changed to imports from the new file
+                const newModuleSpecifier = ts.combinePaths(ts.getDirectoryPath(moduleSpecifierFromImport(importNode).text), newModuleName);
+                const newImportDeclaration = filterImport(importNode, ts.createLiteral(newModuleSpecifier), shouldMove);
+                if (newImportDeclaration)
+                    changes.insertNodeAfter(sourceFile, statement, newImportDeclaration);
+                const ns = getNamespaceLikeImport(importNode);
+                if (ns)
+                    updateNamespaceLikeImport(changes, sourceFile, checker, movedSymbols, newModuleName, newModuleSpecifier, ns, importNode);
+            });
+        }
+    }
+}
+/* @internal */
+function getNamespaceLikeImport(node: SupportedImport): ts.Identifier | undefined {
+    switch (node.kind) {
+        case ts.SyntaxKind.ImportDeclaration:
+            return node.importClause && node.importClause.namedBindings && node.importClause.namedBindings.kind === ts.SyntaxKind.NamespaceImport ?
+                node.importClause.namedBindings.name : undefined;
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return node.name;
+        case ts.SyntaxKind.VariableDeclaration:
+            return ts.tryCast(node.name, ts.isIdentifier);
+        default:
+            return ts.Debug.assertNever(node, `Unexpected node kind ${(node as SupportedImport).kind}`);
+    }
+}
+/* @internal */
+function updateNamespaceLikeImport(changes: ts.textChanges.ChangeTracker, sourceFile: ts.SourceFile, checker: ts.TypeChecker, movedSymbols: ReadonlySymbolSet, newModuleName: string, newModuleSpecifier: string, oldImportId: ts.Identifier, oldImportNode: SupportedImport): void {
+    const preferredNewNamespaceName = ts.codefix.moduleSpecifierToValidIdentifier(newModuleName, ts.ScriptTarget.ESNext);
+    let needUniqueName = false;
+    const toChange: ts.Identifier[] = [];
+    ts.FindAllReferences.Core.eachSymbolReferenceInFile(oldImportId, checker, sourceFile, ref => {
+        if (!ts.isPropertyAccessExpression(ref.parent))
+            return;
+        needUniqueName = needUniqueName || !!checker.resolveName(preferredNewNamespaceName, ref, ts.SymbolFlags.All, /*excludeGlobals*/ true);
+        if (movedSymbols.has(checker.getSymbolAtLocation(ref.parent.name)!)) {
+            toChange.push(ref);
+        }
+    });
+    if (toChange.length) {
+        const newNamespaceName = needUniqueName ? ts.getUniqueName(preferredNewNamespaceName, sourceFile) : preferredNewNamespaceName;
+        for (const ref of toChange) {
+            changes.replaceNode(sourceFile, ref, ts.createIdentifier(newNamespaceName));
+        }
+        changes.insertNodeAfter(sourceFile, oldImportNode, updateNamespaceLikeImportNode(oldImportNode, newModuleName, newModuleSpecifier));
+    }
+}
+/* @internal */
+function updateNamespaceLikeImportNode(node: SupportedImport, newNamespaceName: string, newModuleSpecifier: string): ts.Node {
+    const newNamespaceId = ts.createIdentifier(newNamespaceName);
+    const newModuleString = ts.createLiteral(newModuleSpecifier);
+    switch (node.kind) {
+        case ts.SyntaxKind.ImportDeclaration:
+            return ts.createImportDeclaration(
+            /*decorators*/ undefined, /*modifiers*/ undefined, ts.createImportClause(/*name*/ undefined, ts.createNamespaceImport(newNamespaceId)), newModuleString);
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return ts.createImportEqualsDeclaration(/*decorators*/ undefined, /*modifiers*/ undefined, newNamespaceId, ts.createExternalModuleReference(newModuleString));
+        case ts.SyntaxKind.VariableDeclaration:
+            return ts.createVariableDeclaration(newNamespaceId, /*type*/ undefined, createRequireCall(newModuleString));
+        default:
+            return ts.Debug.assertNever(node, `Unexpected node kind ${(node as SupportedImport).kind}`);
+    }
+}
+/* @internal */
+function moduleSpecifierFromImport(i: SupportedImport): ts.StringLiteralLike {
+    return (i.kind === ts.SyntaxKind.ImportDeclaration ? i.moduleSpecifier
+        : i.kind === ts.SyntaxKind.ImportEqualsDeclaration ? i.moduleReference.expression
+            : i.initializer.arguments[0]);
+}
+/* @internal */
+function forEachImportInStatement(statement: ts.Statement, cb: (importNode: SupportedImport) => void): void {
+    if (ts.isImportDeclaration(statement)) {
+        if (ts.isStringLiteral(statement.moduleSpecifier))
+            cb(statement as SupportedImport);
+    }
+    else if (ts.isImportEqualsDeclaration(statement)) {
+        if (ts.isExternalModuleReference(statement.moduleReference) && ts.isStringLiteralLike(statement.moduleReference.expression)) {
+            cb(statement as SupportedImport);
+        }
+    }
+    else if (ts.isVariableStatement(statement)) {
+        for (const decl of statement.declarationList.declarations) {
+            if (decl.initializer && ts.isRequireCall(decl.initializer, /*checkArgumentIsStringLiteralLike*/ true)) {
+                cb(decl as SupportedImport);
+            }
+        }
+    }
+}
+/* @internal */
+type SupportedImport = (ts.ImportDeclaration & {
+    moduleSpecifier: ts.StringLiteralLike;
+}) | (ts.ImportEqualsDeclaration & {
+    moduleReference: ts.ExternalModuleReference & {
+        expression: ts.StringLiteralLike;
+    };
+}) | (ts.VariableDeclaration & {
+    initializer: ts.RequireOrImportCall;
+});
+/* @internal */
+type SupportedImportStatement = ts.ImportDeclaration | ts.ImportEqualsDeclaration | ts.VariableStatement;
+/* @internal */
+function createOldFileImportsFromNewFile(newFileNeedExport: ReadonlySymbolSet, newFileNameWithExtension: string, useEs6Imports: boolean, quotePreference: ts.QuotePreference): ts.Statement | undefined {
+    let defaultImport: ts.Identifier | undefined;
+    const imports: string[] = [];
+    newFileNeedExport.forEach(symbol => {
+        if (symbol.escapedName === ts.InternalSymbolName.Default) {
+            defaultImport = ts.createIdentifier((ts.symbolNameNoDefault(symbol)!)); // TODO: GH#18217
+        }
+        else {
+            imports.push(symbol.name);
+        }
+    });
+    return makeImportOrRequire(defaultImport, imports, newFileNameWithExtension, useEs6Imports, quotePreference);
+}
+/* @internal */
+function makeImportOrRequire(defaultImport: ts.Identifier | undefined, imports: readonly string[], path: string, useEs6Imports: boolean, quotePreference: ts.QuotePreference): ts.Statement | undefined {
+    path = ts.ensurePathIsNonModuleName(path);
+    if (useEs6Imports) {
+        const specifiers = imports.map(i => ts.createImportSpecifier(/*propertyName*/ undefined, ts.createIdentifier(i)));
+        return ts.makeImportIfNecessary(defaultImport, specifiers, path, quotePreference);
+    }
+    else {
+        ts.Debug.assert(!defaultImport, "No default import should exist"); // If there's a default export, it should have been an es6 module.
+        const bindingElements = imports.map(i => ts.createBindingElement(/*dotDotDotToken*/ undefined, /*propertyName*/ undefined, i));
+        return bindingElements.length
+            ? makeVariableStatement(ts.createObjectBindingPattern(bindingElements), /*type*/ undefined, createRequireCall(ts.createLiteral(path)))
+            : undefined;
+    }
+}
+/* @internal */
+function makeVariableStatement(name: ts.BindingName, type: ts.TypeNode | undefined, initializer: ts.Expression | undefined, flags: ts.NodeFlags = ts.NodeFlags.Const) {
+    return ts.createVariableStatement(/*modifiers*/ undefined, ts.createVariableDeclarationList([ts.createVariableDeclaration(name, type, initializer)], flags));
+}
+/* @internal */
+function createRequireCall(moduleSpecifier: ts.StringLiteralLike): ts.CallExpression {
+    return ts.createCall(ts.createIdentifier("require"), /*typeArguments*/ undefined, [moduleSpecifier]);
+}
+/* @internal */
+function addExports(sourceFile: ts.SourceFile, toMove: readonly ts.Statement[], needExport: ReadonlySymbolSet, useEs6Exports: boolean): readonly ts.Statement[] {
+    return ts.flatMap(toMove, statement => {
+        if (isTopLevelDeclarationStatement(statement) &&
+            !isExported(sourceFile, statement, useEs6Exports) &&
+            forEachTopLevelDeclaration(statement, d => needExport.has(ts.Debug.assertDefined(d.symbol)))) {
+            const exports = addExport(statement, useEs6Exports);
+            if (exports)
+                return exports;
+        }
+        return statement;
+    });
+}
+/* @internal */
+function deleteUnusedImports(sourceFile: ts.SourceFile, importDecl: SupportedImport, changes: ts.textChanges.ChangeTracker, isUnused: (name: ts.Identifier) => boolean): void {
+    switch (importDecl.kind) {
+        case ts.SyntaxKind.ImportDeclaration:
+            deleteUnusedImportsInDeclaration(sourceFile, importDecl, changes, isUnused);
+            break;
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            if (isUnused(importDecl.name)) {
+                changes.delete(sourceFile, importDecl);
+            }
+            break;
+        case ts.SyntaxKind.VariableDeclaration:
+            deleteUnusedImportsInVariableDeclaration(sourceFile, importDecl, changes, isUnused);
+            break;
+        default:
+            ts.Debug.assertNever(importDecl, `Unexpected import decl kind ${(importDecl as SupportedImport).kind}`);
+    }
+}
+/* @internal */
+function deleteUnusedImportsInDeclaration(sourceFile: ts.SourceFile, importDecl: ts.ImportDeclaration, changes: ts.textChanges.ChangeTracker, isUnused: (name: ts.Identifier) => boolean): void {
+    if (!importDecl.importClause)
+        return;
+    const { name, namedBindings } = importDecl.importClause;
+    const defaultUnused = !name || isUnused(name);
+    const namedBindingsUnused = !namedBindings ||
+        (namedBindings.kind === ts.SyntaxKind.NamespaceImport ? isUnused(namedBindings.name) : namedBindings.elements.length !== 0 && namedBindings.elements.every(e => isUnused(e.name)));
+    if (defaultUnused && namedBindingsUnused) {
+        changes.delete(sourceFile, importDecl);
+    }
+    else {
+        if (name && defaultUnused) {
+            changes.delete(sourceFile, name);
+        }
+        if (namedBindings) {
+            if (namedBindingsUnused) {
+                changes.replaceNode(sourceFile, importDecl.importClause, ts.updateImportClause(importDecl.importClause, name, /*namedBindings*/ undefined));
+            }
+            else if (namedBindings.kind === ts.SyntaxKind.NamedImports) {
+                for (const element of namedBindings.elements) {
+                    if (isUnused(element.name))
+                        changes.delete(sourceFile, element);
+                }
+            }
+        }
+    }
+}
+/* @internal */
+function deleteUnusedImportsInVariableDeclaration(sourceFile: ts.SourceFile, varDecl: ts.VariableDeclaration, changes: ts.textChanges.ChangeTracker, isUnused: (name: ts.Identifier) => boolean) {
+    const { name } = varDecl;
+    switch (name.kind) {
+        case ts.SyntaxKind.Identifier:
+            if (isUnused(name)) {
+                changes.delete(sourceFile, name);
+            }
+            break;
+        case ts.SyntaxKind.ArrayBindingPattern:
+            break;
+        case ts.SyntaxKind.ObjectBindingPattern:
+            if (name.elements.every(e => ts.isIdentifier(e.name) && isUnused(e.name))) {
+                changes.delete(sourceFile, ts.isVariableDeclarationList(varDecl.parent) && varDecl.parent.declarations.length === 1 ? varDecl.parent.parent : varDecl);
+            }
+            else {
+                for (const element of name.elements) {
+                    if (ts.isIdentifier(element.name) && isUnused(element.name)) {
+                        changes.delete(sourceFile, element.name);
+                    }
+                }
+            }
+            break;
+    }
+}
+/* @internal */
+function getNewFileImportsAndAddExportInOldFile(oldFile: ts.SourceFile, importsToCopy: ReadonlySymbolSet, newFileImportsFromOldFile: ReadonlySymbolSet, changes: ts.textChanges.ChangeTracker, checker: ts.TypeChecker, useEs6ModuleSyntax: boolean, quotePreference: ts.QuotePreference): readonly SupportedImportStatement[] {
+    const copiedOldImports: SupportedImportStatement[] = [];
+    for (const oldStatement of oldFile.statements) {
+        forEachImportInStatement(oldStatement, i => {
+            ts.append(copiedOldImports, filterImport(i, moduleSpecifierFromImport(i), name => importsToCopy.has(checker.getSymbolAtLocation(name)!)));
+        });
+    }
+    // Also, import things used from the old file, and insert 'export' modifiers as necessary in the old file.
+    let oldFileDefault: ts.Identifier | undefined;
+    const oldFileNamedImports: string[] = [];
+    const markSeenTop = ts.nodeSeenTracker(); // Needed because multiple declarations may appear in `const x = 0, y = 1;`.
+    newFileImportsFromOldFile.forEach(symbol => {
+        for (const decl of symbol.declarations) {
+            if (!isTopLevelDeclaration(decl))
+                continue;
+            const name = nameOfTopLevelDeclaration(decl);
+            if (!name)
+                continue;
+            const top = getTopLevelDeclarationStatement(decl);
+            if (markSeenTop(top)) {
+                addExportToChanges(oldFile, top, changes, useEs6ModuleSyntax);
+            }
+            if (ts.hasModifier(decl, ts.ModifierFlags.Default)) {
+                oldFileDefault = name;
+            }
+            else {
+                oldFileNamedImports.push(name.text);
+            }
+        }
+    });
+    ts.append(copiedOldImports, makeImportOrRequire(oldFileDefault, oldFileNamedImports, ts.removeFileExtension(ts.getBaseFileName(oldFile.fileName)), useEs6ModuleSyntax, quotePreference));
+    return copiedOldImports;
+}
+/* @internal */
+function makeUniqueModuleName(moduleName: string, extension: string, inDirectory: string, host: ts.LanguageServiceHost): string {
+    let newModuleName = moduleName;
+    for (let i = 1;; i++) {
+        const name = ts.combinePaths(inDirectory, newModuleName + extension);
+        if (!host.fileExists!(name))
+            return newModuleName; // TODO: GH#18217
+        newModuleName = `${moduleName}.${i}`;
+    }
+}
+/* @internal */
+function getNewModuleName(movedSymbols: ReadonlySymbolSet): string {
+    return movedSymbols.forEachEntry(ts.symbolNameNoDefault) || "newFile";
+}
+/* @internal */
+interface UsageInfo {
+    // Symbols whose declarations are moved from the old file to the new file.
+    readonly movedSymbols: ReadonlySymbolSet;
+    // Symbols declared in the old file that must be imported by the new file. (May not already be exported.)
+    readonly newFileImportsFromOldFile: ReadonlySymbolSet;
+    // Subset of movedSymbols that are still used elsewhere in the old file and must be imported back.
+    readonly oldFileImportsFromNewFile: ReadonlySymbolSet;
+    readonly oldImportsNeededByNewFile: ReadonlySymbolSet;
+    // Subset of oldImportsNeededByNewFile that are will no longer be used in the old file.
+    readonly unusedImportsFromOldFile: ReadonlySymbolSet;
+}
+/* @internal */
+function getUsageInfo(oldFile: ts.SourceFile, toMove: readonly ts.Statement[], checker: ts.TypeChecker): UsageInfo {
+    const movedSymbols = new SymbolSet();
+    const oldImportsNeededByNewFile = new SymbolSet();
+    const newFileImportsFromOldFile = new SymbolSet();
+    const containsJsx = ts.find(toMove, statement => !!(statement.transformFlags & ts.TransformFlags.ContainsJsx));
+    const jsxNamespaceSymbol = getJsxNamespaceSymbol(containsJsx);
+    if (jsxNamespaceSymbol) { // Might not exist (e.g. in non-compiling code)
+        oldImportsNeededByNewFile.add(jsxNamespaceSymbol);
+    }
+    for (const statement of toMove) {
+        forEachTopLevelDeclaration(statement, decl => {
+            movedSymbols.add(ts.Debug.assertDefined(ts.isExpressionStatement(decl) ? checker.getSymbolAtLocation(decl.expression.left) : decl.symbol, "Need a symbol here"));
+        });
+    }
+    for (const statement of toMove) {
+        forEachReference(statement, checker, symbol => {
+            if (!symbol.declarations)
+                return;
+            for (const decl of symbol.declarations) {
+                if (isInImport(decl)) {
+                    oldImportsNeededByNewFile.add(symbol);
+                }
+                else if (isTopLevelDeclaration(decl) && sourceFileOfTopLevelDeclaration(decl) === oldFile && !movedSymbols.has(symbol)) {
+                    newFileImportsFromOldFile.add(symbol);
+                }
+            }
+        });
+    }
+    const unusedImportsFromOldFile = oldImportsNeededByNewFile.clone();
+    const oldFileImportsFromNewFile = new SymbolSet();
+    for (const statement of oldFile.statements) {
+        if (ts.contains(toMove, statement))
+            continue;
+        // jsxNamespaceSymbol will only be set iff it is in oldImportsNeededByNewFile.
+        if (jsxNamespaceSymbol && !!(statement.transformFlags & ts.TransformFlags.ContainsJsx)) {
+            unusedImportsFromOldFile.delete(jsxNamespaceSymbol);
+        }
+        forEachReference(statement, checker, symbol => {
+            if (movedSymbols.has(symbol))
+                oldFileImportsFromNewFile.add(symbol);
+            unusedImportsFromOldFile.delete(symbol);
+        });
+    }
+    return { movedSymbols, newFileImportsFromOldFile, oldFileImportsFromNewFile, oldImportsNeededByNewFile, unusedImportsFromOldFile };
+    function getJsxNamespaceSymbol(containsJsx: ts.Node | undefined) {
+        if (containsJsx === undefined) {
+            return undefined;
+        }
+        const jsxNamespace = checker.getJsxNamespace(containsJsx);
+        // Strictly speaking, this could resolve to a symbol other than the JSX namespace.
+        // This will produce erroneous output (probably, an incorrectly copied import) but
+        // is expected to be very rare and easily reversible.
+        const jsxNamespaceSymbol = checker.resolveName(jsxNamespace, containsJsx, ts.SymbolFlags.Namespace, /*excludeGlobals*/ true);
+        return !!jsxNamespaceSymbol && ts.some(jsxNamespaceSymbol.declarations, isInImport)
+            ? jsxNamespaceSymbol
+            : undefined;
+    }
+}
+// Below should all be utilities
+/* @internal */
+function isInImport(decl: ts.Declaration) {
+    switch (decl.kind) {
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+        case ts.SyntaxKind.ImportSpecifier:
+        case ts.SyntaxKind.ImportClause:
+            return true;
+        case ts.SyntaxKind.VariableDeclaration:
+            return isVariableDeclarationInImport((decl as ts.VariableDeclaration));
+        case ts.SyntaxKind.BindingElement:
+            return ts.isVariableDeclaration(decl.parent.parent) && isVariableDeclarationInImport(decl.parent.parent);
+        default:
+            return false;
+    }
+}
+/* @internal */
+function isVariableDeclarationInImport(decl: ts.VariableDeclaration) {
+    return ts.isSourceFile(decl.parent.parent.parent) &&
+        !!decl.initializer && ts.isRequireCall(decl.initializer, /*checkArgumentIsStringLiteralLike*/ true);
+}
+/* @internal */
+function filterImport(i: SupportedImport, moduleSpecifier: ts.StringLiteralLike, keep: (name: ts.Identifier) => boolean): SupportedImportStatement | undefined {
+    switch (i.kind) {
+        case ts.SyntaxKind.ImportDeclaration: {
+            const clause = i.importClause;
+            if (!clause)
+                return undefined;
+            const defaultImport = clause.name && keep(clause.name) ? clause.name : undefined;
+            const namedBindings = clause.namedBindings && filterNamedBindings(clause.namedBindings, keep);
+            return defaultImport || namedBindings
+                ? ts.createImportDeclaration(/*decorators*/ undefined, /*modifiers*/ undefined, ts.createImportClause(defaultImport, namedBindings), moduleSpecifier)
+                : undefined;
+        }
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return keep(i.name) ? i : undefined;
+        case ts.SyntaxKind.VariableDeclaration: {
+            const name = filterBindingName(i.name, keep);
+            return name ? makeVariableStatement(name, i.type, createRequireCall(moduleSpecifier), i.parent.flags) : undefined;
+        }
+        default:
+            return ts.Debug.assertNever(i, `Unexpected import kind ${(i as SupportedImport).kind}`);
+    }
+}
+/* @internal */
+function filterNamedBindings(namedBindings: ts.NamedImportBindings, keep: (name: ts.Identifier) => boolean): ts.NamedImportBindings | undefined {
+    if (namedBindings.kind === ts.SyntaxKind.NamespaceImport) {
+        return keep(namedBindings.name) ? namedBindings : undefined;
+    }
+    else {
+        const newElements = namedBindings.elements.filter(e => keep(e.name));
+        return newElements.length ? ts.createNamedImports(newElements) : undefined;
+    }
+}
+/* @internal */
+function filterBindingName(name: ts.BindingName, keep: (name: ts.Identifier) => boolean): ts.BindingName | undefined {
+    switch (name.kind) {
+        case ts.SyntaxKind.Identifier:
+            return keep(name) ? name : undefined;
+        case ts.SyntaxKind.ArrayBindingPattern:
+            return name;
+        case ts.SyntaxKind.ObjectBindingPattern: {
+            // We can't handle nested destructurings or property names well here, so just copy them all.
+            const newElements = name.elements.filter(prop => prop.propertyName || !ts.isIdentifier(prop.name) || keep(prop.name));
+            return newElements.length ? ts.createObjectBindingPattern(newElements) : undefined;
+        }
+    }
+}
+/* @internal */
+function forEachReference(node: ts.Node, checker: ts.TypeChecker, onReference: (s: ts.Symbol) => void) {
+    node.forEachChild(function cb(node) {
+        if (ts.isIdentifier(node) && !ts.isDeclarationName(node)) {
+            const sym = checker.getSymbolAtLocation(node);
+            if (sym)
+                onReference(sym);
+        }
+        else {
+            node.forEachChild(cb);
+        }
+    });
+}
+/* @internal */
+interface ReadonlySymbolSet {
+    has(symbol: ts.Symbol): boolean;
+    forEach(cb: (symbol: ts.Symbol) => void): void;
+    forEachEntry<T>(cb: (symbol: ts.Symbol) => T | undefined): T | undefined;
+}
+/* @internal */
+class SymbolSet implements ReadonlySymbolSet {
+    private map = ts.createMap<ts.Symbol>();
+    add(symbol: ts.Symbol): void {
+        this.map.set(String(ts.getSymbolId(symbol)), symbol);
+    }
+    has(symbol: ts.Symbol): boolean {
+        return this.map.has(String(ts.getSymbolId(symbol)));
+    }
+    delete(symbol: ts.Symbol): void {
+        this.map.delete(String(ts.getSymbolId(symbol)));
+    }
+    forEach(cb: (symbol: ts.Symbol) => void): void {
+        this.map.forEach(cb);
+    }
+    forEachEntry<T>(cb: (symbol: ts.Symbol) => T | undefined): T | undefined {
+        return ts.forEachEntry(this.map, cb);
+    }
+    clone(): SymbolSet {
+        const clone = new SymbolSet();
+        ts.copyEntries(this.map, clone.map);
+        return clone;
+    }
+}
+/* @internal */
+type TopLevelExpressionStatement = ts.ExpressionStatement & {
+    expression: ts.BinaryExpression & {
+        left: ts.PropertyAccessExpression;
+    };
+}; // 'exports.x = ...'
+/* @internal */
+type NonVariableTopLevelDeclaration = ts.FunctionDeclaration | ts.ClassDeclaration | ts.EnumDeclaration | ts.TypeAliasDeclaration | ts.InterfaceDeclaration | ts.ModuleDeclaration | TopLevelExpressionStatement | ts.ImportEqualsDeclaration;
+/* @internal */
+type TopLevelDeclarationStatement = NonVariableTopLevelDeclaration | ts.VariableStatement;
+/* @internal */
+interface TopLevelVariableDeclaration extends ts.VariableDeclaration {
+    parent: ts.VariableDeclarationList & {
+        parent: ts.VariableStatement;
+    };
+}
+/* @internal */
+type TopLevelDeclaration = NonVariableTopLevelDeclaration | TopLevelVariableDeclaration | ts.BindingElement;
+/* @internal */
+function isTopLevelDeclaration(node: ts.Node): node is TopLevelDeclaration {
+    return isNonVariableTopLevelDeclaration(node) && ts.isSourceFile(node.parent) || ts.isVariableDeclaration(node) && ts.isSourceFile(node.parent.parent.parent);
+}
+/* @internal */
+function sourceFileOfTopLevelDeclaration(node: TopLevelDeclaration): ts.Node {
+    return ts.isVariableDeclaration(node) ? node.parent.parent.parent : node.parent;
+}
+/* @internal */
+function isTopLevelDeclarationStatement(node: ts.Node): node is TopLevelDeclarationStatement {
+    ts.Debug.assert(ts.isSourceFile(node.parent), "Node parent should be a SourceFile");
+    return isNonVariableTopLevelDeclaration(node) || ts.isVariableStatement(node);
+}
+/* @internal */
+function isNonVariableTopLevelDeclaration(node: ts.Node): node is NonVariableTopLevelDeclaration {
+    switch (node.kind) {
+        case ts.SyntaxKind.FunctionDeclaration:
+        case ts.SyntaxKind.ClassDeclaration:
+        case ts.SyntaxKind.ModuleDeclaration:
+        case ts.SyntaxKind.EnumDeclaration:
+        case ts.SyntaxKind.TypeAliasDeclaration:
+        case ts.SyntaxKind.InterfaceDeclaration:
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return true;
+        default:
+            return false;
+    }
+}
+/* @internal */
+function forEachTopLevelDeclaration<T>(statement: ts.Statement, cb: (node: TopLevelDeclaration) => T): T | undefined {
+    switch (statement.kind) {
+        case ts.SyntaxKind.FunctionDeclaration:
+        case ts.SyntaxKind.ClassDeclaration:
+        case ts.SyntaxKind.ModuleDeclaration:
+        case ts.SyntaxKind.EnumDeclaration:
+        case ts.SyntaxKind.TypeAliasDeclaration:
+        case ts.SyntaxKind.InterfaceDeclaration:
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return cb((statement as ts.FunctionDeclaration | ts.ClassDeclaration | ts.EnumDeclaration | ts.ModuleDeclaration | ts.TypeAliasDeclaration | ts.InterfaceDeclaration | ts.ImportEqualsDeclaration));
+        case ts.SyntaxKind.VariableStatement:
+            return ts.firstDefined((statement as ts.VariableStatement).declarationList.declarations, decl => forEachTopLevelDeclarationInBindingName(decl.name, cb));
+        case ts.SyntaxKind.ExpressionStatement: {
+            const { expression } = (statement as ts.ExpressionStatement);
+            return ts.isBinaryExpression(expression) && ts.getAssignmentDeclarationKind(expression) === ts.AssignmentDeclarationKind.ExportsProperty
+                ? cb(statement as TopLevelExpressionStatement)
+                : undefined;
+        }
+    }
+}
+/* @internal */
+function forEachTopLevelDeclarationInBindingName<T>(name: ts.BindingName, cb: (node: TopLevelDeclaration) => T): T | undefined {
+    switch (name.kind) {
+        case ts.SyntaxKind.Identifier:
+            return cb(ts.cast(name.parent, (x): x is TopLevelVariableDeclaration | ts.BindingElement => ts.isVariableDeclaration(x) || ts.isBindingElement(x)));
+        case ts.SyntaxKind.ArrayBindingPattern:
+        case ts.SyntaxKind.ObjectBindingPattern:
+            return ts.firstDefined(name.elements, em => ts.isOmittedExpression(em) ? undefined : forEachTopLevelDeclarationInBindingName(em.name, cb));
+        default:
+            return ts.Debug.assertNever(name, `Unexpected name kind ${(name as ts.BindingName).kind}`);
+    }
+}
+/* @internal */
+function nameOfTopLevelDeclaration(d: TopLevelDeclaration): ts.Identifier | undefined {
+    return ts.isExpressionStatement(d) ? d.expression.left.name : ts.tryCast(d.name, ts.isIdentifier);
+}
+/* @internal */
+function getTopLevelDeclarationStatement(d: TopLevelDeclaration): TopLevelDeclarationStatement {
+    switch (d.kind) {
+        case ts.SyntaxKind.VariableDeclaration:
+            return d.parent.parent;
+        case ts.SyntaxKind.BindingElement:
+            return getTopLevelDeclarationStatement(ts.cast(d.parent.parent, (p): p is TopLevelVariableDeclaration | ts.BindingElement => ts.isVariableDeclaration(p) || ts.isBindingElement(p)));
+        default:
+            return d;
+    }
+}
+/* @internal */
+function addExportToChanges(sourceFile: ts.SourceFile, decl: TopLevelDeclarationStatement, changes: ts.textChanges.ChangeTracker, useEs6Exports: boolean): void {
+    if (isExported(sourceFile, decl, useEs6Exports))
+        return;
+    if (useEs6Exports) {
+        if (!ts.isExpressionStatement(decl))
+            changes.insertExportModifier(sourceFile, decl);
+    }
+    else {
+        const names = getNamesToExportInCommonJS(decl);
+        if (names.length !== 0)
+            changes.insertNodesAfter(sourceFile, decl, names.map(createExportAssignment));
+    }
+}
+/* @internal */
+function isExported(sourceFile: ts.SourceFile, decl: TopLevelDeclarationStatement, useEs6Exports: boolean): boolean {
+    if (useEs6Exports) {
+        return !ts.isExpressionStatement(decl) && ts.hasModifier(decl, ts.ModifierFlags.Export);
+    }
+    else {
+        return getNamesToExportInCommonJS(decl).some(name => sourceFile.symbol.exports!.has(ts.escapeLeadingUnderscores(name)));
+    }
+}
+/* @internal */
+function addExport(decl: TopLevelDeclarationStatement, useEs6Exports: boolean): readonly ts.Statement[] | undefined {
+    return useEs6Exports ? [addEs6Export(decl)] : addCommonjsExport(decl);
+}
+/* @internal */
+function addEs6Export(d: TopLevelDeclarationStatement): TopLevelDeclarationStatement {
+    const modifiers = ts.concatenate([ts.createModifier(ts.SyntaxKind.ExportKeyword)], d.modifiers);
+    switch (d.kind) {
+        case ts.SyntaxKind.FunctionDeclaration:
+            return ts.updateFunctionDeclaration(d, d.decorators, modifiers, d.asteriskToken, d.name, d.typeParameters, d.parameters, d.type, d.body);
+        case ts.SyntaxKind.ClassDeclaration:
+            return ts.updateClassDeclaration(d, d.decorators, modifiers, d.name, d.typeParameters, d.heritageClauses, d.members);
+        case ts.SyntaxKind.VariableStatement:
+            return ts.updateVariableStatement(d, modifiers, d.declarationList);
+        case ts.SyntaxKind.ModuleDeclaration:
+            return ts.updateModuleDeclaration(d, d.decorators, modifiers, d.name, d.body);
+        case ts.SyntaxKind.EnumDeclaration:
+            return ts.updateEnumDeclaration(d, d.decorators, modifiers, d.name, d.members);
+        case ts.SyntaxKind.TypeAliasDeclaration:
+            return ts.updateTypeAliasDeclaration(d, d.decorators, modifiers, d.name, d.typeParameters, d.type);
+        case ts.SyntaxKind.InterfaceDeclaration:
+            return ts.updateInterfaceDeclaration(d, d.decorators, modifiers, d.name, d.typeParameters, d.heritageClauses, d.members);
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return ts.updateImportEqualsDeclaration(d, d.decorators, modifiers, d.name, d.moduleReference);
+        case ts.SyntaxKind.ExpressionStatement:
+            return ts.Debug.fail(); // Shouldn't try to add 'export' keyword to `exports.x = ...`
+        default:
+            return ts.Debug.assertNever(d, `Unexpected declaration kind ${(d as ts.DeclarationStatement).kind}`);
+    }
+}
+/* @internal */
+function addCommonjsExport(decl: TopLevelDeclarationStatement): readonly ts.Statement[] | undefined {
+    return [decl, ...getNamesToExportInCommonJS(decl).map(createExportAssignment)];
+}
+/* @internal */
+function getNamesToExportInCommonJS(decl: TopLevelDeclarationStatement): readonly string[] {
+    switch (decl.kind) {
+        case ts.SyntaxKind.FunctionDeclaration:
+        case ts.SyntaxKind.ClassDeclaration:
+            return [decl.name!.text]; // TODO: GH#18217
+        case ts.SyntaxKind.VariableStatement:
+            return ts.mapDefined(decl.declarationList.declarations, d => ts.isIdentifier(d.name) ? d.name.text : undefined);
+        case ts.SyntaxKind.ModuleDeclaration:
+        case ts.SyntaxKind.EnumDeclaration:
+        case ts.SyntaxKind.TypeAliasDeclaration:
+        case ts.SyntaxKind.InterfaceDeclaration:
+        case ts.SyntaxKind.ImportEqualsDeclaration:
+            return ts.emptyArray;
+        case ts.SyntaxKind.ExpressionStatement:
+            return ts.Debug.fail("Can't export an ExpressionStatement"); // Shouldn't try to add 'export' keyword to `exports.x = ...`
+        default:
+            return ts.Debug.assertNever(decl, `Unexpected decl kind ${(decl as TopLevelDeclarationStatement).kind}`);
+    }
+}
+/** Creates `exports.x = x;` */
+/* @internal */
+function createExportAssignment(name: string): ts.Statement {
+    return ts.createExpressionStatement(ts.createBinary(ts.createPropertyAccess(ts.createIdentifier("exports"), ts.createIdentifier(name)), ts.SyntaxKind.EqualsToken, ts.createIdentifier(name)));
+}

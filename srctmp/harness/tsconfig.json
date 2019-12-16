@@ -1,0 +1,59 @@
+{
+    "extends": "../tsconfig-base",
+    "compilerOptions": {
+        "outDir": "../../built/local",
+        "types": [
+            "node", "mocha", "chai"
+        ],
+        "lib": [
+            "es6",
+            "scripthost"
+        ]
+    },
+    "references": [
+        { "path": "../compiler" },
+        { "path": "../services" },
+        { "path": "../jsTyping" },
+        { "path": "../server" },
+        { "path": "../typingsInstallerCore" }
+    ],
+    "files": [
+        "collectionsImpl.ts",
+        "util.ts",
+        "documentsUtil.ts",
+        "vpathUtil.ts",
+        "vfsUtil.ts",
+        "compilerImpl.ts",
+        "evaluatorImpl.ts",
+        "fakesHosts.ts",
+        "client.ts",
+        "runnerbase.ts",
+        "sourceMapRecorder.ts",
+        "harnessGlobals.ts",
+        "harnessUtils.ts",
+        "harnessIO.ts",
+        "harnessLanguageService.ts",
+        "virtualFileSystemWithWatch.ts",
+        "fourslashImpl.ts",
+        "fourslashInterfaceImpl.ts",
+        "typeWriter.ts",
+        "loggedIO.ts",
+        "./collections.ts",
+        "./Utils.ts",
+        "./documents.ts",
+        "./vpath.ts",
+        "./vfs.ts",
+        "./compiler.ts",
+        "./evaluator.ts",
+        "./fakes.ts",
+        "./ts.server.ts",
+        "./ts.ts",
+        "./Harness.ts",
+        "./Harness.SourceMapRecorder.ts",
+        "./Harness.LanguageService.ts",
+        "./ts.TestFSWithWatch.ts",
+        "./FourSlash.ts",
+        "./FourSlashInterface.ts",
+        "./Playback.ts"
+    ]
+}

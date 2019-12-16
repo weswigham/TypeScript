@@ -1,191 +1,144 @@
 /*@internal*/
 namespace ts {
-    export function transformJsx(context: TransformationContext) {
+    export function transformJsx(context: ts.TransformationContext) {
         const compilerOptions = context.getCompilerOptions();
-        let currentSourceFile: SourceFile;
-
-        return chainBundle(transformSourceFile);
-
+        let currentSourceFile: ts.SourceFile;
+        return ts.chainBundle(transformSourceFile);
         /**
          * Transform JSX-specific syntax in a SourceFile.
          *
          * @param node A SourceFile node.
          */
-        function transformSourceFile(node: SourceFile) {
+        function transformSourceFile(node: ts.SourceFile) {
             if (node.isDeclarationFile) {
                 return node;
             }
-
             currentSourceFile = node;
-            const visited = visitEachChild(node, visitor, context);
-            addEmitHelpers(visited, context.readEmitHelpers());
+            const visited = ts.visitEachChild(node, visitor, context);
+            ts.addEmitHelpers(visited, context.readEmitHelpers());
             return visited;
         }
-
-        function visitor(node: Node): VisitResult<Node> {
-            if (node.transformFlags & TransformFlags.ContainsJsx) {
+        function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
+            if (node.transformFlags & ts.TransformFlags.ContainsJsx) {
                 return visitorWorker(node);
             }
             else {
                 return node;
             }
         }
-
-        function visitorWorker(node: Node): VisitResult<Node> {
+        function visitorWorker(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.JsxElement:
-                    return visitJsxElement(<JsxElement>node, /*isChild*/ false);
-
-                case SyntaxKind.JsxSelfClosingElement:
-                    return visitJsxSelfClosingElement(<JsxSelfClosingElement>node, /*isChild*/ false);
-
-                case SyntaxKind.JsxFragment:
-                    return visitJsxFragment(<JsxFragment>node, /*isChild*/ false);
-
-                case SyntaxKind.JsxExpression:
-                    return visitJsxExpression(<JsxExpression>node);
-
+                case ts.SyntaxKind.JsxElement:
+                    return visitJsxElement((<ts.JsxElement>node), /*isChild*/ false);
+                case ts.SyntaxKind.JsxSelfClosingElement:
+                    return visitJsxSelfClosingElement((<ts.JsxSelfClosingElement>node), /*isChild*/ false);
+                case ts.SyntaxKind.JsxFragment:
+                    return visitJsxFragment((<ts.JsxFragment>node), /*isChild*/ false);
+                case ts.SyntaxKind.JsxExpression:
+                    return visitJsxExpression((<ts.JsxExpression>node));
                 default:
-                    return visitEachChild(node, visitor, context);
+                    return ts.visitEachChild(node, visitor, context);
             }
         }
-
-        function transformJsxChildToExpression(node: JsxChild): Expression | undefined {
+        function transformJsxChildToExpression(node: ts.JsxChild): ts.Expression | undefined {
             switch (node.kind) {
-                case SyntaxKind.JsxText:
+                case ts.SyntaxKind.JsxText:
                     return visitJsxText(node);
-
-                case SyntaxKind.JsxExpression:
+                case ts.SyntaxKind.JsxExpression:
                     return visitJsxExpression(node);
-
-                case SyntaxKind.JsxElement:
+                case ts.SyntaxKind.JsxElement:
                     return visitJsxElement(node, /*isChild*/ true);
-
-                case SyntaxKind.JsxSelfClosingElement:
+                case ts.SyntaxKind.JsxSelfClosingElement:
                     return visitJsxSelfClosingElement(node, /*isChild*/ true);
-
-                case SyntaxKind.JsxFragment:
+                case ts.SyntaxKind.JsxFragment:
                     return visitJsxFragment(node, /*isChild*/ true);
-
                 default:
-                    return Debug.failBadSyntaxKind(node);
+                    return ts.Debug.failBadSyntaxKind(node);
             }
         }
-
-        function visitJsxElement(node: JsxElement, isChild: boolean) {
+        function visitJsxElement(node: ts.JsxElement, isChild: boolean) {
             return visitJsxOpeningLikeElement(node.openingElement, node.children, isChild, /*location*/ node);
         }
-
-        function visitJsxSelfClosingElement(node: JsxSelfClosingElement, isChild: boolean) {
+        function visitJsxSelfClosingElement(node: ts.JsxSelfClosingElement, isChild: boolean) {
             return visitJsxOpeningLikeElement(node, /*children*/ undefined, isChild, /*location*/ node);
         }
-
-        function visitJsxFragment(node: JsxFragment, isChild: boolean) {
+        function visitJsxFragment(node: ts.JsxFragment, isChild: boolean) {
             return visitJsxOpeningFragment(node.openingFragment, node.children, isChild, /*location*/ node);
         }
-
-        function visitJsxOpeningLikeElement(node: JsxOpeningLikeElement, children: readonly JsxChild[] | undefined, isChild: boolean, location: TextRange) {
+        function visitJsxOpeningLikeElement(node: ts.JsxOpeningLikeElement, children: readonly ts.JsxChild[] | undefined, isChild: boolean, location: ts.TextRange) {
             const tagName = getTagName(node);
-            let objectProperties: Expression | undefined;
+            let objectProperties: ts.Expression | undefined;
             const attrs = node.attributes.properties;
             if (attrs.length === 0) {
                 // When there are no attributes, React wants "null"
-                objectProperties = createNull();
+                objectProperties = ts.createNull();
             }
             else {
                 // Map spans of JsxAttribute nodes into object literals and spans
                 // of JsxSpreadAttribute nodes into expressions.
-                const segments = flatten<Expression | ObjectLiteralExpression>(
-                    spanMap(attrs, isJsxSpreadAttribute, (attrs, isSpread) => isSpread
-                        ? map(attrs, transformJsxSpreadAttributeToExpression)
-                        : createObjectLiteral(map(attrs, transformJsxAttributeToObjectLiteralElement))
-                    )
-                );
-
-                if (isJsxSpreadAttribute(attrs[0])) {
+                const segments = ts.flatten<ts.Expression | ts.ObjectLiteralExpression>(ts.spanMap(attrs, ts.isJsxSpreadAttribute, (attrs, isSpread) => isSpread
+                    ? ts.map(attrs, transformJsxSpreadAttributeToExpression)
+                    : ts.createObjectLiteral(ts.map(attrs, transformJsxAttributeToObjectLiteralElement))));
+                if (ts.isJsxSpreadAttribute(attrs[0])) {
                     // We must always emit at least one object literal before a spread
                     // argument.
-                    segments.unshift(createObjectLiteral());
+                    segments.unshift(ts.createObjectLiteral());
                 }
-
                 // Either emit one big object literal (no spread attribs), or
                 // a call to the __assign helper.
-                objectProperties = singleOrUndefined(segments);
+                objectProperties = ts.singleOrUndefined(segments);
                 if (!objectProperties) {
-                    objectProperties = createAssignHelper(context, segments);
+                    objectProperties = ts.createAssignHelper(context, segments);
                 }
             }
-
-            const element = createExpressionForJsxElement(
-                context.getEmitResolver().getJsxFactoryEntity(currentSourceFile),
-                compilerOptions.reactNamespace!, // TODO: GH#18217
-                tagName,
-                objectProperties,
-                mapDefined(children, transformJsxChildToExpression),
-                node,
-                location
-            );
-
+            const element = ts.createExpressionForJsxElement(context.getEmitResolver().getJsxFactoryEntity(currentSourceFile), (compilerOptions.reactNamespace!), // TODO: GH#18217
+            tagName, objectProperties, ts.mapDefined(children, transformJsxChildToExpression), node, location);
             if (isChild) {
-                startOnNewLine(element);
+                ts.startOnNewLine(element);
             }
-
             return element;
         }
-
-        function visitJsxOpeningFragment(node: JsxOpeningFragment, children: readonly JsxChild[], isChild: boolean, location: TextRange) {
-            const element = createExpressionForJsxFragment(
-                context.getEmitResolver().getJsxFactoryEntity(currentSourceFile),
-                compilerOptions.reactNamespace!, // TODO: GH#18217
-                mapDefined(children, transformJsxChildToExpression),
-                node,
-                location
-            );
-
+        function visitJsxOpeningFragment(node: ts.JsxOpeningFragment, children: readonly ts.JsxChild[], isChild: boolean, location: ts.TextRange) {
+            const element = ts.createExpressionForJsxFragment(context.getEmitResolver().getJsxFactoryEntity(currentSourceFile), (compilerOptions.reactNamespace!), // TODO: GH#18217
+            ts.mapDefined(children, transformJsxChildToExpression), node, location);
             if (isChild) {
-                startOnNewLine(element);
+                ts.startOnNewLine(element);
             }
-
             return element;
         }
-
-        function transformJsxSpreadAttributeToExpression(node: JsxSpreadAttribute) {
-            return visitNode(node.expression, visitor, isExpression);
+        function transformJsxSpreadAttributeToExpression(node: ts.JsxSpreadAttribute) {
+            return ts.visitNode(node.expression, visitor, ts.isExpression);
         }
-
-        function transformJsxAttributeToObjectLiteralElement(node: JsxAttribute) {
+        function transformJsxAttributeToObjectLiteralElement(node: ts.JsxAttribute) {
             const name = getAttributeName(node);
             const expression = transformJsxAttributeInitializer(node.initializer);
-            return createPropertyAssignment(name, expression);
+            return ts.createPropertyAssignment(name, expression);
         }
-
-        function transformJsxAttributeInitializer(node: StringLiteral | JsxExpression | undefined): Expression {
+        function transformJsxAttributeInitializer(node: ts.StringLiteral | ts.JsxExpression | undefined): ts.Expression {
             if (node === undefined) {
-                return createTrue();
+                return ts.createTrue();
             }
-            else if (node.kind === SyntaxKind.StringLiteral) {
+            else if (node.kind === ts.SyntaxKind.StringLiteral) {
                 // Always recreate the literal to escape any escape sequences or newlines which may be in the original jsx string and which
                 // Need to be escaped to be handled correctly in a normal string
-                const literal = createLiteral(tryDecodeEntities(node.text) || node.text);
-                literal.singleQuote = node.singleQuote !== undefined ? node.singleQuote : !isStringDoubleQuoted(node, currentSourceFile);
-                return setTextRange(literal, node);
+                const literal = ts.createLiteral(tryDecodeEntities(node.text) || node.text);
+                literal.singleQuote = node.singleQuote !== undefined ? node.singleQuote : !ts.isStringDoubleQuoted(node, currentSourceFile);
+                return ts.setTextRange(literal, node);
             }
-            else if (node.kind === SyntaxKind.JsxExpression) {
+            else if (node.kind === ts.SyntaxKind.JsxExpression) {
                 if (node.expression === undefined) {
-                    return createTrue();
+                    return ts.createTrue();
                 }
                 return visitJsxExpression(node);
             }
             else {
-                return Debug.failBadSyntaxKind(node);
+                return ts.Debug.failBadSyntaxKind(node);
             }
         }
-
-        function visitJsxText(node: JsxText): StringLiteral | undefined {
+        function visitJsxText(node: ts.JsxText): ts.StringLiteral | undefined {
             const fixed = fixupWhitespaceAndDecodeEntities(node.text);
-            return fixed === undefined ? undefined : createLiteral(fixed);
+            return fixed === undefined ? undefined : ts.createLiteral(fixed);
         }
-
         /**
          * JSX trims whitespace at the end and beginning of lines, except that the
          * start/end of a tag is considered a start/end of a line only if that line is
@@ -210,42 +163,37 @@ namespace ts {
             // These initial values are special because the first line is:
             // firstNonWhitespace = 0 to indicate that we want leading whitsepace,
             // but lastNonWhitespace = -1 as a special flag to indicate that we *don't* include the line if it's all whitespace.
-
             for (let i = 0; i < text.length; i++) {
                 const c = text.charCodeAt(i);
-                if (isLineBreak(c)) {
+                if (ts.isLineBreak(c)) {
                     // If we've seen any non-whitespace characters on this line, add the 'trim' of the line.
                     // (lastNonWhitespace === -1 is a special flag to detect whether the first line is all whitespace.)
                     if (firstNonWhitespace !== -1 && lastNonWhitespace !== -1) {
                         acc = addLineOfJsxText(acc, text.substr(firstNonWhitespace, lastNonWhitespace - firstNonWhitespace + 1));
                     }
-
                     // Reset firstNonWhitespace for the next line.
                     // Don't bother to reset lastNonWhitespace because we ignore it if firstNonWhitespace = -1.
                     firstNonWhitespace = -1;
                 }
-                else if (!isWhiteSpaceSingleLine(c)) {
+                else if (!ts.isWhiteSpaceSingleLine(c)) {
                     lastNonWhitespace = i;
                     if (firstNonWhitespace === -1) {
                         firstNonWhitespace = i;
                     }
                 }
             }
-
             return firstNonWhitespace !== -1
                 // Last line had a non-whitespace character. Emit the 'trimLeft', meaning keep trailing whitespace.
                 ? addLineOfJsxText(acc, text.substr(firstNonWhitespace))
                 // Last line was all whitespace, so ignore it
                 : acc;
         }
-
         function addLineOfJsxText(acc: string | undefined, trimmedLine: string): string {
             // We do not escape the string here as that is handled by the printer
             // when it emits the literal. We do, however, need to decode JSX entities.
             const decoded = decodeEntities(trimmedLine);
             return acc === undefined ? decoded : acc + " " + decoded;
         }
-
         /**
          * Replace entities like "&nbsp;", "&#123;", and "&#xDEADBEEF;" with the characters they encode.
          * See https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
@@ -265,50 +213,45 @@ namespace ts {
                 }
             });
         }
-
         /** Like `decodeEntities` but returns `undefined` if there were no entities to decode. */
         function tryDecodeEntities(text: string): string | undefined {
             const decoded = decodeEntities(text);
             return decoded === text ? undefined : decoded;
         }
-
-        function getTagName(node: JsxElement | JsxOpeningLikeElement): Expression {
-            if (node.kind === SyntaxKind.JsxElement) {
+        function getTagName(node: ts.JsxElement | ts.JsxOpeningLikeElement): ts.Expression {
+            if (node.kind === ts.SyntaxKind.JsxElement) {
                 return getTagName(node.openingElement);
             }
             else {
                 const name = node.tagName;
-                if (isIdentifier(name) && isIntrinsicJsxName(name.escapedText)) {
-                    return createLiteral(idText(name));
+                if (ts.isIdentifier(name) && ts.isIntrinsicJsxName(name.escapedText)) {
+                    return ts.createLiteral(ts.idText(name));
                 }
                 else {
-                    return createExpressionFromEntityName(name);
+                    return ts.createExpressionFromEntityName(name);
                 }
             }
         }
-
         /**
          * Emit an attribute name, which is quoted if it needs to be quoted. Because
          * these emit into an object literal property name, we don't need to be worried
          * about keywords, just non-identifier characters
          */
-        function getAttributeName(node: JsxAttribute): StringLiteral | Identifier {
+        function getAttributeName(node: ts.JsxAttribute): ts.StringLiteral | ts.Identifier {
             const name = node.name;
-            const text = idText(name);
+            const text = ts.idText(name);
             if (/^[A-Za-z_]\w*$/.test(text)) {
                 return name;
             }
             else {
-                return createLiteral(text);
+                return ts.createLiteral(text);
             }
         }
-
-        function visitJsxExpression(node: JsxExpression) {
-            return visitNode(node.expression, visitor, isExpression);
+        function visitJsxExpression(node: ts.JsxExpression) {
+            return ts.visitNode(node.expression, visitor, ts.isExpression);
         }
     }
-
-    const entities = createMapFromTemplate<number>({
+    const entities = ts.createMapFromTemplate<number>({
         quot: 0x0022,
         amp: 0x0026,
         apos: 0x0027,

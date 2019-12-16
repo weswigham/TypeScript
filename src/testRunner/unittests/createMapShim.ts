@@ -1,18 +1,14 @@
 namespace ts {
     describe("unittests:: createMapShim", () => {
-
-        function testMapIterationAddedValues(map: Map<string>, useForEach: boolean): string {
+        function testMapIterationAddedValues(map: ts.Map<string>, useForEach: boolean): string {
             let resultString = "";
-
             map.set("1", "1");
             map.set("3", "3");
             map.set("2", "2");
             map.set("4", "4");
-
             let addedThree = false;
             const doForEach = (value: string, key: string) => {
                 resultString += `${key}:${value};`;
-
                 // Add a new key ("0") - the map should provide this
                 // one in the next iteration.
                 if (key === "1") {
@@ -23,12 +19,10 @@ namespace ts {
                 else if (key === "3") {
                     if (!addedThree) {
                         addedThree = true;
-
                         // Remove and re-add key "3"; the map should
                         // visit it after "0".
                         map.delete("3");
                         map.set("3", "Y3");
-
                         // Change the value of "2"; the map should provide
                         // it when visiting the key.
                         map.set("2", "Y2");
@@ -60,7 +54,6 @@ namespace ts {
                     map.set("Y", "Y");
                 }
             };
-
             if (useForEach) {
                 map.forEach(doForEach);
             }
@@ -72,33 +65,26 @@ namespace ts {
                     if (iterResult.done) {
                         break;
                     }
-
                     const [key, value] = iterResult.value;
                     doForEach(value, key);
                 }
             }
-
             return resultString;
         }
-
         it("iterates values in insertion order and handles changes", () => {
             const expectedResult = "1:1;3:3;2:Y2;4:X4;0:X0;3:Y3;999:999;A:A;Z:Z;X:X;Y:Y;";
-
             // First, ensure the test actually has the same behavior as a native Map.
-            let nativeMap = createMap<string>();
+            let nativeMap = ts.createMap<string>();
             const nativeMapForEachResult = testMapIterationAddedValues(nativeMap, /* useForEach */ true);
             assert.equal(nativeMapForEachResult, expectedResult, "nativeMap-forEach");
-
-            nativeMap = createMap<string>();
+            nativeMap = ts.createMap<string>();
             const nativeMapIteratorResult = testMapIterationAddedValues(nativeMap, /* useForEach */ false);
             assert.equal(nativeMapIteratorResult, expectedResult, "nativeMap-iterator");
-
             // Then, test the map shim.
-            const MapShim = createMapShim(); // tslint:disable-line variable-name
+            const MapShim = ts.createMapShim(); // tslint:disable-line variable-name
             let localShimMap = new MapShim<string>();
             const shimMapForEachResult = testMapIterationAddedValues(localShimMap, /* useForEach */ true);
             assert.equal(shimMapForEachResult, expectedResult, "shimMap-forEach");
-
             localShimMap = new MapShim<string>();
             const shimMapIteratorResult = testMapIterationAddedValues(localShimMap, /* useForEach */ false);
             assert.equal(shimMapIteratorResult, expectedResult, "shimMap-iterator");

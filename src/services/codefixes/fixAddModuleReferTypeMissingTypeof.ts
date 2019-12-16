@@ -2,30 +2,26 @@
 namespace ts.codefix {
     const fixIdAddMissingTypeof = "fixAddModuleReferTypeMissingTypeof";
     const fixId = fixIdAddMissingTypeof;
-    const errorCodes = [Diagnostics.Module_0_does_not_refer_to_a_type_but_is_used_as_a_type_here_Did_you_mean_typeof_import_0.code];
-
-    registerCodeFix({
+    const errorCodes = [ts.Diagnostics.Module_0_does_not_refer_to_a_type_but_is_used_as_a_type_here_Did_you_mean_typeof_import_0.code];
+    ts.codefix.registerCodeFix({
         errorCodes,
         getCodeActions: context => {
             const { sourceFile, span } = context;
             const importType = getImportTypeNode(sourceFile, span.start);
-            const changes = textChanges.ChangeTracker.with(context, t => doChange(t, sourceFile, importType));
-            return [createCodeFixAction(fixId, changes, Diagnostics.Add_missing_typeof, fixId, Diagnostics.Add_missing_typeof)];
+            const changes = ts.textChanges.ChangeTracker.with(context, t => doChange(t, sourceFile, importType));
+            return [ts.codefix.createCodeFixAction(fixId, changes, ts.Diagnostics.Add_missing_typeof, fixId, ts.Diagnostics.Add_missing_typeof)];
         },
         fixIds: [fixId],
-        getAllCodeActions: context => codeFixAll(context, errorCodes, (changes, diag) =>
-            doChange(changes, context.sourceFile, getImportTypeNode(diag.file, diag.start))),
+        getAllCodeActions: context => ts.codefix.codeFixAll(context, errorCodes, (changes, diag) => doChange(changes, context.sourceFile, getImportTypeNode(diag.file, diag.start))),
     });
-
-    function getImportTypeNode(sourceFile: SourceFile, pos: number): ImportTypeNode {
-        const token = getTokenAtPosition(sourceFile, pos);
-        Debug.assert(token.kind === SyntaxKind.ImportKeyword, "This token should be an ImportKeyword");
-        Debug.assert(token.parent.kind === SyntaxKind.ImportType, "Token parent should be an ImportType");
-        return <ImportTypeNode>token.parent;
+    function getImportTypeNode(sourceFile: ts.SourceFile, pos: number): ts.ImportTypeNode {
+        const token = ts.getTokenAtPosition(sourceFile, pos);
+        ts.Debug.assert(token.kind === ts.SyntaxKind.ImportKeyword, "This token should be an ImportKeyword");
+        ts.Debug.assert(token.parent.kind === ts.SyntaxKind.ImportType, "Token parent should be an ImportType");
+        return <ts.ImportTypeNode>token.parent;
     }
-
-    function doChange(changes: textChanges.ChangeTracker, sourceFile: SourceFile, importType: ImportTypeNode) {
-        const newTypeNode = updateImportTypeNode(importType, importType.argument, importType.qualifier, importType.typeArguments, /* isTypeOf */ true);
+    function doChange(changes: ts.textChanges.ChangeTracker, sourceFile: ts.SourceFile, importType: ts.ImportTypeNode) {
+        const newTypeNode = ts.updateImportTypeNode(importType, importType.argument, importType.qualifier, importType.typeArguments, /* isTypeOf */ true);
         changes.replaceNode(sourceFile, importType, newTypeNode);
     }
 }

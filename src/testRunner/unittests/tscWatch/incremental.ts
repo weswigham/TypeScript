@@ -1,71 +1,61 @@
 namespace ts.tscWatch {
     describe("unittests:: tsc-watch:: emit file --incremental", () => {
         const project = "/users/username/projects/project";
-
-        const configFile: File = {
+        const configFile: ts.tscWatch.File = {
             path: `${project}/tsconfig.json`,
             content: JSON.stringify({ compilerOptions: { incremental: true } })
         };
-
         interface VerifyIncrementalWatchEmitInput {
-            files: readonly File[];
-            optionsToExtend?: CompilerOptions;
-            expectedInitialEmit: readonly File[];
+            files: readonly ts.tscWatch.File[];
+            optionsToExtend?: ts.CompilerOptions;
+            expectedInitialEmit: readonly ts.tscWatch.File[];
             expectedInitialErrors: readonly string[];
-            modifyFs?: (host: WatchedSystem) => void;
-            expectedIncrementalEmit?: readonly File[];
+            modifyFs?: (host: ts.tscWatch.WatchedSystem) => void;
+            expectedIncrementalEmit?: readonly ts.tscWatch.File[];
             expectedIncrementalErrors?: readonly string[];
         }
         function verifyIncrementalWatchEmit(input: () => VerifyIncrementalWatchEmitInput) {
             it("with tsc --w", () => {
                 verifyIncrementalWatchEmitWorker({
                     input: input(),
-                    emitAndReportErrors: createWatchOfConfigFile,
-                    verifyErrors: checkOutputErrorsInitial
+                    emitAndReportErrors: ts.tscWatch.createWatchOfConfigFile,
+                    verifyErrors: ts.tscWatch.checkOutputErrorsInitial
                 });
             });
             it("with tsc", () => {
                 verifyIncrementalWatchEmitWorker({
                     input: input(),
                     emitAndReportErrors: incrementalBuild,
-                    verifyErrors: checkNormalBuildErrors
+                    verifyErrors: ts.tscWatch.checkNormalBuildErrors
                 });
             });
         }
-
-        function incrementalBuild(configFile: string, host: WatchedSystem, optionsToExtend?: CompilerOptions) {
-            const reportDiagnostic = createDiagnosticReporter(host);
-            const config = parseConfigFileWithSystem(configFile, optionsToExtend || {}, /*watchOptionsToExtend*/ undefined, host, reportDiagnostic);
+        function incrementalBuild(configFile: string, host: ts.tscWatch.WatchedSystem, optionsToExtend?: ts.CompilerOptions) {
+            const reportDiagnostic = ts.createDiagnosticReporter(host);
+            const config = ts.parseConfigFileWithSystem(configFile, optionsToExtend || {}, /*watchOptionsToExtend*/ undefined, host, reportDiagnostic);
             if (config) {
-                performIncrementalCompilation({
+                ts.performIncrementalCompilation({
                     rootNames: config.fileNames,
                     options: config.options,
                     projectReferences: config.projectReferences,
-                    configFileParsingDiagnostics: getConfigFileParsingDiagnostics(config),
+                    configFileParsingDiagnostics: ts.getConfigFileParsingDiagnostics(config),
                     reportDiagnostic,
                     system: host
                 });
             }
-            return { close: noop };
+            return { close: ts.noop };
         }
-
         interface VerifyIncrementalWatchEmitWorkerInput {
             input: VerifyIncrementalWatchEmitInput;
-            emitAndReportErrors: (configFile: string, host: WatchedSystem, optionsToExtend?: CompilerOptions) => { close(): void; };
-            verifyErrors: (host: WatchedSystem, errors: readonly string[]) => void;
+            emitAndReportErrors: (configFile: string, host: ts.tscWatch.WatchedSystem, optionsToExtend?: ts.CompilerOptions) => {
+                close(): void;
+            };
+            verifyErrors: (host: ts.tscWatch.WatchedSystem, errors: readonly string[]) => void;
         }
-        function verifyIncrementalWatchEmitWorker({
-            input: {
-                files, optionsToExtend,
-                expectedInitialEmit, expectedInitialErrors,
-                modifyFs, expectedIncrementalEmit, expectedIncrementalErrors
-            },
-            emitAndReportErrors,
-            verifyErrors
-        }: VerifyIncrementalWatchEmitWorkerInput) {
-            const host = createWatchedSystem(files, { currentDirectory: project });
+        function verifyIncrementalWatchEmitWorker({ input: { files, optionsToExtend, expectedInitialEmit, expectedInitialErrors, modifyFs, expectedIncrementalEmit, expectedIncrementalErrors }, emitAndReportErrors, verifyErrors }: VerifyIncrementalWatchEmitWorkerInput) {
+            const host = ts.tscWatch.createWatchedSystem(files, { currentDirectory: project });
             const originalWriteFile = host.writeFile;
-            const writtenFiles = createMap<string>();
+            const writtenFiles = ts.createMap<string>();
             host.writeFile = (path, content) => {
                 assert.isFalse(writtenFiles.has(path));
                 writtenFiles.set(path, content);
@@ -88,97 +78,86 @@ namespace ts.tscWatch {
                     writtenFiles,
                     emitAndReportErrors,
                     verifyErrors,
-                    expectedEmit: Debug.assertDefined(expectedIncrementalEmit),
-                    expectedErrors: Debug.assertDefined(expectedIncrementalErrors)
+                    expectedEmit: ts.Debug.assertDefined(expectedIncrementalEmit),
+                    expectedErrors: ts.Debug.assertDefined(expectedIncrementalErrors)
                 });
             }
         }
-
         interface VerifyBuildWorker {
-            host: WatchedSystem;
-            optionsToExtend?: CompilerOptions;
-            writtenFiles: Map<string>;
+            host: ts.tscWatch.WatchedSystem;
+            optionsToExtend?: ts.CompilerOptions;
+            writtenFiles: ts.Map<string>;
             emitAndReportErrors: VerifyIncrementalWatchEmitWorkerInput["emitAndReportErrors"];
             verifyErrors: VerifyIncrementalWatchEmitWorkerInput["verifyErrors"];
-            expectedEmit: readonly File[];
+            expectedEmit: readonly ts.tscWatch.File[];
             expectedErrors: readonly string[];
         }
-        function verifyBuild({
-            host, optionsToExtend, writtenFiles, emitAndReportErrors,
-            verifyErrors, expectedEmit, expectedErrors
-        }: VerifyBuildWorker) {
+        function verifyBuild({ host, optionsToExtend, writtenFiles, emitAndReportErrors, verifyErrors, expectedEmit, expectedErrors }: VerifyBuildWorker) {
             writtenFiles.clear();
             const result = emitAndReportErrors("tsconfig.json", host, optionsToExtend);
             checkFileEmit(writtenFiles, expectedEmit);
             verifyErrors(host, expectedErrors);
             result.close();
         }
-
         function sanitizeBuildInfo(content: string) {
-            const buildInfo = getBuildInfo(content);
+            const buildInfo = ts.getBuildInfo(content);
             fakes.sanitizeBuildInfoProgram(buildInfo);
-            return getBuildInfoText(buildInfo);
+            return ts.getBuildInfoText(buildInfo);
         }
-
-        function checkFileEmit(actual: Map<string>, expected: readonly File[]) {
-            assert.equal(actual.size, expected.length, `Actual: ${JSON.stringify(arrayFrom(actual.entries()), /*replacer*/ undefined, " ")}\nExpected: ${JSON.stringify(expected, /*replacer*/ undefined, " ")}`);
+        function checkFileEmit(actual: ts.Map<string>, expected: readonly ts.tscWatch.File[]) {
+            assert.equal(actual.size, expected.length, `Actual: ${JSON.stringify(ts.arrayFrom(actual.entries()), /*replacer*/ undefined, " ")}\nExpected: ${JSON.stringify(expected, /*replacer*/ undefined, " ")}`);
             for (const file of expected) {
                 let expectedContent = file.content;
                 let actualContent = actual.get(file.path);
-                if (isBuildInfoFile(file.path)) {
+                if (ts.isBuildInfoFile(file.path)) {
                     actualContent = actualContent && sanitizeBuildInfo(actualContent);
                     expectedContent = sanitizeBuildInfo(expectedContent);
                 }
                 assert.equal(actualContent, expectedContent, `Emit for ${file.path}`);
             }
         }
-
-        const libFileInfo: BuilderState.FileInfo = {
-            version: Harness.mockHash(libFile.content),
-            signature: Harness.mockHash(libFile.content)
+        const libFileInfo: ts.BuilderState.FileInfo = {
+            version: Harness.mockHash(ts.tscWatch.libFile.content),
+            signature: Harness.mockHash(ts.tscWatch.libFile.content)
         };
-
-        const getCanonicalFileName = createGetCanonicalFileName(/*useCaseSensitiveFileNames*/ false);
+        const getCanonicalFileName = ts.createGetCanonicalFileName(/*useCaseSensitiveFileNames*/ false);
         function relativeToBuildInfo(buildInfoPath: string, path: string) {
-            return getRelativePathFromFile(buildInfoPath, path, getCanonicalFileName);
+            return ts.getRelativePathFromFile(buildInfoPath, path, getCanonicalFileName);
         }
-
         const buildInfoPath = `${project}/tsconfig.tsbuildinfo`;
-        const [libFilePath, file1Path, file2Path] = [libFile.path, `${project}/file1.ts`, `${project}/file2.ts`].map(path => relativeToBuildInfo(buildInfoPath, path));
-
+        const [libFilePath, file1Path, file2Path] = [ts.tscWatch.libFile.path, `${project}/file1.ts`, `${project}/file2.ts`].map(path => relativeToBuildInfo(buildInfoPath, path));
         describe("non module compilation", () => {
-            function getFileInfo(content: string): BuilderState.FileInfo {
+            function getFileInfo(content: string): ts.BuilderState.FileInfo {
                 return { version: Harness.mockHash(content), signature: Harness.mockHash(`declare ${content}\n`) };
             }
-
-            const file1: File = {
+            const file1: ts.tscWatch.File = {
                 path: `${project}/file1.ts`,
                 content: "const x = 10;"
             };
-            const file2: File = {
+            const file2: ts.tscWatch.File = {
                 path: `${project}/file2.ts`,
                 content: "const y = 20;"
             };
-            const file1Js: File = {
+            const file1Js: ts.tscWatch.File = {
                 path: `${project}/file1.js`,
                 content: "var x = 10;\n"
             };
-            const file2Js: File = {
+            const file2Js: ts.tscWatch.File = {
                 path: `${project}/file2.js`,
                 content: "var y = 20;\n"
             };
             describe("own file emit without errors", () => {
-                function verify(optionsToExtend?: CompilerOptions, expectedBuildinfoOptions?: CompilerOptions) {
+                function verify(optionsToExtend?: ts.CompilerOptions, expectedBuildinfoOptions?: ts.CompilerOptions) {
                     const modifiedFile2Content = file2.content.replace("y", "z").replace("20", "10");
                     verifyIncrementalWatchEmit(() => ({
-                        files: [libFile, file1, file2, configFile],
+                        files: [ts.tscWatch.libFile, file1, file2, configFile],
                         optionsToExtend,
                         expectedInitialEmit: [
                             file1Js,
                             file2Js,
                             {
                                 path: `${project}/tsconfig.tsbuildinfo`,
-                                content: getBuildInfoText({
+                                content: ts.getBuildInfoText({
                                     program: {
                                         fileInfos: {
                                             [libFilePath]: libFileInfo,
@@ -198,14 +177,14 @@ namespace ts.tscWatch {
                                 })
                             }
                         ],
-                        expectedInitialErrors: emptyArray,
+                        expectedInitialErrors: ts.emptyArray,
                         modifyFs: host => host.writeFile(file2.path, modifiedFile2Content),
                         expectedIncrementalEmit: [
                             file1Js,
                             { path: file2Js.path, content: file2Js.content.replace("y", "z").replace("20", "10") },
                             {
                                 path: `${project}/tsconfig.tsbuildinfo`,
-                                content: getBuildInfoText({
+                                content: ts.getBuildInfoText({
                                     program: {
                                         fileInfos: {
                                             [libFilePath]: libFileInfo,
@@ -225,7 +204,7 @@ namespace ts.tscWatch {
                                 })
                             }
                         ],
-                        expectedIncrementalErrors: emptyArray,
+                        expectedIncrementalErrors: ts.emptyArray,
                     }));
                 }
                 verify();
@@ -233,24 +212,23 @@ namespace ts.tscWatch {
                     verify({ project: "tsconfig.json" }, { project: "./tsconfig.json" });
                 });
             });
-
             describe("own file emit with errors", () => {
-                const fileModified: File = {
+                const fileModified: ts.tscWatch.File = {
                     path: file2.path,
                     content: `const y: string = 20;`
                 };
-                const file2FileInfo: BuilderState.FileInfo = {
+                const file2FileInfo: ts.BuilderState.FileInfo = {
                     version: Harness.mockHash(fileModified.content),
                     signature: Harness.mockHash("declare const y: string;\n")
                 };
-                const file2ReuasableError: ProgramBuildInfoDiagnostic = [
+                const file2ReuasableError: ts.ProgramBuildInfoDiagnostic = [
                     file2Path, [
                         {
                             file: file2Path,
                             start: 6,
                             length: 1,
-                            code: Diagnostics.Type_0_is_not_assignable_to_type_1.code,
-                            category: Diagnostics.Type_0_is_not_assignable_to_type_1.category,
+                            code: ts.Diagnostics.Type_0_is_not_assignable_to_type_1.code,
+                            category: ts.Diagnostics.Type_0_is_not_assignable_to_type_1.category,
                             messageText: "Type '20' is not assignable to type 'string'."
                         }
                     ]
@@ -260,13 +238,13 @@ namespace ts.tscWatch {
                 ];
                 const modifiedFile1Content = file1.content.replace("x", "z");
                 verifyIncrementalWatchEmit(() => ({
-                    files: [libFile, file1, fileModified, configFile],
+                    files: [ts.tscWatch.libFile, file1, fileModified, configFile],
                     expectedInitialEmit: [
                         file1Js,
                         file2Js,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -296,7 +274,7 @@ namespace ts.tscWatch {
                         file2Js,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -322,29 +300,28 @@ namespace ts.tscWatch {
                     expectedIncrementalErrors: file2Errors,
                 }));
             });
-
             describe("with --out", () => {
-                const config: File = {
+                const config: ts.tscWatch.File = {
                     path: configFile.path,
                     content: JSON.stringify({ compilerOptions: { incremental: true, outFile: "out.js" } })
                 };
-                const outFile: File = {
+                const outFile: ts.tscWatch.File = {
                     path: `${project}/out.js`,
                     content: "var x = 10;\nvar y = 20;\n"
                 };
                 verifyIncrementalWatchEmit(() => ({
-                    files: [libFile, file1, file2, config],
+                    files: [ts.tscWatch.libFile, file1, file2, config],
                     expectedInitialEmit: [
                         outFile,
                         {
                             path: `${project}/out.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 bundle: {
                                     commonSourceDirectory: relativeToBuildInfo(`${project}/out.tsbuildinfo`, `${project}/`),
                                     sourceFiles: [file1Path, file2Path],
                                     js: {
                                         sections: [
-                                            { pos: 0, end: outFile.content.length, kind: BundleFileSectionKind.Text }
+                                            { pos: 0, end: outFile.content.length, kind: ts.BundleFileSectionKind.Text }
                                         ]
                                     },
                                 },
@@ -352,20 +329,17 @@ namespace ts.tscWatch {
                             })
                         }
                     ],
-                    expectedInitialErrors: emptyArray
+                    expectedInitialErrors: ts.emptyArray
                 }));
             });
-
         });
-
         describe("module compilation", () => {
-            function getFileInfo(content: string): BuilderState.FileInfo {
+            function getFileInfo(content: string): ts.BuilderState.FileInfo {
                 return {
                     version: Harness.mockHash(content),
                     signature: Harness.mockHash(`${content.replace("export ", "export declare ")}\n`)
                 };
             }
-
             function getEmitContent(varName: string, value: string) {
                 return `define(["require", "exports"], function (require, exports) {
     "use strict";
@@ -374,37 +348,36 @@ namespace ts.tscWatch {
 });
 `;
             }
-            const file1: File = {
+            const file1: ts.tscWatch.File = {
                 path: `${project}/file1.ts`,
                 content: "export const x = 10;"
             };
-            const file2: File = {
+            const file2: ts.tscWatch.File = {
                 path: `${project}/file2.ts`,
                 content: "export const y = 20;"
             };
-            const file1Js: File = {
+            const file1Js: ts.tscWatch.File = {
                 path: `${project}/file1.js`,
                 content: getEmitContent("x", "10")
             };
-            const file2Js: File = {
+            const file2Js: ts.tscWatch.File = {
                 path: `${project}/file2.js`,
                 content: getEmitContent("y", "20")
             };
-            const config: File = {
+            const config: ts.tscWatch.File = {
                 path: configFile.path,
                 content: JSON.stringify({ compilerOptions: { incremental: true, module: "amd" } })
             };
-
             describe("own file emit without errors", () => {
                 const modifiedFile2Content = file2.content.replace("y", "z").replace("20", "10");
                 verifyIncrementalWatchEmit(() => ({
-                    files: [libFile, file1, file2, config],
+                    files: [ts.tscWatch.libFile, file1, file2, config],
                     expectedInitialEmit: [
                         file1Js,
                         file2Js,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -413,7 +386,7 @@ namespace ts.tscWatch {
                                     },
                                     options: {
                                         incremental: true,
-                                        module: ModuleKind.AMD,
+                                        module: ts.ModuleKind.AMD,
                                         configFilePath: "./tsconfig.json"
                                     },
                                     referencedMap: {},
@@ -424,13 +397,13 @@ namespace ts.tscWatch {
                             })
                         }
                     ],
-                    expectedInitialErrors: emptyArray,
+                    expectedInitialErrors: ts.emptyArray,
                     modifyFs: host => host.writeFile(file2.path, modifiedFile2Content),
                     expectedIncrementalEmit: [
                         { path: `${project}/file2.js`, content: getEmitContent("z", "10") },
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -439,7 +412,7 @@ namespace ts.tscWatch {
                                     },
                                     options: {
                                         incremental: true,
-                                        module: ModuleKind.AMD,
+                                        module: ts.ModuleKind.AMD,
                                         configFilePath: "./tsconfig.json"
                                     },
                                     referencedMap: {},
@@ -450,27 +423,26 @@ namespace ts.tscWatch {
                             })
                         }
                     ],
-                    expectedIncrementalErrors: emptyArray,
+                    expectedIncrementalErrors: ts.emptyArray,
                 }));
             });
-
             describe("own file emit with errors", () => {
-                const fileModified: File = {
+                const fileModified: ts.tscWatch.File = {
                     path: file2.path,
                     content: `export const y: string = 20;`
                 };
-                const file2FileInfo: BuilderState.FileInfo = {
+                const file2FileInfo: ts.BuilderState.FileInfo = {
                     version: Harness.mockHash(fileModified.content),
                     signature: Harness.mockHash("export declare const y: string;\n")
                 };
-                const file2ReuasableError: ProgramBuildInfoDiagnostic = [
+                const file2ReuasableError: ts.ProgramBuildInfoDiagnostic = [
                     file2Path, [
                         {
                             file: file2Path,
                             start: 13,
                             length: 1,
-                            code: Diagnostics.Type_0_is_not_assignable_to_type_1.code,
-                            category: Diagnostics.Type_0_is_not_assignable_to_type_1.category,
+                            code: ts.Diagnostics.Type_0_is_not_assignable_to_type_1.code,
+                            category: ts.Diagnostics.Type_0_is_not_assignable_to_type_1.category,
                             messageText: "Type '20' is not assignable to type 'string'."
                         }
                     ]
@@ -480,13 +452,13 @@ namespace ts.tscWatch {
                 ];
                 const modifiedFile1Content = file1.content.replace("x = 10", "z = 10");
                 verifyIncrementalWatchEmit(() => ({
-                    files: [libFile, file1, fileModified, config],
+                    files: [ts.tscWatch.libFile, file1, fileModified, config],
                     expectedInitialEmit: [
                         file1Js,
                         file2Js,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -495,7 +467,7 @@ namespace ts.tscWatch {
                                     },
                                     options: {
                                         incremental: true,
-                                        module: ModuleKind.AMD,
+                                        module: ts.ModuleKind.AMD,
                                         configFilePath: "./tsconfig.json"
                                     },
                                     referencedMap: {},
@@ -516,7 +488,7 @@ namespace ts.tscWatch {
                         { path: file1Js.path, content: file1Js.content.replace("x = 10", "z = 10") },
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -525,7 +497,7 @@ namespace ts.tscWatch {
                                     },
                                     options: {
                                         incremental: true,
-                                        module: ModuleKind.AMD,
+                                        module: ts.ModuleKind.AMD,
                                         configFilePath: "./tsconfig.json"
                                     },
                                     referencedMap: {},
@@ -542,57 +514,49 @@ namespace ts.tscWatch {
                     ],
                     expectedIncrementalErrors: file2Errors,
                 }));
-
                 it("verify that state is read correctly", () => {
-                    const system = createWatchedSystem([libFile, file1, fileModified, config], { currentDirectory: project });
+                    const system = ts.tscWatch.createWatchedSystem([ts.tscWatch.libFile, file1, fileModified, config], { currentDirectory: project });
                     incrementalBuild("tsconfig.json", system);
-
-                    const command = parseConfigFileWithSystem("tsconfig.json", {}, /*watchOptionsToExtend*/ undefined, system, noop)!;
-                    const builderProgram = createIncrementalProgram({
+                    const command = (ts.parseConfigFileWithSystem("tsconfig.json", {}, /*watchOptionsToExtend*/ undefined, system, ts.noop)!);
+                    const builderProgram = ts.createIncrementalProgram({
                         rootNames: command.fileNames,
                         options: command.options,
                         projectReferences: command.projectReferences,
-                        configFileParsingDiagnostics: getConfigFileParsingDiagnostics(command),
-                        host: createIncrementalCompilerHost(command.options, system)
+                        configFileParsingDiagnostics: ts.getConfigFileParsingDiagnostics(command),
+                        host: ts.createIncrementalCompilerHost(command.options, system)
                     });
-
                     const state = builderProgram.getState();
                     assert.equal(state.changedFilesSet!.size, 0, "changes");
-
                     assert.equal(state.fileInfos.size, 3, "FileInfo size");
-                    assert.deepEqual(state.fileInfos.get(libFile.path), libFileInfo);
+                    assert.deepEqual(state.fileInfos.get(ts.tscWatch.libFile.path), libFileInfo);
                     assert.deepEqual(state.fileInfos.get(file1.path), getFileInfo(file1.content));
                     assert.deepEqual(state.fileInfos.get(file2.path), file2FileInfo);
-
                     assert.deepEqual(state.compilerOptions, {
                         incremental: true,
-                        module: ModuleKind.AMD,
+                        module: ts.ModuleKind.AMD,
                         configFilePath: config.path
                     });
-
                     assert.equal(state.referencedMap!.size, 0);
                     assert.equal(state.exportedModulesMap!.size, 0);
-
                     assert.equal(state.semanticDiagnosticsPerFile!.size, 3);
-                    assert.deepEqual(state.semanticDiagnosticsPerFile!.get(libFile.path), emptyArray);
-                    assert.deepEqual(state.semanticDiagnosticsPerFile!.get(file1.path), emptyArray);
+                    assert.deepEqual(state.semanticDiagnosticsPerFile!.get(ts.tscWatch.libFile.path), ts.emptyArray);
+                    assert.deepEqual(state.semanticDiagnosticsPerFile!.get(file1.path), ts.emptyArray);
                     const { file: _, relatedInformation: __, ...rest } = file2ReuasableError[1][0];
                     assert.deepEqual(state.semanticDiagnosticsPerFile!.get(file2.path), [{
-                        ...rest,
-                        file: state.program!.getSourceFileByPath(file2.path as Path)!,
-                        relatedInformation: undefined,
-                        reportsUnnecessary: undefined,
-                        source: undefined
-                    }]);
+                            ...rest,
+                            file: (state.program!.getSourceFileByPath((file2.path as ts.Path))!),
+                            relatedInformation: undefined,
+                            reportsUnnecessary: undefined,
+                            source: undefined
+                        }]);
                 });
             });
-
             describe("with --out", () => {
-                const config: File = {
+                const config: ts.tscWatch.File = {
                     path: configFile.path,
                     content: JSON.stringify({ compilerOptions: { incremental: true, module: "amd", outFile: "out.js" } })
                 };
-                const outFile: File = {
+                const outFile: ts.tscWatch.File = {
                     path: `${project}/out.js`,
                     content: `${getEmitContent("file1", "x", "10")}${getEmitContent("file2", "y", "20")}`
                 };
@@ -605,18 +569,18 @@ namespace ts.tscWatch {
 `;
                 }
                 verifyIncrementalWatchEmit(() => ({
-                    files: [libFile, file1, file2, config],
+                    files: [ts.tscWatch.libFile, file1, file2, config],
                     expectedInitialEmit: [
                         outFile,
                         {
                             path: `${project}/out.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 bundle: {
                                     commonSourceDirectory: relativeToBuildInfo(`${project}/out.tsbuildinfo`, `${project}/`),
                                     sourceFiles: [file1Path, file2Path],
                                     js: {
                                         sections: [
-                                            { pos: 0, end: outFile.content.length, kind: BundleFileSectionKind.Text }
+                                            { pos: 0, end: outFile.content.length, kind: ts.BundleFileSectionKind.Text }
                                         ]
                                     },
                                 },
@@ -624,17 +588,16 @@ namespace ts.tscWatch {
                             })
                         }
                     ],
-                    expectedInitialErrors: emptyArray
+                    expectedInitialErrors: ts.emptyArray
                 }));
             });
         });
-
         describe("incremental with circular references", () => {
-            function getFileInfo(content: string): BuilderState.FileInfo {
+            function getFileInfo(content: string): ts.BuilderState.FileInfo {
                 const signature = Harness.mockHash(content);
                 return { version: signature, signature };
             }
-            const config: File = {
+            const config: ts.tscWatch.File = {
                 path: configFile.path,
                 content: JSON.stringify({
                     compilerOptions: {
@@ -646,7 +609,7 @@ namespace ts.tscWatch {
                     }
                 })
             };
-            const aTs: File = {
+            const aTs: ts.tscWatch.File = {
                 path: `${project}/a.ts`,
                 content: `import { B } from "./b";
 export interface A {
@@ -654,7 +617,7 @@ export interface A {
 }
 `
             };
-            const bTs: File = {
+            const bTs: ts.tscWatch.File = {
                 path: `${project}/b.ts`,
                 content: `import { C } from "./c";
 export interface B {
@@ -662,7 +625,7 @@ export interface B {
 }
 `
             };
-            const cTs: File = {
+            const cTs: ts.tscWatch.File = {
                 path: `${project}/c.ts`,
                 content: `import { A } from "./a";
 export interface C {
@@ -670,22 +633,21 @@ export interface C {
 }
 `
             };
-            const indexTs: File = {
+            const indexTs: ts.tscWatch.File = {
                 path: `${project}/index.ts`,
                 content: `export { A } from "./a";
 export { B } from "./b";
 export { C } from "./c";
 `
             };
-
             verifyIncrementalWatchEmit(() => {
-                const referencedMap: MapLike<string[]> = {
+                const referencedMap: ts.MapLike<string[]> = {
                     "./a.ts": ["./b.ts"],
                     "./b.ts": ["./c.ts"],
                     "./c.ts": ["./a.ts"],
                     "./index.ts": ["./a.ts", "./b.ts", "./c.ts"],
                 };
-                const initialProgram: ProgramBuildInfo = {
+                const initialProgram: ts.ProgramBuildInfo = {
                     fileInfos: {
                         [libFilePath]: libFileInfo,
                         "./c.ts": getFileInfo(cTs.content),
@@ -695,8 +657,8 @@ export { C } from "./c";
                     },
                     options: {
                         incremental: true,
-                        target: ScriptTarget.ES5,
-                        module: ModuleKind.CommonJS,
+                        target: ts.ScriptTarget.ES5,
+                        module: ts.ModuleKind.CommonJS,
                         declaration: true,
                         emitDeclarationOnly: true,
                         configFilePath: "./tsconfig.json"
@@ -712,14 +674,14 @@ export { C } from "./c";
                     ]
                 };
                 const { fileInfos, ...rest } = initialProgram;
-                const expectedADts: File = { path: `${project}/a.d.ts`, content: aTs.content };
-                const expectedBDts: File = { path: `${project}/b.d.ts`, content: bTs.content };
-                const expectedCDts: File = { path: `${project}/c.d.ts`, content: cTs.content };
-                const expectedIndexDts: File = { path: `${project}/index.d.ts`, content: indexTs.content };
+                const expectedADts: ts.tscWatch.File = { path: `${project}/a.d.ts`, content: aTs.content };
+                const expectedBDts: ts.tscWatch.File = { path: `${project}/b.d.ts`, content: bTs.content };
+                const expectedCDts: ts.tscWatch.File = { path: `${project}/c.d.ts`, content: cTs.content };
+                const expectedIndexDts: ts.tscWatch.File = { path: `${project}/index.d.ts`, content: indexTs.content };
                 const modifiedATsContent = aTs.content.replace("b: B;", `b: B;
     foo: any;`);
                 return {
-                    files: [libFile, aTs, bTs, cTs, indexTs, config],
+                    files: [ts.tscWatch.libFile, aTs, bTs, cTs, indexTs, config],
                     expectedInitialEmit: [
                         expectedADts,
                         expectedBDts,
@@ -727,13 +689,13 @@ export { C } from "./c";
                         expectedIndexDts,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: initialProgram,
                                 version: ts.version // eslint-disable-line @typescript-eslint/no-unnecessary-qualifier
                             })
                         }
                     ],
-                    expectedInitialErrors: emptyArray,
+                    expectedInitialErrors: ts.emptyArray,
                     modifyFs: host => host.writeFile(aTs.path, modifiedATsContent),
                     expectedIncrementalEmit: [
                         { path: expectedADts.path, content: modifiedATsContent },
@@ -742,7 +704,7 @@ export { C } from "./c";
                         expectedIndexDts,
                         {
                             path: `${project}/tsconfig.tsbuildinfo`,
-                            content: getBuildInfoText({
+                            content: ts.getBuildInfoText({
                                 program: {
                                     fileInfos: {
                                         [libFilePath]: libFileInfo,
@@ -757,7 +719,7 @@ export { C } from "./c";
                             })
                         }
                     ],
-                    expectedIncrementalErrors: emptyArray
+                    expectedIncrementalErrors: ts.emptyArray
                 };
             });
         });

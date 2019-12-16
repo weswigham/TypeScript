@@ -3,13 +3,11 @@
  */
 namespace fakes {
     const processExitSentinel = new Error("System exit");
-
     export interface SystemOptions {
         executingFilePath?: string;
         newLine?: "\r\n" | "\n";
         env?: Record<string, string>;
     }
-
     /**
      * A fake `ts.System` that leverages a virtual file system.
      */
@@ -20,10 +18,8 @@ namespace fakes {
         public readonly newLine: string;
         public readonly useCaseSensitiveFileNames: boolean;
         public exitCode: number | undefined;
-
         private readonly _executingFilePath: string | undefined;
         private readonly _env: Record<string, string> | undefined;
-
         constructor(vfs: vfs.FileSystem, { executingFilePath, newLine = "\r\n", env }: SystemOptions = {}) {
             this.vfs = vfs.isReadonly ? vfs.shadow() : vfs;
             this.useCaseSensitiveFileNames = !this.vfs.ignoreCase;
@@ -31,11 +27,9 @@ namespace fakes {
             this._executingFilePath = executingFilePath;
             this._env = env;
         }
-
         public write(message: string) {
             this.output.push(message);
         }
-
         public readFile(path: string) {
             try {
                 const content = this.vfs.readFileSync(path, "utf8");
@@ -45,34 +39,27 @@ namespace fakes {
                 return undefined;
             }
         }
-
         public writeFile(path: string, data: string, writeByteOrderMark?: boolean): void {
             this.vfs.mkdirpSync(vpath.dirname(path));
             this.vfs.writeFileSync(path, writeByteOrderMark ? Utils.addUTF8ByteOrderMark(data) : data);
         }
-
         public deleteFile(path: string) {
             this.vfs.unlinkSync(path);
         }
-
         public fileExists(path: string) {
             const stats = this._getStats(path);
             return stats ? stats.isFile() : false;
         }
-
         public directoryExists(path: string) {
             const stats = this._getStats(path);
             return stats ? stats.isDirectory() : false;
         }
-
         public createDirectory(path: string): void {
             this.vfs.mkdirpSync(path);
         }
-
         public getCurrentDirectory() {
             return this.vfs.cwd();
         }
-
         public getDirectories(path: string) {
             const result: string[] = [];
             try {
@@ -85,11 +72,9 @@ namespace fakes {
             catch { /*ignore*/ }
             return result;
         }
-
         public readDirectory(path: string, extensions?: readonly string[], exclude?: readonly string[], include?: readonly string[], depth?: number): string[] {
             return ts.matchFiles(path, extensions, exclude, include, this.useCaseSensitiveFileNames, this.getCurrentDirectory(), depth, path => this.getAccessibleFileSystemEntries(path), path => this.realpath(path));
         }
-
         public getAccessibleFileSystemEntries(path: string): ts.FileSystemEntries {
             const files: string[] = [];
             const directories: string[] = [];
@@ -110,39 +95,32 @@ namespace fakes {
             catch { /*ignored*/ }
             return { files, directories };
         }
-
         public exit(exitCode?: number) {
             this.exitCode = exitCode;
             throw processExitSentinel;
         }
-
         public getFileSize(path: string) {
             const stats = this._getStats(path);
             return stats && stats.isFile() ? stats.size : 0;
         }
-
         public resolvePath(path: string) {
             return vpath.resolve(this.vfs.cwd(), path);
         }
-
         public getExecutingFilePath() {
-            if (this._executingFilePath === undefined) return ts.notImplemented();
+            if (this._executingFilePath === undefined)
+                return ts.notImplemented();
             return this._executingFilePath;
         }
-
         public getModifiedTime(path: string) {
             const stats = this._getStats(path);
             return stats ? stats.mtime : undefined!; // TODO: GH#18217
         }
-
         public setModifiedTime(path: string, time: Date) {
             this.vfs.utimesSync(path, time, time);
         }
-
         public createHash(data: string): string {
             return `${ts.generateDjb2Hash(data)}-${data}`;
         }
-
         public realpath(path: string) {
             try {
                 return this.vfs.realpathSync(path);
@@ -151,11 +129,9 @@ namespace fakes {
                 return path;
             }
         }
-
         public getEnvironmentVariable(name: string): string {
             return (this._env && this._env[name])!; // TODO: GH#18217
         }
-
         private _getStats(path: string) {
             try {
                 return this.vfs.existsSync(path) ? this.vfs.statSync(path) : undefined;
@@ -164,48 +140,39 @@ namespace fakes {
                 return undefined;
             }
         }
-
         now() {
             return new Date(this.vfs.time());
         }
     }
-
     /**
      * A fake `ts.ParseConfigHost` that leverages a virtual file system.
      */
     export class ParseConfigHost implements ts.ParseConfigHost {
         public readonly sys: System;
-
         constructor(sys: System | vfs.FileSystem) {
-            if (sys instanceof vfs.FileSystem) sys = new System(sys);
+            if (sys instanceof vfs.FileSystem)
+                sys = new System(sys);
             this.sys = sys;
         }
-
         public get vfs() {
             return this.sys.vfs;
         }
-
         public get useCaseSensitiveFileNames() {
             return this.sys.useCaseSensitiveFileNames;
         }
-
         public fileExists(fileName: string): boolean {
             return this.sys.fileExists(fileName);
         }
-
         public directoryExists(directoryName: string): boolean {
             return this.sys.directoryExists(directoryName);
         }
-
         public readFile(path: string): string | undefined {
             return this.sys.readFile(path);
         }
-
         public readDirectory(path: string, extensions: string[], excludes: string[], includes: string[], depth: number): string[] {
             return this.sys.readDirectory(path, extensions, excludes, includes, depth);
         }
     }
-
     /**
      * A fake `ts.CompilerHost` that leverages a virtual file system.
      */
@@ -216,14 +183,13 @@ namespace fakes {
         private readonly _outputsMap: collections.SortedMap<string, number>;
         public readonly traces: string[] = [];
         public readonly shouldAssertInvariants = !Harness.lightMode;
-
         private _setParentNodes: boolean;
         private _sourceFiles: collections.SortedMap<string, ts.SourceFile>;
         private _parseConfigHost: ParseConfigHost | undefined;
         private _newLine: string;
-
         constructor(sys: System | vfs.FileSystem, options = ts.getDefaultCompilerOptions(), setParentNodes = false) {
-            if (sys instanceof vfs.FileSystem) sys = new System(sys);
+            if (sys instanceof vfs.FileSystem)
+                sys = new System(sys);
             this.sys = sys;
             this.defaultLibLocation = sys.vfs.meta.get("defaultLibLocation") || "";
             this._newLine = ts.getNewLineCharacter(options, () => this.sys.newLine);
@@ -231,67 +197,52 @@ namespace fakes {
             this._setParentNodes = setParentNodes;
             this._outputsMap = new collections.SortedMap(this.vfs.stringComparer);
         }
-
         public get vfs() {
             return this.sys.vfs;
         }
-
         public get parseConfigHost() {
             return this._parseConfigHost || (this._parseConfigHost = new ParseConfigHost(this.sys));
         }
-
         public getCurrentDirectory(): string {
             return this.sys.getCurrentDirectory();
         }
-
         public useCaseSensitiveFileNames(): boolean {
             return this.sys.useCaseSensitiveFileNames;
         }
-
         public getNewLine(): string {
             return this._newLine;
         }
-
         public getCanonicalFileName(fileName: string): string {
             return this.sys.useCaseSensitiveFileNames ? fileName : fileName.toLowerCase();
         }
-
         public deleteFile(fileName: string) {
             this.sys.deleteFile(fileName);
         }
-
         public fileExists(fileName: string): boolean {
             return this.sys.fileExists(fileName);
         }
-
         public directoryExists(directoryName: string): boolean {
             return this.sys.directoryExists(directoryName);
         }
-
         public getModifiedTime(fileName: string) {
             return this.sys.getModifiedTime(fileName);
         }
-
         public setModifiedTime(fileName: string, time: Date) {
             return this.sys.setModifiedTime(fileName, time);
         }
-
         public getDirectories(path: string): string[] {
             return this.sys.getDirectories(path);
         }
-
         public readDirectory(path: string, extensions?: readonly string[], exclude?: readonly string[], include?: readonly string[], depth?: number): string[] {
             return this.sys.readDirectory(path, extensions, exclude, include, depth);
         }
-
         public readFile(path: string): string | undefined {
             return this.sys.readFile(path);
         }
-
         public writeFile(fileName: string, content: string, writeByteOrderMark: boolean) {
-            if (writeByteOrderMark) content = Utils.addUTF8ByteOrderMark(content);
+            if (writeByteOrderMark)
+                content = Utils.addUTF8ByteOrderMark(content);
             this.sys.writeFile(fileName, content);
-
             const document = new documents.TextDocument(fileName, content);
             document.meta.set("fileName", fileName);
             this.vfs.filemeta(fileName).set("document", document);
@@ -301,31 +252,26 @@ namespace fakes {
             }
             this.outputs[this._outputsMap.get(document.file)!] = document;
         }
-
         public trace(s: string): void {
             this.traces.push(s);
         }
-
         public realpath(path: string): string {
             return this.sys.realpath(path);
         }
-
         public getDefaultLibLocation(): string {
             return vpath.resolve(this.getCurrentDirectory(), this.defaultLibLocation);
         }
-
         public getDefaultLibFileName(options: ts.CompilerOptions): string {
             return vpath.resolve(this.getDefaultLibLocation(), ts.getDefaultLibFileName(options));
         }
-
         public getSourceFile(fileName: string, languageVersion: number): ts.SourceFile | undefined {
             const canonicalFileName = this.getCanonicalFileName(vpath.resolve(this.getCurrentDirectory(), fileName));
             const existing = this._sourceFiles.get(canonicalFileName);
-            if (existing) return existing;
-
+            if (existing)
+                return existing;
             const content = this.readFile(canonicalFileName);
-            if (content === undefined) return undefined;
-
+            if (content === undefined)
+                return undefined;
             // A virtual file system may shadow another existing virtual file system. This
             // allows us to reuse a common virtual file system structure across multiple
             // tests. If a virtual file is a shadow, it is likely that the file will be
@@ -341,18 +287,14 @@ namespace fakes {
                     return sourceFileFromMetadata;
                 }
             }
-
             const parsed = ts.createSourceFile(fileName, content, languageVersion, this._setParentNodes || this.shouldAssertInvariants);
             if (this.shouldAssertInvariants) {
                 Utils.assertInvariants(parsed, /*parent*/ undefined);
             }
-
             this._sourceFiles.set(canonicalFileName, parsed);
-
             if (cacheKey) {
                 // store the cached source file on the unshadowed file with the same version.
                 const stats = this.vfs.statSync(canonicalFileName);
-
                 let fs = this.vfs;
                 while (fs.shadowRoot) {
                     try {
@@ -362,29 +304,24 @@ namespace fakes {
                             shadowRootStats.mtimeMs !== stats.mtimeMs) {
                             break;
                         }
-
                         fs = fs.shadowRoot;
                     }
                     catch {
                         break;
                     }
                 }
-
                 if (fs !== this.vfs) {
                     fs.filemeta(canonicalFileName).set(cacheKey, parsed);
                 }
             }
-
             return parsed;
         }
     }
-
     export type ExpectedDiagnosticMessage = [ts.DiagnosticMessage, ...(string | number)[]];
     export interface ExpectedDiagnosticMessageChain {
         message: ExpectedDiagnosticMessage;
         next?: ExpectedDiagnosticMessageChain[];
     }
-
     export interface ExpectedDiagnosticLocation {
         file: string;
         start: number;
@@ -393,7 +330,6 @@ namespace fakes {
     export interface ExpectedDiagnosticRelatedInformation extends ExpectedDiagnosticMessageChain {
         location?: ExpectedDiagnosticLocation;
     }
-
     export enum DiagnosticKind {
         Error = "Error",
         Status = "Status"
@@ -401,16 +337,14 @@ namespace fakes {
     export interface ExpectedErrorDiagnostic extends ExpectedDiagnosticRelatedInformation {
         relatedInformation?: ExpectedDiagnosticRelatedInformation[];
     }
-
     export type ExpectedDiagnostic = ExpectedDiagnosticMessage | ExpectedErrorDiagnostic;
-
     interface SolutionBuilderDiagnostic {
         kind: DiagnosticKind;
         diagnostic: ts.Diagnostic;
     }
-
     function indentedText(indent: number, text: string) {
-        if (!indent) return text;
+        if (!indent)
+            return text;
         let indentText = "";
         for (let i = 0; i < indent; i++) {
             indentText += "  ";
@@ -418,7 +352,6 @@ namespace fakes {
         return `
 ${indentText}${text}`;
     }
-
     function expectedDiagnosticMessageToText([message, ...args]: ExpectedDiagnosticMessage) {
         let text = ts.getLocaleSpecificMessage(message);
         if (args.length) {
@@ -426,7 +359,6 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function expectedDiagnosticMessageChainToText({ message, next }: ExpectedDiagnosticMessageChain, indent = 0) {
         let text = indentedText(indent, expectedDiagnosticMessageToText(message));
         if (next) {
@@ -435,7 +367,6 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function expectedDiagnosticRelatedInformationToText({ location, ...diagnosticMessage }: ExpectedDiagnosticRelatedInformation) {
         const text = expectedDiagnosticMessageChainToText(diagnosticMessage);
         if (location) {
@@ -444,7 +375,6 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function expectedErrorDiagnosticToText({ relatedInformation, ...diagnosticRelatedInformation }: ExpectedErrorDiagnostic) {
         let text = `${DiagnosticKind.Error}!: ${expectedDiagnosticRelatedInformationToText(diagnosticRelatedInformation)}`;
         if (relatedInformation) {
@@ -455,14 +385,12 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function expectedDiagnosticToText(errorOrStatus: ExpectedDiagnostic) {
         return ts.isArray(errorOrStatus) ?
             `${DiagnosticKind.Status}!: ${expectedDiagnosticMessageToText(errorOrStatus)}` :
             expectedErrorDiagnosticToText(errorOrStatus);
     }
-
-    function diagnosticMessageChainToText({ messageText, next}: ts.DiagnosticMessageChain, indent = 0) {
+    function diagnosticMessageChainToText({ messageText, next }: ts.DiagnosticMessageChain, indent = 0) {
         let text = indentedText(indent, messageText);
         if (next) {
             indent++;
@@ -470,7 +398,6 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function diagnosticRelatedInformationToText({ file, start, length, messageText }: ts.DiagnosticRelatedInformation) {
         const text = typeof messageText === "string" ?
             messageText :
@@ -479,7 +406,6 @@ ${indentText}${text}`;
             `${file.fileName}(${start}:${length}):: ${text}` :
             text;
     }
-
     function diagnosticToText({ kind, diagnostic: { relatedInformation, ...diagnosticRelatedInformation } }: SolutionBuilderDiagnostic) {
         let text = `${kind}!: ${diagnosticRelatedInformationToText(diagnosticRelatedInformation)}`;
         if (relatedInformation) {
@@ -490,11 +416,9 @@ ${indentText}${text}`;
         }
         return text;
     }
-
     function compareProgramBuildInfoDiagnostic(a: ts.ProgramBuildInfoDiagnostic, b: ts.ProgramBuildInfoDiagnostic) {
         return ts.compareStringsCaseSensitive(ts.isString(a) ? a : a[0], ts.isString(b) ? b : b[0]);
     }
-
     export function sanitizeBuildInfoProgram(buildInfo: ts.BuildInfo) {
         if (buildInfo.program) {
             // reference Map
@@ -505,7 +429,6 @@ ${indentText}${text}`;
                 }
                 buildInfo.program.referencedMap = referencedMap;
             }
-
             // exportedModulesMap
             if (buildInfo.program.exportedModulesMap) {
                 const exportedModulesMap: ts.MapLike<string[]> = {};
@@ -514,31 +437,29 @@ ${indentText}${text}`;
                 }
                 buildInfo.program.exportedModulesMap = exportedModulesMap;
             }
-
             // semanticDiagnosticsPerFile
             if (buildInfo.program.semanticDiagnosticsPerFile) {
                 buildInfo.program.semanticDiagnosticsPerFile.sort(compareProgramBuildInfoDiagnostic);
             }
         }
     }
-
     export const version = "FakeTSVersion";
-
     export function patchHostForBuildInfoReadWrite(host: ts.CompilerHost | ts.SolutionBuilderHost<ts.BuilderProgram>) {
         const originalReadFile = host.readFile;
         host.readFile = (path, encoding) => {
             const value = originalReadFile.call(host, path, encoding);
-            if (!value || !ts.isBuildInfoFile(path)) return value;
+            if (!value || !ts.isBuildInfoFile(path))
+                return value;
             const buildInfo = ts.getBuildInfo(value);
             ts.Debug.assert(buildInfo.version === version);
             buildInfo.version = ts.version;
             return ts.getBuildInfoText(buildInfo);
         };
-
         if (host.writeFile) {
             const originalWriteFile = host.writeFile;
             host.writeFile = (fileName: string, content: string, writeByteOrderMark: boolean) => {
-                if (!ts.isBuildInfoFile(fileName)) return originalWriteFile.call(host, fileName, content, writeByteOrderMark);
+                if (!ts.isBuildInfoFile(fileName))
+                    return originalWriteFile.call(host, fileName, content, writeByteOrderMark);
                 const buildInfo = ts.getBuildInfo(content);
                 sanitizeBuildInfoProgram(buildInfo);
                 buildInfo.version = version;
@@ -546,47 +467,36 @@ ${indentText}${text}`;
             };
         }
     }
-
     export function patchSolutionBuilderHost(host: ts.SolutionBuilderHost<ts.BuilderProgram>, sys: System) {
         patchHostForBuildInfoReadWrite(host);
-
         ts.Debug.assert(host.now === undefined);
         host.now = () => new Date(sys.vfs.time());
         ts.Debug.assertDefined(host.createHash);
     }
-
     export class SolutionBuilderHost extends CompilerHost implements ts.SolutionBuilderHost<ts.BuilderProgram> {
         createProgram: ts.CreateProgram<ts.BuilderProgram>;
-
         private constructor(sys: System | vfs.FileSystem, options?: ts.CompilerOptions, setParentNodes?: boolean, createProgram?: ts.CreateProgram<ts.BuilderProgram>) {
             super(sys, options, setParentNodes);
             this.createProgram = createProgram || ts.createEmitAndSemanticDiagnosticsBuilderProgram;
         }
-
         static create(sys: System | vfs.FileSystem, options?: ts.CompilerOptions, setParentNodes?: boolean, createProgram?: ts.CreateProgram<ts.BuilderProgram>) {
             const host = new SolutionBuilderHost(sys, options, setParentNodes, createProgram);
             patchSolutionBuilderHost(host, host.sys);
             return host;
         }
-
         createHash(data: string) {
             return `${ts.generateDjb2Hash(data)}-${data}`;
         }
-
         diagnostics: SolutionBuilderDiagnostic[] = [];
-
         reportDiagnostic(diagnostic: ts.Diagnostic) {
             this.diagnostics.push({ kind: DiagnosticKind.Error, diagnostic });
         }
-
         reportSolutionBuilderStatus(diagnostic: ts.Diagnostic) {
             this.diagnostics.push({ kind: DiagnosticKind.Status, diagnostic });
         }
-
         clearDiagnostics() {
             this.diagnostics.length = 0;
         }
-
         assertDiagnosticMessages(...expectedDiagnostics: ExpectedDiagnostic[]) {
             const actual = this.diagnostics.slice().map(diagnosticToText);
             const expected = expectedDiagnostics.map(expectedDiagnosticToText);
@@ -594,7 +504,6 @@ ${indentText}${text}`;
 Actual: ${JSON.stringify(actual, /*replacer*/ undefined, " ")}
 Expected: ${JSON.stringify(expected, /*replacer*/ undefined, " ")}`);
         }
-
         assertErrors(...expectedDiagnostics: ExpectedErrorDiagnostic[]) {
             const actual = this.diagnostics.filter(d => d.kind === DiagnosticKind.Error).map(diagnosticToText);
             const expected = expectedDiagnostics.map(expectedDiagnosticToText);
@@ -603,7 +512,6 @@ Actual: ${JSON.stringify(actual, /*replacer*/ undefined, " ")}
 Expected: ${JSON.stringify(expected, /*replacer*/ undefined, " ")}
 Actual All:: ${JSON.stringify(this.diagnostics.slice().map(diagnosticToText), /*replacer*/ undefined, " ")}`);
         }
-
         printDiagnostics(header = "== Diagnostics ==") {
             const out = ts.createDiagnosticReporter(ts.sys);
             ts.sys.write(header + "\r\n");
@@ -613,4 +521,3 @@ Actual All:: ${JSON.stringify(this.diagnostics.slice().map(diagnosticToText), /*
         }
     }
 }
-

@@ -1,11 +1,11 @@
 namespace ts {
     describe("unittests:: tsc:: incremental::", () => {
-        verifyTscIncrementalEdits({
+        ts.verifyTscIncrementalEdits({
             scenario: "incremental",
             subScenario: "when passing filename for buildinfo on commandline",
-            fs: () => loadProjectFromFiles({
+            fs: () => ts.loadProjectFromFiles({
                 "/src/project/src/main.ts": "export const x = 10;",
-                "/src/project/tsconfig.json": Utils.dedent`
+                "/src/project/tsconfig.json": Utils.dedent `
                     {
                         "compilerOptions": {
                             "target": "es5",
@@ -17,15 +17,14 @@ namespace ts {
                     }`,
             }),
             commandLineArgs: ["--incremental", "--p", "src/project", "--tsBuildInfoFile", "src/project/.tsbuildinfo"],
-            incrementalScenarios: [noChangeRun]
+            incrementalScenarios: [ts.noChangeRun]
         });
-
-        verifyTscIncrementalEdits({
+        ts.verifyTscIncrementalEdits({
             scenario: "incremental",
             subScenario: "when passing rootDir from commandline",
-            fs: () => loadProjectFromFiles({
+            fs: () => ts.loadProjectFromFiles({
                 "/src/project/src/main.ts": "export const x = 10;",
-                "/src/project/tsconfig.json": Utils.dedent`
+                "/src/project/tsconfig.json": Utils.dedent `
                     {
                         "compilerOptions": {
                             "incremental": true,
@@ -34,33 +33,31 @@ namespace ts {
                     }`,
             }),
             commandLineArgs: ["--p", "src/project", "--rootDir", "src/project/src"],
-            incrementalScenarios: [noChangeRun]
+            incrementalScenarios: [ts.noChangeRun]
         });
-
-        verifyTscIncrementalEdits({
+        ts.verifyTscIncrementalEdits({
             scenario: "incremental",
             subScenario: "with only dts files",
-            fs: () => loadProjectFromFiles({
+            fs: () => ts.loadProjectFromFiles({
                 "/src/project/src/main.d.ts": "export const x = 10;",
                 "/src/project/src/another.d.ts": "export const y = 10;",
                 "/src/project/tsconfig.json": "{}",
             }),
             commandLineArgs: ["--incremental", "--p", "src/project"],
             incrementalScenarios: [
-                noChangeRun,
+                ts.noChangeRun,
                 {
-                    buildKind: BuildKind.IncrementalDtsUnchanged,
-                    modifyFs: fs => appendText(fs, "/src/project/src/main.d.ts", "export const xy = 100;")
+                    buildKind: ts.BuildKind.IncrementalDtsUnchanged,
+                    modifyFs: fs => ts.appendText(fs, "/src/project/src/main.d.ts", "export const xy = 100;")
                 }
             ]
         });
-
-        verifyTscIncrementalEdits({
+        ts.verifyTscIncrementalEdits({
             scenario: "incremental",
             subScenario: "when passing rootDir is in the tsconfig",
-            fs: () => loadProjectFromFiles({
+            fs: () => ts.loadProjectFromFiles({
                 "/src/project/src/main.ts": "export const x = 10;",
-                "/src/project/tsconfig.json": Utils.dedent`
+                "/src/project/tsconfig.json": Utils.dedent `
                     {
                         "compilerOptions": {
                             "incremental": true,
@@ -70,17 +67,16 @@ namespace ts {
                     }`,
             }),
             commandLineArgs: ["--p", "src/project"],
-            incrementalScenarios: [noChangeRun]
+            incrementalScenarios: [ts.noChangeRun]
         });
-
-        verifyTscIncrementalEdits({
+        ts.verifyTscIncrementalEdits({
             scenario: "incremental",
             subScenario: "with noEmitOnError",
-            fs: () => loadProjectFromDisk("tests/projects/noEmitOnError"),
+            fs: () => ts.loadProjectFromDisk("tests/projects/noEmitOnError"),
             commandLineArgs: ["--incremental", "-p", "src"],
             incrementalScenarios: [
                 {
-                    buildKind: BuildKind.IncrementalDtsUnchanged,
+                    buildKind: ts.BuildKind.IncrementalDtsUnchanged,
                     modifyFs: fs => fs.writeFileSync("/src/src/main.ts", `import { A } from "../shared/types/db";
 const a = {
     lastName: 'sdsd'

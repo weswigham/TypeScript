@@ -1,52 +1,33 @@
 namespace ts {
     describe("unittests:: config:: tsconfigParsingWatchOptions:: parseConfigFileTextToJson", () => {
         function createParseConfigHost(additionalFiles?: vfs.FileSet) {
-            return new fakes.ParseConfigHost(
-                new vfs.FileSystem(
-                    /*ignoreCase*/ false,
-                    {
-                        cwd: "/",
-                        files: { "/": {}, "/a.ts": "", ...additionalFiles }
-                    }
-                )
-            );
+            return new fakes.ParseConfigHost(new vfs.FileSystem(
+            /*ignoreCase*/ false, {
+                cwd: "/",
+                files: { "/": {}, "/a.ts": "", ...additionalFiles }
+            }));
         }
-        function getParsedCommandJson(json: object, additionalFiles?: vfs.FileSet, existingWatchOptions?: WatchOptions) {
-            return parseJsonConfigFileContent(
-                json,
-                createParseConfigHost(additionalFiles),
-                "/",
-                /*existingOptions*/ undefined,
-                "tsconfig.json",
-                /*resolutionStack*/ undefined,
-                /*extraFileExtensions*/ undefined,
-                /*extendedConfigCache*/ undefined,
-                existingWatchOptions,
-            );
+        function getParsedCommandJson(json: object, additionalFiles?: vfs.FileSet, existingWatchOptions?: ts.WatchOptions) {
+            return ts.parseJsonConfigFileContent(json, createParseConfigHost(additionalFiles), "/", 
+            /*existingOptions*/ undefined, "tsconfig.json", 
+            /*resolutionStack*/ undefined, 
+            /*extraFileExtensions*/ undefined, 
+            /*extendedConfigCache*/ undefined, existingWatchOptions);
         }
-
-        function getParsedCommandJsonNode(json: object, additionalFiles?: vfs.FileSet, existingWatchOptions?: WatchOptions) {
-            const parsed = parseJsonText("tsconfig.json", JSON.stringify(json));
-            return parseJsonSourceFileConfigFileContent(
-                parsed,
-                createParseConfigHost(additionalFiles),
-                "/",
-                /*existingOptions*/ undefined,
-                "tsconfig.json",
-                /*resolutionStack*/ undefined,
-                /*extraFileExtensions*/ undefined,
-                /*extendedConfigCache*/ undefined,
-                existingWatchOptions,
-            );
+        function getParsedCommandJsonNode(json: object, additionalFiles?: vfs.FileSet, existingWatchOptions?: ts.WatchOptions) {
+            const parsed = ts.parseJsonText("tsconfig.json", JSON.stringify(json));
+            return ts.parseJsonSourceFileConfigFileContent(parsed, createParseConfigHost(additionalFiles), "/", 
+            /*existingOptions*/ undefined, "tsconfig.json", 
+            /*resolutionStack*/ undefined, 
+            /*extraFileExtensions*/ undefined, 
+            /*extendedConfigCache*/ undefined, existingWatchOptions);
         }
-
         interface VerifyWatchOptions {
             json: object;
-            expectedOptions: WatchOptions | undefined;
+            expectedOptions: ts.WatchOptions | undefined;
             additionalFiles?: vfs.FileSet;
-            existingWatchOptions?: WatchOptions | undefined;
+            existingWatchOptions?: ts.WatchOptions | undefined;
         }
-
         function verifyWatchOptions(scenario: () => VerifyWatchOptions[]) {
             it("with json api", () => {
                 for (const { json, expectedOptions, additionalFiles, existingWatchOptions } of scenario()) {
@@ -54,7 +35,6 @@ namespace ts {
                     assert.deepEqual(parsed.watchOptions, expectedOptions);
                 }
             });
-
             it("with json source file api", () => {
                 for (const { json, expectedOptions, additionalFiles, existingWatchOptions } of scenario()) {
                     const parsed = getParsedCommandJsonNode(json, additionalFiles, existingWatchOptions);
@@ -62,21 +42,18 @@ namespace ts {
                 }
             });
         }
-
         describe("no watchOptions specified option", () => {
             verifyWatchOptions(() => [{
-                json: {},
-                expectedOptions: undefined
-            }]);
+                    json: {},
+                    expectedOptions: undefined
+                }]);
         });
-
         describe("empty watchOptions specified option", () => {
             verifyWatchOptions(() => [{
-                json: { watchOptions: {} },
-                expectedOptions: undefined
-            }]);
+                    json: { watchOptions: {} },
+                    expectedOptions: undefined
+                }]);
         });
-
         describe("extending config file", () => {
             describe("when extending config file without watchOptions", () => {
                 verifyWatchOptions(() => [
@@ -85,7 +62,7 @@ namespace ts {
                             extends: "./base.json",
                             watchOptions: { watchFile: "UseFsEvents" }
                         },
-                        expectedOptions: { watchFile: WatchFileKind.UseFsEvents },
+                        expectedOptions: { watchFile: ts.WatchFileKind.UseFsEvents },
                         additionalFiles: { "/base.json": "{}" }
                     },
                     {
@@ -95,7 +72,6 @@ namespace ts {
                     }
                 ]);
             });
-
             describe("when extending config file with watchOptions", () => {
                 verifyWatchOptions(() => [
                     {
@@ -106,8 +82,8 @@ namespace ts {
                             }
                         },
                         expectedOptions: {
-                            watchFile: WatchFileKind.UseFsEvents,
-                            watchDirectory: WatchDirectoryKind.FixedPollingInterval
+                            watchFile: ts.WatchFileKind.UseFsEvents,
+                            watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval
                         },
                         additionalFiles: {
                             "/base.json": JSON.stringify({
@@ -123,8 +99,8 @@ namespace ts {
                             extends: "./base.json",
                         },
                         expectedOptions: {
-                            watchFile: WatchFileKind.UseFsEventsOnParentDirectory,
-                            watchDirectory: WatchDirectoryKind.FixedPollingInterval
+                            watchFile: ts.WatchFileKind.UseFsEventsOnParentDirectory,
+                            watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval
                         },
                         additionalFiles: {
                             "/base.json": JSON.stringify({
@@ -138,20 +114,19 @@ namespace ts {
                 ]);
             });
         });
-
         describe("different options", () => {
             verifyWatchOptions(() => [
                 {
                     json: { watchOptions: { watchFile: "UseFsEvents" } },
-                    expectedOptions: { watchFile: WatchFileKind.UseFsEvents }
+                    expectedOptions: { watchFile: ts.WatchFileKind.UseFsEvents }
                 },
                 {
                     json: { watchOptions: { watchDirectory: "UseFsEvents" } },
-                    expectedOptions: { watchDirectory: WatchDirectoryKind.UseFsEvents }
+                    expectedOptions: { watchDirectory: ts.WatchDirectoryKind.UseFsEvents }
                 },
                 {
                     json: { watchOptions: { fallbackPolling: "DynamicPriority" } },
-                    expectedOptions: { fallbackPolling: PollingWatchKind.DynamicPriority }
+                    expectedOptions: { fallbackPolling: ts.PollingWatchKind.DynamicPriority }
                 },
                 {
                     json: { watchOptions: { synchronousWatchDirectory: true } },
@@ -159,18 +134,17 @@ namespace ts {
                 }
             ]);
         });
-
         describe("watch options extending passed in watch options", () => {
             verifyWatchOptions(() => [
                 {
                     json: { watchOptions: { watchFile: "UseFsEvents" } },
-                    expectedOptions: { watchFile: WatchFileKind.UseFsEvents, watchDirectory: WatchDirectoryKind.FixedPollingInterval },
-                    existingWatchOptions: { watchDirectory: WatchDirectoryKind.FixedPollingInterval }
+                    expectedOptions: { watchFile: ts.WatchFileKind.UseFsEvents, watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval },
+                    existingWatchOptions: { watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval }
                 },
                 {
                     json: {},
-                    expectedOptions: { watchDirectory: WatchDirectoryKind.FixedPollingInterval },
-                    existingWatchOptions: { watchDirectory: WatchDirectoryKind.FixedPollingInterval }
+                    expectedOptions: { watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval },
+                    existingWatchOptions: { watchDirectory: ts.WatchDirectoryKind.FixedPollingInterval }
                 },
             ]);
         });

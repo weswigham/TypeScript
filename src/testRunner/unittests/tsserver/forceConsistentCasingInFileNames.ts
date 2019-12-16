@@ -2,19 +2,19 @@ namespace ts.projectSystem {
     describe("unittests:: tsserver:: forceConsistentCasingInFileNames", () => {
         it("works when extends is specified with a case insensitive file system", () => {
             const rootPath = "/Users/username/dev/project";
-            const file1: File = {
+            const file1: ts.projectSystem.File = {
                 path: `${rootPath}/index.ts`,
                 content: 'import {x} from "file2";',
             };
-            const file2: File = {
+            const file2: ts.projectSystem.File = {
                 path: `${rootPath}/file2.js`,
                 content: "",
             };
-            const file2Dts: File = {
+            const file2Dts: ts.projectSystem.File = {
                 path: `${rootPath}/types/file2/index.d.ts`,
                 content: "export declare const x: string;",
             };
-            const tsconfigAll: File = {
+            const tsconfigAll: ts.projectSystem.File = {
                 path: `${rootPath}/tsconfig.all.json`,
                 content: JSON.stringify({
                     compilerOptions: {
@@ -25,79 +25,67 @@ namespace ts.projectSystem {
                     },
                 }),
             };
-            const tsconfig: File = {
+            const tsconfig: ts.projectSystem.File = {
                 path: `${rootPath}/tsconfig.json`,
                 content: JSON.stringify({ extends: "./tsconfig.all.json" }),
             };
-
-            const host = createServerHost([file1, file2, file2Dts, libFile, tsconfig, tsconfigAll], { useCaseSensitiveFileNames: false });
-            const session = createSession(host);
-
-            openFilesForSession([file1], session);
+            const host = ts.projectSystem.createServerHost([file1, file2, file2Dts, ts.projectSystem.libFile, tsconfig, tsconfigAll], { useCaseSensitiveFileNames: false });
+            const session = ts.projectSystem.createSession(host);
+            ts.projectSystem.openFilesForSession([file1], session);
             const projectService = session.getProjectService();
-
-            checkNumberOfProjects(projectService, { configuredProjects: 1 });
-
-            const diagnostics = configuredProjectAt(projectService, 0).getLanguageService().getCompilerOptionsDiagnostics();
+            ts.projectSystem.checkNumberOfProjects(projectService, { configuredProjects: 1 });
+            const diagnostics = ts.projectSystem.configuredProjectAt(projectService, 0).getLanguageService().getCompilerOptionsDiagnostics();
             assert.deepEqual(diagnostics, []);
         });
-
         it("works when renaming file with different casing", () => {
-            const loggerFile: File = {
-                path: `${tscWatch.projectRoot}/Logger.ts`,
+            const loggerFile: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/Logger.ts`,
                 content: `export class logger { }`
             };
-            const anotherFile: File = {
-                path: `${tscWatch.projectRoot}/another.ts`,
+            const anotherFile: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/another.ts`,
                 content: `import { logger } from "./Logger"; new logger();`
             };
-            const tsconfig: File = {
-                path: `${tscWatch.projectRoot}/tsconfig.json`,
+            const tsconfig: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/tsconfig.json`,
                 content: JSON.stringify({
                     compilerOptions: { forceConsistentCasingInFileNames: true }
                 })
             };
-
-            const host = createServerHost([loggerFile, anotherFile, tsconfig, libFile, tsconfig]);
-            const session = createSession(host, { canUseEvents: true });
-            openFilesForSession([{ file: loggerFile, projectRootPath: tscWatch.projectRoot }], session);
+            const host = ts.projectSystem.createServerHost([loggerFile, anotherFile, tsconfig, ts.projectSystem.libFile, tsconfig]);
+            const session = ts.projectSystem.createSession(host, { canUseEvents: true });
+            ts.projectSystem.openFilesForSession([{ file: loggerFile, projectRootPath: ts.tscWatch.projectRoot }], session);
             const service = session.getProjectService();
-            checkNumberOfProjects(service, { configuredProjects: 1 });
+            ts.projectSystem.checkNumberOfProjects(service, { configuredProjects: 1 });
             const project = service.configuredProjects.get(tsconfig.path)!;
-            checkProjectActualFiles(project, [loggerFile.path, anotherFile.path, libFile.path, tsconfig.path]);
-            verifyGetErrRequest({
+            ts.projectSystem.checkProjectActualFiles(project, [loggerFile.path, anotherFile.path, ts.projectSystem.libFile.path, tsconfig.path]);
+            ts.projectSystem.verifyGetErrRequest({
                 host,
                 session,
                 expected: [
                     { file: loggerFile.path, syntax: [], semantic: [], suggestion: [] }
                 ]
             });
-
             const newLoggerPath = loggerFile.path.toLowerCase();
             host.renameFile(loggerFile.path, newLoggerPath);
-            closeFilesForSession([loggerFile], session);
-            openFilesForSession([{ file: newLoggerPath, content: loggerFile.content, projectRootPath: tscWatch.projectRoot }], session);
-
+            ts.projectSystem.closeFilesForSession([loggerFile], session);
+            ts.projectSystem.openFilesForSession([{ file: newLoggerPath, content: loggerFile.content, projectRootPath: ts.tscWatch.projectRoot }], session);
             // Apply edits for rename
-            openFilesForSession([{ file: anotherFile, projectRootPath: tscWatch.projectRoot }], session);
-            session.executeCommandSeq<protocol.UpdateOpenRequest>({
-                command: protocol.CommandTypes.UpdateOpen,
+            ts.projectSystem.openFilesForSession([{ file: anotherFile, projectRootPath: ts.tscWatch.projectRoot }], session);
+            session.executeCommandSeq<ts.projectSystem.protocol.UpdateOpenRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.UpdateOpen,
                 arguments: {
                     changedFiles: [{
-                        fileName: anotherFile.path,
-                        textChanges: [{
-                            newText: "./logger",
-                            ...protocolTextSpanFromSubstring(
-                                anotherFile.content,
-                                "./Logger"
-                            )
+                            fileName: anotherFile.path,
+                            textChanges: [{
+                                    newText: "./logger",
+                                    ...ts.projectSystem.protocolTextSpanFromSubstring(anotherFile.content, "./Logger")
+                                }]
                         }]
-                    }]
                 }
             });
-
             // Check errors in both files
-            verifyGetErrRequest({
+            ts.projectSystem.verifyGetErrRequest({
                 host,
                 session,
                 expected: [
@@ -106,70 +94,58 @@ namespace ts.projectSystem {
                 ]
             });
         });
-
         it("when changing module name with different casing", () => {
-            const loggerFile: File = {
-                path: `${tscWatch.projectRoot}/Logger.ts`,
+            const loggerFile: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/Logger.ts`,
                 content: `export class logger { }`
             };
-            const anotherFile: File = {
-                path: `${tscWatch.projectRoot}/another.ts`,
+            const anotherFile: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/another.ts`,
                 content: `import { logger } from "./Logger"; new logger();`
             };
-            const tsconfig: File = {
-                path: `${tscWatch.projectRoot}/tsconfig.json`,
+            const tsconfig: ts.projectSystem.File = {
+                path: `${ts.tscWatch.projectRoot}/tsconfig.json`,
                 content: JSON.stringify({
                     compilerOptions: { forceConsistentCasingInFileNames: true }
                 })
             };
-
-            const host = createServerHost([loggerFile, anotherFile, tsconfig, libFile, tsconfig]);
-            const session = createSession(host, { canUseEvents: true });
-            openFilesForSession([{ file: anotherFile, projectRootPath: tscWatch.projectRoot }], session);
+            const host = ts.projectSystem.createServerHost([loggerFile, anotherFile, tsconfig, ts.projectSystem.libFile, tsconfig]);
+            const session = ts.projectSystem.createSession(host, { canUseEvents: true });
+            ts.projectSystem.openFilesForSession([{ file: anotherFile, projectRootPath: ts.tscWatch.projectRoot }], session);
             const service = session.getProjectService();
-            checkNumberOfProjects(service, { configuredProjects: 1 });
+            ts.projectSystem.checkNumberOfProjects(service, { configuredProjects: 1 });
             const project = service.configuredProjects.get(tsconfig.path)!;
-            checkProjectActualFiles(project, [loggerFile.path, anotherFile.path, libFile.path, tsconfig.path]);
-            verifyGetErrRequest({
+            ts.projectSystem.checkProjectActualFiles(project, [loggerFile.path, anotherFile.path, ts.projectSystem.libFile.path, tsconfig.path]);
+            ts.projectSystem.verifyGetErrRequest({
                 host,
                 session,
                 expected: [
                     { file: anotherFile.path, syntax: [], semantic: [], suggestion: [] }
                 ]
             });
-
-            session.executeCommandSeq<protocol.UpdateOpenRequest>({
-                command: protocol.CommandTypes.UpdateOpen,
+            session.executeCommandSeq<ts.projectSystem.protocol.UpdateOpenRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.UpdateOpen,
                 arguments: {
                     changedFiles: [{
-                        fileName: anotherFile.path,
-                        textChanges: [{
-                            newText: "./logger",
-                            ...protocolTextSpanFromSubstring(
-                                anotherFile.content,
-                                "./Logger"
-                            )
+                            fileName: anotherFile.path,
+                            textChanges: [{
+                                    newText: "./logger",
+                                    ...ts.projectSystem.protocolTextSpanFromSubstring(anotherFile.content, "./Logger")
+                                }]
                         }]
-                    }]
                 }
             });
-
-            const location = protocolTextSpanFromSubstring(anotherFile.content, `"./Logger"`);
+            const location = ts.projectSystem.protocolTextSpanFromSubstring(anotherFile.content, `"./Logger"`);
             // Check errors in both files
-            verifyGetErrRequest({
+            ts.projectSystem.verifyGetErrRequest({
                 host,
                 session,
                 expected: [{
-                    file: anotherFile.path,
-                    syntax: [],
-                    semantic: [createDiagnostic(
-                        location.start,
-                        location.end,
-                        Diagnostics.File_name_0_differs_from_already_included_file_name_1_only_in_casing,
-                        [loggerFile.path.toLowerCase(), loggerFile.path]
-                    )],
-                    suggestion: []
-                }]
+                        file: anotherFile.path,
+                        syntax: [],
+                        semantic: [ts.projectSystem.createDiagnostic(location.start, location.end, ts.Diagnostics.File_name_0_differs_from_already_included_file_name_1_only_in_casing, [loggerFile.path.toLowerCase(), loggerFile.path])],
+                        suggestion: []
+                    }]
             });
         });
     });

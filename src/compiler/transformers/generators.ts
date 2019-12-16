@@ -116,33 +116,28 @@
 //  .endfinally                   |     return [7 /*endfinally*/];
 //  .endtry                       |
 //  .mark END                     | case END:
-
 /*@internal*/
 namespace ts {
     type Label = number;
-
     const enum OpCode {
-        Nop,                    // No operation, used to force a new case in the state machine
-        Statement,              // A regular javascript statement
-        Assign,                 // An assignment
-        Break,                  // A break instruction used to jump to a label
-        BreakWhenTrue,          // A break instruction used to jump to a label if a condition evaluates to true
-        BreakWhenFalse,         // A break instruction used to jump to a label if a condition evaluates to false
-        Yield,                  // A completion instruction for the `yield` keyword
-        YieldStar,              // A completion instruction for the `yield*` keyword (not implemented, but reserved for future use)
-        Return,                 // A completion instruction for the `return` keyword
-        Throw,                  // A completion instruction for the `throw` keyword
-        Endfinally              // Marks the end of a `finally` block
+        Nop,
+        Statement,
+        Assign,
+        Break,
+        BreakWhenTrue,
+        BreakWhenFalse,
+        Yield,
+        YieldStar,
+        Return,
+        Throw,
+        Endfinally // Marks the end of a `finally` block
     }
-
-    type OperationArguments = [Label] | [Label, Expression] | [Statement] | [Expression | undefined] | [Expression, Expression];
-
+    type OperationArguments = [Label] | [Label, ts.Expression] | [ts.Statement] | [ts.Expression | undefined] | [ts.Expression, ts.Expression];
     // whether a generated code block is opening or closing at the current operation for a FunctionBuilder
     const enum BlockAction {
         Open,
-        Close,
+        Close
     }
-
     // the kind for a generated code block in a FunctionBuilder
     const enum CodeBlockKind {
         Exception,
@@ -151,7 +146,6 @@ namespace ts {
         Loop,
         Labeled
     }
-
     // the state for a generated code exception block
     const enum ExceptionBlockState {
         Try,
@@ -159,21 +153,18 @@ namespace ts {
         Finally,
         Done
     }
-
     // A generated code block
-    type CodeBlock = | ExceptionBlock | LabeledBlock | SwitchBlock | LoopBlock | WithBlock;
-
+    type CodeBlock = ExceptionBlock | LabeledBlock | SwitchBlock | LoopBlock | WithBlock;
     // a generated exception block, used for 'try' statements
     interface ExceptionBlock {
         kind: CodeBlockKind.Exception;
         state: ExceptionBlockState;
         startLabel: Label;
-        catchVariable?: Identifier;
+        catchVariable?: ts.Identifier;
         catchLabel?: Label;
         finallyLabel?: Label;
         endLabel: Label;
     }
-
     // A generated code that tracks the target for 'break' statements in a LabeledStatement.
     interface LabeledBlock {
         kind: CodeBlockKind.Labeled;
@@ -181,14 +172,12 @@ namespace ts {
         isScript: boolean;
         breakLabel: Label;
     }
-
     // a generated block that tracks the target for 'break' statements in a 'switch' statement
     interface SwitchBlock {
         kind: CodeBlockKind.Switch;
         isScript: boolean;
         breakLabel: Label;
     }
-
     // a generated block that tracks the targets for 'break' and 'continue' statements, used for iteration statements
     interface LoopBlock {
         kind: CodeBlockKind.Loop;
@@ -196,15 +185,13 @@ namespace ts {
         isScript: boolean;
         breakLabel: Label;
     }
-
     // a generated block associated with a 'with' statement
     interface WithBlock {
         kind: CodeBlockKind.With;
-        expression: Identifier;
+        expression: ts.Identifier;
         startLabel: Label;
         endLabel: Label;
     }
-
     // NOTE: changes to this enum should be reflected in the __generator helper.
     const enum Instruction {
         Next = 0,
@@ -214,9 +201,8 @@ namespace ts {
         Yield = 4,
         YieldStar = 5,
         Catch = 6,
-        Endfinally = 7,
+        Endfinally = 7
     }
-
     function getInstructionName(instruction: Instruction): string {
         switch (instruction) {
             case Instruction.Return: return "return";
@@ -227,27 +213,17 @@ namespace ts {
             default: return undefined!; // TODO: GH#18217
         }
     }
-
-    export function transformGenerators(context: TransformationContext) {
-        const {
-            resumeLexicalEnvironment,
-            endLexicalEnvironment,
-            hoistFunctionDeclaration,
-            hoistVariableDeclaration
-        } = context;
-
+    export function transformGenerators(context: ts.TransformationContext) {
+        const { resumeLexicalEnvironment, endLexicalEnvironment, hoistFunctionDeclaration, hoistVariableDeclaration } = context;
         const compilerOptions = context.getCompilerOptions();
-        const languageVersion = getEmitScriptTarget(compilerOptions);
+        const languageVersion = ts.getEmitScriptTarget(compilerOptions);
         const resolver = context.getEmitResolver();
         const previousOnSubstituteNode = context.onSubstituteNode;
         context.onSubstituteNode = onSubstituteNode;
-
-        let renamedCatchVariables: Map<boolean>;
-        let renamedCatchVariableDeclarations: Identifier[];
-
+        let renamedCatchVariables: ts.Map<boolean>;
+        let renamedCatchVariableDeclarations: ts.Identifier[];
         let inGeneratorFunctionBody: boolean;
         let inStatementContainingYield: boolean;
-
         // The following three arrays store information about generated code blocks.
         // All three arrays are correlated by their index. This approach is used over allocating
         // objects to store the same information to avoid GC overhead.
@@ -256,16 +232,14 @@ namespace ts {
         let blockOffsets: number[] | undefined; // The operation offset at which a code block begins or ends
         let blockActions: BlockAction[] | undefined; // Whether the code block is opened or closed
         let blockStack: CodeBlock[] | undefined; // A stack of currently open code blocks
-
         // Labels are used to mark locations in the code that can be the target of a Break (jump)
         // operation. These are translated into case clauses in a switch statement.
         // The following two arrays are correlated by their index. This approach is used over
         // allocating objects to store the same information to avoid GC overhead.
         //
         let labelOffsets: number[] | undefined; // The operation offset at which the label is defined.
-        let labelExpressions: LiteralExpression[][] | undefined; // The NumericLiteral nodes bound to each label.
+        let labelExpressions: ts.LiteralExpression[][] | undefined; // The NumericLiteral nodes bound to each label.
         let nextLabelId = 1; // The next label id to use.
-
         // Operations store information about generated code for the function body. This
         // Includes things like statements, assignments, breaks (jumps), and yields.
         // The following three arrays are correlated by their index. This approach is used over
@@ -273,10 +247,8 @@ namespace ts {
         //
         let operations: OpCode[] | undefined; // The operation to perform.
         let operationArguments: (OperationArguments | undefined)[] | undefined; // The arguments to the operation.
-        let operationLocations: (TextRange | undefined)[] | undefined; // The source map location for the operation.
-
-        let state: Identifier; // The name of the state object used by the generator at runtime.
-
+        let operationLocations: (ts.TextRange | undefined)[] | undefined; // The source map location for the operation.
+        let state: ts.Identifier; // The name of the state object used by the generator at runtime.
         // The following variables store information used by the `build` function:
         //
         let blockIndex = 0; // The index of the current block.
@@ -284,31 +256,26 @@ namespace ts {
         let labelNumbers: number[][] | undefined;
         let lastOperationWasAbrupt: boolean; // Indicates whether the last operation was abrupt (break/continue).
         let lastOperationWasCompletion: boolean; // Indicates whether the last operation was a completion (return/throw).
-        let clauses: CaseClause[] | undefined; // The case clauses generated for labels.
-        let statements: Statement[] | undefined; // The statements for the current label.
+        let clauses: ts.CaseClause[] | undefined; // The case clauses generated for labels.
+        let statements: ts.Statement[] | undefined; // The statements for the current label.
         let exceptionBlockStack: ExceptionBlock[] | undefined; // A stack of containing exception blocks.
         let currentExceptionBlock: ExceptionBlock | undefined; // The current exception block.
         let withBlockStack: WithBlock[] | undefined; // A stack containing `with` blocks.
-
-        return chainBundle(transformSourceFile);
-
-        function transformSourceFile(node: SourceFile) {
-            if (node.isDeclarationFile || (node.transformFlags & TransformFlags.ContainsGenerator) === 0) {
+        return ts.chainBundle(transformSourceFile);
+        function transformSourceFile(node: ts.SourceFile) {
+            if (node.isDeclarationFile || (node.transformFlags & ts.TransformFlags.ContainsGenerator) === 0) {
                 return node;
             }
-
-
-            const visited = visitEachChild(node, visitor, context);
-            addEmitHelpers(visited, context.readEmitHelpers());
+            const visited = ts.visitEachChild(node, visitor, context);
+            ts.addEmitHelpers(visited, context.readEmitHelpers());
             return visited;
         }
-
         /**
          * Visits a node.
          *
          * @param node The node to visit.
          */
-        function visitor(node: Node): VisitResult<Node> {
+        function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
             const transformFlags = node.transformFlags;
             if (inStatementContainingYield) {
                 return visitJavaScriptInStatementContainingYield(node);
@@ -316,122 +283,115 @@ namespace ts {
             else if (inGeneratorFunctionBody) {
                 return visitJavaScriptInGeneratorFunctionBody(node);
             }
-            else if (isFunctionLikeDeclaration(node) && node.asteriskToken) {
+            else if (ts.isFunctionLikeDeclaration(node) && node.asteriskToken) {
                 return visitGenerator(node);
             }
-            else if (transformFlags & TransformFlags.ContainsGenerator) {
-                return visitEachChild(node, visitor, context);
+            else if (transformFlags & ts.TransformFlags.ContainsGenerator) {
+                return ts.visitEachChild(node, visitor, context);
             }
             else {
                 return node;
             }
         }
-
         /**
          * Visits a node that is contained within a statement that contains yield.
          *
          * @param node The node to visit.
          */
-        function visitJavaScriptInStatementContainingYield(node: Node): VisitResult<Node> {
+        function visitJavaScriptInStatementContainingYield(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.DoStatement:
-                    return visitDoStatement(<DoStatement>node);
-                case SyntaxKind.WhileStatement:
-                    return visitWhileStatement(<WhileStatement>node);
-                case SyntaxKind.SwitchStatement:
-                    return visitSwitchStatement(<SwitchStatement>node);
-                case SyntaxKind.LabeledStatement:
-                    return visitLabeledStatement(<LabeledStatement>node);
+                case ts.SyntaxKind.DoStatement:
+                    return visitDoStatement((<ts.DoStatement>node));
+                case ts.SyntaxKind.WhileStatement:
+                    return visitWhileStatement((<ts.WhileStatement>node));
+                case ts.SyntaxKind.SwitchStatement:
+                    return visitSwitchStatement((<ts.SwitchStatement>node));
+                case ts.SyntaxKind.LabeledStatement:
+                    return visitLabeledStatement((<ts.LabeledStatement>node));
                 default:
                     return visitJavaScriptInGeneratorFunctionBody(node);
             }
         }
-
         /**
          * Visits a node that is contained within a generator function.
          *
          * @param node The node to visit.
          */
-        function visitJavaScriptInGeneratorFunctionBody(node: Node): VisitResult<Node> {
+        function visitJavaScriptInGeneratorFunctionBody(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.FunctionDeclaration:
-                    return visitFunctionDeclaration(<FunctionDeclaration>node);
-                case SyntaxKind.FunctionExpression:
-                    return visitFunctionExpression(<FunctionExpression>node);
-                case SyntaxKind.GetAccessor:
-                case SyntaxKind.SetAccessor:
-                    return visitAccessorDeclaration(<AccessorDeclaration>node);
-                case SyntaxKind.VariableStatement:
-                    return visitVariableStatement(<VariableStatement>node);
-                case SyntaxKind.ForStatement:
-                    return visitForStatement(<ForStatement>node);
-                case SyntaxKind.ForInStatement:
-                    return visitForInStatement(<ForInStatement>node);
-                case SyntaxKind.BreakStatement:
-                    return visitBreakStatement(<BreakStatement>node);
-                case SyntaxKind.ContinueStatement:
-                    return visitContinueStatement(<ContinueStatement>node);
-                case SyntaxKind.ReturnStatement:
-                    return visitReturnStatement(<ReturnStatement>node);
+                case ts.SyntaxKind.FunctionDeclaration:
+                    return visitFunctionDeclaration((<ts.FunctionDeclaration>node));
+                case ts.SyntaxKind.FunctionExpression:
+                    return visitFunctionExpression((<ts.FunctionExpression>node));
+                case ts.SyntaxKind.GetAccessor:
+                case ts.SyntaxKind.SetAccessor:
+                    return visitAccessorDeclaration((<ts.AccessorDeclaration>node));
+                case ts.SyntaxKind.VariableStatement:
+                    return visitVariableStatement((<ts.VariableStatement>node));
+                case ts.SyntaxKind.ForStatement:
+                    return visitForStatement((<ts.ForStatement>node));
+                case ts.SyntaxKind.ForInStatement:
+                    return visitForInStatement((<ts.ForInStatement>node));
+                case ts.SyntaxKind.BreakStatement:
+                    return visitBreakStatement((<ts.BreakStatement>node));
+                case ts.SyntaxKind.ContinueStatement:
+                    return visitContinueStatement((<ts.ContinueStatement>node));
+                case ts.SyntaxKind.ReturnStatement:
+                    return visitReturnStatement((<ts.ReturnStatement>node));
                 default:
-                    if (node.transformFlags & TransformFlags.ContainsYield) {
+                    if (node.transformFlags & ts.TransformFlags.ContainsYield) {
                         return visitJavaScriptContainingYield(node);
                     }
-                    else if (node.transformFlags & (TransformFlags.ContainsGenerator | TransformFlags.ContainsHoistedDeclarationOrCompletion)) {
-                        return visitEachChild(node, visitor, context);
+                    else if (node.transformFlags & (ts.TransformFlags.ContainsGenerator | ts.TransformFlags.ContainsHoistedDeclarationOrCompletion)) {
+                        return ts.visitEachChild(node, visitor, context);
                     }
                     else {
                         return node;
                     }
             }
         }
-
         /**
          * Visits a node that contains a YieldExpression.
          *
          * @param node The node to visit.
          */
-        function visitJavaScriptContainingYield(node: Node): VisitResult<Node> {
+        function visitJavaScriptContainingYield(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.BinaryExpression:
-                    return visitBinaryExpression(<BinaryExpression>node);
-                case SyntaxKind.ConditionalExpression:
-                    return visitConditionalExpression(<ConditionalExpression>node);
-                case SyntaxKind.YieldExpression:
-                    return visitYieldExpression(<YieldExpression>node);
-                case SyntaxKind.ArrayLiteralExpression:
-                    return visitArrayLiteralExpression(<ArrayLiteralExpression>node);
-                case SyntaxKind.ObjectLiteralExpression:
-                    return visitObjectLiteralExpression(<ObjectLiteralExpression>node);
-                case SyntaxKind.ElementAccessExpression:
-                    return visitElementAccessExpression(<ElementAccessExpression>node);
-                case SyntaxKind.CallExpression:
-                    return visitCallExpression(<CallExpression>node);
-                case SyntaxKind.NewExpression:
-                    return visitNewExpression(<NewExpression>node);
+                case ts.SyntaxKind.BinaryExpression:
+                    return visitBinaryExpression((<ts.BinaryExpression>node));
+                case ts.SyntaxKind.ConditionalExpression:
+                    return visitConditionalExpression((<ts.ConditionalExpression>node));
+                case ts.SyntaxKind.YieldExpression:
+                    return visitYieldExpression((<ts.YieldExpression>node));
+                case ts.SyntaxKind.ArrayLiteralExpression:
+                    return visitArrayLiteralExpression((<ts.ArrayLiteralExpression>node));
+                case ts.SyntaxKind.ObjectLiteralExpression:
+                    return visitObjectLiteralExpression((<ts.ObjectLiteralExpression>node));
+                case ts.SyntaxKind.ElementAccessExpression:
+                    return visitElementAccessExpression((<ts.ElementAccessExpression>node));
+                case ts.SyntaxKind.CallExpression:
+                    return visitCallExpression((<ts.CallExpression>node));
+                case ts.SyntaxKind.NewExpression:
+                    return visitNewExpression((<ts.NewExpression>node));
                 default:
-                    return visitEachChild(node, visitor, context);
+                    return ts.visitEachChild(node, visitor, context);
             }
         }
-
         /**
          * Visits a generator function.
          *
          * @param node The node to visit.
          */
-        function visitGenerator(node: Node): VisitResult<Node> {
+        function visitGenerator(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.FunctionDeclaration:
-                    return visitFunctionDeclaration(<FunctionDeclaration>node);
-
-                case SyntaxKind.FunctionExpression:
-                    return visitFunctionExpression(<FunctionExpression>node);
-
+                case ts.SyntaxKind.FunctionDeclaration:
+                    return visitFunctionDeclaration((<ts.FunctionDeclaration>node));
+                case ts.SyntaxKind.FunctionExpression:
+                    return visitFunctionExpression((<ts.FunctionExpression>node));
                 default:
-                    return Debug.failBadSyntaxKind(node);
+                    return ts.Debug.failBadSyntaxKind(node);
             }
         }
-
         /**
          * Visits a function declaration.
          *
@@ -441,36 +401,25 @@ namespace ts {
          *
          * @param node The node to visit.
          */
-        function visitFunctionDeclaration(node: FunctionDeclaration): Statement | undefined {
+        function visitFunctionDeclaration(node: ts.FunctionDeclaration): ts.Statement | undefined {
             // Currently, we only support generators that were originally async functions.
             if (node.asteriskToken) {
-                node = setOriginalNode(
-                    setTextRange(
-                        createFunctionDeclaration(
-                            /*decorators*/ undefined,
-                            node.modifiers,
-                            /*asteriskToken*/ undefined,
-                            node.name,
-                            /*typeParameters*/ undefined,
-                            visitParameterList(node.parameters, visitor, context),
-                            /*type*/ undefined,
-                            transformGeneratorFunctionBody(node.body!)
-                        ),
-                        /*location*/ node
-                    ),
-                    node
-                );
+                node = ts.setOriginalNode(ts.setTextRange(ts.createFunctionDeclaration(
+                /*decorators*/ undefined, node.modifiers, 
+                /*asteriskToken*/ undefined, node.name, 
+                /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+                /*type*/ undefined, transformGeneratorFunctionBody(node.body!)), 
+                /*location*/ node), node);
             }
             else {
                 const savedInGeneratorFunctionBody = inGeneratorFunctionBody;
                 const savedInStatementContainingYield = inStatementContainingYield;
                 inGeneratorFunctionBody = false;
                 inStatementContainingYield = false;
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
                 inGeneratorFunctionBody = savedInGeneratorFunctionBody;
                 inStatementContainingYield = savedInStatementContainingYield;
             }
-
             if (inGeneratorFunctionBody) {
                 // Function declarations in a generator function body are hoisted
                 // to the top of the lexical scope and elided from the current statement.
@@ -481,7 +430,6 @@ namespace ts {
                 return node;
             }
         }
-
         /**
          * Visits a function expression.
          *
@@ -491,38 +439,27 @@ namespace ts {
          *
          * @param node The node to visit.
          */
-        function visitFunctionExpression(node: FunctionExpression): Expression {
+        function visitFunctionExpression(node: ts.FunctionExpression): ts.Expression {
             // Currently, we only support generators that were originally async functions.
             if (node.asteriskToken) {
-                node = setOriginalNode(
-                    setTextRange(
-                        createFunctionExpression(
-                            /*modifiers*/ undefined,
-                            /*asteriskToken*/ undefined,
-                            node.name,
-                            /*typeParameters*/ undefined,
-                            visitParameterList(node.parameters, visitor, context),
-                            /*type*/ undefined,
-                            transformGeneratorFunctionBody(node.body)
-                        ),
-                        /*location*/ node
-                    ),
-                    node
-                );
+                node = ts.setOriginalNode(ts.setTextRange(ts.createFunctionExpression(
+                /*modifiers*/ undefined, 
+                /*asteriskToken*/ undefined, node.name, 
+                /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+                /*type*/ undefined, transformGeneratorFunctionBody(node.body)), 
+                /*location*/ node), node);
             }
             else {
                 const savedInGeneratorFunctionBody = inGeneratorFunctionBody;
                 const savedInStatementContainingYield = inStatementContainingYield;
                 inGeneratorFunctionBody = false;
                 inStatementContainingYield = false;
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
                 inGeneratorFunctionBody = savedInGeneratorFunctionBody;
                 inStatementContainingYield = savedInStatementContainingYield;
             }
-
             return node;
         }
-
         /**
          * Visits a get or set accessor declaration.
          *
@@ -531,25 +468,24 @@ namespace ts {
          *
          * @param node The node to visit.
          */
-        function visitAccessorDeclaration(node: AccessorDeclaration) {
+        function visitAccessorDeclaration(node: ts.AccessorDeclaration) {
             const savedInGeneratorFunctionBody = inGeneratorFunctionBody;
             const savedInStatementContainingYield = inStatementContainingYield;
             inGeneratorFunctionBody = false;
             inStatementContainingYield = false;
-            node = visitEachChild(node, visitor, context);
+            node = ts.visitEachChild(node, visitor, context);
             inGeneratorFunctionBody = savedInGeneratorFunctionBody;
             inStatementContainingYield = savedInStatementContainingYield;
             return node;
         }
-
         /**
          * Transforms the body of a generator function declaration.
          *
          * @param node The function body to transform.
          */
-        function transformGeneratorFunctionBody(body: Block) {
+        function transformGeneratorFunctionBody(body: ts.Block) {
             // Save existing generator state
-            const statements: Statement[] = [];
+            const statements: ts.Statement[] = [];
             const savedInGeneratorFunctionBody = inGeneratorFunctionBody;
             const savedInStatementContainingYield = inStatementContainingYield;
             const savedBlocks = blocks;
@@ -563,7 +499,6 @@ namespace ts {
             const savedOperationArguments = operationArguments;
             const savedOperationLocations = operationLocations;
             const savedState = state;
-
             // Initialize generator state
             inGeneratorFunctionBody = true;
             inStatementContainingYield = false;
@@ -577,19 +512,14 @@ namespace ts {
             operations = undefined;
             operationArguments = undefined;
             operationLocations = undefined;
-            state = createTempVariable(/*recordTempVariable*/ undefined);
-
+            state = ts.createTempVariable(/*recordTempVariable*/ undefined);
             // Build the generator
             resumeLexicalEnvironment();
-
-            const statementOffset = addPrologue(statements, body.statements, /*ensureUseStrict*/ false, visitor);
-
+            const statementOffset = ts.addPrologue(statements, body.statements, /*ensureUseStrict*/ false, visitor);
             transformAndEmitStatements(body.statements, statementOffset);
-
             const buildResult = build();
-            insertStatementsAfterStandardPrologue(statements, endLexicalEnvironment());
-            statements.push(createReturn(buildResult));
-
+            ts.insertStatementsAfterStandardPrologue(statements, endLexicalEnvironment());
+            statements.push(ts.createReturn(buildResult));
             // Restore previous generator state
             inGeneratorFunctionBody = savedInGeneratorFunctionBody;
             inStatementContainingYield = savedInStatementContainingYield;
@@ -604,10 +534,8 @@ namespace ts {
             operationArguments = savedOperationArguments;
             operationLocations = savedOperationLocations;
             state = savedState;
-
-            return setTextRange(createBlock(statements, body.multiLine), body);
+            return ts.setTextRange(ts.createBlock(statements, body.multiLine), body);
         }
-
         /**
          * Visits a variable statement.
          *
@@ -616,37 +544,26 @@ namespace ts {
          *
          * @param node The node to visit.
          */
-        function visitVariableStatement(node: VariableStatement): Statement | undefined {
-            if (node.transformFlags & TransformFlags.ContainsYield) {
+        function visitVariableStatement(node: ts.VariableStatement): ts.Statement | undefined {
+            if (node.transformFlags & ts.TransformFlags.ContainsYield) {
                 transformAndEmitVariableDeclarationList(node.declarationList);
                 return undefined;
             }
             else {
                 // Do not hoist custom prologues.
-                if (getEmitFlags(node) & EmitFlags.CustomPrologue) {
+                if (ts.getEmitFlags(node) & ts.EmitFlags.CustomPrologue) {
                     return node;
                 }
-
                 for (const variable of node.declarationList.declarations) {
-                    hoistVariableDeclaration(<Identifier>variable.name);
+                    hoistVariableDeclaration((<ts.Identifier>variable.name));
                 }
-
-                const variables = getInitializedVariables(node.declarationList);
+                const variables = ts.getInitializedVariables(node.declarationList);
                 if (variables.length === 0) {
                     return undefined;
                 }
-
-                return setSourceMapRange(
-                    createExpressionStatement(
-                        inlineExpressions(
-                            map(variables, transformInitializedVariable)
-                        )
-                    ),
-                    node
-                );
+                return ts.setSourceMapRange(ts.createExpressionStatement(ts.inlineExpressions(ts.map(variables, transformInitializedVariable))), node);
             }
         }
-
         /**
          * Visits a binary expression.
          *
@@ -655,51 +572,48 @@ namespace ts {
          *
          * @param node The node to visit.
          */
-        function visitBinaryExpression(node: BinaryExpression): Expression {
-            const assoc = getExpressionAssociativity(node);
+        function visitBinaryExpression(node: ts.BinaryExpression): ts.Expression {
+            const assoc = ts.getExpressionAssociativity(node);
             switch (assoc) {
-                case Associativity.Left:
+                case ts.Associativity.Left:
                     return visitLeftAssociativeBinaryExpression(node);
-                case Associativity.Right:
+                case ts.Associativity.Right:
                     return visitRightAssociativeBinaryExpression(node);
                 default:
-                    return Debug.assertNever(assoc);
+                    return ts.Debug.assertNever(assoc);
             }
         }
-
-        function isCompoundAssignment(kind: BinaryOperator): kind is CompoundAssignmentOperator {
-            return kind >= SyntaxKind.FirstCompoundAssignment
-                && kind <= SyntaxKind.LastCompoundAssignment;
+        function isCompoundAssignment(kind: ts.BinaryOperator): kind is ts.CompoundAssignmentOperator {
+            return kind >= ts.SyntaxKind.FirstCompoundAssignment
+                && kind <= ts.SyntaxKind.LastCompoundAssignment;
         }
-
-        function getOperatorForCompoundAssignment(kind: CompoundAssignmentOperator): BitwiseOperatorOrHigher {
+        function getOperatorForCompoundAssignment(kind: ts.CompoundAssignmentOperator): ts.BitwiseOperatorOrHigher {
             switch (kind) {
-                case SyntaxKind.PlusEqualsToken: return SyntaxKind.PlusToken;
-                case SyntaxKind.MinusEqualsToken: return SyntaxKind.MinusToken;
-                case SyntaxKind.AsteriskEqualsToken: return SyntaxKind.AsteriskToken;
-                case SyntaxKind.AsteriskAsteriskEqualsToken: return SyntaxKind.AsteriskAsteriskToken;
-                case SyntaxKind.SlashEqualsToken: return SyntaxKind.SlashToken;
-                case SyntaxKind.PercentEqualsToken: return SyntaxKind.PercentToken;
-                case SyntaxKind.LessThanLessThanEqualsToken: return SyntaxKind.LessThanLessThanToken;
-                case SyntaxKind.GreaterThanGreaterThanEqualsToken: return SyntaxKind.GreaterThanGreaterThanToken;
-                case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken: return SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
-                case SyntaxKind.AmpersandEqualsToken: return SyntaxKind.AmpersandToken;
-                case SyntaxKind.BarEqualsToken: return SyntaxKind.BarToken;
-                case SyntaxKind.CaretEqualsToken: return SyntaxKind.CaretToken;
+                case ts.SyntaxKind.PlusEqualsToken: return ts.SyntaxKind.PlusToken;
+                case ts.SyntaxKind.MinusEqualsToken: return ts.SyntaxKind.MinusToken;
+                case ts.SyntaxKind.AsteriskEqualsToken: return ts.SyntaxKind.AsteriskToken;
+                case ts.SyntaxKind.AsteriskAsteriskEqualsToken: return ts.SyntaxKind.AsteriskAsteriskToken;
+                case ts.SyntaxKind.SlashEqualsToken: return ts.SyntaxKind.SlashToken;
+                case ts.SyntaxKind.PercentEqualsToken: return ts.SyntaxKind.PercentToken;
+                case ts.SyntaxKind.LessThanLessThanEqualsToken: return ts.SyntaxKind.LessThanLessThanToken;
+                case ts.SyntaxKind.GreaterThanGreaterThanEqualsToken: return ts.SyntaxKind.GreaterThanGreaterThanToken;
+                case ts.SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken: return ts.SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
+                case ts.SyntaxKind.AmpersandEqualsToken: return ts.SyntaxKind.AmpersandToken;
+                case ts.SyntaxKind.BarEqualsToken: return ts.SyntaxKind.BarToken;
+                case ts.SyntaxKind.CaretEqualsToken: return ts.SyntaxKind.CaretToken;
             }
         }
-
         /**
          * Visits a right-associative binary expression containing `yield`.
          *
          * @param node The node to visit.
          */
-        function visitRightAssociativeBinaryExpression(node: BinaryExpression) {
+        function visitRightAssociativeBinaryExpression(node: ts.BinaryExpression) {
             const { left, right } = node;
             if (containsYield(right)) {
-                let target: Expression;
+                let target: ts.Expression;
                 switch (left.kind) {
-                    case SyntaxKind.PropertyAccessExpression:
+                    case ts.SyntaxKind.PropertyAccessExpression:
                         // [source]
                         //      a.b = yield;
                         //
@@ -709,15 +623,9 @@ namespace ts {
                         //  .yield resumeLabel
                         //  .mark resumeLabel
                         //      _a.b = %sent%;
-
-                        target = updatePropertyAccess(
-                            <PropertyAccessExpression>left,
-                            cacheExpression(visitNode((<PropertyAccessExpression>left).expression, visitor, isLeftHandSideExpression)),
-                            (<PropertyAccessExpression>left).name
-                        );
+                        target = ts.updatePropertyAccess((<ts.PropertyAccessExpression>left), cacheExpression(ts.visitNode((<ts.PropertyAccessExpression>left).expression, visitor, ts.isLeftHandSideExpression)), (<ts.PropertyAccessExpression>left).name);
                         break;
-
-                    case SyntaxKind.ElementAccessExpression:
+                    case ts.SyntaxKind.ElementAccessExpression:
                         // [source]
                         //      a[b] = yield;
                         //
@@ -728,52 +636,30 @@ namespace ts {
                         //  .yield resumeLabel
                         //  .mark resumeLabel
                         //      _a[_b] = %sent%;
-
-                        target = updateElementAccess(<ElementAccessExpression>left,
-                            cacheExpression(visitNode((<ElementAccessExpression>left).expression, visitor, isLeftHandSideExpression)),
-                            cacheExpression(visitNode((<ElementAccessExpression>left).argumentExpression, visitor, isExpression))
-                        );
+                        target = ts.updateElementAccess((<ts.ElementAccessExpression>left), cacheExpression(ts.visitNode((<ts.ElementAccessExpression>left).expression, visitor, ts.isLeftHandSideExpression)), cacheExpression(ts.visitNode((<ts.ElementAccessExpression>left).argumentExpression, visitor, ts.isExpression)));
                         break;
-
                     default:
-                        target = visitNode(left, visitor, isExpression);
+                        target = ts.visitNode(left, visitor, ts.isExpression);
                         break;
                 }
-
                 const operator = node.operatorToken.kind;
                 if (isCompoundAssignment(operator)) {
-                    return setTextRange(
-                        createAssignment(
-                            target,
-                            setTextRange(
-                                createBinary(
-                                    cacheExpression(target),
-                                    getOperatorForCompoundAssignment(operator),
-                                    visitNode(right, visitor, isExpression)
-                                ),
-                                node
-                            )
-                        ),
-                        node
-                    );
+                    return ts.setTextRange(ts.createAssignment(target, ts.setTextRange(ts.createBinary(cacheExpression(target), getOperatorForCompoundAssignment(operator), ts.visitNode(right, visitor, ts.isExpression)), node)), node);
                 }
                 else {
-                    return updateBinary(node, target, visitNode(right, visitor, isExpression));
+                    return ts.updateBinary(node, target, ts.visitNode(right, visitor, ts.isExpression));
                 }
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitLeftAssociativeBinaryExpression(node: BinaryExpression) {
+        function visitLeftAssociativeBinaryExpression(node: ts.BinaryExpression) {
             if (containsYield(node.right)) {
-                if (isLogicalOperator(node.operatorToken.kind)) {
+                if (ts.isLogicalOperator(node.operatorToken.kind)) {
                     return visitLogicalBinaryExpression(node);
                 }
-                else if (node.operatorToken.kind === SyntaxKind.CommaToken) {
+                else if (node.operatorToken.kind === ts.SyntaxKind.CommaToken) {
                     return visitCommaExpression(node);
                 }
-
                 // [source]
                 //      a() + (yield) + c()
                 //
@@ -782,22 +668,19 @@ namespace ts {
                 //      _a = a();
                 //  .yield resumeLabel
                 //      _a + %sent% + c()
-
-                const clone = getMutableClone(node);
-                clone.left = cacheExpression(visitNode(node.left, visitor, isExpression));
-                clone.right = visitNode(node.right, visitor, isExpression);
+                const clone = ts.getMutableClone(node);
+                clone.left = cacheExpression(ts.visitNode(node.left, visitor, ts.isExpression));
+                clone.right = ts.visitNode(node.right, visitor, ts.isExpression);
                 return clone;
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
         /**
          * Visits a logical binary expression containing `yield`.
          *
          * @param node A node to visit.
          */
-        function visitLogicalBinaryExpression(node: BinaryExpression) {
+        function visitLogicalBinaryExpression(node: ts.BinaryExpression) {
             // Logical binary expressions (`&&` and `||`) are shortcutting expressions and need
             // to be transformed as such:
             //
@@ -826,12 +709,10 @@ namespace ts {
             //      _a = %sent%;
             //  .mark resultLabel
             //      x = _a;
-
             const resultLabel = defineLabel();
             const resultLocal = declareLocal();
-
-            emitAssignment(resultLocal, visitNode(node.left, visitor, isExpression), /*location*/ node.left);
-            if (node.operatorToken.kind === SyntaxKind.AmpersandAmpersandToken) {
+            emitAssignment(resultLocal, ts.visitNode(node.left, visitor, ts.isExpression), /*location*/ node.left);
+            if (node.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
                 // Logical `&&` shortcuts when the left-hand operand is falsey.
                 emitBreakWhenFalse(resultLabel, resultLocal, /*location*/ node.left);
             }
@@ -839,18 +720,16 @@ namespace ts {
                 // Logical `||` shortcuts when the left-hand operand is truthy.
                 emitBreakWhenTrue(resultLabel, resultLocal, /*location*/ node.left);
             }
-
-            emitAssignment(resultLocal, visitNode(node.right, visitor, isExpression), /*location*/ node.right);
+            emitAssignment(resultLocal, ts.visitNode(node.right, visitor, ts.isExpression), /*location*/ node.right);
             markLabel(resultLabel);
             return resultLocal;
         }
-
         /**
          * Visits a comma expression containing `yield`.
          *
          * @param node The node to visit.
          */
-        function visitCommaExpression(node: BinaryExpression) {
+        function visitCommaExpression(node: ts.BinaryExpression) {
             // [source]
             //      x = a(), yield, b();
             //
@@ -859,34 +738,30 @@ namespace ts {
             //  .yield resumeLabel
             //  .mark resumeLabel
             //      x = %sent%, b();
-
-            let pendingExpressions: Expression[] = [];
+            let pendingExpressions: ts.Expression[] = [];
             visit(node.left);
             visit(node.right);
-            return inlineExpressions(pendingExpressions);
-
-            function visit(node: Expression) {
-                if (isBinaryExpression(node) && node.operatorToken.kind === SyntaxKind.CommaToken) {
+            return ts.inlineExpressions(pendingExpressions);
+            function visit(node: ts.Expression) {
+                if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.CommaToken) {
                     visit(node.left);
                     visit(node.right);
                 }
                 else {
                     if (containsYield(node) && pendingExpressions.length > 0) {
-                        emitWorker(OpCode.Statement, [createExpressionStatement(inlineExpressions(pendingExpressions))]);
+                        emitWorker(OpCode.Statement, [ts.createExpressionStatement(ts.inlineExpressions(pendingExpressions))]);
                         pendingExpressions = [];
                     }
-
-                    pendingExpressions.push(visitNode(node, visitor, isExpression));
+                    pendingExpressions.push(ts.visitNode(node, visitor, ts.isExpression));
                 }
             }
         }
-
         /**
          * Visits a conditional expression containing `yield`.
          *
          * @param node The node to visit.
          */
-        function visitConditionalExpression(node: ConditionalExpression): Expression {
+        function visitConditionalExpression(node: ts.ConditionalExpression): ts.Expression {
             // [source]
             //      x = a() ? yield : b();
             //
@@ -901,7 +776,6 @@ namespace ts {
             //      _a = b();
             //  .mark resultLabel
             //      x = _a;
-
             // We only need to perform a specific transformation if a `yield` expression exists
             // in either the `whenTrue` or `whenFalse` branches.
             // A `yield` in the condition will be handled by the normal visitor.
@@ -909,24 +783,22 @@ namespace ts {
                 const whenFalseLabel = defineLabel();
                 const resultLabel = defineLabel();
                 const resultLocal = declareLocal();
-                emitBreakWhenFalse(whenFalseLabel, visitNode(node.condition, visitor, isExpression), /*location*/ node.condition);
-                emitAssignment(resultLocal, visitNode(node.whenTrue, visitor, isExpression), /*location*/ node.whenTrue);
+                emitBreakWhenFalse(whenFalseLabel, ts.visitNode(node.condition, visitor, ts.isExpression), /*location*/ node.condition);
+                emitAssignment(resultLocal, ts.visitNode(node.whenTrue, visitor, ts.isExpression), /*location*/ node.whenTrue);
                 emitBreak(resultLabel);
                 markLabel(whenFalseLabel);
-                emitAssignment(resultLocal, visitNode(node.whenFalse, visitor, isExpression), /*location*/ node.whenFalse);
+                emitAssignment(resultLocal, ts.visitNode(node.whenFalse, visitor, ts.isExpression), /*location*/ node.whenFalse);
                 markLabel(resultLabel);
                 return resultLocal;
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
         /**
          * Visits a `yield` expression.
          *
          * @param node The node to visit.
          */
-        function visitYieldExpression(node: YieldExpression): LeftHandSideExpression {
+        function visitYieldExpression(node: ts.YieldExpression): ts.LeftHandSideExpression {
             // [source]
             //      x = yield a();
             //
@@ -934,32 +806,28 @@ namespace ts {
             //  .yield resumeLabel, (a())
             //  .mark resumeLabel
             //      x = %sent%;
-
             const resumeLabel = defineLabel();
-            const expression = visitNode(node.expression, visitor, isExpression);
+            const expression = ts.visitNode(node.expression, visitor, ts.isExpression);
             if (node.asteriskToken) {
-                const iterator = (getEmitFlags(node.expression!) & EmitFlags.Iterator) === 0
-                    ? createValuesHelper(context, expression, /*location*/ node)
+                const iterator = (ts.getEmitFlags((node.expression!)) & ts.EmitFlags.Iterator) === 0
+                    ? ts.createValuesHelper(context, expression, /*location*/ node)
                     : expression;
                 emitYieldStar(iterator, /*location*/ node);
             }
             else {
                 emitYield(expression, /*location*/ node);
             }
-
             markLabel(resumeLabel);
             return createGeneratorResume(/*location*/ node);
         }
-
         /**
          * Visits an ArrayLiteralExpression that contains a YieldExpression.
          *
          * @param node The node to visit.
          */
-        function visitArrayLiteralExpression(node: ArrayLiteralExpression) {
+        function visitArrayLiteralExpression(node: ts.ArrayLiteralExpression) {
             return visitElements(node.elements, /*leadingElement*/ undefined, /*location*/ undefined, node.multiLine);
         }
-
         /**
          * Visits an array of expressions containing one or more YieldExpression nodes
          * and returns an expression for the resulting value.
@@ -967,7 +835,7 @@ namespace ts {
          * @param elements The elements to visit.
          * @param multiLine Whether array literals created should be emitted on multiple lines.
          */
-        function visitElements(elements: NodeArray<Expression>, leadingElement?: Expression, location?: TextRange, multiLine?: boolean) {
+        function visitElements(elements: ts.NodeArray<ts.Expression>, leadingElement?: ts.Expression, location?: ts.TextRange, multiLine?: boolean) {
             // [source]
             //      ar = [1, yield, 2];
             //
@@ -977,60 +845,37 @@ namespace ts {
             //  .yield resumeLabel
             //  .mark resumeLabel
             //      ar = _a.concat([%sent%, 2]);
-
             const numInitialElements = countInitialNodesWithoutYield(elements);
-
-            let temp: Identifier | undefined;
+            let temp: ts.Identifier | undefined;
             if (numInitialElements > 0) {
                 temp = declareLocal();
-                const initialElements = visitNodes(elements, visitor, isExpression, 0, numInitialElements);
-                emitAssignment(temp,
-                    createArrayLiteral(
-                        leadingElement
-                            ? [leadingElement, ...initialElements]
-                            : initialElements
-                    )
-                );
+                const initialElements = ts.visitNodes(elements, visitor, ts.isExpression, 0, numInitialElements);
+                emitAssignment(temp, ts.createArrayLiteral(leadingElement
+                    ? [leadingElement, ...initialElements]
+                    : initialElements));
                 leadingElement = undefined;
             }
-
-            const expressions = reduceLeft(elements, reduceElement, <Expression[]>[], numInitialElements);
+            const expressions = ts.reduceLeft(elements, reduceElement, (<ts.Expression[]>[]), numInitialElements);
             return temp
-                ? createArrayConcat(temp, [createArrayLiteral(expressions, multiLine)])
-                : setTextRange(
-                    createArrayLiteral(leadingElement ? [leadingElement, ...expressions] : expressions, multiLine),
-                    location
-                );
-
-            function reduceElement(expressions: Expression[], element: Expression) {
+                ? ts.createArrayConcat(temp, [ts.createArrayLiteral(expressions, multiLine)])
+                : ts.setTextRange(ts.createArrayLiteral(leadingElement ? [leadingElement, ...expressions] : expressions, multiLine), location);
+            function reduceElement(expressions: ts.Expression[], element: ts.Expression) {
                 if (containsYield(element) && expressions.length > 0) {
                     const hasAssignedTemp = temp !== undefined;
                     if (!temp) {
                         temp = declareLocal();
                     }
-
-                    emitAssignment(
-                        temp,
-                        hasAssignedTemp
-                            ? createArrayConcat(
-                                temp,
-                                [createArrayLiteral(expressions, multiLine)]
-                            )
-                            : createArrayLiteral(
-                                leadingElement ? [leadingElement, ...expressions] : expressions,
-                                multiLine
-                            )
-                    );
+                    emitAssignment(temp, hasAssignedTemp
+                        ? ts.createArrayConcat(temp, [ts.createArrayLiteral(expressions, multiLine)])
+                        : ts.createArrayLiteral(leadingElement ? [leadingElement, ...expressions] : expressions, multiLine));
                     leadingElement = undefined;
                     expressions = [];
                 }
-
-                expressions.push(visitNode(element, visitor, isExpression));
+                expressions.push(ts.visitNode(element, visitor, ts.isExpression));
                 return expressions;
             }
         }
-
-        function visitObjectLiteralExpression(node: ObjectLiteralExpression) {
+        function visitObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
             // [source]
             //      o = {
             //          a: 1,
@@ -1048,47 +893,36 @@ namespace ts {
             //      o = (_a.b = %sent%,
             //          _a.c = 2,
             //          _a);
-
             const properties = node.properties;
             const multiLine = node.multiLine;
             const numInitialProperties = countInitialNodesWithoutYield(properties);
-
             const temp = declareLocal();
-            emitAssignment(temp,
-                createObjectLiteral(
-                    visitNodes(properties, visitor, isObjectLiteralElementLike, 0, numInitialProperties),
-                    multiLine
-                )
-            );
-
-            const expressions = reduceLeft(properties, reduceProperty, <Expression[]>[], numInitialProperties);
-            expressions.push(multiLine ? startOnNewLine(getMutableClone(temp)) : temp);
-            return inlineExpressions(expressions);
-
-            function reduceProperty(expressions: Expression[], property: ObjectLiteralElementLike) {
+            emitAssignment(temp, ts.createObjectLiteral(ts.visitNodes(properties, visitor, ts.isObjectLiteralElementLike, 0, numInitialProperties), multiLine));
+            const expressions = ts.reduceLeft(properties, reduceProperty, (<ts.Expression[]>[]), numInitialProperties);
+            expressions.push(multiLine ? ts.startOnNewLine(ts.getMutableClone(temp)) : temp);
+            return ts.inlineExpressions(expressions);
+            function reduceProperty(expressions: ts.Expression[], property: ts.ObjectLiteralElementLike) {
                 if (containsYield(property) && expressions.length > 0) {
-                    emitStatement(createExpressionStatement(inlineExpressions(expressions)));
+                    emitStatement(ts.createExpressionStatement(ts.inlineExpressions(expressions)));
                     expressions = [];
                 }
-
-                const expression = createExpressionForObjectLiteralElementLike(node, property, temp);
-                const visited = visitNode(expression, visitor, isExpression);
+                const expression = ts.createExpressionForObjectLiteralElementLike(node, property, temp);
+                const visited = ts.visitNode(expression, visitor, ts.isExpression);
                 if (visited) {
                     if (multiLine) {
-                        startOnNewLine(visited);
+                        ts.startOnNewLine(visited);
                     }
                     expressions.push(visited);
                 }
                 return expressions;
             }
         }
-
         /**
          * Visits an ElementAccessExpression that contains a YieldExpression.
          *
          * @param node The node to visit.
          */
-        function visitElementAccessExpression(node: ElementAccessExpression) {
+        function visitElementAccessExpression(node: ts.ElementAccessExpression) {
             if (containsYield(node.argumentExpression)) {
                 // [source]
                 //      a = x[yield];
@@ -1099,18 +933,15 @@ namespace ts {
                 //  .yield resumeLabel
                 //  .mark resumeLabel
                 //      a = _a[%sent%]
-
-                const clone = getMutableClone(node);
-                clone.expression = cacheExpression(visitNode(node.expression, visitor, isLeftHandSideExpression));
-                clone.argumentExpression = visitNode(node.argumentExpression, visitor, isExpression);
+                const clone = ts.getMutableClone(node);
+                clone.expression = cacheExpression(ts.visitNode(node.expression, visitor, ts.isLeftHandSideExpression));
+                clone.argumentExpression = ts.visitNode(node.argumentExpression, visitor, ts.isExpression);
                 return clone;
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitCallExpression(node: CallExpression) {
-            if (!isImportCall(node) && forEach(node.arguments, containsYield)) {
+        function visitCallExpression(node: ts.CallExpression) {
+            if (!ts.isImportCall(node) && ts.forEach(node.arguments, containsYield)) {
                 // [source]
                 //      a.b(1, yield, 2);
                 //
@@ -1121,23 +952,14 @@ namespace ts {
                 //  .yield resumeLabel
                 //  .mark resumeLabel
                 //      _b.apply(_a, _c.concat([%sent%, 2]));
-                const { target, thisArg } = createCallBinding(node.expression, hoistVariableDeclaration, languageVersion, /*cacheIdentifiers*/ true);
-                return setOriginalNode(
-                    createFunctionApply(
-                        cacheExpression(visitNode(target, visitor, isLeftHandSideExpression)),
-                        thisArg,
-                        visitElements(node.arguments),
-                        /*location*/ node
-                    ),
-                    node
-                );
+                const { target, thisArg } = ts.createCallBinding(node.expression, hoistVariableDeclaration, languageVersion, /*cacheIdentifiers*/ true);
+                return ts.setOriginalNode(ts.createFunctionApply(cacheExpression(ts.visitNode(target, visitor, ts.isLeftHandSideExpression)), thisArg, visitElements(node.arguments), 
+                /*location*/ node), node);
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitNewExpression(node: NewExpression) {
-            if (forEach(node.arguments, containsYield)) {
+        function visitNewExpression(node: ts.NewExpression) {
+            if (ts.forEach(node.arguments, containsYield)) {
                 // [source]
                 //      new a.b(1, yield, 2);
                 //
@@ -1148,148 +970,112 @@ namespace ts {
                 //  .yield resumeLabel
                 //  .mark resumeLabel
                 //      new (_b.apply(_a, _c.concat([%sent%, 2])));
-
-                const { target, thisArg } = createCallBinding(createPropertyAccess(node.expression, "bind"), hoistVariableDeclaration);
-                return setOriginalNode(
-                    setTextRange(
-                        createNew(
-                            createFunctionApply(
-                                cacheExpression(visitNode(target, visitor, isExpression)),
-                                thisArg,
-                                visitElements(
-                                    node.arguments!,
-                                    /*leadingElement*/ createVoidZero()
-                                )
-                            ),
-                            /*typeArguments*/ undefined,
-                            []
-                        ),
-                        node
-                    ),
-                    node
-                );
+                const { target, thisArg } = ts.createCallBinding(ts.createPropertyAccess(node.expression, "bind"), hoistVariableDeclaration);
+                return ts.setOriginalNode(ts.setTextRange(ts.createNew(ts.createFunctionApply(cacheExpression(ts.visitNode(target, visitor, ts.isExpression)), thisArg, visitElements((node.arguments!), 
+                /*leadingElement*/ ts.createVoidZero())), 
+                /*typeArguments*/ undefined, []), node), node);
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function transformAndEmitStatements(statements: readonly Statement[], start = 0) {
+        function transformAndEmitStatements(statements: readonly ts.Statement[], start = 0) {
             const numStatements = statements.length;
             for (let i = start; i < numStatements; i++) {
                 transformAndEmitStatement(statements[i]);
             }
         }
-
-        function transformAndEmitEmbeddedStatement(node: Statement) {
-            if (isBlock(node)) {
+        function transformAndEmitEmbeddedStatement(node: ts.Statement) {
+            if (ts.isBlock(node)) {
                 transformAndEmitStatements(node.statements);
             }
             else {
                 transformAndEmitStatement(node);
             }
         }
-
-        function transformAndEmitStatement(node: Statement): void {
+        function transformAndEmitStatement(node: ts.Statement): void {
             const savedInStatementContainingYield = inStatementContainingYield;
             if (!inStatementContainingYield) {
                 inStatementContainingYield = containsYield(node);
             }
-
             transformAndEmitStatementWorker(node);
             inStatementContainingYield = savedInStatementContainingYield;
         }
-
-        function transformAndEmitStatementWorker(node: Statement): void {
+        function transformAndEmitStatementWorker(node: ts.Statement): void {
             switch (node.kind) {
-                case SyntaxKind.Block:
-                    return transformAndEmitBlock(<Block>node);
-                case SyntaxKind.ExpressionStatement:
-                    return transformAndEmitExpressionStatement(<ExpressionStatement>node);
-                case SyntaxKind.IfStatement:
-                    return transformAndEmitIfStatement(<IfStatement>node);
-                case SyntaxKind.DoStatement:
-                    return transformAndEmitDoStatement(<DoStatement>node);
-                case SyntaxKind.WhileStatement:
-                    return transformAndEmitWhileStatement(<WhileStatement>node);
-                case SyntaxKind.ForStatement:
-                    return transformAndEmitForStatement(<ForStatement>node);
-                case SyntaxKind.ForInStatement:
-                    return transformAndEmitForInStatement(<ForInStatement>node);
-                case SyntaxKind.ContinueStatement:
-                    return transformAndEmitContinueStatement(<ContinueStatement>node);
-                case SyntaxKind.BreakStatement:
-                    return transformAndEmitBreakStatement(<BreakStatement>node);
-                case SyntaxKind.ReturnStatement:
-                    return transformAndEmitReturnStatement(<ReturnStatement>node);
-                case SyntaxKind.WithStatement:
-                    return transformAndEmitWithStatement(<WithStatement>node);
-                case SyntaxKind.SwitchStatement:
-                    return transformAndEmitSwitchStatement(<SwitchStatement>node);
-                case SyntaxKind.LabeledStatement:
-                    return transformAndEmitLabeledStatement(<LabeledStatement>node);
-                case SyntaxKind.ThrowStatement:
-                    return transformAndEmitThrowStatement(<ThrowStatement>node);
-                case SyntaxKind.TryStatement:
-                    return transformAndEmitTryStatement(<TryStatement>node);
+                case ts.SyntaxKind.Block:
+                    return transformAndEmitBlock((<ts.Block>node));
+                case ts.SyntaxKind.ExpressionStatement:
+                    return transformAndEmitExpressionStatement((<ts.ExpressionStatement>node));
+                case ts.SyntaxKind.IfStatement:
+                    return transformAndEmitIfStatement((<ts.IfStatement>node));
+                case ts.SyntaxKind.DoStatement:
+                    return transformAndEmitDoStatement((<ts.DoStatement>node));
+                case ts.SyntaxKind.WhileStatement:
+                    return transformAndEmitWhileStatement((<ts.WhileStatement>node));
+                case ts.SyntaxKind.ForStatement:
+                    return transformAndEmitForStatement((<ts.ForStatement>node));
+                case ts.SyntaxKind.ForInStatement:
+                    return transformAndEmitForInStatement((<ts.ForInStatement>node));
+                case ts.SyntaxKind.ContinueStatement:
+                    return transformAndEmitContinueStatement((<ts.ContinueStatement>node));
+                case ts.SyntaxKind.BreakStatement:
+                    return transformAndEmitBreakStatement((<ts.BreakStatement>node));
+                case ts.SyntaxKind.ReturnStatement:
+                    return transformAndEmitReturnStatement((<ts.ReturnStatement>node));
+                case ts.SyntaxKind.WithStatement:
+                    return transformAndEmitWithStatement((<ts.WithStatement>node));
+                case ts.SyntaxKind.SwitchStatement:
+                    return transformAndEmitSwitchStatement((<ts.SwitchStatement>node));
+                case ts.SyntaxKind.LabeledStatement:
+                    return transformAndEmitLabeledStatement((<ts.LabeledStatement>node));
+                case ts.SyntaxKind.ThrowStatement:
+                    return transformAndEmitThrowStatement((<ts.ThrowStatement>node));
+                case ts.SyntaxKind.TryStatement:
+                    return transformAndEmitTryStatement((<ts.TryStatement>node));
                 default:
-                    return emitStatement(visitNode(node, visitor, isStatement));
+                    return emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function transformAndEmitBlock(node: Block): void {
+        function transformAndEmitBlock(node: ts.Block): void {
             if (containsYield(node)) {
                 transformAndEmitStatements(node.statements);
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function transformAndEmitExpressionStatement(node: ExpressionStatement) {
-            emitStatement(visitNode(node, visitor, isStatement));
+        function transformAndEmitExpressionStatement(node: ts.ExpressionStatement) {
+            emitStatement(ts.visitNode(node, visitor, ts.isStatement));
         }
-
-        function transformAndEmitVariableDeclarationList(node: VariableDeclarationList): VariableDeclarationList | undefined {
+        function transformAndEmitVariableDeclarationList(node: ts.VariableDeclarationList): ts.VariableDeclarationList | undefined {
             for (const variable of node.declarations) {
-                const name = getSynthesizedClone(<Identifier>variable.name);
-                setCommentRange(name, variable.name);
+                const name = ts.getSynthesizedClone((<ts.Identifier>variable.name));
+                ts.setCommentRange(name, variable.name);
                 hoistVariableDeclaration(name);
             }
-
-            const variables = getInitializedVariables(node);
+            const variables = ts.getInitializedVariables(node);
             const numVariables = variables.length;
             let variablesWritten = 0;
-            let pendingExpressions: Expression[] = [];
+            let pendingExpressions: ts.Expression[] = [];
             while (variablesWritten < numVariables) {
                 for (let i = variablesWritten; i < numVariables; i++) {
                     const variable = variables[i];
                     if (containsYield(variable.initializer) && pendingExpressions.length > 0) {
                         break;
                     }
-
                     pendingExpressions.push(transformInitializedVariable(variable));
                 }
-
                 if (pendingExpressions.length) {
-                    emitStatement(createExpressionStatement(inlineExpressions(pendingExpressions)));
+                    emitStatement(ts.createExpressionStatement(ts.inlineExpressions(pendingExpressions)));
                     variablesWritten += pendingExpressions.length;
                     pendingExpressions = [];
                 }
             }
-
             return undefined;
         }
-
-        function transformInitializedVariable(node: VariableDeclaration) {
-            return setSourceMapRange(
-                createAssignment(
-                    setSourceMapRange(<Identifier>getSynthesizedClone(node.name), node.name),
-                    visitNode(node.initializer, visitor, isExpression)
-                ),
-                node
-            );
+        function transformInitializedVariable(node: ts.VariableDeclaration) {
+            return ts.setSourceMapRange(ts.createAssignment(ts.setSourceMapRange((<ts.Identifier>ts.getSynthesizedClone(node.name)), node.name), ts.visitNode(node.initializer, visitor, ts.isExpression)), node);
         }
-
-        function transformAndEmitIfStatement(node: IfStatement) {
+        function transformAndEmitIfStatement(node: ts.IfStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      if (x)
@@ -1304,11 +1090,10 @@ namespace ts {
                 //  .mark elseLabel
                 //      /*elseStatement*/
                 //  .mark endLabel
-
                 if (containsYield(node.thenStatement) || containsYield(node.elseStatement)) {
                     const endLabel = defineLabel();
                     const elseLabel = node.elseStatement ? defineLabel() : undefined;
-                    emitBreakWhenFalse(node.elseStatement ? elseLabel! : endLabel, visitNode(node.expression, visitor, isExpression), /*location*/ node.expression);
+                    emitBreakWhenFalse(node.elseStatement ? elseLabel! : endLabel, ts.visitNode(node.expression, visitor, ts.isExpression), /*location*/ node.expression);
                     transformAndEmitEmbeddedStatement(node.thenStatement);
                     if (node.elseStatement) {
                         emitBreak(endLabel);
@@ -1318,15 +1103,14 @@ namespace ts {
                     markLabel(endLabel);
                 }
                 else {
-                    emitStatement(visitNode(node, visitor, isStatement));
+                    emitStatement(ts.visitNode(node, visitor, ts.isStatement));
                 }
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function transformAndEmitDoStatement(node: DoStatement) {
+        function transformAndEmitDoStatement(node: ts.DoStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      do {
@@ -1342,34 +1126,31 @@ namespace ts {
                 //  .brtrue loopLabel, (i < 10)
                 //  .endloop
                 //  .mark endLabel
-
                 const conditionLabel = defineLabel();
                 const loopLabel = defineLabel();
                 beginLoopBlock(/*continueLabel*/ conditionLabel);
                 markLabel(loopLabel);
                 transformAndEmitEmbeddedStatement(node.statement);
                 markLabel(conditionLabel);
-                emitBreakWhenTrue(loopLabel, visitNode(node.expression, visitor, isExpression));
+                emitBreakWhenTrue(loopLabel, ts.visitNode(node.expression, visitor, ts.isExpression));
                 endLoopBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitDoStatement(node: DoStatement) {
+        function visitDoStatement(node: ts.DoStatement) {
             if (inStatementContainingYield) {
                 beginScriptLoopBlock();
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
                 endLoopBlock();
                 return node;
             }
             else {
-                return visitEachChild(node, visitor, context);
+                return ts.visitEachChild(node, visitor, context);
             }
         }
-
-        function transformAndEmitWhileStatement(node: WhileStatement) {
+        function transformAndEmitWhileStatement(node: ts.WhileStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      while (i < 10) {
@@ -1384,33 +1165,30 @@ namespace ts {
                 //  .br loopLabel
                 //  .endloop
                 //  .mark endLabel
-
                 const loopLabel = defineLabel();
                 const endLabel = beginLoopBlock(loopLabel);
                 markLabel(loopLabel);
-                emitBreakWhenFalse(endLabel, visitNode(node.expression, visitor, isExpression));
+                emitBreakWhenFalse(endLabel, ts.visitNode(node.expression, visitor, ts.isExpression));
                 transformAndEmitEmbeddedStatement(node.statement);
                 emitBreak(loopLabel);
                 endLoopBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitWhileStatement(node: WhileStatement) {
+        function visitWhileStatement(node: ts.WhileStatement) {
             if (inStatementContainingYield) {
                 beginScriptLoopBlock();
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
                 endLoopBlock();
                 return node;
             }
             else {
-                return visitEachChild(node, visitor, context);
+                return ts.visitEachChild(node, visitor, context);
             }
         }
-
-        function transformAndEmitForStatement(node: ForStatement) {
+        function transformAndEmitForStatement(node: ts.ForStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      for (var i = 0; i < 10; i++) {
@@ -1429,86 +1207,57 @@ namespace ts {
                 //  .br conditionLabel
                 //  .endloop
                 //  .mark endLoopLabel
-
                 const conditionLabel = defineLabel();
                 const incrementLabel = defineLabel();
                 const endLabel = beginLoopBlock(incrementLabel);
                 if (node.initializer) {
                     const initializer = node.initializer;
-                    if (isVariableDeclarationList(initializer)) {
+                    if (ts.isVariableDeclarationList(initializer)) {
                         transformAndEmitVariableDeclarationList(initializer);
                     }
                     else {
-                        emitStatement(
-                            setTextRange(
-                                createExpressionStatement(
-                                    visitNode(initializer, visitor, isExpression)
-                                ),
-                                initializer
-                            )
-                        );
+                        emitStatement(ts.setTextRange(ts.createExpressionStatement(ts.visitNode(initializer, visitor, ts.isExpression)), initializer));
                     }
                 }
-
                 markLabel(conditionLabel);
                 if (node.condition) {
-                    emitBreakWhenFalse(endLabel, visitNode(node.condition, visitor, isExpression));
+                    emitBreakWhenFalse(endLabel, ts.visitNode(node.condition, visitor, ts.isExpression));
                 }
-
                 transformAndEmitEmbeddedStatement(node.statement);
-
                 markLabel(incrementLabel);
                 if (node.incrementor) {
-                    emitStatement(
-                        setTextRange(
-                            createExpressionStatement(
-                                visitNode(node.incrementor, visitor, isExpression)
-                            ),
-                            node.incrementor
-                        )
-                    );
+                    emitStatement(ts.setTextRange(ts.createExpressionStatement(ts.visitNode(node.incrementor, visitor, ts.isExpression)), node.incrementor));
                 }
                 emitBreak(conditionLabel);
                 endLoopBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitForStatement(node: ForStatement) {
+        function visitForStatement(node: ts.ForStatement) {
             if (inStatementContainingYield) {
                 beginScriptLoopBlock();
             }
-
             const initializer = node.initializer;
-            if (initializer && isVariableDeclarationList(initializer)) {
+            if (initializer && ts.isVariableDeclarationList(initializer)) {
                 for (const variable of initializer.declarations) {
-                    hoistVariableDeclaration(<Identifier>variable.name);
+                    hoistVariableDeclaration((<ts.Identifier>variable.name));
                 }
-
-                const variables = getInitializedVariables(initializer);
-                node = updateFor(node,
-                    variables.length > 0
-                        ? inlineExpressions(map(variables, transformInitializedVariable))
-                        : undefined,
-                    visitNode(node.condition, visitor, isExpression),
-                    visitNode(node.incrementor, visitor, isExpression),
-                    visitNode(node.statement, visitor, isStatement, liftToBlock)
-                );
+                const variables = ts.getInitializedVariables(initializer);
+                node = ts.updateFor(node, variables.length > 0
+                    ? ts.inlineExpressions(ts.map(variables, transformInitializedVariable))
+                    : undefined, ts.visitNode(node.condition, visitor, ts.isExpression), ts.visitNode(node.incrementor, visitor, ts.isExpression), ts.visitNode(node.statement, visitor, ts.isStatement, ts.liftToBlock));
             }
             else {
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
             }
-
             if (inStatementContainingYield) {
                 endLoopBlock();
             }
-
             return node;
         }
-
-        function transformAndEmitForInStatement(node: ForInStatement) {
+        function transformAndEmitForInStatement(node: ts.ForInStatement) {
             // TODO(rbuckton): Source map locations
             if (containsYield(node)) {
                 // [source]
@@ -1531,65 +1280,43 @@ namespace ts {
                 //  .br conditionLabel
                 //  .endloop
                 //  .mark endLoopLabel
-
                 const keysArray = declareLocal(); // _a
                 const key = declareLocal(); // _b
-                const keysIndex = createLoopVariable(); // _i
+                const keysIndex = ts.createLoopVariable(); // _i
                 const initializer = node.initializer;
                 hoistVariableDeclaration(keysIndex);
-                emitAssignment(keysArray, createArrayLiteral());
-
-                emitStatement(
-                    createForIn(
-                        key,
-                        visitNode(node.expression, visitor, isExpression),
-                        createExpressionStatement(
-                            createCall(
-                                createPropertyAccess(keysArray, "push"),
-                                /*typeArguments*/ undefined,
-                                [key]
-                            )
-                        )
-                    )
-                );
-
-                emitAssignment(keysIndex, createLiteral(0));
-
+                emitAssignment(keysArray, ts.createArrayLiteral());
+                emitStatement(ts.createForIn(key, ts.visitNode(node.expression, visitor, ts.isExpression), ts.createExpressionStatement(ts.createCall(ts.createPropertyAccess(keysArray, "push"), 
+                /*typeArguments*/ undefined, [key]))));
+                emitAssignment(keysIndex, ts.createLiteral(0));
                 const conditionLabel = defineLabel();
                 const incrementLabel = defineLabel();
                 const endLabel = beginLoopBlock(incrementLabel);
-
                 markLabel(conditionLabel);
-                emitBreakWhenFalse(endLabel, createLessThan(keysIndex, createPropertyAccess(keysArray, "length")));
-
-                let variable: Expression;
-                if (isVariableDeclarationList(initializer)) {
+                emitBreakWhenFalse(endLabel, ts.createLessThan(keysIndex, ts.createPropertyAccess(keysArray, "length")));
+                let variable: ts.Expression;
+                if (ts.isVariableDeclarationList(initializer)) {
                     for (const variable of initializer.declarations) {
-                        hoistVariableDeclaration(<Identifier>variable.name);
+                        hoistVariableDeclaration((<ts.Identifier>variable.name));
                     }
-
-                    variable = <Identifier>getSynthesizedClone(initializer.declarations[0].name);
+                    variable = (<ts.Identifier>ts.getSynthesizedClone(initializer.declarations[0].name));
                 }
                 else {
-                    variable = visitNode(initializer, visitor, isExpression);
-                    Debug.assert(isLeftHandSideExpression(variable));
+                    variable = ts.visitNode(initializer, visitor, ts.isExpression);
+                    ts.Debug.assert(ts.isLeftHandSideExpression(variable));
                 }
-
-                emitAssignment(variable, createElementAccess(keysArray, keysIndex));
+                emitAssignment(variable, ts.createElementAccess(keysArray, keysIndex));
                 transformAndEmitEmbeddedStatement(node.statement);
-
                 markLabel(incrementLabel);
-                emitStatement(createExpressionStatement(createPostfixIncrement(keysIndex)));
-
+                emitStatement(ts.createExpressionStatement(ts.createPostfixIncrement(keysIndex)));
                 emitBreak(conditionLabel);
                 endLoopBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitForInStatement(node: ForInStatement) {
+        function visitForInStatement(node: ts.ForInStatement) {
             // [source]
             //      for (var x in a) {
             //          /*body*/
@@ -1602,36 +1329,26 @@ namespace ts {
             //          /*body*/
             //      }
             //  .endloop
-
             if (inStatementContainingYield) {
                 beginScriptLoopBlock();
             }
-
             const initializer = node.initializer;
-            if (isVariableDeclarationList(initializer)) {
+            if (ts.isVariableDeclarationList(initializer)) {
                 for (const variable of initializer.declarations) {
-                    hoistVariableDeclaration(<Identifier>variable.name);
+                    hoistVariableDeclaration((<ts.Identifier>variable.name));
                 }
-
-                node = updateForIn(node,
-                    <Identifier>initializer.declarations[0].name,
-                    visitNode(node.expression, visitor, isExpression),
-                    visitNode(node.statement, visitor, isStatement, liftToBlock)
-                );
+                node = ts.updateForIn(node, (<ts.Identifier>initializer.declarations[0].name), ts.visitNode(node.expression, visitor, ts.isExpression), ts.visitNode(node.statement, visitor, ts.isStatement, ts.liftToBlock));
             }
             else {
-                node = visitEachChild(node, visitor, context);
+                node = ts.visitEachChild(node, visitor, context);
             }
-
             if (inStatementContainingYield) {
                 endLoopBlock();
             }
-
             return node;
         }
-
-        function transformAndEmitContinueStatement(node: ContinueStatement): void {
-            const label = findContinueTarget(node.label ? idText(node.label) : undefined);
+        function transformAndEmitContinueStatement(node: ts.ContinueStatement): void {
+            const label = findContinueTarget(node.label ? ts.idText(node.label) : undefined);
             if (label > 0) {
                 emitBreak(label, /*location*/ node);
             }
@@ -1640,20 +1357,17 @@ namespace ts {
                 emitStatement(node);
             }
         }
-
-        function visitContinueStatement(node: ContinueStatement): Statement {
+        function visitContinueStatement(node: ts.ContinueStatement): ts.Statement {
             if (inStatementContainingYield) {
-                const label = findContinueTarget(node.label && idText(node.label));
+                const label = findContinueTarget(node.label && ts.idText(node.label));
                 if (label > 0) {
                     return createInlineBreak(label, /*location*/ node);
                 }
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function transformAndEmitBreakStatement(node: BreakStatement): void {
-            const label = findBreakTarget(node.label ? idText(node.label) : undefined);
+        function transformAndEmitBreakStatement(node: ts.BreakStatement): void {
+            const label = findBreakTarget(node.label ? ts.idText(node.label) : undefined);
             if (label > 0) {
                 emitBreak(label, /*location*/ node);
             }
@@ -1662,33 +1376,24 @@ namespace ts {
                 emitStatement(node);
             }
         }
-
-        function visitBreakStatement(node: BreakStatement): Statement {
+        function visitBreakStatement(node: ts.BreakStatement): ts.Statement {
             if (inStatementContainingYield) {
-                const label = findBreakTarget(node.label && idText(node.label));
+                const label = findBreakTarget(node.label && ts.idText(node.label));
                 if (label > 0) {
                     return createInlineBreak(label, /*location*/ node);
                 }
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function transformAndEmitReturnStatement(node: ReturnStatement): void {
-            emitReturn(
-                visitNode(node.expression, visitor, isExpression),
-                /*location*/ node
-            );
+        function transformAndEmitReturnStatement(node: ts.ReturnStatement): void {
+            emitReturn(ts.visitNode(node.expression, visitor, ts.isExpression), 
+            /*location*/ node);
         }
-
-        function visitReturnStatement(node: ReturnStatement) {
-            return createInlineReturn(
-                visitNode(node.expression, visitor, isExpression),
-                /*location*/ node
-            );
+        function visitReturnStatement(node: ts.ReturnStatement) {
+            return createInlineReturn(ts.visitNode(node.expression, visitor, ts.isExpression), 
+            /*location*/ node);
         }
-
-        function transformAndEmitWithStatement(node: WithStatement) {
+        function transformAndEmitWithStatement(node: ts.WithStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      with (x) {
@@ -1699,16 +1404,15 @@ namespace ts {
                 //  .with (x)
                 //      /*body*/
                 //  .endwith
-                beginWithBlock(cacheExpression(visitNode(node.expression, visitor, isExpression)));
+                beginWithBlock(cacheExpression(ts.visitNode(node.expression, visitor, ts.isExpression)));
                 transformAndEmitEmbeddedStatement(node.statement);
                 endWithBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function transformAndEmitSwitchStatement(node: SwitchStatement) {
+        function transformAndEmitSwitchStatement(node: ts.SwitchStatement) {
             if (containsYield(node.caseBlock)) {
                 // [source]
                 //      switch (x) {
@@ -1741,54 +1445,43 @@ namespace ts {
                 //      /*caseStatements*/
                 //  .endswitch
                 //  .mark endLabel
-
                 const caseBlock = node.caseBlock;
                 const numClauses = caseBlock.clauses.length;
                 const endLabel = beginSwitchBlock();
-
-                const expression = cacheExpression(visitNode(node.expression, visitor, isExpression));
-
+                const expression = cacheExpression(ts.visitNode(node.expression, visitor, ts.isExpression));
                 // Create labels for each clause and find the index of the first default clause.
                 const clauseLabels: Label[] = [];
                 let defaultClauseIndex = -1;
                 for (let i = 0; i < numClauses; i++) {
                     const clause = caseBlock.clauses[i];
                     clauseLabels.push(defineLabel());
-                    if (clause.kind === SyntaxKind.DefaultClause && defaultClauseIndex === -1) {
+                    if (clause.kind === ts.SyntaxKind.DefaultClause && defaultClauseIndex === -1) {
                         defaultClauseIndex = i;
                     }
                 }
-
                 // Emit switch statements for each run of case clauses either from the first case
                 // clause or the next case clause with a `yield` in its expression, up to the next
                 // case clause with a `yield` in its expression.
                 let clausesWritten = 0;
-                let pendingClauses: CaseClause[] = [];
+                let pendingClauses: ts.CaseClause[] = [];
                 while (clausesWritten < numClauses) {
                     let defaultClausesSkipped = 0;
                     for (let i = clausesWritten; i < numClauses; i++) {
                         const clause = caseBlock.clauses[i];
-                        if (clause.kind === SyntaxKind.CaseClause) {
+                        if (clause.kind === ts.SyntaxKind.CaseClause) {
                             if (containsYield(clause.expression) && pendingClauses.length > 0) {
                                 break;
                             }
-
-                            pendingClauses.push(
-                                createCaseClause(
-                                    visitNode(clause.expression, visitor, isExpression),
-                                    [
-                                        createInlineBreak(clauseLabels[i], /*location*/ clause.expression)
-                                    ]
-                                )
-                            );
+                            pendingClauses.push(ts.createCaseClause(ts.visitNode(clause.expression, visitor, ts.isExpression), [
+                                createInlineBreak(clauseLabels[i], /*location*/ clause.expression)
+                            ]));
                         }
                         else {
                             defaultClausesSkipped++;
                         }
                     }
-
                     if (pendingClauses.length) {
-                        emitStatement(createSwitch(expression, createCaseBlock(pendingClauses)));
+                        emitStatement(ts.createSwitch(expression, ts.createCaseBlock(pendingClauses)));
                         clausesWritten += pendingClauses.length;
                         pendingClauses = [];
                     }
@@ -1797,41 +1490,33 @@ namespace ts {
                         defaultClausesSkipped = 0;
                     }
                 }
-
                 if (defaultClauseIndex >= 0) {
                     emitBreak(clauseLabels[defaultClauseIndex]);
                 }
                 else {
                     emitBreak(endLabel);
                 }
-
                 for (let i = 0; i < numClauses; i++) {
                     markLabel(clauseLabels[i]);
                     transformAndEmitStatements(caseBlock.clauses[i].statements);
                 }
-
                 endSwitchBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitSwitchStatement(node: SwitchStatement) {
+        function visitSwitchStatement(node: ts.SwitchStatement) {
             if (inStatementContainingYield) {
                 beginScriptSwitchBlock();
             }
-
-            node = visitEachChild(node, visitor, context);
-
+            node = ts.visitEachChild(node, visitor, context);
             if (inStatementContainingYield) {
                 endSwitchBlock();
             }
-
             return node;
         }
-
-        function transformAndEmitLabeledStatement(node: LabeledStatement) {
+        function transformAndEmitLabeledStatement(node: ts.LabeledStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      x: {
@@ -1843,37 +1528,29 @@ namespace ts {
                 //      /*body*/
                 //  .endlabeled
                 //  .mark endLabel
-                beginLabeledBlock(idText(node.label));
+                beginLabeledBlock(ts.idText(node.label));
                 transformAndEmitEmbeddedStatement(node.statement);
                 endLabeledBlock();
             }
             else {
-                emitStatement(visitNode(node, visitor, isStatement));
+                emitStatement(ts.visitNode(node, visitor, ts.isStatement));
             }
         }
-
-        function visitLabeledStatement(node: LabeledStatement) {
+        function visitLabeledStatement(node: ts.LabeledStatement) {
             if (inStatementContainingYield) {
-                beginScriptLabeledBlock(idText(node.label));
+                beginScriptLabeledBlock(ts.idText(node.label));
             }
-
-            node = visitEachChild(node, visitor, context);
-
+            node = ts.visitEachChild(node, visitor, context);
             if (inStatementContainingYield) {
                 endLabeledBlock();
             }
-
             return node;
         }
-
-        function transformAndEmitThrowStatement(node: ThrowStatement): void {
-            emitThrow(
-                visitNode(node.expression, visitor, isExpression),
-                /*location*/ node
-            );
+        function transformAndEmitThrowStatement(node: ts.ThrowStatement): void {
+            emitThrow(ts.visitNode(node.expression, visitor, ts.isExpression), 
+            /*location*/ node);
         }
-
-        function transformAndEmitTryStatement(node: TryStatement) {
+        function transformAndEmitTryStatement(node: ts.TryStatement) {
             if (containsYield(node)) {
                 // [source]
                 //      try {
@@ -1904,94 +1581,80 @@ namespace ts {
                 //  .endfinally
                 //  .endtry
                 //  .mark endLabel
-
                 beginExceptionBlock();
                 transformAndEmitEmbeddedStatement(node.tryBlock);
                 if (node.catchClause) {
                     beginCatchBlock(node.catchClause.variableDeclaration!); // TODO: GH#18217
                     transformAndEmitEmbeddedStatement(node.catchClause.block);
                 }
-
                 if (node.finallyBlock) {
                     beginFinallyBlock();
                     transformAndEmitEmbeddedStatement(node.finallyBlock);
                 }
-
                 endExceptionBlock();
             }
             else {
-                emitStatement(visitEachChild(node, visitor, context));
+                emitStatement(ts.visitEachChild(node, visitor, context));
             }
         }
-
-        function containsYield(node: Node | undefined): boolean {
-            return !!node && (node.transformFlags & TransformFlags.ContainsYield) !== 0;
+        function containsYield(node: ts.Node | undefined): boolean {
+            return !!node && (node.transformFlags & ts.TransformFlags.ContainsYield) !== 0;
         }
-
-        function countInitialNodesWithoutYield(nodes: NodeArray<Node>) {
+        function countInitialNodesWithoutYield(nodes: ts.NodeArray<ts.Node>) {
             const numNodes = nodes.length;
             for (let i = 0; i < numNodes; i++) {
                 if (containsYield(nodes[i])) {
                     return i;
                 }
             }
-
             return -1;
         }
-
-        function onSubstituteNode(hint: EmitHint, node: Node): Node {
+        function onSubstituteNode(hint: ts.EmitHint, node: ts.Node): ts.Node {
             node = previousOnSubstituteNode(hint, node);
-            if (hint === EmitHint.Expression) {
-                return substituteExpression(<Expression>node);
+            if (hint === ts.EmitHint.Expression) {
+                return substituteExpression((<ts.Expression>node));
             }
             return node;
         }
-
-        function substituteExpression(node: Expression): Expression {
-            if (isIdentifier(node)) {
+        function substituteExpression(node: ts.Expression): ts.Expression {
+            if (ts.isIdentifier(node)) {
                 return substituteExpressionIdentifier(node);
             }
             return node;
         }
-
-        function substituteExpressionIdentifier(node: Identifier) {
-            if (!isGeneratedIdentifier(node) && renamedCatchVariables && renamedCatchVariables.has(idText(node))) {
-                const original = getOriginalNode(node);
-                if (isIdentifier(original) && original.parent) {
+        function substituteExpressionIdentifier(node: ts.Identifier) {
+            if (!ts.isGeneratedIdentifier(node) && renamedCatchVariables && renamedCatchVariables.has(ts.idText(node))) {
+                const original = ts.getOriginalNode(node);
+                if (ts.isIdentifier(original) && original.parent) {
                     const declaration = resolver.getReferencedValueDeclaration(original);
                     if (declaration) {
-                        const name = renamedCatchVariableDeclarations[getOriginalNodeId(declaration)];
+                        const name = renamedCatchVariableDeclarations[ts.getOriginalNodeId(declaration)];
                         if (name) {
-                            const clone = getMutableClone(name);
-                            setSourceMapRange(clone, node);
-                            setCommentRange(clone, node);
+                            const clone = ts.getMutableClone(name);
+                            ts.setSourceMapRange(clone, node);
+                            ts.setCommentRange(clone, node);
                             return clone;
                         }
                     }
                 }
             }
-
             return node;
         }
-
-        function cacheExpression(node: Expression): Identifier {
-            if (isGeneratedIdentifier(node) || getEmitFlags(node) & EmitFlags.HelperName) {
-                return <Identifier>node;
+        function cacheExpression(node: ts.Expression): ts.Identifier {
+            if (ts.isGeneratedIdentifier(node) || ts.getEmitFlags(node) & ts.EmitFlags.HelperName) {
+                return <ts.Identifier>node;
             }
-
-            const temp = createTempVariable(hoistVariableDeclaration);
+            const temp = ts.createTempVariable(hoistVariableDeclaration);
             emitAssignment(temp, node, /*location*/ node);
             return temp;
         }
-
-        function declareLocal(name?: string): Identifier {
+        function declareLocal(name?: string): ts.Identifier {
             const temp = name
-                ? createUniqueName(name)
-                : createTempVariable(/*recordTempVariable*/ undefined);
+                ? ts.createUniqueName(name)
+                : ts.createTempVariable(/*recordTempVariable*/ undefined);
             hoistVariableDeclaration(temp);
             return temp;
         }
-
         /**
          * Defines a label, uses as the target of a Break operation.
          */
@@ -1999,21 +1662,18 @@ namespace ts {
             if (!labelOffsets) {
                 labelOffsets = [];
             }
-
             const label = nextLabelId;
             nextLabelId++;
             labelOffsets[label] = -1;
             return label;
         }
-
         /**
          * Marks the current operation with the specified label.
          */
         function markLabel(label: Label): void {
-            Debug.assert(labelOffsets !== undefined, "No labels were defined.");
+            ts.Debug.assert(labelOffsets !== undefined, "No labels were defined.");
             labelOffsets![label] = operations ? operations.length : 0;
         }
-
         /**
          * Begins a block operation (With, Break/Continue, Try/Catch/Finally)
          *
@@ -2026,7 +1686,6 @@ namespace ts {
                 blockOffsets = [];
                 blockStack = [];
             }
-
             const index = blockActions!.length;
             blockActions![index] = BlockAction.Open;
             blockOffsets![index] = operations ? operations.length : 0;
@@ -2034,14 +1693,13 @@ namespace ts {
             blockStack!.push(block);
             return index;
         }
-
         /**
          * Ends the current block operation.
          */
         function endBlock(): CodeBlock {
             const block = peekBlock();
-            if (block === undefined) return Debug.fail("beginBlock was never called.");
-
+            if (block === undefined)
+                return ts.Debug.fail("beginBlock was never called.");
             const index = blockActions!.length;
             blockActions![index] = BlockAction.Close;
             blockOffsets![index] = operations ? operations.length : 0;
@@ -2049,14 +1707,12 @@ namespace ts {
             blockStack!.pop();
             return block;
         }
-
         /**
          * Gets the current open block.
          */
         function peekBlock() {
-            return lastOrUndefined(blockStack!);
+            return ts.lastOrUndefined((blockStack!));
         }
-
         /**
          * Gets the kind of the current open block.
          */
@@ -2064,13 +1720,12 @@ namespace ts {
             const block = peekBlock();
             return block && block.kind;
         }
-
         /**
          * Begins a code block for a generated `with` statement.
          *
          * @param expression An identifier representing expression for the `with` block.
          */
-        function beginWithBlock(expression: Identifier): void {
+        function beginWithBlock(expression: ts.Identifier): void {
             const startLabel = defineLabel();
             const endLabel = defineLabel();
             markLabel(startLabel);
@@ -2081,16 +1736,14 @@ namespace ts {
                 endLabel
             });
         }
-
         /**
          * Ends a code block for a generated `with` statement.
          */
         function endWithBlock(): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.With);
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.With);
             const block = <WithBlock>endBlock();
             markLabel(block.endLabel);
         }
-
         /**
          * Begins a code block for a generated `try` statement.
          */
@@ -2107,73 +1760,61 @@ namespace ts {
             emitNop();
             return endLabel;
         }
-
         /**
          * Enters the `catch` clause of a generated `try` statement.
          *
          * @param variable The catch variable.
          */
-        function beginCatchBlock(variable: VariableDeclaration): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
-
+        function beginCatchBlock(variable: ts.VariableDeclaration): void {
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
             // generated identifiers should already be unique within a file
-            let name: Identifier;
-            if (isGeneratedIdentifier(variable.name)) {
+            let name: ts.Identifier;
+            if (ts.isGeneratedIdentifier(variable.name)) {
                 name = variable.name;
                 hoistVariableDeclaration(variable.name);
             }
             else {
-                const text = idText(<Identifier>variable.name);
+                const text = ts.idText((<ts.Identifier>variable.name));
                 name = declareLocal(text);
                 if (!renamedCatchVariables) {
-                    renamedCatchVariables = createMap<boolean>();
+                    renamedCatchVariables = ts.createMap<boolean>();
                     renamedCatchVariableDeclarations = [];
-                    context.enableSubstitution(SyntaxKind.Identifier);
+                    context.enableSubstitution(ts.SyntaxKind.Identifier);
                 }
-
                 renamedCatchVariables.set(text, true);
-                renamedCatchVariableDeclarations[getOriginalNodeId(variable)] = name;
+                renamedCatchVariableDeclarations[ts.getOriginalNodeId(variable)] = name;
             }
-
             const exception = <ExceptionBlock>peekBlock();
-            Debug.assert(exception.state < ExceptionBlockState.Catch);
-
+            ts.Debug.assert(exception.state < ExceptionBlockState.Catch);
             const endLabel = exception.endLabel;
             emitBreak(endLabel);
-
             const catchLabel = defineLabel();
             markLabel(catchLabel);
             exception.state = ExceptionBlockState.Catch;
             exception.catchVariable = name;
             exception.catchLabel = catchLabel;
-
-            emitAssignment(name, createCall(createPropertyAccess(state, "sent"), /*typeArguments*/ undefined, []));
+            emitAssignment(name, ts.createCall(ts.createPropertyAccess(state, "sent"), /*typeArguments*/ undefined, []));
             emitNop();
         }
-
         /**
          * Enters the `finally` block of a generated `try` statement.
          */
         function beginFinallyBlock(): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
-
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
             const exception = <ExceptionBlock>peekBlock();
-            Debug.assert(exception.state < ExceptionBlockState.Finally);
-
+            ts.Debug.assert(exception.state < ExceptionBlockState.Finally);
             const endLabel = exception.endLabel;
             emitBreak(endLabel);
-
             const finallyLabel = defineLabel();
             markLabel(finallyLabel);
             exception.state = ExceptionBlockState.Finally;
             exception.finallyLabel = finallyLabel;
         }
-
         /**
          * Ends the code block for a generated `try` statement.
          */
         function endExceptionBlock(): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Exception);
             const exception = <ExceptionBlock>endBlock();
             const state = exception.state;
             if (state < ExceptionBlockState.Finally) {
@@ -2182,12 +1823,10 @@ namespace ts {
             else {
                 emitEndfinally();
             }
-
             markLabel(exception.endLabel);
             emitNop();
             exception.state = ExceptionBlockState.Done;
         }
-
         /**
          * Begins a code block that supports `break` or `continue` statements that are defined in
          * the source tree and not from generated code.
@@ -2202,7 +1841,6 @@ namespace ts {
                 continueLabel: -1
             });
         }
-
         /**
          * Begins a code block that supports `break` or `continue` statements that are defined in
          * generated code. Returns a label used to mark the operation to which to jump when a
@@ -2221,20 +1859,18 @@ namespace ts {
             });
             return breakLabel;
         }
-
         /**
          * Ends a code block that supports `break` or `continue` statements that are defined in
          * generated code or in the source tree.
          */
         function endLoopBlock(): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Loop);
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Loop);
             const block = <SwitchBlock>endBlock();
             const breakLabel = block.breakLabel;
             if (!block.isScript) {
                 markLabel(breakLabel);
             }
         }
-
         /**
          * Begins a code block that supports `break` statements that are defined in the source
          * tree and not from generated code.
@@ -2247,7 +1883,6 @@ namespace ts {
                 breakLabel: -1
             });
         }
-
         /**
          * Begins a code block that supports `break` statements that are defined in generated code.
          * Returns a label used to mark the operation to which to jump when a `break` statement
@@ -2262,19 +1897,17 @@ namespace ts {
             });
             return breakLabel;
         }
-
         /**
          * Ends a code block that supports `break` statements that are defined in generated code.
          */
         function endSwitchBlock(): void {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Switch);
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Switch);
             const block = <SwitchBlock>endBlock();
             const breakLabel = block.breakLabel;
             if (!block.isScript) {
                 markLabel(breakLabel);
             }
         }
-
         function beginScriptLabeledBlock(labelText: string) {
             beginBlock({
                 kind: CodeBlockKind.Labeled,
@@ -2283,7 +1916,6 @@ namespace ts {
                 breakLabel: -1
             });
         }
-
         function beginLabeledBlock(labelText: string) {
             const breakLabel = defineLabel();
             beginBlock({
@@ -2293,15 +1925,13 @@ namespace ts {
                 breakLabel
             });
         }
-
         function endLabeledBlock() {
-            Debug.assert(peekBlockKind() === CodeBlockKind.Labeled);
+            ts.Debug.assert(peekBlockKind() === CodeBlockKind.Labeled);
             const block = <LabeledBlock>endBlock();
             if (!block.isScript) {
                 markLabel(block.breakLabel);
             }
         }
-
         /**
          * Indicates whether the provided block supports `break` statements.
          *
@@ -2311,7 +1941,6 @@ namespace ts {
             return block.kind === CodeBlockKind.Switch
                 || block.kind === CodeBlockKind.Loop;
         }
-
         /**
          * Indicates whether the provided block supports `break` statements with labels.
          *
@@ -2320,7 +1949,6 @@ namespace ts {
         function supportsLabeledBreakOrContinue(block: CodeBlock): block is LabeledBlock {
             return block.kind === CodeBlockKind.Labeled;
         }
-
         /**
          * Indicates whether the provided block supports `continue` statements.
          *
@@ -2329,7 +1957,6 @@ namespace ts {
         function supportsUnlabeledContinue(block: CodeBlock): block is LoopBlock {
             return block.kind === CodeBlockKind.Loop;
         }
-
         function hasImmediateContainingLabeledBlock(labelText: string, start: number) {
             for (let j = start; j >= 0; j--) {
                 const containingBlock = blockStack![j];
@@ -2342,10 +1969,8 @@ namespace ts {
                     break;
                 }
             }
-
             return false;
         }
-
         /**
          * Finds the label that is the target for a `break` statement.
          *
@@ -2375,7 +2000,6 @@ namespace ts {
             }
             return 0;
         }
-
         /**
          * Finds the label that is the target for a `continue` statement.
          *
@@ -2402,105 +2026,78 @@ namespace ts {
             }
             return 0;
         }
-
         /**
          * Creates an expression that can be used to indicate the value for a label.
          *
          * @param label A label.
          */
-        function createLabel(label: Label | undefined): Expression {
+        function createLabel(label: Label | undefined): ts.Expression {
             if (label !== undefined && label > 0) {
                 if (labelExpressions === undefined) {
                     labelExpressions = [];
                 }
-
-                const expression = createLiteral(-1);
+                const expression = ts.createLiteral(-1);
                 if (labelExpressions[label] === undefined) {
                     labelExpressions[label] = [expression];
                 }
                 else {
                     labelExpressions[label].push(expression);
                 }
-
                 return expression;
             }
-
-            return createOmittedExpression();
+            return ts.createOmittedExpression();
         }
-
         /**
          * Creates a numeric literal for the provided instruction.
          */
-        function createInstruction(instruction: Instruction): NumericLiteral {
-            const literal = createLiteral(instruction);
-            addSyntheticTrailingComment(literal, SyntaxKind.MultiLineCommentTrivia, getInstructionName(instruction));
+        function createInstruction(instruction: Instruction): ts.NumericLiteral {
+            const literal = ts.createLiteral(instruction);
+            ts.addSyntheticTrailingComment(literal, ts.SyntaxKind.MultiLineCommentTrivia, getInstructionName(instruction));
             return literal;
         }
-
         /**
          * Creates a statement that can be used indicate a Break operation to the provided label.
          *
          * @param label A label.
          * @param location An optional source map location for the statement.
          */
-        function createInlineBreak(label: Label, location?: TextRange): ReturnStatement {
-            Debug.assertLessThan(0, label, "Invalid label");
-            return setTextRange(
-                createReturn(
-                    createArrayLiteral([
-                        createInstruction(Instruction.Break),
-                        createLabel(label)
-                    ])
-                ),
-                location
-            );
+        function createInlineBreak(label: Label, location?: ts.TextRange): ts.ReturnStatement {
+            ts.Debug.assertLessThan(0, label, "Invalid label");
+            return ts.setTextRange(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.Break),
+                createLabel(label)
+            ])), location);
         }
-
         /**
          * Creates a statement that can be used indicate a Return operation.
          *
          * @param expression The expression for the return statement.
          * @param location An optional source map location for the statement.
          */
-        function createInlineReturn(expression?: Expression, location?: TextRange): ReturnStatement {
-            return setTextRange(
-                createReturn(
-                    createArrayLiteral(expression
-                        ? [createInstruction(Instruction.Return), expression]
-                        : [createInstruction(Instruction.Return)]
-                    )
-                ),
-                location
-            );
+        function createInlineReturn(expression?: ts.Expression, location?: ts.TextRange): ts.ReturnStatement {
+            return ts.setTextRange(ts.createReturn(ts.createArrayLiteral(expression
+                ? [createInstruction(Instruction.Return), expression]
+                : [createInstruction(Instruction.Return)])), location);
         }
-
         /**
          * Creates an expression that can be used to resume from a Yield operation.
          */
-        function createGeneratorResume(location?: TextRange): LeftHandSideExpression {
-            return setTextRange(
-                createCall(
-                    createPropertyAccess(state, "sent"),
-                    /*typeArguments*/ undefined,
-                    []
-                ),
-                location
-            );
+        function createGeneratorResume(location?: ts.TextRange): ts.LeftHandSideExpression {
+            return ts.setTextRange(ts.createCall(ts.createPropertyAccess(state, "sent"), 
+            /*typeArguments*/ undefined, []), location);
         }
-
         /**
          * Emits an empty instruction.
          */
         function emitNop() {
             emitWorker(OpCode.Nop);
         }
-
         /**
          * Emits a Statement.
          *
          * @param node A statement.
          */
-        function emitStatement(node: Statement): void {
+        function emitStatement(node: ts.Statement): void {
             if (node) {
                 emitWorker(OpCode.Statement, [node]);
             }
@@ -2508,7 +2105,6 @@ namespace ts {
                 emitNop();
             }
         }
-
         /**
          * Emits an Assignment operation.
          *
@@ -2516,20 +2112,18 @@ namespace ts {
          * @param right The right-hand side of the assignment.
          * @param location An optional source map location for the assignment.
          */
-        function emitAssignment(left: Expression, right: Expression, location?: TextRange): void {
+        function emitAssignment(left: ts.Expression, right: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.Assign, [left, right], location);
         }
-
         /**
          * Emits a Break operation to the specified label.
          *
          * @param label A label.
          * @param location An optional source map location for the assignment.
          */
-        function emitBreak(label: Label, location?: TextRange): void {
+        function emitBreak(label: Label, location?: ts.TextRange): void {
             emitWorker(OpCode.Break, [label], location);
         }
-
         /**
          * Emits a Break operation to the specified label when a condition evaluates to a truthy
          * value at runtime.
@@ -2538,10 +2132,9 @@ namespace ts {
          * @param condition The condition.
          * @param location An optional source map location for the assignment.
          */
-        function emitBreakWhenTrue(label: Label, condition: Expression, location?: TextRange): void {
+        function emitBreakWhenTrue(label: Label, condition: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.BreakWhenTrue, [label, condition], location);
         }
-
         /**
          * Emits a Break to the specified label when a condition evaluates to a falsey value at
          * runtime.
@@ -2550,81 +2143,72 @@ namespace ts {
          * @param condition The condition.
          * @param location An optional source map location for the assignment.
          */
-        function emitBreakWhenFalse(label: Label, condition: Expression, location?: TextRange): void {
+        function emitBreakWhenFalse(label: Label, condition: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.BreakWhenFalse, [label, condition], location);
         }
-
         /**
          * Emits a YieldStar operation for the provided expression.
          *
          * @param expression An optional value for the yield operation.
          * @param location An optional source map location for the assignment.
          */
-        function emitYieldStar(expression?: Expression, location?: TextRange): void {
+        function emitYieldStar(expression?: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.YieldStar, [expression], location);
         }
-
         /**
          * Emits a Yield operation for the provided expression.
          *
          * @param expression An optional value for the yield operation.
          * @param location An optional source map location for the assignment.
          */
-        function emitYield(expression?: Expression, location?: TextRange): void {
+        function emitYield(expression?: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.Yield, [expression], location);
         }
-
         /**
          * Emits a Return operation for the provided expression.
          *
          * @param expression An optional value for the operation.
          * @param location An optional source map location for the assignment.
          */
-        function emitReturn(expression?: Expression, location?: TextRange): void {
+        function emitReturn(expression?: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.Return, [expression], location);
         }
-
         /**
          * Emits a Throw operation for the provided expression.
          *
          * @param expression A value for the operation.
          * @param location An optional source map location for the assignment.
          */
-        function emitThrow(expression: Expression, location?: TextRange): void {
+        function emitThrow(expression: ts.Expression, location?: ts.TextRange): void {
             emitWorker(OpCode.Throw, [expression], location);
         }
-
         /**
          * Emits an Endfinally operation. This is used to handle `finally` block semantics.
          */
         function emitEndfinally(): void {
             emitWorker(OpCode.Endfinally);
         }
-
         /**
          * Emits an operation.
          *
          * @param code The OpCode for the operation.
          * @param args The optional arguments for the operation.
          */
-        function emitWorker(code: OpCode, args?: OperationArguments, location?: TextRange): void {
+        function emitWorker(code: OpCode, args?: OperationArguments, location?: ts.TextRange): void {
             if (operations === undefined) {
                 operations = [];
                 operationArguments = [];
                 operationLocations = [];
             }
-
             if (labelOffsets === undefined) {
                 // mark entry point
                 markLabel(defineLabel());
             }
-
             const operationIndex = operations.length;
             operations[operationIndex] = code;
             operationArguments![operationIndex] = args;
             operationLocations![operationIndex] = location;
         }
-
         /**
          * Builds the generator function body.
          */
@@ -2639,56 +2223,38 @@ namespace ts {
             exceptionBlockStack = undefined;
             currentExceptionBlock = undefined;
             withBlockStack = undefined;
-
             const buildResult = buildStatements();
-            return createGeneratorHelper(
-                context,
-                setEmitFlags(
-                    createFunctionExpression(
-                        /*modifiers*/ undefined,
-                        /*asteriskToken*/ undefined,
-                        /*name*/ undefined,
-                        /*typeParameters*/ undefined,
-                        [createParameter(/*decorators*/ undefined, /*modifiers*/ undefined, /*dotDotDotToken*/ undefined, state)],
-                        /*type*/ undefined,
-                        createBlock(
-                            buildResult,
-                            /*multiLine*/ buildResult.length > 0
-                        )
-                    ),
-                    EmitFlags.ReuseTempVariableScope
-                )
-            );
+            return createGeneratorHelper(context, ts.setEmitFlags(ts.createFunctionExpression(
+            /*modifiers*/ undefined, 
+            /*asteriskToken*/ undefined, 
+            /*name*/ undefined, 
+            /*typeParameters*/ undefined, [ts.createParameter(/*decorators*/ undefined, /*modifiers*/ undefined, /*dotDotDotToken*/ undefined, state)], 
+            /*type*/ undefined, ts.createBlock(buildResult, 
+            /*multiLine*/ buildResult.length > 0)), ts.EmitFlags.ReuseTempVariableScope));
         }
-
         /**
          * Builds the statements for the generator function body.
          */
-        function buildStatements(): Statement[] {
+        function buildStatements(): ts.Statement[] {
             if (operations) {
                 for (let operationIndex = 0; operationIndex < operations.length; operationIndex++) {
                     writeOperation(operationIndex);
                 }
-
                 flushFinalLabel(operations.length);
             }
             else {
                 flushFinalLabel(0);
             }
-
             if (clauses) {
-                const labelExpression = createPropertyAccess(state, "label");
-                const switchStatement = createSwitch(labelExpression, createCaseBlock(clauses));
-                return [startOnNewLine(switchStatement)];
+                const labelExpression = ts.createPropertyAccess(state, "label");
+                const switchStatement = ts.createSwitch(labelExpression, ts.createCaseBlock(clauses));
+                return [ts.startOnNewLine(switchStatement)];
             }
-
             if (statements) {
                 return statements;
             }
-
             return [];
         }
-
         /**
          * Flush the current label and advance to a new label.
          */
@@ -2696,14 +2262,11 @@ namespace ts {
             if (!statements) {
                 return;
             }
-
             appendLabel(/*markLabelEnd*/ !lastOperationWasAbrupt);
-
             lastOperationWasAbrupt = false;
             lastOperationWasCompletion = false;
             labelNumber++;
         }
-
         /**
          * Flush the final label of the generator function body.
          */
@@ -2713,14 +2276,11 @@ namespace ts {
                 withBlockStack = undefined;
                 writeReturn(/*expression*/ undefined, /*operationLocation*/ undefined);
             }
-
             if (statements && clauses) {
                 appendLabel(/*markLabelEnd*/ false);
             }
-
             updateLabelExpressions();
         }
-
         /**
          * Tests whether the final label of the generator function body
          * is reachable by user code.
@@ -2731,13 +2291,11 @@ namespace ts {
             if (!lastOperationWasCompletion) {
                 return true;
             }
-
             // if there are no labels defined or referenced, then the final label is
             // not reachable.
             if (!labelOffsets || !labelExpressions) {
                 return false;
             }
-
             // if the label for this offset is referenced, then the final label
             // is reachable.
             for (let label = 0; label < labelOffsets.length; label++) {
@@ -2745,10 +2303,8 @@ namespace ts {
                     return true;
                 }
             }
-
             return false;
         }
-
         /**
          * Appends a case clause for the last label and sets the new label.
          *
@@ -2760,66 +2316,40 @@ namespace ts {
             if (!clauses) {
                 clauses = [];
             }
-
             if (statements) {
                 if (withBlockStack) {
                     // The previous label was nested inside one or more `with` blocks, so we
                     // surround the statements in generated `with` blocks to create the same environment.
                     for (let i = withBlockStack.length - 1; i >= 0; i--) {
                         const withBlock = withBlockStack[i];
-                        statements = [createWith(withBlock.expression, createBlock(statements))];
+                        statements = [ts.createWith(withBlock.expression, ts.createBlock(statements))];
                     }
                 }
-
                 if (currentExceptionBlock) {
                     // The previous label was nested inside of an exception block, so we must
                     // indicate entry into a protected region by pushing the label numbers
                     // for each block in the protected region.
                     const { startLabel, catchLabel, finallyLabel, endLabel } = currentExceptionBlock;
-                    statements.unshift(
-                        createExpressionStatement(
-                            createCall(
-                                createPropertyAccess(createPropertyAccess(state, "trys"), "push"),
-                                /*typeArguments*/ undefined,
-                                [
-                                    createArrayLiteral([
-                                        createLabel(startLabel),
-                                        createLabel(catchLabel),
-                                        createLabel(finallyLabel),
-                                        createLabel(endLabel)
-                                    ])
-                                ]
-                            )
-                        )
-                    );
-
+                    statements.unshift(ts.createExpressionStatement(ts.createCall(ts.createPropertyAccess(ts.createPropertyAccess(state, "trys"), "push"), 
+                    /*typeArguments*/ undefined, [
+                        ts.createArrayLiteral([
+                            createLabel(startLabel),
+                            createLabel(catchLabel),
+                            createLabel(finallyLabel),
+                            createLabel(endLabel)
+                        ])
+                    ])));
                     currentExceptionBlock = undefined;
                 }
-
                 if (markLabelEnd) {
                     // The case clause for the last label falls through to this label, so we
                     // add an assignment statement to reflect the change in labels.
-                    statements.push(
-                        createExpressionStatement(
-                            createAssignment(
-                                createPropertyAccess(state, "label"),
-                                createLiteral(labelNumber + 1)
-                            )
-                        )
-                    );
+                    statements.push(ts.createExpressionStatement(ts.createAssignment(ts.createPropertyAccess(state, "label"), ts.createLiteral(labelNumber + 1))));
                 }
             }
-
-            clauses.push(
-                createCaseClause(
-                    createLiteral(labelNumber),
-                    statements || []
-                )
-            );
-
+            clauses.push(ts.createCaseClause(ts.createLiteral(labelNumber), statements || []));
             statements = undefined;
         }
-
         /**
          * Tries to enter into a new label at the current operation index.
          */
@@ -2827,7 +2357,6 @@ namespace ts {
             if (!labelOffsets) {
                 return;
             }
-
             for (let label = 0; label < labelOffsets.length; label++) {
                 if (labelOffsets[label] === operationIndex) {
                     flushLabel();
@@ -2843,7 +2372,6 @@ namespace ts {
                 }
             }
         }
-
         /**
          * Updates literal expressions for labels with actual label numbers.
          */
@@ -2864,7 +2392,6 @@ namespace ts {
                 }
             }
         }
-
         /**
          * Tries to enter or leave a code block.
          */
@@ -2879,11 +2406,9 @@ namespace ts {
                                 if (!exceptionBlockStack) {
                                     exceptionBlockStack = [];
                                 }
-
                                 if (!statements) {
                                     statements = [];
                                 }
-
                                 exceptionBlockStack.push(currentExceptionBlock!);
                                 currentExceptionBlock = block;
                             }
@@ -2896,7 +2421,6 @@ namespace ts {
                                 if (!withBlockStack) {
                                     withBlockStack = [];
                                 }
-
                                 withBlockStack.push(block);
                             }
                             else if (blockAction === BlockAction.Close) {
@@ -2908,7 +2432,6 @@ namespace ts {
                 }
             }
         }
-
         /**
          * Writes an operation as a statement to the current label's statement list.
          *
@@ -2917,15 +2440,12 @@ namespace ts {
         function writeOperation(operationIndex: number): void {
             tryEnterLabel(operationIndex);
             tryEnterOrLeaveBlock(operationIndex);
-
             // early termination, nothing else to process in this label
             if (lastOperationWasAbrupt) {
                 return;
             }
-
             lastOperationWasAbrupt = false;
             lastOperationWasCompletion = false;
-
             const opcode = operations![operationIndex];
             if (opcode === OpCode.Nop) {
                 return;
@@ -2933,39 +2453,36 @@ namespace ts {
             else if (opcode === OpCode.Endfinally) {
                 return writeEndfinally();
             }
-
             const args = operationArguments![operationIndex]!;
             if (opcode === OpCode.Statement) {
-                return writeStatement(<Statement>args[0]);
+                return writeStatement((<ts.Statement>args[0]));
             }
-
             const location = operationLocations![operationIndex];
             switch (opcode) {
                 case OpCode.Assign:
-                    return writeAssign(<Expression>args[0], <Expression>args[1], location);
+                    return writeAssign((<ts.Expression>args[0]), (<ts.Expression>args[1]), location);
                 case OpCode.Break:
                     return writeBreak(<Label>args[0], location);
                 case OpCode.BreakWhenTrue:
-                    return writeBreakWhenTrue(<Label>args[0], <Expression>args[1], location);
+                    return writeBreakWhenTrue((<Label>args[0]), (<ts.Expression>args[1]), location);
                 case OpCode.BreakWhenFalse:
-                    return writeBreakWhenFalse(<Label>args[0], <Expression>args[1], location);
+                    return writeBreakWhenFalse((<Label>args[0]), (<ts.Expression>args[1]), location);
                 case OpCode.Yield:
-                    return writeYield(<Expression>args[0], location);
+                    return writeYield((<ts.Expression>args[0]), location);
                 case OpCode.YieldStar:
-                    return writeYieldStar(<Expression>args[0], location);
+                    return writeYieldStar((<ts.Expression>args[0]), location);
                 case OpCode.Return:
-                    return writeReturn(<Expression>args[0], location);
+                    return writeReturn((<ts.Expression>args[0]), location);
                 case OpCode.Throw:
-                    return writeThrow(<Expression>args[0], location);
+                    return writeThrow((<ts.Expression>args[0]), location);
             }
         }
-
         /**
          * Writes a statement to the current label's statement list.
          *
          * @param statement A statement to write.
          */
-        function writeStatement(statement: Statement): void {
+        function writeStatement(statement: ts.Statement): void {
             if (statement) {
                 if (!statements) {
                     statements = [statement];
@@ -2975,7 +2492,6 @@ namespace ts {
                 }
             }
         }
-
         /**
          * Writes an Assign operation to the current label's statement list.
          *
@@ -2983,71 +2499,46 @@ namespace ts {
          * @param right The right-hand side of the assignment.
          * @param operationLocation The source map location for the operation.
          */
-        function writeAssign(left: Expression, right: Expression, operationLocation: TextRange | undefined): void {
-            writeStatement(setTextRange(createExpressionStatement(createAssignment(left, right)), operationLocation));
+        function writeAssign(left: ts.Expression, right: ts.Expression, operationLocation: ts.TextRange | undefined): void {
+            writeStatement(ts.setTextRange(ts.createExpressionStatement(ts.createAssignment(left, right)), operationLocation));
         }
-
         /**
          * Writes a Throw operation to the current label's statement list.
          *
          * @param expression The value to throw.
          * @param operationLocation The source map location for the operation.
          */
-        function writeThrow(expression: Expression, operationLocation: TextRange | undefined): void {
+        function writeThrow(expression: ts.Expression, operationLocation: ts.TextRange | undefined): void {
             lastOperationWasAbrupt = true;
             lastOperationWasCompletion = true;
-            writeStatement(setTextRange(createThrow(expression), operationLocation));
+            writeStatement(ts.setTextRange(ts.createThrow(expression), operationLocation));
         }
-
         /**
          * Writes a Return operation to the current label's statement list.
          *
          * @param expression The value to return.
          * @param operationLocation The source map location for the operation.
          */
-        function writeReturn(expression: Expression | undefined, operationLocation: TextRange | undefined): void {
+        function writeReturn(expression: ts.Expression | undefined, operationLocation: ts.TextRange | undefined): void {
             lastOperationWasAbrupt = true;
             lastOperationWasCompletion = true;
-            writeStatement(
-                setEmitFlags(
-                    setTextRange(
-                        createReturn(
-                            createArrayLiteral(expression
-                                ? [createInstruction(Instruction.Return), expression]
-                                : [createInstruction(Instruction.Return)]
-                            )
-                        ),
-                        operationLocation
-                    ),
-                    EmitFlags.NoTokenSourceMaps
-                )
-            );
+            writeStatement(ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral(expression
+                ? [createInstruction(Instruction.Return), expression]
+                : [createInstruction(Instruction.Return)])), operationLocation), ts.EmitFlags.NoTokenSourceMaps));
         }
-
         /**
          * Writes a Break operation to the current label's statement list.
          *
          * @param label The label for the Break.
          * @param operationLocation The source map location for the operation.
          */
-        function writeBreak(label: Label, operationLocation: TextRange | undefined): void {
+        function writeBreak(label: Label, operationLocation: ts.TextRange | undefined): void {
             lastOperationWasAbrupt = true;
-            writeStatement(
-                setEmitFlags(
-                    setTextRange(
-                        createReturn(
-                            createArrayLiteral([
-                                createInstruction(Instruction.Break),
-                                createLabel(label)
-                            ])
-                        ),
-                        operationLocation
-                    ),
-                    EmitFlags.NoTokenSourceMaps
-                )
-            );
+            writeStatement(ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.Break),
+                createLabel(label)
+            ])), operationLocation), ts.EmitFlags.NoTokenSourceMaps));
         }
-
         /**
          * Writes a BreakWhenTrue operation to the current label's statement list.
          *
@@ -3055,29 +2546,12 @@ namespace ts {
          * @param condition The condition for the Break.
          * @param operationLocation The source map location for the operation.
          */
-        function writeBreakWhenTrue(label: Label, condition: Expression, operationLocation: TextRange | undefined): void {
-            writeStatement(
-                setEmitFlags(
-                    createIf(
-                        condition,
-                        setEmitFlags(
-                            setTextRange(
-                                createReturn(
-                                    createArrayLiteral([
-                                        createInstruction(Instruction.Break),
-                                        createLabel(label)
-                                    ])
-                                ),
-                                operationLocation
-                            ),
-                            EmitFlags.NoTokenSourceMaps
-                        )
-                    ),
-                    EmitFlags.SingleLine
-                )
-            );
+        function writeBreakWhenTrue(label: Label, condition: ts.Expression, operationLocation: ts.TextRange | undefined): void {
+            writeStatement(ts.setEmitFlags(ts.createIf(condition, ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.Break),
+                createLabel(label)
+            ])), operationLocation), ts.EmitFlags.NoTokenSourceMaps)), ts.EmitFlags.SingleLine));
         }
-
         /**
          * Writes a BreakWhenFalse operation to the current label's statement list.
          *
@@ -3085,101 +2559,52 @@ namespace ts {
          * @param condition The condition for the Break.
          * @param operationLocation The source map location for the operation.
          */
-        function writeBreakWhenFalse(label: Label, condition: Expression, operationLocation: TextRange | undefined): void {
-            writeStatement(
-                setEmitFlags(
-                    createIf(
-                        createLogicalNot(condition),
-                        setEmitFlags(
-                            setTextRange(
-                                createReturn(
-                                    createArrayLiteral([
-                                        createInstruction(Instruction.Break),
-                                        createLabel(label)
-                                    ])
-                                ),
-                                operationLocation
-                            ),
-                            EmitFlags.NoTokenSourceMaps
-                        )
-                    ),
-                    EmitFlags.SingleLine
-                )
-            );
+        function writeBreakWhenFalse(label: Label, condition: ts.Expression, operationLocation: ts.TextRange | undefined): void {
+            writeStatement(ts.setEmitFlags(ts.createIf(ts.createLogicalNot(condition), ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.Break),
+                createLabel(label)
+            ])), operationLocation), ts.EmitFlags.NoTokenSourceMaps)), ts.EmitFlags.SingleLine));
         }
-
         /**
          * Writes a Yield operation to the current label's statement list.
          *
          * @param expression The expression to yield.
          * @param operationLocation The source map location for the operation.
          */
-        function writeYield(expression: Expression, operationLocation: TextRange | undefined): void {
+        function writeYield(expression: ts.Expression, operationLocation: ts.TextRange | undefined): void {
             lastOperationWasAbrupt = true;
-            writeStatement(
-                setEmitFlags(
-                    setTextRange(
-                        createReturn(
-                            createArrayLiteral(
-                                expression
-                                    ? [createInstruction(Instruction.Yield), expression]
-                                    : [createInstruction(Instruction.Yield)]
-                            )
-                        ),
-                        operationLocation
-                    ),
-                    EmitFlags.NoTokenSourceMaps
-                )
-            );
+            writeStatement(ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral(expression
+                ? [createInstruction(Instruction.Yield), expression]
+                : [createInstruction(Instruction.Yield)])), operationLocation), ts.EmitFlags.NoTokenSourceMaps));
         }
-
         /**
          * Writes a YieldStar instruction to the current label's statement list.
          *
          * @param expression The expression to yield.
          * @param operationLocation The source map location for the operation.
          */
-        function writeYieldStar(expression: Expression, operationLocation: TextRange | undefined): void {
+        function writeYieldStar(expression: ts.Expression, operationLocation: ts.TextRange | undefined): void {
             lastOperationWasAbrupt = true;
-            writeStatement(
-                setEmitFlags(
-                    setTextRange(
-                        createReturn(
-                            createArrayLiteral([
-                                createInstruction(Instruction.YieldStar),
-                                expression
-                            ])
-                        ),
-                        operationLocation
-                    ),
-                    EmitFlags.NoTokenSourceMaps
-                )
-            );
+            writeStatement(ts.setEmitFlags(ts.setTextRange(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.YieldStar),
+                expression
+            ])), operationLocation), ts.EmitFlags.NoTokenSourceMaps));
         }
-
         /**
          * Writes an Endfinally instruction to the current label's statement list.
          */
         function writeEndfinally(): void {
             lastOperationWasAbrupt = true;
-            writeStatement(
-                createReturn(
-                    createArrayLiteral([
-                        createInstruction(Instruction.Endfinally)
-                    ])
-                )
-            );
+            writeStatement(ts.createReturn(ts.createArrayLiteral([
+                createInstruction(Instruction.Endfinally)
+            ])));
         }
     }
-
-    function createGeneratorHelper(context: TransformationContext, body: FunctionExpression) {
+    function createGeneratorHelper(context: ts.TransformationContext, body: ts.FunctionExpression) {
         context.requestEmitHelper(generatorHelper);
-        return createCall(
-            getUnscopedHelperName("__generator"),
-            /*typeArguments*/ undefined,
-            [createThis(), body]);
+        return ts.createCall(ts.getUnscopedHelperName("__generator"), 
+        /*typeArguments*/ undefined, [ts.createThis(), body]);
     }
-
     // The __generator helper is used by down-level transformations to emulate the runtime
     // semantics of an ES2015 generator function. When called, this helper returns an
     // object that implements the Iterator protocol, in that it has `next`, `return`, and
@@ -3239,7 +2664,7 @@ namespace ts {
     //                        entering a finally block.
     //
     // For examples of how these are used, see the comments in ./transformers/generators.ts
-    export const generatorHelper: UnscopedEmitHelper = {
+    export const generatorHelper: ts.UnscopedEmitHelper = {
         name: "typescript:generator",
         importName: "__generator",
         scoped: false,

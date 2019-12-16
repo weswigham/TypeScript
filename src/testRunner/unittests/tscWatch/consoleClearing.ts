@@ -5,13 +5,11 @@ namespace ts.tscWatch {
             "FileWatcher:: Added:: WatchInfo: /f.ts 250 undefined Source file\n",
             "FileWatcher:: Added:: WatchInfo: /a/lib/lib.d.ts 250 undefined Source file\n"
         ];
-
-        const file: File = {
+        const file: ts.tscWatch.File = {
             path: "/f.ts",
             content: ""
         };
-
-        function getProgramSynchronizingLog(options: CompilerOptions) {
+        function getProgramSynchronizingLog(options: ts.CompilerOptions) {
             return [
                 "Synchronizing program\n",
                 "CreatingProgramWith::\n",
@@ -19,35 +17,31 @@ namespace ts.tscWatch {
                 `  options: ${JSON.stringify(options)}\n`
             ];
         }
-
-        function isConsoleClearDisabled(options: CompilerOptions) {
+        function isConsoleClearDisabled(options: ts.CompilerOptions) {
             return options.diagnostics || options.extendedDiagnostics || options.preserveWatchOutput;
         }
-
-        function verifyCompilation(host: WatchedSystem, options: CompilerOptions, initialDisableOptions?: CompilerOptions) {
+        function verifyCompilation(host: ts.tscWatch.WatchedSystem, options: ts.CompilerOptions, initialDisableOptions?: ts.CompilerOptions) {
             const disableConsoleClear = isConsoleClearDisabled(options);
             const hasLog = options.extendedDiagnostics || options.diagnostics;
-            checkOutputErrorsInitial(host, emptyArray, initialDisableOptions ? isConsoleClearDisabled(initialDisableOptions) : disableConsoleClear, hasLog ? [
+            ts.tscWatch.checkOutputErrorsInitial(host, ts.emptyArray, initialDisableOptions ? isConsoleClearDisabled(initialDisableOptions) : disableConsoleClear, hasLog ? [
                 currentDirectoryLog,
                 ...getProgramSynchronizingLog(options),
-                ...(options.extendedDiagnostics ? fileWatcherAddedLog : emptyArray)
+                ...(options.extendedDiagnostics ? fileWatcherAddedLog : ts.emptyArray)
             ] : undefined);
             host.modifyFile(file.path, "//");
             host.runQueuedTimeoutCallbacks();
-            checkOutputErrorsIncremental(host, emptyArray, disableConsoleClear, hasLog ? [
+            ts.tscWatch.checkOutputErrorsIncremental(host, ts.emptyArray, disableConsoleClear, hasLog ? [
                 "FileWatcher:: Triggered with /f.ts 1:: WatchInfo: /f.ts 250 undefined Source file\n",
                 "Scheduling update\n",
                 "Elapsed:: 0ms FileWatcher:: Triggered with /f.ts 1:: WatchInfo: /f.ts 250 undefined Source file\n"
             ] : undefined, hasLog ? getProgramSynchronizingLog(options) : undefined);
         }
-
-        function checkConsoleClearingUsingCommandLineOptions(options: CompilerOptions = {}) {
-            const files = [file, libFile];
-            const host = createWatchedSystem(files);
-            createWatchOfFilesAndCompilerOptions([file.path], host, options);
+        function checkConsoleClearingUsingCommandLineOptions(options: ts.CompilerOptions = {}) {
+            const files = [file, ts.tscWatch.libFile];
+            const host = ts.tscWatch.createWatchedSystem(files);
+            ts.tscWatch.createWatchOfFilesAndCompilerOptions([file.path], host, options);
             verifyCompilation(host, options);
         }
-
         it("without --diagnostics or --extendedDiagnostics", () => {
             checkConsoleClearingUsingCommandLineOptions();
         });
@@ -66,30 +60,29 @@ namespace ts.tscWatch {
                 preserveWatchOutput: true,
             });
         });
-
         describe("when preserveWatchOutput is true in config file", () => {
-            const compilerOptions: CompilerOptions = {
+            const compilerOptions: ts.CompilerOptions = {
                 preserveWatchOutput: true
             };
-            const configFile: File = {
+            const configFile: ts.tscWatch.File = {
                 path: "/tsconfig.json",
                 content: JSON.stringify({ compilerOptions })
             };
-            const files = [file, configFile, libFile];
+            const files = [file, configFile, ts.tscWatch.libFile];
             it("using createWatchOfConfigFile ", () => {
-                const host = createWatchedSystem(files);
-                createWatchOfConfigFile(configFile.path, host);
+                const host = ts.tscWatch.createWatchedSystem(files);
+                ts.tscWatch.createWatchOfConfigFile(configFile.path, host);
                 // Initially console is cleared if --preserveOutput is not provided since the config file is yet to be parsed
                 verifyCompilation(host, compilerOptions, {});
             });
             it("when createWatchProgram is invoked with configFileParseResult on WatchCompilerHostOfConfigFile", () => {
-                const host = createWatchedSystem(files);
-                const reportDiagnostic = createDiagnosticReporter(host);
-                const optionsToExtend: CompilerOptions = {};
-                const configParseResult = parseConfigFileWithSystem(configFile.path, optionsToExtend, /*watchOptionsToExtend*/ undefined, host, reportDiagnostic)!;
-                const watchCompilerHost = createWatchCompilerHostOfConfigFile(configParseResult.options.configFilePath!, optionsToExtend, /*watchOptionsToExtend*/ undefined, host, /*createProgram*/ undefined, reportDiagnostic, createWatchStatusReporter(host));
+                const host = ts.tscWatch.createWatchedSystem(files);
+                const reportDiagnostic = ts.createDiagnosticReporter(host);
+                const optionsToExtend: ts.CompilerOptions = {};
+                const configParseResult = (ts.parseConfigFileWithSystem(configFile.path, optionsToExtend, /*watchOptionsToExtend*/ undefined, host, reportDiagnostic)!);
+                const watchCompilerHost = ts.createWatchCompilerHostOfConfigFile((configParseResult.options.configFilePath!), optionsToExtend, /*watchOptionsToExtend*/ undefined, host, /*createProgram*/ undefined, reportDiagnostic, ts.createWatchStatusReporter(host));
                 watchCompilerHost.configFileParsingResult = configParseResult;
-                createWatchProgram(watchCompilerHost);
+                ts.createWatchProgram(watchCompilerHost);
                 verifyCompilation(host, compilerOptions);
             });
         });

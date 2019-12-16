@@ -1,11 +1,9 @@
 /* @internal */
 namespace ts.formatting {
     export namespace SmartIndenter {
-
         const enum Value {
             Unknown = -1
         }
-
         /**
          * @param assumeNewLineBeforeCloseBrace
          * `false` when called on text from a real source file.
@@ -21,106 +19,86 @@ namespace ts.formatting {
          * When inserting some text after an open brace, we would like to get indentation as if a newline was already there.
          * By default indentation at `position` will be 0 so 'assumeNewLineBeforeCloseBrace' overrides this behavior.
          */
-        export function getIndentation(position: number, sourceFile: SourceFile, options: EditorSettings, assumeNewLineBeforeCloseBrace = false): number {
+        export function getIndentation(position: number, sourceFile: ts.SourceFile, options: ts.EditorSettings, assumeNewLineBeforeCloseBrace = false): number {
             if (position > sourceFile.text.length) {
                 return getBaseIndentation(options); // past EOF
             }
-
             // no indentation when the indent style is set to none,
             // so we can return fast
-            if (options.indentStyle === IndentStyle.None) {
+            if (options.indentStyle === ts.IndentStyle.None) {
                 return 0;
             }
-
-            const precedingToken = findPrecedingToken(position, sourceFile, /*startNode*/ undefined, /*excludeJsdoc*/ true);
-
+            const precedingToken = ts.findPrecedingToken(position, sourceFile, /*startNode*/ undefined, /*excludeJsdoc*/ true);
             // eslint-disable-next-line no-null/no-null
-            const enclosingCommentRange = getRangeOfEnclosingComment(sourceFile, position, precedingToken || null);
-            if (enclosingCommentRange && enclosingCommentRange.kind === SyntaxKind.MultiLineCommentTrivia) {
+            const enclosingCommentRange = ts.formatting.getRangeOfEnclosingComment(sourceFile, position, precedingToken || null);
+            if (enclosingCommentRange && enclosingCommentRange.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
                 return getCommentIndent(sourceFile, position, options, enclosingCommentRange);
             }
-
             if (!precedingToken) {
                 return getBaseIndentation(options);
             }
-
             // no indentation in string \regex\template literals
-            const precedingTokenIsLiteral = isStringOrRegularExpressionOrTemplateLiteral(precedingToken.kind);
+            const precedingTokenIsLiteral = ts.isStringOrRegularExpressionOrTemplateLiteral(precedingToken.kind);
             if (precedingTokenIsLiteral && precedingToken.getStart(sourceFile) <= position && position < precedingToken.end) {
                 return 0;
             }
-
             const lineAtPosition = sourceFile.getLineAndCharacterOfPosition(position).line;
-
             // indentation is first non-whitespace character in a previous line
             // for block indentation, we should look for a line which contains something that's not
             // whitespace.
-            if (options.indentStyle === IndentStyle.Block) {
+            if (options.indentStyle === ts.IndentStyle.Block) {
                 return getBlockIndent(sourceFile, position, options);
             }
-
-            if (precedingToken.kind === SyntaxKind.CommaToken && precedingToken.parent.kind !== SyntaxKind.BinaryExpression) {
+            if (precedingToken.kind === ts.SyntaxKind.CommaToken && precedingToken.parent.kind !== ts.SyntaxKind.BinaryExpression) {
                 // previous token is comma that separates items in list - find the previous item and try to derive indentation from it
                 const actualIndentation = getActualIndentationForListItemBeforeComma(precedingToken, sourceFile, options);
                 if (actualIndentation !== Value.Unknown) {
                     return actualIndentation;
                 }
             }
-
             const containerList = getListByPosition(position, precedingToken.parent, sourceFile);
             // use list position if the preceding token is before any list items
-            if (containerList && !rangeContainsRange(containerList, precedingToken)) {
+            if (containerList && !ts.rangeContainsRange(containerList, precedingToken)) {
                 return getActualIndentationForListStartLine(containerList, sourceFile, options) + options.indentSize!; // TODO: GH#18217
             }
-
             return getSmartIndent(sourceFile, position, precedingToken, lineAtPosition, assumeNewLineBeforeCloseBrace, options);
         }
-
-        function getCommentIndent(sourceFile: SourceFile, position: number, options: EditorSettings, enclosingCommentRange: CommentRange): number {
-            const previousLine = getLineAndCharacterOfPosition(sourceFile, position).line - 1;
-            const commentStartLine = getLineAndCharacterOfPosition(sourceFile, enclosingCommentRange.pos).line;
-
-            Debug.assert(commentStartLine >= 0);
-
+        function getCommentIndent(sourceFile: ts.SourceFile, position: number, options: ts.EditorSettings, enclosingCommentRange: ts.CommentRange): number {
+            const previousLine = ts.getLineAndCharacterOfPosition(sourceFile, position).line - 1;
+            const commentStartLine = ts.getLineAndCharacterOfPosition(sourceFile, enclosingCommentRange.pos).line;
+            ts.Debug.assert(commentStartLine >= 0);
             if (previousLine <= commentStartLine) {
-                return findFirstNonWhitespaceColumn(getStartPositionOfLine(commentStartLine, sourceFile), position, sourceFile, options);
+                return findFirstNonWhitespaceColumn(ts.getStartPositionOfLine(commentStartLine, sourceFile), position, sourceFile, options);
             }
-
-            const startPositionOfLine = getStartPositionOfLine(previousLine, sourceFile);
+            const startPositionOfLine = ts.getStartPositionOfLine(previousLine, sourceFile);
             const { column, character } = findFirstNonWhitespaceCharacterAndColumn(startPositionOfLine, position, sourceFile, options);
-
             if (column === 0) {
                 return column;
             }
-
             const firstNonWhitespaceCharacterCode = sourceFile.text.charCodeAt(startPositionOfLine + character);
-            return firstNonWhitespaceCharacterCode === CharacterCodes.asterisk ? column - 1 : column;
+            return firstNonWhitespaceCharacterCode === ts.CharacterCodes.asterisk ? column - 1 : column;
         }
-
-        function getBlockIndent(sourceFile: SourceFile, position: number, options: EditorSettings): number {
+        function getBlockIndent(sourceFile: ts.SourceFile, position: number, options: ts.EditorSettings): number {
             // move backwards until we find a line with a non-whitespace character,
             // then find the first non-whitespace character for that line.
             let current = position;
             while (current > 0) {
                 const char = sourceFile.text.charCodeAt(current);
-                if (!isWhiteSpaceLike(char)) {
+                if (!ts.isWhiteSpaceLike(char)) {
                     break;
                 }
                 current--;
             }
-
-            const lineStart = getLineStartPositionForPosition(current, sourceFile);
+            const lineStart = ts.getLineStartPositionForPosition(current, sourceFile);
             return findFirstNonWhitespaceColumn(lineStart, current, sourceFile, options);
         }
-
-        function getSmartIndent(sourceFile: SourceFile, position: number, precedingToken: Node, lineAtPosition: number, assumeNewLineBeforeCloseBrace: boolean, options: EditorSettings): number {
+        function getSmartIndent(sourceFile: ts.SourceFile, position: number, precedingToken: ts.Node, lineAtPosition: number, assumeNewLineBeforeCloseBrace: boolean, options: ts.EditorSettings): number {
             // try to find node that can contribute to indentation and includes 'position' starting from 'precedingToken'
             // if such node is found - compute initial indentation for 'position' inside this node
-            let previous: Node | undefined;
+            let previous: ts.Node | undefined;
             let current = precedingToken;
-
             while (current) {
-                if (positionBelongsToNode(current, position, sourceFile) && shouldIndentChildNode(options, current, previous, sourceFile, /*isNextChild*/ true)) {
+                if (ts.positionBelongsToNode(current, position, sourceFile) && shouldIndentChildNode(options, current, previous, sourceFile, /*isNextChild*/ true)) {
                     const currentStart = getStartLineAndCharacterForNode(current, sourceFile);
                     const nextTokenKind = nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken, current, lineAtPosition, sourceFile);
                     const indentationDelta = nextTokenKind !== NextTokenKind.Unknown
@@ -129,7 +107,6 @@ namespace ts.formatting {
                         : lineAtPosition !== currentStart.line ? options.indentSize : 0;
                     return getIndentationForNodeWorker(current, currentStart, /*ignoreActualIndentationRange*/ undefined, indentationDelta!, sourceFile, /*isNextChild*/ true, options); // TODO: GH#18217
                 }
-
                 // check if current node is a list item - if yes, take indentation from it
                 // do not consider parent-child line sharing yet:
                 // function foo(a
@@ -138,33 +115,21 @@ namespace ts.formatting {
                 if (actualIndentation !== Value.Unknown) {
                     return actualIndentation;
                 }
-
                 previous = current;
                 current = current.parent;
             }
             // no parent was found - return the base indentation of the SourceFile
             return getBaseIndentation(options);
         }
-
-        export function getIndentationForNode(n: Node, ignoreActualIndentationRange: TextRange, sourceFile: SourceFile, options: EditorSettings): number {
+        export function getIndentationForNode(n: ts.Node, ignoreActualIndentationRange: ts.TextRange, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
             const start = sourceFile.getLineAndCharacterOfPosition(n.getStart(sourceFile));
             return getIndentationForNodeWorker(n, start, ignoreActualIndentationRange, /*indentationDelta*/ 0, sourceFile, /*isNextChild*/ false, options);
         }
-
-        export function getBaseIndentation(options: EditorSettings) {
+        export function getBaseIndentation(options: ts.EditorSettings) {
             return options.baseIndentSize || 0;
         }
-
-        function getIndentationForNodeWorker(
-            current: Node,
-            currentStart: LineAndCharacter,
-            ignoreActualIndentationRange: TextRange | undefined,
-            indentationDelta: number,
-            sourceFile: SourceFile,
-            isNextChild: boolean,
-            options: EditorSettings): number {
+        function getIndentationForNodeWorker(current: ts.Node, currentStart: ts.LineAndCharacter, ignoreActualIndentationRange: ts.TextRange | undefined, indentationDelta: number, sourceFile: ts.SourceFile, isNextChild: boolean, options: ts.EditorSettings): number {
             let parent = current.parent;
-
             // Walk up the tree and collect indentation for parent-child node pairs. Indentation is not added if
             // * parent and child nodes start on the same line, or
             // * parent is an IfStatement and child starts on the same line as an 'else clause'.
@@ -174,31 +139,25 @@ namespace ts.formatting {
                     const start = current.getStart(sourceFile);
                     useActualIndentation = start < ignoreActualIndentationRange.pos || start > ignoreActualIndentationRange.end;
                 }
-
                 const containingListOrParentStart = getContainingListOrParentStart(parent, current, sourceFile);
-                const parentAndChildShareLine =
-                    containingListOrParentStart.line === currentStart.line ||
+                const parentAndChildShareLine = containingListOrParentStart.line === currentStart.line ||
                     childStartsOnTheSameLineWithElseInIfStatement(parent, current, currentStart.line, sourceFile);
-
                 if (useActualIndentation) {
                     // check if current node is a list item - if yes, take indentation from it
                     let actualIndentation = getActualIndentationForListItem(current, sourceFile, options, !parentAndChildShareLine);
                     if (actualIndentation !== Value.Unknown) {
                         return actualIndentation + indentationDelta;
                     }
-
                     // try to fetch actual indentation for current node from source text
                     actualIndentation = getActualIndentationForNode(current, parent, currentStart, parentAndChildShareLine, sourceFile, options);
                     if (actualIndentation !== Value.Unknown) {
                         return actualIndentation + indentationDelta;
                     }
                 }
-
                 // increase indentation if parent node wants its content to be indented and parent and child nodes don't start on the same line
                 if (shouldIndentChildNode(options, parent, current, sourceFile, isNextChild) && !parentAndChildShareLine) {
                     indentationDelta += options.indentSize!;
                 }
-
                 // In our AST, a call argument's `parent` is the call-expression, not the argument list.
                 // We would like to increase indentation based on the relationship between an argument and its argument-list,
                 // so we spoof the starting position of the (parent) call-expression to match the (non-parent) argument-list.
@@ -207,30 +166,24 @@ namespace ts.formatting {
                 //
                 // Instead, when at an argument, we unspoof the starting position of the enclosing call expression
                 // *after* applying indentation for the argument.
-
-                const useTrueStart =
-                    isArgumentAndStartLineOverlapsExpressionBeingCalled(parent, current, currentStart.line, sourceFile);
-
+                const useTrueStart = isArgumentAndStartLineOverlapsExpressionBeingCalled(parent, current, currentStart.line, sourceFile);
                 current = parent;
                 parent = current.parent;
                 currentStart = useTrueStart ? sourceFile.getLineAndCharacterOfPosition(current.getStart(sourceFile)) : containingListOrParentStart;
             }
-
             return indentationDelta + getBaseIndentation(options);
         }
-
-        function getContainingListOrParentStart(parent: Node, child: Node, sourceFile: SourceFile): LineAndCharacter {
+        function getContainingListOrParentStart(parent: ts.Node, child: ts.Node, sourceFile: ts.SourceFile): ts.LineAndCharacter {
             const containingList = getContainingList(child, sourceFile);
             const startPos = containingList ? containingList.pos : parent.getStart(sourceFile);
             return sourceFile.getLineAndCharacterOfPosition(startPos);
         }
-
         /*
          * Function returns Value.Unknown if indentation cannot be determined
          */
-        function getActualIndentationForListItemBeforeComma(commaToken: Node, sourceFile: SourceFile, options: EditorSettings): number {
+        function getActualIndentationForListItemBeforeComma(commaToken: ts.Node, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
             // previous token is comma that separates items in list - find the previous item and try to derive indentation from it
-            const commaItemInfo = findListItemInfo(commaToken);
+            const commaItemInfo = ts.findListItemInfo(commaToken);
             if (commaItemInfo && commaItemInfo.listItemIndex > 0) {
                 return deriveActualIndentationFromList(commaItemInfo.list.getChildren(), commaItemInfo.listItemIndex - 1, sourceFile, options);
             }
@@ -239,48 +192,35 @@ namespace ts.formatting {
                 return Value.Unknown;
             }
         }
-
         /*
          * Function returns Value.Unknown if actual indentation for node should not be used (i.e because node is nested expression)
          */
-        function getActualIndentationForNode(current: Node,
-            parent: Node,
-            currentLineAndChar: LineAndCharacter,
-            parentAndChildShareLine: boolean,
-            sourceFile: SourceFile,
-            options: EditorSettings): number {
-
+        function getActualIndentationForNode(current: ts.Node, parent: ts.Node, currentLineAndChar: ts.LineAndCharacter, parentAndChildShareLine: boolean, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
             // actual indentation is used for statements\declarations if one of cases below is true:
             // - parent is SourceFile - by default immediate children of SourceFile are not indented except when user indents them manually
             // - parent and child are not on the same line
-            const useActualIndentation =
-                (isDeclaration(current) || isStatementButNotDeclaration(current)) &&
-                (parent.kind === SyntaxKind.SourceFile || !parentAndChildShareLine);
-
+            const useActualIndentation = (ts.isDeclaration(current) || ts.isStatementButNotDeclaration(current)) &&
+                (parent.kind === ts.SyntaxKind.SourceFile || !parentAndChildShareLine);
             if (!useActualIndentation) {
                 return Value.Unknown;
             }
-
             return findColumnForFirstNonWhitespaceCharacterInLine(currentLineAndChar, sourceFile, options);
         }
-
         const enum NextTokenKind {
             Unknown,
             OpenBrace,
             CloseBrace
         }
-
-        function nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken: Node, current: Node, lineAtPosition: number, sourceFile: SourceFile): NextTokenKind {
-            const nextToken = findNextToken(precedingToken, current, sourceFile);
+        function nextTokenIsCurlyBraceOnSameLineAsCursor(precedingToken: ts.Node, current: ts.Node, lineAtPosition: number, sourceFile: ts.SourceFile): NextTokenKind {
+            const nextToken = ts.findNextToken(precedingToken, current, sourceFile);
             if (!nextToken) {
                 return NextTokenKind.Unknown;
             }
-
-            if (nextToken.kind === SyntaxKind.OpenBraceToken) {
+            if (nextToken.kind === ts.SyntaxKind.OpenBraceToken) {
                 // open braces are always indented at the parent level
                 return NextTokenKind.OpenBrace;
             }
-            else if (nextToken.kind === SyntaxKind.CloseBraceToken) {
+            else if (nextToken.kind === ts.SyntaxKind.CloseBraceToken) {
                 // close braces are indented at the parent level if they are located on the same line with cursor
                 // this means that if new line will be added at $ position, this case will be indented
                 // class A {
@@ -289,113 +229,99 @@ namespace ts.formatting {
                 /// and this one - not
                 // class A {
                 // $}
-
                 const nextTokenStartLine = getStartLineAndCharacterForNode(nextToken, sourceFile).line;
                 return lineAtPosition === nextTokenStartLine ? NextTokenKind.CloseBrace : NextTokenKind.Unknown;
             }
-
             return NextTokenKind.Unknown;
         }
-
-        function getStartLineAndCharacterForNode(n: Node, sourceFile: SourceFileLike): LineAndCharacter {
+        function getStartLineAndCharacterForNode(n: ts.Node, sourceFile: ts.SourceFileLike): ts.LineAndCharacter {
             return sourceFile.getLineAndCharacterOfPosition(n.getStart(sourceFile));
         }
-
-        export function isArgumentAndStartLineOverlapsExpressionBeingCalled(parent: Node, child: Node, childStartLine: number, sourceFile: SourceFileLike): boolean {
-            if (!(isCallExpression(parent) && contains(parent.arguments, child))) {
+        export function isArgumentAndStartLineOverlapsExpressionBeingCalled(parent: ts.Node, child: ts.Node, childStartLine: number, sourceFile: ts.SourceFileLike): boolean {
+            if (!(ts.isCallExpression(parent) && ts.contains(parent.arguments, child))) {
                 return false;
             }
-
             const expressionOfCallExpressionEnd = parent.expression.getEnd();
-            const expressionOfCallExpressionEndLine = getLineAndCharacterOfPosition(sourceFile, expressionOfCallExpressionEnd).line;
+            const expressionOfCallExpressionEndLine = ts.getLineAndCharacterOfPosition(sourceFile, expressionOfCallExpressionEnd).line;
             return expressionOfCallExpressionEndLine === childStartLine;
         }
-
-        export function childStartsOnTheSameLineWithElseInIfStatement(parent: Node, child: TextRangeWithKind, childStartLine: number, sourceFile: SourceFileLike): boolean {
-            if (parent.kind === SyntaxKind.IfStatement && (<IfStatement>parent).elseStatement === child) {
-                const elseKeyword = findChildOfKind(parent, SyntaxKind.ElseKeyword, sourceFile)!;
-                Debug.assert(elseKeyword !== undefined);
-
+        export function childStartsOnTheSameLineWithElseInIfStatement(parent: ts.Node, child: ts.formatting.TextRangeWithKind, childStartLine: number, sourceFile: ts.SourceFileLike): boolean {
+            if (parent.kind === ts.SyntaxKind.IfStatement && (<ts.IfStatement>parent).elseStatement === child) {
+                const elseKeyword = (ts.findChildOfKind(parent, ts.SyntaxKind.ElseKeyword, sourceFile)!);
+                ts.Debug.assert(elseKeyword !== undefined);
                 const elseKeywordStartLine = getStartLineAndCharacterForNode(elseKeyword, sourceFile).line;
                 return elseKeywordStartLine === childStartLine;
             }
-
             return false;
         }
-
-        export function argumentStartsOnSameLineAsPreviousArgument(parent: Node, child: TextRangeWithKind, childStartLine: number, sourceFile: SourceFileLike): boolean {
-            if (isCallOrNewExpression(parent)) {
-                if (!parent.arguments) return false;
-                const currentNode = find(parent.arguments, arg => arg.pos === child.pos);
+        export function argumentStartsOnSameLineAsPreviousArgument(parent: ts.Node, child: ts.formatting.TextRangeWithKind, childStartLine: number, sourceFile: ts.SourceFileLike): boolean {
+            if (ts.isCallOrNewExpression(parent)) {
+                if (!parent.arguments)
+                    return false;
+                const currentNode = ts.find(parent.arguments, arg => arg.pos === child.pos);
                 // If it's not one of the arguments, don't look past this
-                if (!currentNode) return false;
+                if (!currentNode)
+                    return false;
                 const currentIndex = parent.arguments.indexOf(currentNode);
-                if (currentIndex === 0) return false; // Can't look at previous node if first
-
+                if (currentIndex === 0)
+                    return false; // Can't look at previous node if first
                 const previousNode = parent.arguments[currentIndex - 1];
-                const lineOfPreviousNode = getLineAndCharacterOfPosition(sourceFile, previousNode.getEnd()).line;
-
+                const lineOfPreviousNode = ts.getLineAndCharacterOfPosition(sourceFile, previousNode.getEnd()).line;
                 if (childStartLine === lineOfPreviousNode) {
                     return true;
                 }
             }
-
             return false;
         }
-
-        export function getContainingList(node: Node, sourceFile: SourceFile): NodeArray<Node> | undefined {
+        export function getContainingList(node: ts.Node, sourceFile: ts.SourceFile): ts.NodeArray<ts.Node> | undefined {
             return node.parent && getListByRange(node.getStart(sourceFile), node.getEnd(), node.parent, sourceFile);
         }
-
-        function getListByPosition(pos: number, node: Node, sourceFile: SourceFile): NodeArray<Node> | undefined {
+        function getListByPosition(pos: number, node: ts.Node, sourceFile: ts.SourceFile): ts.NodeArray<ts.Node> | undefined {
             return node && getListByRange(pos, pos, node, sourceFile);
         }
-
-        function getListByRange(start: number, end: number, node: Node, sourceFile: SourceFile): NodeArray<Node> | undefined {
+        function getListByRange(start: number, end: number, node: ts.Node, sourceFile: ts.SourceFile): ts.NodeArray<ts.Node> | undefined {
             switch (node.kind) {
-                case SyntaxKind.TypeReference:
-                    return getList((<TypeReferenceNode>node).typeArguments);
-                case SyntaxKind.ObjectLiteralExpression:
-                    return getList((<ObjectLiteralExpression>node).properties);
-                case SyntaxKind.ArrayLiteralExpression:
-                    return getList((<ArrayLiteralExpression>node).elements);
-                case SyntaxKind.TypeLiteral:
-                    return getList((<TypeLiteralNode>node).members);
-                case SyntaxKind.FunctionDeclaration:
-                case SyntaxKind.FunctionExpression:
-                case SyntaxKind.ArrowFunction:
-                case SyntaxKind.MethodDeclaration:
-                case SyntaxKind.MethodSignature:
-                case SyntaxKind.CallSignature:
-                case SyntaxKind.Constructor:
-                case SyntaxKind.ConstructorType:
-                case SyntaxKind.ConstructSignature:
-                    return getList((<SignatureDeclaration>node).typeParameters) || getList((<SignatureDeclaration>node).parameters);
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ClassExpression:
-                case SyntaxKind.InterfaceDeclaration:
-                case SyntaxKind.TypeAliasDeclaration:
-                case SyntaxKind.JSDocTemplateTag:
-                    return getList((<ClassDeclaration | ClassExpression | InterfaceDeclaration | TypeAliasDeclaration | JSDocTemplateTag>node).typeParameters);
-                case SyntaxKind.NewExpression:
-                case SyntaxKind.CallExpression:
-                    return getList((<CallExpression>node).typeArguments) || getList((<CallExpression>node).arguments);
-                case SyntaxKind.VariableDeclarationList:
-                    return getList((<VariableDeclarationList>node).declarations);
-                case SyntaxKind.NamedImports:
-                case SyntaxKind.NamedExports:
-                    return getList((<NamedImportsOrExports>node).elements);
-                case SyntaxKind.ObjectBindingPattern:
-                case SyntaxKind.ArrayBindingPattern:
-                    return getList((<ObjectBindingPattern | ArrayBindingPattern>node).elements);
+                case ts.SyntaxKind.TypeReference:
+                    return getList((<ts.TypeReferenceNode>node).typeArguments);
+                case ts.SyntaxKind.ObjectLiteralExpression:
+                    return getList((<ts.ObjectLiteralExpression>node).properties);
+                case ts.SyntaxKind.ArrayLiteralExpression:
+                    return getList((<ts.ArrayLiteralExpression>node).elements);
+                case ts.SyntaxKind.TypeLiteral:
+                    return getList((<ts.TypeLiteralNode>node).members);
+                case ts.SyntaxKind.FunctionDeclaration:
+                case ts.SyntaxKind.FunctionExpression:
+                case ts.SyntaxKind.ArrowFunction:
+                case ts.SyntaxKind.MethodDeclaration:
+                case ts.SyntaxKind.MethodSignature:
+                case ts.SyntaxKind.CallSignature:
+                case ts.SyntaxKind.Constructor:
+                case ts.SyntaxKind.ConstructorType:
+                case ts.SyntaxKind.ConstructSignature:
+                    return getList((<ts.SignatureDeclaration>node).typeParameters) || getList((<ts.SignatureDeclaration>node).parameters);
+                case ts.SyntaxKind.ClassDeclaration:
+                case ts.SyntaxKind.ClassExpression:
+                case ts.SyntaxKind.InterfaceDeclaration:
+                case ts.SyntaxKind.TypeAliasDeclaration:
+                case ts.SyntaxKind.JSDocTemplateTag:
+                    return getList((<ts.ClassDeclaration | ts.ClassExpression | ts.InterfaceDeclaration | ts.TypeAliasDeclaration | ts.JSDocTemplateTag>node).typeParameters);
+                case ts.SyntaxKind.NewExpression:
+                case ts.SyntaxKind.CallExpression:
+                    return getList((<ts.CallExpression>node).typeArguments) || getList((<ts.CallExpression>node).arguments);
+                case ts.SyntaxKind.VariableDeclarationList:
+                    return getList((<ts.VariableDeclarationList>node).declarations);
+                case ts.SyntaxKind.NamedImports:
+                case ts.SyntaxKind.NamedExports:
+                    return getList((<ts.NamedImportsOrExports>node).elements);
+                case ts.SyntaxKind.ObjectBindingPattern:
+                case ts.SyntaxKind.ArrayBindingPattern:
+                    return getList((<ts.ObjectBindingPattern | ts.ArrayBindingPattern>node).elements);
             }
-
-            function getList(list: NodeArray<Node> | undefined): NodeArray<Node> | undefined {
-                return list && rangeContainsStartEnd(getVisualListRange(node, list, sourceFile), start, end) ? list : undefined;
+            function getList(list: ts.NodeArray<ts.Node> | undefined): ts.NodeArray<ts.Node> | undefined {
+                return list && ts.rangeContainsStartEnd(getVisualListRange(node, list, sourceFile), start, end) ? list : undefined;
             }
         }
-
-        function getVisualListRange(node: Node, list: TextRange, sourceFile: SourceFile): TextRange {
+        function getVisualListRange(node: ts.Node, list: ts.TextRange, sourceFile: ts.SourceFile): ts.TextRange {
             const children = node.getChildren(sourceFile);
             for (let i = 1; i < children.length - 1; i++) {
                 if (children[i].pos === list.pos && children[i].end === list.end) {
@@ -404,16 +330,14 @@ namespace ts.formatting {
             }
             return list;
         }
-
-        function getActualIndentationForListStartLine(list: NodeArray<Node>, sourceFile: SourceFile, options: EditorSettings): number {
+        function getActualIndentationForListStartLine(list: ts.NodeArray<ts.Node>, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
             if (!list) {
                 return Value.Unknown;
             }
             return findColumnForFirstNonWhitespaceCharacterInLine(sourceFile.getLineAndCharacterOfPosition(list.pos), sourceFile, options);
         }
-
-        function getActualIndentationForListItem(node: Node, sourceFile: SourceFile, options: EditorSettings, listIndentsChild: boolean): number {
-            if (node.parent && node.parent.kind === SyntaxKind.VariableDeclarationList) {
+        function getActualIndentationForListItem(node: ts.Node, sourceFile: ts.SourceFile, options: ts.EditorSettings, listIndentsChild: boolean): number {
+            if (node.parent && node.parent.kind === ts.SyntaxKind.VariableDeclarationList) {
                 // VariableDeclarationList has no wrapping tokens
                 return Value.Unknown;
             }
@@ -430,16 +354,14 @@ namespace ts.formatting {
             }
             return Value.Unknown;
         }
-
-        function deriveActualIndentationFromList(list: readonly Node[], index: number, sourceFile: SourceFile, options: EditorSettings): number {
-            Debug.assert(index >= 0 && index < list.length);
+        function deriveActualIndentationFromList(list: readonly ts.Node[], index: number, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
+            ts.Debug.assert(index >= 0 && index < list.length);
             const node = list[index];
-
             // walk toward the start of the list starting from current node and check if the line is the same for all items.
             // if end line for item [i - 1] differs from the start line for item [i] - find column of the first non-whitespace character on the line of item [i]
             let lineAndCharacter = getStartLineAndCharacterForNode(node, sourceFile);
             for (let i = index - 1; i >= 0; i--) {
-                if (list[i].kind === SyntaxKind.CommaToken) {
+                if (list[i].kind === ts.SyntaxKind.CommaToken) {
                     continue;
                 }
                 // skip list items that ends on the same line with the current list element
@@ -447,17 +369,14 @@ namespace ts.formatting {
                 if (prevEndLine !== lineAndCharacter.line) {
                     return findColumnForFirstNonWhitespaceCharacterInLine(lineAndCharacter, sourceFile, options);
                 }
-
                 lineAndCharacter = getStartLineAndCharacterForNode(list[i], sourceFile);
             }
             return Value.Unknown;
         }
-
-        function findColumnForFirstNonWhitespaceCharacterInLine(lineAndCharacter: LineAndCharacter, sourceFile: SourceFile, options: EditorSettings): number {
+        function findColumnForFirstNonWhitespaceCharacterInLine(lineAndCharacter: ts.LineAndCharacter, sourceFile: ts.SourceFile, options: ts.EditorSettings): number {
             const lineStart = sourceFile.getPositionOfLineAndCharacter(lineAndCharacter.line, 0);
             return findFirstNonWhitespaceColumn(lineStart, lineStart + lineAndCharacter.character, sourceFile, options);
         }
-
         /**
          * Character is the actual index of the character since the beginning of the line.
          * Column - position of the character after expanding tabs to spaces.
@@ -465,147 +384,139 @@ namespace ts.formatting {
          * value of 'character' for '$' is 3
          * value of 'column' for '$' is 6 (assuming that tab size is 4)
          */
-        export function findFirstNonWhitespaceCharacterAndColumn(startPos: number, endPos: number, sourceFile: SourceFileLike, options: EditorSettings) {
+        export function findFirstNonWhitespaceCharacterAndColumn(startPos: number, endPos: number, sourceFile: ts.SourceFileLike, options: ts.EditorSettings) {
             let character = 0;
             let column = 0;
             for (let pos = startPos; pos < endPos; pos++) {
                 const ch = sourceFile.text.charCodeAt(pos);
-                if (!isWhiteSpaceSingleLine(ch)) {
+                if (!ts.isWhiteSpaceSingleLine(ch)) {
                     break;
                 }
-
-                if (ch === CharacterCodes.tab) {
+                if (ch === ts.CharacterCodes.tab) {
                     column += options.tabSize! + (column % options.tabSize!);
                 }
                 else {
                     column++;
                 }
-
                 character++;
             }
             return { column, character };
         }
-
-        export function findFirstNonWhitespaceColumn(startPos: number, endPos: number, sourceFile: SourceFileLike, options: EditorSettings): number {
+        export function findFirstNonWhitespaceColumn(startPos: number, endPos: number, sourceFile: ts.SourceFileLike, options: ts.EditorSettings): number {
             return findFirstNonWhitespaceCharacterAndColumn(startPos, endPos, sourceFile, options).column;
         }
-
-        export function nodeWillIndentChild(settings: FormatCodeSettings, parent: TextRangeWithKind, child: TextRangeWithKind | undefined, sourceFile: SourceFileLike | undefined, indentByDefault: boolean): boolean {
-            const childKind = child ? child.kind : SyntaxKind.Unknown;
-
+        export function nodeWillIndentChild(settings: ts.FormatCodeSettings, parent: ts.formatting.TextRangeWithKind, child: ts.formatting.TextRangeWithKind | undefined, sourceFile: ts.SourceFileLike | undefined, indentByDefault: boolean): boolean {
+            const childKind = child ? child.kind : ts.SyntaxKind.Unknown;
             switch (parent.kind) {
-                case SyntaxKind.ExpressionStatement:
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ClassExpression:
-                case SyntaxKind.InterfaceDeclaration:
-                case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.TypeAliasDeclaration:
-                case SyntaxKind.ArrayLiteralExpression:
-                case SyntaxKind.Block:
-                case SyntaxKind.ModuleBlock:
-                case SyntaxKind.ObjectLiteralExpression:
-                case SyntaxKind.TypeLiteral:
-                case SyntaxKind.MappedType:
-                case SyntaxKind.TupleType:
-                case SyntaxKind.CaseBlock:
-                case SyntaxKind.DefaultClause:
-                case SyntaxKind.CaseClause:
-                case SyntaxKind.ParenthesizedExpression:
-                case SyntaxKind.PropertyAccessExpression:
-                case SyntaxKind.CallExpression:
-                case SyntaxKind.NewExpression:
-                case SyntaxKind.VariableStatement:
-                case SyntaxKind.ExportAssignment:
-                case SyntaxKind.ReturnStatement:
-                case SyntaxKind.ConditionalExpression:
-                case SyntaxKind.ArrayBindingPattern:
-                case SyntaxKind.ObjectBindingPattern:
-                case SyntaxKind.JsxOpeningElement:
-                case SyntaxKind.JsxOpeningFragment:
-                case SyntaxKind.JsxSelfClosingElement:
-                case SyntaxKind.JsxExpression:
-                case SyntaxKind.MethodSignature:
-                case SyntaxKind.CallSignature:
-                case SyntaxKind.ConstructSignature:
-                case SyntaxKind.Parameter:
-                case SyntaxKind.FunctionType:
-                case SyntaxKind.ConstructorType:
-                case SyntaxKind.ParenthesizedType:
-                case SyntaxKind.TaggedTemplateExpression:
-                case SyntaxKind.AwaitExpression:
-                case SyntaxKind.NamedExports:
-                case SyntaxKind.NamedImports:
-                case SyntaxKind.ExportSpecifier:
-                case SyntaxKind.ImportSpecifier:
-                case SyntaxKind.PropertyDeclaration:
+                case ts.SyntaxKind.ExpressionStatement:
+                case ts.SyntaxKind.ClassDeclaration:
+                case ts.SyntaxKind.ClassExpression:
+                case ts.SyntaxKind.InterfaceDeclaration:
+                case ts.SyntaxKind.EnumDeclaration:
+                case ts.SyntaxKind.TypeAliasDeclaration:
+                case ts.SyntaxKind.ArrayLiteralExpression:
+                case ts.SyntaxKind.Block:
+                case ts.SyntaxKind.ModuleBlock:
+                case ts.SyntaxKind.ObjectLiteralExpression:
+                case ts.SyntaxKind.TypeLiteral:
+                case ts.SyntaxKind.MappedType:
+                case ts.SyntaxKind.TupleType:
+                case ts.SyntaxKind.CaseBlock:
+                case ts.SyntaxKind.DefaultClause:
+                case ts.SyntaxKind.CaseClause:
+                case ts.SyntaxKind.ParenthesizedExpression:
+                case ts.SyntaxKind.PropertyAccessExpression:
+                case ts.SyntaxKind.CallExpression:
+                case ts.SyntaxKind.NewExpression:
+                case ts.SyntaxKind.VariableStatement:
+                case ts.SyntaxKind.ExportAssignment:
+                case ts.SyntaxKind.ReturnStatement:
+                case ts.SyntaxKind.ConditionalExpression:
+                case ts.SyntaxKind.ArrayBindingPattern:
+                case ts.SyntaxKind.ObjectBindingPattern:
+                case ts.SyntaxKind.JsxOpeningElement:
+                case ts.SyntaxKind.JsxOpeningFragment:
+                case ts.SyntaxKind.JsxSelfClosingElement:
+                case ts.SyntaxKind.JsxExpression:
+                case ts.SyntaxKind.MethodSignature:
+                case ts.SyntaxKind.CallSignature:
+                case ts.SyntaxKind.ConstructSignature:
+                case ts.SyntaxKind.Parameter:
+                case ts.SyntaxKind.FunctionType:
+                case ts.SyntaxKind.ConstructorType:
+                case ts.SyntaxKind.ParenthesizedType:
+                case ts.SyntaxKind.TaggedTemplateExpression:
+                case ts.SyntaxKind.AwaitExpression:
+                case ts.SyntaxKind.NamedExports:
+                case ts.SyntaxKind.NamedImports:
+                case ts.SyntaxKind.ExportSpecifier:
+                case ts.SyntaxKind.ImportSpecifier:
+                case ts.SyntaxKind.PropertyDeclaration:
                     return true;
-                case SyntaxKind.VariableDeclaration:
-                case SyntaxKind.PropertyAssignment:
-                case SyntaxKind.BinaryExpression:
-                    if (!settings.indentMultiLineObjectLiteralBeginningOnBlankLine && sourceFile && childKind === SyntaxKind.ObjectLiteralExpression) { // TODO: GH#18217
+                case ts.SyntaxKind.VariableDeclaration:
+                case ts.SyntaxKind.PropertyAssignment:
+                case ts.SyntaxKind.BinaryExpression:
+                    if (!settings.indentMultiLineObjectLiteralBeginningOnBlankLine && sourceFile && childKind === ts.SyntaxKind.ObjectLiteralExpression) { // TODO: GH#18217
                         return rangeIsOnOneLine(sourceFile, child!);
                     }
-                    if (parent.kind !== SyntaxKind.BinaryExpression) {
+                    if (parent.kind !== ts.SyntaxKind.BinaryExpression) {
                         return true;
                     }
                     break;
-                case SyntaxKind.DoStatement:
-                case SyntaxKind.WhileStatement:
-                case SyntaxKind.ForInStatement:
-                case SyntaxKind.ForOfStatement:
-                case SyntaxKind.ForStatement:
-                case SyntaxKind.IfStatement:
-                case SyntaxKind.FunctionDeclaration:
-                case SyntaxKind.FunctionExpression:
-                case SyntaxKind.MethodDeclaration:
-                case SyntaxKind.ArrowFunction:
-                case SyntaxKind.Constructor:
-                case SyntaxKind.GetAccessor:
-                case SyntaxKind.SetAccessor:
-                    return childKind !== SyntaxKind.Block;
-                case SyntaxKind.ExportDeclaration:
-                    return childKind !== SyntaxKind.NamedExports;
-                case SyntaxKind.ImportDeclaration:
-                    return childKind !== SyntaxKind.ImportClause ||
-                        (!!(<ImportClause>child).namedBindings && (<ImportClause>child).namedBindings!.kind !== SyntaxKind.NamedImports);
-                case SyntaxKind.JsxElement:
-                    return childKind !== SyntaxKind.JsxClosingElement;
-                case SyntaxKind.JsxFragment:
-                    return childKind !== SyntaxKind.JsxClosingFragment;
-                case SyntaxKind.IntersectionType:
-                case SyntaxKind.UnionType:
-                    if (childKind === SyntaxKind.TypeLiteral) {
+                case ts.SyntaxKind.DoStatement:
+                case ts.SyntaxKind.WhileStatement:
+                case ts.SyntaxKind.ForInStatement:
+                case ts.SyntaxKind.ForOfStatement:
+                case ts.SyntaxKind.ForStatement:
+                case ts.SyntaxKind.IfStatement:
+                case ts.SyntaxKind.FunctionDeclaration:
+                case ts.SyntaxKind.FunctionExpression:
+                case ts.SyntaxKind.MethodDeclaration:
+                case ts.SyntaxKind.ArrowFunction:
+                case ts.SyntaxKind.Constructor:
+                case ts.SyntaxKind.GetAccessor:
+                case ts.SyntaxKind.SetAccessor:
+                    return childKind !== ts.SyntaxKind.Block;
+                case ts.SyntaxKind.ExportDeclaration:
+                    return childKind !== ts.SyntaxKind.NamedExports;
+                case ts.SyntaxKind.ImportDeclaration:
+                    return childKind !== ts.SyntaxKind.ImportClause ||
+                        (!!(<ts.ImportClause>child).namedBindings && (<ts.ImportClause>child).namedBindings!.kind !== ts.SyntaxKind.NamedImports);
+                case ts.SyntaxKind.JsxElement:
+                    return childKind !== ts.SyntaxKind.JsxClosingElement;
+                case ts.SyntaxKind.JsxFragment:
+                    return childKind !== ts.SyntaxKind.JsxClosingFragment;
+                case ts.SyntaxKind.IntersectionType:
+                case ts.SyntaxKind.UnionType:
+                    if (childKind === ts.SyntaxKind.TypeLiteral) {
                         return false;
                     }
-                    // falls through
+                // falls through
             }
             // No explicit rule for given nodes so the result will follow the default value argument
             return indentByDefault;
         }
-
-        function isControlFlowEndingStatement(kind: SyntaxKind, parent: TextRangeWithKind): boolean {
+        function isControlFlowEndingStatement(kind: ts.SyntaxKind, parent: ts.formatting.TextRangeWithKind): boolean {
             switch (kind) {
-                case SyntaxKind.ReturnStatement:
-                case SyntaxKind.ThrowStatement:
-                case SyntaxKind.ContinueStatement:
-                case SyntaxKind.BreakStatement:
-                    return parent.kind !== SyntaxKind.Block;
+                case ts.SyntaxKind.ReturnStatement:
+                case ts.SyntaxKind.ThrowStatement:
+                case ts.SyntaxKind.ContinueStatement:
+                case ts.SyntaxKind.BreakStatement:
+                    return parent.kind !== ts.SyntaxKind.Block;
                 default:
                     return false;
             }
         }
-
         /**
          * True when the parent node should indent the given child by an explicit rule.
          * @param isNextChild If true, we are judging indent of a hypothetical child *after* this one, not the current child.
          */
-        export function shouldIndentChildNode(settings: FormatCodeSettings, parent: TextRangeWithKind, child?: Node, sourceFile?: SourceFileLike, isNextChild = false): boolean {
+        export function shouldIndentChildNode(settings: ts.FormatCodeSettings, parent: ts.formatting.TextRangeWithKind, child?: ts.Node, sourceFile?: ts.SourceFileLike, isNextChild = false): boolean {
             return nodeWillIndentChild(settings, parent, child, sourceFile, /*indentByDefault*/ false)
                 && !(isNextChild && child && isControlFlowEndingStatement(child.kind, parent));
         }
-
-        function rangeIsOnOneLine(sourceFile: SourceFileLike, range: TextRangeWithKind) {
-            const rangeStart = skipTrivia(sourceFile.text, range.pos);
+        function rangeIsOnOneLine(sourceFile: ts.SourceFileLike, range: ts.formatting.TextRangeWithKind) {
+            const rangeStart = ts.skipTrivia(sourceFile.text, range.pos);
             const startLine = sourceFile.getLineAndCharacterOfPosition(rangeStart).line;
             const endLine = sourceFile.getLineAndCharacterOfPosition(range.end).line;
             return startLine === endLine;

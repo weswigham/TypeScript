@@ -2,28 +2,27 @@
 namespace ts {
     type PerfLogger = typeof import("@microsoft/typescript-etw");
     const nullLogger: PerfLogger = {
-        logEvent: noop,
-        logErrEvent: noop,
-        logPerfEvent: noop,
-        logInfoEvent: noop,
-        logStartCommand: noop,
-        logStopCommand: noop,
-        logStartUpdateProgram: noop,
-        logStopUpdateProgram: noop,
-        logStartUpdateGraph: noop,
-        logStopUpdateGraph: noop,
-        logStartResolveModule: noop,
-        logStopResolveModule: noop,
-        logStartParseSourceFile: noop,
-        logStopParseSourceFile: noop,
-        logStartReadFile: noop,
-        logStopReadFile: noop,
-        logStartBindFile: noop,
-        logStopBindFile: noop,
-        logStartScheduledOperation: noop,
-        logStopScheduledOperation: noop,
+        logEvent: ts.noop,
+        logErrEvent: ts.noop,
+        logPerfEvent: ts.noop,
+        logInfoEvent: ts.noop,
+        logStartCommand: ts.noop,
+        logStopCommand: ts.noop,
+        logStartUpdateProgram: ts.noop,
+        logStopUpdateProgram: ts.noop,
+        logStartUpdateGraph: ts.noop,
+        logStopUpdateGraph: ts.noop,
+        logStartResolveModule: ts.noop,
+        logStopResolveModule: ts.noop,
+        logStartParseSourceFile: ts.noop,
+        logStopParseSourceFile: ts.noop,
+        logStartReadFile: ts.noop,
+        logStopReadFile: ts.noop,
+        logStartBindFile: ts.noop,
+        logStopBindFile: ts.noop,
+        logStartScheduledOperation: ts.noop,
+        logStopScheduledOperation: ts.noop,
     };
-
     // Load optional module to enable Event Tracing for Windows
     // See https://github.com/microsoft/typescript-etw for more information
     let etwModule;
@@ -35,7 +34,6 @@ namespace ts {
     catch (e) {
         etwModule = undefined;
     }
-
     /** Performance logger that will generate ETW events if possible - check for `logEvent` member, as `etwModule` will be `{}` when browserified */
     export const perfLogger: PerfLogger = etwModule && etwModule.logEvent ? etwModule : nullLogger;
 }

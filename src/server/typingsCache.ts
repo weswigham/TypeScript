@@ -1,49 +1,44 @@
 namespace ts.server {
-    export interface InstallPackageOptionsWithProject extends InstallPackageOptions {
+    export interface InstallPackageOptionsWithProject extends ts.InstallPackageOptions {
         projectName: string;
-        projectRootPath: Path;
+        projectRootPath: ts.Path;
     }
-
     // for backwards-compatibility
     // eslint-disable-next-line @typescript-eslint/interface-name-prefix
     export interface ITypingsInstaller {
         isKnownTypesPackageName(name: string): boolean;
-        installPackage(options: InstallPackageOptionsWithProject): Promise<ApplyCodeActionCommandResult>;
-        enqueueInstallTypingsRequest(p: Project, typeAcquisition: TypeAcquisition, unresolvedImports: SortedReadonlyArray<string> | undefined): void;
-        attach(projectService: ProjectService): void;
-        onProjectClosed(p: Project): void;
+        installPackage(options: InstallPackageOptionsWithProject): Promise<ts.ApplyCodeActionCommandResult>;
+        enqueueInstallTypingsRequest(p: ts.server.Project, typeAcquisition: ts.TypeAcquisition, unresolvedImports: ts.SortedReadonlyArray<string> | undefined): void;
+        attach(projectService: ts.server.ProjectService): void;
+        onProjectClosed(p: ts.server.Project): void;
         readonly globalTypingsCacheLocation: string | undefined;
     }
-
     export const nullTypingsInstaller: ITypingsInstaller = {
-        isKnownTypesPackageName: returnFalse,
+        isKnownTypesPackageName: ts.returnFalse,
         // Should never be called because we never provide a types registry.
-        installPackage: notImplemented,
-        enqueueInstallTypingsRequest: noop,
-        attach: noop,
-        onProjectClosed: noop,
+        installPackage: ts.notImplemented,
+        enqueueInstallTypingsRequest: ts.noop,
+        attach: ts.noop,
+        onProjectClosed: ts.noop,
         globalTypingsCacheLocation: undefined! // TODO: GH#18217
     };
-
     interface TypingsCacheEntry {
-        readonly typeAcquisition: TypeAcquisition;
-        readonly compilerOptions: CompilerOptions;
-        readonly typings: SortedReadonlyArray<string>;
-        readonly unresolvedImports: SortedReadonlyArray<string> | undefined;
+        readonly typeAcquisition: ts.TypeAcquisition;
+        readonly compilerOptions: ts.CompilerOptions;
+        readonly typings: ts.SortedReadonlyArray<string>;
+        readonly unresolvedImports: ts.SortedReadonlyArray<string> | undefined;
         /* mainly useful for debugging */
         poisoned: boolean;
     }
-
     function setIsEqualTo(arr1: string[] | undefined, arr2: string[] | undefined): boolean {
         if (arr1 === arr2) {
             return true;
         }
-        if ((arr1 || emptyArray).length === 0 && (arr2 || emptyArray).length === 0) {
+        if ((arr1 || ts.server.emptyArray).length === 0 && (arr2 || ts.server.emptyArray).length === 0) {
             return true;
         }
-        const set: Map<boolean> = createMap<boolean>();
+        const set: ts.Map<boolean> = ts.createMap<boolean>();
         let unique = 0;
-
         for (const v of arr1!) {
             if (set.get(v) !== true) {
                 set.set(v, true);
@@ -62,47 +57,37 @@ namespace ts.server {
         }
         return unique === 0;
     }
-
-    function typeAcquisitionChanged(opt1: TypeAcquisition, opt2: TypeAcquisition): boolean {
+    function typeAcquisitionChanged(opt1: ts.TypeAcquisition, opt2: ts.TypeAcquisition): boolean {
         return opt1.enable !== opt2.enable ||
             !setIsEqualTo(opt1.include, opt2.include) ||
             !setIsEqualTo(opt1.exclude, opt2.exclude);
     }
-
-    function compilerOptionsChanged(opt1: CompilerOptions, opt2: CompilerOptions): boolean {
+    function compilerOptionsChanged(opt1: ts.CompilerOptions, opt2: ts.CompilerOptions): boolean {
         // TODO: add more relevant properties
         return opt1.allowJs !== opt2.allowJs;
     }
-
-    function unresolvedImportsChanged(imports1: SortedReadonlyArray<string> | undefined, imports2: SortedReadonlyArray<string> | undefined): boolean {
+    function unresolvedImportsChanged(imports1: ts.SortedReadonlyArray<string> | undefined, imports2: ts.SortedReadonlyArray<string> | undefined): boolean {
         if (imports1 === imports2) {
             return false;
         }
-        return !arrayIsEqualTo(imports1, imports2);
+        return !ts.arrayIsEqualTo(imports1, imports2);
     }
-
     /*@internal*/
     export class TypingsCache {
-        private readonly perProjectCache: Map<TypingsCacheEntry> = createMap<TypingsCacheEntry>();
-
+        private readonly perProjectCache: ts.Map<TypingsCacheEntry> = ts.createMap<TypingsCacheEntry>();
         constructor(private readonly installer: ITypingsInstaller) {
         }
-
         isKnownTypesPackageName(name: string): boolean {
             return this.installer.isKnownTypesPackageName(name);
         }
-
-        installPackage(options: InstallPackageOptionsWithProject): Promise<ApplyCodeActionCommandResult> {
+        installPackage(options: InstallPackageOptionsWithProject): Promise<ts.ApplyCodeActionCommandResult> {
             return this.installer.installPackage(options);
         }
-
-        enqueueInstallTypingsForProject(project: Project, unresolvedImports: SortedReadonlyArray<string> | undefined, forceRefresh: boolean) {
+        enqueueInstallTypingsForProject(project: ts.server.Project, unresolvedImports: ts.SortedReadonlyArray<string> | undefined, forceRefresh: boolean) {
             const typeAcquisition = project.getTypeAcquisition();
-
             if (!typeAcquisition || !typeAcquisition.enable) {
                 return;
             }
-
             const entry = this.perProjectCache.get(project.getProjectName());
             if (forceRefresh ||
                 !entry ||
@@ -114,7 +99,7 @@ namespace ts.server {
                 this.perProjectCache.set(project.getProjectName(), {
                     compilerOptions: project.getCompilationSettings(),
                     typeAcquisition,
-                    typings: entry ? entry.typings : emptyArray,
+                    typings: entry ? entry.typings : ts.server.emptyArray,
                     unresolvedImports,
                     poisoned: true
                 });
@@ -122,9 +107,8 @@ namespace ts.server {
                 this.installer.enqueueInstallTypingsRequest(project, typeAcquisition, unresolvedImports);
             }
         }
-
-        updateTypingsForProject(projectName: string, compilerOptions: CompilerOptions, typeAcquisition: TypeAcquisition, unresolvedImports: SortedReadonlyArray<string>, newTypings: string[]) {
-            const typings = sort(newTypings);
+        updateTypingsForProject(projectName: string, compilerOptions: ts.CompilerOptions, typeAcquisition: ts.TypeAcquisition, unresolvedImports: ts.SortedReadonlyArray<string>, newTypings: string[]) {
+            const typings = ts.sort(newTypings);
             this.perProjectCache.set(projectName, {
                 compilerOptions,
                 typeAcquisition,
@@ -132,10 +116,9 @@ namespace ts.server {
                 unresolvedImports,
                 poisoned: false
             });
-            return !typeAcquisition || !typeAcquisition.enable ? emptyArray : typings;
+            return !typeAcquisition || !typeAcquisition.enable ? ts.server.emptyArray : typings;
         }
-
-        onProjectClosed(project: Project) {
+        onProjectClosed(project: ts.server.Project) {
             this.perProjectCache.delete(project.getProjectName());
             this.installer.onProjectClosed(project);
         }

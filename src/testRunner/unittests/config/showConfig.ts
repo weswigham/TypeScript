@@ -3,56 +3,42 @@ namespace ts {
         function showTSConfigCorrectly(name: string, commandLinesArgs: string[], configJson?: object) {
             describe(name, () => {
                 const outputFileName = `showConfig/${name.replace(/[^a-z0-9\-./ ]/ig, "")}/tsconfig.json`;
-
                 it(`Correct output for ${outputFileName}`, () => {
                     const cwd = `/${name}`;
-                    const configPath = combinePaths(cwd, "tsconfig.json");
+                    const configPath = ts.combinePaths(cwd, "tsconfig.json");
                     const configContents = configJson ? JSON.stringify(configJson) : undefined;
-                    const configParseHost: ParseConfigFileHost = {
-                        fileExists: path =>
-                            comparePaths(getNormalizedAbsolutePath(path, cwd), configPath) === Comparison.EqualTo ? true : false,
+                    const configParseHost: ts.ParseConfigFileHost = {
+                        fileExists: path => ts.comparePaths(ts.getNormalizedAbsolutePath(path, cwd), configPath) === ts.Comparison.EqualTo ? true : false,
                         getCurrentDirectory() { return cwd; },
                         useCaseSensitiveFileNames: true,
                         onUnRecoverableConfigFileDiagnostic: d => {
-                            throw new Error(flattenDiagnosticMessageText(d.messageText, "\n"));
+                            throw new Error(ts.flattenDiagnosticMessageText(d.messageText, "\n"));
                         },
                         readDirectory() { return []; },
-                        readFile: path =>
-                            comparePaths(getNormalizedAbsolutePath(path, cwd), configPath) === Comparison.EqualTo ? configContents : undefined,
+                        readFile: path => ts.comparePaths(ts.getNormalizedAbsolutePath(path, cwd), configPath) === ts.Comparison.EqualTo ? configContents : undefined,
                     };
-                    let commandLine = parseCommandLine(commandLinesArgs);
+                    let commandLine = ts.parseCommandLine(commandLinesArgs);
                     if (commandLine.options.project) {
-                        const result = getParsedCommandLineOfConfigFile(commandLine.options.project, commandLine.options, configParseHost);
+                        const result = ts.getParsedCommandLineOfConfigFile(commandLine.options.project, commandLine.options, configParseHost);
                         if (result) {
                             commandLine = result;
                         }
                     }
-                    const initResult = convertToTSConfig(commandLine, configPath, configParseHost);
-
+                    const initResult = ts.convertToTSConfig(commandLine, configPath, configParseHost);
                     // eslint-disable-next-line no-null/no-null
                     Harness.Baseline.runBaseline(outputFileName, JSON.stringify(initResult, null, 4) + "\n");
                 });
             });
         }
-
         showTSConfigCorrectly("Default initialized TSConfig", ["--showConfig"]);
-
         showTSConfigCorrectly("Show TSConfig with files options", ["--showConfig", "file0.st", "file1.ts", "file2.ts"]);
-
         showTSConfigCorrectly("Show TSConfig with boolean value compiler options", ["--showConfig", "--noUnusedLocals"]);
-
         showTSConfigCorrectly("Show TSConfig with enum value compiler options", ["--showConfig", "--target", "es5", "--jsx", "react"]);
-
         showTSConfigCorrectly("Show TSConfig with list compiler options", ["--showConfig", "--types", "jquery,mocha"]);
-
         showTSConfigCorrectly("Show TSConfig with list compiler options with enum value", ["--showConfig", "--lib", "es5,es2015.core"]);
-
         showTSConfigCorrectly("Show TSConfig with incorrect compiler option", ["--showConfig", "--someNonExistOption"]);
-
         showTSConfigCorrectly("Show TSConfig with incorrect compiler option value", ["--showConfig", "--lib", "nonExistLib,es5,es2015.promise"]);
-
         showTSConfigCorrectly("Show TSConfig with advanced options", ["--showConfig", "--declaration", "--declarationDir", "lib", "--skipLibCheck", "--noErrorTruncation"]);
-
         showTSConfigCorrectly("Show TSConfig with compileOnSave and more", ["-p", "tsconfig.json"], {
             compilerOptions: {
                 esModuleInterop: true,
@@ -72,7 +58,6 @@ namespace ts {
                 { path: "./test" }
             ],
         });
-
         // Regression test for https://github.com/Microsoft/TypeScript/issues/28836
         showTSConfigCorrectly("Show TSConfig with paths and more", ["-p", "tsconfig.json"], {
             compilerOptions: {
@@ -101,7 +86,6 @@ namespace ts {
                 "./src/**/*"
             ]
         });
-
         showTSConfigCorrectly("Show TSConfig with watch options", ["-p", "tsconfig.json"], {
             watchOptions: {
                 watchFile: "DynamicPriorityPolling"
@@ -110,18 +94,16 @@ namespace ts {
                 "./src/**/*"
             ]
         });
-
         // Bulk validation of all option declarations
-        for (const option of optionDeclarations) {
+        for (const option of ts.optionDeclarations) {
             baselineOption(option, /*isCompilerOptions*/ true);
         }
-
-        for (const option of optionsForWatch) {
+        for (const option of ts.optionsForWatch) {
             baselineOption(option, /*isCompilerOptions*/ false);
         }
-
-        function baselineOption(option: CommandLineOption, isCompilerOptions: boolean) {
-            if (option.name === "project") return;
+        function baselineOption(option: ts.CommandLineOption, isCompilerOptions: boolean) {
+            if (option.name === "project")
+                return;
             let args: string[];
             let optionValue: object | undefined;
             switch (option.type) {
@@ -172,7 +154,8 @@ namespace ts {
                 }
                 default: {
                     const iterResult = option.type.keys().next();
-                    if (iterResult.done) return Debug.fail("Expected 'option.type' to have entries");
+                    if (iterResult.done)
+                        return ts.Debug.fail("Expected 'option.type' to have entries");
                     const val = iterResult.value;
                     if (option.isTSConfigOnly) {
                         args = ["-p", "tsconfig.json"];
@@ -184,7 +167,6 @@ namespace ts {
                     break;
                 }
             }
-
             const configObject = optionValue &&
                 (isCompilerOptions ? { compilerOptions: optionValue } : { watchOptions: optionValue });
             showTSConfigCorrectly(`Shows tsconfig for single option/${option.name}`, args, configObject);

@@ -29,22 +29,8 @@ namespace ts {
          * @param version Current version of the file. Only used if the file was not found
          * in the registry and a new one was created.
          */
-        acquireDocument(
-            fileName: string,
-            compilationSettings: CompilerOptions,
-            scriptSnapshot: IScriptSnapshot,
-            version: string,
-            scriptKind?: ScriptKind): SourceFile;
-
-        acquireDocumentWithKey(
-            fileName: string,
-            path: Path,
-            compilationSettings: CompilerOptions,
-            key: DocumentRegistryBucketKey,
-            scriptSnapshot: IScriptSnapshot,
-            version: string,
-            scriptKind?: ScriptKind): SourceFile;
-
+        acquireDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile;
+        acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile;
         /**
          * Request an updated version of an already existing SourceFile with a given fileName
          * and compilationSettings. The update will in-turn call updateLanguageServiceSourceFile
@@ -57,23 +43,9 @@ namespace ts {
          * @param scriptSnapshot Text of the file.
          * @param version Current version of the file.
          */
-        updateDocument(
-            fileName: string,
-            compilationSettings: CompilerOptions,
-            scriptSnapshot: IScriptSnapshot,
-            version: string,
-            scriptKind?: ScriptKind): SourceFile;
-
-        updateDocumentWithKey(
-            fileName: string,
-            path: Path,
-            compilationSettings: CompilerOptions,
-            key: DocumentRegistryBucketKey,
-            scriptSnapshot: IScriptSnapshot,
-            version: string,
-            scriptKind?: ScriptKind): SourceFile;
-
-        getKeyForCompilationSettings(settings: CompilerOptions): DocumentRegistryBucketKey;
+        updateDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile;
+        updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile;
+        getKeyForCompilationSettings(settings: ts.CompilerOptions): DocumentRegistryBucketKey;
         /**
          * Informs the DocumentRegistry that a file is not needed any longer.
          *
@@ -83,48 +55,43 @@ namespace ts {
          * @param fileName The name of the file to be released
          * @param compilationSettings The compilation settings used to acquire the file
          */
-        releaseDocument(fileName: string, compilationSettings: CompilerOptions): void;
-
-        releaseDocumentWithKey(path: Path, key: DocumentRegistryBucketKey): void;
-
+        releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions): void;
+        releaseDocumentWithKey(path: ts.Path, key: DocumentRegistryBucketKey): void;
         /*@internal*/
-        getLanguageServiceRefCounts(path: Path): [string, number | undefined][];
-
+        getLanguageServiceRefCounts(path: ts.Path): [string, number | undefined][];
         reportStats(): string;
     }
-
     /*@internal*/
     export interface ExternalDocumentCache {
-        setDocument(key: DocumentRegistryBucketKey, path: Path, sourceFile: SourceFile): void;
-        getDocument(key: DocumentRegistryBucketKey, path: Path): SourceFile | undefined;
+        setDocument(key: DocumentRegistryBucketKey, path: ts.Path, sourceFile: ts.SourceFile): void;
+        getDocument(key: DocumentRegistryBucketKey, path: ts.Path): ts.SourceFile | undefined;
     }
-
-    export type DocumentRegistryBucketKey = string & { __bucketKey: any };
-
+    export type DocumentRegistryBucketKey = string & {
+        __bucketKey: any;
+    };
     interface DocumentRegistryEntry {
-        sourceFile: SourceFile;
-
+        sourceFile: ts.SourceFile;
         // The number of language services that this source file is referenced in.   When no more
         // language services are referencing the file, then the file can be removed from the
         // registry.
         languageServiceRefCount: number;
     }
-
     export function createDocumentRegistry(useCaseSensitiveFileNames?: boolean, currentDirectory?: string): DocumentRegistry {
         return createDocumentRegistryInternal(useCaseSensitiveFileNames, currentDirectory);
     }
-
     /*@internal*/
     export function createDocumentRegistryInternal(useCaseSensitiveFileNames?: boolean, currentDirectory = "", externalCache?: ExternalDocumentCache): DocumentRegistry {
         // Maps from compiler setting target (ES3, ES5, etc.) to all the cached documents we have
         // for those settings.
-        const buckets = createMap<Map<DocumentRegistryEntry>>();
-        const getCanonicalFileName = createGetCanonicalFileName(!!useCaseSensitiveFileNames);
-
+        const buckets = ts.createMap<ts.Map<DocumentRegistryEntry>>();
+        const getCanonicalFileName = ts.createGetCanonicalFileName(!!useCaseSensitiveFileNames);
         function reportStats() {
-            const bucketInfoArray = arrayFrom(buckets.keys()).filter(name => name && name.charAt(0) === "_").map(name => {
+            const bucketInfoArray = ts.arrayFrom(buckets.keys()).filter(name => name && name.charAt(0) === "_").map(name => {
                 const entries = buckets.get(name)!;
-                const sourceFiles: { name: string; refCount: number; }[] = [];
+                const sourceFiles: {
+                    name: string;
+                    refCount: number;
+                }[] = [];
                 entries.forEach((entry, name) => {
                     sourceFiles.push({
                         name,
@@ -139,44 +106,30 @@ namespace ts {
             });
             return JSON.stringify(bucketInfoArray, undefined, 2);
         }
-
-        function acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: IScriptSnapshot, version: string, scriptKind?: ScriptKind): SourceFile {
-            const path = toPath(fileName, currentDirectory, getCanonicalFileName);
+        function acquireDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile {
+            const path = ts.toPath(fileName, currentDirectory, getCanonicalFileName);
             const key = getKeyForCompilationSettings(compilationSettings);
             return acquireDocumentWithKey(fileName, path, compilationSettings, key, scriptSnapshot, version, scriptKind);
         }
-
-        function acquireDocumentWithKey(fileName: string, path: Path, compilationSettings: CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: IScriptSnapshot, version: string, scriptKind?: ScriptKind): SourceFile {
+        function acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile {
             return acquireOrUpdateDocument(fileName, path, compilationSettings, key, scriptSnapshot, version, /*acquiring*/ true, scriptKind);
         }
-
-        function updateDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: IScriptSnapshot, version: string, scriptKind?: ScriptKind): SourceFile {
-            const path = toPath(fileName, currentDirectory, getCanonicalFileName);
+        function updateDocument(fileName: string, compilationSettings: ts.CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile {
+            const path = ts.toPath(fileName, currentDirectory, getCanonicalFileName);
             const key = getKeyForCompilationSettings(compilationSettings);
             return updateDocumentWithKey(fileName, path, compilationSettings, key, scriptSnapshot, version, scriptKind);
         }
-
-        function updateDocumentWithKey(fileName: string, path: Path, compilationSettings: CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: IScriptSnapshot, version: string, scriptKind?: ScriptKind): SourceFile {
+        function updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ts.ScriptKind): ts.SourceFile {
             return acquireOrUpdateDocument(fileName, path, compilationSettings, key, scriptSnapshot, version, /*acquiring*/ false, scriptKind);
         }
-
-        function acquireOrUpdateDocument(
-            fileName: string,
-            path: Path,
-            compilationSettings: CompilerOptions,
-            key: DocumentRegistryBucketKey,
-            scriptSnapshot: IScriptSnapshot,
-            version: string,
-            acquiring: boolean,
-            scriptKind?: ScriptKind): SourceFile {
-
-            const bucket = getOrUpdate<Map<DocumentRegistryEntry>>(buckets, key, createMap);
+        function acquireOrUpdateDocument(fileName: string, path: ts.Path, compilationSettings: ts.CompilerOptions, key: DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot, version: string, acquiring: boolean, scriptKind?: ts.ScriptKind): ts.SourceFile {
+            const bucket = ts.getOrUpdate<ts.Map<DocumentRegistryEntry>>(buckets, key, ts.createMap);
             let entry = bucket.get(path);
-            const scriptTarget = scriptKind === ScriptKind.JSON ? ScriptTarget.JSON : compilationSettings.target || ScriptTarget.ES5;
+            const scriptTarget = scriptKind === ts.ScriptKind.JSON ? ts.ScriptTarget.JSON : compilationSettings.target || ts.ScriptTarget.ES5;
             if (!entry && externalCache) {
                 const sourceFile = externalCache.getDocument(key, path);
                 if (sourceFile) {
-                    Debug.assert(acquiring);
+                    ts.Debug.assert(acquiring);
                     entry = {
                         sourceFile,
                         languageServiceRefCount: 0
@@ -184,10 +137,9 @@ namespace ts {
                     bucket.set(path, entry);
                 }
             }
-
             if (!entry) {
                 // Have never seen this file with these settings.  Create a new source file for it.
-                const sourceFile = createLanguageServiceSourceFile(fileName, scriptSnapshot, scriptTarget, version, /*setNodeParents*/ false, scriptKind);
+                const sourceFile = ts.createLanguageServiceSourceFile(fileName, scriptSnapshot, scriptTarget, version, /*setNodeParents*/ false, scriptKind);
                 if (externalCache) {
                     externalCache.setDocument(key, path, sourceFile);
                 }
@@ -202,13 +154,11 @@ namespace ts {
                 // the script snapshot.  If so, update it appropriately.  Otherwise, we can just
                 // return it as is.
                 if (entry.sourceFile.version !== version) {
-                    entry.sourceFile = updateLanguageServiceSourceFile(entry.sourceFile, scriptSnapshot, version,
-                        scriptSnapshot.getChangeRange(entry.sourceFile.scriptSnapshot!)); // TODO: GH#18217
+                    entry.sourceFile = ts.updateLanguageServiceSourceFile(entry.sourceFile, scriptSnapshot, version, scriptSnapshot.getChangeRange(entry.sourceFile.scriptSnapshot!)); // TODO: GH#18217
                     if (externalCache) {
                         externalCache.setDocument(key, path, entry.sourceFile);
                     }
                 }
-
                 // If we're acquiring, then this is the first time this LS is asking for this document.
                 // Increase our ref count so we know there's another LS using the document.  If we're
                 // not acquiring, then that means the LS is 'updating' the file instead, and that means
@@ -218,35 +168,29 @@ namespace ts {
                     entry.languageServiceRefCount++;
                 }
             }
-            Debug.assert(entry.languageServiceRefCount !== 0);
-
+            ts.Debug.assert(entry.languageServiceRefCount !== 0);
             return entry.sourceFile;
         }
-
-        function releaseDocument(fileName: string, compilationSettings: CompilerOptions): void {
-            const path = toPath(fileName, currentDirectory, getCanonicalFileName);
+        function releaseDocument(fileName: string, compilationSettings: ts.CompilerOptions): void {
+            const path = ts.toPath(fileName, currentDirectory, getCanonicalFileName);
             const key = getKeyForCompilationSettings(compilationSettings);
             return releaseDocumentWithKey(path, key);
         }
-
-        function releaseDocumentWithKey(path: Path, key: DocumentRegistryBucketKey): void {
-            const bucket = Debug.assertDefined(buckets.get(key));
+        function releaseDocumentWithKey(path: ts.Path, key: DocumentRegistryBucketKey): void {
+            const bucket = ts.Debug.assertDefined(buckets.get(key));
             const entry = bucket.get(path)!;
             entry.languageServiceRefCount--;
-
-            Debug.assert(entry.languageServiceRefCount >= 0);
+            ts.Debug.assert(entry.languageServiceRefCount >= 0);
             if (entry.languageServiceRefCount === 0) {
                 bucket.delete(path);
             }
         }
-
-        function getLanguageServiceRefCounts(path: Path) {
-            return arrayFrom(buckets.entries(), ([key, bucket]): [string, number | undefined] => {
+        function getLanguageServiceRefCounts(path: ts.Path) {
+            return ts.arrayFrom(buckets.entries(), ([key, bucket]): [string, number | undefined] => {
                 const entry = bucket.get(path);
                 return [key, entry && entry.languageServiceRefCount];
             });
         }
-
         return {
             acquireDocument,
             acquireDocumentWithKey,
@@ -259,8 +203,7 @@ namespace ts {
             getKeyForCompilationSettings
         };
     }
-
-    function getKeyForCompilationSettings(settings: CompilerOptions): DocumentRegistryBucketKey {
-        return sourceFileAffectingCompilerOptions.map(option => getCompilerOptionValue(settings, option)).join("|") as DocumentRegistryBucketKey;
+    function getKeyForCompilationSettings(settings: ts.CompilerOptions): DocumentRegistryBucketKey {
+        return ts.sourceFileAffectingCompilerOptions.map(option => ts.getCompilerOptionValue(settings, option)).join("|") as DocumentRegistryBucketKey;
     }
 }

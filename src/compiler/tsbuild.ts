@@ -22,26 +22,12 @@ namespace ts {
         UpstreamBlocked,
         ComputingUpstream,
         TsVersionOutputOfDate,
-
         /**
          * Projects with no outputs (i.e. "solution" files)
          */
         ContainerOnly
     }
-
-    export type UpToDateStatus =
-        | Status.Unbuildable
-        | Status.UpToDate
-        | Status.OutOfDateWithPrepend
-        | Status.OutputMissing
-        | Status.OutOfDateWithSelf
-        | Status.OutOfDateWithUpstream
-        | Status.UpstreamOutOfDate
-        | Status.UpstreamBlocked
-        | Status.ComputingUpstream
-        | Status.TsVersionOutOfDate
-        | Status.ContainerOnly;
-
+    export type UpToDateStatus = Status.Unbuildable | Status.UpToDate | Status.OutOfDateWithPrepend | Status.OutputMissing | Status.OutOfDateWithSelf | Status.OutOfDateWithUpstream | Status.UpstreamOutOfDate | Status.UpstreamBlocked | Status.ComputingUpstream | Status.TsVersionOutOfDate | Status.ContainerOnly;
     export namespace Status {
         /**
          * The project can't be built at all in its current state. For example,
@@ -51,14 +37,12 @@ namespace ts {
             type: UpToDateStatusType.Unbuildable;
             reason: string;
         }
-
         /**
          * This project doesn't have any outputs, so "is it up to date" is a meaningless question.
          */
         export interface ContainerOnly {
             type: UpToDateStatusType.ContainerOnly;
         }
-
         /**
          * The project is up to date with respect to its inputs.
          * We track what the newest input file is.
@@ -72,7 +56,6 @@ namespace ts {
             newestOutputFileName?: string;
             oldestOutputFileName: string;
         }
-
         /**
          * The project is up to date with respect to its inputs except for prepend output changed (no declaration file change in prepend).
          */
@@ -81,7 +64,6 @@ namespace ts {
             outOfDateOutputFileName: string;
             newerProjectName: string;
         }
-
         /**
          * One or more of the outputs of the project does not exist.
          */
@@ -92,7 +74,6 @@ namespace ts {
              */
             missingOutputFileName: string;
         }
-
         /**
          * One or more of the project's outputs is older than its newest input.
          */
@@ -101,7 +82,6 @@ namespace ts {
             outOfDateOutputFileName: string;
             newerInputFileName: string;
         }
-
         /**
          * This project depends on an out-of-date project, so shouldn't be built yet
          */
@@ -109,7 +89,6 @@ namespace ts {
             type: UpToDateStatusType.UpstreamOutOfDate;
             upstreamProjectName: string;
         }
-
         /**
          * This project depends an upstream project with build errors
          */
@@ -118,19 +97,16 @@ namespace ts {
             upstreamProjectName: string;
             upstreamProjectBlocked: boolean;
         }
-
         /**
          *  Computing status of upstream projects referenced
          */
         export interface ComputingUpstream {
             type: UpToDateStatusType.ComputingUpstream;
         }
-
         export interface TsVersionOutOfDate {
             type: UpToDateStatusType.TsVersionOutputOfDate;
             version: string;
         }
-
         /**
          * One or more of the project's outputs is older than the newest output of
          * an upstream project.
@@ -141,12 +117,10 @@ namespace ts {
             newerProjectName: string;
         }
     }
-
-    export function resolveConfigFileProjectName(project: string): ResolvedConfigFileName {
-        if (fileExtensionIs(project, Extension.Json)) {
-            return project as ResolvedConfigFileName;
+    export function resolveConfigFileProjectName(project: string): ts.ResolvedConfigFileName {
+        if (ts.fileExtensionIs(project, ts.Extension.Json)) {
+            return project as ts.ResolvedConfigFileName;
         }
-
-        return combinePaths(project, "tsconfig.json") as ResolvedConfigFileName;
+        return ts.combinePaths(project, "tsconfig.json") as ts.ResolvedConfigFileName;
     }
 }

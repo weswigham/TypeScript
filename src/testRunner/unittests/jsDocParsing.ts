@@ -3,21 +3,17 @@ namespace ts {
         describe("TypeExpressions", () => {
             function parsesCorrectly(name: string, content: string) {
                 it(name, () => {
-                    const typeAndDiagnostics = parseJSDocTypeExpressionForTests(content);
+                    const typeAndDiagnostics = ts.parseJSDocTypeExpressionForTests(content);
                     assert.isTrue(typeAndDiagnostics && typeAndDiagnostics.diagnostics.length === 0, "no errors issued");
-
-                    Harness.Baseline.runBaseline("JSDocParsing/TypeExpressions.parsesCorrectly." + name + ".json",
-                        Utils.sourceFileToJSON(typeAndDiagnostics!.jsDocTypeExpression.type));
+                    Harness.Baseline.runBaseline("JSDocParsing/TypeExpressions.parsesCorrectly." + name + ".json", Utils.sourceFileToJSON(typeAndDiagnostics!.jsDocTypeExpression.type));
                 });
             }
-
             function parsesIncorrectly(name: string, content: string) {
                 it(name, () => {
-                    const type = parseJSDocTypeExpressionForTests(content);
+                    const type = ts.parseJSDocTypeExpressionForTests(content);
                     assert.isTrue(!type || type.diagnostics.length > 0);
                 });
             }
-
             describe("parseCorrectly", () => {
                 parsesCorrectly("unknownType", "{?}");
                 parsesCorrectly("allType", "{*}");
@@ -68,7 +64,6 @@ namespace ts {
                 parsesCorrectly("typeArgumentsNotFollowingDot", "{a<>}");
                 parsesCorrectly("functionTypeWithTrailingComma", "{function(a,)}");
             });
-
             describe("parsesIncorrectly", () => {
                 parsesIncorrectly("emptyType", "{}");
                 parsesIncorrectly("unionTypeWithTrailingBar", "{(a|)}");
@@ -84,240 +79,150 @@ namespace ts {
                 parsesIncorrectly("tupleTypeWithLeadingComma", "{[,number]}");
             });
         });
-
         describe("DocComments", () => {
             function parsesCorrectly(name: string, content: string) {
                 it(name, () => {
-                    const comment = parseIsolatedJSDocComment(content)!;
+                    const comment = (ts.parseIsolatedJSDocComment(content)!);
                     if (!comment) {
-                        Debug.fail("Comment failed to parse entirely");
+                        ts.Debug.fail("Comment failed to parse entirely");
                     }
                     if (comment.diagnostics.length > 0) {
-                        Debug.fail("Comment has at least one diagnostic: " + comment.diagnostics[0].messageText);
+                        ts.Debug.fail("Comment has at least one diagnostic: " + comment.diagnostics[0].messageText);
                     }
-
-                    Harness.Baseline.runBaseline("JSDocParsing/DocComments.parsesCorrectly." + name + ".json",
-                        JSON.stringify(comment.jsDoc,
-                            (_, v) => v && v.pos !== undefined ? JSON.parse(Utils.sourceFileToJSON(v)) : v, 4));
+                    Harness.Baseline.runBaseline("JSDocParsing/DocComments.parsesCorrectly." + name + ".json", JSON.stringify(comment.jsDoc, (_, v) => v && v.pos !== undefined ? JSON.parse(Utils.sourceFileToJSON(v)) : v, 4));
                 });
             }
-
             function parsesIncorrectly(name: string, content: string) {
                 it(name, () => {
-                    const type = parseIsolatedJSDocComment(content);
+                    const type = ts.parseIsolatedJSDocComment(content);
                     assert.isTrue(!type || type.diagnostics.length > 0);
                 });
             }
-
             describe("parsesIncorrectly", () => {
-                parsesIncorrectly("multipleTypes",
-                    `/**
+                parsesIncorrectly("multipleTypes", `/**
   * @type {number}
   * @type {string}
   */`);
-                parsesIncorrectly("multipleReturnTypes",
-                    `/**
+                parsesIncorrectly("multipleReturnTypes", `/**
   * @return {number}
   * @return {string}
   */`);
-                parsesIncorrectly("noTypeParameters",
-                    `/**
+                parsesIncorrectly("noTypeParameters", `/**
   * @template
   */`);
-                parsesIncorrectly("trailingTypeParameterComma",
-                    `/**
+                parsesIncorrectly("trailingTypeParameterComma", `/**
   * @template T,
   */`);
-                parsesIncorrectly("paramWithoutName",
-                    `/**
+                parsesIncorrectly("paramWithoutName", `/**
   * @param {number}
   */`);
-                parsesIncorrectly("paramWithoutTypeOrName",
-                    `/**
+                parsesIncorrectly("paramWithoutTypeOrName", `/**
   * @param
   */`);
-
-                parsesIncorrectly("noType",
-                    `/**
+                parsesIncorrectly("noType", `/**
 * @type
 */`);
-
-                parsesIncorrectly("@augments with no type",
-                    `/**
+                parsesIncorrectly("@augments with no type", `/**
  * @augments
  */`);
             });
-
             describe("parsesCorrectly", () => {
                 parsesCorrectly("threeAsterisks", "/*** */");
                 parsesCorrectly("emptyComment", "/***/");
-                parsesCorrectly("noLeadingAsterisk",
-                    `/**
+                parsesCorrectly("noLeadingAsterisk", `/**
     @type {number}
   */`);
-
-
-                parsesCorrectly("noReturnType",
-                    `/**
+                parsesCorrectly("noReturnType", `/**
   * @return
   */`);
-
-                parsesCorrectly("leadingAsterisk",
-                    `/**
+                parsesCorrectly("leadingAsterisk", `/**
   * @type {number}
   */`);
-
                 parsesCorrectly("asteriskAfterPreamble", "/** * @type {number} */");
-
-                parsesCorrectly("typeTag",
-                    `/**
+                parsesCorrectly("typeTag", `/**
   * @type {number}
   */`);
-
-
-                parsesCorrectly("returnTag1",
-                    `/**
+                parsesCorrectly("returnTag1", `/**
   * @return {number}
   */`);
-
-
-                parsesCorrectly("returnTag2",
-                    `/**
+                parsesCorrectly("returnTag2", `/**
   * @return {number} Description text follows
   */`);
-
-
-                parsesCorrectly("returnsTag1",
-                    `/**
+                parsesCorrectly("returnsTag1", `/**
   * @returns {number}
   */`);
-
-
-                parsesCorrectly("oneParamTag",
-                    `/**
+                parsesCorrectly("oneParamTag", `/**
   * @param {number} name1
   */`);
-
-
-                parsesCorrectly("twoParamTag2",
-                    `/**
+                parsesCorrectly("twoParamTag2", `/**
   * @param {number} name1
   * @param {number} name2
   */`);
-
-
-                parsesCorrectly("paramTag1",
-                    `/**
+                parsesCorrectly("paramTag1", `/**
   * @param {number} name1 Description text follows
   */`);
-
-
-                parsesCorrectly("paramTagBracketedName1",
-                    `/**
+                parsesCorrectly("paramTagBracketedName1", `/**
   * @param {number} [name1] Description text follows
   */`);
-
-
-                parsesCorrectly("paramTagBracketedName2",
-                    `/**
+                parsesCorrectly("paramTagBracketedName2", `/**
   * @param {number} [ name1 = 1] Description text follows
   */`);
-
-
-                parsesCorrectly("twoParamTagOnSameLine",
-                    `/**
+                parsesCorrectly("twoParamTagOnSameLine", `/**
   * @param {number} name1 @param {number} name2
   */`);
-
-
-                parsesCorrectly("paramTagNameThenType1",
-                    `/**
+                parsesCorrectly("paramTagNameThenType1", `/**
   * @param name1 {number}
   */`);
-
-
-                parsesCorrectly("paramTagNameThenType2",
-                    `/**
+                parsesCorrectly("paramTagNameThenType2", `/**
   * @param name1 {number} Description
   */`);
-
-
-                parsesCorrectly("argSynonymForParamTag",
-                    `/**
+                parsesCorrectly("argSynonymForParamTag", `/**
   * @arg {number} name1 Description
   */`);
-
-
-                parsesCorrectly("argumentSynonymForParamTag",
-                    `/**
+                parsesCorrectly("argumentSynonymForParamTag", `/**
   * @argument {number} name1 Description
   */`);
-
-
-                parsesCorrectly("templateTag",
-                    `/**
+                parsesCorrectly("templateTag", `/**
   * @template T
   */`);
-
-
-                parsesCorrectly("templateTag2",
-                    `/**
+                parsesCorrectly("templateTag2", `/**
   * @template K,V
   */`);
-
-
-                parsesCorrectly("templateTag3",
-                    `/**
+                parsesCorrectly("templateTag3", `/**
   * @template K ,V
   */`);
-
-
-                parsesCorrectly("templateTag4",
-                    `/**
+                parsesCorrectly("templateTag4", `/**
   * @template K, V
   */`);
-
-
-                parsesCorrectly("templateTag5",
-                    `/**
+                parsesCorrectly("templateTag5", `/**
   * @template K , V
   */`);
-
-                parsesCorrectly("templateTag6",
-                    `/**
+                parsesCorrectly("templateTag6", `/**
   * @template K , V Description of type parameters.
   */`);
-
-                parsesCorrectly("paramWithoutType",
-                    `/**
+                parsesCorrectly("paramWithoutType", `/**
   * @param foo
   */`);
-                parsesCorrectly("typedefTagWithChildrenTags",
-                    `/**
+                parsesCorrectly("typedefTagWithChildrenTags", `/**
   * @typedef People
   * @type {Object}
   * @property {number} age
   * @property {string} name
   */`);
-                parsesCorrectly("less-than and greater-than characters",
-                    `/**
+                parsesCorrectly("less-than and greater-than characters", `/**
  * @param x hi
 < > still part of the previous comment
  */`);
-
-                parsesCorrectly("Nested @param tags",
-                    `/**
+                parsesCorrectly("Nested @param tags", `/**
 * @param {object} o Doc doc
 * @param {string} o.f Doc for f
 */`);
-                parsesCorrectly("@link tags",
-                    `/**
+                parsesCorrectly("@link tags", `/**
  * {@link first link}
  * Inside {@link link text} thing
  * @see {@link second link text} and {@link Foo|a foo} as well.
  */`);
-                parsesCorrectly("authorTag",
-                    `/**
+                parsesCorrectly("authorTag", `/**
  * @author John Doe <john.doe@example.com>
  * @author John Doe <john.doe@example.com> unexpected comment
  */`);
@@ -325,21 +230,21 @@ namespace ts {
         });
         describe("getFirstToken", () => {
             it("gets jsdoc", () => {
-                const root = createSourceFile("foo.ts", "/** comment */var a = true;", ScriptTarget.ES5, /*setParentNodes*/ true);
+                const root = ts.createSourceFile("foo.ts", "/** comment */var a = true;", ts.ScriptTarget.ES5, /*setParentNodes*/ true);
                 assert.isDefined(root);
-                assert.equal(root.kind, SyntaxKind.SourceFile);
+                assert.equal(root.kind, ts.SyntaxKind.SourceFile);
                 const first = root.getFirstToken();
                 assert.isDefined(first);
-                assert.equal(first!.kind, SyntaxKind.VarKeyword);
+                assert.equal(first!.kind, ts.SyntaxKind.VarKeyword);
             });
         });
         describe("getLastToken", () => {
             it("gets jsdoc", () => {
-                const root = createSourceFile("foo.ts", "var a = true;/** comment */", ScriptTarget.ES5, /*setParentNodes*/ true);
+                const root = ts.createSourceFile("foo.ts", "var a = true;/** comment */", ts.ScriptTarget.ES5, /*setParentNodes*/ true);
                 assert.isDefined(root);
                 const last = root.getLastToken();
                 assert.isDefined(last);
-                assert.equal(last!.kind, SyntaxKind.EndOfFileToken);
+                assert.equal(last!.kind, ts.SyntaxKind.EndOfFileToken);
             });
         });
     });

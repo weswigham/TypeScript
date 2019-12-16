@@ -2,115 +2,107 @@ namespace ts {
     const caseInsensitiveBasePath = "c:/dev/";
     const caseInsensitiveTsconfigPath = "c:/dev/tsconfig.json";
     const caseInsensitiveHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ true, { cwd: caseInsensitiveBasePath, files: {
-        "c:/dev/a.ts": "",
-        "c:/dev/a.d.ts": "",
-        "c:/dev/a.js": "",
-        "c:/dev/b.ts": "",
-        "c:/dev/b.js": "",
-        "c:/dev/c.d.ts": "",
-        "c:/dev/z/a.ts": "",
-        "c:/dev/z/abz.ts": "",
-        "c:/dev/z/aba.ts": "",
-        "c:/dev/z/b.ts": "",
-        "c:/dev/z/bbz.ts": "",
-        "c:/dev/z/bba.ts": "",
-        "c:/dev/x/a.ts": "",
-        "c:/dev/x/aa.ts": "",
-        "c:/dev/x/b.ts": "",
-        "c:/dev/x/y/a.ts": "",
-        "c:/dev/x/y/b.ts": "",
-        "c:/dev/js/a.js": "",
-        "c:/dev/js/b.js": "",
-        "c:/dev/js/d.min.js": "",
-        "c:/dev/js/ab.min.js": "",
-        "c:/ext/ext.ts": "",
-        "c:/ext/b/a..b.ts": "",
-    }}));
-
+            "c:/dev/a.ts": "",
+            "c:/dev/a.d.ts": "",
+            "c:/dev/a.js": "",
+            "c:/dev/b.ts": "",
+            "c:/dev/b.js": "",
+            "c:/dev/c.d.ts": "",
+            "c:/dev/z/a.ts": "",
+            "c:/dev/z/abz.ts": "",
+            "c:/dev/z/aba.ts": "",
+            "c:/dev/z/b.ts": "",
+            "c:/dev/z/bbz.ts": "",
+            "c:/dev/z/bba.ts": "",
+            "c:/dev/x/a.ts": "",
+            "c:/dev/x/aa.ts": "",
+            "c:/dev/x/b.ts": "",
+            "c:/dev/x/y/a.ts": "",
+            "c:/dev/x/y/b.ts": "",
+            "c:/dev/js/a.js": "",
+            "c:/dev/js/b.js": "",
+            "c:/dev/js/d.min.js": "",
+            "c:/dev/js/ab.min.js": "",
+            "c:/ext/ext.ts": "",
+            "c:/ext/b/a..b.ts": "",
+        } }));
     const caseSensitiveBasePath = "/dev/";
     const caseSensitiveHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ false, { cwd: caseSensitiveBasePath, files: {
-        "/dev/a.ts": "",
-        "/dev/a.d.ts": "",
-        "/dev/a.js": "",
-        "/dev/b.ts": "",
-        "/dev/b.js": "",
-        "/dev/A.ts": "",
-        "/dev/B.ts": "",
-        "/dev/c.d.ts": "",
-        "/dev/z/a.ts": "",
-        "/dev/z/abz.ts": "",
-        "/dev/z/aba.ts": "",
-        "/dev/z/b.ts": "",
-        "/dev/z/bbz.ts": "",
-        "/dev/z/bba.ts": "",
-        "/dev/x/a.ts": "",
-        "/dev/x/b.ts": "",
-        "/dev/x/y/a.ts": "",
-        "/dev/x/y/b.ts": "",
-        "/dev/q/a/c/b/d.ts": "",
-        "/dev/js/a.js": "",
-        "/dev/js/b.js": "",
-    }}));
-
+            "/dev/a.ts": "",
+            "/dev/a.d.ts": "",
+            "/dev/a.js": "",
+            "/dev/b.ts": "",
+            "/dev/b.js": "",
+            "/dev/A.ts": "",
+            "/dev/B.ts": "",
+            "/dev/c.d.ts": "",
+            "/dev/z/a.ts": "",
+            "/dev/z/abz.ts": "",
+            "/dev/z/aba.ts": "",
+            "/dev/z/b.ts": "",
+            "/dev/z/bbz.ts": "",
+            "/dev/z/bba.ts": "",
+            "/dev/x/a.ts": "",
+            "/dev/x/b.ts": "",
+            "/dev/x/y/a.ts": "",
+            "/dev/x/y/b.ts": "",
+            "/dev/q/a/c/b/d.ts": "",
+            "/dev/js/a.js": "",
+            "/dev/js/b.js": "",
+        } }));
     const caseInsensitiveMixedExtensionHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ true, { cwd: caseInsensitiveBasePath, files: {
-        "c:/dev/a.ts": "",
-        "c:/dev/a.d.ts": "",
-        "c:/dev/a.js": "",
-        "c:/dev/b.tsx": "",
-        "c:/dev/b.d.ts": "",
-        "c:/dev/b.jsx": "",
-        "c:/dev/c.tsx": "",
-        "c:/dev/c.js": "",
-        "c:/dev/d.js": "",
-        "c:/dev/e.jsx": "",
-        "c:/dev/f.other": "",
-    }}));
-
+            "c:/dev/a.ts": "",
+            "c:/dev/a.d.ts": "",
+            "c:/dev/a.js": "",
+            "c:/dev/b.tsx": "",
+            "c:/dev/b.d.ts": "",
+            "c:/dev/b.jsx": "",
+            "c:/dev/c.tsx": "",
+            "c:/dev/c.js": "",
+            "c:/dev/d.js": "",
+            "c:/dev/e.jsx": "",
+            "c:/dev/f.other": "",
+        } }));
     const caseInsensitiveCommonFoldersHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ true, { cwd: caseInsensitiveBasePath, files: {
-        "c:/dev/a.ts": "",
-        "c:/dev/a.d.ts": "",
-        "c:/dev/a.js": "",
-        "c:/dev/b.ts": "",
-        "c:/dev/x/a.ts": "",
-        "c:/dev/node_modules/a.ts": "",
-        "c:/dev/bower_components/a.ts": "",
-        "c:/dev/jspm_packages/a.ts": "",
-    }}));
-
+            "c:/dev/a.ts": "",
+            "c:/dev/a.d.ts": "",
+            "c:/dev/a.js": "",
+            "c:/dev/b.ts": "",
+            "c:/dev/x/a.ts": "",
+            "c:/dev/node_modules/a.ts": "",
+            "c:/dev/bower_components/a.ts": "",
+            "c:/dev/jspm_packages/a.ts": "",
+        } }));
     const caseInsensitiveDottedFoldersHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ true, { cwd: caseInsensitiveBasePath, files: {
-        "c:/dev/x/d.ts": "",
-        "c:/dev/x/y/d.ts": "",
-        "c:/dev/x/y/.e.ts": "",
-        "c:/dev/x/.y/a.ts": "",
-        "c:/dev/.z/.b.ts": "",
-        "c:/dev/.z/c.ts": "",
-        "c:/dev/w/.u/e.ts": "",
-        "c:/dev/g.min.js/.g/g.ts": "",
-    }}));
-
+            "c:/dev/x/d.ts": "",
+            "c:/dev/x/y/d.ts": "",
+            "c:/dev/x/y/.e.ts": "",
+            "c:/dev/x/.y/a.ts": "",
+            "c:/dev/.z/.b.ts": "",
+            "c:/dev/.z/c.ts": "",
+            "c:/dev/w/.u/e.ts": "",
+            "c:/dev/g.min.js/.g/g.ts": "",
+        } }));
     const caseInsensitiveOrderingDiffersWithCaseHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ true, { cwd: caseInsensitiveBasePath, files: {
-        "c:/dev/xylophone.ts": "",
-        "c:/dev/Yosemite.ts": "",
-        "c:/dev/zebra.ts": "",
-    }}));
-
+            "c:/dev/xylophone.ts": "",
+            "c:/dev/Yosemite.ts": "",
+            "c:/dev/zebra.ts": "",
+        } }));
     const caseSensitiveOrderingDiffersWithCaseHost = new fakes.ParseConfigHost(new vfs.FileSystem(/*ignoreCase*/ false, { cwd: caseSensitiveBasePath, files: {
-        "/dev/xylophone.ts": "",
-        "/dev/Yosemite.ts": "",
-        "/dev/zebra.ts": "",
-    }}));
-
-    function assertParsed(actual: ParsedCommandLine, expected: ParsedCommandLine): void {
+            "/dev/xylophone.ts": "",
+            "/dev/Yosemite.ts": "",
+            "/dev/zebra.ts": "",
+        } }));
+    function assertParsed(actual: ts.ParsedCommandLine, expected: ts.ParsedCommandLine): void {
         assert.deepEqual(actual.fileNames, expected.fileNames);
         assert.deepEqual(actual.wildcardDirectories, expected.wildcardDirectories);
         assert.deepEqual(actual.errors, expected.errors);
     }
-
-    function validateMatches(expected: ParsedCommandLine, json: any, host: ParseConfigHost, basePath: string, existingOptions?: CompilerOptions, configFileName?: string, resolutionStack?: Path[]) {
+    function validateMatches(expected: ts.ParsedCommandLine, json: any, host: ts.ParseConfigHost, basePath: string, existingOptions?: ts.CompilerOptions, configFileName?: string, resolutionStack?: ts.Path[]) {
         {
             const jsonText = JSON.stringify(json);
-            const result = parseJsonText(caseInsensitiveTsconfigPath, jsonText);
-            const actual = parseJsonSourceFileConfigFileContent(result, host, basePath, existingOptions, configFileName, resolutionStack);
+            const result = ts.parseJsonText(caseInsensitiveTsconfigPath, jsonText);
+            const actual = ts.parseJsonSourceFileConfigFileContent(result, host, basePath, existingOptions, configFileName, resolutionStack);
             for (const error of expected.errors) {
                 if (error.file) {
                     error.file = result;
@@ -119,8 +111,8 @@ namespace ts {
             assertParsed(actual, expected);
         }
         {
-            const actual = parseJsonConfigFileContent(json, host, basePath, existingOptions, configFileName, resolutionStack);
-            expected.errors = expected.errors.map((error): Diagnostic => ({
+            const actual = ts.parseJsonConfigFileContent(json, host, basePath, existingOptions, configFileName, resolutionStack);
+            expected.errors = expected.errors.map((error): ts.Diagnostic => ({
                 category: error.category,
                 code: error.code,
                 file: undefined,
@@ -132,21 +124,19 @@ namespace ts {
             assertParsed(actual, expected);
         }
     }
-
-    function createDiagnosticForConfigFile(json: any, start: number, length: number, diagnosticMessage: DiagnosticMessage, arg0: string) {
+    function createDiagnosticForConfigFile(json: any, start: number, length: number, diagnosticMessage: ts.DiagnosticMessage, arg0: string) {
         const text = JSON.stringify(json);
-        const file = <SourceFile>{
+        const file = (<ts.SourceFile>{
             fileName: caseInsensitiveTsconfigPath,
-            kind: SyntaxKind.SourceFile,
+            kind: ts.SyntaxKind.SourceFile,
             text
-        };
-        return createFileDiagnostic(file, start, length, diagnosticMessage, arg0);
+        });
+        return ts.createFileDiagnostic(file, start, length, diagnosticMessage, arg0);
     }
-
     describe("unittests:: config:: matchFiles", () => {
         it("with defaults", () => {
             const json = {};
-            const expected: ParsedCommandLine = {
+            const expected: ts.ParsedCommandLine = {
                 options: {},
                 errors: [],
                 fileNames: [
@@ -155,12 +145,11 @@ namespace ts {
                     "c:/dev/x/a.ts"
                 ],
                 wildcardDirectories: {
-                    "c:/dev": WatchDirectoryFlags.Recursive
+                    "c:/dev": ts.WatchDirectoryFlags.Recursive
                 },
             };
             validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
         });
-
         describe("with literal file list", () => {
             it("without exclusions", () => {
                 const json = {
@@ -169,7 +158,7 @@ namespace ts {
                         "b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -187,7 +176,7 @@ namespace ts {
                         "x.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -208,7 +197,7 @@ namespace ts {
                         "b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -220,7 +209,6 @@ namespace ts {
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
             });
         });
-
         describe("with literal include list", () => {
             it("without exclusions", () => {
                 const json = {
@@ -229,7 +217,7 @@ namespace ts {
                         "b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -247,11 +235,10 @@ namespace ts {
                         "b.js"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [
-                        createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                            caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                        ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                     ],
                     fileNames: [],
                     wildcardDirectories: {},
@@ -265,11 +252,10 @@ namespace ts {
                         "x.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [
-                        createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                            caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                        ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                     ],
                     fileNames: [],
                     wildcardDirectories: {},
@@ -286,7 +272,7 @@ namespace ts {
                         "b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -312,7 +298,7 @@ namespace ts {
                         "*/b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -337,7 +323,7 @@ namespace ts {
                         "**/b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -358,7 +344,7 @@ namespace ts {
                         "**/b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -378,7 +364,7 @@ namespace ts {
                         "jspm_packages/a.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -406,7 +392,7 @@ namespace ts {
                         "b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -428,7 +414,7 @@ namespace ts {
                         "jspm_packages/a.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -443,7 +429,6 @@ namespace ts {
                 validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
             });
         });
-
         describe("with wildcard include list", () => {
             it("is sorted in include order, then in alphabetical order", () => {
                 const json = {
@@ -452,7 +437,7 @@ namespace ts {
                         "x/*.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -467,8 +452,8 @@ namespace ts {
                         "c:/dev/x/b.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/z": WatchDirectoryFlags.None,
-                        "c:/dev/x": WatchDirectoryFlags.None
+                        "c:/dev/z": ts.WatchDirectoryFlags.None,
+                        "c:/dev/x": ts.WatchDirectoryFlags.None
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -479,7 +464,7 @@ namespace ts {
                         "*.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -488,7 +473,7 @@ namespace ts {
                         "c:/dev/c.d.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.None
+                        "c:/dev": ts.WatchDirectoryFlags.None
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -499,7 +484,7 @@ namespace ts {
                         "*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -508,7 +493,7 @@ namespace ts {
                         "c:/dev/c.d.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.None
+                        "c:/dev": ts.WatchDirectoryFlags.None
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -519,7 +504,7 @@ namespace ts {
                         "x/?.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -527,7 +512,7 @@ namespace ts {
                         "c:/dev/x/b.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/x": WatchDirectoryFlags.None
+                        "c:/dev/x": ts.WatchDirectoryFlags.None
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -538,7 +523,7 @@ namespace ts {
                         "**/a.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -548,7 +533,7 @@ namespace ts {
                         "c:/dev/z/a.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -561,7 +546,7 @@ namespace ts {
                         "z/**/a.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -570,8 +555,8 @@ namespace ts {
                         "c:/dev/z/a.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/x": WatchDirectoryFlags.Recursive,
-                        "c:/dev/z": WatchDirectoryFlags.Recursive
+                        "c:/dev/x": ts.WatchDirectoryFlags.Recursive,
+                        "c:/dev/z": ts.WatchDirectoryFlags.Recursive
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -582,14 +567,14 @@ namespace ts {
                         "**/A.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
                         "/dev/A.ts"
                     ],
                     wildcardDirectories: {
-                        "/dev": WatchDirectoryFlags.Recursive
+                        "/dev": ts.WatchDirectoryFlags.Recursive
                     },
                 };
                 validateMatches(expected, json, caseSensitiveHost, caseSensitiveBasePath);
@@ -600,15 +585,14 @@ namespace ts {
                         "*/z.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [
-                        createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                            caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                        ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                     ],
                     fileNames: [],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath, /*existingOptions*/ undefined, caseInsensitiveTsconfigPath);
@@ -625,14 +609,14 @@ namespace ts {
                         "**/a.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
                         "c:/dev/a.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     },
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -647,7 +631,7 @@ namespace ts {
                         "x"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -656,7 +640,7 @@ namespace ts {
                         "c:/dev/c.d.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -668,7 +652,7 @@ namespace ts {
                             "**/a.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -676,7 +660,7 @@ namespace ts {
                             "c:/dev/x/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -690,7 +674,7 @@ namespace ts {
                             "a.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -698,7 +682,7 @@ namespace ts {
                             "c:/dev/x/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -710,7 +694,7 @@ namespace ts {
                         ],
                         exclude: <string[]>[]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -718,7 +702,7 @@ namespace ts {
                             "c:/dev/x/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -730,7 +714,7 @@ namespace ts {
                             "**/node_modules/a.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -739,7 +723,7 @@ namespace ts {
                             "c:/dev/node_modules/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -750,14 +734,14 @@ namespace ts {
                             "*/a.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
                             "c:/dev/x/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -769,7 +753,7 @@ namespace ts {
                             "node_modules/a.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -777,7 +761,7 @@ namespace ts {
                             "c:/dev/node_modules/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         },
                     };
                     validateMatches(expected, json, caseInsensitiveCommonFoldersHost, caseInsensitiveBasePath);
@@ -792,17 +776,16 @@ namespace ts {
                         "js/*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: false
                     },
                     errors: [
-                        createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                            caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                        ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                     ],
                     fileNames: [],
                     wildcardDirectories: {
-                        "c:/dev/js": WatchDirectoryFlags.None
+                        "c:/dev/js": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath, /*existingOptions*/ undefined, caseInsensitiveTsconfigPath);
@@ -816,7 +799,7 @@ namespace ts {
                         "js/*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: true
                     },
@@ -826,7 +809,7 @@ namespace ts {
                         "c:/dev/js/b.js"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/js": WatchDirectoryFlags.None
+                        "c:/dev/js": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -840,7 +823,7 @@ namespace ts {
                         "js/*.min.js"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: true
                     },
@@ -850,7 +833,7 @@ namespace ts {
                         "c:/dev/js/d.min.js"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/js": WatchDirectoryFlags.None
+                        "c:/dev/js": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -862,7 +845,7 @@ namespace ts {
                         "c:/ext/*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -872,8 +855,8 @@ namespace ts {
                         "c:/ext/ext.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.None,
-                        "c:/ext": WatchDirectoryFlags.None
+                        "c:/dev": ts.WatchDirectoryFlags.None,
+                        "c:/ext": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -888,14 +871,14 @@ namespace ts {
                         "**"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
                         "c:/ext/ext.ts"
                     ],
                     wildcardDirectories: {
-                        "c:/ext": WatchDirectoryFlags.None
+                        "c:/ext": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -909,12 +892,11 @@ namespace ts {
                         "../**"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [
-                        createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                            caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))]
-                    ,
+                        ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))
+                    ],
                     fileNames: [],
                     wildcardDirectories: {}
                 };
@@ -929,7 +911,7 @@ namespace ts {
                         "**"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -948,14 +930,14 @@ namespace ts {
                         "c:/ext/b/a..b.ts"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
                         "c:/ext/ext.ts",
                     ],
                     wildcardDirectories: {
-                        "c:/ext": WatchDirectoryFlags.Recursive
+                        "c:/ext": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
@@ -966,7 +948,7 @@ namespace ts {
                         allowJs: false
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: false
                     },
@@ -977,7 +959,7 @@ namespace ts {
                         "c:/dev/c.tsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -989,9 +971,9 @@ namespace ts {
                         allowJs: false
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
-                        jsx: JsxEmit.Preserve,
+                        jsx: ts.JsxEmit.Preserve,
                         allowJs: false
                     },
                     errors: [],
@@ -1001,7 +983,7 @@ namespace ts {
                         "c:/dev/c.tsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -1013,9 +995,9 @@ namespace ts {
                         allowJs: false
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
-                        jsx: JsxEmit.ReactNative,
+                        jsx: ts.JsxEmit.ReactNative,
                         allowJs: false
                     },
                     errors: [],
@@ -1025,7 +1007,7 @@ namespace ts {
                         "c:/dev/c.tsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -1036,7 +1018,7 @@ namespace ts {
                         allowJs: true
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: true
                     },
@@ -1049,7 +1031,7 @@ namespace ts {
                         "c:/dev/e.jsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -1061,9 +1043,9 @@ namespace ts {
                         allowJs: true
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
-                        jsx: JsxEmit.Preserve,
+                        jsx: ts.JsxEmit.Preserve,
                         allowJs: true
                     },
                     errors: [],
@@ -1075,7 +1057,7 @@ namespace ts {
                         "c:/dev/e.jsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -1087,9 +1069,9 @@ namespace ts {
                         allowJs: true
                     }
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
-                        jsx: JsxEmit.ReactNative,
+                        jsx: ts.JsxEmit.ReactNative,
                         allowJs: true
                     },
                     errors: [],
@@ -1101,7 +1083,7 @@ namespace ts {
                         "c:/dev/e.jsx",
                     ],
                     wildcardDirectories: {
-                        "c:/dev": WatchDirectoryFlags.Recursive
+                        "c:/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveMixedExtensionHost, caseInsensitiveBasePath);
@@ -1118,7 +1100,7 @@ namespace ts {
                         "js/a*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {
                         allowJs: true
                     },
@@ -1127,12 +1109,11 @@ namespace ts {
                         "c:/dev/js/d.min.js"
                     ],
                     wildcardDirectories: {
-                        "c:/dev/js": WatchDirectoryFlags.None
+                        "c:/dev/js": ts.WatchDirectoryFlags.None
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
             });
-
             describe("with trailing recursive directory", () => {
                 it("in includes", () => {
                     const json = {
@@ -1140,12 +1121,11 @@ namespace ts {
                             "**"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createDiagnosticForConfigFile(json, 12, 4, Diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**"),
-                            createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                                caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                            createDiagnosticForConfigFile(json, 12, 4, ts.Diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**"),
+                            ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                         ],
                         fileNames: [],
                         wildcardDirectories: {}
@@ -1161,11 +1141,10 @@ namespace ts {
                             "**"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                                caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))
+                            ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))
                         ],
                         fileNames: [],
                         wildcardDirectories: {}
@@ -1180,7 +1159,7 @@ namespace ts {
                             "**/x/**/*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -1191,7 +1170,7 @@ namespace ts {
                             "c:/dev/x/y/b.ts",
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath, /*existingOptions*/ undefined, caseInsensitiveTsconfigPath);
@@ -1205,7 +1184,7 @@ namespace ts {
                             "**/x/**"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -1213,13 +1192,12 @@ namespace ts {
                             "c:/dev/z/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
                 });
             });
-
             describe("with parent directory symbols after a recursive directory pattern", () => {
                 it("in includes immediately after", () => {
                     const json = {
@@ -1227,38 +1205,34 @@ namespace ts {
                             "**/../*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createDiagnosticForConfigFile(json, 12, 9, Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/../*"),
-                            createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                                caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                            createDiagnosticForConfigFile(json, 12, 9, ts.Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/../*"),
+                            ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                         ],
                         fileNames: [],
                         wildcardDirectories: {}
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath, /*existingOptions*/ undefined, caseInsensitiveTsconfigPath);
                 });
-
                 it("in includes after a subdirectory", () => {
                     const json = {
                         include: [
                             "**/y/../*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createDiagnosticForConfigFile(json, 12, 11, Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/y/../*"),
-                            createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                                caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
+                            createDiagnosticForConfigFile(json, 12, 11, ts.Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/y/../*"),
+                            ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), "[]")
                         ],
                         fileNames: [],
                         wildcardDirectories: {}
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath, /*existingOptions*/ undefined, caseInsensitiveTsconfigPath);
                 });
-
                 it("in excludes immediately after", () => {
                     const json = {
                         include: [
@@ -1268,10 +1242,10 @@ namespace ts {
                             "**/.."
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createDiagnosticForConfigFile(json, 34, 7, Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/..")
+                            createDiagnosticForConfigFile(json, 34, 7, ts.Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/..")
                         ],
                         fileNames: [
                             "c:/dev/a.ts",
@@ -1280,12 +1254,11 @@ namespace ts {
                             "c:/dev/z/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
                 });
-
                 it("in excludes after a subdirectory", () => {
                     const json = {
                         include: [
@@ -1295,10 +1268,10 @@ namespace ts {
                             "**/y/.."
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createDiagnosticForConfigFile(json, 34, 9, Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/y/..")
+                            createDiagnosticForConfigFile(json, 34, 9, ts.Diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0, "**/y/..")
                         ],
                         fileNames: [
                             "c:/dev/a.ts",
@@ -1307,31 +1280,29 @@ namespace ts {
                             "c:/dev/z/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
                 });
             });
-
             describe("with implicit globbification", () => {
                 it("Expands 'z' to 'z/**/*'", () => {
                     const json = {
                         include: ["z"]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
-                        fileNames: [ "a.ts", "aba.ts", "abz.ts", "b.ts", "bba.ts", "bbz.ts" ].map(x => `c:/dev/z/${x}`),
+                        fileNames: ["a.ts", "aba.ts", "abz.ts", "b.ts", "bba.ts", "bbz.ts"].map(x => `c:/dev/z/${x}`),
                         wildcardDirectories: {
-                            "c:/dev/z": WatchDirectoryFlags.Recursive
+                            "c:/dev/z": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveHost, caseInsensitiveBasePath);
                 });
             });
         });
-
         describe("with files or folders that begin with a .", () => {
             it("that are not explicitly included", () => {
                 const json = {
@@ -1340,7 +1311,7 @@ namespace ts {
                         "w/*/*"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -1348,8 +1319,8 @@ namespace ts {
                         "c:/dev/x/y/d.ts",
                     ],
                     wildcardDirectories: {
-                        "c:/dev/x": WatchDirectoryFlags.Recursive,
-                        "c:/dev/w": WatchDirectoryFlags.Recursive
+                        "c:/dev/x": ts.WatchDirectoryFlags.Recursive,
+                        "c:/dev/w": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseInsensitiveDottedFoldersHost, caseInsensitiveBasePath);
@@ -1362,7 +1333,7 @@ namespace ts {
                             "c:/dev/.z/.b.ts"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -1379,7 +1350,7 @@ namespace ts {
                             "**/.*/*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -1389,7 +1360,7 @@ namespace ts {
                             "c:/dev/x/.y/a.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev": WatchDirectoryFlags.Recursive
+                            "c:/dev": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveDottedFoldersHost, caseInsensitiveBasePath);
@@ -1401,7 +1372,7 @@ namespace ts {
                             ".z/**/.*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [],
                         fileNames: [
@@ -1409,8 +1380,8 @@ namespace ts {
                             "c:/dev/.z/.b.ts"
                         ],
                         wildcardDirectories: {
-                            "c:/dev/.z": WatchDirectoryFlags.Recursive,
-                            "c:/dev/x": WatchDirectoryFlags.Recursive
+                            "c:/dev/.z": ts.WatchDirectoryFlags.Recursive,
+                            "c:/dev/x": ts.WatchDirectoryFlags.Recursive
                         }
                     };
                     validateMatches(expected, json, caseInsensitiveDottedFoldersHost, caseInsensitiveBasePath);
@@ -1424,11 +1395,10 @@ namespace ts {
                             "**/*"
                         ]
                     };
-                    const expected: ParsedCommandLine = {
+                    const expected: ts.ParsedCommandLine = {
                         options: {},
                         errors: [
-                            createCompilerDiagnostic(Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2,
-                                caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))
+                            ts.createCompilerDiagnostic(ts.Diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, caseInsensitiveTsconfigPath, JSON.stringify(json.include), JSON.stringify(json.exclude))
                         ],
                         fileNames: [],
                         wildcardDirectories: {}
@@ -1437,7 +1407,6 @@ namespace ts {
                 });
             });
         });
-
         describe("exclude or include patterns which start with **", () => {
             it("can exclude dirs whose pattern starts with **", () => {
                 const json = {
@@ -1445,7 +1414,7 @@ namespace ts {
                         "**/x"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -1463,7 +1432,7 @@ namespace ts {
                         "/dev/z/bbz.ts",
                     ],
                     wildcardDirectories: {
-                        "/dev": WatchDirectoryFlags.Recursive
+                        "/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseSensitiveHost, caseSensitiveBasePath);
@@ -1475,7 +1444,7 @@ namespace ts {
                         "**/a/**/b"
                     ]
                 };
-                const expected: ParsedCommandLine = {
+                const expected: ts.ParsedCommandLine = {
                     options: {},
                     errors: [],
                     fileNames: [
@@ -1486,25 +1455,24 @@ namespace ts {
                         "/dev/q/a/c/b/d.ts",
                     ],
                     wildcardDirectories: {
-                        "/dev": WatchDirectoryFlags.Recursive
+                        "/dev": ts.WatchDirectoryFlags.Recursive
                     }
                 };
                 validateMatches(expected, json, caseSensitiveHost, caseSensitiveBasePath);
             });
         });
-
         it("can include files in the same order on multiple platforms", () => {
-            function getExpected(basePath: string): ParsedCommandLine {
+            function getExpected(basePath: string): ts.ParsedCommandLine {
                 return {
                     options: {},
                     errors: [],
                     fileNames: [
-                        `${basePath}Yosemite.ts`, // capital always comes before lowercase letters
+                        `${basePath}Yosemite.ts`,
                         `${basePath}xylophone.ts`,
                         `${basePath}zebra.ts`
                     ],
                     wildcardDirectories: {
-                        [basePath.slice(0, basePath.length - 1)]: WatchDirectoryFlags.Recursive
+                        [basePath.slice(0, basePath.length - 1)]: ts.WatchDirectoryFlags.Recursive
                     },
                 };
             }
@@ -1512,7 +1480,6 @@ namespace ts {
             validateMatches(getExpected(caseSensitiveBasePath), json, caseSensitiveOrderingDiffersWithCaseHost, caseSensitiveBasePath);
             validateMatches(getExpected(caseInsensitiveBasePath), json, caseInsensitiveOrderingDiffersWithCaseHost, caseInsensitiveBasePath);
         });
-
         it("when recursive symlinked directories are present", () => {
             const fs = new vfs.FileSystem(/*ignoreCase*/ true, {
                 cwd: caseInsensitiveBasePath, files: {
@@ -1525,14 +1492,14 @@ namespace ts {
             fs.symlinkSync("c:/dev/a", "c:/dev/a/b/c/grandparent");
             const host = new fakes.ParseConfigHost(fs);
             const json = {};
-            const expected: ParsedCommandLine = {
+            const expected: ts.ParsedCommandLine = {
                 options: {},
                 errors: [],
                 fileNames: [
                     "c:/dev/index.ts"
                 ],
                 wildcardDirectories: {
-                    "c:/dev": WatchDirectoryFlags.Recursive
+                    "c:/dev": ts.WatchDirectoryFlags.Recursive
                 },
             };
             validateMatches(expected, json, host, caseInsensitiveBasePath);

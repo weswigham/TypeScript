@@ -3,77 +3,63 @@ namespace vfs {
      * Posix-style path to the TypeScript compiler build outputs (including tsc.js, lib.d.ts, etc.)
      */
     export const builtFolder = "/.ts";
-
     /**
      * Posix-style path to additional mountable folders (./tests/projects in this repo)
      */
     export const projectsFolder = "/.projects";
-
     /**
      * Posix-style path to additional test libraries
      */
     export const testLibFolder = "/.lib";
-
     /**
      * Posix-style path to sources under test
      */
     export const srcFolder = "/.src";
-
     // file type
-    const S_IFMT            = 0o170000; // file type
-    const S_IFSOCK          = 0o140000; // socket
-    const S_IFLNK           = 0o120000; // symbolic link
-    const S_IFREG           = 0o100000; // regular file
-    const S_IFBLK           = 0o060000; // block device
-    const S_IFDIR           = 0o040000; // directory
-    const S_IFCHR           = 0o020000; // character device
-    const S_IFIFO           = 0o010000; // FIFO
-
+    const S_IFMT = 0o170000; // file type
+    const S_IFSOCK = 0o140000; // socket
+    const S_IFLNK = 0o120000; // symbolic link
+    const S_IFREG = 0o100000; // regular file
+    const S_IFBLK = 0o060000; // block device
+    const S_IFDIR = 0o040000; // directory
+    const S_IFCHR = 0o020000; // character device
+    const S_IFIFO = 0o010000; // FIFO
     let devCount = 0; // A monotonically increasing count of device ids
     let inoCount = 0; // A monotonically increasing count of inodes
-
     export interface DiffOptions {
         includeChangedFileWithSameContent?: boolean;
     }
-
     /**
      * Represents a virtual POSIX-like file system.
      */
     export class FileSystem {
         /** Indicates whether the file system is case-sensitive (`false`) or case-insensitive (`true`). */
         public readonly ignoreCase: boolean;
-
         /** Gets the comparison function used to compare two paths. */
         public readonly stringComparer: (a: string, b: string) => number;
-
         // lazy-initialized state that should be mutable even if the FileSystem is frozen.
         private _lazy: {
             links?: collections.SortedMap<string, Inode>;
             shadows?: Map<number, Inode>;
             meta?: collections.Metadata;
         } = {};
-
         private _cwd: string; // current working directory
         private _time: number | Date | (() => number | Date);
         private _shadowRoot: FileSystem | undefined;
         private _dirStack: string[] | undefined;
-
         constructor(ignoreCase: boolean, options: FileSystemOptions = {}) {
             const { time = -1, files, meta } = options;
             this.ignoreCase = ignoreCase;
             this.stringComparer = this.ignoreCase ? vpath.compareCaseInsensitive : vpath.compareCaseSensitive;
             this._time = time;
-
             if (meta) {
                 for (const key of Object.keys(meta)) {
                     this.meta.set(key, meta[key]);
                 }
             }
-
             if (files) {
                 this._applyFiles(files, /*dirname*/ "");
             }
-
             let cwd = options.cwd;
             if ((!cwd || !vpath.isRoot(cwd)) && this._lazy.links) {
                 const iterator = collections.getIterator(this._lazy.links.keys());
@@ -88,15 +74,12 @@ namespace vfs {
                     collections.closeIterator(iterator);
                 }
             }
-
             if (cwd) {
                 vpath.validate(cwd, vpath.ValidationFlags.Absolute);
                 this.mkdirpSync(cwd);
             }
-
             this._cwd = cwd || "";
         }
-
         /**
          * Gets metadata for this `FileSystem`.
          */
@@ -106,14 +89,12 @@ namespace vfs {
             }
             return this._lazy.meta;
         }
-
         /**
          * Gets a value indicating whether the file system is read-only.
          */
         public get isReadonly() {
             return Object.isFrozen(this);
         }
-
         /**
          * Makes the file system read-only.
          */
@@ -121,21 +102,20 @@ namespace vfs {
             Object.freeze(this);
             return this;
         }
-
         /**
          * Gets the file system shadowed by this file system.
          */
         public get shadowRoot() {
             return this._shadowRoot;
         }
-
         /**
          * Snapshots the current file system, effectively shadowing itself. This is useful for
          * generating file system patches using `.diff()` from one snapshot to the next. Performs
          * no action if this file system is read-only.
          */
         public snapshot() {
-            if (this.isReadonly) return;
+            if (this.isReadonly)
+                return;
             const fs = new FileSystem(this.ignoreCase, { time: this._time });
             fs._lazy = this._lazy;
             fs._cwd = this._cwd;
@@ -146,48 +126,51 @@ namespace vfs {
             this._lazy = {};
             this._shadowRoot = fs;
         }
-
         /**
          * Gets a shadow copy of this file system. Changes to the shadow copy do not affect the
          * original, allowing multiple copies of the same core file system without multiple copies
          * of the same data.
          */
         public shadow(ignoreCase = this.ignoreCase) {
-            if (!this.isReadonly) throw new Error("Cannot shadow a mutable file system.");
-            if (ignoreCase && !this.ignoreCase) throw new Error("Cannot create a case-insensitive file system from a case-sensitive one.");
+            if (!this.isReadonly)
+                throw new Error("Cannot shadow a mutable file system.");
+            if (ignoreCase && !this.ignoreCase)
+                throw new Error("Cannot create a case-insensitive file system from a case-sensitive one.");
             const fs = new FileSystem(ignoreCase, { time: this._time });
             fs._shadowRoot = this;
             fs._cwd = this._cwd;
             return fs;
         }
-
         /**
          * Gets or sets the timestamp (in milliseconds) used for file status, returning the previous timestamp.
          *
          * @link http://pubs.opengroup.org/onlinepubs/9699919799/functions/time.html
          */
         public time(value?: number | Date | (() => number | Date)): number {
-            if (value !== undefined && this.isReadonly) throw createIOError("EPERM");
+            if (value !== undefined && this.isReadonly)
+                throw createIOError("EPERM");
             let result = this._time;
-            if (typeof result === "function") result = result();
-            if (typeof result === "object") result = result.getTime();
-            if (result === -1) result = Date.now();
+            if (typeof result === "function")
+                result = result();
+            if (typeof result === "object")
+                result = result.getTime();
+            if (result === -1)
+                result = Date.now();
             if (value !== undefined) {
                 this._time = value;
             }
             return result;
         }
-
         /**
          * Gets the metadata object for a path.
          * @param path
          */
         public filemeta(path: string): collections.Metadata {
             const { node } = this._walk(this._resolve(path));
-            if (!node) throw createIOError("ENOENT");
+            if (!node)
+                throw createIOError("ENOENT");
             return this._filemeta(node);
         }
-
         private _filemeta(node: Inode): collections.Metadata {
             if (!node.meta) {
                 const parentMeta = node.shadowRoot && this._shadowRoot && this._shadowRoot._filemeta(node.shadowRoot);
@@ -195,67 +178,71 @@ namespace vfs {
             }
             return node.meta;
         }
-
         /**
          * Get the pathname of the current working directory.
          *
          * @link - http://pubs.opengroup.org/onlinepubs/9699919799/functions/getcwd.html
          */
         public cwd() {
-            if (!this._cwd) throw new Error("The current working directory has not been set.");
+            if (!this._cwd)
+                throw new Error("The current working directory has not been set.");
             const { node } = this._walk(this._cwd);
-            if (!node) throw createIOError("ENOENT");
-            if (!isDirectory(node)) throw createIOError("ENOTDIR");
+            if (!node)
+                throw createIOError("ENOENT");
+            if (!isDirectory(node))
+                throw createIOError("ENOTDIR");
             return this._cwd;
         }
-
         /**
          * Changes the current working directory.
          *
          * @link http://pubs.opengroup.org/onlinepubs/9699919799/functions/chdir.html
          */
         public chdir(path: string) {
-            if (this.isReadonly) throw createIOError("EPERM");
+            if (this.isReadonly)
+                throw createIOError("EPERM");
             path = this._resolve(path);
             const { node } = this._walk(path);
-            if (!node) throw createIOError("ENOENT");
-            if (!isDirectory(node)) throw createIOError("ENOTDIR");
+            if (!node)
+                throw createIOError("ENOENT");
+            if (!isDirectory(node))
+                throw createIOError("ENOTDIR");
             this._cwd = path;
         }
-
         /**
          * Pushes the current directory onto the directory stack and changes the current working directory to the supplied path.
          */
         public pushd(path?: string) {
-            if (this.isReadonly) throw createIOError("EPERM");
-            if (path) path = this._resolve(path);
+            if (this.isReadonly)
+                throw createIOError("EPERM");
+            if (path)
+                path = this._resolve(path);
             if (this._cwd) {
-                if (!this._dirStack) this._dirStack = [];
+                if (!this._dirStack)
+                    this._dirStack = [];
                 this._dirStack.push(this._cwd);
             }
             if (path && path !== this._cwd) {
                 this.chdir(path);
             }
         }
-
         /**
          * Pops the previous directory from the location stack and changes the current directory to that directory.
          */
         public popd() {
-            if (this.isReadonly) throw createIOError("EPERM");
+            if (this.isReadonly)
+                throw createIOError("EPERM");
             const path = this._dirStack && this._dirStack.pop();
             if (path) {
                 this.chdir(path);
             }
         }
-
         /**
          * Update the file system with a set of files.
          */
         public apply(files: FileSet) {
             this._applyFiles(files, this._cwd);
         }
-
         /**
          * Scan file system entries along a path. If `path` is a symbolic link, it is dereferenced.
          * @param path The path at which to start the scan.
@@ -268,7 +255,6 @@ namespace vfs {
             this._scan(path, this._stat(this._walk(path)), axis, traversal, /*noFollow*/ false, results);
             return results;
         }
-
         /**
          * Scan file system entries along a path.
          * @param path The path at which to start the scan.
@@ -281,7 +267,6 @@ namespace vfs {
             this._scan(path, this._stat(this._walk(path, /*noFollow*/ true)), axis, traversal, /*noFollow*/ true, results);
             return results;
         }
-
         private _scan(path: string, stats: Stats, axis: Axis, traversal: Traversal, noFollow: boolean, results: string[]) {
             if (axis === "ancestors-or-self" || axis === "self" || axis === "descendants-or-self") {
                 if (!traversal.accept || traversal.accept(path, stats)) {
@@ -313,7 +298,6 @@ namespace vfs {
                 }
             }
         }
-
         /**
          * Mounts a physical or virtual file system at a location in this virtual file system.
          *
@@ -322,20 +306,18 @@ namespace vfs {
          * @param resolver An object used to resolve files in `source`.
          */
         public mountSync(source: string, target: string, resolver: FileSystemResolver) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             source = vpath.validate(source, vpath.ValidationFlags.Absolute);
-
             const { parent, links, node: existingNode, basename } = this._walk(this._resolve(target), /*noFollow*/ true);
-            if (existingNode) throw createIOError("EEXIST");
-
+            if (existingNode)
+                throw createIOError("EEXIST");
             const time = this.time();
             const node = this._mknod(parent ? parent.dev : ++devCount, S_IFDIR, /*mode*/ 0o777, time);
             node.source = source;
             node.resolver = resolver;
             this._addLink(parent, links, basename, node, time);
         }
-
         /**
          * Recursively remove all files and directories underneath the provided path.
          */
@@ -353,11 +335,11 @@ namespace vfs {
                 }
             }
             catch (e) {
-                if (e.code === "ENOENT") return;
+                if (e.code === "ENOENT")
+                    return;
                 throw e;
             }
         }
-
         /**
          * Make a directory and all of its parent paths (if they don't exist).
          */
@@ -370,10 +352,9 @@ namespace vfs {
                 }
                 return "throw";
             });
-
-            if (!result.node) this._mkdir(result);
+            if (!result.node)
+                this._mkdir(result);
         }
-
         public getFileListing(): string {
             let result = "";
             const printLinks = (dirname: string | undefined, links: collections.SortedMap<string, Inode>) => {
@@ -383,7 +364,8 @@ namespace vfs {
                         const [name, node] = i.value;
                         const path = dirname ? vpath.combine(dirname, name) : name;
                         const marker = vpath.compare(this._cwd, path, this.ignoreCase) === 0 ? "*" : " ";
-                        if (result) result += "\n";
+                        if (result)
+                            result += "\n";
                         result += marker;
                         if (isDirectory(node)) {
                             result += vpath.addTrailingSeparator(path);
@@ -404,16 +386,13 @@ namespace vfs {
             printLinks(/*dirname*/ undefined, this._getRootLinks());
             return result;
         }
-
         /**
          * Print diagnostic information about the structure of the file system to the console.
          */
         public debugPrint(): void {
             console.log(this.getFileListing());
         }
-
         // POSIX API (aligns with NodeJS "fs" module API)
-
         /**
          * Determines whether a path exists.
          */
@@ -421,7 +400,6 @@ namespace vfs {
             const result = this._walk(this._resolve(path), /*noFollow*/ true, () => "stop");
             return result !== undefined && result.node !== undefined;
         }
-
         /**
          * Get file status. If `path` is a symbolic link, it is dereferenced.
          *
@@ -432,16 +410,16 @@ namespace vfs {
         public statSync(path: string) {
             return this._stat(this._walk(this._resolve(path)));
         }
-
         /**
          * Change file access times
          *
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public utimesSync(path: string, atime: Date, mtime: Date) {
-            if (this.isReadonly) throw createIOError("EROFS");
-            if (!isFinite(+atime) || !isFinite(+mtime)) throw createIOError("EINVAL");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
+            if (!isFinite(+atime) || !isFinite(+mtime))
+                throw createIOError("EINVAL");
             const entry = this._walk(this._resolve(path));
             if (!entry || !entry.node) {
                 throw createIOError("ENOENT");
@@ -450,7 +428,6 @@ namespace vfs {
             entry.node.mtimeMs = +mtime;
             entry.node.ctimeMs = this.time();
         }
-
         /**
          * Get file status. If `path` is a symbolic link, it is dereferenced.
          *
@@ -461,27 +438,16 @@ namespace vfs {
         public lstatSync(path: string) {
             return this._stat(this._walk(this._resolve(path), /*noFollow*/ true));
         }
-
-
         private _stat(entry: WalkResult) {
             const node = entry.node;
-            if (!node) throw createIOError(`ENOENT`, entry.realpath);
-            return new Stats(
-                node.dev,
-                node.ino,
-                node.mode,
-                node.nlink,
-                /*rdev*/ 0,
-                /*size*/ isFile(node) ? this._getSize(node) : isSymlink(node) ? node.symlink.length : 0,
-                /*blksize*/ 4096,
-                /*blocks*/ 0,
-                node.atimeMs,
-                node.mtimeMs,
-                node.ctimeMs,
-                node.birthtimeMs,
-            );
+            if (!node)
+                throw createIOError(`ENOENT`, entry.realpath);
+            return new Stats(node.dev, node.ino, node.mode, node.nlink, 
+            /*rdev*/ 0, 
+            /*size*/ isFile(node) ? this._getSize(node) : isSymlink(node) ? node.symlink.length : 0, 
+            /*blksize*/ 4096, 
+            /*blocks*/ 0, node.atimeMs, node.mtimeMs, node.ctimeMs, node.birthtimeMs);
         }
-
         /**
          * Read a directory. If `path` is a symbolic link, it is dereferenced.
          *
@@ -491,11 +457,12 @@ namespace vfs {
          */
         public readdirSync(path: string) {
             const { node } = this._walk(this._resolve(path));
-            if (!node) throw createIOError("ENOENT");
-            if (!isDirectory(node)) throw createIOError("ENOTDIR");
+            if (!node)
+                throw createIOError("ENOENT");
+            if (!isDirectory(node))
+                throw createIOError("ENOTDIR");
             return Array.from(this._getLinks(node).keys());
         }
-
         /**
          * Make a directory.
          *
@@ -504,18 +471,17 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public mkdirSync(path: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             this._mkdir(this._walk(this._resolve(path), /*noFollow*/ true));
         }
-
         private _mkdir({ parent, links, node: existingNode, basename }: WalkResult) {
-            if (existingNode) throw createIOError("EEXIST");
+            if (existingNode)
+                throw createIOError("EEXIST");
             const time = this.time();
             const node = this._mknod(parent ? parent.dev : ++devCount, S_IFDIR, /*mode*/ 0o777, time);
             this._addLink(parent, links, basename, node, time);
         }
-
         /**
          * Remove a directory.
          *
@@ -524,17 +490,18 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public rmdirSync(path: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             path = this._resolve(path);
-
             const { parent, links, node, basename } = this._walk(path, /*noFollow*/ true);
-            if (!parent) throw createIOError("EPERM");
-            if (!isDirectory(node)) throw createIOError("ENOTDIR");
-            if (this._getLinks(node).size !== 0) throw createIOError("ENOTEMPTY");
-
+            if (!parent)
+                throw createIOError("EPERM");
+            if (!isDirectory(node))
+                throw createIOError("ENOTDIR");
+            if (this._getLinks(node).size !== 0)
+                throw createIOError("ENOTEMPTY");
             this._removeLink(parent, links, basename, node);
         }
-
         /**
          * Link one file to another file (also known as a "hard link").
          *
@@ -543,19 +510,20 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public linkSync(oldpath: string, newpath: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             const { node } = this._walk(this._resolve(oldpath));
-            if (!node) throw createIOError("ENOENT");
-            if (isDirectory(node)) throw createIOError("EPERM");
-
+            if (!node)
+                throw createIOError("ENOENT");
+            if (isDirectory(node))
+                throw createIOError("EPERM");
             const { parent, links, basename, node: existingNode } = this._walk(this._resolve(newpath), /*noFollow*/ true);
-            if (!parent) throw createIOError("EPERM");
-            if (existingNode) throw createIOError("EEXIST");
-
+            if (!parent)
+                throw createIOError("EPERM");
+            if (existingNode)
+                throw createIOError("EEXIST");
             this._addLink(parent, links, basename, node);
         }
-
         /**
          * Remove a directory entry.
          *
@@ -564,16 +532,17 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public unlinkSync(path: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             const { parent, links, node, basename } = this._walk(this._resolve(path), /*noFollow*/ true);
-            if (!parent) throw createIOError("EPERM");
-            if (!node) throw createIOError("ENOENT");
-            if (isDirectory(node)) throw createIOError("EISDIR");
-
+            if (!parent)
+                throw createIOError("EPERM");
+            if (!node)
+                throw createIOError("ENOENT");
+            if (isDirectory(node))
+                throw createIOError("EISDIR");
             this._removeLink(parent, links, basename, node);
         }
-
         /**
          * Rename a file.
          *
@@ -582,30 +551,32 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public renameSync(oldpath: string, newpath: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             const { parent: oldParent, links: oldParentLinks, node, basename: oldBasename } = this._walk(this._resolve(oldpath), /*noFollow*/ true);
-            if (!oldParent) throw createIOError("EPERM");
-            if (!node) throw createIOError("ENOENT");
-
+            if (!oldParent)
+                throw createIOError("EPERM");
+            if (!node)
+                throw createIOError("ENOENT");
             const { parent: newParent, links: newParentLinks, node: existingNode, basename: newBasename } = this._walk(this._resolve(newpath), /*noFollow*/ true);
-            if (!newParent) throw createIOError("EPERM");
-
+            if (!newParent)
+                throw createIOError("EPERM");
             const time = this.time();
             if (existingNode) {
                 if (isDirectory(node)) {
-                    if (!isDirectory(existingNode)) throw createIOError("ENOTDIR");
-                    if (this._getLinks(existingNode).size > 0) throw createIOError("ENOTEMPTY");
+                    if (!isDirectory(existingNode))
+                        throw createIOError("ENOTDIR");
+                    if (this._getLinks(existingNode).size > 0)
+                        throw createIOError("ENOTEMPTY");
                 }
                 else {
-                    if (isDirectory(existingNode)) throw createIOError("EISDIR");
+                    if (isDirectory(existingNode))
+                        throw createIOError("EISDIR");
                 }
                 this._removeLink(newParent, newParentLinks, newBasename, existingNode, time);
             }
-
             this._replaceLink(oldParent, oldParentLinks, oldBasename, newParent, newParentLinks, newBasename, node, time);
         }
-
         /**
          * Make a symbolic link.
          *
@@ -614,18 +585,18 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public symlinkSync(target: string, linkpath: string) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             const { parent, links, node: existingNode, basename } = this._walk(this._resolve(linkpath), /*noFollow*/ true);
-            if (!parent) throw createIOError("EPERM");
-            if (existingNode) throw createIOError("EEXIST");
-
+            if (!parent)
+                throw createIOError("EPERM");
+            if (existingNode)
+                throw createIOError("EEXIST");
             const time = this.time();
             const node = this._mknod(parent.dev, S_IFLNK, /*mode*/ 0o666, time);
             node.symlink = vpath.validate(target, vpath.ValidationFlags.RelativeOrAbsolute);
             this._addLink(parent, links, basename, node, time);
         }
-
         /**
          * Resolve a pathname.
          *
@@ -637,7 +608,6 @@ namespace vfs {
             const { realpath } = this._walk(this._resolve(path));
             return realpath;
         }
-
         /**
          * Read from a file.
          *
@@ -656,16 +626,17 @@ namespace vfs {
          * NOTE: do not rename this method as it is intended to align with the same named export of the "fs" module.
          */
         public readFileSync(path: string, encoding?: string | null): string | Buffer;
-        public readFileSync(path: string, encoding: string | null = null) { // eslint-disable-line no-null/no-null
+        public readFileSync(path: string, encoding: string | null = null) {
             const { node } = this._walk(this._resolve(path));
-            if (!node) throw createIOError("ENOENT");
-            if (isDirectory(node)) throw createIOError("EISDIR");
-            if (!isFile(node)) throw createIOError("EBADF");
-
+            if (!node)
+                throw createIOError("ENOENT");
+            if (isDirectory(node))
+                throw createIOError("EISDIR");
+            if (!isFile(node))
+                throw createIOError("EBADF");
             const buffer = this._getBuffer(node).slice();
             return encoding ? buffer.toString(encoding) : buffer;
         }
-
         /**
          * Write to a file.
          *
@@ -673,26 +644,26 @@ namespace vfs {
          */
         // eslint-disable-next-line no-null/no-null
         public writeFileSync(path: string, data: string | Buffer, encoding: string | null = null) {
-            if (this.isReadonly) throw createIOError("EROFS");
-
+            if (this.isReadonly)
+                throw createIOError("EROFS");
             const { parent, links, node: existingNode, basename } = this._walk(this._resolve(path), /*noFollow*/ false);
-            if (!parent) throw createIOError("EPERM");
-
+            if (!parent)
+                throw createIOError("EPERM");
             const time = this.time();
             let node = existingNode;
             if (!node) {
                 node = this._mknod(parent.dev, S_IFREG, 0o666, time);
                 this._addLink(parent, links, basename, node, time);
             }
-
-            if (isDirectory(node)) throw createIOError("EISDIR");
-            if (!isFile(node)) throw createIOError("EBADF");
+            if (isDirectory(node))
+                throw createIOError("EISDIR");
+            if (!isFile(node))
+                throw createIOError("EBADF");
             node.buffer = Buffer.isBuffer(data) ? data.slice() : ts.sys.bufferFrom!("" + data, encoding || "utf8") as Buffer;
             node.size = node.buffer.byteLength;
             node.mtimeMs = time;
             node.ctimeMs = time;
         }
-
         /**
          * Generates a `FileSet` patch containing all the entries in this `FileSystem` that are not in `base`.
          * @param base The base file system. If not provided, this file system's `shadowRoot` is used (if present).
@@ -704,7 +675,6 @@ namespace vfs {
                 FileSystem.trackCreatedInodes(differences, this, this._getRootLinks());
             return hasDifferences ? differences : undefined;
         }
-
         /**
          * Generates a `FileSet` patch containing all the entries in `changed` that are not in `base`.
          */
@@ -714,10 +684,11 @@ namespace vfs {
                 differences :
                 undefined;
         }
-
         private static diffWorker(container: FileSet, changed: FileSystem, changedLinks: ReadonlyMap<string, Inode> | undefined, base: FileSystem, baseLinks: ReadonlyMap<string, Inode> | undefined, options: DiffOptions) {
-            if (changedLinks && !baseLinks) return FileSystem.trackCreatedInodes(container, changed, changedLinks);
-            if (baseLinks && !changedLinks) return FileSystem.trackDeletedInodes(container, baseLinks);
+            if (changedLinks && !baseLinks)
+                return FileSystem.trackCreatedInodes(container, changed, changedLinks);
+            if (baseLinks && !changedLinks)
+                return FileSystem.trackDeletedInodes(container, baseLinks);
             if (changedLinks && baseLinks) {
                 let hasChanges = false;
                 // track base items missing in changed
@@ -747,84 +718,81 @@ namespace vfs {
             }
             return false;
         }
-
         private static rootDiff(container: FileSet, changed: FileSystem, base: FileSystem, options: DiffOptions) {
-            while (!changed._lazy.links && changed._shadowRoot) changed = changed._shadowRoot;
-            while (!base._lazy.links && base._shadowRoot) base = base._shadowRoot;
-
+            while (!changed._lazy.links && changed._shadowRoot)
+                changed = changed._shadowRoot;
+            while (!base._lazy.links && base._shadowRoot)
+                base = base._shadowRoot;
             // no difference if the file systems are the same reference
-            if (changed === base) return false;
-
+            if (changed === base)
+                return false;
             // no difference if the root links are empty and unshadowed
-            if (!changed._lazy.links && !changed._shadowRoot && !base._lazy.links && !base._shadowRoot) return false;
-
+            if (!changed._lazy.links && !changed._shadowRoot && !base._lazy.links && !base._shadowRoot)
+                return false;
             return FileSystem.diffWorker(container, changed, changed._getRootLinks(), base, base._getRootLinks(), options);
         }
-
         private static directoryDiff(container: FileSet, basename: string, changed: FileSystem, changedNode: DirectoryInode, base: FileSystem, baseNode: DirectoryInode, options: DiffOptions) {
-            while (!changedNode.links && changedNode.shadowRoot) changedNode = changedNode.shadowRoot;
-            while (!baseNode.links && baseNode.shadowRoot) baseNode = baseNode.shadowRoot;
-
+            while (!changedNode.links && changedNode.shadowRoot)
+                changedNode = changedNode.shadowRoot;
+            while (!baseNode.links && baseNode.shadowRoot)
+                baseNode = baseNode.shadowRoot;
             // no difference if the nodes are the same reference
-            if (changedNode === baseNode) return false;
-
+            if (changedNode === baseNode)
+                return false;
             // no difference if both nodes are non shadowed and have no entries
-            if (isEmptyNonShadowedDirectory(changedNode) && isEmptyNonShadowedDirectory(baseNode)) return false;
-
+            if (isEmptyNonShadowedDirectory(changedNode) && isEmptyNonShadowedDirectory(baseNode))
+                return false;
             // no difference if both nodes are unpopulated and point to the same mounted file system
             if (!changedNode.links && !baseNode.links &&
                 changedNode.resolver && changedNode.source !== undefined &&
-                baseNode.resolver === changedNode.resolver && baseNode.source === changedNode.source) return false;
-
+                baseNode.resolver === changedNode.resolver && baseNode.source === changedNode.source)
+                return false;
             // no difference if both nodes have identical children
             const children: FileSet = {};
             if (!FileSystem.diffWorker(children, changed, changed._getLinks(changedNode), base, base._getLinks(baseNode), options)) {
                 return false;
             }
-
             container[basename] = new Directory(children);
             return true;
         }
-
         private static fileDiff(container: FileSet, basename: string, changed: FileSystem, changedNode: FileInode, base: FileSystem, baseNode: FileInode, options: DiffOptions) {
-            while (!changedNode.buffer && changedNode.shadowRoot) changedNode = changedNode.shadowRoot;
-            while (!baseNode.buffer && baseNode.shadowRoot) baseNode = baseNode.shadowRoot;
-
+            while (!changedNode.buffer && changedNode.shadowRoot)
+                changedNode = changedNode.shadowRoot;
+            while (!baseNode.buffer && baseNode.shadowRoot)
+                baseNode = baseNode.shadowRoot;
             // no difference if the nodes are the same reference
-            if (changedNode === baseNode) return false;
-
+            if (changedNode === baseNode)
+                return false;
             // no difference if both nodes are non shadowed and have no entries
-            if (isEmptyNonShadowedFile(changedNode) && isEmptyNonShadowedFile(baseNode)) return false;
-
+            if (isEmptyNonShadowedFile(changedNode) && isEmptyNonShadowedFile(baseNode))
+                return false;
             // no difference if both nodes are unpopulated and point to the same mounted file system
             if (!changedNode.buffer && !baseNode.buffer &&
                 changedNode.resolver && changedNode.source !== undefined &&
-                baseNode.resolver === changedNode.resolver && baseNode.source === changedNode.source) return false;
-
+                baseNode.resolver === changedNode.resolver && baseNode.source === changedNode.source)
+                return false;
             const changedBuffer = changed._getBuffer(changedNode);
             const baseBuffer = base._getBuffer(baseNode);
-
             // no difference if both buffers are the same reference
-            if (changedBuffer === baseBuffer) return false;
-
+            if (changedBuffer === baseBuffer)
+                return false;
             // no difference if both buffers are identical
             if (Buffer.compare(changedBuffer, baseBuffer) === 0) {
-                if (!options.includeChangedFileWithSameContent) return false;
+                if (!options.includeChangedFileWithSameContent)
+                    return false;
                 container[basename] = new SameFileContentFile(changedBuffer);
                 return true;
             }
-
             container[basename] = new File(changedBuffer);
             return true;
         }
-
         private static symlinkDiff(container: FileSet, basename: string, changedNode: SymlinkInode, baseNode: SymlinkInode) {
             // no difference if the nodes are the same reference
-            if (changedNode.symlink === baseNode.symlink) return false;
+            if (changedNode.symlink === baseNode.symlink)
+                return false;
             container[basename] = new Symlink(changedNode.symlink);
             return true;
         }
-
         private static trackCreatedInode(container: FileSet, basename: string, changed: FileSystem, node: Inode) {
             if (isDirectory(node)) {
                 const children: FileSet = {};
@@ -839,22 +807,20 @@ namespace vfs {
             }
             return true;
         }
-
         private static trackCreatedInodes(container: FileSet, changed: FileSystem, changedLinks: ReadonlyMap<string, Inode>) {
             // no difference if links are empty
-            if (!changedLinks.size) return false;
-
+            if (!changedLinks.size)
+                return false;
             changedLinks.forEach((node, basename) => { FileSystem.trackCreatedInode(container, basename, changed, node); });
             return true;
         }
-
         private static trackDeletedInodes(container: FileSet, baseLinks: ReadonlyMap<string, Inode>) {
             // no difference if links are empty
-            if (!baseLinks.size) return false;
+            if (!baseLinks.size)
+                return false;
             baseLinks.forEach((node, basename) => { container[basename] = isDirectory(node) ? new Rmdir() : new Unlink(); });
             return true;
         }
-
         private _mknod(dev: number, type: typeof S_IFREG, mode: number, time?: number): FileInode;
         private _mknod(dev: number, type: typeof S_IFDIR, mode: number, time?: number): DirectoryInode;
         private _mknod(dev: number, type: typeof S_IFLNK, mode: number, time?: number): SymlinkInode;
@@ -870,22 +836,22 @@ namespace vfs {
                 nlink: 0
             };
         }
-
         private _addLink(parent: DirectoryInode | undefined, links: collections.SortedMap<string, Inode>, name: string, node: Inode, time = this.time()) {
             links.set(name, node);
             node.nlink++;
             node.ctimeMs = time;
-            if (parent) parent.mtimeMs = time;
-            if (!parent && !this._cwd) this._cwd = name;
+            if (parent)
+                parent.mtimeMs = time;
+            if (!parent && !this._cwd)
+                this._cwd = name;
         }
-
         private _removeLink(parent: DirectoryInode | undefined, links: collections.SortedMap<string, Inode>, name: string, node: Inode, time = this.time()) {
             links.delete(name);
             node.nlink--;
             node.ctimeMs = time;
-            if (parent) parent.mtimeMs = time;
+            if (parent)
+                parent.mtimeMs = time;
         }
-
         private _replaceLink(oldParent: DirectoryInode, oldLinks: collections.SortedMap<string, Inode>, oldName: string, newParent: DirectoryInode, newLinks: collections.SortedMap<string, Inode>, newName: string, node: Inode, time: number) {
             if (oldParent !== newParent) {
                 this._removeLink(oldParent, oldLinks, oldName, node, time);
@@ -898,7 +864,6 @@ namespace vfs {
                 newParent.mtimeMs = time;
             }
         }
-
         private _getRootLinks() {
             if (!this._lazy.links) {
                 this._lazy.links = new collections.SortedMap<string, Inode>(this.stringComparer);
@@ -909,7 +874,6 @@ namespace vfs {
             }
             return this._lazy.links;
         }
-
         private _getLinks(node: DirectoryInode) {
             if (!node.links) {
                 const links = new collections.SortedMap<string, Inode>(this.stringComparer);
@@ -944,12 +908,10 @@ namespace vfs {
             }
             return node.links;
         }
-
         private _getShadow(root: DirectoryInode): DirectoryInode;
         private _getShadow(root: Inode): Inode;
         private _getShadow(root: Inode) {
             const shadows = this._lazy.shadows || (this._lazy.shadows = new Map<number, Inode>());
-
             let shadow = shadows.get(root.ino);
             if (!shadow) {
                 shadow = <Inode>{
@@ -963,14 +925,12 @@ namespace vfs {
                     nlink: root.nlink,
                     shadowRoot: root
                 };
-
-                if (isSymlink(root)) (<SymlinkInode>shadow).symlink = root.symlink;
+                if (isSymlink(root))
+                    (<SymlinkInode>shadow).symlink = root.symlink;
                 shadows.set(shadow.ino, shadow);
             }
-
             return shadow;
         }
-
         private _copyShadowLinks(source: ReadonlyMap<string, Inode>, target: collections.SortedMap<string, Inode>) {
             const iterator = collections.getIterator(source);
             try {
@@ -983,15 +943,17 @@ namespace vfs {
                 collections.closeIterator(iterator);
             }
         }
-
         private _getSize(node: FileInode): number {
-            if (node.buffer) return node.buffer.byteLength;
-            if (node.size !== undefined) return node.size;
-            if (node.source && node.resolver) return node.size = node.resolver.statSync(node.source).size;
-            if (this._shadowRoot && node.shadowRoot) return node.size = this._shadowRoot._getSize(node.shadowRoot);
+            if (node.buffer)
+                return node.buffer.byteLength;
+            if (node.size !== undefined)
+                return node.size;
+            if (node.source && node.resolver)
+                return node.size = node.resolver.statSync(node.source).size;
+            if (this._shadowRoot && node.shadowRoot)
+                return node.size = this._shadowRoot._getSize(node.shadowRoot);
             return 0;
         }
-
         private _getBuffer(node: FileInode): Buffer {
             if (!node.buffer) {
                 const { source, resolver } = node;
@@ -1010,7 +972,6 @@ namespace vfs {
             }
             return node.buffer;
         }
-
         /**
          * Walk a path to its end.
          *
@@ -1030,7 +991,8 @@ namespace vfs {
             let depth = 0;
             let retry = false;
             while (true) {
-                if (depth >= 40) throw createIOError("ELOOP");
+                if (depth >= 40)
+                    throw createIOError("ELOOP");
                 const lastStep = step === components.length - 1;
                 const basename = components[step];
                 const node = links.get(basename);
@@ -1038,7 +1000,8 @@ namespace vfs {
                     return { realpath: vpath.format(components), basename, parent, links, node };
                 }
                 if (node === undefined) {
-                    if (trapError(createIOError("ENOENT"), node)) continue;
+                    if (trapError(createIOError("ENOENT"), node))
+                        continue;
                     return undefined;
                 }
                 if (isSymlink(node)) {
@@ -1059,15 +1022,16 @@ namespace vfs {
                     retry = false;
                     continue;
                 }
-                if (trapError(createIOError("ENOTDIR"), node)) continue;
+                if (trapError(createIOError("ENOTDIR"), node))
+                    continue;
                 return undefined;
             }
-
             function trapError(error: NodeJS.ErrnoException, node?: Inode) {
                 const realpath = vpath.format(components.slice(0, step + 1));
                 const basename = components[step];
                 const result = !retry && onError ? onError(error, { realpath, basename, parent, links, node }) : "throw";
-                if (result === "stop") return false;
+                if (result === "stop")
+                    return false;
                 if (result === "retry") {
                     retry = true;
                     return true;
@@ -1075,7 +1039,6 @@ namespace vfs {
                 throw error;
             }
         }
-
         /**
          * Resolve a path relative to the current working directory.
          */
@@ -1084,7 +1047,6 @@ namespace vfs {
                 ? vpath.resolve(this._cwd, vpath.validate(path, vpath.ValidationFlags.RelativeOrAbsolute | vpath.ValidationFlags.AllowWildcard))
                 : vpath.validate(path, vpath.ValidationFlags.Absolute | vpath.ValidationFlags.AllowWildcard);
         }
-
         private _applyFiles(files: FileSet, dirname: string) {
             const deferred: [Symlink | Link | Mount, string][] = [];
             this._applyFilesWorker(files, dirname, deferred);
@@ -1111,7 +1073,6 @@ namespace vfs {
                 this.popd();
             }
         }
-
         private _applyFileExtendedOptions(path: string, entry: Directory | File | Symlink | Mount) {
             const { meta } = entry;
             if (meta !== undefined) {
@@ -1121,13 +1082,11 @@ namespace vfs {
                 }
             }
         }
-
         private _applyFilesWorker(files: FileSet, dirname: string, deferred: [Symlink | Link | Mount, string][]) {
             for (const key of Object.keys(files)) {
                 const value = normalizeFileSetEntry(files[key]);
                 const path = dirname ? vpath.resolve(dirname, key) : key;
                 vpath.validate(path, vpath.ValidationFlags.Absolute);
-
                 // eslint-disable-next-line no-null/no-null
                 if (value === null || value === undefined || value instanceof Rmdir || value instanceof Unlink) {
                     if (this.stringComparer(vpath.dirname(path), path) === 0) {
@@ -1154,42 +1113,36 @@ namespace vfs {
             }
         }
     }
-
     export interface FileSystemOptions {
         // Sets the initial timestamp for new files and directories, or the function used
         // to calculate timestamps.
         time?: number | Date | (() => number | Date);
-
         // A set of file system entries to initially add to the file system.
         files?: FileSet;
-
         // Sets the initial working directory for the file system.
         cwd?: string;
-
         // Sets initial metadata attached to the file system.
         meta?: Record<string, any>;
     }
-
     export interface FileSystemCreateOptions extends FileSystemOptions {
         // Sets the documents to add to the file system.
         documents?: readonly documents.TextDocument[];
     }
-
     export type Axis = "ancestors" | "ancestors-or-self" | "self" | "descendants-or-self" | "descendants";
-
     export interface Traversal {
         /** A function called to choose whether to continue to traverse to either ancestors or descendants. */
         traverse?(path: string, stats: Stats): boolean;
         /** A function called to choose whether to accept a path as part of the result. */
         accept?(path: string, stats: Stats): boolean;
     }
-
     export interface FileSystemResolver {
-        statSync(path: string): { mode: number; size: number; };
+        statSync(path: string): {
+            mode: number;
+            size: number;
+        };
         readdirSync(path: string): string[];
         readFileSync(path: string): Buffer;
     }
-
     export interface FileSystemResolverHost {
         useCaseSensitiveFileNames(): boolean;
         getAccessibleFileSystemEntries(path: string): ts.FileSystemEntries;
@@ -1199,14 +1152,16 @@ namespace vfs {
         readFile(path: string): string | undefined;
         getWorkspaceRoot(): string;
     }
-
     export function createResolver(host: FileSystemResolverHost): FileSystemResolver {
         return {
             readdirSync(path: string): string[] {
                 const { files, directories } = host.getAccessibleFileSystemEntries(path);
                 return directories.concat(files);
             },
-            statSync(path: string): { mode: number; size: number; } {
+            statSync(path: string): {
+                mode: number;
+                size: number;
+            } {
                 if (host.directoryExists(path)) {
                     return { mode: S_IFDIR | 0o777, size: 0 };
                 }
@@ -1222,7 +1177,6 @@ namespace vfs {
             }
         };
     }
-
     /**
      * Create a virtual file system from a physical file system using the following path mappings:
      *
@@ -1266,7 +1220,6 @@ namespace vfs {
         }
         return fs;
     }
-
     export class Stats {
         public dev: number;
         public ino: number;
@@ -1286,7 +1239,6 @@ namespace vfs {
         public mtime: Date;
         public ctime: Date;
         public birthtime: Date;
-
         constructor();
         constructor(dev: number, ino: number, mode: number, nlink: number, rdev: number, size: number, blksize: number, blocks: number, atimeMs: number, mtimeMs: number, ctimeMs: number, birthtimeMs: number);
         constructor(dev = 0, ino = 0, mode = 0, nlink = 0, rdev = 0, size = 0, blksize = 0, blocks = 0, atimeMs = 0, mtimeMs = 0, ctimeMs = 0, birthtimeMs = 0) {
@@ -1309,7 +1261,6 @@ namespace vfs {
             this.ctime = new Date(this.ctimeMs);
             this.birthtime = new Date(this.birthtimeMs);
         }
-
         public isFile() { return (this.mode & S_IFMT) === S_IFREG; }
         public isDirectory() { return (this.mode & S_IFMT) === S_IFDIR; }
         public isSymbolicLink() { return (this.mode & S_IFMT) === S_IFLNK; }
@@ -1318,7 +1269,6 @@ namespace vfs {
         public isFIFO() { return (this.mode & S_IFMT) === S_IFIFO; }
         public isSocket() { return (this.mode & S_IFMT) === S_IFSOCK; }
     }
-
     export const IOErrorMessages = Object.freeze({
         EACCES: "access denied",
         EIO: "an I/O error occurred",
@@ -1333,52 +1283,54 @@ namespace vfs {
         EPERM: "operation not permitted",
         EROFS: "file system is read-only"
     });
-
     export function createIOError(code: keyof typeof IOErrorMessages, details = "") {
         const err: NodeJS.ErrnoException = new Error(`${code}: ${IOErrorMessages[code]} ${details}`);
         err.code = code;
-        if (Error.captureStackTrace) Error.captureStackTrace(err, createIOError);
+        if (Error.captureStackTrace)
+            Error.captureStackTrace(err, createIOError);
         return err;
     }
-
     /**
      * A template used to populate files, directories, links, etc. in a virtual file system.
      */
     export interface FileSet {
         [name: string]: DirectoryLike | FileLike | Link | Symlink | Mount | Rmdir | Unlink | null | undefined;
     }
-
     export type DirectoryLike = FileSet | Directory;
     export type FileLike = File | Buffer | string;
-
     /** Extended options for a directory in a `FileSet` */
     export class Directory {
         public readonly files: FileSet;
         public readonly meta: Record<string, any> | undefined;
-        constructor(files: FileSet, { meta }: { meta?: Record<string, any> } = {}) {
+        constructor(files: FileSet, { meta }: {
+            meta?: Record<string, any>;
+        } = {}) {
             this.files = files;
             this.meta = meta;
         }
     }
-
     /** Extended options for a file in a `FileSet` */
     export class File {
         public readonly data: Buffer | string;
         public readonly encoding: string | undefined;
         public readonly meta: Record<string, any> | undefined;
-        constructor(data: Buffer | string, { meta, encoding }: { encoding?: string, meta?: Record<string, any> } = {}) {
+        constructor(data: Buffer | string, { meta, encoding }: {
+            encoding?: string;
+            meta?: Record<string, any>;
+        } = {}) {
             this.data = data;
             this.encoding = encoding;
             this.meta = meta;
         }
     }
-
     export class SameFileContentFile extends File {
-        constructor(data: Buffer | string, metaAndEncoding?: { encoding?: string, meta?: Record<string, any> }) {
+        constructor(data: Buffer | string, metaAndEncoding?: {
+            encoding?: string;
+            meta?: Record<string, any>;
+        }) {
             super(data, metaAndEncoding);
         }
     }
-
     /** Extended options for a hard link in a `FileSet` */
     export class Link {
         public readonly path: string;
@@ -1386,42 +1338,40 @@ namespace vfs {
             this.path = path;
         }
     }
-
     /** Removes a directory in a `FileSet` */
     export class Rmdir {
         public _rmdirBrand?: never; // brand necessary for proper type guards
     }
-
     /** Unlinks a file in a `FileSet` */
     export class Unlink {
         public _unlinkBrand?: never; // brand necessary for proper type guards
     }
-
     /** Extended options for a symbolic link in a `FileSet` */
     export class Symlink {
         public readonly symlink: string;
         public readonly meta: Record<string, any> | undefined;
-        constructor(symlink: string, { meta }: { meta?: Record<string, any> } = {}) {
+        constructor(symlink: string, { meta }: {
+            meta?: Record<string, any>;
+        } = {}) {
             this.symlink = symlink;
             this.meta = meta;
         }
     }
-
     /** Extended options for mounting a virtual copy of an external file system via a `FileSet` */
     export class Mount {
         public readonly source: string;
         public readonly resolver: FileSystemResolver;
         public readonly meta: Record<string, any> | undefined;
-        constructor(source: string, resolver: FileSystemResolver, { meta }: { meta?: Record<string, any> } = {}) {
+        constructor(source: string, resolver: FileSystemResolver, { meta }: {
+            meta?: Record<string, any>;
+        } = {}) {
             this.source = source;
             this.resolver = resolver;
             this.meta = meta;
         }
     }
-
     // a generic POSIX inode
     type Inode = FileInode | DirectoryInode | SymlinkInode;
-
     interface FileInode {
         dev: number; // device id
         ino: number; // inode id
@@ -1438,7 +1388,6 @@ namespace vfs {
         shadowRoot?: FileInode;
         meta?: collections.Metadata;
     }
-
     interface DirectoryInode {
         dev: number; // device id
         ino: number; // inode id
@@ -1454,7 +1403,6 @@ namespace vfs {
         shadowRoot?: DirectoryInode;
         meta?: collections.Metadata;
     }
-
     interface SymlinkInode {
         dev: number; // device id
         ino: number; // inode id
@@ -1468,27 +1416,21 @@ namespace vfs {
         shadowRoot?: SymlinkInode;
         meta?: collections.Metadata;
     }
-
     function isEmptyNonShadowedDirectory(node: DirectoryInode) {
         return !node.links && !node.shadowRoot && !node.resolver && !node.source;
     }
-
     function isEmptyNonShadowedFile(node: FileInode) {
         return !node.buffer && !node.shadowRoot && !node.resolver && !node.source;
     }
-
     function isFile(node: Inode | undefined): node is FileInode {
         return node !== undefined && (node.mode & S_IFMT) === S_IFREG;
     }
-
     function isDirectory(node: Inode | undefined): node is DirectoryInode {
         return node !== undefined && (node.mode & S_IFMT) === S_IFDIR;
     }
-
     function isSymlink(node: Inode | undefined): node is SymlinkInode {
         return node !== undefined && (node.mode & S_IFMT) === S_IFLNK;
     }
-
     interface WalkResult {
         realpath: string;
         basename: string;
@@ -1496,11 +1438,9 @@ namespace vfs {
         links: collections.SortedMap<string, Inode>;
         node: Inode | undefined;
     }
-
     let builtLocalHost: FileSystemResolverHost | undefined;
     let builtLocalCI: FileSystem | undefined;
     let builtLocalCS: FileSystem | undefined;
-
     function getBuiltLocal(host: FileSystemResolverHost, ignoreCase: boolean): FileSystem {
         if (builtLocalHost !== host) {
             builtLocalCI = undefined;
@@ -1521,14 +1461,14 @@ namespace vfs {
             });
             builtLocalCI.makeReadonly();
         }
-        if (ignoreCase) return builtLocalCI;
+        if (ignoreCase)
+            return builtLocalCI;
         if (!builtLocalCS) {
             builtLocalCS = builtLocalCI.shadow(/*ignoreCase*/ false);
             builtLocalCS.makeReadonly();
         }
         return builtLocalCS;
     }
-
     /* eslint-disable no-null/no-null */
     function normalizeFileSetEntry(value: FileSet[string]) {
         if (value === undefined ||
@@ -1544,14 +1484,12 @@ namespace vfs {
         }
         return typeof value === "string" || Buffer.isBuffer(value) ? new File(value) : new Directory(value);
     }
-
     export function formatPatch(patch: FileSet): string;
     export function formatPatch(patch: FileSet | undefined): string | null;
     export function formatPatch(patch: FileSet | undefined) {
         return patch ? formatPatchWorker("", patch) : null;
     }
     /* eslint-enable no-null/no-null */
-
     function formatPatchWorker(dirname: string, container: FileSet): string {
         let text = "";
         for (const name of Object.keys(container)) {
@@ -1586,12 +1524,10 @@ namespace vfs {
         }
         return text;
     }
-
     export function iteratePatch(patch: FileSet | undefined): IterableIterator<[string, string]> | null {
         // eslint-disable-next-line no-null/no-null
         return patch ? Harness.Compiler.iterateOutputs(iteratePatchWorker("", patch)) : null;
     }
-
     function* iteratePatchWorker(dirname: string, container: FileSet): IterableIterator<documents.TextDocument> {
         for (const name of Object.keys(container)) {
             const entry = normalizeFileSetEntry(container[name]);

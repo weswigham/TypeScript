@@ -7,7 +7,6 @@ namespace Harness.Parallel.Worker {
                 exceptionsHooked = true;
             }
         }
-
         function unhookUncaughtExceptions() {
             if (exceptionsHooked) {
                 process.removeListener("uncaughtException", handleUncaughtException);
@@ -15,13 +14,10 @@ namespace Harness.Parallel.Worker {
                 exceptionsHooked = false;
             }
         }
-
         let exceptionsHooked = false;
         hookUncaughtExceptions();
-
         // Capitalization is aligned with the global `Mocha` namespace for typespace/namespace references.
         const Mocha = require("mocha") as typeof import("mocha");
-
         /**
          * Mixin helper.
          * @param base The base class constructor.
@@ -33,7 +29,6 @@ namespace Harness.Parallel.Worker {
             }
             return base;
         }
-
         /**
          * Mixes in overrides for `resetTimeout` and `clearTimeout` to support parallel test execution in a worker.
          */
@@ -54,12 +49,13 @@ namespace Harness.Parallel.Worker {
                 }
             } as T;
         }
-
         /**
          * Mixes in an override for `clone` to support parallel test execution in a worker.
          */
         function Clone<T extends typeof Mocha.Suite | typeof Mocha.Test>(base: T) {
-            return class extends (base as new (...args: any[]) => { clone(): any; }) {
+            return class extends (base as new (...args: any[]) => {
+                clone(): any;
+            }) {
                 clone() {
                     const cloned = super.clone();
                     Object.setPrototypeOf(cloned, this.constructor.prototype);
@@ -67,7 +63,6 @@ namespace Harness.Parallel.Worker {
                 }
             } as T;
         }
-
         /**
          * A `Mocha.Suite` subclass to support parallel test execution in a worker.
          */
@@ -78,19 +73,16 @@ namespace Harness.Parallel.Worker {
                 return hook;
             }
         }
-
         /**
          * A `Mocha.Hook` subclass to support parallel test execution in a worker.
          */
         class Hook extends mixin(Mocha.Hook, Timeout) {
         }
-
         /**
          * A `Mocha.Test` subclass to support parallel test execution in a worker.
          */
         class Test extends mixin(Mocha.Test, Timeout, Clone) {
         }
-
         /**
          * Shims a 'bdd'-style test interface to support parallel test execution in a worker.
          * @param rootSuite The root suite.
@@ -108,7 +100,6 @@ namespace Harness.Parallel.Worker {
             context.it = context.specify = ((title: string | Mocha.Func | Mocha.AsyncFunc, fn?: Mocha.Func | Mocha.AsyncFunc) => addTest(title, fn)) as Mocha.TestFunction;
             context.it.skip = context.xit = context.xspecify = (title: string | Mocha.Func | Mocha.AsyncFunc) => addTest(typeof title === "function" ? title.name : title, /*fn*/ undefined);
             context.it.only = (title: string | Mocha.Func | Mocha.AsyncFunc, fn?: Mocha.Func | Mocha.AsyncFunc) => addTest(title, fn);
-
             function addSuite(title: string, fn: ((this: Mocha.Suite) => void) | undefined): Mocha.Suite {
                 const suite = new Suite(title, suites[0].ctx);
                 suites[0].addSuite(suite);
@@ -120,7 +111,6 @@ namespace Harness.Parallel.Worker {
                 suites.shift();
                 return suite;
             }
-
             function addTest(title: string | Mocha.Func | Mocha.AsyncFunc, fn: Mocha.Func | Mocha.AsyncFunc | undefined): Mocha.Test {
                 if (typeof title === "function") {
                     fn = title;
@@ -131,11 +121,10 @@ namespace Harness.Parallel.Worker {
                 return test;
             }
         }
-
         /**
          * Run the tests in the requested task.
          */
-        function runTests(task: Task, fn: (payload: TaskResult) => void) {
+        function runTests(task: Harness.Parallel.Task, fn: (payload: Harness.Parallel.TaskResult) => void) {
             if (task.runner === "unittest") {
                 return executeUnitTests(task, fn);
             }
@@ -143,8 +132,7 @@ namespace Harness.Parallel.Worker {
                 return runFileTests(task, fn);
             }
         }
-
-        function executeUnitTests(task: UnitTestTask, fn: (payload: TaskResult) => void) {
+        function executeUnitTests(task: Harness.Parallel.UnitTestTask, fn: (payload: Harness.Parallel.TaskResult) => void) {
             if (!unitTestSuiteMap && unitTestSuite.suites.length) {
                 unitTestSuiteMap = ts.createMap<Mocha.Suite>();
                 for (const suite of unitTestSuite.suites) {
@@ -157,19 +145,16 @@ namespace Harness.Parallel.Worker {
                     unitTestTestMap.set(test.title, test);
                 }
             }
-
             if (!unitTestSuiteMap && !unitTestTestMap) {
                 throw new Error(`Asked to run unit test ${task.file}, but no unit tests were discovered!`);
             }
-
             let suite = unitTestSuiteMap.get(task.file);
             const test = unitTestTestMap.get(task.file);
             if (!suite && !test) {
                 throw new Error(`Unit test with name "${task.file}" was asked to be run, but such a test does not exist!`);
             }
-
             const root = new Suite("", new Mocha.Context());
-            root.timeout(globalTimeout || 40_000);
+            root.timeout(Harness.globalTimeout || 40000);
             if (suite) {
                 root.addSuite(suite);
                 Object.setPrototypeOf(suite.ctx, root.ctx);
@@ -183,59 +168,52 @@ namespace Harness.Parallel.Worker {
                 test.parent = newSuite;
                 suite = newSuite;
             }
-
             runSuite(task, suite!, payload => {
                 suite!.parent = unitTestSuite;
                 Object.setPrototypeOf(suite!.ctx, unitTestSuite.ctx);
                 fn(payload);
             });
         }
-
-        function runFileTests(task: RunnerTask, fn: (result: TaskResult) => void) {
+        function runFileTests(task: Harness.Parallel.RunnerTask, fn: (result: Harness.Parallel.TaskResult) => void) {
             let instance = runners.get(task.runner);
-            if (!instance) runners.set(task.runner, instance = createRunner(task.runner));
+            if (!instance)
+                runners.set(task.runner, instance = Harness.createRunner(task.runner));
             instance.tests = [task.file];
-
             const suite = new Suite("", new Mocha.Context());
-            suite.timeout(globalTimeout || 40_000);
-
+            suite.timeout(Harness.globalTimeout || 40000);
             shimTestInterface(suite, global);
             instance.initializeTests();
-
             runSuite(task, suite, fn);
         }
-
-        function runSuite(task: Task, suite: Mocha.Suite, fn: (result: TaskResult) => void) {
-            const errors: ErrorInfo[] = [];
-            const passes: TestInfo[] = [];
+        function runSuite(task: Harness.Parallel.Task, suite: Mocha.Suite, fn: (result: Harness.Parallel.TaskResult) => void) {
+            const errors: Harness.Parallel.ErrorInfo[] = [];
+            const passes: Harness.Parallel.TestInfo[] = [];
             const start = +new Date();
             const runner = new Mocha.Runner(suite, /*delay*/ false);
             const uncaught = (err: any) => runner.uncaught(err);
-
             runner
                 .on("start", () => {
-                    unhookUncaughtExceptions(); // turn off global uncaught handling
-                    process.on("unhandledRejection", uncaught); // turn on unhandled rejection handling (not currently handled in mocha)
-                })
+                unhookUncaughtExceptions(); // turn off global uncaught handling
+                process.on("unhandledRejection", uncaught); // turn on unhandled rejection handling (not currently handled in mocha)
+            })
                 .on("pass", (test: Mocha.Test) => {
-                    passes.push({ name: test.titlePath() });
-                })
+                passes.push({ name: test.titlePath() });
+            })
                 .on("fail", (test: Mocha.Test | Mocha.Hook, err: any) => {
-                    errors.push({ name: test.titlePath(), error: err.message, stack: err.stack });
-                })
+                errors.push({ name: test.titlePath(), error: err.message, stack: err.stack });
+            })
                 .on("end", () => {
-                    process.removeListener("unhandledRejection", uncaught);
-                    hookUncaughtExceptions();
-                })
+                process.removeListener("unhandledRejection", uncaught);
+                hookUncaughtExceptions();
+            })
                 .run(() => {
-                    fn({ task, errors, passes, passing: passes.length, duration: +new Date() - start });
-                });
+                fn({ task, errors, passes, passing: passes.length, duration: +new Date() - start });
+            });
         }
-
         /**
          * Validates a message received from the host is well-formed.
          */
-        function validateHostMessage(message: ParallelHostMessage) {
+        function validateHostMessage(message: Harness.Parallel.ParallelHostMessage) {
             switch (message.type) {
                 case "test": return validateTest(message.payload);
                 case "batch": return validateBatch(message.payload);
@@ -243,78 +221,69 @@ namespace Harness.Parallel.Worker {
                 default: return false;
             }
         }
-
         /**
          * Validates a test task is well formed.
          */
-        function validateTest(task: Task) {
+        function validateTest(task: Harness.Parallel.Task) {
             return !!task && !!task.runner && !!task.file;
         }
-
         /**
          * Validates a batch of test tasks are well formed.
          */
-        function validateBatch(tasks: Task[]) {
+        function validateBatch(tasks: Harness.Parallel.Task[]) {
             return !!tasks && Array.isArray(tasks) && tasks.length > 0 && tasks.every(validateTest);
         }
-
-        function processHostMessage(message: ParallelHostMessage) {
+        function processHostMessage(message: Harness.Parallel.ParallelHostMessage) {
             if (!validateHostMessage(message)) {
                 console.log("Invalid message:", message);
                 return;
             }
-
             switch (message.type) {
                 case "test": return processTest(message.payload, /*last*/ true);
                 case "batch": return processBatch(message.payload);
                 case "close": return process.exit(0);
             }
         }
-
-        function processTest(task: Task, last: boolean, fn?: () => void) {
+        function processTest(task: Harness.Parallel.Task, last: boolean, fn?: () => void) {
             runTests(task, payload => {
                 sendMessage(last ? { type: "result", payload } : { type: "progress", payload });
-                if (fn) fn();
+                if (fn)
+                    fn();
             });
         }
-
-        function processBatch(tasks: Task[], fn?: () => void) {
+        function processBatch(tasks: Harness.Parallel.Task[], fn?: () => void) {
             const next = () => {
                 const task = tasks.shift();
-                if (task) return processTest(task, tasks.length === 0, next);
-                if (fn) fn();
+                if (task)
+                    return processTest(task, tasks.length === 0, next);
+                if (fn)
+                    fn();
             };
             next();
         }
-
         function handleUncaughtException(err: any) {
             const error = err instanceof Error ? err : new Error("" + err);
             sendMessage({ type: "error", payload: { error: error.message, stack: error.stack! } });
         }
-
-        function sendMessage(message: ParallelClientMessage) {
+        function sendMessage(message: Harness.Parallel.ParallelClientMessage) {
             process.send!(message);
         }
-
         // A cache of test harness Runner instances.
-        const runners = ts.createMap<RunnerBase>();
-
+        const runners = ts.createMap<Harness.RunnerBase>();
         // The root suite for all unit tests.
         let unitTestSuite: Suite;
         let unitTestSuiteMap: ts.Map<Mocha.Suite>;
         // (Unit) Tests directly within the root suite
         let unitTestTestMap: ts.Map<Mocha.Test>;
-
-        if (runUnitTests) {
+        if (Harness.runUnitTests) {
             unitTestSuite = new Suite("", new Mocha.Context());
-            unitTestSuite.timeout(globalTimeout || 40_000);
+            unitTestSuite.timeout(Harness.globalTimeout || 40000);
             shimTestInterface(unitTestSuite, global);
         }
         else {
             // ensure unit tests do not get run
-            shimNoopTestInterface(global);
+            Harness.Parallel.shimNoopTestInterface(global);
         }
-
         process.on("message", processHostMessage);
     }
 }

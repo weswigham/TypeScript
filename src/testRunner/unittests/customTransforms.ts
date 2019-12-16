@@ -1,11 +1,14 @@
 namespace ts {
     describe("unittests:: customTransforms", () => {
-        function emitsCorrectly(name: string, sources: { file: string, text: string }[], customTransformers: CustomTransformers, options: CompilerOptions = {}) {
+        function emitsCorrectly(name: string, sources: {
+            file: string;
+            text: string;
+        }[], customTransformers: ts.CustomTransformers, options: ts.CompilerOptions = {}) {
             it(name, () => {
-                const roots = sources.map(source => createSourceFile(source.file, source.text, ScriptTarget.ES2015));
-                const fileMap = arrayToMap(roots, file => file.fileName);
-                const outputs = createMap<string>();
-                const host: CompilerHost = {
+                const roots = sources.map(source => ts.createSourceFile(source.file, source.text, ts.ScriptTarget.ES2015));
+                const fileMap = ts.arrayToMap(roots, file => file.fileName);
+                const outputs = ts.createMap<string>();
+                const host: ts.CompilerHost = {
                     getSourceFile: (fileName) => fileMap.get(fileName),
                     getDefaultLibFileName: () => "lib.d.ts",
                     getCurrentDirectory: () => "",
@@ -17,152 +20,137 @@ namespace ts {
                     readFile: (fileName) => fileMap.has(fileName) ? fileMap.get(fileName)!.text : undefined,
                     writeFile: (fileName, text) => outputs.set(fileName, text),
                 };
-
-                const program = createProgram(arrayFrom(fileMap.keys()), { newLine: NewLineKind.LineFeed, ...options }, host);
+                const program = ts.createProgram(ts.arrayFrom(fileMap.keys()), { newLine: ts.NewLineKind.LineFeed, ...options }, host);
                 program.emit(/*targetSourceFile*/ undefined, host.writeFile, /*cancellationToken*/ undefined, /*emitOnlyDtsFiles*/ false, customTransformers);
                 let content = "";
-                for (const [file, text] of arrayFrom(outputs.entries())) {
-                    if (content) content += "\n\n";
+                for (const [file, text] of ts.arrayFrom(outputs.entries())) {
+                    if (content)
+                        content += "\n\n";
                     content += `// [${file}]\n`;
                     content += text;
                 }
                 Harness.Baseline.runBaseline(`customTransforms/${name}.js`, content);
             });
         }
-
         const sources = [{
-            file: "source.ts",
-            text: `
+                file: "source.ts",
+                text: `
             function f1() { }
             class c() { }
             enum e { }
             // leading
             function f2() { } // trailing
             `
-        }];
-
-        const before: TransformerFactory<SourceFile> = context => {
-            return file => visitEachChild(file, visit, context);
-            function visit(node: Node): VisitResult<Node> {
+            }];
+        const before: ts.TransformerFactory<ts.SourceFile> = context => {
+            return file => ts.visitEachChild(file, visit, context);
+            function visit(node: ts.Node): ts.VisitResult<ts.Node> {
                 switch (node.kind) {
-                    case SyntaxKind.FunctionDeclaration:
-                        return visitFunction(<FunctionDeclaration>node);
+                    case ts.SyntaxKind.FunctionDeclaration:
+                        return visitFunction((<ts.FunctionDeclaration>node));
                     default:
-                        return visitEachChild(node, visit, context);
+                        return ts.visitEachChild(node, visit, context);
                 }
             }
-            function visitFunction(node: FunctionDeclaration) {
-                addSyntheticLeadingComment(node, SyntaxKind.MultiLineCommentTrivia, "@before", /*hasTrailingNewLine*/ true);
+            function visitFunction(node: ts.FunctionDeclaration) {
+                ts.addSyntheticLeadingComment(node, ts.SyntaxKind.MultiLineCommentTrivia, "@before", /*hasTrailingNewLine*/ true);
                 return node;
             }
         };
-
-        const after: TransformerFactory<SourceFile> = context => {
-            return file => visitEachChild(file, visit, context);
-            function visit(node: Node): VisitResult<Node> {
+        const after: ts.TransformerFactory<ts.SourceFile> = context => {
+            return file => ts.visitEachChild(file, visit, context);
+            function visit(node: ts.Node): ts.VisitResult<ts.Node> {
                 switch (node.kind) {
-                    case SyntaxKind.VariableStatement:
-                        return visitVariableStatement(<VariableStatement>node);
+                    case ts.SyntaxKind.VariableStatement:
+                        return visitVariableStatement((<ts.VariableStatement>node));
                     default:
-                        return visitEachChild(node, visit, context);
+                        return ts.visitEachChild(node, visit, context);
                 }
             }
-            function visitVariableStatement(node: VariableStatement) {
-                addSyntheticLeadingComment(node, SyntaxKind.SingleLineCommentTrivia, "@after");
+            function visitVariableStatement(node: ts.VariableStatement) {
+                ts.addSyntheticLeadingComment(node, ts.SyntaxKind.SingleLineCommentTrivia, "@after");
                 return node;
             }
         };
-
         emitsCorrectly("before", sources, { before: [before] });
         emitsCorrectly("after", sources, { after: [after] });
         emitsCorrectly("both", sources, { before: [before], after: [after] });
-
         emitsCorrectly("before+decorators", [{
-            file: "source.ts",
-            text: `
+                file: "source.ts",
+                text: `
                 declare const dec: any;
                 class B {}
                 @dec export class C { constructor(b: B) { } }
                 'change'
             `
-        }], {before: [
-            context => node => visitNode(node, function visitor(node: Node): Node {
-                if (isStringLiteral(node) && node.text === "change") return createLiteral("changed");
-                return visitEachChild(node, visitor, context);
-            })
-        ]}, {
-            target: ScriptTarget.ES5,
-            module: ModuleKind.ES2015,
+            }], { before: [
+                context => node => ts.visitNode(node, function visitor(node: ts.Node): ts.Node {
+                    if (ts.isStringLiteral(node) && node.text === "change")
+                        return ts.createLiteral("changed");
+                    return ts.visitEachChild(node, visitor, context);
+                })
+            ] }, {
+            target: ts.ScriptTarget.ES5,
+            module: ts.ModuleKind.ES2015,
             emitDecoratorMetadata: true,
             experimentalDecorators: true
         });
-
-        emitsCorrectly("sourceMapExternalSourceFiles",
-            [
-                {
-                    file: "source.ts",
-                    // The text of length 'changed' is made to be on two lines so we know the line map change
-                    text: `\`multi
+        emitsCorrectly("sourceMapExternalSourceFiles", [
+            {
+                file: "source.ts",
+                // The text of length 'changed' is made to be on two lines so we know the line map change
+                text: `\`multi
                     line\`
 'change'`
-                },
-            ],
-            {
-                before: [
-                    context => node => visitNode(node, function visitor(node: Node): Node {
-                        if (isStringLiteral(node) && node.text === "change") {
-                            const text = "'changed'";
-                            const lineMap = computeLineStarts(text);
-                            setSourceMapRange(node, {
-                                pos: 0, end: text.length, source: {
-                                    text,
-                                    fileName: "another.html",
-                                    lineMap,
-                                    getLineAndCharacterOfPosition: pos => computeLineAndCharacterOfPosition(lineMap, pos)
-                                }
-                            });
-                            return node;
-                        }
-                        return visitEachChild(node, visitor, context);
-                    })
-                ]
             },
-            { sourceMap: true }
-        );
-
-        emitsCorrectly("skipTriviaExternalSourceFiles",
-            [
-                {
-                    file: "source.ts",
-                    // The source file contains preceding trivia (e.g. whitespace) to try to confuse the `skipSourceTrivia` function.
-                    text: "         original;"
-                },
-            ],
-            {
-                before: [
-                    context => {
-                        const transformSourceFile: Transformer<SourceFile> = node => visitNode(node, function visitor(node: Node): Node {
-                            if (isIdentifier(node) && node.text === "original") {
-                                const newNode = createIdentifier("changed");
-                                setSourceMapRange(newNode, {
-                                    pos: 0,
-                                    end: 7,
-                                    // Do not provide a custom skipTrivia function for `source`.
-                                    source: createSourceMapSource("another.html", "changed;")
-                                });
-                                return newNode;
+        ], {
+            before: [
+                context => node => ts.visitNode(node, function visitor(node: ts.Node): ts.Node {
+                    if (ts.isStringLiteral(node) && node.text === "change") {
+                        const text = "'changed'";
+                        const lineMap = ts.computeLineStarts(text);
+                        ts.setSourceMapRange(node, {
+                            pos: 0, end: text.length, source: {
+                                text,
+                                fileName: "another.html",
+                                lineMap,
+                                getLineAndCharacterOfPosition: pos => ts.computeLineAndCharacterOfPosition(lineMap, pos)
                             }
-                            return visitEachChild(node, visitor, context);
                         });
-                        return {
-                            transformSourceFile,
-                            transformBundle: node => createBundle(map(node.sourceFiles, transformSourceFile), node.prepends),
-                        };
+                        return node;
                     }
-                ]
+                    return ts.visitEachChild(node, visitor, context);
+                })
+            ]
+        }, { sourceMap: true });
+        emitsCorrectly("skipTriviaExternalSourceFiles", [
+            {
+                file: "source.ts",
+                // The source file contains preceding trivia (e.g. whitespace) to try to confuse the `skipSourceTrivia` function.
+                text: "         original;"
             },
-            { sourceMap: true, outFile: "source.js" }
-        );
-
+        ], {
+            before: [
+                context => {
+                    const transformSourceFile: ts.Transformer<ts.SourceFile> = node => ts.visitNode(node, function visitor(node: ts.Node): ts.Node {
+                        if (ts.isIdentifier(node) && node.text === "original") {
+                            const newNode = ts.createIdentifier("changed");
+                            ts.setSourceMapRange(newNode, {
+                                pos: 0,
+                                end: 7,
+                                // Do not provide a custom skipTrivia function for `source`.
+                                source: ts.createSourceMapSource("another.html", "changed;")
+                            });
+                            return newNode;
+                        }
+                        return ts.visitEachChild(node, visitor, context);
+                    });
+                    return {
+                        transformSourceFile,
+                        transformBundle: node => ts.createBundle(ts.map(node.sourceFiles, transformSourceFile), node.prepends),
+                    };
+                }
+            ]
+        }, { sourceMap: true, outFile: "source.js" });
     });
 }

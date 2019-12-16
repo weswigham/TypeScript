@@ -1,10 +1,10 @@
 namespace ts.projectSystem {
-    import Tsc_WatchDirectory = TestFSWithWatch.Tsc_WatchDirectory;
+    import Tsc_WatchDirectory = ts.TestFSWithWatch.Tsc_WatchDirectory;
     describe("unittests:: tsserver:: watchEnvironment:: tsserverProjectSystem watchDirectories implementation", () => {
         function verifyCompletionListWithNewFileInSubFolder(tscWatchDirectory: Tsc_WatchDirectory) {
             const projectFolder = "/a/username/project";
             const projectSrcFolder = `${projectFolder}/src`;
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: `${projectFolder}/tsconfig.json`,
                 content: JSON.stringify({
                     watchOptions: {
@@ -12,44 +12,41 @@ namespace ts.projectSystem {
                     }
                 })
             };
-            const index: File = {
+            const index: ts.projectSystem.File = {
                 path: `${projectSrcFolder}/index.ts`,
                 content: `import {} from "./"`
             };
-            const file1: File = {
+            const file1: ts.projectSystem.File = {
                 path: `${projectSrcFolder}/file1.ts`,
                 content: ""
             };
-
-            const files = [index, file1, configFile, libFile];
+            const files = [index, file1, configFile, ts.projectSystem.libFile];
             const fileNames = files.map(file => file.path);
             // All closed files(files other than index), project folder, project/src folder and project/node_modules/@types folder
-            const expectedWatchedFiles = arrayToMap(fileNames.slice(1), s => s, () => 1);
-            const expectedWatchedDirectories = createMap<number>();
+            const expectedWatchedFiles = ts.arrayToMap(fileNames.slice(1), s => s, () => 1);
+            const expectedWatchedDirectories = ts.createMap<number>();
             const mapOfDirectories = tscWatchDirectory === Tsc_WatchDirectory.NonRecursiveWatchDirectory ?
                 expectedWatchedDirectories :
                 tscWatchDirectory === Tsc_WatchDirectory.WatchFile ?
                     expectedWatchedFiles :
-                    createMap();
+                    ts.createMap();
             // For failed resolution lookup and tsconfig files => cached so only watched only once
             mapOfDirectories.set(projectFolder, 1);
             // Through above recursive watches
             mapOfDirectories.set(projectSrcFolder, 1);
             // node_modules/@types folder
-            mapOfDirectories.set(`${projectFolder}/${nodeModulesAtTypes}`, 1);
+            mapOfDirectories.set(`${projectFolder}/${ts.projectSystem.nodeModulesAtTypes}`, 1);
             const expectedCompletions = ["file1"];
             const completionPosition = index.content.lastIndexOf('"');
-            const environmentVariables = createMap<string>();
+            const environmentVariables = ts.createMap<string>();
             environmentVariables.set("TSC_WATCHDIRECTORY", tscWatchDirectory);
-            const host = createServerHost(files, { environmentVariables });
-            const projectService = createProjectService(host);
+            const host = ts.projectSystem.createServerHost(files, { environmentVariables });
+            const projectService = ts.projectSystem.createProjectService(host);
             projectService.openClientFile(index.path);
-
-            const project = Debug.assertDefined(projectService.configuredProjects.get(configFile.path));
+            const project = ts.Debug.assertDefined(projectService.configuredProjects.get(configFile.path));
             verifyProjectAndCompletions();
-
             // Add file2
-            const file2: File = {
+            const file2: ts.projectSystem.File = {
                 path: `${projectSrcFolder}/file2.ts`,
                 content: ""
             };
@@ -61,140 +58,120 @@ namespace ts.projectSystem {
             host.runQueuedTimeoutCallbacks();
             assert.equal(projectService.configuredProjects.get(configFile.path), project);
             verifyProjectAndCompletions();
-
             function verifyProjectAndCompletions() {
                 const completions = project.getLanguageService().getCompletionsAtPosition(index.path, completionPosition, { includeExternalModuleExports: false, includeInsertTextCompletions: false })!;
-                checkArray("Completion Entries", completions.entries.map(e => e.name), expectedCompletions);
-
-                checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
-
-                checkWatchedFilesDetailed(host, expectedWatchedFiles);
-                checkWatchedDirectoriesDetailed(host, expectedWatchedDirectories, /*recursive*/ false);
-                checkProjectActualFiles(project, fileNames);
+                ts.projectSystem.checkArray("Completion Entries", completions.entries.map(e => e.name), expectedCompletions);
+                ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
+                ts.projectSystem.checkWatchedFilesDetailed(host, expectedWatchedFiles);
+                ts.projectSystem.checkWatchedDirectoriesDetailed(host, expectedWatchedDirectories, /*recursive*/ false);
+                ts.projectSystem.checkProjectActualFiles(project, fileNames);
             }
         }
-
         it("uses watchFile when file is added to subfolder, completion list has new file", () => {
             verifyCompletionListWithNewFileInSubFolder(Tsc_WatchDirectory.WatchFile);
         });
-
         it("uses non recursive watchDirectory when file is added to subfolder, completion list has new file", () => {
             verifyCompletionListWithNewFileInSubFolder(Tsc_WatchDirectory.NonRecursiveWatchDirectory);
         });
-
         it("uses dynamic polling when file is added to subfolder, completion list has new file", () => {
             verifyCompletionListWithNewFileInSubFolder(Tsc_WatchDirectory.DynamicPolling);
         });
     });
-
     describe("unittests:: tsserver:: watchEnvironment:: tsserverProjectSystem Watched recursive directories with windows style file system", () => {
         function verifyWatchedDirectories(rootedPath: string, useProjectAtRoot: boolean) {
             const root = useProjectAtRoot ? rootedPath : `${rootedPath}myfolder/allproject/`;
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: root + "project/tsconfig.json",
                 content: "{}"
             };
-            const file1: File = {
+            const file1: ts.projectSystem.File = {
                 path: root + "project/file1.ts",
                 content: "let x = 10;"
             };
-            const file2: File = {
+            const file2: ts.projectSystem.File = {
                 path: root + "project/file2.ts",
                 content: "let y = 10;"
             };
-            const files = [configFile, file1, file2, libFile];
-            const host = createServerHost(files, { windowsStyleRoot: "c:/" });
-            const projectService = createProjectService(host);
+            const files = [configFile, file1, file2, ts.projectSystem.libFile];
+            const host = ts.projectSystem.createServerHost(files, { windowsStyleRoot: "c:/" });
+            const projectService = ts.projectSystem.createProjectService(host);
             projectService.openClientFile(file1.path);
             const project = projectService.configuredProjects.get(configFile.path)!;
             assert.isDefined(project);
-            const winsowsStyleLibFilePath = "c:/" + libFile.path.substring(1);
-            checkProjectActualFiles(project, files.map(f => f === libFile ? winsowsStyleLibFilePath : f.path));
-            checkWatchedFiles(host, mapDefined(files, f => f === libFile ? winsowsStyleLibFilePath : f === file1 ? undefined : f.path));
-            checkWatchedDirectories(host, [], /*recursive*/ false);
-            checkWatchedDirectories(host, [
+            const winsowsStyleLibFilePath = "c:/" + ts.projectSystem.libFile.path.substring(1);
+            ts.projectSystem.checkProjectActualFiles(project, files.map(f => f === ts.projectSystem.libFile ? winsowsStyleLibFilePath : f.path));
+            ts.projectSystem.checkWatchedFiles(host, ts.mapDefined(files, f => f === ts.projectSystem.libFile ? winsowsStyleLibFilePath : f === file1 ? undefined : f.path));
+            ts.projectSystem.checkWatchedDirectories(host, [], /*recursive*/ false);
+            ts.projectSystem.checkWatchedDirectories(host, [
                 root + "project",
                 root + "project/node_modules/@types"
-            ].concat(useProjectAtRoot ? [] : [root + nodeModulesAtTypes]), /*recursive*/ true);
+            ].concat(useProjectAtRoot ? [] : [root + ts.projectSystem.nodeModulesAtTypes]), /*recursive*/ true);
         }
-
         function verifyRootedDirectoryWatch(rootedPath: string) {
             it("When project is in rootFolder of style c:/", () => {
                 verifyWatchedDirectories(rootedPath, /*useProjectAtRoot*/ true);
             });
-
             it("When files at some folder other than root", () => {
                 verifyWatchedDirectories(rootedPath, /*useProjectAtRoot*/ false);
             });
         }
-
         describe("for rootFolder of style c:/", () => {
             verifyRootedDirectoryWatch("c:/");
         });
-
         describe("for rootFolder of style c:/users/username", () => {
             verifyRootedDirectoryWatch("c:/users/username/");
         });
     });
-
     it(`unittests:: tsserver:: watchEnvironment:: tsserverProjectSystem recursive watch directory implementation does not watch files/directories in node_modules starting with "."`, () => {
         const projectFolder = "/a/username/project";
         const projectSrcFolder = `${projectFolder}/src`;
-        const configFile: File = {
+        const configFile: ts.projectSystem.File = {
             path: `${projectFolder}/tsconfig.json`,
             content: "{}"
         };
-        const index: File = {
+        const index: ts.projectSystem.File = {
             path: `${projectSrcFolder}/index.ts`,
             content: `import {} from "file"`
         };
-        const file1: File = {
+        const file1: ts.projectSystem.File = {
             path: `${projectSrcFolder}/file1.ts`,
             content: ""
         };
-        const nodeModulesExistingUnusedFile: File = {
+        const nodeModulesExistingUnusedFile: ts.projectSystem.File = {
             path: `${projectFolder}/node_modules/someFile.d.ts`,
             content: ""
         };
-
-        const fileNames = [index, file1, configFile, libFile].map(file => file.path);
+        const fileNames = [index, file1, configFile, ts.projectSystem.libFile].map(file => file.path);
         // All closed files(files other than index), project folder, project/src folder and project/node_modules/@types folder
-        const expectedWatchedFiles = arrayToMap(fileNames.slice(1), identity, () => 1);
-        const expectedWatchedDirectories = arrayToMap([projectFolder, projectSrcFolder, `${projectFolder}/${nodeModules}`, `${projectFolder}/${nodeModulesAtTypes}`], identity, () => 1);
-
-        const environmentVariables = createMap<string>();
+        const expectedWatchedFiles = ts.arrayToMap(fileNames.slice(1), ts.identity, () => 1);
+        const expectedWatchedDirectories = ts.arrayToMap([projectFolder, projectSrcFolder, `${projectFolder}/${ts.projectSystem.nodeModules}`, `${projectFolder}/${ts.projectSystem.nodeModulesAtTypes}`], ts.identity, () => 1);
+        const environmentVariables = ts.createMap<string>();
         environmentVariables.set("TSC_WATCHDIRECTORY", Tsc_WatchDirectory.NonRecursiveWatchDirectory);
-        const host = createServerHost([index, file1, configFile, libFile, nodeModulesExistingUnusedFile], { environmentVariables });
-        const projectService = createProjectService(host);
+        const host = ts.projectSystem.createServerHost([index, file1, configFile, ts.projectSystem.libFile, nodeModulesExistingUnusedFile], { environmentVariables });
+        const projectService = ts.projectSystem.createProjectService(host);
         projectService.openClientFile(index.path);
-
-        const project = Debug.assertDefined(projectService.configuredProjects.get(configFile.path));
+        const project = ts.Debug.assertDefined(projectService.configuredProjects.get(configFile.path));
         verifyProject();
-
-        const nodeModulesIgnoredFileFromIgnoreDirectory: File = {
+        const nodeModulesIgnoredFileFromIgnoreDirectory: ts.projectSystem.File = {
             path: `${projectFolder}/node_modules/.cache/someFile.d.ts`,
             content: ""
         };
-
-        const nodeModulesIgnoredFile: File = {
+        const nodeModulesIgnoredFile: ts.projectSystem.File = {
             path: `${projectFolder}/node_modules/.cacheFile.ts`,
             content: ""
         };
-
-        const gitIgnoredFileFromIgnoreDirectory: File = {
+        const gitIgnoredFileFromIgnoreDirectory: ts.projectSystem.File = {
             path: `${projectFolder}/.git/someFile.d.ts`,
             content: ""
         };
-
-        const gitIgnoredFile: File = {
+        const gitIgnoredFile: ts.projectSystem.File = {
             path: `${projectFolder}/.gitCache.d.ts`,
             content: ""
         };
-        const emacsIgnoredFileFromIgnoreDirectory: File = {
+        const emacsIgnoredFileFromIgnoreDirectory: ts.projectSystem.File = {
             path: `${projectFolder}/src/.#field.ts`,
             content: ""
         };
-
         [
             nodeModulesIgnoredFileFromIgnoreDirectory,
             nodeModulesIgnoredFile,
@@ -206,197 +183,126 @@ namespace ts.projectSystem {
             host.checkTimeoutQueueLength(0);
             verifyProject();
         });
-
         function verifyProject() {
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
-            checkWatchedFilesDetailed(host, expectedWatchedFiles);
-            checkWatchedDirectoriesDetailed(host, expectedWatchedDirectories, /*recursive*/ false);
-            checkProjectActualFiles(project, fileNames);
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
+            ts.projectSystem.checkWatchedFilesDetailed(host, expectedWatchedFiles);
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, expectedWatchedDirectories, /*recursive*/ false);
+            ts.projectSystem.checkProjectActualFiles(project, fileNames);
         }
     });
-
     describe("unittests:: tsserver:: watchEnvironment:: tsserverProjectSystem watching files with network style paths", () => {
         function verifyFilePathStyle(path: string) {
-            const windowsStyleRoot = path.substr(0, getRootLength(path));
-            const host = createServerHost(
-                [libFile, { path, content: "const x = 10" }],
-                { windowsStyleRoot }
-            );
-            const service = createProjectService(host);
+            const windowsStyleRoot = path.substr(0, ts.getRootLength(path));
+            const host = ts.projectSystem.createServerHost([ts.projectSystem.libFile, { path, content: "const x = 10" }], { windowsStyleRoot });
+            const service = ts.projectSystem.createProjectService(host);
             service.openClientFile(path);
-            checkNumberOfProjects(service, { inferredProjects: 1 });
-            const libPath = `${windowsStyleRoot}${libFile.path.substring(1)}`;
-            checkProjectActualFiles(service.inferredProjects[0], [path, libPath]);
-            checkWatchedFiles(host, [libPath, `${getDirectoryPath(path)}/tsconfig.json`, `${getDirectoryPath(path)}/jsconfig.json`]);
+            ts.projectSystem.checkNumberOfProjects(service, { inferredProjects: 1 });
+            const libPath = `${windowsStyleRoot}${ts.projectSystem.libFile.path.substring(1)}`;
+            ts.projectSystem.checkProjectActualFiles(service.inferredProjects[0], [path, libPath]);
+            ts.projectSystem.checkWatchedFiles(host, [libPath, `${ts.getDirectoryPath(path)}/tsconfig.json`, `${ts.getDirectoryPath(path)}/jsconfig.json`]);
         }
-
         it("for file of style c:/myprojects/project/x.js", () => {
             verifyFilePathStyle("c:/myprojects/project/x.js");
         });
-
         it("for file of style //vda1cs4850/myprojects/project/x.js", () => {
             verifyFilePathStyle("//vda1cs4850/myprojects/project/x.js");
         });
-
         it("for file of style //vda1cs4850/c$/myprojects/project/x.js", () => {
             verifyFilePathStyle("//vda1cs4850/c$/myprojects/project/x.js");
         });
-
         it("for file of style c:/users/username/myprojects/project/x.js", () => {
             verifyFilePathStyle("c:/users/username/myprojects/project/x.js");
         });
-
         it("for file of style //vda1cs4850/c$/users/username/myprojects/project/x.js", () => {
             verifyFilePathStyle("//vda1cs4850/c$/users/username/myprojects/project/x.js");
         });
     });
-
     describe("unittests:: tsserver:: watchEnvironment:: handles watch compiler options", () => {
         it("with watchFile option as host configuration", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: "{}"
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1));
-            const session = createSession(host);
-            session.executeCommandSeq<protocol.ConfigureRequest>({
-                command: protocol.CommandTypes.Configure,
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1));
+            const session = ts.projectSystem.createSession(host);
+            session.executeCommandSeq<ts.projectSystem.protocol.ConfigureRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.Configure,
                 arguments: {
                     watchOptions: {
-                        watchFile: protocol.WatchFileKind.UseFsEvents
+                        watchFile: ts.projectSystem.protocol.WatchFileKind.UseFsEvents
                     }
                 }
             });
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
             // Instead of polling watch (= watchedFiles), uses fsWatch
-            checkWatchedFiles(host, emptyArray);
-            checkWatchedDirectoriesDetailed(
-                host,
-                files.map(f => f.path.toLowerCase()),
-                1,
-                /*recursive*/ false,
-                arrayToMap(
-                    files,
-                    f => f.path.toLowerCase(),
-                    f => [{
-                        fallbackPollingInterval: f === configFile ? PollingInterval.High : PollingInterval.Medium,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
-            checkWatchedDirectoriesDetailed(
-                host,
-                ["/a/b", "/a/b/node_modules/@types"],
-                1,
-                /*recursive*/ true,
-                arrayToMap(
-                    ["/a/b", "/a/b/node_modules/@types"],
-                    identity,
-                    () => [{
-                        fallbackPollingInterval: PollingInterval.Medium,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
+            ts.projectSystem.checkWatchedFiles(host, ts.emptyArray);
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, files.map(f => f.path.toLowerCase()), 1, 
+            /*recursive*/ false, ts.arrayToMap(files, f => f.path.toLowerCase(), f => [{
+                    fallbackPollingInterval: f === configFile ? ts.PollingInterval.High : ts.PollingInterval.Medium,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, ["/a/b", "/a/b/node_modules/@types"], 1, 
+            /*recursive*/ true, ts.arrayToMap(["/a/b", "/a/b/node_modules/@types"], ts.identity, () => [{
+                    fallbackPollingInterval: ts.PollingInterval.Medium,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
         });
-
         it("with watchDirectory option as host configuration", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: "{}"
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1), { runWithoutRecursiveWatches: true });
-            const session = createSession(host);
-            session.executeCommandSeq<protocol.ConfigureRequest>({
-                command: protocol.CommandTypes.Configure,
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1), { runWithoutRecursiveWatches: true });
+            const session = ts.projectSystem.createSession(host);
+            session.executeCommandSeq<ts.projectSystem.protocol.ConfigureRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.Configure,
                 arguments: {
                     watchOptions: {
-                        watchDirectory: protocol.WatchDirectoryKind.UseFsEvents
+                        watchDirectory: ts.projectSystem.protocol.WatchDirectoryKind.UseFsEvents
                     }
                 }
             });
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
-            checkWatchedFilesDetailed(
-                host,
-                files.map(f => f.path.toLowerCase()),
-                1,
-                arrayToMap(
-                    files,
-                    f => f.path.toLowerCase(),
-                    () => [PollingInterval.Low]
-                )
-            );
-            checkWatchedDirectoriesDetailed(
-                host,
-                ["/a/b", "/a/b/node_modules/@types"],
-                1,
-                /*recursive*/ false,
-                arrayToMap(
-                    ["/a/b", "/a/b/node_modules/@types"],
-                    identity,
-                    () => [{
-                        fallbackPollingInterval: PollingInterval.Medium,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
+            ts.projectSystem.checkWatchedFilesDetailed(host, files.map(f => f.path.toLowerCase()), 1, ts.arrayToMap(files, f => f.path.toLowerCase(), () => [ts.PollingInterval.Low]));
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, ["/a/b", "/a/b/node_modules/@types"], 1, 
+            /*recursive*/ false, ts.arrayToMap(["/a/b", "/a/b/node_modules/@types"], ts.identity, () => [{
+                    fallbackPollingInterval: ts.PollingInterval.Medium,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
         });
-
         it("with fallbackPolling option as host configuration", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: "{}"
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1), { runWithoutRecursiveWatches: true, runWithFallbackPolling: true });
-            const session = createSession(host);
-            session.executeCommandSeq<protocol.ConfigureRequest>({
-                command: protocol.CommandTypes.Configure,
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1), { runWithoutRecursiveWatches: true, runWithFallbackPolling: true });
+            const session = ts.projectSystem.createSession(host);
+            session.executeCommandSeq<ts.projectSystem.protocol.ConfigureRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.Configure,
                 arguments: {
                     watchOptions: {
-                        fallbackPolling: protocol.PollingWatchKind.PriorityInterval
+                        fallbackPolling: ts.projectSystem.protocol.PollingWatchKind.PriorityInterval
                     }
                 }
             });
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
             const filePaths = files.map(f => f.path.toLowerCase());
-            checkWatchedFilesDetailed(
-                host,
-                filePaths.concat(["/a/b", "/a/b/node_modules/@types"]),
-                1,
-                arrayToMap(
-                    filePaths.concat(["/a/b", "/a/b/node_modules/@types"]),
-                    identity,
-                    f => [contains(filePaths, f) ? PollingInterval.Low : PollingInterval.Medium]
-                )
-            );
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ false);
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
+            ts.projectSystem.checkWatchedFilesDetailed(host, filePaths.concat(["/a/b", "/a/b/node_modules/@types"]), 1, ts.arrayToMap(filePaths.concat(["/a/b", "/a/b/node_modules/@types"]), ts.identity, f => [ts.contains(filePaths, f) ? ts.PollingInterval.Low : ts.PollingInterval.Medium]));
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ false);
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
         });
-
         it("with watchFile option in configFile", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: JSON.stringify({
                     watchOptions: {
@@ -404,60 +310,28 @@ namespace ts.projectSystem {
                     }
                 })
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1));
-            const session = createSession(host);
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1));
+            const session = ts.projectSystem.createSession(host);
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
             // The closed script infos are watched using host settings
-            checkWatchedFilesDetailed(
-                host,
-                [libFile, commonFile2].map(f => f.path.toLowerCase()),
-                1,
-                arrayToMap(
-                    [libFile, commonFile2],
-                    f => f.path.toLowerCase(),
-                    () => [PollingInterval.Low]
-                )
-            );
+            ts.projectSystem.checkWatchedFilesDetailed(host, [ts.projectSystem.libFile, ts.projectSystem.commonFile2].map(f => f.path.toLowerCase()), 1, ts.arrayToMap([ts.projectSystem.libFile, ts.projectSystem.commonFile2], f => f.path.toLowerCase(), () => [ts.PollingInterval.Low]));
             // Config file with the setting with fsWatch
-            checkWatchedDirectoriesDetailed(
-                host,
-                [configFile.path.toLowerCase()],
-                1,
-                /*recursive*/ false,
-                arrayToMap(
-                    [configFile.path.toLowerCase()],
-                    identity,
-                    () => [{
-                        fallbackPollingInterval: PollingInterval.High,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
-            checkWatchedDirectoriesDetailed(
-                host,
-                ["/a/b", "/a/b/node_modules/@types"],
-                1,
-                /*recursive*/ true,
-                arrayToMap(
-                    ["/a/b", "/a/b/node_modules/@types"],
-                    identity,
-                    () => [{
-                        fallbackPollingInterval: PollingInterval.Medium,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, [configFile.path.toLowerCase()], 1, 
+            /*recursive*/ false, ts.arrayToMap([configFile.path.toLowerCase()], ts.identity, () => [{
+                    fallbackPollingInterval: ts.PollingInterval.High,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, ["/a/b", "/a/b/node_modules/@types"], 1, 
+            /*recursive*/ true, ts.arrayToMap(["/a/b", "/a/b/node_modules/@types"], ts.identity, () => [{
+                    fallbackPollingInterval: ts.PollingInterval.Medium,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
         });
-
         it("with watchDirectory option in configFile", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: JSON.stringify({
                     watchOptions: {
@@ -465,45 +339,22 @@ namespace ts.projectSystem {
                     }
                 })
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1), { runWithoutRecursiveWatches: true });
-            const session = createSession(host);
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1), { runWithoutRecursiveWatches: true });
+            const session = ts.projectSystem.createSession(host);
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
-            checkWatchedFilesDetailed(
-                host,
-                files.map(f => f.path.toLowerCase()),
-                1,
-                arrayToMap(
-                    files,
-                    f => f.path.toLowerCase(),
-                    () => [PollingInterval.Low]
-                )
-            );
-            checkWatchedDirectoriesDetailed(
-                host,
-                ["/a/b", "/a/b/node_modules/@types"],
-                1,
-                /*recursive*/ false,
-                arrayToMap(
-                    ["/a/b", "/a/b/node_modules/@types"],
-                    identity,
-                    () => [{
-                        fallbackPollingInterval: PollingInterval.Medium,
-                        fallbackOptions: { watchFile: WatchFileKind.PriorityPollingInterval }
-                    }]
-                )
-            );
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
+            ts.projectSystem.checkWatchedFilesDetailed(host, files.map(f => f.path.toLowerCase()), 1, ts.arrayToMap(files, f => f.path.toLowerCase(), () => [ts.PollingInterval.Low]));
+            ts.projectSystem.checkWatchedDirectoriesDetailed(host, ["/a/b", "/a/b/node_modules/@types"], 1, 
+            /*recursive*/ false, ts.arrayToMap(["/a/b", "/a/b/node_modules/@types"], ts.identity, () => [{
+                    fallbackPollingInterval: ts.PollingInterval.Medium,
+                    fallbackOptions: { watchFile: ts.WatchFileKind.PriorityPollingInterval }
+                }]));
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
         });
-
         it("with fallbackPolling option in configFile", () => {
-            const configFile: File = {
+            const configFile: ts.projectSystem.File = {
                 path: "/a/b/tsconfig.json",
                 content: JSON.stringify({
                     watchOptions: {
@@ -511,37 +362,24 @@ namespace ts.projectSystem {
                     }
                 })
             };
-            const files = [libFile, commonFile2, configFile];
-            const host = createServerHost(files.concat(commonFile1), { runWithoutRecursiveWatches: true, runWithFallbackPolling: true });
-            const session = createSession(host);
-            session.executeCommandSeq<protocol.ConfigureRequest>({
-                command: protocol.CommandTypes.Configure,
+            const files = [ts.projectSystem.libFile, ts.projectSystem.commonFile2, configFile];
+            const host = ts.projectSystem.createServerHost(files.concat(ts.projectSystem.commonFile1), { runWithoutRecursiveWatches: true, runWithFallbackPolling: true });
+            const session = ts.projectSystem.createSession(host);
+            session.executeCommandSeq<ts.projectSystem.protocol.ConfigureRequest>({
+                command: ts.projectSystem.protocol.CommandTypes.Configure,
                 arguments: {
                     watchOptions: {
-                        fallbackPolling: protocol.PollingWatchKind.PriorityInterval
+                        fallbackPolling: ts.projectSystem.protocol.PollingWatchKind.PriorityInterval
                     }
                 }
             });
             const service = session.getProjectService();
-            openFilesForSession([{ file: commonFile1, projectRootPath: "/a/b" }], session);
-            checkProjectActualFiles(
-                service.configuredProjects.get(configFile.path)!,
-                files.map(f => f.path).concat(commonFile1.path)
-            );
-
+            ts.projectSystem.openFilesForSession([{ file: ts.projectSystem.commonFile1, projectRootPath: "/a/b" }], session);
+            ts.projectSystem.checkProjectActualFiles((service.configuredProjects.get(configFile.path)!), files.map(f => f.path).concat(ts.projectSystem.commonFile1.path));
             const filePaths = files.map(f => f.path.toLowerCase());
-            checkWatchedFilesDetailed(
-                host,
-                filePaths.concat(["/a/b", "/a/b/node_modules/@types"]),
-                1,
-                arrayToMap(
-                    filePaths.concat(["/a/b", "/a/b/node_modules/@types"]),
-                    identity,
-                    f => [contains(filePaths, f) ? PollingInterval.Low : PollingInterval.Medium]
-                )
-            );
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ false);
-            checkWatchedDirectories(host, emptyArray, /*recursive*/ true);
+            ts.projectSystem.checkWatchedFilesDetailed(host, filePaths.concat(["/a/b", "/a/b/node_modules/@types"]), 1, ts.arrayToMap(filePaths.concat(["/a/b", "/a/b/node_modules/@types"]), ts.identity, f => [ts.contains(filePaths, f) ? ts.PollingInterval.Low : ts.PollingInterval.Medium]));
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ false);
+            ts.projectSystem.checkWatchedDirectories(host, ts.emptyArray, /*recursive*/ true);
         });
     });
 }

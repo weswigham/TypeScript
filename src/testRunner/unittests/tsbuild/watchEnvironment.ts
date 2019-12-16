@@ -3,75 +3,61 @@ namespace ts.tscWatch {
         describe("when watchFile can create multiple watchers per file", () => {
             verifyWatchFileOnMultipleProjects(/*singleWatchPerFile*/ false);
         });
-
         describe("when watchFile is single watcher per file", () => {
             verifyWatchFileOnMultipleProjects(
-                /*singleWatchPerFile*/ true,
-                arrayToMap(["TSC_WATCHFILE"], identity, () => TestFSWithWatch.Tsc_WatchFile.SingleFileWatcherPerName)
-            );
+            /*singleWatchPerFile*/ true, ts.arrayToMap(["TSC_WATCHFILE"], ts.identity, () => ts.TestFSWithWatch.Tsc_WatchFile.SingleFileWatcherPerName));
         });
-
-        function verifyWatchFileOnMultipleProjects(singleWatchPerFile: boolean, environmentVariables?: Map<string>) {
+        function verifyWatchFileOnMultipleProjects(singleWatchPerFile: boolean, environmentVariables?: ts.Map<string>) {
             it("watchFile on same file multiple times because file is part of multiple projects", () => {
-                const project = `${TestFSWithWatch.tsbuildProjectsLocation}/myproject`;
+                const project = `${ts.TestFSWithWatch.tsbuildProjectsLocation}/myproject`;
                 let maxPkgs = 4;
                 const configPath = `${project}/tsconfig.json`;
-                const typing: File = {
+                const typing: ts.tscWatch.File = {
                     path: `${project}/typings/xterm.d.ts`,
                     content: "export const typing = 10;"
                 };
-
                 const allPkgFiles = pkgs(pkgFiles);
-                const system = createWatchedSystem([libFile, typing, ...flatArray(allPkgFiles)], { currentDirectory: project, environmentVariables });
+                const system = ts.tscWatch.createWatchedSystem([ts.tscWatch.libFile, typing, ...flatArray(allPkgFiles)], { currentDirectory: project, environmentVariables });
                 writePkgReferences();
-                const host = createSolutionBuilderWithWatchHost(system);
-                const solutionBuilder = createSolutionBuilderWithWatch(host, ["tsconfig.json"], { watch: true, verbose: true });
+                const host = ts.tscWatch.createSolutionBuilderWithWatchHost(system);
+                const solutionBuilder = ts.createSolutionBuilderWithWatch(host, ["tsconfig.json"], { watch: true, verbose: true });
                 solutionBuilder.build();
-                checkOutputErrorsInitial(system, emptyArray, /*disableConsoleClears*/ undefined, [
-                    `Projects in this build: \r\n${
-                        concatenate(
-                            pkgs(index => `    * pkg${index}/tsconfig.json`),
-                            ["    * tsconfig.json"]
-                        ).join("\r\n")}\n\n`,
+                ts.tscWatch.checkOutputErrorsInitial(system, ts.emptyArray, /*disableConsoleClears*/ undefined, [
+                    `Projects in this build: \r\n${ts.concatenate(pkgs(index => `    * pkg${index}/tsconfig.json`), ["    * tsconfig.json"]).join("\r\n")}\n\n`,
                     ...flatArray(pkgs(index => [
                         `Project 'pkg${index}/tsconfig.json' is out of date because output file 'pkg${index}/index.js' does not exist\n\n`,
                         `Building project '${project}/pkg${index}/tsconfig.json'...\n\n`
                     ]))
                 ]);
-
-                const watchFilesDetailed = arrayToMap(flatArray(allPkgFiles), f => f.path, () => 1);
+                const watchFilesDetailed = ts.arrayToMap(flatArray(allPkgFiles), f => f.path, () => 1);
                 watchFilesDetailed.set(configPath, 1);
                 watchFilesDetailed.set(typing.path, singleWatchPerFile ? 1 : maxPkgs);
-                checkWatchedFilesDetailed(system, watchFilesDetailed);
+                ts.tscWatch.checkWatchedFilesDetailed(system, watchFilesDetailed);
                 system.writeFile(typing.path, `${typing.content}export const typing1 = 10;`);
                 verifyInvoke();
-
                 // Make change
                 maxPkgs--;
                 writePkgReferences();
                 system.checkTimeoutQueueLengthAndRun(1);
-                checkOutputErrorsIncremental(system, emptyArray);
-                const lastFiles = last(allPkgFiles);
+                ts.tscWatch.checkOutputErrorsIncremental(system, ts.emptyArray);
+                const lastFiles = ts.last(allPkgFiles);
                 lastFiles.forEach(f => watchFilesDetailed.delete(f.path));
                 watchFilesDetailed.set(typing.path, singleWatchPerFile ? 1 : maxPkgs);
-                checkWatchedFilesDetailed(system, watchFilesDetailed);
+                ts.tscWatch.checkWatchedFilesDetailed(system, watchFilesDetailed);
                 system.writeFile(typing.path, typing.content);
                 verifyInvoke();
-
                 // Make change to remove all the watches
                 maxPkgs = 0;
                 writePkgReferences();
                 system.checkTimeoutQueueLengthAndRun(1);
-                checkOutputErrorsIncremental(system, [
+                ts.tscWatch.checkOutputErrorsIncremental(system, [
                     `tsconfig.json(1,10): error TS18002: The 'files' list in config file '${configPath}' is empty.\n`
                 ]);
-                checkWatchedFilesDetailed(system, [configPath], 1);
-
+                ts.tscWatch.checkWatchedFilesDetailed(system, [configPath], 1);
                 system.writeFile(typing.path, `${typing.content}export const typing1 = 10;`);
                 system.checkTimeoutQueueLength(0);
-
                 function flatArray<T>(arr: T[][]): readonly T[] {
-                    return flatMap(arr, identity);
+                    return ts.flatMap(arr, ts.identity);
                 }
                 function pkgs<T>(cb: (index: number) => T): T[] {
                     const result: T[] = [];
@@ -83,7 +69,7 @@ namespace ts.tscWatch {
                 function createPkgReference(index: number) {
                     return { path: `./pkg${index}` };
                 }
-                function pkgFiles(index: number): File[] {
+                function pkgFiles(index: number): ts.tscWatch.File[] {
                     return [
                         {
                             path: `${project}/pkg${index}/index.ts`,
@@ -110,7 +96,7 @@ namespace ts.tscWatch {
                 }
                 function verifyInvoke() {
                     pkgs(() => system.checkTimeoutQueueLengthAndRun(1));
-                    checkOutputErrorsIncremental(system, emptyArray, /*disableConsoleClears*/ undefined, /*logsBeforeWatchDiagnostics*/ undefined, [
+                    ts.tscWatch.checkOutputErrorsIncremental(system, ts.emptyArray, /*disableConsoleClears*/ undefined, /*logsBeforeWatchDiagnostics*/ undefined, [
                         ...flatArray(pkgs(index => [
                             `Project 'pkg${index}/tsconfig.json' is out of date because oldest output 'pkg${index}/index.js' is older than newest input 'typings/xterm.d.ts'\n\n`,
                             `Building project '${project}/pkg${index}/tsconfig.json'...\n\n`,

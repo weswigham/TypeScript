@@ -5,12 +5,11 @@ namespace ts.projectSystem {
                 path: "/a.ts",
                 content: "function f() {\n  1;\n}",
             };
-            const host = createServerHost([file]);
-            const session = createSession(host);
-            openFilesForSession([file], session);
-
-            const response0 = session.executeCommandSeq<server.protocol.ConfigureRequest>({
-                command: server.protocol.CommandTypes.Configure,
+            const host = ts.projectSystem.createServerHost([file]);
+            const session = ts.projectSystem.createSession(host);
+            ts.projectSystem.openFilesForSession([file], session);
+            const response0 = session.executeCommandSeq<ts.server.protocol.ConfigureRequest>({
+                command: ts.server.protocol.CommandTypes.Configure,
                 arguments: {
                     formatOptions: {
                         indentSize: 2,
@@ -18,9 +17,8 @@ namespace ts.projectSystem {
                 },
             }).response;
             assert.deepEqual(response0, /*expected*/ undefined);
-
-            const response1 = session.executeCommandSeq<server.protocol.GetEditsForRefactorRequest>({
-                command: server.protocol.CommandTypes.GetEditsForRefactor,
+            const response1 = session.executeCommandSeq<ts.server.protocol.GetEditsForRefactorRequest>({
+                command: ts.server.protocol.CommandTypes.GetEditsForRefactor,
                 arguments: {
                     refactor: "Extract Symbol",
                     action: "function_scope_1",
@@ -53,7 +51,6 @@ namespace ts.projectSystem {
                 renameLocation: { line: 2, offset: 3 },
             });
         });
-
         it("handles text changes in tsconfig.json", () => {
             const aTs = {
                 path: "/a.ts",
@@ -63,12 +60,10 @@ namespace ts.projectSystem {
                 path: "/tsconfig.json",
                 content: '{ "files": ["./a.ts"] }',
             };
-
-            const session = createSession(createServerHost([aTs, tsconfig]));
-            openFilesForSession([aTs], session);
-
-            const response1 = session.executeCommandSeq<server.protocol.GetEditsForRefactorRequest>({
-                command: server.protocol.CommandTypes.GetEditsForRefactor,
+            const session = ts.projectSystem.createSession(ts.projectSystem.createServerHost([aTs, tsconfig]));
+            ts.projectSystem.openFilesForSession([aTs], session);
+            const response1 = session.executeCommandSeq<ts.server.protocol.GetEditsForRefactorRequest>({
+                command: ts.server.protocol.CommandTypes.GetEditsForRefactor,
                 arguments: {
                     refactor: "Move to a new file",
                     action: "Move to a new file",
@@ -116,14 +111,12 @@ namespace ts.projectSystem {
                 renameLocation: undefined,
             });
         });
-
         it("handles canonicalization of tsconfig path", () => {
-            const aTs: File = { path: "/Foo/a.ts", content: "const x = 0;" };
-            const tsconfig: File = { path: "/Foo/tsconfig.json", content: '{ "files": ["./a.ts"] }' };
-            const session = createSession(createServerHost([aTs, tsconfig]));
-            openFilesForSession([aTs], session);
-
-            const result = executeSessionRequest<protocol.GetEditsForRefactorRequest, protocol.GetEditsForRefactorResponse>(session, protocol.CommandTypes.GetEditsForRefactor, {
+            const aTs: ts.projectSystem.File = { path: "/Foo/a.ts", content: "const x = 0;" };
+            const tsconfig: ts.projectSystem.File = { path: "/Foo/tsconfig.json", content: '{ "files": ["./a.ts"] }' };
+            const session = ts.projectSystem.createSession(ts.projectSystem.createServerHost([aTs, tsconfig]));
+            ts.projectSystem.openFilesForSession([aTs], session);
+            const result = ts.projectSystem.executeSessionRequest<ts.projectSystem.protocol.GetEditsForRefactorRequest, ts.projectSystem.protocol.GetEditsForRefactorResponse>(session, ts.projectSystem.protocol.CommandTypes.GetEditsForRefactor, {
                 file: aTs.path,
                 startLine: 1,
                 startOffset: 1,
@@ -132,7 +125,7 @@ namespace ts.projectSystem {
                 refactor: "Move to a new file",
                 action: "Move to a new file",
             });
-            assert.deepEqual<protocol.RefactorEditInfo | undefined>(result, {
+            assert.deepEqual<ts.projectSystem.protocol.RefactorEditInfo | undefined>(result, {
                 edits: [
                     {
                         fileName: aTs.path,

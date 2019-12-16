@@ -24,7 +24,6 @@ describe("unittests:: evaluation:: forAwaitOfEvaluation", () => {
         assert.strictEqual(result.output[1], 2);
         assert.strictEqual(result.output[2], 3);
     });
-
     it("sync (es2015)", async () => {
         const result = evaluator.evaluateTypeScript(`
         let i = 0;
@@ -50,7 +49,6 @@ describe("unittests:: evaluation:: forAwaitOfEvaluation", () => {
         assert.strictEqual(result.output[1], 2);
         assert.strictEqual(result.output[2], 3);
     });
-
     it("async (es5)", async () => {
         const result = evaluator.evaluateTypeScript(`
         let i = 0;
@@ -76,7 +74,6 @@ describe("unittests:: evaluation:: forAwaitOfEvaluation", () => {
         assert.instanceOf(result.output[1], Promise);
         assert.instanceOf(result.output[2], Promise);
     });
-
     it("async (es2015)", async () => {
         const result = evaluator.evaluateTypeScript(`
         let i = 0;

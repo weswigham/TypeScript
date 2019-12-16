@@ -3,7 +3,6 @@ namespace collections {
         comparer: (a: T, b: T) => number;
         sort: "insertion" | "comparison";
     }
-
     export class SortedMap<K, V> {
         private _comparer: (a: K, b: K) => number;
         private _keys: K[] = [];
@@ -11,7 +10,6 @@ namespace collections {
         private _order: number[] | undefined;
         private _version = 0;
         private _copyOnWrite = false;
-
         constructor(comparer: ((a: K, b: K) => number) | SortOptions<K>, iterable?: Iterable<[K, V]>) {
             this._comparer = typeof comparer === "object" ? comparer.comparer : comparer;
             this._order = typeof comparer === "object" && comparer.sort === "insertion" ? [] : undefined;
@@ -28,28 +26,22 @@ namespace collections {
                 }
             }
         }
-
         public get size() {
             return this._keys.length;
         }
-
         public get comparer() {
             return this._comparer;
         }
-
         public get [Symbol.toStringTag]() {
             return "SortedMap";
         }
-
         public has(key: K) {
             return ts.binarySearch(this._keys, key, ts.identity, this._comparer) >= 0;
         }
-
         public get(key: K) {
             const index = ts.binarySearch(this._keys, key, ts.identity, this._comparer);
             return index >= 0 ? this._values[index] : undefined;
         }
-
         public set(key: K, value: V) {
             const index = ts.binarySearch(this._keys, key, ts.identity, this._comparer);
             if (index >= 0) {
@@ -59,35 +51,35 @@ namespace collections {
                 this.writePreamble();
                 insertAt(this._keys, ~index, key);
                 insertAt(this._values, ~index, value);
-                if (this._order) insertAt(this._order, ~index, this._version);
+                if (this._order)
+                    insertAt(this._order, ~index, this._version);
                 this.writePostScript();
             }
             return this;
         }
-
         public delete(key: K) {
             const index = ts.binarySearch(this._keys, key, ts.identity, this._comparer);
             if (index >= 0) {
                 this.writePreamble();
                 ts.orderedRemoveItemAt(this._keys, index);
                 ts.orderedRemoveItemAt(this._values, index);
-                if (this._order) ts.orderedRemoveItemAt(this._order, index);
+                if (this._order)
+                    ts.orderedRemoveItemAt(this._order, index);
                 this.writePostScript();
                 return true;
             }
             return false;
         }
-
         public clear() {
             if (this.size > 0) {
                 this.writePreamble();
                 this._keys.length = 0;
                 this._values.length = 0;
-                if (this._order) this._order.length = 0;
+                if (this._order)
+                    this._order.length = 0;
                 this.writePostScript();
             }
         }
-
         public forEach(callback: (value: V, key: K, collection: this) => void, thisArg?: any) {
             const keys = this._keys;
             const values = this._values;
@@ -112,8 +104,7 @@ namespace collections {
                 }
             }
         }
-
-        public * keys() {
+        public *keys() {
             const keys = this._keys;
             const indices = this.getIterationOrder();
             const version = this._version;
@@ -134,8 +125,7 @@ namespace collections {
                 }
             }
         }
-
-        public * values() {
+        public *values() {
             const values = this._values;
             const indices = this.getIterationOrder();
             const version = this._version;
@@ -156,8 +146,7 @@ namespace collections {
                 }
             }
         }
-
-        public * entries() {
+        public *entries() {
             const keys = this._keys;
             const values = this._values;
             const indices = this.getIterationOrder();
@@ -181,24 +170,21 @@ namespace collections {
                 }
             }
         }
-
         public [Symbol.iterator]() {
             return this.entries();
         }
-
         private writePreamble() {
             if (this._copyOnWrite) {
                 this._keys = this._keys.slice();
                 this._values = this._values.slice();
-                if (this._order) this._order = this._order.slice();
+                if (this._order)
+                    this._order = this._order.slice();
                 this._copyOnWrite = false;
             }
         }
-
         private writePostScript() {
             this._version++;
         }
-
         private getIterationOrder() {
             if (this._order) {
                 const order = this._order;
@@ -209,7 +195,6 @@ namespace collections {
             return undefined;
         }
     }
-
     export function insertAt<T>(array: T[], index: number, value: T): void {
         if (index === 0) {
             array.unshift(value);
@@ -224,41 +209,39 @@ namespace collections {
             array[index] = value;
         }
     }
-
     export function getIterator<T>(iterable: Iterable<T>): Iterator<T> {
         return iterable[Symbol.iterator]();
     }
-
     export function nextResult<T>(iterator: Iterator<T>): IteratorResult<T> | undefined {
         const result = iterator.next();
         return result.done ? undefined : result;
     }
-
     export function closeIterator<T>(iterator: Iterator<T>) {
         const fn = iterator.return;
-        if (typeof fn === "function") fn.call(iterator);
+        if (typeof fn === "function")
+            fn.call(iterator);
     }
-
     /**
      * A collection of metadata that supports inheritance.
      */
     export class Metadata {
         private static readonly _undefinedValue = {};
         private _parent: Metadata | undefined;
-        private _map: { [key: string]: any };
+        private _map: {
+            [key: string]: any;
+        };
         private _version = 0;
         private _size = -1;
         private _parentVersion: number | undefined;
-
         constructor(parent?: Metadata) {
             this._parent = parent;
             this._map = Object.create(parent ? parent._map : null); // eslint-disable-line no-null/no-null
         }
-
         public get size(): number {
             if (this._size === -1 || (this._parent && this._parent._version !== this._parentVersion)) {
                 let size = 0;
-                for (const _ in this._map) size++;
+                for (const _ in this._map)
+                    size++;
                 this._size = size;
                 if (this._parent) {
                     this._parentVersion = this._parent._version;
@@ -266,27 +249,22 @@ namespace collections {
             }
             return this._size;
         }
-
         public get parent() {
             return this._parent;
         }
-
         public has(key: string): boolean {
             return this._map[Metadata._escapeKey(key)] !== undefined;
         }
-
         public get(key: string): any {
             const value = this._map[Metadata._escapeKey(key)];
             return value === Metadata._undefinedValue ? undefined : value;
         }
-
         public set(key: string, value: any): this {
             this._map[Metadata._escapeKey(key)] = value === undefined ? Metadata._undefinedValue : value;
             this._size = -1;
             this._version++;
             return this;
         }
-
         public delete(key: string): boolean {
             const escapedKey = Metadata._escapeKey(key);
             if (this._map[escapedKey] !== undefined) {
@@ -297,23 +275,19 @@ namespace collections {
             }
             return false;
         }
-
         public clear(): void {
             this._map = Object.create(this._parent ? this._parent._map : null); // eslint-disable-line no-null/no-null
             this._size = -1;
             this._version++;
         }
-
         public forEach(callback: (value: any, key: string, map: this) => void) {
             for (const key in this._map) {
                 callback(this._map[key], Metadata._unescapeKey(key), this);
             }
         }
-
         private static _escapeKey(text: string) {
             return (text.length >= 2 && text.charAt(0) === "_" && text.charAt(1) === "_" ? "_" + text : text);
         }
-
         private static _unescapeKey(text: string) {
             return (text.length >= 3 && text.charAt(0) === "_" && text.charAt(1) === "_" && text.charAt(2) === "_" ? text.slice(1) : text);
         }

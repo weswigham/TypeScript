@@ -1,8 +1,7 @@
 namespace Harness {
-    export class FourSlashRunner extends RunnerBase {
+    export class FourSlashRunner extends Harness.RunnerBase {
         protected basePath: string;
-        protected testSuiteName: TestRunnerKind;
-
+        protected testSuiteName: Harness.TestRunnerKind;
         constructor(private testType: FourSlash.FourSlashTestType) {
             super();
             switch (testType) {
@@ -26,32 +25,27 @@ namespace Harness {
                     throw ts.Debug.assertNever(testType);
             }
         }
-
         public enumerateTestFiles() {
             // see also: `enumerateTestFiles` in tests/webTestServer.ts
             return this.enumerateFiles(this.basePath, /\.ts/i, { recursive: false });
         }
-
         public kind() {
             return this.testSuiteName;
         }
-
         public initializeTests() {
             if (this.tests.length === 0) {
-                this.tests = IO.enumerateTestFiles(this);
+                this.tests = Harness.IO.enumerateTestFiles(this);
             }
-
             describe(this.testSuiteName + " tests", () => {
                 this.tests.forEach(test => {
                     const file = typeof test === "string" ? test : test.file;
                     describe(file, () => {
                         let fn = ts.normalizeSlashes(file);
                         const justName = fn.replace(/^.*[\\\/]/, "");
-
                         // Convert to relative path
                         const testIndex = fn.indexOf("tests/");
-                        if (testIndex >= 0) fn = fn.substr(testIndex);
-
+                        if (testIndex >= 0)
+                            fn = fn.substr(testIndex);
                         if (justName && !justName.match(/fourslash\.ts$/i) && !justName.match(/\.d\.ts$/i)) {
                             it(this.testSuiteName + " test " + justName + " runs correctly", () => {
                                 FourSlash.runFourSlashTest(this.basePath, this.testType, fn);
@@ -62,7 +56,6 @@ namespace Harness {
             });
         }
     }
-
     export class GeneratedFourslashRunner extends FourSlashRunner {
         constructor(testType: FourSlash.FourSlashTestType) {
             super(testType);

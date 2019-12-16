@@ -4,66 +4,49 @@ namespace ts {
         /** Enables substitutions for async methods with `super` calls. */
         AsyncMethodsWithSuper = 1 << 0
     }
-
-    export function transformES2018(context: TransformationContext) {
-        const {
-            resumeLexicalEnvironment,
-            endLexicalEnvironment,
-            hoistVariableDeclaration
-        } = context;
-
+    export function transformES2018(context: ts.TransformationContext) {
+        const { resumeLexicalEnvironment, endLexicalEnvironment, hoistVariableDeclaration } = context;
         const resolver = context.getEmitResolver();
         const compilerOptions = context.getCompilerOptions();
-        const languageVersion = getEmitScriptTarget(compilerOptions);
-
+        const languageVersion = ts.getEmitScriptTarget(compilerOptions);
         const previousOnEmitNode = context.onEmitNode;
         context.onEmitNode = onEmitNode;
-
         const previousOnSubstituteNode = context.onSubstituteNode;
         context.onSubstituteNode = onSubstituteNode;
-
         let exportedVariableStatement = false;
         let enabledSubstitutions: ESNextSubstitutionFlags;
-        let enclosingFunctionFlags: FunctionFlags;
-        let enclosingSuperContainerFlags: NodeCheckFlags = 0;
+        let enclosingFunctionFlags: ts.FunctionFlags;
+        let enclosingSuperContainerFlags: ts.NodeCheckFlags = 0;
         let topLevel: boolean;
-
         /** Keeps track of property names accessed on super (`super.x`) within async functions. */
-        let capturedSuperProperties: UnderscoreEscapedMap<true>;
+        let capturedSuperProperties: ts.UnderscoreEscapedMap<true>;
         /** Whether the async function contains an element access on super (`super[x]`). */
         let hasSuperElementAccess: boolean;
         /** A set of node IDs for generated super accessors. */
         const substitutedSuperAccessors: boolean[] = [];
-
-        return chainBundle(transformSourceFile);
-
-        function transformSourceFile(node: SourceFile) {
+        return ts.chainBundle(transformSourceFile);
+        function transformSourceFile(node: ts.SourceFile) {
             if (node.isDeclarationFile) {
                 return node;
             }
-
             exportedVariableStatement = false;
-            topLevel = isEffectiveStrictModeSourceFile(node, compilerOptions);
-            const visited = visitEachChild(node, visitor, context);
-            addEmitHelpers(visited, context.readEmitHelpers());
+            topLevel = ts.isEffectiveStrictModeSourceFile(node, compilerOptions);
+            const visited = ts.visitEachChild(node, visitor, context);
+            ts.addEmitHelpers(visited, context.readEmitHelpers());
             return visited;
         }
-
-        function visitor(node: Node): VisitResult<Node> {
+        function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
             return visitorWorker(node, /*noDestructuringValue*/ false);
         }
-
-        function visitorNoDestructuringValue(node: Node): VisitResult<Node> {
+        function visitorNoDestructuringValue(node: ts.Node): ts.VisitResult<ts.Node> {
             return visitorWorker(node, /*noDestructuringValue*/ true);
         }
-
-        function visitorNoAsyncModifier(node: Node): VisitResult<Node> {
-            if (node.kind === SyntaxKind.AsyncKeyword) {
+        function visitorNoAsyncModifier(node: ts.Node): ts.VisitResult<ts.Node> {
+            if (node.kind === ts.SyntaxKind.AsyncKeyword) {
                 return undefined;
             }
             return node;
         }
-
         function doOutsideOfTopLevel<T, U>(cb: (value: T) => U, value: T) {
             if (topLevel) {
                 topLevel = false;
@@ -73,183 +56,135 @@ namespace ts {
             }
             return cb(value);
         }
-
-        function visitDefault(node: Node): VisitResult<Node> {
-            return visitEachChild(node, visitor, context);
+        function visitDefault(node: ts.Node): ts.VisitResult<ts.Node> {
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitorWorker(node: Node, noDestructuringValue: boolean): VisitResult<Node> {
-            if ((node.transformFlags & TransformFlags.ContainsES2018) === 0) {
+        function visitorWorker(node: ts.Node, noDestructuringValue: boolean): ts.VisitResult<ts.Node> {
+            if ((node.transformFlags & ts.TransformFlags.ContainsES2018) === 0) {
                 return node;
             }
             switch (node.kind) {
-                case SyntaxKind.AwaitExpression:
-                    return visitAwaitExpression(node as AwaitExpression);
-                case SyntaxKind.YieldExpression:
-                    return visitYieldExpression(node as YieldExpression);
-                case SyntaxKind.ReturnStatement:
-                    return visitReturnStatement(node as ReturnStatement);
-                case SyntaxKind.LabeledStatement:
-                    return visitLabeledStatement(node as LabeledStatement);
-                case SyntaxKind.ObjectLiteralExpression:
-                    return visitObjectLiteralExpression(node as ObjectLiteralExpression);
-                case SyntaxKind.BinaryExpression:
-                    return visitBinaryExpression(node as BinaryExpression, noDestructuringValue);
-                case SyntaxKind.CatchClause:
-                    return visitCatchClause(node as CatchClause);
-                case SyntaxKind.VariableStatement:
-                    return visitVariableStatement(node as VariableStatement);
-                case SyntaxKind.VariableDeclaration:
-                    return visitVariableDeclaration(node as VariableDeclaration);
-                case SyntaxKind.ForOfStatement:
-                    return visitForOfStatement(node as ForOfStatement, /*outermostLabeledStatement*/ undefined);
-                case SyntaxKind.ForStatement:
-                    return visitForStatement(node as ForStatement);
-                case SyntaxKind.VoidExpression:
-                    return visitVoidExpression(node as VoidExpression);
-                case SyntaxKind.Constructor:
-                    return doOutsideOfTopLevel(visitConstructorDeclaration, node as ConstructorDeclaration);
-                case SyntaxKind.MethodDeclaration:
-                    return doOutsideOfTopLevel(visitMethodDeclaration, node as MethodDeclaration);
-                case SyntaxKind.GetAccessor:
-                    return doOutsideOfTopLevel(visitGetAccessorDeclaration, node as GetAccessorDeclaration);
-                case SyntaxKind.SetAccessor:
-                    return doOutsideOfTopLevel(visitSetAccessorDeclaration, node as SetAccessorDeclaration);
-                case SyntaxKind.FunctionDeclaration:
-                    return doOutsideOfTopLevel(visitFunctionDeclaration, node as FunctionDeclaration);
-                case SyntaxKind.FunctionExpression:
-                    return doOutsideOfTopLevel(visitFunctionExpression, node as FunctionExpression);
-                case SyntaxKind.ArrowFunction:
-                    return visitArrowFunction(node as ArrowFunction);
-                case SyntaxKind.Parameter:
-                    return visitParameter(node as ParameterDeclaration);
-                case SyntaxKind.ExpressionStatement:
-                    return visitExpressionStatement(node as ExpressionStatement);
-                case SyntaxKind.ParenthesizedExpression:
-                    return visitParenthesizedExpression(node as ParenthesizedExpression, noDestructuringValue);
-                case SyntaxKind.PropertyAccessExpression:
-                    if (capturedSuperProperties && isPropertyAccessExpression(node) && node.expression.kind === SyntaxKind.SuperKeyword) {
+                case ts.SyntaxKind.AwaitExpression:
+                    return visitAwaitExpression((node as ts.AwaitExpression));
+                case ts.SyntaxKind.YieldExpression:
+                    return visitYieldExpression((node as ts.YieldExpression));
+                case ts.SyntaxKind.ReturnStatement:
+                    return visitReturnStatement((node as ts.ReturnStatement));
+                case ts.SyntaxKind.LabeledStatement:
+                    return visitLabeledStatement((node as ts.LabeledStatement));
+                case ts.SyntaxKind.ObjectLiteralExpression:
+                    return visitObjectLiteralExpression((node as ts.ObjectLiteralExpression));
+                case ts.SyntaxKind.BinaryExpression:
+                    return visitBinaryExpression((node as ts.BinaryExpression), noDestructuringValue);
+                case ts.SyntaxKind.CatchClause:
+                    return visitCatchClause((node as ts.CatchClause));
+                case ts.SyntaxKind.VariableStatement:
+                    return visitVariableStatement((node as ts.VariableStatement));
+                case ts.SyntaxKind.VariableDeclaration:
+                    return visitVariableDeclaration((node as ts.VariableDeclaration));
+                case ts.SyntaxKind.ForOfStatement:
+                    return visitForOfStatement((node as ts.ForOfStatement), /*outermostLabeledStatement*/ undefined);
+                case ts.SyntaxKind.ForStatement:
+                    return visitForStatement((node as ts.ForStatement));
+                case ts.SyntaxKind.VoidExpression:
+                    return visitVoidExpression((node as ts.VoidExpression));
+                case ts.SyntaxKind.Constructor:
+                    return doOutsideOfTopLevel(visitConstructorDeclaration, (node as ts.ConstructorDeclaration));
+                case ts.SyntaxKind.MethodDeclaration:
+                    return doOutsideOfTopLevel(visitMethodDeclaration, (node as ts.MethodDeclaration));
+                case ts.SyntaxKind.GetAccessor:
+                    return doOutsideOfTopLevel(visitGetAccessorDeclaration, (node as ts.GetAccessorDeclaration));
+                case ts.SyntaxKind.SetAccessor:
+                    return doOutsideOfTopLevel(visitSetAccessorDeclaration, (node as ts.SetAccessorDeclaration));
+                case ts.SyntaxKind.FunctionDeclaration:
+                    return doOutsideOfTopLevel(visitFunctionDeclaration, (node as ts.FunctionDeclaration));
+                case ts.SyntaxKind.FunctionExpression:
+                    return doOutsideOfTopLevel(visitFunctionExpression, (node as ts.FunctionExpression));
+                case ts.SyntaxKind.ArrowFunction:
+                    return visitArrowFunction((node as ts.ArrowFunction));
+                case ts.SyntaxKind.Parameter:
+                    return visitParameter((node as ts.ParameterDeclaration));
+                case ts.SyntaxKind.ExpressionStatement:
+                    return visitExpressionStatement((node as ts.ExpressionStatement));
+                case ts.SyntaxKind.ParenthesizedExpression:
+                    return visitParenthesizedExpression((node as ts.ParenthesizedExpression), noDestructuringValue);
+                case ts.SyntaxKind.PropertyAccessExpression:
+                    if (capturedSuperProperties && ts.isPropertyAccessExpression(node) && node.expression.kind === ts.SyntaxKind.SuperKeyword) {
                         capturedSuperProperties.set(node.name.escapedText, true);
                     }
-                    return visitEachChild(node, visitor, context);
-                case SyntaxKind.ElementAccessExpression:
-                    if (capturedSuperProperties && (<ElementAccessExpression>node).expression.kind === SyntaxKind.SuperKeyword) {
+                    return ts.visitEachChild(node, visitor, context);
+                case ts.SyntaxKind.ElementAccessExpression:
+                    if (capturedSuperProperties && (<ts.ElementAccessExpression>node).expression.kind === ts.SyntaxKind.SuperKeyword) {
                         hasSuperElementAccess = true;
                     }
-                    return visitEachChild(node, visitor, context);
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ClassExpression:
+                    return ts.visitEachChild(node, visitor, context);
+                case ts.SyntaxKind.ClassDeclaration:
+                case ts.SyntaxKind.ClassExpression:
                     return doOutsideOfTopLevel(visitDefault, node);
                 default:
-                    return visitEachChild(node, visitor, context);
+                    return ts.visitEachChild(node, visitor, context);
             }
         }
-
-        function visitAwaitExpression(node: AwaitExpression): Expression {
-            if (enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator) {
-                return setOriginalNode(
-                    setTextRange(
-                        createYield(createAwaitHelper(context, visitNode(node.expression, visitor, isExpression))),
-                        /*location*/ node
-                    ),
-                    node
-                );
+        function visitAwaitExpression(node: ts.AwaitExpression): ts.Expression {
+            if (enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator) {
+                return ts.setOriginalNode(ts.setTextRange(ts.createYield(createAwaitHelper(context, ts.visitNode(node.expression, visitor, ts.isExpression))), 
+                /*location*/ node), node);
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitYieldExpression(node: YieldExpression) {
-            if (enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator) {
+        function visitYieldExpression(node: ts.YieldExpression) {
+            if (enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator) {
                 if (node.asteriskToken) {
-                    const expression = visitNode(node.expression, visitor, isExpression);
-
-                    return setOriginalNode(
-                        setTextRange(
-                            createYield(
-                                createAwaitHelper(context,
-                                    updateYield(
-                                        node,
-                                        node.asteriskToken,
-                                        createAsyncDelegatorHelper(
-                                            context,
-                                            createAsyncValuesHelper(context, expression, expression),
-                                            expression
-                                        )
-                                    )
-                                )
-                            ),
-                            node
-                        ),
-                        node
-                    );
+                    const expression = ts.visitNode(node.expression, visitor, ts.isExpression);
+                    return ts.setOriginalNode(ts.setTextRange(ts.createYield(createAwaitHelper(context, ts.updateYield(node, node.asteriskToken, createAsyncDelegatorHelper(context, createAsyncValuesHelper(context, expression, expression), expression)))), node), node);
                 }
-
-                return setOriginalNode(
-                    setTextRange(
-                        createYield(
-                            createDownlevelAwait(
-                                node.expression
-                                    ? visitNode(node.expression, visitor, isExpression)
-                                    : createVoidZero()
-                            )
-                        ),
-                        node
-                    ),
-                    node
-                );
+                return ts.setOriginalNode(ts.setTextRange(ts.createYield(createDownlevelAwait(node.expression
+                    ? ts.visitNode(node.expression, visitor, ts.isExpression)
+                    : ts.createVoidZero())), node), node);
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitReturnStatement(node: ReturnStatement) {
-            if (enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator) {
-                return updateReturn(node, createDownlevelAwait(
-                    node.expression ? visitNode(node.expression, visitor, isExpression) : createVoidZero()
-                ));
+        function visitReturnStatement(node: ts.ReturnStatement) {
+            if (enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator) {
+                return ts.updateReturn(node, createDownlevelAwait(node.expression ? ts.visitNode(node.expression, visitor, ts.isExpression) : ts.createVoidZero()));
             }
-
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitLabeledStatement(node: LabeledStatement) {
-            if (enclosingFunctionFlags & FunctionFlags.Async) {
-                const statement = unwrapInnermostStatementOfLabel(node);
-                if (statement.kind === SyntaxKind.ForOfStatement && (<ForOfStatement>statement).awaitModifier) {
-                    return visitForOfStatement(<ForOfStatement>statement, node);
+        function visitLabeledStatement(node: ts.LabeledStatement) {
+            if (enclosingFunctionFlags & ts.FunctionFlags.Async) {
+                const statement = ts.unwrapInnermostStatementOfLabel(node);
+                if (statement.kind === ts.SyntaxKind.ForOfStatement && (<ts.ForOfStatement>statement).awaitModifier) {
+                    return visitForOfStatement((<ts.ForOfStatement>statement), node);
                 }
-                return restoreEnclosingLabel(visitEachChild(statement, visitor, context), node);
+                return ts.restoreEnclosingLabel(ts.visitEachChild(statement, visitor, context), node);
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function chunkObjectLiteralElements(elements: readonly ObjectLiteralElementLike[]): Expression[] {
-            let chunkObject: ObjectLiteralElementLike[] | undefined;
-            const objects: Expression[] = [];
+        function chunkObjectLiteralElements(elements: readonly ts.ObjectLiteralElementLike[]): ts.Expression[] {
+            let chunkObject: ts.ObjectLiteralElementLike[] | undefined;
+            const objects: ts.Expression[] = [];
             for (const e of elements) {
-                if (e.kind === SyntaxKind.SpreadAssignment) {
+                if (e.kind === ts.SyntaxKind.SpreadAssignment) {
                     if (chunkObject) {
-                        objects.push(createObjectLiteral(chunkObject));
+                        objects.push(ts.createObjectLiteral(chunkObject));
                         chunkObject = undefined;
                     }
                     const target = e.expression;
-                    objects.push(visitNode(target, visitor, isExpression));
+                    objects.push(ts.visitNode(target, visitor, ts.isExpression));
                 }
                 else {
-                    chunkObject = append(chunkObject, e.kind === SyntaxKind.PropertyAssignment
-                        ? createPropertyAssignment(e.name, visitNode(e.initializer, visitor, isExpression))
-                        : visitNode(e, visitor, isObjectLiteralElementLike));
+                    chunkObject = ts.append(chunkObject, e.kind === ts.SyntaxKind.PropertyAssignment
+                        ? ts.createPropertyAssignment(e.name, ts.visitNode(e.initializer, visitor, ts.isExpression))
+                        : ts.visitNode(e, visitor, ts.isObjectLiteralElementLike));
                 }
             }
             if (chunkObject) {
-                objects.push(createObjectLiteral(chunkObject));
+                objects.push(ts.createObjectLiteral(chunkObject));
             }
-
             return objects;
         }
-
-        function visitObjectLiteralExpression(node: ObjectLiteralExpression): Expression {
-            if (node.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
+        function visitObjectLiteralExpression(node: ts.ObjectLiteralExpression): ts.Expression {
+            if (node.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
                 // spread elements emit like so:
                 // non-spread elements are chunked together into object literals, and then all are passed to __assign:
                 //     { a, ...o, b } => __assign(__assign({a}, o), {b});
@@ -272,10 +207,10 @@ namespace ts {
                 // If we translate the above to `__assign({}, k, l)`, the `l` will evaluate before `k` is spread and we
                 // end up with `{ a: 1, b: 2, c: 3 }`
                 const objects = chunkObjectLiteralElements(node.properties);
-                if (objects.length && objects[0].kind !== SyntaxKind.ObjectLiteralExpression) {
-                    objects.unshift(createObjectLiteral());
+                if (objects.length && objects[0].kind !== ts.SyntaxKind.ObjectLiteralExpression) {
+                    objects.unshift(ts.createObjectLiteral());
                 }
-                let expression: Expression = objects[0];
+                let expression: ts.Expression = objects[0];
                 if (objects.length > 1) {
                     for (let i = 1; i < objects.length; i++) {
                         expression = createAssignHelper(context, [expression, objects[i]]);
@@ -286,81 +221,62 @@ namespace ts {
                     return createAssignHelper(context, objects);
                 }
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitExpressionStatement(node: ExpressionStatement): ExpressionStatement {
-            return visitEachChild(node, visitorNoDestructuringValue, context);
+        function visitExpressionStatement(node: ts.ExpressionStatement): ts.ExpressionStatement {
+            return ts.visitEachChild(node, visitorNoDestructuringValue, context);
         }
-
-        function visitParenthesizedExpression(node: ParenthesizedExpression, noDestructuringValue: boolean): ParenthesizedExpression {
-            return visitEachChild(node, noDestructuringValue ? visitorNoDestructuringValue : visitor, context);
+        function visitParenthesizedExpression(node: ts.ParenthesizedExpression, noDestructuringValue: boolean): ts.ParenthesizedExpression {
+            return ts.visitEachChild(node, noDestructuringValue ? visitorNoDestructuringValue : visitor, context);
         }
-
         /**
          * Visits a BinaryExpression that contains a destructuring assignment.
          *
          * @param node A BinaryExpression node.
          */
-        function visitBinaryExpression(node: BinaryExpression, noDestructuringValue: boolean): Expression {
-            if (isDestructuringAssignment(node) && node.left.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
-                return flattenDestructuringAssignment(
-                    node,
-                    visitor,
-                    context,
-                    FlattenLevel.ObjectRest,
-                    !noDestructuringValue
-                );
+        function visitBinaryExpression(node: ts.BinaryExpression, noDestructuringValue: boolean): ts.Expression {
+            if (ts.isDestructuringAssignment(node) && node.left.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
+                return ts.flattenDestructuringAssignment(node, visitor, context, ts.FlattenLevel.ObjectRest, !noDestructuringValue);
             }
-            else if (node.operatorToken.kind === SyntaxKind.CommaToken) {
-                return updateBinary(
-                    node,
-                    visitNode(node.left, visitorNoDestructuringValue, isExpression),
-                    visitNode(node.right, noDestructuringValue ? visitorNoDestructuringValue : visitor, isExpression)
-                );
+            else if (node.operatorToken.kind === ts.SyntaxKind.CommaToken) {
+                return ts.updateBinary(node, ts.visitNode(node.left, visitorNoDestructuringValue, ts.isExpression), ts.visitNode(node.right, noDestructuringValue ? visitorNoDestructuringValue : visitor, ts.isExpression));
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitCatchClause(node: CatchClause) {
+        function visitCatchClause(node: ts.CatchClause) {
             if (node.variableDeclaration &&
-                isBindingPattern(node.variableDeclaration.name) &&
-                node.variableDeclaration.name.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
-                const name = getGeneratedNameForNode(node.variableDeclaration.name);
-                const updatedDecl = updateVariableDeclaration(node.variableDeclaration, node.variableDeclaration.name, /*type*/ undefined, name);
-                const visitedBindings = flattenDestructuringBinding(updatedDecl, visitor, context, FlattenLevel.ObjectRest);
-                let block = visitNode(node.block, visitor, isBlock);
-                if (some(visitedBindings)) {
-                    block = updateBlock(block, [
-                        createVariableStatement(/*modifiers*/ undefined, visitedBindings),
+                ts.isBindingPattern(node.variableDeclaration.name) &&
+                node.variableDeclaration.name.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
+                const name = ts.getGeneratedNameForNode(node.variableDeclaration.name);
+                const updatedDecl = ts.updateVariableDeclaration(node.variableDeclaration, node.variableDeclaration.name, /*type*/ undefined, name);
+                const visitedBindings = ts.flattenDestructuringBinding(updatedDecl, visitor, context, ts.FlattenLevel.ObjectRest);
+                let block = ts.visitNode(node.block, visitor, ts.isBlock);
+                if (ts.some(visitedBindings)) {
+                    block = ts.updateBlock(block, [
+                        ts.createVariableStatement(/*modifiers*/ undefined, visitedBindings),
                         ...block.statements,
                     ]);
                 }
-                return updateCatchClause(
-                    node,
-                    updateVariableDeclaration(node.variableDeclaration, name, /*type*/ undefined, /*initializer*/ undefined),
-                    block);
+                return ts.updateCatchClause(node, ts.updateVariableDeclaration(node.variableDeclaration, name, /*type*/ undefined, /*initializer*/ undefined), block);
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitVariableStatement(node: VariableStatement): VisitResult<VariableStatement> {
-            if (hasModifier(node, ModifierFlags.Export)) {
+        function visitVariableStatement(node: ts.VariableStatement): ts.VisitResult<ts.VariableStatement> {
+            if (ts.hasModifier(node, ts.ModifierFlags.Export)) {
                 const savedExportedVariableStatement = exportedVariableStatement;
                 exportedVariableStatement = true;
-                const visited = visitEachChild(node, visitor, context);
+                const visited = ts.visitEachChild(node, visitor, context);
                 exportedVariableStatement = savedExportedVariableStatement;
                 return visited;
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
         /**
          * Visits a VariableDeclaration node with a binding pattern.
          *
          * @param node A VariableDeclaration node.
          */
-        function visitVariableDeclaration(node: VariableDeclaration): VisitResult<VariableDeclaration> {
+        function visitVariableDeclaration(node: ts.VariableDeclaration): ts.VisitResult<ts.VariableDeclaration> {
             if (exportedVariableStatement) {
                 const savedExportedVariableStatement = exportedVariableStatement;
                 exportedVariableStatement = false;
@@ -370,515 +286,308 @@ namespace ts {
             }
             return visitVariableDeclarationWorker(node, /*exportedVariableStatement*/ false);
         }
-
-        function visitVariableDeclarationWorker(node: VariableDeclaration, exportedVariableStatement: boolean): VisitResult<VariableDeclaration> {
+        function visitVariableDeclarationWorker(node: ts.VariableDeclaration, exportedVariableStatement: boolean): ts.VisitResult<ts.VariableDeclaration> {
             // If we are here it is because the name contains a binding pattern with a rest somewhere in it.
-            if (isBindingPattern(node.name) && node.name.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
-                return flattenDestructuringBinding(
-                    node,
-                    visitor,
-                    context,
-                    FlattenLevel.ObjectRest,
-                    /*rval*/ undefined,
-                    exportedVariableStatement
-                );
+            if (ts.isBindingPattern(node.name) && node.name.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
+                return ts.flattenDestructuringBinding(node, visitor, context, ts.FlattenLevel.ObjectRest, 
+                /*rval*/ undefined, exportedVariableStatement);
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitForStatement(node: ForStatement): VisitResult<Statement> {
-            return updateFor(
-                node,
-                visitNode(node.initializer, visitorNoDestructuringValue, isForInitializer),
-                visitNode(node.condition, visitor, isExpression),
-                visitNode(node.incrementor, visitor, isExpression),
-                visitNode(node.statement, visitor, isStatement)
-            );
+        function visitForStatement(node: ts.ForStatement): ts.VisitResult<ts.Statement> {
+            return ts.updateFor(node, ts.visitNode(node.initializer, visitorNoDestructuringValue, ts.isForInitializer), ts.visitNode(node.condition, visitor, ts.isExpression), ts.visitNode(node.incrementor, visitor, ts.isExpression), ts.visitNode(node.statement, visitor, ts.isStatement));
         }
-
-        function visitVoidExpression(node: VoidExpression) {
-            return visitEachChild(node, visitorNoDestructuringValue, context);
+        function visitVoidExpression(node: ts.VoidExpression) {
+            return ts.visitEachChild(node, visitorNoDestructuringValue, context);
         }
-
         /**
          * Visits a ForOfStatement and converts it into a ES2015-compatible ForOfStatement.
          *
          * @param node A ForOfStatement.
          */
-        function visitForOfStatement(node: ForOfStatement, outermostLabeledStatement: LabeledStatement | undefined): VisitResult<Statement> {
-            if (node.initializer.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
+        function visitForOfStatement(node: ts.ForOfStatement, outermostLabeledStatement: ts.LabeledStatement | undefined): ts.VisitResult<ts.Statement> {
+            if (node.initializer.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
                 node = transformForOfStatementWithObjectRest(node);
             }
             if (node.awaitModifier) {
                 return transformForAwaitOfStatement(node, outermostLabeledStatement);
             }
             else {
-                return restoreEnclosingLabel(visitEachChild(node, visitor, context), outermostLabeledStatement);
+                return ts.restoreEnclosingLabel(ts.visitEachChild(node, visitor, context), outermostLabeledStatement);
             }
         }
-
-        function transformForOfStatementWithObjectRest(node: ForOfStatement) {
-            const initializerWithoutParens = skipParentheses(node.initializer) as ForInitializer;
-            if (isVariableDeclarationList(initializerWithoutParens) || isAssignmentPattern(initializerWithoutParens)) {
-                let bodyLocation: TextRange | undefined;
-                let statementsLocation: TextRange | undefined;
-                const temp = createTempVariable(/*recordTempVariable*/ undefined);
-                const statements: Statement[] = [createForOfBindingStatement(initializerWithoutParens, temp)];
-                if (isBlock(node.statement)) {
-                    addRange(statements, node.statement.statements);
+        function transformForOfStatementWithObjectRest(node: ts.ForOfStatement) {
+            const initializerWithoutParens = (ts.skipParentheses(node.initializer) as ts.ForInitializer);
+            if (ts.isVariableDeclarationList(initializerWithoutParens) || ts.isAssignmentPattern(initializerWithoutParens)) {
+                let bodyLocation: ts.TextRange | undefined;
+                let statementsLocation: ts.TextRange | undefined;
+                const temp = ts.createTempVariable(/*recordTempVariable*/ undefined);
+                const statements: ts.Statement[] = [ts.createForOfBindingStatement(initializerWithoutParens, temp)];
+                if (ts.isBlock(node.statement)) {
+                    ts.addRange(statements, node.statement.statements);
                     bodyLocation = node.statement;
                     statementsLocation = node.statement.statements;
                 }
                 else if (node.statement) {
-                    append(statements, node.statement);
+                    ts.append(statements, node.statement);
                     bodyLocation = node.statement;
                     statementsLocation = node.statement;
                 }
-                return updateForOf(
-                    node,
-                    node.awaitModifier,
-                    setTextRange(
-                        createVariableDeclarationList(
-                            [
-                                setTextRange(createVariableDeclaration(temp), node.initializer)
-                            ],
-                            NodeFlags.Let
-                        ),
-                        node.initializer
-                    ),
-                    node.expression,
-                    setTextRange(
-                        createBlock(
-                            setTextRange(createNodeArray(statements), statementsLocation),
-                            /*multiLine*/ true
-                        ),
-                        bodyLocation
-                    )
-                );
+                return ts.updateForOf(node, node.awaitModifier, ts.setTextRange(ts.createVariableDeclarationList([
+                    ts.setTextRange(ts.createVariableDeclaration(temp), node.initializer)
+                ], ts.NodeFlags.Let), node.initializer), node.expression, ts.setTextRange(ts.createBlock(ts.setTextRange(ts.createNodeArray(statements), statementsLocation), 
+                /*multiLine*/ true), bodyLocation));
             }
             return node;
         }
-
-        function convertForOfStatementHead(node: ForOfStatement, boundValue: Expression) {
-            const binding = createForOfBindingStatement(node.initializer, boundValue);
-
-            let bodyLocation: TextRange | undefined;
-            let statementsLocation: TextRange | undefined;
-            const statements: Statement[] = [visitNode(binding, visitor, isStatement)];
-            const statement = visitNode(node.statement, visitor, isStatement);
-            if (isBlock(statement)) {
-                addRange(statements, statement.statements);
+        function convertForOfStatementHead(node: ts.ForOfStatement, boundValue: ts.Expression) {
+            const binding = ts.createForOfBindingStatement(node.initializer, boundValue);
+            let bodyLocation: ts.TextRange | undefined;
+            let statementsLocation: ts.TextRange | undefined;
+            const statements: ts.Statement[] = [ts.visitNode(binding, visitor, ts.isStatement)];
+            const statement = ts.visitNode(node.statement, visitor, ts.isStatement);
+            if (ts.isBlock(statement)) {
+                ts.addRange(statements, statement.statements);
                 bodyLocation = statement;
                 statementsLocation = statement.statements;
             }
             else {
                 statements.push(statement);
             }
-
-            return setEmitFlags(
-                setTextRange(
-                    createBlock(
-                        setTextRange(createNodeArray(statements), statementsLocation),
-                        /*multiLine*/ true
-                    ),
-                    bodyLocation
-                ),
-                EmitFlags.NoSourceMap | EmitFlags.NoTokenSourceMaps
-            );
+            return ts.setEmitFlags(ts.setTextRange(ts.createBlock(ts.setTextRange(ts.createNodeArray(statements), statementsLocation), 
+            /*multiLine*/ true), bodyLocation), ts.EmitFlags.NoSourceMap | ts.EmitFlags.NoTokenSourceMaps);
         }
-
-        function createDownlevelAwait(expression: Expression) {
-            return enclosingFunctionFlags & FunctionFlags.Generator
-                ? createYield(/*asteriskToken*/ undefined, createAwaitHelper(context, expression))
-                : createAwait(expression);
+        function createDownlevelAwait(expression: ts.Expression) {
+            return enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? ts.createYield(/*asteriskToken*/ undefined, createAwaitHelper(context, expression))
+                : ts.createAwait(expression);
         }
-
-        function transformForAwaitOfStatement(node: ForOfStatement, outermostLabeledStatement: LabeledStatement | undefined) {
-            const expression = visitNode(node.expression, visitor, isExpression);
-            const iterator = isIdentifier(expression) ? getGeneratedNameForNode(expression) : createTempVariable(/*recordTempVariable*/ undefined);
-            const result = isIdentifier(expression) ? getGeneratedNameForNode(iterator) : createTempVariable(/*recordTempVariable*/ undefined);
-            const errorRecord = createUniqueName("e");
-            const catchVariable = getGeneratedNameForNode(errorRecord);
-            const returnMethod = createTempVariable(/*recordTempVariable*/ undefined);
+        function transformForAwaitOfStatement(node: ts.ForOfStatement, outermostLabeledStatement: ts.LabeledStatement | undefined) {
+            const expression = ts.visitNode(node.expression, visitor, ts.isExpression);
+            const iterator = ts.isIdentifier(expression) ? ts.getGeneratedNameForNode(expression) : ts.createTempVariable(/*recordTempVariable*/ undefined);
+            const result = ts.isIdentifier(expression) ? ts.getGeneratedNameForNode(iterator) : ts.createTempVariable(/*recordTempVariable*/ undefined);
+            const errorRecord = ts.createUniqueName("e");
+            const catchVariable = ts.getGeneratedNameForNode(errorRecord);
+            const returnMethod = ts.createTempVariable(/*recordTempVariable*/ undefined);
             const callValues = createAsyncValuesHelper(context, expression, /*location*/ node.expression);
-            const callNext = createCall(createPropertyAccess(iterator, "next"), /*typeArguments*/ undefined, []);
-            const getDone = createPropertyAccess(result, "done");
-            const getValue = createPropertyAccess(result, "value");
-            const callReturn = createFunctionCall(returnMethod, iterator, []);
-
+            const callNext = ts.createCall(ts.createPropertyAccess(iterator, "next"), /*typeArguments*/ undefined, []);
+            const getDone = ts.createPropertyAccess(result, "done");
+            const getValue = ts.createPropertyAccess(result, "value");
+            const callReturn = ts.createFunctionCall(returnMethod, iterator, []);
             hoistVariableDeclaration(errorRecord);
             hoistVariableDeclaration(returnMethod);
-
-            const forStatement = setEmitFlags(
-                setTextRange(
-                    createFor(
-                        /*initializer*/ setEmitFlags(
-                            setTextRange(
-                                createVariableDeclarationList([
-                                    setTextRange(createVariableDeclaration(iterator, /*type*/ undefined, callValues), node.expression),
-                                    createVariableDeclaration(result)
-                                ]),
-                                node.expression
-                            ),
-                            EmitFlags.NoHoisting
-                        ),
-                        /*condition*/ createComma(
-                            createAssignment(result, createDownlevelAwait(callNext)),
-                            createLogicalNot(getDone)
-                        ),
-                        /*incrementor*/ undefined,
-                        /*statement*/ convertForOfStatementHead(node, getValue)
-                    ),
-                    /*location*/ node
-                ),
-                EmitFlags.NoTokenTrailingSourceMaps
-            );
-
-            return createTry(
-                createBlock([
-                    restoreEnclosingLabel(
-                        forStatement,
-                        outermostLabeledStatement
-                    )
-                ]),
-                createCatchClause(
-                    createVariableDeclaration(catchVariable),
-                    setEmitFlags(
-                        createBlock([
-                            createExpressionStatement(
-                                createAssignment(
-                                    errorRecord,
-                                    createObjectLiteral([
-                                        createPropertyAssignment("error", catchVariable)
-                                    ])
-                                )
-                            )
-                        ]),
-                        EmitFlags.SingleLine
-                    )
-                ),
-                createBlock([
-                    createTry(
-                        /*tryBlock*/ createBlock([
-                            setEmitFlags(
-                                createIf(
-                                    createLogicalAnd(
-                                        createLogicalAnd(
-                                            result,
-                                            createLogicalNot(getDone)
-                                        ),
-                                        createAssignment(
-                                            returnMethod,
-                                            createPropertyAccess(iterator, "return")
-                                        )
-                                    ),
-                                    createExpressionStatement(createDownlevelAwait(callReturn))
-                                ),
-                                EmitFlags.SingleLine
-                            )
-                        ]),
-                        /*catchClause*/ undefined,
-                        /*finallyBlock*/ setEmitFlags(
-                            createBlock([
-                                setEmitFlags(
-                                    createIf(
-                                        errorRecord,
-                                        createThrow(
-                                            createPropertyAccess(errorRecord, "error")
-                                        )
-                                    ),
-                                    EmitFlags.SingleLine
-                                )
-                            ]),
-                            EmitFlags.SingleLine
-                        )
-                    )
-                ])
-            );
+            const forStatement = ts.setEmitFlags(ts.setTextRange(ts.createFor(
+            /*initializer*/ ts.setEmitFlags(ts.setTextRange(ts.createVariableDeclarationList([
+                ts.setTextRange(ts.createVariableDeclaration(iterator, /*type*/ undefined, callValues), node.expression),
+                ts.createVariableDeclaration(result)
+            ]), node.expression), ts.EmitFlags.NoHoisting), 
+            /*condition*/ ts.createComma(ts.createAssignment(result, createDownlevelAwait(callNext)), ts.createLogicalNot(getDone)), 
+            /*incrementor*/ undefined, 
+            /*statement*/ convertForOfStatementHead(node, getValue)), 
+            /*location*/ node), ts.EmitFlags.NoTokenTrailingSourceMaps);
+            return ts.createTry(ts.createBlock([
+                ts.restoreEnclosingLabel(forStatement, outermostLabeledStatement)
+            ]), ts.createCatchClause(ts.createVariableDeclaration(catchVariable), ts.setEmitFlags(ts.createBlock([
+                ts.createExpressionStatement(ts.createAssignment(errorRecord, ts.createObjectLiteral([
+                    ts.createPropertyAssignment("error", catchVariable)
+                ])))
+            ]), ts.EmitFlags.SingleLine)), ts.createBlock([
+                ts.createTry(
+                /*tryBlock*/ ts.createBlock([
+                    ts.setEmitFlags(ts.createIf(ts.createLogicalAnd(ts.createLogicalAnd(result, ts.createLogicalNot(getDone)), ts.createAssignment(returnMethod, ts.createPropertyAccess(iterator, "return"))), ts.createExpressionStatement(createDownlevelAwait(callReturn))), ts.EmitFlags.SingleLine)
+                ]), 
+                /*catchClause*/ undefined, 
+                /*finallyBlock*/ ts.setEmitFlags(ts.createBlock([
+                    ts.setEmitFlags(ts.createIf(errorRecord, ts.createThrow(ts.createPropertyAccess(errorRecord, "error"))), ts.EmitFlags.SingleLine)
+                ]), ts.EmitFlags.SingleLine))
+            ]));
         }
-
-        function visitParameter(node: ParameterDeclaration): ParameterDeclaration {
-            if (node.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
+        function visitParameter(node: ts.ParameterDeclaration): ts.ParameterDeclaration {
+            if (node.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
                 // Binding patterns are converted into a generated name and are
                 // evaluated inside the function body.
-                return updateParameter(
-                    node,
-                    /*decorators*/ undefined,
-                    /*modifiers*/ undefined,
-                    node.dotDotDotToken,
-                    getGeneratedNameForNode(node),
-                    /*questionToken*/ undefined,
-                    /*type*/ undefined,
-                    visitNode(node.initializer, visitor, isExpression)
-                );
+                return ts.updateParameter(node, 
+                /*decorators*/ undefined, 
+                /*modifiers*/ undefined, node.dotDotDotToken, ts.getGeneratedNameForNode(node), 
+                /*questionToken*/ undefined, 
+                /*type*/ undefined, ts.visitNode(node.initializer, visitor, ts.isExpression));
             }
-            return visitEachChild(node, visitor, context);
+            return ts.visitEachChild(node, visitor, context);
         }
-
-        function visitConstructorDeclaration(node: ConstructorDeclaration) {
+        function visitConstructorDeclaration(node: ts.ConstructorDeclaration) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = FunctionFlags.Normal;
-            const updated = updateConstructor(
-                node,
-                /*decorators*/ undefined,
-                node.modifiers,
-                visitParameterList(node.parameters, visitor, context),
-                transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.FunctionFlags.Normal;
+            const updated = ts.updateConstructor(node, 
+            /*decorators*/ undefined, node.modifiers, ts.visitParameterList(node.parameters, visitor, context), transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitGetAccessorDeclaration(node: GetAccessorDeclaration) {
+        function visitGetAccessorDeclaration(node: ts.GetAccessorDeclaration) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = FunctionFlags.Normal;
-            const updated = updateGetAccessor(
-                node,
-                /*decorators*/ undefined,
-                node.modifiers,
-                visitNode(node.name, visitor, isPropertyName),
-                visitParameterList(node.parameters, visitor, context),
-                /*type*/ undefined,
-                transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.FunctionFlags.Normal;
+            const updated = ts.updateGetAccessor(node, 
+            /*decorators*/ undefined, node.modifiers, ts.visitNode(node.name, visitor, ts.isPropertyName), ts.visitParameterList(node.parameters, visitor, context), 
+            /*type*/ undefined, transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitSetAccessorDeclaration(node: SetAccessorDeclaration) {
+        function visitSetAccessorDeclaration(node: ts.SetAccessorDeclaration) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = FunctionFlags.Normal;
-            const updated = updateSetAccessor(
-                node,
-                /*decorators*/ undefined,
-                node.modifiers,
-                visitNode(node.name, visitor, isPropertyName),
-                visitParameterList(node.parameters, visitor, context),
-                transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.FunctionFlags.Normal;
+            const updated = ts.updateSetAccessor(node, 
+            /*decorators*/ undefined, node.modifiers, ts.visitNode(node.name, visitor, ts.isPropertyName), ts.visitParameterList(node.parameters, visitor, context), transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitMethodDeclaration(node: MethodDeclaration) {
+        function visitMethodDeclaration(node: ts.MethodDeclaration) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = getFunctionFlags(node);
-            const updated = updateMethod(
-                node,
-                /*decorators*/ undefined,
-                enclosingFunctionFlags & FunctionFlags.Generator
-                    ? visitNodes(node.modifiers, visitorNoAsyncModifier, isModifier)
-                    : node.modifiers,
-                enclosingFunctionFlags & FunctionFlags.Async
-                    ? undefined
-                    : node.asteriskToken,
-                visitNode(node.name, visitor, isPropertyName),
-                visitNode<Token<SyntaxKind.QuestionToken>>(/*questionToken*/ undefined, visitor, isToken),
-                /*typeParameters*/ undefined,
-                visitParameterList(node.parameters, visitor, context),
-                /*type*/ undefined,
-                enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator
-                    ? transformAsyncGeneratorFunctionBody(node)
-                    : transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.getFunctionFlags(node);
+            const updated = ts.updateMethod(node, 
+            /*decorators*/ undefined, enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? ts.visitNodes(node.modifiers, visitorNoAsyncModifier, ts.isModifier)
+                : node.modifiers, enclosingFunctionFlags & ts.FunctionFlags.Async
+                ? undefined
+                : node.asteriskToken, ts.visitNode(node.name, visitor, ts.isPropertyName), ts.visitNode<ts.Token<ts.SyntaxKind.QuestionToken>>(/*questionToken*/ undefined, visitor, ts.isToken), 
+            /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+            /*type*/ undefined, enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? transformAsyncGeneratorFunctionBody(node)
+                : transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitFunctionDeclaration(node: FunctionDeclaration) {
+        function visitFunctionDeclaration(node: ts.FunctionDeclaration) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = getFunctionFlags(node);
-            const updated = updateFunctionDeclaration(
-                node,
-                /*decorators*/ undefined,
-                enclosingFunctionFlags & FunctionFlags.Generator
-                    ? visitNodes(node.modifiers, visitorNoAsyncModifier, isModifier)
-                    : node.modifiers,
-                enclosingFunctionFlags & FunctionFlags.Async
-                    ? undefined
-                    : node.asteriskToken,
-                node.name,
-                /*typeParameters*/ undefined,
-                visitParameterList(node.parameters, visitor, context),
-                /*type*/ undefined,
-                enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator
-                    ? transformAsyncGeneratorFunctionBody(node)
-                    : transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.getFunctionFlags(node);
+            const updated = ts.updateFunctionDeclaration(node, 
+            /*decorators*/ undefined, enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? ts.visitNodes(node.modifiers, visitorNoAsyncModifier, ts.isModifier)
+                : node.modifiers, enclosingFunctionFlags & ts.FunctionFlags.Async
+                ? undefined
+                : node.asteriskToken, node.name, 
+            /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+            /*type*/ undefined, enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? transformAsyncGeneratorFunctionBody(node)
+                : transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitArrowFunction(node: ArrowFunction) {
+        function visitArrowFunction(node: ts.ArrowFunction) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = getFunctionFlags(node);
-            const updated = updateArrowFunction(
-                node,
-                node.modifiers,
-                /*typeParameters*/ undefined,
-                visitParameterList(node.parameters, visitor, context),
-                /*type*/ undefined,
-                node.equalsGreaterThanToken,
-                transformFunctionBody(node),
-            );
+            enclosingFunctionFlags = ts.getFunctionFlags(node);
+            const updated = ts.updateArrowFunction(node, node.modifiers, 
+            /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+            /*type*/ undefined, node.equalsGreaterThanToken, transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function visitFunctionExpression(node: FunctionExpression) {
+        function visitFunctionExpression(node: ts.FunctionExpression) {
             const savedEnclosingFunctionFlags = enclosingFunctionFlags;
-            enclosingFunctionFlags = getFunctionFlags(node);
-            const updated = updateFunctionExpression(
-                node,
-                enclosingFunctionFlags & FunctionFlags.Generator
-                    ? visitNodes(node.modifiers, visitorNoAsyncModifier, isModifier)
-                    : node.modifiers,
-                enclosingFunctionFlags & FunctionFlags.Async
-                    ? undefined
-                    : node.asteriskToken,
-                node.name,
-                /*typeParameters*/ undefined,
-                visitParameterList(node.parameters, visitor, context),
-                /*type*/ undefined,
-                enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator
-                    ? transformAsyncGeneratorFunctionBody(node)
-                    : transformFunctionBody(node)
-            );
+            enclosingFunctionFlags = ts.getFunctionFlags(node);
+            const updated = ts.updateFunctionExpression(node, enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? ts.visitNodes(node.modifiers, visitorNoAsyncModifier, ts.isModifier)
+                : node.modifiers, enclosingFunctionFlags & ts.FunctionFlags.Async
+                ? undefined
+                : node.asteriskToken, node.name, 
+            /*typeParameters*/ undefined, ts.visitParameterList(node.parameters, visitor, context), 
+            /*type*/ undefined, enclosingFunctionFlags & ts.FunctionFlags.Async && enclosingFunctionFlags & ts.FunctionFlags.Generator
+                ? transformAsyncGeneratorFunctionBody(node)
+                : transformFunctionBody(node));
             enclosingFunctionFlags = savedEnclosingFunctionFlags;
             return updated;
         }
-
-        function transformAsyncGeneratorFunctionBody(node: MethodDeclaration | AccessorDeclaration | FunctionDeclaration | FunctionExpression): FunctionBody {
+        function transformAsyncGeneratorFunctionBody(node: ts.MethodDeclaration | ts.AccessorDeclaration | ts.FunctionDeclaration | ts.FunctionExpression): ts.FunctionBody {
             resumeLexicalEnvironment();
-            const statements: Statement[] = [];
-            const statementOffset = addPrologue(statements, node.body!.statements, /*ensureUseStrict*/ false, visitor);
+            const statements: ts.Statement[] = [];
+            const statementOffset = ts.addPrologue(statements, node.body!.statements, /*ensureUseStrict*/ false, visitor);
             appendObjectRestAssignmentsIfNeeded(statements, node);
-
             const savedCapturedSuperProperties = capturedSuperProperties;
             const savedHasSuperElementAccess = hasSuperElementAccess;
-            capturedSuperProperties = createUnderscoreEscapedMap<true>();
+            capturedSuperProperties = ts.createUnderscoreEscapedMap<true>();
             hasSuperElementAccess = false;
-
-            const returnStatement = createReturn(
-                createAsyncGeneratorHelper(
-                    context,
-                    createFunctionExpression(
-                        /*modifiers*/ undefined,
-                        createToken(SyntaxKind.AsteriskToken),
-                        node.name && getGeneratedNameForNode(node.name),
-                        /*typeParameters*/ undefined,
-                        /*parameters*/ [],
-                        /*type*/ undefined,
-                        updateBlock(
-                            node.body!,
-                            visitLexicalEnvironment(node.body!.statements, visitor, context, statementOffset)
-                        )
-                    ),
-                    !topLevel
-                )
-            );
-
+            const returnStatement = ts.createReturn(createAsyncGeneratorHelper(context, ts.createFunctionExpression(
+            /*modifiers*/ undefined, ts.createToken(ts.SyntaxKind.AsteriskToken), node.name && ts.getGeneratedNameForNode(node.name), 
+            /*typeParameters*/ undefined, 
+            /*parameters*/ [], 
+            /*type*/ undefined, ts.updateBlock((node.body!), ts.visitLexicalEnvironment(node.body!.statements, visitor, context, statementOffset))), !topLevel));
             // Minor optimization, emit `_super` helper to capture `super` access in an arrow.
             // This step isn't needed if we eventually transform this to ES5.
-            const emitSuperHelpers = languageVersion >= ScriptTarget.ES2015 && resolver.getNodeCheckFlags(node) & (NodeCheckFlags.AsyncMethodWithSuperBinding | NodeCheckFlags.AsyncMethodWithSuper);
-
+            const emitSuperHelpers = languageVersion >= ts.ScriptTarget.ES2015 && resolver.getNodeCheckFlags(node) & (ts.NodeCheckFlags.AsyncMethodWithSuperBinding | ts.NodeCheckFlags.AsyncMethodWithSuper);
             if (emitSuperHelpers) {
                 enableSubstitutionForAsyncMethodsWithSuper();
-                const variableStatement = createSuperAccessVariableStatement(resolver, node, capturedSuperProperties);
-                substitutedSuperAccessors[getNodeId(variableStatement)] = true;
-                insertStatementsAfterStandardPrologue(statements, [variableStatement]);
+                const variableStatement = ts.createSuperAccessVariableStatement(resolver, node, capturedSuperProperties);
+                substitutedSuperAccessors[ts.getNodeId(variableStatement)] = true;
+                ts.insertStatementsAfterStandardPrologue(statements, [variableStatement]);
             }
-
             statements.push(returnStatement);
-
-            insertStatementsAfterStandardPrologue(statements, endLexicalEnvironment());
-            const block = updateBlock(node.body!, statements);
-
+            ts.insertStatementsAfterStandardPrologue(statements, endLexicalEnvironment());
+            const block = ts.updateBlock((node.body!), statements);
             if (emitSuperHelpers && hasSuperElementAccess) {
-                if (resolver.getNodeCheckFlags(node) & NodeCheckFlags.AsyncMethodWithSuperBinding) {
-                    addEmitHelper(block, advancedAsyncSuperHelper);
+                if (resolver.getNodeCheckFlags(node) & ts.NodeCheckFlags.AsyncMethodWithSuperBinding) {
+                    ts.addEmitHelper(block, ts.advancedAsyncSuperHelper);
                 }
-                else if (resolver.getNodeCheckFlags(node) & NodeCheckFlags.AsyncMethodWithSuper) {
-                    addEmitHelper(block, asyncSuperHelper);
+                else if (resolver.getNodeCheckFlags(node) & ts.NodeCheckFlags.AsyncMethodWithSuper) {
+                    ts.addEmitHelper(block, ts.asyncSuperHelper);
                 }
             }
-
             capturedSuperProperties = savedCapturedSuperProperties;
             hasSuperElementAccess = savedHasSuperElementAccess;
-
             return block;
         }
-
-        function transformFunctionBody(node: FunctionDeclaration | FunctionExpression | ConstructorDeclaration | MethodDeclaration | AccessorDeclaration): FunctionBody;
-        function transformFunctionBody(node: ArrowFunction): ConciseBody;
-        function transformFunctionBody(node: FunctionLikeDeclaration): ConciseBody {
+        function transformFunctionBody(node: ts.FunctionDeclaration | ts.FunctionExpression | ts.ConstructorDeclaration | ts.MethodDeclaration | ts.AccessorDeclaration): ts.FunctionBody;
+        function transformFunctionBody(node: ts.ArrowFunction): ts.ConciseBody;
+        function transformFunctionBody(node: ts.FunctionLikeDeclaration): ts.ConciseBody {
             resumeLexicalEnvironment();
             let statementOffset = 0;
-            const statements: Statement[] = [];
-            const body = visitNode(node.body, visitor, isConciseBody);
-            if (isBlock(body)) {
-                statementOffset = addPrologue(statements, body.statements, /*ensureUseStrict*/ false, visitor);
+            const statements: ts.Statement[] = [];
+            const body = ts.visitNode(node.body, visitor, ts.isConciseBody);
+            if (ts.isBlock(body)) {
+                statementOffset = ts.addPrologue(statements, body.statements, /*ensureUseStrict*/ false, visitor);
             }
-            addRange(statements, appendObjectRestAssignmentsIfNeeded(/*statements*/ undefined, node));
+            ts.addRange(statements, appendObjectRestAssignmentsIfNeeded(/*statements*/ undefined, node));
             const leadingStatements = endLexicalEnvironment();
-            if (statementOffset > 0 || some(statements) || some(leadingStatements)) {
-                const block = convertToFunctionBody(body, /*multiLine*/ true);
-                insertStatementsAfterStandardPrologue(statements, leadingStatements);
-                addRange(statements, block.statements.slice(statementOffset));
-                return updateBlock(block, setTextRange(createNodeArray(statements), block.statements));
+            if (statementOffset > 0 || ts.some(statements) || ts.some(leadingStatements)) {
+                const block = ts.convertToFunctionBody(body, /*multiLine*/ true);
+                ts.insertStatementsAfterStandardPrologue(statements, leadingStatements);
+                ts.addRange(statements, block.statements.slice(statementOffset));
+                return ts.updateBlock(block, ts.setTextRange(ts.createNodeArray(statements), block.statements));
             }
             return body;
         }
-
-        function appendObjectRestAssignmentsIfNeeded(statements: Statement[] | undefined, node: FunctionLikeDeclaration): Statement[] | undefined {
+        function appendObjectRestAssignmentsIfNeeded(statements: ts.Statement[] | undefined, node: ts.FunctionLikeDeclaration): ts.Statement[] | undefined {
             for (const parameter of node.parameters) {
-                if (parameter.transformFlags & TransformFlags.ContainsObjectRestOrSpread) {
-                    const temp = getGeneratedNameForNode(parameter);
-                    const declarations = flattenDestructuringBinding(
-                        parameter,
-                        visitor,
-                        context,
-                        FlattenLevel.ObjectRest,
-                        temp,
-                        /*doNotRecordTempVariablesInLine*/ false,
-                        /*skipInitializer*/ true,
-                    );
-                    if (some(declarations)) {
-                        const statement = createVariableStatement(
-                            /*modifiers*/ undefined,
-                            createVariableDeclarationList(
-                                declarations
-                            )
-                        );
-                        setEmitFlags(statement, EmitFlags.CustomPrologue);
-                        statements = append(statements, statement);
+                if (parameter.transformFlags & ts.TransformFlags.ContainsObjectRestOrSpread) {
+                    const temp = ts.getGeneratedNameForNode(parameter);
+                    const declarations = ts.flattenDestructuringBinding(parameter, visitor, context, ts.FlattenLevel.ObjectRest, temp, 
+                    /*doNotRecordTempVariablesInLine*/ false, 
+                    /*skipInitializer*/ true);
+                    if (ts.some(declarations)) {
+                        const statement = ts.createVariableStatement(
+                        /*modifiers*/ undefined, ts.createVariableDeclarationList(declarations));
+                        ts.setEmitFlags(statement, ts.EmitFlags.CustomPrologue);
+                        statements = ts.append(statements, statement);
                     }
                 }
             }
             return statements;
         }
-
         function enableSubstitutionForAsyncMethodsWithSuper() {
             if ((enabledSubstitutions & ESNextSubstitutionFlags.AsyncMethodsWithSuper) === 0) {
                 enabledSubstitutions |= ESNextSubstitutionFlags.AsyncMethodsWithSuper;
-
                 // We need to enable substitutions for call, property access, and element access
                 // if we need to rewrite super calls.
-                context.enableSubstitution(SyntaxKind.CallExpression);
-                context.enableSubstitution(SyntaxKind.PropertyAccessExpression);
-                context.enableSubstitution(SyntaxKind.ElementAccessExpression);
-
+                context.enableSubstitution(ts.SyntaxKind.CallExpression);
+                context.enableSubstitution(ts.SyntaxKind.PropertyAccessExpression);
+                context.enableSubstitution(ts.SyntaxKind.ElementAccessExpression);
                 // We need to be notified when entering and exiting declarations that bind super.
-                context.enableEmitNotification(SyntaxKind.ClassDeclaration);
-                context.enableEmitNotification(SyntaxKind.MethodDeclaration);
-                context.enableEmitNotification(SyntaxKind.GetAccessor);
-                context.enableEmitNotification(SyntaxKind.SetAccessor);
-                context.enableEmitNotification(SyntaxKind.Constructor);
+                context.enableEmitNotification(ts.SyntaxKind.ClassDeclaration);
+                context.enableEmitNotification(ts.SyntaxKind.MethodDeclaration);
+                context.enableEmitNotification(ts.SyntaxKind.GetAccessor);
+                context.enableEmitNotification(ts.SyntaxKind.SetAccessor);
+                context.enableEmitNotification(ts.SyntaxKind.Constructor);
                 // We need to be notified when entering the generated accessor arrow functions.
-                context.enableEmitNotification(SyntaxKind.VariableStatement);
+                context.enableEmitNotification(ts.SyntaxKind.VariableStatement);
             }
         }
-
         /**
          * Called by the printer just before a node is printed.
          *
@@ -886,11 +595,11 @@ namespace ts {
          * @param node The node to be printed.
          * @param emitCallback The callback used to emit the node.
          */
-        function onEmitNode(hint: EmitHint, node: Node, emitCallback: (hint: EmitHint, node: Node) => void) {
+        function onEmitNode(hint: ts.EmitHint, node: ts.Node, emitCallback: (hint: ts.EmitHint, node: ts.Node) => void) {
             // If we need to support substitutions for `super` in an async method,
             // we should track it here.
             if (enabledSubstitutions & ESNextSubstitutionFlags.AsyncMethodsWithSuper && isSuperContainer(node)) {
-                const superContainerFlags = resolver.getNodeCheckFlags(node) & (NodeCheckFlags.AsyncMethodWithSuper | NodeCheckFlags.AsyncMethodWithSuperBinding);
+                const superContainerFlags = resolver.getNodeCheckFlags(node) & (ts.NodeCheckFlags.AsyncMethodWithSuper | ts.NodeCheckFlags.AsyncMethodWithSuperBinding);
                 if (superContainerFlags !== enclosingSuperContainerFlags) {
                     const savedEnclosingSuperContainerFlags = enclosingSuperContainerFlags;
                     enclosingSuperContainerFlags = superContainerFlags;
@@ -900,120 +609,85 @@ namespace ts {
                 }
             }
             // Disable substitution in the generated super accessor itself.
-            else if (enabledSubstitutions && substitutedSuperAccessors[getNodeId(node)]) {
+            else if (enabledSubstitutions && substitutedSuperAccessors[ts.getNodeId(node)]) {
                 const savedEnclosingSuperContainerFlags = enclosingSuperContainerFlags;
-                enclosingSuperContainerFlags = 0 as NodeCheckFlags;
+                enclosingSuperContainerFlags = (0 as ts.NodeCheckFlags);
                 previousOnEmitNode(hint, node, emitCallback);
                 enclosingSuperContainerFlags = savedEnclosingSuperContainerFlags;
                 return;
             }
-
             previousOnEmitNode(hint, node, emitCallback);
         }
-
         /**
          * Hooks node substitutions.
          *
          * @param hint The context for the emitter.
          * @param node The node to substitute.
          */
-        function onSubstituteNode(hint: EmitHint, node: Node) {
+        function onSubstituteNode(hint: ts.EmitHint, node: ts.Node) {
             node = previousOnSubstituteNode(hint, node);
-            if (hint === EmitHint.Expression && enclosingSuperContainerFlags) {
-                return substituteExpression(<Expression>node);
+            if (hint === ts.EmitHint.Expression && enclosingSuperContainerFlags) {
+                return substituteExpression((<ts.Expression>node));
             }
             return node;
         }
-
-        function substituteExpression(node: Expression) {
+        function substituteExpression(node: ts.Expression) {
             switch (node.kind) {
-                case SyntaxKind.PropertyAccessExpression:
-                    return substitutePropertyAccessExpression(<PropertyAccessExpression>node);
-                case SyntaxKind.ElementAccessExpression:
-                    return substituteElementAccessExpression(<ElementAccessExpression>node);
-                case SyntaxKind.CallExpression:
-                    return substituteCallExpression(<CallExpression>node);
+                case ts.SyntaxKind.PropertyAccessExpression:
+                    return substitutePropertyAccessExpression((<ts.PropertyAccessExpression>node));
+                case ts.SyntaxKind.ElementAccessExpression:
+                    return substituteElementAccessExpression((<ts.ElementAccessExpression>node));
+                case ts.SyntaxKind.CallExpression:
+                    return substituteCallExpression((<ts.CallExpression>node));
             }
             return node;
         }
-
-        function substitutePropertyAccessExpression(node: PropertyAccessExpression) {
-            if (node.expression.kind === SyntaxKind.SuperKeyword) {
-                return setTextRange(
-                    createPropertyAccess(
-                        createFileLevelUniqueName("_super"),
-                        node.name),
-                    node
-                );
+        function substitutePropertyAccessExpression(node: ts.PropertyAccessExpression) {
+            if (node.expression.kind === ts.SyntaxKind.SuperKeyword) {
+                return ts.setTextRange(ts.createPropertyAccess(ts.createFileLevelUniqueName("_super"), node.name), node);
             }
             return node;
         }
-
-        function substituteElementAccessExpression(node: ElementAccessExpression) {
-            if (node.expression.kind === SyntaxKind.SuperKeyword) {
-                return createSuperElementAccessInAsyncMethod(
-                    node.argumentExpression,
-                    node
-                );
+        function substituteElementAccessExpression(node: ts.ElementAccessExpression) {
+            if (node.expression.kind === ts.SyntaxKind.SuperKeyword) {
+                return createSuperElementAccessInAsyncMethod(node.argumentExpression, node);
             }
             return node;
         }
-
-        function substituteCallExpression(node: CallExpression): Expression {
+        function substituteCallExpression(node: ts.CallExpression): ts.Expression {
             const expression = node.expression;
-            if (isSuperProperty(expression)) {
-                const argumentExpression = isPropertyAccessExpression(expression)
+            if (ts.isSuperProperty(expression)) {
+                const argumentExpression = ts.isPropertyAccessExpression(expression)
                     ? substitutePropertyAccessExpression(expression)
                     : substituteElementAccessExpression(expression);
-                return createCall(
-                    createPropertyAccess(argumentExpression, "call"),
-                    /*typeArguments*/ undefined,
-                    [
-                        createThis(),
-                        ...node.arguments
-                    ]
-                );
+                return ts.createCall(ts.createPropertyAccess(argumentExpression, "call"), 
+                /*typeArguments*/ undefined, [
+                    ts.createThis(),
+                    ...node.arguments
+                ]);
             }
             return node;
         }
-
-        function isSuperContainer(node: Node) {
+        function isSuperContainer(node: ts.Node) {
             const kind = node.kind;
-            return kind === SyntaxKind.ClassDeclaration
-                || kind === SyntaxKind.Constructor
-                || kind === SyntaxKind.MethodDeclaration
-                || kind === SyntaxKind.GetAccessor
-                || kind === SyntaxKind.SetAccessor;
+            return kind === ts.SyntaxKind.ClassDeclaration
+                || kind === ts.SyntaxKind.Constructor
+                || kind === ts.SyntaxKind.MethodDeclaration
+                || kind === ts.SyntaxKind.GetAccessor
+                || kind === ts.SyntaxKind.SetAccessor;
         }
-
-        function createSuperElementAccessInAsyncMethod(argumentExpression: Expression, location: TextRange): LeftHandSideExpression {
-            if (enclosingSuperContainerFlags & NodeCheckFlags.AsyncMethodWithSuperBinding) {
-                return setTextRange(
-                    createPropertyAccess(
-                        createCall(
-                            createIdentifier("_superIndex"),
-                            /*typeArguments*/ undefined,
-                            [argumentExpression]
-                        ),
-                        "value"
-                    ),
-                    location
-                );
+        function createSuperElementAccessInAsyncMethod(argumentExpression: ts.Expression, location: ts.TextRange): ts.LeftHandSideExpression {
+            if (enclosingSuperContainerFlags & ts.NodeCheckFlags.AsyncMethodWithSuperBinding) {
+                return ts.setTextRange(ts.createPropertyAccess(ts.createCall(ts.createIdentifier("_superIndex"), 
+                /*typeArguments*/ undefined, [argumentExpression]), "value"), location);
             }
             else {
-                return setTextRange(
-                    createCall(
-                        createIdentifier("_superIndex"),
-                        /*typeArguments*/ undefined,
-                        [argumentExpression]
-                    ),
-                    location
-                );
+                return ts.setTextRange(ts.createCall(ts.createIdentifier("_superIndex"), 
+                /*typeArguments*/ undefined, [argumentExpression]), location);
             }
         }
     }
-
-    export const assignHelper: UnscopedEmitHelper = {
+    export const assignHelper: ts.UnscopedEmitHelper = {
         name: "typescript:assign",
         importName: "__assign",
         scoped: false,
@@ -1031,33 +705,26 @@ namespace ts {
                 return __assign.apply(this, arguments);
             };`
     };
-
-    export function createAssignHelper(context: TransformationContext, attributesSegments: Expression[]) {
-        if (context.getCompilerOptions().target! >= ScriptTarget.ES2015) {
-            return createCall(createPropertyAccess(createIdentifier("Object"), "assign"), /*typeArguments*/ undefined, attributesSegments);
+    export function createAssignHelper(context: ts.TransformationContext, attributesSegments: ts.Expression[]) {
+        if ((context.getCompilerOptions().target!) >= ts.ScriptTarget.ES2015) {
+            return ts.createCall(ts.createPropertyAccess(ts.createIdentifier("Object"), "assign"), /*typeArguments*/ undefined, attributesSegments);
         }
         context.requestEmitHelper(assignHelper);
-        return createCall(
-            getUnscopedHelperName("__assign"),
-            /*typeArguments*/ undefined,
-            attributesSegments
-        );
+        return ts.createCall(ts.getUnscopedHelperName("__assign"), 
+        /*typeArguments*/ undefined, attributesSegments);
     }
-
-    export const awaitHelper: UnscopedEmitHelper = {
+    export const awaitHelper: ts.UnscopedEmitHelper = {
         name: "typescript:await",
         importName: "__await",
         scoped: false,
         text: `
             var __await = (this && this.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); }`
     };
-
-    function createAwaitHelper(context: TransformationContext, expression: Expression) {
+    function createAwaitHelper(context: ts.TransformationContext, expression: ts.Expression) {
         context.requestEmitHelper(awaitHelper);
-        return createCall(getUnscopedHelperName("__await"), /*typeArguments*/ undefined, [expression]);
+        return ts.createCall(ts.getUnscopedHelperName("__await"), /*typeArguments*/ undefined, [expression]);
     }
-
-    export const asyncGeneratorHelper: UnscopedEmitHelper = {
+    export const asyncGeneratorHelper: ts.UnscopedEmitHelper = {
         name: "typescript:asyncGenerator",
         importName: "__asyncGenerator",
         scoped: false,
@@ -1074,26 +741,19 @@ namespace ts {
                 function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
             };`
     };
-
-    function createAsyncGeneratorHelper(context: TransformationContext, generatorFunc: FunctionExpression, hasLexicalThis: boolean) {
+    function createAsyncGeneratorHelper(context: ts.TransformationContext, generatorFunc: ts.FunctionExpression, hasLexicalThis: boolean) {
         context.requestEmitHelper(awaitHelper);
         context.requestEmitHelper(asyncGeneratorHelper);
-
         // Mark this node as originally an async function
-        (generatorFunc.emitNode || (generatorFunc.emitNode = {} as EmitNode)).flags |= EmitFlags.AsyncFunctionBody;
-
-        return createCall(
-            getUnscopedHelperName("__asyncGenerator"),
-            /*typeArguments*/ undefined,
-            [
-                hasLexicalThis ? createThis() : createVoidZero(),
-                createIdentifier("arguments"),
-                generatorFunc
-            ]
-        );
+        (generatorFunc.emitNode || (generatorFunc.emitNode = ({} as ts.EmitNode))).flags |= ts.EmitFlags.AsyncFunctionBody;
+        return ts.createCall(ts.getUnscopedHelperName("__asyncGenerator"), 
+        /*typeArguments*/ undefined, [
+            hasLexicalThis ? ts.createThis() : ts.createVoidZero(),
+            ts.createIdentifier("arguments"),
+            generatorFunc
+        ]);
     }
-
-    export const asyncDelegator: UnscopedEmitHelper = {
+    export const asyncDelegator: ts.UnscopedEmitHelper = {
         name: "typescript:asyncDelegator",
         importName: "__asyncDelegator",
         scoped: false,
@@ -1104,21 +764,13 @@ namespace ts {
                 function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
             };`
     };
-
-    function createAsyncDelegatorHelper(context: TransformationContext, expression: Expression, location?: TextRange) {
+    function createAsyncDelegatorHelper(context: ts.TransformationContext, expression: ts.Expression, location?: ts.TextRange) {
         context.requestEmitHelper(awaitHelper);
         context.requestEmitHelper(asyncDelegator);
-        return setTextRange(
-            createCall(
-                getUnscopedHelperName("__asyncDelegator"),
-                /*typeArguments*/ undefined,
-                [expression]
-            ),
-            location
-        );
+        return ts.setTextRange(ts.createCall(ts.getUnscopedHelperName("__asyncDelegator"), 
+        /*typeArguments*/ undefined, [expression]), location);
     }
-
-    export const asyncValues: UnscopedEmitHelper = {
+    export const asyncValues: ts.UnscopedEmitHelper = {
         name: "typescript:asyncValues",
         importName: "__asyncValues",
         scoped: false,
@@ -1131,16 +783,9 @@ namespace ts {
                 function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
             };`
     };
-
-    function createAsyncValuesHelper(context: TransformationContext, expression: Expression, location?: TextRange) {
+    function createAsyncValuesHelper(context: ts.TransformationContext, expression: ts.Expression, location?: ts.TextRange) {
         context.requestEmitHelper(asyncValues);
-        return setTextRange(
-            createCall(
-                getUnscopedHelperName("__asyncValues"),
-                /*typeArguments*/ undefined,
-                [expression]
-            ),
-            location
-        );
+        return ts.setTextRange(ts.createCall(ts.getUnscopedHelperName("__asyncValues"), 
+        /*typeArguments*/ undefined, [expression]), location);
     }
 }

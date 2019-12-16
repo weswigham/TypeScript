@@ -1,0 +1,20 @@
+{
+    "extends": "../tsconfig-noncomposite-base",
+    "compilerOptions": {
+        "outDir": "../../built/local",
+        "types": [
+            "node"
+        ]
+    },
+    "files": [
+        "server.ts",
+        "./ts.server.ts",
+        "./ts.ts"
+    ],
+    "references": [
+        { "path": "../compiler" },
+        { "path": "../services" },
+        { "path": "../jsTyping" },
+        { "path": "../server" }
+    ]
+}

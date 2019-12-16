@@ -2,12 +2,12 @@ namespace ts {
     describe("unittests:: tsbuild - with noEmitOnError", () => {
         let projFs: vfs.FileSystem;
         before(() => {
-            projFs = loadProjectFromDisk("tests/projects/noEmitOnError");
+            projFs = ts.loadProjectFromDisk("tests/projects/noEmitOnError");
         });
         after(() => {
             projFs = undefined!;
         });
-        verifyTsc({
+        ts.verifyTsc({
             scenario: "noEmitOnError",
             subScenario: "has empty files diagnostic when files is empty and no references are provided",
             fs: () => projFs,

@@ -1,19 +1,16 @@
 namespace ts {
-    export type ErrorCallback = (message: DiagnosticMessage, length: number) => void;
-
+    export type ErrorCallback = (message: ts.DiagnosticMessage, length: number) => void;
     /* @internal */
-    export function tokenIsIdentifierOrKeyword(token: SyntaxKind): boolean {
-        return token >= SyntaxKind.Identifier;
+    export function tokenIsIdentifierOrKeyword(token: ts.SyntaxKind): boolean {
+        return token >= ts.SyntaxKind.Identifier;
     }
-
     /* @internal */
-    export function tokenIsIdentifierOrKeywordOrGreaterThan(token: SyntaxKind): boolean {
-        return token === SyntaxKind.GreaterThanToken || tokenIsIdentifierOrKeyword(token);
+    export function tokenIsIdentifierOrKeywordOrGreaterThan(token: ts.SyntaxKind): boolean {
+        return token === ts.SyntaxKind.GreaterThanToken || tokenIsIdentifierOrKeyword(token);
     }
-
     export interface Scanner {
         getStartPos(): number;
-        getToken(): SyntaxKind;
+        getToken(): ts.SyntaxKind;
         getTextPos(): number;
         getTokenPos(): number;
         getTokenText(): string;
@@ -25,26 +22,26 @@ namespace ts {
         isReservedWord(): boolean;
         isUnterminated(): boolean;
         /* @internal */
-        getTokenFlags(): TokenFlags;
-        reScanGreaterToken(): SyntaxKind;
-        reScanSlashToken(): SyntaxKind;
-        reScanTemplateToken(): SyntaxKind;
-        scanJsxIdentifier(): SyntaxKind;
-        scanJsxAttributeValue(): SyntaxKind;
-        reScanJsxAttributeValue(): SyntaxKind;
-        reScanJsxToken(): JsxTokenSyntaxKind;
-        reScanLessThanToken(): SyntaxKind;
-        reScanQuestionToken(): SyntaxKind;
-        scanJsxToken(): JsxTokenSyntaxKind;
-        scanJsDocToken(): JSDocSyntaxKind;
-        scan(): SyntaxKind;
+        getTokenFlags(): ts.TokenFlags;
+        reScanGreaterToken(): ts.SyntaxKind;
+        reScanSlashToken(): ts.SyntaxKind;
+        reScanTemplateToken(): ts.SyntaxKind;
+        scanJsxIdentifier(): ts.SyntaxKind;
+        scanJsxAttributeValue(): ts.SyntaxKind;
+        reScanJsxAttributeValue(): ts.SyntaxKind;
+        reScanJsxToken(): ts.JsxTokenSyntaxKind;
+        reScanLessThanToken(): ts.SyntaxKind;
+        reScanQuestionToken(): ts.SyntaxKind;
+        scanJsxToken(): ts.JsxTokenSyntaxKind;
+        scanJsDocToken(): ts.JSDocSyntaxKind;
+        scan(): ts.SyntaxKind;
         getText(): string;
         // Sets the text for the scanner to scan.  An optional subrange starting point and length
         // can be provided to have the scanner only scan a portion of the text.
         setText(text: string | undefined, start?: number, length?: number): void;
         setOnError(onError: ErrorCallback | undefined): void;
-        setScriptTarget(scriptTarget: ScriptTarget): void;
-        setLanguageVariant(variant: LanguageVariant): void;
+        setScriptTarget(scriptTarget: ts.ScriptTarget): void;
+        setLanguageVariant(variant: ts.LanguageVariant): void;
         setTextPos(textPos: number): void;
         /* @internal */
         setInJSDocType(inType: boolean): void;
@@ -52,160 +49,154 @@ namespace ts {
         // was in immediately prior to invoking the callback.  The result of invoking the callback
         // is returned from this function.
         lookAhead<T>(callback: () => T): T;
-
         // Invokes the callback with the scanner set to scan the specified range. When the callback
         // returns, the scanner is restored to the state it was in before scanRange was called.
         scanRange<T>(start: number, length: number, callback: () => T): T;
-
         // Invokes the provided callback.  If the callback returns something falsy, then it restores
         // the scanner to the state it was in immediately prior to invoking the callback.  If the
         // callback returns something truthy, then the scanner state is not rolled back.  The result
         // of invoking the callback is returned from this function.
         tryScan<T>(callback: () => T): T;
     }
-
-    const textToKeywordObj: MapLike<KeywordSyntaxKind> = {
-        abstract: SyntaxKind.AbstractKeyword,
-        any: SyntaxKind.AnyKeyword,
-        as: SyntaxKind.AsKeyword,
-        asserts: SyntaxKind.AssertsKeyword,
-        bigint: SyntaxKind.BigIntKeyword,
-        boolean: SyntaxKind.BooleanKeyword,
-        break: SyntaxKind.BreakKeyword,
-        case: SyntaxKind.CaseKeyword,
-        catch: SyntaxKind.CatchKeyword,
-        class: SyntaxKind.ClassKeyword,
-        continue: SyntaxKind.ContinueKeyword,
-        const: SyntaxKind.ConstKeyword,
-        ["" + "constructor"]: SyntaxKind.ConstructorKeyword,
-        debugger: SyntaxKind.DebuggerKeyword,
-        declare: SyntaxKind.DeclareKeyword,
-        default: SyntaxKind.DefaultKeyword,
-        delete: SyntaxKind.DeleteKeyword,
-        do: SyntaxKind.DoKeyword,
-        else: SyntaxKind.ElseKeyword,
-        enum: SyntaxKind.EnumKeyword,
-        export: SyntaxKind.ExportKeyword,
-        extends: SyntaxKind.ExtendsKeyword,
-        false: SyntaxKind.FalseKeyword,
-        finally: SyntaxKind.FinallyKeyword,
-        for: SyntaxKind.ForKeyword,
-        from: SyntaxKind.FromKeyword,
-        function: SyntaxKind.FunctionKeyword,
-        get: SyntaxKind.GetKeyword,
-        if: SyntaxKind.IfKeyword,
-        implements: SyntaxKind.ImplementsKeyword,
-        import: SyntaxKind.ImportKeyword,
-        in: SyntaxKind.InKeyword,
-        infer: SyntaxKind.InferKeyword,
-        instanceof: SyntaxKind.InstanceOfKeyword,
-        interface: SyntaxKind.InterfaceKeyword,
-        is: SyntaxKind.IsKeyword,
-        keyof: SyntaxKind.KeyOfKeyword,
-        let: SyntaxKind.LetKeyword,
-        module: SyntaxKind.ModuleKeyword,
-        namespace: SyntaxKind.NamespaceKeyword,
-        never: SyntaxKind.NeverKeyword,
-        new: SyntaxKind.NewKeyword,
-        null: SyntaxKind.NullKeyword,
-        number: SyntaxKind.NumberKeyword,
-        object: SyntaxKind.ObjectKeyword,
-        package: SyntaxKind.PackageKeyword,
-        private: SyntaxKind.PrivateKeyword,
-        protected: SyntaxKind.ProtectedKeyword,
-        public: SyntaxKind.PublicKeyword,
-        readonly: SyntaxKind.ReadonlyKeyword,
-        require: SyntaxKind.RequireKeyword,
-        global: SyntaxKind.GlobalKeyword,
-        return: SyntaxKind.ReturnKeyword,
-        set: SyntaxKind.SetKeyword,
-        static: SyntaxKind.StaticKeyword,
-        string: SyntaxKind.StringKeyword,
-        super: SyntaxKind.SuperKeyword,
-        switch: SyntaxKind.SwitchKeyword,
-        symbol: SyntaxKind.SymbolKeyword,
-        this: SyntaxKind.ThisKeyword,
-        throw: SyntaxKind.ThrowKeyword,
-        true: SyntaxKind.TrueKeyword,
-        try: SyntaxKind.TryKeyword,
-        type: SyntaxKind.TypeKeyword,
-        typeof: SyntaxKind.TypeOfKeyword,
-        undefined: SyntaxKind.UndefinedKeyword,
-        unique: SyntaxKind.UniqueKeyword,
-        unknown: SyntaxKind.UnknownKeyword,
-        var: SyntaxKind.VarKeyword,
-        void: SyntaxKind.VoidKeyword,
-        while: SyntaxKind.WhileKeyword,
-        with: SyntaxKind.WithKeyword,
-        yield: SyntaxKind.YieldKeyword,
-        async: SyntaxKind.AsyncKeyword,
-        await: SyntaxKind.AwaitKeyword,
-        of: SyntaxKind.OfKeyword,
+    const textToKeywordObj: ts.MapLike<ts.KeywordSyntaxKind> = {
+        abstract: ts.SyntaxKind.AbstractKeyword,
+        any: ts.SyntaxKind.AnyKeyword,
+        as: ts.SyntaxKind.AsKeyword,
+        asserts: ts.SyntaxKind.AssertsKeyword,
+        bigint: ts.SyntaxKind.BigIntKeyword,
+        boolean: ts.SyntaxKind.BooleanKeyword,
+        break: ts.SyntaxKind.BreakKeyword,
+        case: ts.SyntaxKind.CaseKeyword,
+        catch: ts.SyntaxKind.CatchKeyword,
+        class: ts.SyntaxKind.ClassKeyword,
+        continue: ts.SyntaxKind.ContinueKeyword,
+        const: ts.SyntaxKind.ConstKeyword,
+        ["" + "constructor"]: ts.SyntaxKind.ConstructorKeyword,
+        debugger: ts.SyntaxKind.DebuggerKeyword,
+        declare: ts.SyntaxKind.DeclareKeyword,
+        default: ts.SyntaxKind.DefaultKeyword,
+        delete: ts.SyntaxKind.DeleteKeyword,
+        do: ts.SyntaxKind.DoKeyword,
+        else: ts.SyntaxKind.ElseKeyword,
+        enum: ts.SyntaxKind.EnumKeyword,
+        export: ts.SyntaxKind.ExportKeyword,
+        extends: ts.SyntaxKind.ExtendsKeyword,
+        false: ts.SyntaxKind.FalseKeyword,
+        finally: ts.SyntaxKind.FinallyKeyword,
+        for: ts.SyntaxKind.ForKeyword,
+        from: ts.SyntaxKind.FromKeyword,
+        function: ts.SyntaxKind.FunctionKeyword,
+        get: ts.SyntaxKind.GetKeyword,
+        if: ts.SyntaxKind.IfKeyword,
+        implements: ts.SyntaxKind.ImplementsKeyword,
+        import: ts.SyntaxKind.ImportKeyword,
+        in: ts.SyntaxKind.InKeyword,
+        infer: ts.SyntaxKind.InferKeyword,
+        instanceof: ts.SyntaxKind.InstanceOfKeyword,
+        interface: ts.SyntaxKind.InterfaceKeyword,
+        is: ts.SyntaxKind.IsKeyword,
+        keyof: ts.SyntaxKind.KeyOfKeyword,
+        let: ts.SyntaxKind.LetKeyword,
+        module: ts.SyntaxKind.ModuleKeyword,
+        namespace: ts.SyntaxKind.NamespaceKeyword,
+        never: ts.SyntaxKind.NeverKeyword,
+        new: ts.SyntaxKind.NewKeyword,
+        null: ts.SyntaxKind.NullKeyword,
+        number: ts.SyntaxKind.NumberKeyword,
+        object: ts.SyntaxKind.ObjectKeyword,
+        package: ts.SyntaxKind.PackageKeyword,
+        private: ts.SyntaxKind.PrivateKeyword,
+        protected: ts.SyntaxKind.ProtectedKeyword,
+        public: ts.SyntaxKind.PublicKeyword,
+        readonly: ts.SyntaxKind.ReadonlyKeyword,
+        require: ts.SyntaxKind.RequireKeyword,
+        global: ts.SyntaxKind.GlobalKeyword,
+        return: ts.SyntaxKind.ReturnKeyword,
+        set: ts.SyntaxKind.SetKeyword,
+        static: ts.SyntaxKind.StaticKeyword,
+        string: ts.SyntaxKind.StringKeyword,
+        super: ts.SyntaxKind.SuperKeyword,
+        switch: ts.SyntaxKind.SwitchKeyword,
+        symbol: ts.SyntaxKind.SymbolKeyword,
+        this: ts.SyntaxKind.ThisKeyword,
+        throw: ts.SyntaxKind.ThrowKeyword,
+        true: ts.SyntaxKind.TrueKeyword,
+        try: ts.SyntaxKind.TryKeyword,
+        type: ts.SyntaxKind.TypeKeyword,
+        typeof: ts.SyntaxKind.TypeOfKeyword,
+        undefined: ts.SyntaxKind.UndefinedKeyword,
+        unique: ts.SyntaxKind.UniqueKeyword,
+        unknown: ts.SyntaxKind.UnknownKeyword,
+        var: ts.SyntaxKind.VarKeyword,
+        void: ts.SyntaxKind.VoidKeyword,
+        while: ts.SyntaxKind.WhileKeyword,
+        with: ts.SyntaxKind.WithKeyword,
+        yield: ts.SyntaxKind.YieldKeyword,
+        async: ts.SyntaxKind.AsyncKeyword,
+        await: ts.SyntaxKind.AwaitKeyword,
+        of: ts.SyntaxKind.OfKeyword,
     };
-
-    const textToKeyword = createMapFromTemplate(textToKeywordObj);
-
-    const textToToken = createMapFromTemplate<SyntaxKind>({
+    const textToKeyword = ts.createMapFromTemplate(textToKeywordObj);
+    const textToToken = ts.createMapFromTemplate<ts.SyntaxKind>({
         ...textToKeywordObj,
-        "{": SyntaxKind.OpenBraceToken,
-        "}": SyntaxKind.CloseBraceToken,
-        "(": SyntaxKind.OpenParenToken,
-        ")": SyntaxKind.CloseParenToken,
-        "[": SyntaxKind.OpenBracketToken,
-        "]": SyntaxKind.CloseBracketToken,
-        ".": SyntaxKind.DotToken,
-        "...": SyntaxKind.DotDotDotToken,
-        ";": SyntaxKind.SemicolonToken,
-        ",": SyntaxKind.CommaToken,
-        "<": SyntaxKind.LessThanToken,
-        ">": SyntaxKind.GreaterThanToken,
-        "<=": SyntaxKind.LessThanEqualsToken,
-        ">=": SyntaxKind.GreaterThanEqualsToken,
-        "==": SyntaxKind.EqualsEqualsToken,
-        "!=": SyntaxKind.ExclamationEqualsToken,
-        "===": SyntaxKind.EqualsEqualsEqualsToken,
-        "!==": SyntaxKind.ExclamationEqualsEqualsToken,
-        "=>": SyntaxKind.EqualsGreaterThanToken,
-        "+": SyntaxKind.PlusToken,
-        "-": SyntaxKind.MinusToken,
-        "**": SyntaxKind.AsteriskAsteriskToken,
-        "*": SyntaxKind.AsteriskToken,
-        "/": SyntaxKind.SlashToken,
-        "%": SyntaxKind.PercentToken,
-        "++": SyntaxKind.PlusPlusToken,
-        "--": SyntaxKind.MinusMinusToken,
-        "<<": SyntaxKind.LessThanLessThanToken,
-        "</": SyntaxKind.LessThanSlashToken,
-        ">>": SyntaxKind.GreaterThanGreaterThanToken,
-        ">>>": SyntaxKind.GreaterThanGreaterThanGreaterThanToken,
-        "&": SyntaxKind.AmpersandToken,
-        "|": SyntaxKind.BarToken,
-        "^": SyntaxKind.CaretToken,
-        "!": SyntaxKind.ExclamationToken,
-        "~": SyntaxKind.TildeToken,
-        "&&": SyntaxKind.AmpersandAmpersandToken,
-        "||": SyntaxKind.BarBarToken,
-        "?": SyntaxKind.QuestionToken,
-        "??": SyntaxKind.QuestionQuestionToken,
-        "?.": SyntaxKind.QuestionDotToken,
-        ":": SyntaxKind.ColonToken,
-        "=": SyntaxKind.EqualsToken,
-        "+=": SyntaxKind.PlusEqualsToken,
-        "-=": SyntaxKind.MinusEqualsToken,
-        "*=": SyntaxKind.AsteriskEqualsToken,
-        "**=": SyntaxKind.AsteriskAsteriskEqualsToken,
-        "/=": SyntaxKind.SlashEqualsToken,
-        "%=": SyntaxKind.PercentEqualsToken,
-        "<<=": SyntaxKind.LessThanLessThanEqualsToken,
-        ">>=": SyntaxKind.GreaterThanGreaterThanEqualsToken,
-        ">>>=": SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken,
-        "&=": SyntaxKind.AmpersandEqualsToken,
-        "|=": SyntaxKind.BarEqualsToken,
-        "^=": SyntaxKind.CaretEqualsToken,
-        "@": SyntaxKind.AtToken,
-        "`": SyntaxKind.BacktickToken
+        "{": ts.SyntaxKind.OpenBraceToken,
+        "}": ts.SyntaxKind.CloseBraceToken,
+        "(": ts.SyntaxKind.OpenParenToken,
+        ")": ts.SyntaxKind.CloseParenToken,
+        "[": ts.SyntaxKind.OpenBracketToken,
+        "]": ts.SyntaxKind.CloseBracketToken,
+        ".": ts.SyntaxKind.DotToken,
+        "...": ts.SyntaxKind.DotDotDotToken,
+        ";": ts.SyntaxKind.SemicolonToken,
+        ",": ts.SyntaxKind.CommaToken,
+        "<": ts.SyntaxKind.LessThanToken,
+        ">": ts.SyntaxKind.GreaterThanToken,
+        "<=": ts.SyntaxKind.LessThanEqualsToken,
+        ">=": ts.SyntaxKind.GreaterThanEqualsToken,
+        "==": ts.SyntaxKind.EqualsEqualsToken,
+        "!=": ts.SyntaxKind.ExclamationEqualsToken,
+        "===": ts.SyntaxKind.EqualsEqualsEqualsToken,
+        "!==": ts.SyntaxKind.ExclamationEqualsEqualsToken,
+        "=>": ts.SyntaxKind.EqualsGreaterThanToken,
+        "+": ts.SyntaxKind.PlusToken,
+        "-": ts.SyntaxKind.MinusToken,
+        "**": ts.SyntaxKind.AsteriskAsteriskToken,
+        "*": ts.SyntaxKind.AsteriskToken,
+        "/": ts.SyntaxKind.SlashToken,
+        "%": ts.SyntaxKind.PercentToken,
+        "++": ts.SyntaxKind.PlusPlusToken,
+        "--": ts.SyntaxKind.MinusMinusToken,
+        "<<": ts.SyntaxKind.LessThanLessThanToken,
+        "</": ts.SyntaxKind.LessThanSlashToken,
+        ">>": ts.SyntaxKind.GreaterThanGreaterThanToken,
+        ">>>": ts.SyntaxKind.GreaterThanGreaterThanGreaterThanToken,
+        "&": ts.SyntaxKind.AmpersandToken,
+        "|": ts.SyntaxKind.BarToken,
+        "^": ts.SyntaxKind.CaretToken,
+        "!": ts.SyntaxKind.ExclamationToken,
+        "~": ts.SyntaxKind.TildeToken,
+        "&&": ts.SyntaxKind.AmpersandAmpersandToken,
+        "||": ts.SyntaxKind.BarBarToken,
+        "?": ts.SyntaxKind.QuestionToken,
+        "??": ts.SyntaxKind.QuestionQuestionToken,
+        "?.": ts.SyntaxKind.QuestionDotToken,
+        ":": ts.SyntaxKind.ColonToken,
+        "=": ts.SyntaxKind.EqualsToken,
+        "+=": ts.SyntaxKind.PlusEqualsToken,
+        "-=": ts.SyntaxKind.MinusEqualsToken,
+        "*=": ts.SyntaxKind.AsteriskEqualsToken,
+        "**=": ts.SyntaxKind.AsteriskAsteriskEqualsToken,
+        "/=": ts.SyntaxKind.SlashEqualsToken,
+        "%=": ts.SyntaxKind.PercentEqualsToken,
+        "<<=": ts.SyntaxKind.LessThanLessThanEqualsToken,
+        ">>=": ts.SyntaxKind.GreaterThanGreaterThanEqualsToken,
+        ">>>=": ts.SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken,
+        "&=": ts.SyntaxKind.AmpersandEqualsToken,
+        "|=": ts.SyntaxKind.BarEqualsToken,
+        "^=": ts.SyntaxKind.CaretEqualsToken,
+        "@": ts.SyntaxKind.AtToken,
+        "`": ts.SyntaxKind.BacktickToken
     });
-
     /*
         As per ECMAScript Language Specification 3th Edition, Section 7.6: Identifiers
         IdentifierStart ::
@@ -226,9 +217,8 @@ namespace ts {
         Codepoint ranges for ES3 Identifiers are extracted from the Unicode 3.0.0 specification at:
         http://www.unicode.org/Public/3.0-Update/UnicodeData-3.0.0.txt
     */
-    const unicodeES3IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1610, 1649, 1747, 1749, 1749, 1765, 1766, 1786, 1788, 1808, 1808, 1810, 1836, 1920, 1957, 2309, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2784, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3294, 3294, 3296, 3297, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3424, 3425, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3805, 3840, 3840, 3904, 3911, 3913, 3946, 3976, 3979, 4096, 4129, 4131, 4135, 4137, 4138, 4176, 4181, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6067, 6176, 6263, 6272, 6312, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8319, 8319, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12346, 12353, 12436, 12445, 12446, 12449, 12538, 12540, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65138, 65140, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, ];
-    const unicodeES3IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 768, 846, 864, 866, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1155, 1158, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1441, 1443, 1465, 1467, 1469, 1471, 1471, 1473, 1474, 1476, 1476, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1621, 1632, 1641, 1648, 1747, 1749, 1756, 1759, 1768, 1770, 1773, 1776, 1788, 1808, 1836, 1840, 1866, 1920, 1968, 2305, 2307, 2309, 2361, 2364, 2381, 2384, 2388, 2392, 2403, 2406, 2415, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2492, 2494, 2500, 2503, 2504, 2507, 2509, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2562, 2562, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2649, 2652, 2654, 2654, 2662, 2676, 2689, 2691, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2784, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2876, 2883, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2913, 2918, 2927, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3031, 3031, 3047, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3134, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3168, 3169, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3262, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3297, 3302, 3311, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3390, 3395, 3398, 3400, 3402, 3405, 3415, 3415, 3424, 3425, 3430, 3439, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3805, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3946, 3953, 3972, 3974, 3979, 3984, 3991, 3993, 4028, 4038, 4038, 4096, 4129, 4131, 4135, 4137, 4138, 4140, 4146, 4150, 4153, 4160, 4169, 4176, 4185, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 4969, 4977, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6099, 6112, 6121, 6160, 6169, 6176, 6263, 6272, 6313, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8255, 8256, 8319, 8319, 8400, 8412, 8417, 8417, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12346, 12353, 12436, 12441, 12442, 12445, 12446, 12449, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65056, 65059, 65075, 65076, 65101, 65103, 65136, 65138, 65140, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65381, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, ];
-
+    const unicodeES3IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1610, 1649, 1747, 1749, 1749, 1765, 1766, 1786, 1788, 1808, 1808, 1810, 1836, 1920, 1957, 2309, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2784, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3294, 3294, 3296, 3297, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3424, 3425, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3805, 3840, 3840, 3904, 3911, 3913, 3946, 3976, 3979, 4096, 4129, 4131, 4135, 4137, 4138, 4176, 4181, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6067, 6176, 6263, 6272, 6312, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8319, 8319, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12346, 12353, 12436, 12445, 12446, 12449, 12538, 12540, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65138, 65140, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500,];
+    const unicodeES3IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 768, 846, 864, 866, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1155, 1158, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1441, 1443, 1465, 1467, 1469, 1471, 1471, 1473, 1474, 1476, 1476, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1621, 1632, 1641, 1648, 1747, 1749, 1756, 1759, 1768, 1770, 1773, 1776, 1788, 1808, 1836, 1840, 1866, 1920, 1968, 2305, 2307, 2309, 2361, 2364, 2381, 2384, 2388, 2392, 2403, 2406, 2415, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2492, 2494, 2500, 2503, 2504, 2507, 2509, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2562, 2562, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2649, 2652, 2654, 2654, 2662, 2676, 2689, 2691, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2784, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2876, 2883, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2913, 2918, 2927, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3031, 3031, 3047, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3134, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3168, 3169, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3262, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3297, 3302, 3311, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3390, 3395, 3398, 3400, 3402, 3405, 3415, 3415, 3424, 3425, 3430, 3439, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3805, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3946, 3953, 3972, 3974, 3979, 3984, 3991, 3993, 4028, 4038, 4038, 4096, 4129, 4131, 4135, 4137, 4138, 4140, 4146, 4150, 4153, 4160, 4169, 4176, 4185, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 4969, 4977, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6099, 6112, 6121, 6160, 6169, 6176, 6263, 6272, 6313, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8255, 8256, 8319, 8319, 8400, 8412, 8417, 8417, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12346, 12353, 12436, 12441, 12442, 12445, 12446, 12449, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65056, 65059, 65075, 65076, 65101, 65103, 65136, 65138, 65140, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65381, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500,];
     /*
         As per ECMAScript Language Specification 5th Edition, Section 7.6: ISyntaxToken Names and Identifiers
         IdentifierStart ::
@@ -251,9 +241,8 @@ namespace ts {
         Codepoint ranges for ES5 Identifiers are extracted from the Unicode 6.2 specification at:
         http://www.unicode.org/Public/6.2.0/ucd/UnicodeData.txt
     */
-    const unicodeES5IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 880, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1568, 1610, 1646, 1647, 1649, 1747, 1749, 1749, 1765, 1766, 1774, 1775, 1786, 1788, 1791, 1791, 1808, 1808, 1810, 1839, 1869, 1957, 1969, 1969, 1994, 2026, 2036, 2037, 2042, 2042, 2048, 2069, 2074, 2074, 2084, 2084, 2088, 2088, 2112, 2136, 2208, 2208, 2210, 2220, 2308, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2417, 2423, 2425, 2431, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2493, 2493, 2510, 2510, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2785, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2929, 2929, 2947, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3024, 3024, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3133, 3160, 3161, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3261, 3261, 3294, 3294, 3296, 3297, 3313, 3314, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3389, 3406, 3406, 3424, 3425, 3450, 3455, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3807, 3840, 3840, 3904, 3911, 3913, 3948, 3976, 3980, 4096, 4138, 4159, 4159, 4176, 4181, 4186, 4189, 4193, 4193, 4197, 4198, 4206, 4208, 4213, 4225, 4238, 4238, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5905, 5920, 5937, 5952, 5969, 5984, 5996, 5998, 6000, 6016, 6067, 6103, 6103, 6108, 6108, 6176, 6263, 6272, 6312, 6314, 6314, 6320, 6389, 6400, 6428, 6480, 6509, 6512, 6516, 6528, 6571, 6593, 6599, 6656, 6678, 6688, 6740, 6823, 6823, 6917, 6963, 6981, 6987, 7043, 7072, 7086, 7087, 7098, 7141, 7168, 7203, 7245, 7247, 7258, 7293, 7401, 7404, 7406, 7409, 7413, 7414, 7424, 7615, 7680, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8305, 8305, 8319, 8319, 8336, 8348, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11502, 11506, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11648, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11823, 11823, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12348, 12353, 12438, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42527, 42538, 42539, 42560, 42606, 42623, 42647, 42656, 42735, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43009, 43011, 43013, 43015, 43018, 43020, 43042, 43072, 43123, 43138, 43187, 43250, 43255, 43259, 43259, 43274, 43301, 43312, 43334, 43360, 43388, 43396, 43442, 43471, 43471, 43520, 43560, 43584, 43586, 43588, 43595, 43616, 43638, 43642, 43642, 43648, 43695, 43697, 43697, 43701, 43702, 43705, 43709, 43712, 43712, 43714, 43714, 43739, 43741, 43744, 43754, 43762, 43764, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44002, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, ];
-    const unicodeES5IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 768, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1155, 1159, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1469, 1471, 1471, 1473, 1474, 1476, 1477, 1479, 1479, 1488, 1514, 1520, 1522, 1552, 1562, 1568, 1641, 1646, 1747, 1749, 1756, 1759, 1768, 1770, 1788, 1791, 1791, 1808, 1866, 1869, 1969, 1984, 2037, 2042, 2042, 2048, 2093, 2112, 2139, 2208, 2208, 2210, 2220, 2276, 2302, 2304, 2403, 2406, 2415, 2417, 2423, 2425, 2431, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2500, 2503, 2504, 2507, 2510, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2561, 2563, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2641, 2641, 2649, 2652, 2654, 2654, 2662, 2677, 2689, 2691, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2787, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2876, 2884, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2915, 2918, 2927, 2929, 2929, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3024, 3024, 3031, 3031, 3046, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3160, 3161, 3168, 3171, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3260, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3299, 3302, 3311, 3313, 3314, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3396, 3398, 3400, 3402, 3406, 3415, 3415, 3424, 3427, 3430, 3439, 3450, 3455, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3807, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3948, 3953, 3972, 3974, 3991, 3993, 4028, 4038, 4038, 4096, 4169, 4176, 4253, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4957, 4959, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5908, 5920, 5940, 5952, 5971, 5984, 5996, 5998, 6000, 6002, 6003, 6016, 6099, 6103, 6103, 6108, 6109, 6112, 6121, 6155, 6157, 6160, 6169, 6176, 6263, 6272, 6314, 6320, 6389, 6400, 6428, 6432, 6443, 6448, 6459, 6470, 6509, 6512, 6516, 6528, 6571, 6576, 6601, 6608, 6617, 6656, 6683, 6688, 6750, 6752, 6780, 6783, 6793, 6800, 6809, 6823, 6823, 6912, 6987, 6992, 7001, 7019, 7027, 7040, 7155, 7168, 7223, 7232, 7241, 7245, 7293, 7376, 7378, 7380, 7414, 7424, 7654, 7676, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8204, 8205, 8255, 8256, 8276, 8276, 8305, 8305, 8319, 8319, 8336, 8348, 8400, 8412, 8417, 8417, 8421, 8432, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11647, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11744, 11775, 11823, 11823, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12348, 12353, 12438, 12441, 12442, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42539, 42560, 42607, 42612, 42621, 42623, 42647, 42655, 42737, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43047, 43072, 43123, 43136, 43204, 43216, 43225, 43232, 43255, 43259, 43259, 43264, 43309, 43312, 43347, 43360, 43388, 43392, 43456, 43471, 43481, 43520, 43574, 43584, 43597, 43600, 43609, 43616, 43638, 43642, 43643, 43648, 43714, 43739, 43741, 43744, 43759, 43762, 43766, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44010, 44012, 44013, 44016, 44025, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65024, 65039, 65056, 65062, 65075, 65076, 65101, 65103, 65136, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, ];
-
+    const unicodeES5IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 880, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1568, 1610, 1646, 1647, 1649, 1747, 1749, 1749, 1765, 1766, 1774, 1775, 1786, 1788, 1791, 1791, 1808, 1808, 1810, 1839, 1869, 1957, 1969, 1969, 1994, 2026, 2036, 2037, 2042, 2042, 2048, 2069, 2074, 2074, 2084, 2084, 2088, 2088, 2112, 2136, 2208, 2208, 2210, 2220, 2308, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2417, 2423, 2425, 2431, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2493, 2493, 2510, 2510, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2785, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2929, 2929, 2947, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3024, 3024, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3133, 3160, 3161, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3261, 3261, 3294, 3294, 3296, 3297, 3313, 3314, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3389, 3406, 3406, 3424, 3425, 3450, 3455, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3807, 3840, 3840, 3904, 3911, 3913, 3948, 3976, 3980, 4096, 4138, 4159, 4159, 4176, 4181, 4186, 4189, 4193, 4193, 4197, 4198, 4206, 4208, 4213, 4225, 4238, 4238, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5905, 5920, 5937, 5952, 5969, 5984, 5996, 5998, 6000, 6016, 6067, 6103, 6103, 6108, 6108, 6176, 6263, 6272, 6312, 6314, 6314, 6320, 6389, 6400, 6428, 6480, 6509, 6512, 6516, 6528, 6571, 6593, 6599, 6656, 6678, 6688, 6740, 6823, 6823, 6917, 6963, 6981, 6987, 7043, 7072, 7086, 7087, 7098, 7141, 7168, 7203, 7245, 7247, 7258, 7293, 7401, 7404, 7406, 7409, 7413, 7414, 7424, 7615, 7680, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8305, 8305, 8319, 8319, 8336, 8348, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11502, 11506, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11648, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11823, 11823, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12348, 12353, 12438, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42527, 42538, 42539, 42560, 42606, 42623, 42647, 42656, 42735, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43009, 43011, 43013, 43015, 43018, 43020, 43042, 43072, 43123, 43138, 43187, 43250, 43255, 43259, 43259, 43274, 43301, 43312, 43334, 43360, 43388, 43396, 43442, 43471, 43471, 43520, 43560, 43584, 43586, 43588, 43595, 43616, 43638, 43642, 43642, 43648, 43695, 43697, 43697, 43701, 43702, 43705, 43709, 43712, 43712, 43714, 43714, 43739, 43741, 43744, 43754, 43762, 43764, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44002, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500,];
+    const unicodeES5IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 768, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1155, 1159, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1469, 1471, 1471, 1473, 1474, 1476, 1477, 1479, 1479, 1488, 1514, 1520, 1522, 1552, 1562, 1568, 1641, 1646, 1747, 1749, 1756, 1759, 1768, 1770, 1788, 1791, 1791, 1808, 1866, 1869, 1969, 1984, 2037, 2042, 2042, 2048, 2093, 2112, 2139, 2208, 2208, 2210, 2220, 2276, 2302, 2304, 2403, 2406, 2415, 2417, 2423, 2425, 2431, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2500, 2503, 2504, 2507, 2510, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2561, 2563, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2641, 2641, 2649, 2652, 2654, 2654, 2662, 2677, 2689, 2691, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2787, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2876, 2884, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2915, 2918, 2927, 2929, 2929, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3024, 3024, 3031, 3031, 3046, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3160, 3161, 3168, 3171, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3260, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3299, 3302, 3311, 3313, 3314, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3396, 3398, 3400, 3402, 3406, 3415, 3415, 3424, 3427, 3430, 3439, 3450, 3455, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3807, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3948, 3953, 3972, 3974, 3991, 3993, 4028, 4038, 4038, 4096, 4169, 4176, 4253, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4957, 4959, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5908, 5920, 5940, 5952, 5971, 5984, 5996, 5998, 6000, 6002, 6003, 6016, 6099, 6103, 6103, 6108, 6109, 6112, 6121, 6155, 6157, 6160, 6169, 6176, 6263, 6272, 6314, 6320, 6389, 6400, 6428, 6432, 6443, 6448, 6459, 6470, 6509, 6512, 6516, 6528, 6571, 6576, 6601, 6608, 6617, 6656, 6683, 6688, 6750, 6752, 6780, 6783, 6793, 6800, 6809, 6823, 6823, 6912, 6987, 6992, 7001, 7019, 7027, 7040, 7155, 7168, 7223, 7232, 7241, 7245, 7293, 7376, 7378, 7380, 7414, 7424, 7654, 7676, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8204, 8205, 8255, 8256, 8276, 8276, 8305, 8305, 8319, 8319, 8336, 8348, 8400, 8412, 8417, 8417, 8421, 8432, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11647, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11744, 11775, 11823, 11823, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12348, 12353, 12438, 12441, 12442, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42539, 42560, 42607, 42612, 42621, 42623, 42647, 42655, 42737, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43047, 43072, 43123, 43136, 43204, 43216, 43225, 43232, 43255, 43259, 43259, 43264, 43309, 43312, 43347, 43360, 43388, 43392, 43456, 43471, 43481, 43520, 43574, 43584, 43597, 43600, 43609, 43616, 43638, 43642, 43643, 43648, 43714, 43739, 43741, 43744, 43759, 43762, 43766, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44010, 44012, 44013, 44016, 44025, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65024, 65039, 65056, 65062, 65075, 65076, 65101, 65103, 65136, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500,];
     /**
      * Generated by scripts/regenerate-unicode-identifier-parts.js on node v12.4.0 with unicode 12.1
      * based on http://www.unicode.org/reports/tr31/ and https://www.ecma-international.org/ecma-262/6.0/#sec-names-and-keywords
@@ -262,18 +251,15 @@ namespace ts {
      */
     const unicodeESNextIdentifierStart = [65, 90, 97, 122, 170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 880, 884, 886, 887, 890, 893, 895, 895, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1162, 1327, 1329, 1366, 1369, 1369, 1376, 1416, 1488, 1514, 1519, 1522, 1568, 1610, 1646, 1647, 1649, 1747, 1749, 1749, 1765, 1766, 1774, 1775, 1786, 1788, 1791, 1791, 1808, 1808, 1810, 1839, 1869, 1957, 1969, 1969, 1994, 2026, 2036, 2037, 2042, 2042, 2048, 2069, 2074, 2074, 2084, 2084, 2088, 2088, 2112, 2136, 2144, 2154, 2208, 2228, 2230, 2237, 2308, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2417, 2432, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2493, 2493, 2510, 2510, 2524, 2525, 2527, 2529, 2544, 2545, 2556, 2556, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2785, 2809, 2809, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2929, 2929, 2947, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3024, 3024, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3129, 3133, 3133, 3160, 3162, 3168, 3169, 3200, 3200, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3261, 3261, 3294, 3294, 3296, 3297, 3313, 3314, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3389, 3406, 3406, 3412, 3414, 3423, 3425, 3450, 3455, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3718, 3722, 3724, 3747, 3749, 3749, 3751, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3807, 3840, 3840, 3904, 3911, 3913, 3948, 3976, 3980, 4096, 4138, 4159, 4159, 4176, 4181, 4186, 4189, 4193, 4193, 4197, 4198, 4206, 4208, 4213, 4225, 4238, 4238, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4992, 5007, 5024, 5109, 5112, 5117, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5880, 5888, 5900, 5902, 5905, 5920, 5937, 5952, 5969, 5984, 5996, 5998, 6000, 6016, 6067, 6103, 6103, 6108, 6108, 6176, 6264, 6272, 6312, 6314, 6314, 6320, 6389, 6400, 6430, 6480, 6509, 6512, 6516, 6528, 6571, 6576, 6601, 6656, 6678, 6688, 6740, 6823, 6823, 6917, 6963, 6981, 6987, 7043, 7072, 7086, 7087, 7098, 7141, 7168, 7203, 7245, 7247, 7258, 7293, 7296, 7304, 7312, 7354, 7357, 7359, 7401, 7404, 7406, 7411, 7413, 7414, 7418, 7418, 7424, 7615, 7680, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8305, 8305, 8319, 8319, 8336, 8348, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8472, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11502, 11506, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11648, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12348, 12353, 12438, 12443, 12447, 12449, 12538, 12540, 12543, 12549, 12591, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40943, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42527, 42538, 42539, 42560, 42606, 42623, 42653, 42656, 42735, 42775, 42783, 42786, 42888, 42891, 42943, 42946, 42950, 42999, 43009, 43011, 43013, 43015, 43018, 43020, 43042, 43072, 43123, 43138, 43187, 43250, 43255, 43259, 43259, 43261, 43262, 43274, 43301, 43312, 43334, 43360, 43388, 43396, 43442, 43471, 43471, 43488, 43492, 43494, 43503, 43514, 43518, 43520, 43560, 43584, 43586, 43588, 43595, 43616, 43638, 43642, 43642, 43646, 43695, 43697, 43697, 43701, 43702, 43705, 43709, 43712, 43712, 43714, 43714, 43739, 43741, 43744, 43754, 43762, 43764, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43824, 43866, 43868, 43879, 43888, 44002, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, 65536, 65547, 65549, 65574, 65576, 65594, 65596, 65597, 65599, 65613, 65616, 65629, 65664, 65786, 65856, 65908, 66176, 66204, 66208, 66256, 66304, 66335, 66349, 66378, 66384, 66421, 66432, 66461, 66464, 66499, 66504, 66511, 66513, 66517, 66560, 66717, 66736, 66771, 66776, 66811, 66816, 66855, 66864, 66915, 67072, 67382, 67392, 67413, 67424, 67431, 67584, 67589, 67592, 67592, 67594, 67637, 67639, 67640, 67644, 67644, 67647, 67669, 67680, 67702, 67712, 67742, 67808, 67826, 67828, 67829, 67840, 67861, 67872, 67897, 67968, 68023, 68030, 68031, 68096, 68096, 68112, 68115, 68117, 68119, 68121, 68149, 68192, 68220, 68224, 68252, 68288, 68295, 68297, 68324, 68352, 68405, 68416, 68437, 68448, 68466, 68480, 68497, 68608, 68680, 68736, 68786, 68800, 68850, 68864, 68899, 69376, 69404, 69415, 69415, 69424, 69445, 69600, 69622, 69635, 69687, 69763, 69807, 69840, 69864, 69891, 69926, 69956, 69956, 69968, 70002, 70006, 70006, 70019, 70066, 70081, 70084, 70106, 70106, 70108, 70108, 70144, 70161, 70163, 70187, 70272, 70278, 70280, 70280, 70282, 70285, 70287, 70301, 70303, 70312, 70320, 70366, 70405, 70412, 70415, 70416, 70419, 70440, 70442, 70448, 70450, 70451, 70453, 70457, 70461, 70461, 70480, 70480, 70493, 70497, 70656, 70708, 70727, 70730, 70751, 70751, 70784, 70831, 70852, 70853, 70855, 70855, 71040, 71086, 71128, 71131, 71168, 71215, 71236, 71236, 71296, 71338, 71352, 71352, 71424, 71450, 71680, 71723, 71840, 71903, 71935, 71935, 72096, 72103, 72106, 72144, 72161, 72161, 72163, 72163, 72192, 72192, 72203, 72242, 72250, 72250, 72272, 72272, 72284, 72329, 72349, 72349, 72384, 72440, 72704, 72712, 72714, 72750, 72768, 72768, 72818, 72847, 72960, 72966, 72968, 72969, 72971, 73008, 73030, 73030, 73056, 73061, 73063, 73064, 73066, 73097, 73112, 73112, 73440, 73458, 73728, 74649, 74752, 74862, 74880, 75075, 77824, 78894, 82944, 83526, 92160, 92728, 92736, 92766, 92880, 92909, 92928, 92975, 92992, 92995, 93027, 93047, 93053, 93071, 93760, 93823, 93952, 94026, 94032, 94032, 94099, 94111, 94176, 94177, 94179, 94179, 94208, 100343, 100352, 101106, 110592, 110878, 110928, 110930, 110948, 110951, 110960, 111355, 113664, 113770, 113776, 113788, 113792, 113800, 113808, 113817, 119808, 119892, 119894, 119964, 119966, 119967, 119970, 119970, 119973, 119974, 119977, 119980, 119982, 119993, 119995, 119995, 119997, 120003, 120005, 120069, 120071, 120074, 120077, 120084, 120086, 120092, 120094, 120121, 120123, 120126, 120128, 120132, 120134, 120134, 120138, 120144, 120146, 120485, 120488, 120512, 120514, 120538, 120540, 120570, 120572, 120596, 120598, 120628, 120630, 120654, 120656, 120686, 120688, 120712, 120714, 120744, 120746, 120770, 120772, 120779, 123136, 123180, 123191, 123197, 123214, 123214, 123584, 123627, 124928, 125124, 125184, 125251, 125259, 125259, 126464, 126467, 126469, 126495, 126497, 126498, 126500, 126500, 126503, 126503, 126505, 126514, 126516, 126519, 126521, 126521, 126523, 126523, 126530, 126530, 126535, 126535, 126537, 126537, 126539, 126539, 126541, 126543, 126545, 126546, 126548, 126548, 126551, 126551, 126553, 126553, 126555, 126555, 126557, 126557, 126559, 126559, 126561, 126562, 126564, 126564, 126567, 126570, 126572, 126578, 126580, 126583, 126585, 126588, 126590, 126590, 126592, 126601, 126603, 126619, 126625, 126627, 126629, 126633, 126635, 126651, 131072, 173782, 173824, 177972, 177984, 178205, 178208, 183969, 183984, 191456, 194560, 195101];
     const unicodeESNextIdentifierPart = [48, 57, 65, 90, 95, 95, 97, 122, 170, 170, 181, 181, 183, 183, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 768, 884, 886, 887, 890, 893, 895, 895, 902, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1155, 1159, 1162, 1327, 1329, 1366, 1369, 1369, 1376, 1416, 1425, 1469, 1471, 1471, 1473, 1474, 1476, 1477, 1479, 1479, 1488, 1514, 1519, 1522, 1552, 1562, 1568, 1641, 1646, 1747, 1749, 1756, 1759, 1768, 1770, 1788, 1791, 1791, 1808, 1866, 1869, 1969, 1984, 2037, 2042, 2042, 2045, 2045, 2048, 2093, 2112, 2139, 2144, 2154, 2208, 2228, 2230, 2237, 2259, 2273, 2275, 2403, 2406, 2415, 2417, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2500, 2503, 2504, 2507, 2510, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2556, 2556, 2558, 2558, 2561, 2563, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2641, 2641, 2649, 2652, 2654, 2654, 2662, 2677, 2689, 2691, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2787, 2790, 2799, 2809, 2815, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2876, 2884, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2915, 2918, 2927, 2929, 2929, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3024, 3024, 3031, 3031, 3046, 3055, 3072, 3084, 3086, 3088, 3090, 3112, 3114, 3129, 3133, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3160, 3162, 3168, 3171, 3174, 3183, 3200, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3260, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3299, 3302, 3311, 3313, 3314, 3328, 3331, 3333, 3340, 3342, 3344, 3346, 3396, 3398, 3400, 3402, 3406, 3412, 3415, 3423, 3427, 3430, 3439, 3450, 3455, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3558, 3567, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3718, 3722, 3724, 3747, 3749, 3749, 3751, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3807, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3948, 3953, 3972, 3974, 3991, 3993, 4028, 4038, 4038, 4096, 4169, 4176, 4253, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4957, 4959, 4969, 4977, 4992, 5007, 5024, 5109, 5112, 5117, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5880, 5888, 5900, 5902, 5908, 5920, 5940, 5952, 5971, 5984, 5996, 5998, 6000, 6002, 6003, 6016, 6099, 6103, 6103, 6108, 6109, 6112, 6121, 6155, 6157, 6160, 6169, 6176, 6264, 6272, 6314, 6320, 6389, 6400, 6430, 6432, 6443, 6448, 6459, 6470, 6509, 6512, 6516, 6528, 6571, 6576, 6601, 6608, 6618, 6656, 6683, 6688, 6750, 6752, 6780, 6783, 6793, 6800, 6809, 6823, 6823, 6832, 6845, 6912, 6987, 6992, 7001, 7019, 7027, 7040, 7155, 7168, 7223, 7232, 7241, 7245, 7293, 7296, 7304, 7312, 7354, 7357, 7359, 7376, 7378, 7380, 7418, 7424, 7673, 7675, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8255, 8256, 8276, 8276, 8305, 8305, 8319, 8319, 8336, 8348, 8400, 8412, 8417, 8417, 8421, 8432, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8472, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11647, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11744, 11775, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12348, 12353, 12438, 12441, 12447, 12449, 12538, 12540, 12543, 12549, 12591, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40943, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42539, 42560, 42607, 42612, 42621, 42623, 42737, 42775, 42783, 42786, 42888, 42891, 42943, 42946, 42950, 42999, 43047, 43072, 43123, 43136, 43205, 43216, 43225, 43232, 43255, 43259, 43259, 43261, 43309, 43312, 43347, 43360, 43388, 43392, 43456, 43471, 43481, 43488, 43518, 43520, 43574, 43584, 43597, 43600, 43609, 43616, 43638, 43642, 43714, 43739, 43741, 43744, 43759, 43762, 43766, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43824, 43866, 43868, 43879, 43888, 44010, 44012, 44013, 44016, 44025, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65024, 65039, 65056, 65071, 65075, 65076, 65101, 65103, 65136, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, 65536, 65547, 65549, 65574, 65576, 65594, 65596, 65597, 65599, 65613, 65616, 65629, 65664, 65786, 65856, 65908, 66045, 66045, 66176, 66204, 66208, 66256, 66272, 66272, 66304, 66335, 66349, 66378, 66384, 66426, 66432, 66461, 66464, 66499, 66504, 66511, 66513, 66517, 66560, 66717, 66720, 66729, 66736, 66771, 66776, 66811, 66816, 66855, 66864, 66915, 67072, 67382, 67392, 67413, 67424, 67431, 67584, 67589, 67592, 67592, 67594, 67637, 67639, 67640, 67644, 67644, 67647, 67669, 67680, 67702, 67712, 67742, 67808, 67826, 67828, 67829, 67840, 67861, 67872, 67897, 67968, 68023, 68030, 68031, 68096, 68099, 68101, 68102, 68108, 68115, 68117, 68119, 68121, 68149, 68152, 68154, 68159, 68159, 68192, 68220, 68224, 68252, 68288, 68295, 68297, 68326, 68352, 68405, 68416, 68437, 68448, 68466, 68480, 68497, 68608, 68680, 68736, 68786, 68800, 68850, 68864, 68903, 68912, 68921, 69376, 69404, 69415, 69415, 69424, 69456, 69600, 69622, 69632, 69702, 69734, 69743, 69759, 69818, 69840, 69864, 69872, 69881, 69888, 69940, 69942, 69951, 69956, 69958, 69968, 70003, 70006, 70006, 70016, 70084, 70089, 70092, 70096, 70106, 70108, 70108, 70144, 70161, 70163, 70199, 70206, 70206, 70272, 70278, 70280, 70280, 70282, 70285, 70287, 70301, 70303, 70312, 70320, 70378, 70384, 70393, 70400, 70403, 70405, 70412, 70415, 70416, 70419, 70440, 70442, 70448, 70450, 70451, 70453, 70457, 70459, 70468, 70471, 70472, 70475, 70477, 70480, 70480, 70487, 70487, 70493, 70499, 70502, 70508, 70512, 70516, 70656, 70730, 70736, 70745, 70750, 70751, 70784, 70853, 70855, 70855, 70864, 70873, 71040, 71093, 71096, 71104, 71128, 71133, 71168, 71232, 71236, 71236, 71248, 71257, 71296, 71352, 71360, 71369, 71424, 71450, 71453, 71467, 71472, 71481, 71680, 71738, 71840, 71913, 71935, 71935, 72096, 72103, 72106, 72151, 72154, 72161, 72163, 72164, 72192, 72254, 72263, 72263, 72272, 72345, 72349, 72349, 72384, 72440, 72704, 72712, 72714, 72758, 72760, 72768, 72784, 72793, 72818, 72847, 72850, 72871, 72873, 72886, 72960, 72966, 72968, 72969, 72971, 73014, 73018, 73018, 73020, 73021, 73023, 73031, 73040, 73049, 73056, 73061, 73063, 73064, 73066, 73102, 73104, 73105, 73107, 73112, 73120, 73129, 73440, 73462, 73728, 74649, 74752, 74862, 74880, 75075, 77824, 78894, 82944, 83526, 92160, 92728, 92736, 92766, 92768, 92777, 92880, 92909, 92912, 92916, 92928, 92982, 92992, 92995, 93008, 93017, 93027, 93047, 93053, 93071, 93760, 93823, 93952, 94026, 94031, 94087, 94095, 94111, 94176, 94177, 94179, 94179, 94208, 100343, 100352, 101106, 110592, 110878, 110928, 110930, 110948, 110951, 110960, 111355, 113664, 113770, 113776, 113788, 113792, 113800, 113808, 113817, 113821, 113822, 119141, 119145, 119149, 119154, 119163, 119170, 119173, 119179, 119210, 119213, 119362, 119364, 119808, 119892, 119894, 119964, 119966, 119967, 119970, 119970, 119973, 119974, 119977, 119980, 119982, 119993, 119995, 119995, 119997, 120003, 120005, 120069, 120071, 120074, 120077, 120084, 120086, 120092, 120094, 120121, 120123, 120126, 120128, 120132, 120134, 120134, 120138, 120144, 120146, 120485, 120488, 120512, 120514, 120538, 120540, 120570, 120572, 120596, 120598, 120628, 120630, 120654, 120656, 120686, 120688, 120712, 120714, 120744, 120746, 120770, 120772, 120779, 120782, 120831, 121344, 121398, 121403, 121452, 121461, 121461, 121476, 121476, 121499, 121503, 121505, 121519, 122880, 122886, 122888, 122904, 122907, 122913, 122915, 122916, 122918, 122922, 123136, 123180, 123184, 123197, 123200, 123209, 123214, 123214, 123584, 123641, 124928, 125124, 125136, 125142, 125184, 125259, 125264, 125273, 126464, 126467, 126469, 126495, 126497, 126498, 126500, 126500, 126503, 126503, 126505, 126514, 126516, 126519, 126521, 126521, 126523, 126523, 126530, 126530, 126535, 126535, 126537, 126537, 126539, 126539, 126541, 126543, 126545, 126546, 126548, 126548, 126551, 126551, 126553, 126553, 126555, 126555, 126557, 126557, 126559, 126559, 126561, 126562, 126564, 126564, 126567, 126570, 126572, 126578, 126580, 126583, 126585, 126588, 126590, 126590, 126592, 126601, 126603, 126619, 126625, 126627, 126629, 126633, 126635, 126651, 131072, 173782, 173824, 177972, 177984, 178205, 178208, 183969, 183984, 191456, 194560, 195101, 917760, 917999];
-
     function lookupInUnicodeMap(code: number, map: readonly number[]): boolean {
         // Bail out quickly if it couldn't possibly be in the map.
         if (code < map[0]) {
             return false;
         }
-
         // Perform binary search in one of the Unicode range maps
         let lo = 0;
         let hi: number = map.length;
         let mid: number;
-
         while (lo + 1 < hi) {
             mid = lo + (hi - lo) / 2;
             // mid has to be even to catch a range's beginning
@@ -281,7 +267,6 @@ namespace ts {
             if (map[mid] <= code && code <= map[mid + 1]) {
                 return true;
             }
-
             if (code < map[mid]) {
                 hi = mid;
             }
@@ -289,42 +274,35 @@ namespace ts {
                 lo = mid + 2;
             }
         }
-
         return false;
     }
-
-    /* @internal */ export function isUnicodeIdentifierStart(code: number, languageVersion: ScriptTarget | undefined) {
-        return languageVersion! >= ScriptTarget.ES2015 ?
+    /* @internal */ export function isUnicodeIdentifierStart(code: number, languageVersion: ts.ScriptTarget | undefined) {
+        return (languageVersion!) >= ts.ScriptTarget.ES2015 ?
             lookupInUnicodeMap(code, unicodeESNextIdentifierStart) :
-            languageVersion! === ScriptTarget.ES5 ? lookupInUnicodeMap(code, unicodeES5IdentifierStart) :
-            lookupInUnicodeMap(code, unicodeES3IdentifierStart);
+            (languageVersion!) === ts.ScriptTarget.ES5 ? lookupInUnicodeMap(code, unicodeES5IdentifierStart) :
+                lookupInUnicodeMap(code, unicodeES3IdentifierStart);
     }
-
-    function isUnicodeIdentifierPart(code: number, languageVersion: ScriptTarget | undefined) {
-        return languageVersion! >= ScriptTarget.ES2015 ?
+    function isUnicodeIdentifierPart(code: number, languageVersion: ts.ScriptTarget | undefined) {
+        return (languageVersion!) >= ts.ScriptTarget.ES2015 ?
             lookupInUnicodeMap(code, unicodeESNextIdentifierPart) :
-            languageVersion! === ScriptTarget.ES5 ? lookupInUnicodeMap(code, unicodeES5IdentifierPart) :
-            lookupInUnicodeMap(code, unicodeES3IdentifierPart);
+            (languageVersion!) === ts.ScriptTarget.ES5 ? lookupInUnicodeMap(code, unicodeES5IdentifierPart) :
+                lookupInUnicodeMap(code, unicodeES3IdentifierPart);
     }
-
-    function makeReverseMap(source: Map<number>): string[] {
+    function makeReverseMap(source: ts.Map<number>): string[] {
         const result: string[] = [];
         source.forEach((value, name) => {
             result[value] = name;
         });
         return result;
     }
-
     const tokenStrings = makeReverseMap(textToToken);
-    export function tokenToString(t: SyntaxKind): string | undefined {
+    export function tokenToString(t: ts.SyntaxKind): string | undefined {
         return tokenStrings[t];
     }
-
     /* @internal */
-    export function stringToToken(s: string): SyntaxKind | undefined {
+    export function stringToToken(s: string): ts.SyntaxKind | undefined {
         return textToToken.get(s);
     }
-
     /* @internal */
     export function computeLineStarts(text: string): number[] {
         const result: number[] = new Array();
@@ -334,17 +312,17 @@ namespace ts {
             const ch = text.charCodeAt(pos);
             pos++;
             switch (ch) {
-                case CharacterCodes.carriageReturn:
-                    if (text.charCodeAt(pos) === CharacterCodes.lineFeed) {
+                case ts.CharacterCodes.carriageReturn:
+                    if (text.charCodeAt(pos) === ts.CharacterCodes.lineFeed) {
                         pos++;
                     }
-                    // falls through
-                case CharacterCodes.lineFeed:
+                // falls through
+                case ts.CharacterCodes.lineFeed:
                     result.push(lineStart);
                     lineStart = pos;
                     break;
                 default:
-                    if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
+                    if (ch > ts.CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
                         result.push(lineStart);
                         lineStart = pos;
                     }
@@ -354,16 +332,14 @@ namespace ts {
         result.push(lineStart);
         return result;
     }
-
-    export function getPositionOfLineAndCharacter(sourceFile: SourceFileLike, line: number, character: number): number;
+    export function getPositionOfLineAndCharacter(sourceFile: ts.SourceFileLike, line: number, character: number): number;
     /* @internal */
-    export function getPositionOfLineAndCharacter(sourceFile: SourceFileLike, line: number, character: number, allowEdits?: true): number; // eslint-disable-line @typescript-eslint/unified-signatures
-    export function getPositionOfLineAndCharacter(sourceFile: SourceFileLike, line: number, character: number, allowEdits?: true): number {
+    export function getPositionOfLineAndCharacter(sourceFile: ts.SourceFileLike, line: number, character: number, allowEdits?: true): number; // eslint-disable-line @typescript-eslint/unified-signatures
+    export function getPositionOfLineAndCharacter(sourceFile: ts.SourceFileLike, line: number, character: number, allowEdits?: true): number {
         return sourceFile.getPositionOfLineAndCharacter ?
             sourceFile.getPositionOfLineAndCharacter(line, character, allowEdits) :
             computePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character, sourceFile.text, allowEdits);
     }
-
     /* @internal */
     export function computePositionOfLineAndCharacter(lineStarts: readonly number[], line: number, character: number, debugText?: string, allowEdits?: true): number {
         if (line < 0 || line >= lineStarts.length) {
@@ -372,10 +348,9 @@ namespace ts {
                 line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
             }
             else {
-                Debug.fail(`Bad line number. Line: ${line}, lineStarts.length: ${lineStarts.length} , line map is correct? ${debugText !== undefined ? arraysEqual(lineStarts, computeLineStarts(debugText)) : "unknown"}`);
+                ts.Debug.fail(`Bad line number. Line: ${line}, lineStarts.length: ${lineStarts.length} , line map is correct? ${debugText !== undefined ? ts.arraysEqual(lineStarts, computeLineStarts(debugText)) : "unknown"}`);
             }
         }
-
         const res = lineStarts[line] + character;
         if (allowEdits) {
             // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
@@ -384,25 +359,23 @@ namespace ts {
             return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
         }
         if (line < lineStarts.length - 1) {
-            Debug.assert(res < lineStarts[line + 1]);
+            ts.Debug.assert(res < lineStarts[line + 1]);
         }
         else if (debugText !== undefined) {
-            Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
+            ts.Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
         }
         return res;
     }
-
     /* @internal */
-    export function getLineStarts(sourceFile: SourceFileLike): readonly number[] {
+    export function getLineStarts(sourceFile: ts.SourceFileLike): readonly number[] {
         return sourceFile.lineMap || (sourceFile.lineMap = computeLineStarts(sourceFile.text));
     }
-
     /* @internal */
     /**
      * We assume the first line starts at position 0 and 'position' is non-negative.
      */
-    export function computeLineAndCharacterOfPosition(lineStarts: readonly number[], position: number): LineAndCharacter {
-        let lineNumber = binarySearch(lineStarts, position, identity, compareValues);
+    export function computeLineAndCharacterOfPosition(lineStarts: readonly number[], position: number): ts.LineAndCharacter {
+        let lineNumber = ts.binarySearch(lineStarts, position, ts.identity, ts.compareValues);
         if (lineNumber < 0) {
             // If the actual position was not found,
             // the binary search returns the 2's-complement of the next line start
@@ -412,40 +385,36 @@ namespace ts {
             // We want the index of the previous line start, so we subtract 1.
             // Review 2's-complement if this is confusing.
             lineNumber = ~lineNumber - 1;
-            Debug.assert(lineNumber !== -1, "position cannot precede the beginning of the file");
+            ts.Debug.assert(lineNumber !== -1, "position cannot precede the beginning of the file");
         }
         return {
             line: lineNumber,
             character: position - lineStarts[lineNumber]
         };
     }
-
-    export function getLineAndCharacterOfPosition(sourceFile: SourceFileLike, position: number): LineAndCharacter {
+    export function getLineAndCharacterOfPosition(sourceFile: ts.SourceFileLike, position: number): ts.LineAndCharacter {
         return computeLineAndCharacterOfPosition(getLineStarts(sourceFile), position);
     }
-
     export function isWhiteSpaceLike(ch: number): boolean {
         return isWhiteSpaceSingleLine(ch) || isLineBreak(ch);
     }
-
     /** Does not include line breaks. For that, see isWhiteSpaceLike. */
     export function isWhiteSpaceSingleLine(ch: number): boolean {
         // Note: nextLine is in the Zs space, and should be considered to be a whitespace.
         // It is explicitly not a line-break as it isn't in the exact set specified by EcmaScript.
-        return ch === CharacterCodes.space ||
-            ch === CharacterCodes.tab ||
-            ch === CharacterCodes.verticalTab ||
-            ch === CharacterCodes.formFeed ||
-            ch === CharacterCodes.nonBreakingSpace ||
-            ch === CharacterCodes.nextLine ||
-            ch === CharacterCodes.ogham ||
-            ch >= CharacterCodes.enQuad && ch <= CharacterCodes.zeroWidthSpace ||
-            ch === CharacterCodes.narrowNoBreakSpace ||
-            ch === CharacterCodes.mathematicalSpace ||
-            ch === CharacterCodes.ideographicSpace ||
-            ch === CharacterCodes.byteOrderMark;
+        return ch === ts.CharacterCodes.space ||
+            ch === ts.CharacterCodes.tab ||
+            ch === ts.CharacterCodes.verticalTab ||
+            ch === ts.CharacterCodes.formFeed ||
+            ch === ts.CharacterCodes.nonBreakingSpace ||
+            ch === ts.CharacterCodes.nextLine ||
+            ch === ts.CharacterCodes.ogham ||
+            ch >= ts.CharacterCodes.enQuad && ch <= ts.CharacterCodes.zeroWidthSpace ||
+            ch === ts.CharacterCodes.narrowNoBreakSpace ||
+            ch === ts.CharacterCodes.mathematicalSpace ||
+            ch === ts.CharacterCodes.ideographicSpace ||
+            ch === ts.CharacterCodes.byteOrderMark;
     }
-
     export function isLineBreak(ch: number): boolean {
         // ES5 7.3:
         // The ECMAScript line terminator characters are listed in Table 3.
@@ -457,81 +426,75 @@ namespace ts {
         //     \u2029              Paragraph separator     <PS>
         // Only the characters in Table 3 are treated as line terminators. Other new line or line
         // breaking characters are treated as white space but not as line terminators.
-
-        return ch === CharacterCodes.lineFeed ||
-            ch === CharacterCodes.carriageReturn ||
-            ch === CharacterCodes.lineSeparator ||
-            ch === CharacterCodes.paragraphSeparator;
+        return ch === ts.CharacterCodes.lineFeed ||
+            ch === ts.CharacterCodes.carriageReturn ||
+            ch === ts.CharacterCodes.lineSeparator ||
+            ch === ts.CharacterCodes.paragraphSeparator;
     }
-
     function isDigit(ch: number): boolean {
-        return ch >= CharacterCodes._0 && ch <= CharacterCodes._9;
+        return ch >= ts.CharacterCodes._0 && ch <= ts.CharacterCodes._9;
     }
-
     /* @internal */
     export function isOctalDigit(ch: number): boolean {
-        return ch >= CharacterCodes._0 && ch <= CharacterCodes._7;
+        return ch >= ts.CharacterCodes._0 && ch <= ts.CharacterCodes._7;
     }
-
     export function couldStartTrivia(text: string, pos: number): boolean {
         // Keep in sync with skipTrivia
         const ch = text.charCodeAt(pos);
         switch (ch) {
-            case CharacterCodes.carriageReturn:
-            case CharacterCodes.lineFeed:
-            case CharacterCodes.tab:
-            case CharacterCodes.verticalTab:
-            case CharacterCodes.formFeed:
-            case CharacterCodes.space:
-            case CharacterCodes.slash:
-                // starts of normal trivia
-                // falls through
-            case CharacterCodes.lessThan:
-            case CharacterCodes.bar:
-            case CharacterCodes.equals:
-            case CharacterCodes.greaterThan:
+            case ts.CharacterCodes.carriageReturn:
+            case ts.CharacterCodes.lineFeed:
+            case ts.CharacterCodes.tab:
+            case ts.CharacterCodes.verticalTab:
+            case ts.CharacterCodes.formFeed:
+            case ts.CharacterCodes.space:
+            case ts.CharacterCodes.slash:
+            // starts of normal trivia
+            // falls through
+            case ts.CharacterCodes.lessThan:
+            case ts.CharacterCodes.bar:
+            case ts.CharacterCodes.equals:
+            case ts.CharacterCodes.greaterThan:
                 // Starts of conflict marker trivia
                 return true;
-            case CharacterCodes.hash:
+            case ts.CharacterCodes.hash:
                 // Only if its the beginning can we have #! trivia
                 return pos === 0;
             default:
-                return ch > CharacterCodes.maxAsciiCharacter;
+                return ch > ts.CharacterCodes.maxAsciiCharacter;
         }
     }
-
     /* @internal */
     export function skipTrivia(text: string, pos: number, stopAfterLineBreak?: boolean, stopAtComments = false): number {
-        if (positionIsSynthesized(pos)) {
+        if (ts.positionIsSynthesized(pos)) {
             return pos;
         }
-
         // Keep in sync with couldStartTrivia
         while (true) {
             const ch = text.charCodeAt(pos);
             switch (ch) {
-                case CharacterCodes.carriageReturn:
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.lineFeed) {
+                case ts.CharacterCodes.carriageReturn:
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.lineFeed) {
                         pos++;
                     }
-                    // falls through
-                case CharacterCodes.lineFeed:
+                // falls through
+                case ts.CharacterCodes.lineFeed:
                     pos++;
                     if (stopAfterLineBreak) {
                         return pos;
                     }
                     continue;
-                case CharacterCodes.tab:
-                case CharacterCodes.verticalTab:
-                case CharacterCodes.formFeed:
-                case CharacterCodes.space:
+                case ts.CharacterCodes.tab:
+                case ts.CharacterCodes.verticalTab:
+                case ts.CharacterCodes.formFeed:
+                case ts.CharacterCodes.space:
                     pos++;
                     continue;
-                case CharacterCodes.slash:
+                case ts.CharacterCodes.slash:
                     if (stopAtComments) {
                         break;
                     }
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                         pos += 2;
                         while (pos < text.length) {
                             if (isLineBreak(text.charCodeAt(pos))) {
@@ -541,10 +504,10 @@ namespace ts {
                         }
                         continue;
                     }
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.asterisk) {
                         pos += 2;
                         while (pos < text.length) {
-                            if (text.charCodeAt(pos) === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+                            if (text.charCodeAt(pos) === ts.CharacterCodes.asterisk && text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                                 pos += 2;
                                 break;
                             }
@@ -553,26 +516,23 @@ namespace ts {
                         continue;
                     }
                     break;
-
-                case CharacterCodes.lessThan:
-                case CharacterCodes.bar:
-                case CharacterCodes.equals:
-                case CharacterCodes.greaterThan:
+                case ts.CharacterCodes.lessThan:
+                case ts.CharacterCodes.bar:
+                case ts.CharacterCodes.equals:
+                case ts.CharacterCodes.greaterThan:
                     if (isConflictMarkerTrivia(text, pos)) {
                         pos = scanConflictMarkerTrivia(text, pos);
                         continue;
                     }
                     break;
-
-                case CharacterCodes.hash:
+                case ts.CharacterCodes.hash:
                     if (pos === 0 && isShebangTrivia(text, pos)) {
                         pos = scanShebangTrivia(text, pos);
                         continue;
                     }
                     break;
-
                 default:
-                    if (ch > CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
+                    if (ch > ts.CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
                         pos++;
                         continue;
                     }
@@ -581,79 +541,64 @@ namespace ts {
             return pos;
         }
     }
-
     // All conflict markers consist of the same character repeated seven times.  If it is
     // a <<<<<<< or >>>>>>> marker then it is also followed by a space.
     const mergeConflictMarkerLength = "<<<<<<<".length;
-
     function isConflictMarkerTrivia(text: string, pos: number) {
-        Debug.assert(pos >= 0);
-
+        ts.Debug.assert(pos >= 0);
         // Conflict markers must be at the start of a line.
         if (pos === 0 || isLineBreak(text.charCodeAt(pos - 1))) {
             const ch = text.charCodeAt(pos);
-
             if ((pos + mergeConflictMarkerLength) < text.length) {
                 for (let i = 0; i < mergeConflictMarkerLength; i++) {
                     if (text.charCodeAt(pos + i) !== ch) {
                         return false;
                     }
                 }
-
-                return ch === CharacterCodes.equals ||
-                    text.charCodeAt(pos + mergeConflictMarkerLength) === CharacterCodes.space;
+                return ch === ts.CharacterCodes.equals ||
+                    text.charCodeAt(pos + mergeConflictMarkerLength) === ts.CharacterCodes.space;
             }
         }
-
         return false;
     }
-
-    function scanConflictMarkerTrivia(text: string, pos: number, error?: (diag: DiagnosticMessage, pos?: number, len?: number) => void) {
+    function scanConflictMarkerTrivia(text: string, pos: number, error?: (diag: ts.DiagnosticMessage, pos?: number, len?: number) => void) {
         if (error) {
-            error(Diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength);
+            error(ts.Diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength);
         }
-
         const ch = text.charCodeAt(pos);
         const len = text.length;
-
-        if (ch === CharacterCodes.lessThan || ch === CharacterCodes.greaterThan) {
+        if (ch === ts.CharacterCodes.lessThan || ch === ts.CharacterCodes.greaterThan) {
             while (pos < len && !isLineBreak(text.charCodeAt(pos))) {
                 pos++;
             }
         }
         else {
-            Debug.assert(ch === CharacterCodes.bar || ch === CharacterCodes.equals);
+            ts.Debug.assert(ch === ts.CharacterCodes.bar || ch === ts.CharacterCodes.equals);
             // Consume everything from the start of a ||||||| or ======= marker to the start
             // of the next ======= or >>>>>>> marker.
             while (pos < len) {
                 const currentChar = text.charCodeAt(pos);
-                if ((currentChar === CharacterCodes.equals || currentChar === CharacterCodes.greaterThan) && currentChar !== ch && isConflictMarkerTrivia(text, pos)) {
+                if ((currentChar === ts.CharacterCodes.equals || currentChar === ts.CharacterCodes.greaterThan) && currentChar !== ch && isConflictMarkerTrivia(text, pos)) {
                     break;
                 }
-
                 pos++;
             }
         }
-
         return pos;
     }
-
     const shebangTriviaRegex = /^#!.*/;
-
     /*@internal*/
     export function isShebangTrivia(text: string, pos: number) {
         // Shebangs check must only be done at the start of the file
-        Debug.assert(pos === 0);
+        ts.Debug.assert(pos === 0);
         return shebangTriviaRegex.test(text);
     }
-
     /*@internal*/
     export function scanShebangTrivia(text: string, pos: number) {
         const shebang = shebangTriviaRegex.exec(text)![0];
         pos = pos + shebang.length;
         return pos;
     }
-
     /**
      * Invokes a callback for each comment range following the provided position.
      *
@@ -674,10 +619,10 @@ namespace ts {
      * @returns If "reduce" is true, the accumulated value. If "reduce" is false, the first truthy
      *      return value of the callback.
      */
-    function iterateCommentRanges<T, U>(reduce: boolean, text: string, pos: number, trailing: boolean, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T, memo: U | undefined) => U, state: T, initial?: U): U | undefined {
+    function iterateCommentRanges<T, U>(reduce: boolean, text: string, pos: number, trailing: boolean, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T, memo: U | undefined) => U, state: T, initial?: U): U | undefined {
         let pendingPos!: number;
         let pendingEnd!: number;
-        let pendingKind!: CommentKind;
+        let pendingKind!: ts.CommentKind;
         let pendingHasTrailingNewLine!: boolean;
         let hasPendingCommentRange = false;
         let collecting = trailing;
@@ -692,37 +637,35 @@ namespace ts {
         scan: while (pos >= 0 && pos < text.length) {
             const ch = text.charCodeAt(pos);
             switch (ch) {
-                case CharacterCodes.carriageReturn:
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.lineFeed) {
+                case ts.CharacterCodes.carriageReturn:
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.lineFeed) {
                         pos++;
                     }
-                    // falls through
-                case CharacterCodes.lineFeed:
+                // falls through
+                case ts.CharacterCodes.lineFeed:
                     pos++;
                     if (trailing) {
                         break scan;
                     }
-
                     collecting = true;
                     if (hasPendingCommentRange) {
                         pendingHasTrailingNewLine = true;
                     }
-
                     continue;
-                case CharacterCodes.tab:
-                case CharacterCodes.verticalTab:
-                case CharacterCodes.formFeed:
-                case CharacterCodes.space:
+                case ts.CharacterCodes.tab:
+                case ts.CharacterCodes.verticalTab:
+                case ts.CharacterCodes.formFeed:
+                case ts.CharacterCodes.space:
                     pos++;
                     continue;
-                case CharacterCodes.slash:
+                case ts.CharacterCodes.slash:
                     const nextChar = text.charCodeAt(pos + 1);
                     let hasTrailingNewLine = false;
-                    if (nextChar === CharacterCodes.slash || nextChar === CharacterCodes.asterisk) {
-                        const kind = nextChar === CharacterCodes.slash ? SyntaxKind.SingleLineCommentTrivia : SyntaxKind.MultiLineCommentTrivia;
+                    if (nextChar === ts.CharacterCodes.slash || nextChar === ts.CharacterCodes.asterisk) {
+                        const kind = nextChar === ts.CharacterCodes.slash ? ts.SyntaxKind.SingleLineCommentTrivia : ts.SyntaxKind.MultiLineCommentTrivia;
                         const startPos = pos;
                         pos += 2;
-                        if (nextChar === CharacterCodes.slash) {
+                        if (nextChar === ts.CharacterCodes.slash) {
                             while (pos < text.length) {
                                 if (isLineBreak(text.charCodeAt(pos))) {
                                     hasTrailingNewLine = true;
@@ -733,14 +676,13 @@ namespace ts {
                         }
                         else {
                             while (pos < text.length) {
-                                if (text.charCodeAt(pos) === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+                                if (text.charCodeAt(pos) === ts.CharacterCodes.asterisk && text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                                     pos += 2;
                                     break;
                                 }
                                 pos++;
                             }
                         }
-
                         if (collecting) {
                             if (hasPendingCommentRange) {
                                 accumulator = cb(pendingPos, pendingEnd, pendingKind, pendingHasTrailingNewLine, state, accumulator);
@@ -749,19 +691,17 @@ namespace ts {
                                     return accumulator;
                                 }
                             }
-
                             pendingPos = startPos;
                             pendingEnd = pos;
                             pendingKind = kind;
                             pendingHasTrailingNewLine = hasTrailingNewLine;
                             hasPendingCommentRange = true;
                         }
-
                         continue;
                     }
                     break scan;
                 default:
-                    if (ch > CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
+                    if (ch > ts.CharacterCodes.maxAsciiCharacter && (isWhiteSpaceLike(ch))) {
                         if (hasPendingCommentRange && isLineBreak(ch)) {
                             pendingHasTrailingNewLine = true;
                         }
@@ -771,51 +711,40 @@ namespace ts {
                     break scan;
             }
         }
-
         if (hasPendingCommentRange) {
             accumulator = cb(pendingPos, pendingEnd, pendingKind, pendingHasTrailingNewLine, state, accumulator);
         }
-
         return accumulator;
     }
-
-    export function forEachLeadingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
-    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
-    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
+    export function forEachLeadingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
+    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
+    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
         return iterateCommentRanges(/*reduce*/ false, text, pos, /*trailing*/ false, cb, state);
     }
-
-    export function forEachTrailingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
-    export function forEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
-    export function forEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
+    export function forEachTrailingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
+    export function forEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
+    export function forEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
         return iterateCommentRanges(/*reduce*/ false, text, pos, /*trailing*/ true, cb, state);
     }
-
-    export function reduceEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T, memo: U) => U, state: T, initial: U) {
+    export function reduceEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T, memo: U) => U, state: T, initial: U) {
         return iterateCommentRanges(/*reduce*/ true, text, pos, /*trailing*/ false, cb, state, initial);
     }
-
-    export function reduceEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T, memo: U) => U, state: T, initial: U) {
+    export function reduceEachTrailingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, state: T, memo: U) => U, state: T, initial: U) {
         return iterateCommentRanges(/*reduce*/ true, text, pos, /*trailing*/ true, cb, state, initial);
     }
-
-    function appendCommentRange(pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, _state: any, comments: CommentRange[]) {
+    function appendCommentRange(pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean, _state: any, comments: ts.CommentRange[]) {
         if (!comments) {
             comments = [];
         }
-
         comments.push({ kind, pos, end, hasTrailingNewLine });
         return comments;
     }
-
-    export function getLeadingCommentRanges(text: string, pos: number): CommentRange[] | undefined {
+    export function getLeadingCommentRanges(text: string, pos: number): ts.CommentRange[] | undefined {
         return reduceEachLeadingCommentRange(text, pos, appendCommentRange, /*state*/ undefined, /*initial*/ undefined);
     }
-
-    export function getTrailingCommentRanges(text: string, pos: number): CommentRange[] | undefined {
+    export function getTrailingCommentRanges(text: string, pos: number): ts.CommentRange[] | undefined {
         return reduceEachTrailingCommentRange(text, pos, appendCommentRange, /*state*/ undefined, /*initial*/ undefined);
     }
-
     /** Optionally, get the shebang */
     export function getShebang(text: string): string | undefined {
         const match = shebangTriviaRegex.exec(text);
@@ -823,67 +752,45 @@ namespace ts {
             return match[0];
         }
     }
-
-    export function isIdentifierStart(ch: number, languageVersion: ScriptTarget | undefined): boolean {
-        return ch >= CharacterCodes.A && ch <= CharacterCodes.Z || ch >= CharacterCodes.a && ch <= CharacterCodes.z ||
-            ch === CharacterCodes.$ || ch === CharacterCodes._ ||
-            ch > CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierStart(ch, languageVersion);
+    export function isIdentifierStart(ch: number, languageVersion: ts.ScriptTarget | undefined): boolean {
+        return ch >= ts.CharacterCodes.A && ch <= ts.CharacterCodes.Z || ch >= ts.CharacterCodes.a && ch <= ts.CharacterCodes.z ||
+            ch === ts.CharacterCodes.$ || ch === ts.CharacterCodes._ ||
+            ch > ts.CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierStart(ch, languageVersion);
     }
-
-    export function isIdentifierPart(ch: number, languageVersion: ScriptTarget | undefined): boolean {
-        return ch >= CharacterCodes.A && ch <= CharacterCodes.Z || ch >= CharacterCodes.a && ch <= CharacterCodes.z ||
-            ch >= CharacterCodes._0 && ch <= CharacterCodes._9 || ch === CharacterCodes.$ || ch === CharacterCodes._ ||
-            ch > CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierPart(ch, languageVersion);
+    export function isIdentifierPart(ch: number, languageVersion: ts.ScriptTarget | undefined): boolean {
+        return ch >= ts.CharacterCodes.A && ch <= ts.CharacterCodes.Z || ch >= ts.CharacterCodes.a && ch <= ts.CharacterCodes.z ||
+            ch >= ts.CharacterCodes._0 && ch <= ts.CharacterCodes._9 || ch === ts.CharacterCodes.$ || ch === ts.CharacterCodes._ ||
+            ch > ts.CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierPart(ch, languageVersion);
     }
-
     /* @internal */
-    export function isIdentifierText(name: string, languageVersion: ScriptTarget | undefined): boolean {
+    export function isIdentifierText(name: string, languageVersion: ts.ScriptTarget | undefined): boolean {
         let ch = codePointAt(name, 0);
         if (!isIdentifierStart(ch, languageVersion)) {
             return false;
         }
-
         for (let i = charSize(ch); i < name.length; i += charSize(ch)) {
             if (!isIdentifierPart(ch = codePointAt(name, i), languageVersion)) {
                 return false;
             }
         }
-
         return true;
     }
-
     // Creates a scanner over a (possibly unspecified) range of a piece of text.
-    export function createScanner(languageVersion: ScriptTarget,
-        skipTrivia: boolean,
-        languageVariant = LanguageVariant.Standard,
-        textInitial?: string,
-        onError?: ErrorCallback,
-        start?: number,
-        length?: number): Scanner {
-
+    export function createScanner(languageVersion: ts.ScriptTarget, skipTrivia: boolean, languageVariant = ts.LanguageVariant.Standard, textInitial?: string, onError?: ErrorCallback, start?: number, length?: number): Scanner {
         let text = textInitial!;
-
         // Current position (end position of text of current token)
         let pos: number;
-
-
         // end of text
         let end: number;
-
         // Start position of whitespace before current token
         let startPos: number;
-
         // Start position of text of current token
         let tokenPos: number;
-
-        let token: SyntaxKind;
+        let token: ts.SyntaxKind;
         let tokenValue!: string;
-        let tokenFlags: TokenFlags;
-
+        let tokenFlags: ts.TokenFlags;
         let inJSDocType = 0;
-
         setText(text, start, length);
-
         const scanner: Scanner = {
             getStartPos: () => startPos,
             getTextPos: () => pos,
@@ -891,12 +798,12 @@ namespace ts {
             getTokenPos: () => tokenPos,
             getTokenText: () => text.substring(tokenPos, pos),
             getTokenValue: () => tokenValue,
-            hasUnicodeEscape: () => (tokenFlags & TokenFlags.UnicodeEscape) !== 0,
-            hasExtendedUnicodeEscape: () => (tokenFlags & TokenFlags.ExtendedUnicodeEscape) !== 0,
-            hasPrecedingLineBreak: () => (tokenFlags & TokenFlags.PrecedingLineBreak) !== 0,
-            isIdentifier: () => token === SyntaxKind.Identifier || token > SyntaxKind.LastReservedWord,
-            isReservedWord: () => token >= SyntaxKind.FirstReservedWord && token <= SyntaxKind.LastReservedWord,
-            isUnterminated: () => (tokenFlags & TokenFlags.Unterminated) !== 0,
+            hasUnicodeEscape: () => (tokenFlags & ts.TokenFlags.UnicodeEscape) !== 0,
+            hasExtendedUnicodeEscape: () => (tokenFlags & ts.TokenFlags.ExtendedUnicodeEscape) !== 0,
+            hasPrecedingLineBreak: () => (tokenFlags & ts.TokenFlags.PrecedingLineBreak) !== 0,
+            isIdentifier: () => token === ts.SyntaxKind.Identifier || token > ts.SyntaxKind.LastReservedWord,
+            isReservedWord: () => token >= ts.SyntaxKind.FirstReservedWord && token <= ts.SyntaxKind.LastReservedWord,
+            isUnterminated: () => (tokenFlags & ts.TokenFlags.Unterminated) !== 0,
             getTokenFlags: () => tokenFlags,
             reScanGreaterToken,
             reScanSlashToken,
@@ -921,8 +828,7 @@ namespace ts {
             lookAhead,
             scanRange,
         };
-
-        if (Debug.isDebugging) {
+        if (ts.Debug.isDebugging) {
             Object.defineProperty(scanner, "__debugShowCurrentPositionInText", {
                 get: () => {
                     const text = scanner.getText();
@@ -930,12 +836,10 @@ namespace ts {
                 },
             });
         }
-
         return scanner;
-
-        function error(message: DiagnosticMessage): void;
-        function error(message: DiagnosticMessage, errPos: number, length: number): void;
-        function error(message: DiagnosticMessage, errPos: number = pos, length?: number): void {
+        function error(message: ts.DiagnosticMessage): void;
+        function error(message: ts.DiagnosticMessage, errPos: number, length: number): void;
+        function error(message: ts.DiagnosticMessage, errPos: number = pos, length?: number): void {
             if (onError) {
                 const oldPos = pos;
                 pos = errPos;
@@ -943,7 +847,6 @@ namespace ts {
                 pos = oldPos;
             }
         }
-
         function scanNumberFragment(): string {
             let start = pos;
             let allowSeparator = false;
@@ -951,18 +854,18 @@ namespace ts {
             let result = "";
             while (true) {
                 const ch = text.charCodeAt(pos);
-                if (ch === CharacterCodes._) {
-                    tokenFlags |= TokenFlags.ContainsSeparator;
+                if (ch === ts.CharacterCodes._) {
+                    tokenFlags |= ts.TokenFlags.ContainsSeparator;
                     if (allowSeparator) {
                         allowSeparator = false;
                         isPreviousTokenSeparator = true;
                         result += text.substring(start, pos);
                     }
                     else if (isPreviousTokenSeparator) {
-                        error(Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
+                        error(ts.Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
                     }
                     else {
-                        error(Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
+                        error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
                     }
                     pos++;
                     start = pos;
@@ -976,30 +879,33 @@ namespace ts {
                 }
                 break;
             }
-            if (text.charCodeAt(pos - 1) === CharacterCodes._) {
-                error(Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
+            if (text.charCodeAt(pos - 1) === ts.CharacterCodes._) {
+                error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
             }
             return result + text.substring(start, pos);
         }
-
-        function scanNumber(): {type: SyntaxKind, value: string} {
+        function scanNumber(): {
+            type: ts.SyntaxKind;
+            value: string;
+        } {
             const start = pos;
             const mainFragment = scanNumberFragment();
             let decimalFragment: string | undefined;
             let scientificFragment: string | undefined;
-            if (text.charCodeAt(pos) === CharacterCodes.dot) {
+            if (text.charCodeAt(pos) === ts.CharacterCodes.dot) {
                 pos++;
                 decimalFragment = scanNumberFragment();
             }
             let end = pos;
-            if (text.charCodeAt(pos) === CharacterCodes.E || text.charCodeAt(pos) === CharacterCodes.e) {
+            if (text.charCodeAt(pos) === ts.CharacterCodes.E || text.charCodeAt(pos) === ts.CharacterCodes.e) {
                 pos++;
-                tokenFlags |= TokenFlags.Scientific;
-                if (text.charCodeAt(pos) === CharacterCodes.plus || text.charCodeAt(pos) === CharacterCodes.minus) pos++;
+                tokenFlags |= ts.TokenFlags.Scientific;
+                if (text.charCodeAt(pos) === ts.CharacterCodes.plus || text.charCodeAt(pos) === ts.CharacterCodes.minus)
+                    pos++;
                 const preNumericPart = pos;
                 const finalFragment = scanNumberFragment();
                 if (!finalFragment) {
-                    error(Diagnostics.Digit_expected);
+                    error(ts.Diagnostics.Digit_expected);
                 }
                 else {
                     scientificFragment = text.substring(end, preNumericPart) + finalFragment;
@@ -1007,7 +913,7 @@ namespace ts {
                 }
             }
             let result: string;
-            if (tokenFlags & TokenFlags.ContainsSeparator) {
+            if (tokenFlags & ts.TokenFlags.ContainsSeparator) {
                 result = mainFragment;
                 if (decimalFragment) {
                     result += "." + decimalFragment;
@@ -1019,11 +925,10 @@ namespace ts {
             else {
                 result = text.substring(start, end); // No need to use all the fragments; no _ removal needed
             }
-
-            if (decimalFragment !== undefined || tokenFlags & TokenFlags.Scientific) {
-                checkForIdentifierStartAfterNumericLiteral(start, decimalFragment === undefined && !!(tokenFlags & TokenFlags.Scientific));
+            if (decimalFragment !== undefined || tokenFlags & ts.TokenFlags.Scientific) {
+                checkForIdentifierStartAfterNumericLiteral(start, decimalFragment === undefined && !!(tokenFlags & ts.TokenFlags.Scientific));
                 return {
-                    type: SyntaxKind.NumericLiteral,
+                    type: ts.SyntaxKind.NumericLiteral,
                     value: "" + +result // if value is not an integer, it can be safely coerced to a number
                 };
             }
@@ -1034,29 +939,25 @@ namespace ts {
                 return { type, value: tokenValue };
             }
         }
-
         function checkForIdentifierStartAfterNumericLiteral(numericStart: number, isScientific?: boolean) {
             if (!isIdentifierStart(codePointAt(text, pos), languageVersion)) {
                 return;
             }
-
             const identifierStart = pos;
             const { length } = scanIdentifierParts();
-
             if (length === 1 && text[identifierStart] === "n") {
                 if (isScientific) {
-                    error(Diagnostics.A_bigint_literal_cannot_use_exponential_notation, numericStart, identifierStart - numericStart + 1);
+                    error(ts.Diagnostics.A_bigint_literal_cannot_use_exponential_notation, numericStart, identifierStart - numericStart + 1);
                 }
                 else {
-                    error(Diagnostics.A_bigint_literal_must_be_an_integer, numericStart, identifierStart - numericStart + 1);
+                    error(ts.Diagnostics.A_bigint_literal_must_be_an_integer, numericStart, identifierStart - numericStart + 1);
                 }
             }
             else {
-                error(Diagnostics.An_identifier_or_keyword_cannot_immediately_follow_a_numeric_literal, identifierStart, length);
+                error(ts.Diagnostics.An_identifier_or_keyword_cannot_immediately_follow_a_numeric_literal, identifierStart, length);
                 pos = identifierStart;
             }
         }
-
         function scanOctalDigits(): number {
             const start = pos;
             while (isOctalDigit(text.charCodeAt(pos))) {
@@ -1064,7 +965,6 @@ namespace ts {
             }
             return +(text.substring(start, pos));
         }
-
         /**
          * Scans the given number of hexadecimal digits in the text,
          * returning -1 if the given number is unavailable.
@@ -1073,7 +973,6 @@ namespace ts {
             const valueString = scanHexDigits(/*minCount*/ count, /*scanAsManyAsPossible*/ false, canHaveSeparators);
             return valueString ? parseInt(valueString, 16) : -1;
         }
-
         /**
          * Scans as many hexadecimal digits as are available in the text,
          * returning "" if the given number of digits was unavailable.
@@ -1081,35 +980,33 @@ namespace ts {
         function scanMinimumNumberOfHexDigits(count: number, canHaveSeparators: boolean): string {
             return scanHexDigits(/*minCount*/ count, /*scanAsManyAsPossible*/ true, canHaveSeparators);
         }
-
         function scanHexDigits(minCount: number, scanAsManyAsPossible: boolean, canHaveSeparators: boolean): string {
             let valueChars: number[] = [];
             let allowSeparator = false;
             let isPreviousTokenSeparator = false;
             while (valueChars.length < minCount || scanAsManyAsPossible) {
                 let ch = text.charCodeAt(pos);
-                if (canHaveSeparators && ch === CharacterCodes._) {
-                    tokenFlags |= TokenFlags.ContainsSeparator;
+                if (canHaveSeparators && ch === ts.CharacterCodes._) {
+                    tokenFlags |= ts.TokenFlags.ContainsSeparator;
                     if (allowSeparator) {
                         allowSeparator = false;
                         isPreviousTokenSeparator = true;
                     }
                     else if (isPreviousTokenSeparator) {
-                        error(Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
+                        error(ts.Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
                     }
                     else {
-                        error(Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
+                        error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
                     }
                     pos++;
                     continue;
                 }
                 allowSeparator = canHaveSeparators;
-                if (ch >= CharacterCodes.A && ch <= CharacterCodes.F) {
-                    ch += CharacterCodes.a - CharacterCodes.A; // standardize hex literals to lowercase
+                if (ch >= ts.CharacterCodes.A && ch <= ts.CharacterCodes.F) {
+                    ch += ts.CharacterCodes.a - ts.CharacterCodes.A; // standardize hex literals to lowercase
                 }
-                else if (!((ch >= CharacterCodes._0 && ch <= CharacterCodes._9) ||
-                    (ch >= CharacterCodes.a && ch <= CharacterCodes.f)
-                )) {
+                else if (!((ch >= ts.CharacterCodes._0 && ch <= ts.CharacterCodes._9) ||
+                    (ch >= ts.CharacterCodes.a && ch <= ts.CharacterCodes.f))) {
                     break;
                 }
                 valueChars.push(ch);
@@ -1119,12 +1016,11 @@ namespace ts {
             if (valueChars.length < minCount) {
                 valueChars = [];
             }
-            if (text.charCodeAt(pos - 1) === CharacterCodes._) {
-                error(Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
+            if (text.charCodeAt(pos - 1) === ts.CharacterCodes._) {
+                error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
             }
             return String.fromCharCode(...valueChars);
         }
-
         function scanString(jsxAttributeString = false): string {
             const quote = text.charCodeAt(pos);
             pos++;
@@ -1133,8 +1029,8 @@ namespace ts {
             while (true) {
                 if (pos >= end) {
                     result += text.substring(start, pos);
-                    tokenFlags |= TokenFlags.Unterminated;
-                    error(Diagnostics.Unterminated_string_literal);
+                    tokenFlags |= ts.TokenFlags.Unterminated;
+                    error(ts.Diagnostics.Unterminated_string_literal);
                     break;
                 }
                 const ch = text.charCodeAt(pos);
@@ -1143,7 +1039,7 @@ namespace ts {
                     pos++;
                     break;
                 }
-                if (ch === CharacterCodes.backslash && !jsxAttributeString) {
+                if (ch === ts.CharacterCodes.backslash && !jsxAttributeString) {
                     result += text.substring(start, pos);
                     result += scanEscapeSequence();
                     start = pos;
@@ -1151,210 +1047,181 @@ namespace ts {
                 }
                 if (isLineBreak(ch) && !jsxAttributeString) {
                     result += text.substring(start, pos);
-                    tokenFlags |= TokenFlags.Unterminated;
-                    error(Diagnostics.Unterminated_string_literal);
+                    tokenFlags |= ts.TokenFlags.Unterminated;
+                    error(ts.Diagnostics.Unterminated_string_literal);
                     break;
                 }
                 pos++;
             }
             return result;
         }
-
         /**
          * Sets the current 'tokenValue' and returns a NoSubstitutionTemplateLiteral or
          * a literal component of a TemplateExpression.
          */
-        function scanTemplateAndSetTokenValue(): SyntaxKind {
-            const startedWithBacktick = text.charCodeAt(pos) === CharacterCodes.backtick;
-
+        function scanTemplateAndSetTokenValue(): ts.SyntaxKind {
+            const startedWithBacktick = text.charCodeAt(pos) === ts.CharacterCodes.backtick;
             pos++;
             let start = pos;
             let contents = "";
-            let resultingToken: SyntaxKind;
-
+            let resultingToken: ts.SyntaxKind;
             while (true) {
                 if (pos >= end) {
                     contents += text.substring(start, pos);
-                    tokenFlags |= TokenFlags.Unterminated;
-                    error(Diagnostics.Unterminated_template_literal);
-                    resultingToken = startedWithBacktick ? SyntaxKind.NoSubstitutionTemplateLiteral : SyntaxKind.TemplateTail;
+                    tokenFlags |= ts.TokenFlags.Unterminated;
+                    error(ts.Diagnostics.Unterminated_template_literal);
+                    resultingToken = startedWithBacktick ? ts.SyntaxKind.NoSubstitutionTemplateLiteral : ts.SyntaxKind.TemplateTail;
                     break;
                 }
-
                 const currChar = text.charCodeAt(pos);
-
                 // '`'
-                if (currChar === CharacterCodes.backtick) {
+                if (currChar === ts.CharacterCodes.backtick) {
                     contents += text.substring(start, pos);
                     pos++;
-                    resultingToken = startedWithBacktick ? SyntaxKind.NoSubstitutionTemplateLiteral : SyntaxKind.TemplateTail;
+                    resultingToken = startedWithBacktick ? ts.SyntaxKind.NoSubstitutionTemplateLiteral : ts.SyntaxKind.TemplateTail;
                     break;
                 }
-
                 // '${'
-                if (currChar === CharacterCodes.$ && pos + 1 < end && text.charCodeAt(pos + 1) === CharacterCodes.openBrace) {
+                if (currChar === ts.CharacterCodes.$ && pos + 1 < end && text.charCodeAt(pos + 1) === ts.CharacterCodes.openBrace) {
                     contents += text.substring(start, pos);
                     pos += 2;
-                    resultingToken = startedWithBacktick ? SyntaxKind.TemplateHead : SyntaxKind.TemplateMiddle;
+                    resultingToken = startedWithBacktick ? ts.SyntaxKind.TemplateHead : ts.SyntaxKind.TemplateMiddle;
                     break;
                 }
-
                 // Escape character
-                if (currChar === CharacterCodes.backslash) {
+                if (currChar === ts.CharacterCodes.backslash) {
                     contents += text.substring(start, pos);
                     contents += scanEscapeSequence();
                     start = pos;
                     continue;
                 }
-
                 // Speculated ECMAScript 6 Spec 11.8.6.1:
                 // <CR><LF> and <CR> LineTerminatorSequences are normalized to <LF> for Template Values
-                if (currChar === CharacterCodes.carriageReturn) {
+                if (currChar === ts.CharacterCodes.carriageReturn) {
                     contents += text.substring(start, pos);
                     pos++;
-
-                    if (pos < end && text.charCodeAt(pos) === CharacterCodes.lineFeed) {
+                    if (pos < end && text.charCodeAt(pos) === ts.CharacterCodes.lineFeed) {
                         pos++;
                     }
-
                     contents += "\n";
                     start = pos;
                     continue;
                 }
-
                 pos++;
             }
-
-            Debug.assert(resultingToken !== undefined);
-
+            ts.Debug.assert(resultingToken !== undefined);
             tokenValue = contents;
             return resultingToken;
         }
-
         function scanEscapeSequence(): string {
             pos++;
             if (pos >= end) {
-                error(Diagnostics.Unexpected_end_of_text);
+                error(ts.Diagnostics.Unexpected_end_of_text);
                 return "";
             }
             const ch = text.charCodeAt(pos);
             pos++;
             switch (ch) {
-                case CharacterCodes._0:
+                case ts.CharacterCodes._0:
                     return "\0";
-                case CharacterCodes.b:
+                case ts.CharacterCodes.b:
                     return "\b";
-                case CharacterCodes.t:
+                case ts.CharacterCodes.t:
                     return "\t";
-                case CharacterCodes.n:
+                case ts.CharacterCodes.n:
                     return "\n";
-                case CharacterCodes.v:
+                case ts.CharacterCodes.v:
                     return "\v";
-                case CharacterCodes.f:
+                case ts.CharacterCodes.f:
                     return "\f";
-                case CharacterCodes.r:
+                case ts.CharacterCodes.r:
                     return "\r";
-                case CharacterCodes.singleQuote:
+                case ts.CharacterCodes.singleQuote:
                     return "\'";
-                case CharacterCodes.doubleQuote:
+                case ts.CharacterCodes.doubleQuote:
                     return "\"";
-                case CharacterCodes.u:
+                case ts.CharacterCodes.u:
                     // '\u{DDDDDDDD}'
-                    if (pos < end && text.charCodeAt(pos) === CharacterCodes.openBrace) {
-                        tokenFlags |= TokenFlags.ExtendedUnicodeEscape;
+                    if (pos < end && text.charCodeAt(pos) === ts.CharacterCodes.openBrace) {
+                        tokenFlags |= ts.TokenFlags.ExtendedUnicodeEscape;
                         pos++;
                         return scanExtendedUnicodeEscape();
                     }
-
-                    tokenFlags |= TokenFlags.UnicodeEscape;
+                    tokenFlags |= ts.TokenFlags.UnicodeEscape;
                     // '\uDDDD'
                     return scanHexadecimalEscape(/*numDigits*/ 4);
-
-                case CharacterCodes.x:
+                case ts.CharacterCodes.x:
                     // '\xDD'
                     return scanHexadecimalEscape(/*numDigits*/ 2);
-
                 // when encountering a LineContinuation (i.e. a backslash and a line terminator sequence),
                 // the line terminator is interpreted to be "the empty code unit sequence".
-                case CharacterCodes.carriageReturn:
-                    if (pos < end && text.charCodeAt(pos) === CharacterCodes.lineFeed) {
+                case ts.CharacterCodes.carriageReturn:
+                    if (pos < end && text.charCodeAt(pos) === ts.CharacterCodes.lineFeed) {
                         pos++;
                     }
-                    // falls through
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.lineSeparator:
-                case CharacterCodes.paragraphSeparator:
+                // falls through
+                case ts.CharacterCodes.lineFeed:
+                case ts.CharacterCodes.lineSeparator:
+                case ts.CharacterCodes.paragraphSeparator:
                     return "";
                 default:
                     return String.fromCharCode(ch);
             }
         }
-
         function scanHexadecimalEscape(numDigits: number): string {
             const escapedValue = scanExactNumberOfHexDigits(numDigits, /*canHaveSeparators*/ false);
-
             if (escapedValue >= 0) {
                 return String.fromCharCode(escapedValue);
             }
             else {
-                error(Diagnostics.Hexadecimal_digit_expected);
+                error(ts.Diagnostics.Hexadecimal_digit_expected);
                 return "";
             }
         }
-
         function scanExtendedUnicodeEscape(): string {
             const escapedValueString = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ false);
             const escapedValue = escapedValueString ? parseInt(escapedValueString, 16) : -1;
             let isInvalidExtendedEscape = false;
-
             // Validate the value of the digit
             if (escapedValue < 0) {
-                error(Diagnostics.Hexadecimal_digit_expected);
+                error(ts.Diagnostics.Hexadecimal_digit_expected);
                 isInvalidExtendedEscape = true;
             }
             else if (escapedValue > 0x10FFFF) {
-                error(Diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive);
+                error(ts.Diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive);
                 isInvalidExtendedEscape = true;
             }
-
             if (pos >= end) {
-                error(Diagnostics.Unexpected_end_of_text);
+                error(ts.Diagnostics.Unexpected_end_of_text);
                 isInvalidExtendedEscape = true;
             }
-            else if (text.charCodeAt(pos) === CharacterCodes.closeBrace) {
+            else if (text.charCodeAt(pos) === ts.CharacterCodes.closeBrace) {
                 // Only swallow the following character up if it's a '}'.
                 pos++;
             }
             else {
-                error(Diagnostics.Unterminated_Unicode_escape_sequence);
+                error(ts.Diagnostics.Unterminated_Unicode_escape_sequence);
                 isInvalidExtendedEscape = true;
             }
-
             if (isInvalidExtendedEscape) {
                 return "";
             }
-
             return utf16EncodeAsString(escapedValue);
         }
-
         // Derived from the 10.1.1 UTF16Encoding of the ES6 Spec.
         function utf16EncodeAsString(codePoint: number): string {
-            Debug.assert(0x0 <= codePoint && codePoint <= 0x10FFFF);
-
+            ts.Debug.assert(0x0 <= codePoint && codePoint <= 0x10FFFF);
             if (codePoint <= 65535) {
                 return String.fromCharCode(codePoint);
             }
-
             const codeUnit1 = Math.floor((codePoint - 65536) / 1024) + 0xD800;
             const codeUnit2 = ((codePoint - 65536) % 1024) + 0xDC00;
-
             return String.fromCharCode(codeUnit1, codeUnit2);
         }
-
         // Current character is known to be a backslash. Check for Unicode escape of the form '\uXXXX'
         // and return code point value if valid Unicode escape is found. Otherwise return -1.
         function peekUnicodeEscape(): number {
-            if (pos + 5 < end && text.charCodeAt(pos + 1) === CharacterCodes.u) {
+            if (pos + 5 < end && text.charCodeAt(pos + 1) === ts.CharacterCodes.u) {
                 const start = pos;
                 pos += 2;
                 const value = scanExactNumberOfHexDigits(4, /*canHaveSeparators*/ false);
@@ -1363,10 +1230,8 @@ namespace ts {
             }
             return -1;
         }
-
-
         function peekExtendedUnicodeEscape(): number {
-            if (languageVersion >= ScriptTarget.ES2015 && codePointAt(text, pos + 1) === CharacterCodes.u && codePointAt(text, pos + 2) === CharacterCodes.openBrace) {
+            if (languageVersion >= ts.ScriptTarget.ES2015 && codePointAt(text, pos + 1) === ts.CharacterCodes.u && codePointAt(text, pos + 2) === ts.CharacterCodes.openBrace) {
                 const start = pos;
                 pos += 3;
                 const escapedValueString = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ false);
@@ -1376,7 +1241,6 @@ namespace ts {
             }
             return -1;
         }
-
         function scanIdentifierParts(): string {
             let result = "";
             let start = pos;
@@ -1385,11 +1249,11 @@ namespace ts {
                 if (isIdentifierPart(ch, languageVersion)) {
                     pos += charSize(ch);
                 }
-                else if (ch === CharacterCodes.backslash) {
+                else if (ch === ts.CharacterCodes.backslash) {
                     ch = peekExtendedUnicodeEscape();
                     if (ch >= 0 && isIdentifierPart(ch, languageVersion)) {
                         pos += 3;
-                        tokenFlags |= TokenFlags.ExtendedUnicodeEscape;
+                        tokenFlags |= ts.TokenFlags.ExtendedUnicodeEscape;
                         result += scanExtendedUnicodeEscape();
                         start = pos;
                         continue;
@@ -1398,7 +1262,7 @@ namespace ts {
                     if (!(ch >= 0 && isIdentifierPart(ch, languageVersion))) {
                         break;
                     }
-                    tokenFlags |= TokenFlags.UnicodeEscape;
+                    tokenFlags |= ts.TokenFlags.UnicodeEscape;
                     result += text.substring(start, pos);
                     result += utf16EncodeAsString(ch);
                     // Valid Unicode escape is always six characters
@@ -1412,22 +1276,20 @@ namespace ts {
             result += text.substring(start, pos);
             return result;
         }
-
-        function getIdentifierToken(): SyntaxKind.Identifier | KeywordSyntaxKind {
+        function getIdentifierToken(): ts.SyntaxKind.Identifier | ts.KeywordSyntaxKind {
             // Reserved words are between 2 and 11 characters long and start with a lowercase letter
             const len = tokenValue.length;
             if (len >= 2 && len <= 11) {
                 const ch = tokenValue.charCodeAt(0);
-                if (ch >= CharacterCodes.a && ch <= CharacterCodes.z) {
+                if (ch >= ts.CharacterCodes.a && ch <= ts.CharacterCodes.z) {
                     const keyword = textToKeyword.get(tokenValue);
                     if (keyword !== undefined) {
                         return token = keyword;
                     }
                 }
             }
-            return token = SyntaxKind.Identifier;
+            return token = ts.SyntaxKind.Identifier;
         }
-
         function scanBinaryOrOctalDigits(base: 2 | 8): string {
             let value = "";
             // For counting number of digits; Valid binaryIntegerLiteral must have at least one binary digit following B or b.
@@ -1437,120 +1299,116 @@ namespace ts {
             while (true) {
                 const ch = text.charCodeAt(pos);
                 // Numeric separators are allowed anywhere within a numeric literal, except not at the beginning, or following another separator
-                if (ch === CharacterCodes._) {
-                    tokenFlags |= TokenFlags.ContainsSeparator;
+                if (ch === ts.CharacterCodes._) {
+                    tokenFlags |= ts.TokenFlags.ContainsSeparator;
                     if (separatorAllowed) {
                         separatorAllowed = false;
                         isPreviousTokenSeparator = true;
                     }
                     else if (isPreviousTokenSeparator) {
-                        error(Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
+                        error(ts.Diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, pos, 1);
                     }
                     else {
-                        error(Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
+                        error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos, 1);
                     }
                     pos++;
                     continue;
                 }
                 separatorAllowed = true;
-                if (!isDigit(ch) || ch - CharacterCodes._0 >= base) {
+                if (!isDigit(ch) || ch - ts.CharacterCodes._0 >= base) {
                     break;
                 }
                 value += text[pos];
                 pos++;
                 isPreviousTokenSeparator = false;
             }
-            if (text.charCodeAt(pos - 1) === CharacterCodes._) {
+            if (text.charCodeAt(pos - 1) === ts.CharacterCodes._) {
                 // Literal ends with underscore - not allowed
-                error(Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
+                error(ts.Diagnostics.Numeric_separators_are_not_allowed_here, pos - 1, 1);
             }
             return value;
         }
-
-        function checkBigIntSuffix(): SyntaxKind {
-            if (text.charCodeAt(pos) === CharacterCodes.n) {
+        function checkBigIntSuffix(): ts.SyntaxKind {
+            if (text.charCodeAt(pos) === ts.CharacterCodes.n) {
                 tokenValue += "n";
                 // Use base 10 instead of base 2 or base 8 for shorter literals
-                if (tokenFlags & TokenFlags.BinaryOrOctalSpecifier) {
-                    tokenValue = parsePseudoBigInt(tokenValue) + "n";
+                if (tokenFlags & ts.TokenFlags.BinaryOrOctalSpecifier) {
+                    tokenValue = ts.parsePseudoBigInt(tokenValue) + "n";
                 }
                 pos++;
-                return SyntaxKind.BigIntLiteral;
+                return ts.SyntaxKind.BigIntLiteral;
             }
             else { // not a bigint, so can convert to number in simplified form
                 // Number() may not support 0b or 0o, so use parseInt() instead
-                const numericValue = tokenFlags & TokenFlags.BinarySpecifier
+                const numericValue = tokenFlags & ts.TokenFlags.BinarySpecifier
                     ? parseInt(tokenValue.slice(2), 2) // skip "0b"
-                    : tokenFlags & TokenFlags.OctalSpecifier
+                    : tokenFlags & ts.TokenFlags.OctalSpecifier
                         ? parseInt(tokenValue.slice(2), 8) // skip "0o"
                         : +tokenValue;
                 tokenValue = "" + numericValue;
-                return SyntaxKind.NumericLiteral;
+                return ts.SyntaxKind.NumericLiteral;
             }
         }
-
-        function scan(): SyntaxKind {
+        function scan(): ts.SyntaxKind {
             startPos = pos;
-            tokenFlags = TokenFlags.None;
+            tokenFlags = ts.TokenFlags.None;
             let asteriskSeen = false;
             while (true) {
                 tokenPos = pos;
                 if (pos >= end) {
-                    return token = SyntaxKind.EndOfFileToken;
+                    return token = ts.SyntaxKind.EndOfFileToken;
                 }
                 let ch = codePointAt(text, pos);
-
                 // Special handling for shebang
-                if (ch === CharacterCodes.hash && pos === 0 && isShebangTrivia(text, pos)) {
+                if (ch === ts.CharacterCodes.hash && pos === 0 && isShebangTrivia(text, pos)) {
                     pos = scanShebangTrivia(text, pos);
                     if (skipTrivia) {
                         continue;
                     }
                     else {
-                        return token = SyntaxKind.ShebangTrivia;
+                        return token = ts.SyntaxKind.ShebangTrivia;
                     }
                 }
-
                 switch (ch) {
-                    case CharacterCodes.lineFeed:
-                    case CharacterCodes.carriageReturn:
-                        tokenFlags |= TokenFlags.PrecedingLineBreak;
+                    case ts.CharacterCodes.lineFeed:
+                    case ts.CharacterCodes.carriageReturn:
+                        tokenFlags |= ts.TokenFlags.PrecedingLineBreak;
                         if (skipTrivia) {
                             pos++;
                             continue;
                         }
                         else {
-                            if (ch === CharacterCodes.carriageReturn && pos + 1 < end && text.charCodeAt(pos + 1) === CharacterCodes.lineFeed) {
+                            if (ch === ts.CharacterCodes.carriageReturn && pos + 1 < end && text.charCodeAt(pos + 1) === ts.CharacterCodes.lineFeed) {
                                 // consume both CR and LF
                                 pos += 2;
                             }
                             else {
                                 pos++;
                             }
-                            return token = SyntaxKind.NewLineTrivia;
+                            return token = ts.SyntaxKind.NewLineTrivia;
                         }
-                    case CharacterCodes.tab:
-                    case CharacterCodes.verticalTab:
-                    case CharacterCodes.formFeed:
-                    case CharacterCodes.space:
-                    case CharacterCodes.nonBreakingSpace:
-                    case CharacterCodes.ogham:
-                    case CharacterCodes.enQuad:
-                    case CharacterCodes.emQuad:
-                    case CharacterCodes.enSpace:
-                    case CharacterCodes.emSpace:
-                    case CharacterCodes.threePerEmSpace:
-                    case CharacterCodes.fourPerEmSpace:
-                    case CharacterCodes.sixPerEmSpace:
-                    case CharacterCodes.figureSpace:
-                    case CharacterCodes.punctuationSpace:
-                    case CharacterCodes.thinSpace:
-                    case CharacterCodes.hairSpace:
-                    case CharacterCodes.zeroWidthSpace:
-                    case CharacterCodes.narrowNoBreakSpace:
-                    case CharacterCodes.mathematicalSpace:
-                    case CharacterCodes.ideographicSpace:
-                    case CharacterCodes.byteOrderMark:
+                    case ts.CharacterCodes.tab:
+                    case ts.CharacterCodes.verticalTab:
+                    case ts.CharacterCodes.formFeed:
+                    case ts.CharacterCodes.space:
+                    case ts.CharacterCodes.nonBreakingSpace:
+                    case ts.CharacterCodes.ogham:
+                    case ts.CharacterCodes.enQuad:
+                    case ts.CharacterCodes.emQuad:
+                    case ts.CharacterCodes.enSpace:
+                    case ts.CharacterCodes.emSpace:
+                    case ts.CharacterCodes.threePerEmSpace:
+                    case ts.CharacterCodes.fourPerEmSpace:
+                    case ts.CharacterCodes.sixPerEmSpace:
+                    case ts.CharacterCodes.figureSpace:
+                    case ts.CharacterCodes.punctuationSpace:
+                    case ts.CharacterCodes.thinSpace:
+                    case ts.CharacterCodes.hairSpace:
+                    case ts.CharacterCodes.zeroWidthSpace:
+                    case ts.CharacterCodes.narrowNoBreakSpace:
+                    case ts.CharacterCodes.mathematicalSpace:
+                    case ts.CharacterCodes.ideographicSpace:
+                    case ts.CharacterCodes.byteOrderMark:
                         if (skipTrivia) {
                             pos++;
                             continue;
@@ -1559,360 +1417,344 @@ namespace ts {
                             while (pos < end && isWhiteSpaceSingleLine(text.charCodeAt(pos))) {
                                 pos++;
                             }
-                            return token = SyntaxKind.WhitespaceTrivia;
+                            return token = ts.SyntaxKind.WhitespaceTrivia;
                         }
-                    case CharacterCodes.exclamation:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            if (text.charCodeAt(pos + 2) === CharacterCodes.equals) {
-                                return pos += 3, token = SyntaxKind.ExclamationEqualsEqualsToken;
+                    case ts.CharacterCodes.exclamation:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            if (text.charCodeAt(pos + 2) === ts.CharacterCodes.equals) {
+                                return pos += 3, token = ts.SyntaxKind.ExclamationEqualsEqualsToken;
                             }
-                            return pos += 2, token = SyntaxKind.ExclamationEqualsToken;
+                            return pos += 2, token = ts.SyntaxKind.ExclamationEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.ExclamationToken;
-                    case CharacterCodes.doubleQuote:
-                    case CharacterCodes.singleQuote:
+                        return token = ts.SyntaxKind.ExclamationToken;
+                    case ts.CharacterCodes.doubleQuote:
+                    case ts.CharacterCodes.singleQuote:
                         tokenValue = scanString();
-                        return token = SyntaxKind.StringLiteral;
-                    case CharacterCodes.backtick:
+                        return token = ts.SyntaxKind.StringLiteral;
+                    case ts.CharacterCodes.backtick:
                         return token = scanTemplateAndSetTokenValue();
-                    case CharacterCodes.percent:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.PercentEqualsToken;
+                    case ts.CharacterCodes.percent:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.PercentEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.PercentToken;
-                    case CharacterCodes.ampersand:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.ampersand) {
-                            return pos += 2, token = SyntaxKind.AmpersandAmpersandToken;
+                        return token = ts.SyntaxKind.PercentToken;
+                    case ts.CharacterCodes.ampersand:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.ampersand) {
+                            return pos += 2, token = ts.SyntaxKind.AmpersandAmpersandToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.AmpersandEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.AmpersandEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.AmpersandToken;
-                    case CharacterCodes.openParen:
+                        return token = ts.SyntaxKind.AmpersandToken;
+                    case ts.CharacterCodes.openParen:
                         pos++;
-                        return token = SyntaxKind.OpenParenToken;
-                    case CharacterCodes.closeParen:
+                        return token = ts.SyntaxKind.OpenParenToken;
+                    case ts.CharacterCodes.closeParen:
                         pos++;
-                        return token = SyntaxKind.CloseParenToken;
-                    case CharacterCodes.asterisk:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.AsteriskEqualsToken;
+                        return token = ts.SyntaxKind.CloseParenToken;
+                    case ts.CharacterCodes.asterisk:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.AsteriskEqualsToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
-                            if (text.charCodeAt(pos + 2) === CharacterCodes.equals) {
-                                return pos += 3, token = SyntaxKind.AsteriskAsteriskEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.asterisk) {
+                            if (text.charCodeAt(pos + 2) === ts.CharacterCodes.equals) {
+                                return pos += 3, token = ts.SyntaxKind.AsteriskAsteriskEqualsToken;
                             }
-                            return pos += 2, token = SyntaxKind.AsteriskAsteriskToken;
+                            return pos += 2, token = ts.SyntaxKind.AsteriskAsteriskToken;
                         }
                         pos++;
-                        if (inJSDocType && !asteriskSeen && (tokenFlags & TokenFlags.PrecedingLineBreak)) {
+                        if (inJSDocType && !asteriskSeen && (tokenFlags & ts.TokenFlags.PrecedingLineBreak)) {
                             // decoration at the start of a JSDoc comment line
                             asteriskSeen = true;
                             continue;
                         }
-                        return token = SyntaxKind.AsteriskToken;
-                    case CharacterCodes.plus:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.plus) {
-                            return pos += 2, token = SyntaxKind.PlusPlusToken;
+                        return token = ts.SyntaxKind.AsteriskToken;
+                    case ts.CharacterCodes.plus:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.plus) {
+                            return pos += 2, token = ts.SyntaxKind.PlusPlusToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.PlusEqualsToken;
-                        }
-                        pos++;
-                        return token = SyntaxKind.PlusToken;
-                    case CharacterCodes.comma:
-                        pos++;
-                        return token = SyntaxKind.CommaToken;
-                    case CharacterCodes.minus:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.minus) {
-                            return pos += 2, token = SyntaxKind.MinusMinusToken;
-                        }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.MinusEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.PlusEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.MinusToken;
-                    case CharacterCodes.dot:
+                        return token = ts.SyntaxKind.PlusToken;
+                    case ts.CharacterCodes.comma:
+                        pos++;
+                        return token = ts.SyntaxKind.CommaToken;
+                    case ts.CharacterCodes.minus:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.minus) {
+                            return pos += 2, token = ts.SyntaxKind.MinusMinusToken;
+                        }
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.MinusEqualsToken;
+                        }
+                        pos++;
+                        return token = ts.SyntaxKind.MinusToken;
+                    case ts.CharacterCodes.dot:
                         if (isDigit(text.charCodeAt(pos + 1))) {
                             tokenValue = scanNumber().value;
-                            return token = SyntaxKind.NumericLiteral;
+                            return token = ts.SyntaxKind.NumericLiteral;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.dot && text.charCodeAt(pos + 2) === CharacterCodes.dot) {
-                            return pos += 3, token = SyntaxKind.DotDotDotToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.dot && text.charCodeAt(pos + 2) === ts.CharacterCodes.dot) {
+                            return pos += 3, token = ts.SyntaxKind.DotDotDotToken;
                         }
                         pos++;
-                        return token = SyntaxKind.DotToken;
-                    case CharacterCodes.slash:
+                        return token = ts.SyntaxKind.DotToken;
+                    case ts.CharacterCodes.slash:
                         // Single-line comment
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                             pos += 2;
-
                             while (pos < end) {
                                 if (isLineBreak(text.charCodeAt(pos))) {
                                     break;
                                 }
                                 pos++;
-
                             }
-
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
-                                return token = SyntaxKind.SingleLineCommentTrivia;
+                                return token = ts.SyntaxKind.SingleLineCommentTrivia;
                             }
                         }
                         // Multi-line comment
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.asterisk) {
                             pos += 2;
-                            if (text.charCodeAt(pos) === CharacterCodes.asterisk && text.charCodeAt(pos + 1) !== CharacterCodes.slash) {
-                                tokenFlags |= TokenFlags.PrecedingJSDocComment;
+                            if (text.charCodeAt(pos) === ts.CharacterCodes.asterisk && text.charCodeAt(pos + 1) !== ts.CharacterCodes.slash) {
+                                tokenFlags |= ts.TokenFlags.PrecedingJSDocComment;
                             }
-
                             let commentClosed = false;
                             while (pos < end) {
                                 const ch = text.charCodeAt(pos);
-
-                                if (ch === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+                                if (ch === ts.CharacterCodes.asterisk && text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                                     pos += 2;
                                     commentClosed = true;
                                     break;
                                 }
-
                                 if (isLineBreak(ch)) {
-                                    tokenFlags |= TokenFlags.PrecedingLineBreak;
+                                    tokenFlags |= ts.TokenFlags.PrecedingLineBreak;
                                 }
                                 pos++;
                             }
-
                             if (!commentClosed) {
-                                error(Diagnostics.Asterisk_Slash_expected);
+                                error(ts.Diagnostics.Asterisk_Slash_expected);
                             }
-
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
                                 if (!commentClosed) {
-                                    tokenFlags |= TokenFlags.Unterminated;
+                                    tokenFlags |= ts.TokenFlags.Unterminated;
                                 }
-                                return token = SyntaxKind.MultiLineCommentTrivia;
+                                return token = ts.SyntaxKind.MultiLineCommentTrivia;
                             }
                         }
-
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.SlashEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.SlashEqualsToken;
                         }
-
                         pos++;
-                        return token = SyntaxKind.SlashToken;
-
-                    case CharacterCodes._0:
-                        if (pos + 2 < end && (text.charCodeAt(pos + 1) === CharacterCodes.X || text.charCodeAt(pos + 1) === CharacterCodes.x)) {
+                        return token = ts.SyntaxKind.SlashToken;
+                    case ts.CharacterCodes._0:
+                        if (pos + 2 < end && (text.charCodeAt(pos + 1) === ts.CharacterCodes.X || text.charCodeAt(pos + 1) === ts.CharacterCodes.x)) {
                             pos += 2;
                             tokenValue = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ true);
                             if (!tokenValue) {
-                                error(Diagnostics.Hexadecimal_digit_expected);
+                                error(ts.Diagnostics.Hexadecimal_digit_expected);
                                 tokenValue = "0";
                             }
                             tokenValue = "0x" + tokenValue;
-                            tokenFlags |= TokenFlags.HexSpecifier;
+                            tokenFlags |= ts.TokenFlags.HexSpecifier;
                             return token = checkBigIntSuffix();
                         }
-                        else if (pos + 2 < end && (text.charCodeAt(pos + 1) === CharacterCodes.B || text.charCodeAt(pos + 1) === CharacterCodes.b)) {
+                        else if (pos + 2 < end && (text.charCodeAt(pos + 1) === ts.CharacterCodes.B || text.charCodeAt(pos + 1) === ts.CharacterCodes.b)) {
                             pos += 2;
                             tokenValue = scanBinaryOrOctalDigits(/* base */ 2);
                             if (!tokenValue) {
-                                error(Diagnostics.Binary_digit_expected);
+                                error(ts.Diagnostics.Binary_digit_expected);
                                 tokenValue = "0";
                             }
                             tokenValue = "0b" + tokenValue;
-                            tokenFlags |= TokenFlags.BinarySpecifier;
+                            tokenFlags |= ts.TokenFlags.BinarySpecifier;
                             return token = checkBigIntSuffix();
                         }
-                        else if (pos + 2 < end && (text.charCodeAt(pos + 1) === CharacterCodes.O || text.charCodeAt(pos + 1) === CharacterCodes.o)) {
+                        else if (pos + 2 < end && (text.charCodeAt(pos + 1) === ts.CharacterCodes.O || text.charCodeAt(pos + 1) === ts.CharacterCodes.o)) {
                             pos += 2;
                             tokenValue = scanBinaryOrOctalDigits(/* base */ 8);
                             if (!tokenValue) {
-                                error(Diagnostics.Octal_digit_expected);
+                                error(ts.Diagnostics.Octal_digit_expected);
                                 tokenValue = "0";
                             }
                             tokenValue = "0o" + tokenValue;
-                            tokenFlags |= TokenFlags.OctalSpecifier;
+                            tokenFlags |= ts.TokenFlags.OctalSpecifier;
                             return token = checkBigIntSuffix();
                         }
                         // Try to parse as an octal
                         if (pos + 1 < end && isOctalDigit(text.charCodeAt(pos + 1))) {
                             tokenValue = "" + scanOctalDigits();
-                            tokenFlags |= TokenFlags.Octal;
-                            return token = SyntaxKind.NumericLiteral;
+                            tokenFlags |= ts.TokenFlags.Octal;
+                            return token = ts.SyntaxKind.NumericLiteral;
                         }
-                        // This fall-through is a deviation from the EcmaScript grammar. The grammar says that a leading zero
-                        // can only be followed by an octal digit, a dot, or the end of the number literal. However, we are being
-                        // permissive and allowing decimal digits of the form 08* and 09* (which many browsers also do).
-                        // falls through
-                    case CharacterCodes._1:
-                    case CharacterCodes._2:
-                    case CharacterCodes._3:
-                    case CharacterCodes._4:
-                    case CharacterCodes._5:
-                    case CharacterCodes._6:
-                    case CharacterCodes._7:
-                    case CharacterCodes._8:
-                    case CharacterCodes._9:
+                    // This fall-through is a deviation from the EcmaScript grammar. The grammar says that a leading zero
+                    // can only be followed by an octal digit, a dot, or the end of the number literal. However, we are being
+                    // permissive and allowing decimal digits of the form 08* and 09* (which many browsers also do).
+                    // falls through
+                    case ts.CharacterCodes._1:
+                    case ts.CharacterCodes._2:
+                    case ts.CharacterCodes._3:
+                    case ts.CharacterCodes._4:
+                    case ts.CharacterCodes._5:
+                    case ts.CharacterCodes._6:
+                    case ts.CharacterCodes._7:
+                    case ts.CharacterCodes._8:
+                    case ts.CharacterCodes._9:
                         ({ type: token, value: tokenValue } = scanNumber());
                         return token;
-                    case CharacterCodes.colon:
+                    case ts.CharacterCodes.colon:
                         pos++;
-                        return token = SyntaxKind.ColonToken;
-                    case CharacterCodes.semicolon:
+                        return token = ts.SyntaxKind.ColonToken;
+                    case ts.CharacterCodes.semicolon:
                         pos++;
-                        return token = SyntaxKind.SemicolonToken;
-                    case CharacterCodes.lessThan:
+                        return token = ts.SyntaxKind.SemicolonToken;
+                    case ts.CharacterCodes.lessThan:
                         if (isConflictMarkerTrivia(text, pos)) {
                             pos = scanConflictMarkerTrivia(text, pos, error);
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
-                                return token = SyntaxKind.ConflictMarkerTrivia;
+                                return token = ts.SyntaxKind.ConflictMarkerTrivia;
                             }
                         }
-
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.lessThan) {
-                            if (text.charCodeAt(pos + 2) === CharacterCodes.equals) {
-                                return pos += 3, token = SyntaxKind.LessThanLessThanEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.lessThan) {
+                            if (text.charCodeAt(pos + 2) === ts.CharacterCodes.equals) {
+                                return pos += 3, token = ts.SyntaxKind.LessThanLessThanEqualsToken;
                             }
-                            return pos += 2, token = SyntaxKind.LessThanLessThanToken;
+                            return pos += 2, token = ts.SyntaxKind.LessThanLessThanToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.LessThanEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.LessThanEqualsToken;
                         }
-                        if (languageVariant === LanguageVariant.JSX &&
-                                text.charCodeAt(pos + 1) === CharacterCodes.slash &&
-                                text.charCodeAt(pos + 2) !== CharacterCodes.asterisk) {
-                            return pos += 2, token = SyntaxKind.LessThanSlashToken;
+                        if (languageVariant === ts.LanguageVariant.JSX &&
+                            text.charCodeAt(pos + 1) === ts.CharacterCodes.slash &&
+                            text.charCodeAt(pos + 2) !== ts.CharacterCodes.asterisk) {
+                            return pos += 2, token = ts.SyntaxKind.LessThanSlashToken;
                         }
                         pos++;
-                        return token = SyntaxKind.LessThanToken;
-                    case CharacterCodes.equals:
+                        return token = ts.SyntaxKind.LessThanToken;
+                    case ts.CharacterCodes.equals:
                         if (isConflictMarkerTrivia(text, pos)) {
                             pos = scanConflictMarkerTrivia(text, pos, error);
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
-                                return token = SyntaxKind.ConflictMarkerTrivia;
+                                return token = ts.SyntaxKind.ConflictMarkerTrivia;
                             }
                         }
-
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            if (text.charCodeAt(pos + 2) === CharacterCodes.equals) {
-                                return pos += 3, token = SyntaxKind.EqualsEqualsEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            if (text.charCodeAt(pos + 2) === ts.CharacterCodes.equals) {
+                                return pos += 3, token = ts.SyntaxKind.EqualsEqualsEqualsToken;
                             }
-                            return pos += 2, token = SyntaxKind.EqualsEqualsToken;
+                            return pos += 2, token = ts.SyntaxKind.EqualsEqualsToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.greaterThan) {
-                            return pos += 2, token = SyntaxKind.EqualsGreaterThanToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.greaterThan) {
+                            return pos += 2, token = ts.SyntaxKind.EqualsGreaterThanToken;
                         }
                         pos++;
-                        return token = SyntaxKind.EqualsToken;
-                    case CharacterCodes.greaterThan:
+                        return token = ts.SyntaxKind.EqualsToken;
+                    case ts.CharacterCodes.greaterThan:
                         if (isConflictMarkerTrivia(text, pos)) {
                             pos = scanConflictMarkerTrivia(text, pos, error);
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
-                                return token = SyntaxKind.ConflictMarkerTrivia;
+                                return token = ts.SyntaxKind.ConflictMarkerTrivia;
                             }
                         }
-
                         pos++;
-                        return token = SyntaxKind.GreaterThanToken;
-                    case CharacterCodes.question:
+                        return token = ts.SyntaxKind.GreaterThanToken;
+                    case ts.CharacterCodes.question:
                         pos++;
-                        if (text.charCodeAt(pos) === CharacterCodes.dot && !isDigit(text.charCodeAt(pos + 1))) {
+                        if (text.charCodeAt(pos) === ts.CharacterCodes.dot && !isDigit(text.charCodeAt(pos + 1))) {
                             pos++;
-                            return token = SyntaxKind.QuestionDotToken;
+                            return token = ts.SyntaxKind.QuestionDotToken;
                         }
-                        if (text.charCodeAt(pos) === CharacterCodes.question) {
+                        if (text.charCodeAt(pos) === ts.CharacterCodes.question) {
                             pos++;
-                            return token = SyntaxKind.QuestionQuestionToken;
+                            return token = ts.SyntaxKind.QuestionQuestionToken;
                         }
-                        return token = SyntaxKind.QuestionToken;
-                    case CharacterCodes.openBracket:
+                        return token = ts.SyntaxKind.QuestionToken;
+                    case ts.CharacterCodes.openBracket:
                         pos++;
-                        return token = SyntaxKind.OpenBracketToken;
-                    case CharacterCodes.closeBracket:
+                        return token = ts.SyntaxKind.OpenBracketToken;
+                    case ts.CharacterCodes.closeBracket:
                         pos++;
-                        return token = SyntaxKind.CloseBracketToken;
-                    case CharacterCodes.caret:
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.CaretEqualsToken;
+                        return token = ts.SyntaxKind.CloseBracketToken;
+                    case ts.CharacterCodes.caret:
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.CaretEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.CaretToken;
-                    case CharacterCodes.openBrace:
+                        return token = ts.SyntaxKind.CaretToken;
+                    case ts.CharacterCodes.openBrace:
                         pos++;
-                        return token = SyntaxKind.OpenBraceToken;
-                    case CharacterCodes.bar:
+                        return token = ts.SyntaxKind.OpenBraceToken;
+                    case ts.CharacterCodes.bar:
                         if (isConflictMarkerTrivia(text, pos)) {
                             pos = scanConflictMarkerTrivia(text, pos, error);
                             if (skipTrivia) {
                                 continue;
                             }
                             else {
-                                return token = SyntaxKind.ConflictMarkerTrivia;
+                                return token = ts.SyntaxKind.ConflictMarkerTrivia;
                             }
                         }
-
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.bar) {
-                            return pos += 2, token = SyntaxKind.BarBarToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.bar) {
+                            return pos += 2, token = ts.SyntaxKind.BarBarToken;
                         }
-                        if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                            return pos += 2, token = SyntaxKind.BarEqualsToken;
+                        if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                            return pos += 2, token = ts.SyntaxKind.BarEqualsToken;
                         }
                         pos++;
-                        return token = SyntaxKind.BarToken;
-                    case CharacterCodes.closeBrace:
+                        return token = ts.SyntaxKind.BarToken;
+                    case ts.CharacterCodes.closeBrace:
                         pos++;
-                        return token = SyntaxKind.CloseBraceToken;
-                    case CharacterCodes.tilde:
+                        return token = ts.SyntaxKind.CloseBraceToken;
+                    case ts.CharacterCodes.tilde:
                         pos++;
-                        return token = SyntaxKind.TildeToken;
-                    case CharacterCodes.at:
+                        return token = ts.SyntaxKind.TildeToken;
+                    case ts.CharacterCodes.at:
                         pos++;
-                        return token = SyntaxKind.AtToken;
-                    case CharacterCodes.backslash:
+                        return token = ts.SyntaxKind.AtToken;
+                    case ts.CharacterCodes.backslash:
                         const extendedCookedChar = peekExtendedUnicodeEscape();
                         if (extendedCookedChar >= 0 && isIdentifierStart(extendedCookedChar, languageVersion)) {
                             pos += 3;
-                            tokenFlags |= TokenFlags.ExtendedUnicodeEscape;
+                            tokenFlags |= ts.TokenFlags.ExtendedUnicodeEscape;
                             tokenValue = scanExtendedUnicodeEscape() + scanIdentifierParts();
                             return token = getIdentifierToken();
                         }
-
                         const cookedChar = peekUnicodeEscape();
                         if (cookedChar >= 0 && isIdentifierStart(cookedChar, languageVersion)) {
                             pos += 6;
-                            tokenFlags |= TokenFlags.UnicodeEscape;
+                            tokenFlags |= ts.TokenFlags.UnicodeEscape;
                             tokenValue = String.fromCharCode(cookedChar) + scanIdentifierParts();
                             return token = getIdentifierToken();
                         }
-
-                        error(Diagnostics.Invalid_character);
+                        error(ts.Diagnostics.Invalid_character);
                         pos++;
-                        return token = SyntaxKind.Unknown;
+                        return token = ts.SyntaxKind.Unknown;
                     default:
                         if (isIdentifierStart(ch, languageVersion)) {
                             pos += charSize(ch);
-                            while (pos < end && isIdentifierPart(ch = codePointAt(text, pos), languageVersion)) pos += charSize(ch);
+                            while (pos < end && isIdentifierPart(ch = codePointAt(text, pos), languageVersion))
+                                pos += charSize(ch);
                             tokenValue = text.substring(tokenPos, pos);
-                            if (ch === CharacterCodes.backslash) {
+                            if (ch === ts.CharacterCodes.backslash) {
                                 tokenValue += scanIdentifierParts();
                             }
                             return token = getIdentifierToken();
@@ -1922,42 +1764,40 @@ namespace ts {
                             continue;
                         }
                         else if (isLineBreak(ch)) {
-                            tokenFlags |= TokenFlags.PrecedingLineBreak;
+                            tokenFlags |= ts.TokenFlags.PrecedingLineBreak;
                             pos += charSize(ch);
                             continue;
                         }
-                        error(Diagnostics.Invalid_character);
+                        error(ts.Diagnostics.Invalid_character);
                         pos += charSize(ch);
-                        return token = SyntaxKind.Unknown;
+                        return token = ts.SyntaxKind.Unknown;
                 }
             }
         }
-
-        function reScanGreaterToken(): SyntaxKind {
-            if (token === SyntaxKind.GreaterThanToken) {
-                if (text.charCodeAt(pos) === CharacterCodes.greaterThan) {
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.greaterThan) {
-                        if (text.charCodeAt(pos + 2) === CharacterCodes.equals) {
-                            return pos += 3, token = SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
+        function reScanGreaterToken(): ts.SyntaxKind {
+            if (token === ts.SyntaxKind.GreaterThanToken) {
+                if (text.charCodeAt(pos) === ts.CharacterCodes.greaterThan) {
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.greaterThan) {
+                        if (text.charCodeAt(pos + 2) === ts.CharacterCodes.equals) {
+                            return pos += 3, token = ts.SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
                         }
-                        return pos += 2, token = SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
+                        return pos += 2, token = ts.SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
                     }
-                    if (text.charCodeAt(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.GreaterThanGreaterThanEqualsToken;
+                    if (text.charCodeAt(pos + 1) === ts.CharacterCodes.equals) {
+                        return pos += 2, token = ts.SyntaxKind.GreaterThanGreaterThanEqualsToken;
                     }
                     pos++;
-                    return token = SyntaxKind.GreaterThanGreaterThanToken;
+                    return token = ts.SyntaxKind.GreaterThanGreaterThanToken;
                 }
-                if (text.charCodeAt(pos) === CharacterCodes.equals) {
+                if (text.charCodeAt(pos) === ts.CharacterCodes.equals) {
                     pos++;
-                    return token = SyntaxKind.GreaterThanEqualsToken;
+                    return token = ts.SyntaxKind.GreaterThanEqualsToken;
                 }
             }
             return token;
         }
-
-        function reScanSlashToken(): SyntaxKind {
-            if (token === SyntaxKind.SlashToken || token === SyntaxKind.SlashEqualsToken) {
+        function reScanSlashToken(): ts.SyntaxKind {
+            if (token === ts.SyntaxKind.SlashToken || token === ts.SyntaxKind.SlashEqualsToken) {
                 let p = tokenPos + 1;
                 let inEscape = false;
                 let inCharacterClass = false;
@@ -1965,119 +1805,105 @@ namespace ts {
                     // If we reach the end of a file, or hit a newline, then this is an unterminated
                     // regex.  Report error and return what we have so far.
                     if (p >= end) {
-                        tokenFlags |= TokenFlags.Unterminated;
-                        error(Diagnostics.Unterminated_regular_expression_literal);
+                        tokenFlags |= ts.TokenFlags.Unterminated;
+                        error(ts.Diagnostics.Unterminated_regular_expression_literal);
                         break;
                     }
-
                     const ch = text.charCodeAt(p);
                     if (isLineBreak(ch)) {
-                        tokenFlags |= TokenFlags.Unterminated;
-                        error(Diagnostics.Unterminated_regular_expression_literal);
+                        tokenFlags |= ts.TokenFlags.Unterminated;
+                        error(ts.Diagnostics.Unterminated_regular_expression_literal);
                         break;
                     }
-
                     if (inEscape) {
                         // Parsing an escape character;
                         // reset the flag and just advance to the next char.
                         inEscape = false;
                     }
-                    else if (ch === CharacterCodes.slash && !inCharacterClass) {
+                    else if (ch === ts.CharacterCodes.slash && !inCharacterClass) {
                         // A slash within a character class is permissible,
                         // but in general it signals the end of the regexp literal.
                         p++;
                         break;
                     }
-                    else if (ch === CharacterCodes.openBracket) {
+                    else if (ch === ts.CharacterCodes.openBracket) {
                         inCharacterClass = true;
                     }
-                    else if (ch === CharacterCodes.backslash) {
+                    else if (ch === ts.CharacterCodes.backslash) {
                         inEscape = true;
                     }
-                    else if (ch === CharacterCodes.closeBracket) {
+                    else if (ch === ts.CharacterCodes.closeBracket) {
                         inCharacterClass = false;
                     }
                     p++;
                 }
-
                 while (p < end && isIdentifierPart(text.charCodeAt(p), languageVersion)) {
                     p++;
                 }
                 pos = p;
                 tokenValue = text.substring(tokenPos, pos);
-                token = SyntaxKind.RegularExpressionLiteral;
+                token = ts.SyntaxKind.RegularExpressionLiteral;
             }
             return token;
         }
-
         /**
          * Unconditionally back up and scan a template expression portion.
          */
-        function reScanTemplateToken(): SyntaxKind {
-            Debug.assert(token === SyntaxKind.CloseBraceToken, "'reScanTemplateToken' should only be called on a '}'");
+        function reScanTemplateToken(): ts.SyntaxKind {
+            ts.Debug.assert(token === ts.SyntaxKind.CloseBraceToken, "'reScanTemplateToken' should only be called on a '}'");
             pos = tokenPos;
             return token = scanTemplateAndSetTokenValue();
         }
-
-        function reScanJsxToken(): JsxTokenSyntaxKind {
+        function reScanJsxToken(): ts.JsxTokenSyntaxKind {
             pos = tokenPos = startPos;
             return token = scanJsxToken();
         }
-
-        function reScanLessThanToken(): SyntaxKind {
-            if (token === SyntaxKind.LessThanLessThanToken) {
+        function reScanLessThanToken(): ts.SyntaxKind {
+            if (token === ts.SyntaxKind.LessThanLessThanToken) {
                 pos = tokenPos + 1;
-                return token = SyntaxKind.LessThanToken;
+                return token = ts.SyntaxKind.LessThanToken;
             }
             return token;
         }
-
-        function reScanQuestionToken(): SyntaxKind {
-            Debug.assert(token === SyntaxKind.QuestionQuestionToken, "'reScanQuestionToken' should only be called on a '??'");
+        function reScanQuestionToken(): ts.SyntaxKind {
+            ts.Debug.assert(token === ts.SyntaxKind.QuestionQuestionToken, "'reScanQuestionToken' should only be called on a '??'");
             pos = tokenPos + 1;
-            return token = SyntaxKind.QuestionToken;
+            return token = ts.SyntaxKind.QuestionToken;
         }
-
-        function scanJsxToken(): JsxTokenSyntaxKind {
+        function scanJsxToken(): ts.JsxTokenSyntaxKind {
             startPos = tokenPos = pos;
-
             if (pos >= end) {
-                return token = SyntaxKind.EndOfFileToken;
+                return token = ts.SyntaxKind.EndOfFileToken;
             }
-
             let char = text.charCodeAt(pos);
-            if (char === CharacterCodes.lessThan) {
-                if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+            if (char === ts.CharacterCodes.lessThan) {
+                if (text.charCodeAt(pos + 1) === ts.CharacterCodes.slash) {
                     pos += 2;
-                    return token = SyntaxKind.LessThanSlashToken;
+                    return token = ts.SyntaxKind.LessThanSlashToken;
                 }
                 pos++;
-                return token = SyntaxKind.LessThanToken;
+                return token = ts.SyntaxKind.LessThanToken;
             }
-
-            if (char === CharacterCodes.openBrace) {
+            if (char === ts.CharacterCodes.openBrace) {
                 pos++;
-                return token = SyntaxKind.OpenBraceToken;
+                return token = ts.SyntaxKind.OpenBraceToken;
             }
-
             // First non-whitespace character on this line.
             let firstNonWhitespace = 0;
             // These initial values are special because the first line is:
             // firstNonWhitespace = 0 to indicate that we want leading whitespace,
-
             while (pos < end) {
                 char = text.charCodeAt(pos);
-                if (char === CharacterCodes.openBrace) {
+                if (char === ts.CharacterCodes.openBrace) {
                     break;
                 }
-                if (char === CharacterCodes.lessThan) {
+                if (char === ts.CharacterCodes.lessThan) {
                     if (isConflictMarkerTrivia(text, pos)) {
                         pos = scanConflictMarkerTrivia(text, pos, error);
-                        return token = SyntaxKind.ConflictMarkerTrivia;
+                        return token = ts.SyntaxKind.ConflictMarkerTrivia;
                     }
                     break;
                 }
-
                 // FirstNonWhitespace is 0, then we only see whitespaces so far. If we see a linebreak, we want to ignore that whitespaces.
                 // i.e (- : whitespace)
                 //      <div>----
@@ -2092,21 +1918,19 @@ namespace ts {
                 }
                 pos++;
             }
-
             tokenValue = text.substring(startPos, pos);
-            return firstNonWhitespace === -1 ? SyntaxKind.JsxTextAllWhiteSpaces : SyntaxKind.JsxText;
+            return firstNonWhitespace === -1 ? ts.SyntaxKind.JsxTextAllWhiteSpaces : ts.SyntaxKind.JsxText;
         }
-
         // Scans a JSX identifier; these differ from normal identifiers in that
         // they allow dashes
-        function scanJsxIdentifier(): SyntaxKind {
+        function scanJsxIdentifier(): ts.SyntaxKind {
             if (tokenIsIdentifierOrKeyword(token)) {
                 // An identifier or keyword has already been parsed - check for a `-` and then append it and everything after it to the token
                 // Do note that this means that `scanJsxIdentifier` effectively _mutates_ the visible token without advancing to a new token
                 // Any caller should be expecting this behavior and should only read the pos or token value after calling it.
                 while (pos < end) {
                     const ch = text.charCodeAt(pos);
-                    if (ch === CharacterCodes.minus) {
+                    if (ch === ts.CharacterCodes.minus) {
                         tokenValue += "-";
                         pos++;
                         continue;
@@ -2120,107 +1944,100 @@ namespace ts {
             }
             return token;
         }
-
-        function scanJsxAttributeValue(): SyntaxKind {
+        function scanJsxAttributeValue(): ts.SyntaxKind {
             startPos = pos;
-
             switch (text.charCodeAt(pos)) {
-                case CharacterCodes.doubleQuote:
-                case CharacterCodes.singleQuote:
+                case ts.CharacterCodes.doubleQuote:
+                case ts.CharacterCodes.singleQuote:
                     tokenValue = scanString(/*jsxAttributeString*/ true);
-                    return token = SyntaxKind.StringLiteral;
+                    return token = ts.SyntaxKind.StringLiteral;
                 default:
                     // If this scans anything other than `{`, it's a parse error.
                     return scan();
             }
         }
-
-        function reScanJsxAttributeValue(): SyntaxKind {
+        function reScanJsxAttributeValue(): ts.SyntaxKind {
             pos = tokenPos = startPos;
             return scanJsxAttributeValue();
         }
-
-        function scanJsDocToken(): JSDocSyntaxKind {
+        function scanJsDocToken(): ts.JSDocSyntaxKind {
             startPos = tokenPos = pos;
-            tokenFlags = TokenFlags.None;
+            tokenFlags = ts.TokenFlags.None;
             if (pos >= end) {
-                return token = SyntaxKind.EndOfFileToken;
+                return token = ts.SyntaxKind.EndOfFileToken;
             }
-
             const ch = codePointAt(text, pos);
             pos += charSize(ch);
             switch (ch) {
-                case CharacterCodes.tab:
-                case CharacterCodes.verticalTab:
-                case CharacterCodes.formFeed:
-                case CharacterCodes.space:
+                case ts.CharacterCodes.tab:
+                case ts.CharacterCodes.verticalTab:
+                case ts.CharacterCodes.formFeed:
+                case ts.CharacterCodes.space:
                     while (pos < end && isWhiteSpaceSingleLine(text.charCodeAt(pos))) {
                         pos++;
                     }
-                    return token = SyntaxKind.WhitespaceTrivia;
-                case CharacterCodes.at:
-                    return token = SyntaxKind.AtToken;
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.carriageReturn:
-                    tokenFlags |= TokenFlags.PrecedingLineBreak;
-                    return token = SyntaxKind.NewLineTrivia;
-                case CharacterCodes.asterisk:
-                    return token = SyntaxKind.AsteriskToken;
-                case CharacterCodes.openBrace:
-                    return token = SyntaxKind.OpenBraceToken;
-                case CharacterCodes.closeBrace:
-                    return token = SyntaxKind.CloseBraceToken;
-                case CharacterCodes.openBracket:
-                    return token = SyntaxKind.OpenBracketToken;
-                case CharacterCodes.closeBracket:
-                    return token = SyntaxKind.CloseBracketToken;
-                case CharacterCodes.lessThan:
-                    return token = SyntaxKind.LessThanToken;
-                case CharacterCodes.greaterThan:
-                    return token = SyntaxKind.GreaterThanToken;
-                case CharacterCodes.equals:
-                    return token = SyntaxKind.EqualsToken;
-                case CharacterCodes.comma:
-                    return token = SyntaxKind.CommaToken;
-                case CharacterCodes.dot:
-                    return token = SyntaxKind.DotToken;
-                case CharacterCodes.backtick:
-                    return token = SyntaxKind.BacktickToken;
-                case CharacterCodes.backslash:
+                    return token = ts.SyntaxKind.WhitespaceTrivia;
+                case ts.CharacterCodes.at:
+                    return token = ts.SyntaxKind.AtToken;
+                case ts.CharacterCodes.lineFeed:
+                case ts.CharacterCodes.carriageReturn:
+                    tokenFlags |= ts.TokenFlags.PrecedingLineBreak;
+                    return token = ts.SyntaxKind.NewLineTrivia;
+                case ts.CharacterCodes.asterisk:
+                    return token = ts.SyntaxKind.AsteriskToken;
+                case ts.CharacterCodes.openBrace:
+                    return token = ts.SyntaxKind.OpenBraceToken;
+                case ts.CharacterCodes.closeBrace:
+                    return token = ts.SyntaxKind.CloseBraceToken;
+                case ts.CharacterCodes.openBracket:
+                    return token = ts.SyntaxKind.OpenBracketToken;
+                case ts.CharacterCodes.closeBracket:
+                    return token = ts.SyntaxKind.CloseBracketToken;
+                case ts.CharacterCodes.lessThan:
+                    return token = ts.SyntaxKind.LessThanToken;
+                case ts.CharacterCodes.greaterThan:
+                    return token = ts.SyntaxKind.GreaterThanToken;
+                case ts.CharacterCodes.equals:
+                    return token = ts.SyntaxKind.EqualsToken;
+                case ts.CharacterCodes.comma:
+                    return token = ts.SyntaxKind.CommaToken;
+                case ts.CharacterCodes.dot:
+                    return token = ts.SyntaxKind.DotToken;
+                case ts.CharacterCodes.backtick:
+                    return token = ts.SyntaxKind.BacktickToken;
+                case ts.CharacterCodes.backslash:
                     pos--;
                     const extendedCookedChar = peekExtendedUnicodeEscape();
                     if (extendedCookedChar >= 0 && isIdentifierStart(extendedCookedChar, languageVersion)) {
                         pos += 3;
-                        tokenFlags |= TokenFlags.ExtendedUnicodeEscape;
+                        tokenFlags |= ts.TokenFlags.ExtendedUnicodeEscape;
                         tokenValue = scanExtendedUnicodeEscape() + scanIdentifierParts();
                         return token = getIdentifierToken();
                     }
-
                     const cookedChar = peekUnicodeEscape();
                     if (cookedChar >= 0 && isIdentifierStart(cookedChar, languageVersion)) {
                         pos += 6;
-                        tokenFlags |= TokenFlags.UnicodeEscape;
+                        tokenFlags |= ts.TokenFlags.UnicodeEscape;
                         tokenValue = String.fromCharCode(cookedChar) + scanIdentifierParts();
                         return token = getIdentifierToken();
                     }
                     pos++;
-                    return token = SyntaxKind.Unknown;
+                    return token = ts.SyntaxKind.Unknown;
             }
-
             if (isIdentifierStart(ch, languageVersion)) {
                 let char = ch;
-                while (pos < end && isIdentifierPart(char = codePointAt(text, pos), languageVersion) || text.charCodeAt(pos) === CharacterCodes.minus) pos += charSize(char);
+                while (pos < end && isIdentifierPart(char = codePointAt(text, pos), languageVersion) || text.charCodeAt(pos) === ts.CharacterCodes.minus)
+                    pos += charSize(char);
                 tokenValue = text.substring(tokenPos, pos);
-                if (char === CharacterCodes.backslash) {
+                if (char === ts.CharacterCodes.backslash) {
                     tokenValue += scanIdentifierParts();
                 }
                 return token = getIdentifierToken();
             }
             else {
-                return token = SyntaxKind.Unknown;
+                return token = ts.SyntaxKind.Unknown;
             }
         }
-
         function speculationHelper<T>(callback: () => T, isLookahead: boolean): T {
             const savePos = pos;
             const saveStartPos = startPos;
@@ -2229,7 +2046,6 @@ namespace ts {
             const saveTokenValue = tokenValue;
             const saveTokenFlags = tokenFlags;
             const result = callback();
-
             // If our callback returned something 'falsy' or we're just looking ahead,
             // then unconditionally restore us to where we were.
             if (!result || isLookahead) {
@@ -2242,7 +2058,6 @@ namespace ts {
             }
             return result;
         }
-
         function scanRange<T>(start: number, length: number, callback: () => T): T {
             const saveEnd = end;
             const savePos = pos;
@@ -2251,10 +2066,8 @@ namespace ts {
             const saveToken = token;
             const saveTokenValue = tokenValue;
             const saveTokenFlags = tokenFlags;
-
             setText(text, start, length);
             const result = callback();
-
             end = saveEnd;
             pos = savePos;
             startPos = saveStartPos;
@@ -2262,55 +2075,44 @@ namespace ts {
             token = saveToken;
             tokenValue = saveTokenValue;
             tokenFlags = saveTokenFlags;
-
             return result;
         }
-
         function lookAhead<T>(callback: () => T): T {
             return speculationHelper(callback, /*isLookahead*/ true);
         }
-
         function tryScan<T>(callback: () => T): T {
             return speculationHelper(callback, /*isLookahead*/ false);
         }
-
         function getText(): string {
             return text;
         }
-
         function setText(newText: string | undefined, start: number | undefined, length: number | undefined) {
             text = newText || "";
             end = length === undefined ? text.length : start! + length;
             setTextPos(start || 0);
         }
-
         function setOnError(errorCallback: ErrorCallback | undefined) {
             onError = errorCallback;
         }
-
-        function setScriptTarget(scriptTarget: ScriptTarget) {
+        function setScriptTarget(scriptTarget: ts.ScriptTarget) {
             languageVersion = scriptTarget;
         }
-
-        function setLanguageVariant(variant: LanguageVariant) {
+        function setLanguageVariant(variant: ts.LanguageVariant) {
             languageVariant = variant;
         }
-
         function setTextPos(textPos: number) {
-            Debug.assert(textPos >= 0);
+            ts.Debug.assert(textPos >= 0);
             pos = textPos;
             startPos = textPos;
             tokenPos = textPos;
-            token = SyntaxKind.Unknown;
+            token = ts.SyntaxKind.Unknown;
             tokenValue = undefined!;
-            tokenFlags = TokenFlags.None;
+            tokenFlags = ts.TokenFlags.None;
         }
-
         function setInJSDocType(inType: boolean) {
             inJSDocType += inType ? 1 : -1;
         }
     }
-
     /* @internal */
     const codePointAt: (s: string, i: number) => number = (String.prototype as any).codePointAt ? (s, i) => (s as any).codePointAt(i) : function codePointAt(str, i): number {
         // from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/codePointAt
@@ -2331,7 +2133,6 @@ namespace ts {
         }
         return first;
     };
-
     /* @internal */
     function charSize(ch: number) {
         if (ch >= 0x10000) {

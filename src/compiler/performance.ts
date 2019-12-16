@@ -1,52 +1,46 @@
 /*@internal*/
 /** Performance measurements for the compiler. */
 namespace ts.performance {
-    declare const onProfilerEvent: { (markName: string): void; profiler: boolean; };
-
+    declare const onProfilerEvent: {
+        (markName: string): void;
+        profiler: boolean;
+    };
     // NOTE: cannot use ts.noop as core.ts loads after this
-    const profilerEvent: (markName: string) => void = typeof onProfilerEvent === "function" && onProfilerEvent.profiler === true ? onProfilerEvent : () => { /*empty*/ };
-
+    const profilerEvent: (markName: string) => void = typeof onProfilerEvent === "function" && onProfilerEvent.profiler === true ? onProfilerEvent : () => { };
     let enabled = false;
     let profilerStart = 0;
-    let counts: Map<number>;
-    let marks: Map<number>;
-    let measures: Map<number>;
-
+    let counts: ts.Map<number>;
+    let marks: ts.Map<number>;
+    let measures: ts.Map<number>;
     export interface Timer {
         enter(): void;
         exit(): void;
     }
-
     export function createTimerIf(condition: boolean, measureName: string, startMarkName: string, endMarkName: string) {
         return condition ? createTimer(measureName, startMarkName, endMarkName) : nullTimer;
     }
-
     export function createTimer(measureName: string, startMarkName: string, endMarkName: string): Timer {
         let enterCount = 0;
         return {
             enter,
             exit
         };
-
         function enter() {
             if (++enterCount === 1) {
                 mark(startMarkName);
             }
         }
-
         function exit() {
             if (--enterCount === 0) {
                 mark(endMarkName);
                 measure(measureName, startMarkName, endMarkName);
             }
             else if (enterCount < 0) {
-                Debug.fail("enter/exit count does not match.");
+                ts.Debug.fail("enter/exit count does not match.");
             }
         }
     }
-
-    export const nullTimer: Timer = { enter: noop, exit: noop };
-
+    export const nullTimer: Timer = { enter: ts.noop, exit: ts.noop };
     /**
      * Marks a performance event.
      *
@@ -54,12 +48,11 @@ namespace ts.performance {
      */
     export function mark(markName: string) {
         if (enabled) {
-            marks.set(markName, timestamp());
+            marks.set(markName, ts.timestamp());
             counts.set(markName, (counts.get(markName) || 0) + 1);
             profilerEvent(markName);
         }
     }
-
     /**
      * Adds a performance measurement with the specified name.
      *
@@ -71,12 +64,11 @@ namespace ts.performance {
      */
     export function measure(measureName: string, startMarkName?: string, endMarkName?: string) {
         if (enabled) {
-            const end = endMarkName && marks.get(endMarkName) || timestamp();
+            const end = endMarkName && marks.get(endMarkName) || ts.timestamp();
             const start = startMarkName && marks.get(startMarkName) || profilerStart;
             measures.set(measureName, (measures.get(measureName) || 0) + (end - start));
         }
     }
-
     /**
      * Gets the number of times a marker was encountered.
      *
@@ -85,7 +77,6 @@ namespace ts.performance {
     export function getCount(markName: string) {
         return counts && counts.get(markName) || 0;
     }
-
     /**
      * Gets the total duration of all measurements with the supplied name.
      *
@@ -94,7 +85,6 @@ namespace ts.performance {
     export function getDuration(measureName: string) {
         return measures && measures.get(measureName) || 0;
     }
-
     /**
      * Iterate over each measure, performing some action
      *
@@ -105,16 +95,14 @@ namespace ts.performance {
             cb(key, measure);
         });
     }
-
     /** Enables (and resets) performance measurements for the compiler. */
     export function enable() {
-        counts = createMap<number>();
-        marks = createMap<number>();
-        measures = createMap<number>();
+        counts = ts.createMap<number>();
+        marks = ts.createMap<number>();
+        measures = ts.createMap<number>();
         enabled = true;
-        profilerStart = timestamp();
+        profilerStart = ts.timestamp();
     }
-
     /** Disables performance measurements for the compiler. */
     export function disable() {
         enabled = false;

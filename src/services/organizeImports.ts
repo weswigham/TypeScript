@@ -1,66 +1,45 @@
 /* @internal */
 namespace ts.OrganizeImports {
-
     /**
      * Organize imports by:
      *   1) Removing unused imports
      *   2) Coalescing imports from the same module
      *   3) Sorting imports
      */
-    export function organizeImports(
-        sourceFile: SourceFile,
-        formatContext: formatting.FormatContext,
-        host: LanguageServiceHost,
-        program: Program,
-        preferences: UserPreferences,
-    ) {
-
-        const changeTracker = textChanges.ChangeTracker.fromContext({ host, formatContext, preferences });
-
-        const coalesceAndOrganizeImports = (importGroup: readonly ImportDeclaration[]) => coalesceImports(removeUnusedImports(importGroup, sourceFile, program));
-
+    export function organizeImports(sourceFile: ts.SourceFile, formatContext: ts.formatting.FormatContext, host: ts.LanguageServiceHost, program: ts.Program, preferences: ts.UserPreferences) {
+        const changeTracker = ts.textChanges.ChangeTracker.fromContext({ host, formatContext, preferences });
+        const coalesceAndOrganizeImports = (importGroup: readonly ts.ImportDeclaration[]) => coalesceImports(removeUnusedImports(importGroup, sourceFile, program));
         // All of the old ImportDeclarations in the file, in syntactic order.
-        const topLevelImportDecls = sourceFile.statements.filter(isImportDeclaration);
+        const topLevelImportDecls = sourceFile.statements.filter(ts.isImportDeclaration);
         organizeImportsWorker(topLevelImportDecls, coalesceAndOrganizeImports);
-
         // All of the old ExportDeclarations in the file, in syntactic order.
-        const topLevelExportDecls = sourceFile.statements.filter(isExportDeclaration);
+        const topLevelExportDecls = sourceFile.statements.filter(ts.isExportDeclaration);
         organizeImportsWorker(topLevelExportDecls, coalesceExports);
-
-        for (const ambientModule of sourceFile.statements.filter(isAmbientModule)) {
-            if (!ambientModule.body) { continue; }
-
-            const ambientModuleImportDecls = ambientModule.body.statements.filter(isImportDeclaration);
+        for (const ambientModule of sourceFile.statements.filter(ts.isAmbientModule)) {
+            if (!ambientModule.body) {
+                continue;
+            }
+            const ambientModuleImportDecls = ambientModule.body.statements.filter(ts.isImportDeclaration);
             organizeImportsWorker(ambientModuleImportDecls, coalesceAndOrganizeImports);
-
-            const ambientModuleExportDecls = ambientModule.body.statements.filter(isExportDeclaration);
+            const ambientModuleExportDecls = ambientModule.body.statements.filter(ts.isExportDeclaration);
             organizeImportsWorker(ambientModuleExportDecls, coalesceExports);
         }
-
         return changeTracker.getChanges();
-
-        function organizeImportsWorker<T extends ImportDeclaration | ExportDeclaration>(
-            oldImportDecls: readonly T[],
-            coalesce: (group: readonly T[]) => readonly T[]) {
-
-            if (length(oldImportDecls) === 0) {
+        function organizeImportsWorker<T extends ts.ImportDeclaration | ts.ExportDeclaration>(oldImportDecls: readonly T[], coalesce: (group: readonly T[]) => readonly T[]) {
+            if (ts.length(oldImportDecls) === 0) {
                 return;
             }
-
             // Special case: normally, we'd expect leading and trailing trivia to follow each import
             // around as it's sorted.  However, we do not want this to happen for leading trivia
             // on the first import because it is probably the header comment for the file.
             // Consider: we could do a more careful check that this trivia is actually a header,
             // but the consequences of being wrong are very minor.
-            suppressLeadingTrivia(oldImportDecls[0]);
-
-            const oldImportGroups = group(oldImportDecls, importDecl => getExternalModuleName(importDecl.moduleSpecifier!)!);
-            const sortedImportGroups = stableSort(oldImportGroups, (group1, group2) => compareModuleSpecifiers(group1[0].moduleSpecifier!, group2[0].moduleSpecifier!));
-            const newImportDecls = flatMap(sortedImportGroups, importGroup =>
-                getExternalModuleName(importGroup[0].moduleSpecifier!)
-                    ? coalesce(importGroup)
-                    : importGroup);
-
+            ts.suppressLeadingTrivia(oldImportDecls[0]);
+            const oldImportGroups = ts.group(oldImportDecls, importDecl => getExternalModuleName(importDecl.moduleSpecifier!)!);
+            const sortedImportGroups = ts.stableSort(oldImportGroups, (group1, group2) => compareModuleSpecifiers(group1[0].moduleSpecifier!, group2[0].moduleSpecifier!));
+            const newImportDecls = ts.flatMap(sortedImportGroups, importGroup => getExternalModuleName(importGroup[0].moduleSpecifier!)
+                ? coalesce(importGroup)
+                : importGroup);
             // Delete or replace the first import.
             if (newImportDecls.length === 0) {
                 changeTracker.delete(sourceFile, oldImportDecls[0]);
@@ -68,44 +47,36 @@ namespace ts.OrganizeImports {
             else {
                 // Note: Delete the surrounding trivia because it will have been retained in newImportDecls.
                 changeTracker.replaceNodeWithNodes(sourceFile, oldImportDecls[0], newImportDecls, {
-                    leadingTriviaOption: textChanges.LeadingTriviaOption.Exclude, // Leave header comment in place
-                    trailingTriviaOption: textChanges.TrailingTriviaOption.Include,
-                    suffix: getNewLineOrDefaultFromHost(host, formatContext.options),
+                    leadingTriviaOption: ts.textChanges.LeadingTriviaOption.Exclude,
+                    trailingTriviaOption: ts.textChanges.TrailingTriviaOption.Include,
+                    suffix: ts.getNewLineOrDefaultFromHost(host, formatContext.options),
                 });
             }
-
             // Delete any subsequent imports.
             for (let i = 1; i < oldImportDecls.length; i++) {
                 changeTracker.delete(sourceFile, oldImportDecls[i]);
             }
         }
     }
-
-    function removeUnusedImports(oldImports: readonly ImportDeclaration[], sourceFile: SourceFile, program: Program) {
+    function removeUnusedImports(oldImports: readonly ts.ImportDeclaration[], sourceFile: ts.SourceFile, program: ts.Program) {
         const typeChecker = program.getTypeChecker();
         const jsxNamespace = typeChecker.getJsxNamespace(sourceFile);
-        const jsxElementsPresent = !!(sourceFile.transformFlags & TransformFlags.ContainsJsx);
-
-        const usedImports: ImportDeclaration[] = [];
-
+        const jsxElementsPresent = !!(sourceFile.transformFlags & ts.TransformFlags.ContainsJsx);
+        const usedImports: ts.ImportDeclaration[] = [];
         for (const importDecl of oldImports) {
             const { importClause, moduleSpecifier } = importDecl;
-
             if (!importClause) {
                 // Imports without import clauses are assumed to be included for their side effects and are not removed.
                 usedImports.push(importDecl);
                 continue;
             }
-
             let { name, namedBindings } = importClause;
-
             // Default import
             if (name && !isDeclarationUsed(name)) {
                 name = undefined;
             }
-
             if (namedBindings) {
-                if (isNamespaceImport(namedBindings)) {
+                if (ts.isNamespaceImport(namedBindings)) {
                     // Namespace import
                     if (!isDeclarationUsed(namedBindings.name)) {
                         namedBindings = undefined;
@@ -116,12 +87,11 @@ namespace ts.OrganizeImports {
                     const newElements = namedBindings.elements.filter(e => isDeclarationUsed(e.name));
                     if (newElements.length < namedBindings.elements.length) {
                         namedBindings = newElements.length
-                            ? updateNamedImports(namedBindings, newElements)
+                            ? ts.updateNamedImports(namedBindings, newElements)
                             : undefined;
                     }
                 }
             }
-
             if (name || namedBindings) {
                 usedImports.push(updateImportDeclarationAndClause(importDecl, name, namedBindings));
             }
@@ -129,11 +99,8 @@ namespace ts.OrganizeImports {
             else if (hasModuleDeclarationMatchingSpecifier(sourceFile, moduleSpecifier)) {
                 // If we’re in a declaration file, it’s safe to remove the import clause from it
                 if (sourceFile.isDeclarationFile) {
-                    usedImports.push(createImportDeclaration(
-                        importDecl.decorators,
-                        importDecl.modifiers,
-                        /*importClause*/ undefined,
-                        moduleSpecifier));
+                    usedImports.push(ts.createImportDeclaration(importDecl.decorators, importDecl.modifiers, 
+                    /*importClause*/ undefined, moduleSpecifier));
                 }
                 // If we’re not in a declaration file, we can’t remove the import clause even though
                 // the imported symbols are unused, because removing them makes it look like the import
@@ -143,102 +110,75 @@ namespace ts.OrganizeImports {
                 }
             }
         }
-
         return usedImports;
-
-        function isDeclarationUsed(identifier: Identifier) {
+        function isDeclarationUsed(identifier: ts.Identifier) {
             // The JSX factory symbol is always used if JSX elements are present - even if they are not allowed.
-            return jsxElementsPresent && (identifier.text === jsxNamespace) || FindAllReferences.Core.isSymbolReferencedInFile(identifier, typeChecker, sourceFile);
+            return jsxElementsPresent && (identifier.text === jsxNamespace) || ts.FindAllReferences.Core.isSymbolReferencedInFile(identifier, typeChecker, sourceFile);
         }
     }
-
-    function hasModuleDeclarationMatchingSpecifier(sourceFile: SourceFile, moduleSpecifier: Expression) {
-        const moduleSpecifierText = isStringLiteral(moduleSpecifier) && moduleSpecifier.text;
-        return isString(moduleSpecifierText) && some(sourceFile.moduleAugmentations, moduleName =>
-            isStringLiteral(moduleName)
+    function hasModuleDeclarationMatchingSpecifier(sourceFile: ts.SourceFile, moduleSpecifier: ts.Expression) {
+        const moduleSpecifierText = ts.isStringLiteral(moduleSpecifier) && moduleSpecifier.text;
+        return ts.isString(moduleSpecifierText) && ts.some(sourceFile.moduleAugmentations, moduleName => ts.isStringLiteral(moduleName)
             && moduleName.text === moduleSpecifierText);
     }
-
-    function getExternalModuleName(specifier: Expression) {
-        return specifier !== undefined && isStringLiteralLike(specifier)
+    function getExternalModuleName(specifier: ts.Expression) {
+        return specifier !== undefined && ts.isStringLiteralLike(specifier)
             ? specifier.text
             : undefined;
     }
-
     // Internal for testing
     /**
      * @param importGroup a list of ImportDeclarations, all with the same module name.
      */
-    export function coalesceImports(importGroup: readonly ImportDeclaration[]) {
+    export function coalesceImports(importGroup: readonly ts.ImportDeclaration[]) {
         if (importGroup.length === 0) {
             return importGroup;
         }
-
         const { importWithoutClause, defaultImports, namespaceImports, namedImports } = getCategorizedImports(importGroup);
-
-        const coalescedImports: ImportDeclaration[] = [];
-
+        const coalescedImports: ts.ImportDeclaration[] = [];
         if (importWithoutClause) {
             coalescedImports.push(importWithoutClause);
         }
-
         // Normally, we don't combine default and namespace imports, but it would be silly to
         // produce two import declarations in this special case.
         if (defaultImports.length === 1 && namespaceImports.length === 1 && namedImports.length === 0) {
             // Add the namespace import to the existing default ImportDeclaration.
             const defaultImport = defaultImports[0];
-            coalescedImports.push(
-                updateImportDeclarationAndClause(defaultImport, defaultImport.importClause!.name, namespaceImports[0].importClause!.namedBindings)); // TODO: GH#18217
-
+            coalescedImports.push(updateImportDeclarationAndClause(defaultImport, defaultImport.importClause!.name, namespaceImports[0].importClause!.namedBindings)); // TODO: GH#18217
             return coalescedImports;
         }
-
-        const sortedNamespaceImports = stableSort(namespaceImports, (i1, i2) =>
-            compareIdentifiers((i1.importClause!.namedBindings as NamespaceImport).name, (i2.importClause!.namedBindings as NamespaceImport).name)); // TODO: GH#18217
-
+        const sortedNamespaceImports = ts.stableSort(namespaceImports, (i1, i2) => compareIdentifiers((i1.importClause!.namedBindings as ts.NamespaceImport).name, (i2.importClause!.namedBindings as ts.NamespaceImport).name)); // TODO: GH#18217
         for (const namespaceImport of sortedNamespaceImports) {
             // Drop the name, if any
-            coalescedImports.push(
-                updateImportDeclarationAndClause(namespaceImport, /*name*/ undefined, namespaceImport.importClause!.namedBindings)); // TODO: GH#18217
+            coalescedImports.push(updateImportDeclarationAndClause(namespaceImport, /*name*/ undefined, namespaceImport.importClause!.namedBindings)); // TODO: GH#18217
         }
-
         if (defaultImports.length === 0 && namedImports.length === 0) {
             return coalescedImports;
         }
-
-        let newDefaultImport: Identifier | undefined;
-        const newImportSpecifiers: ImportSpecifier[] = [];
+        let newDefaultImport: ts.Identifier | undefined;
+        const newImportSpecifiers: ts.ImportSpecifier[] = [];
         if (defaultImports.length === 1) {
             newDefaultImport = defaultImports[0].importClause!.name;
         }
         else {
             for (const defaultImport of defaultImports) {
-                newImportSpecifiers.push(
-                    createImportSpecifier(createIdentifier("default"), defaultImport.importClause!.name!)); // TODO: GH#18217
+                newImportSpecifiers.push(ts.createImportSpecifier(ts.createIdentifier("default"), (defaultImport.importClause!.name!))); // TODO: GH#18217
             }
         }
-
-        newImportSpecifiers.push(...flatMap(namedImports, i => (i.importClause!.namedBindings as NamedImports).elements)); // TODO: GH#18217
-
+        newImportSpecifiers.push(...ts.flatMap(namedImports, i => (i.importClause!.namedBindings as ts.NamedImports).elements)); // TODO: GH#18217
         const sortedImportSpecifiers = sortSpecifiers(newImportSpecifiers);
-
         const importDecl = defaultImports.length > 0
             ? defaultImports[0]
             : namedImports[0];
-
         const newNamedImports = sortedImportSpecifiers.length === 0
             ? newDefaultImport
                 ? undefined
-                : createNamedImports(emptyArray)
+                : ts.createNamedImports(ts.emptyArray)
             : namedImports.length === 0
-                ? createNamedImports(sortedImportSpecifiers)
-                : updateNamedImports(namedImports[0].importClause!.namedBindings as NamedImports, sortedImportSpecifiers); // TODO: GH#18217
-
-        coalescedImports.push(
-            updateImportDeclarationAndClause(importDecl, newDefaultImport, newNamedImports));
-
+                ? ts.createNamedImports(sortedImportSpecifiers)
+                : ts.updateNamedImports((namedImports[0].importClause!.namedBindings as ts.NamedImports), sortedImportSpecifiers); // TODO: GH#18217
+        coalescedImports.push(updateImportDeclarationAndClause(importDecl, newDefaultImport, newNamedImports));
         return coalescedImports;
-
         /*
          * Returns entire import declarations because they may already have been rewritten and
          * may lack parent pointers.  The desired parts can easily be recovered based on the
@@ -246,12 +186,11 @@ namespace ts.OrganizeImports {
          *
          * NB: There may be overlap between `defaultImports` and `namespaceImports`/`namedImports`.
          */
-        function getCategorizedImports(importGroup: readonly ImportDeclaration[]) {
-            let importWithoutClause: ImportDeclaration | undefined;
-            const defaultImports: ImportDeclaration[] = [];
-            const namespaceImports: ImportDeclaration[] = [];
-            const namedImports: ImportDeclaration[] = [];
-
+        function getCategorizedImports(importGroup: readonly ts.ImportDeclaration[]) {
+            let importWithoutClause: ts.ImportDeclaration | undefined;
+            const defaultImports: ts.ImportDeclaration[] = [];
+            const namespaceImports: ts.ImportDeclaration[] = [];
+            const namedImports: ts.ImportDeclaration[] = [];
             for (const importDeclaration of importGroup) {
                 if (importDeclaration.importClause === undefined) {
                     // Only the first such import is interesting - the others are redundant.
@@ -259,15 +198,12 @@ namespace ts.OrganizeImports {
                     importWithoutClause = importWithoutClause || importDeclaration;
                     continue;
                 }
-
                 const { name, namedBindings } = importDeclaration.importClause;
-
                 if (name) {
                     defaultImports.push(importDeclaration);
                 }
-
                 if (namedBindings) {
-                    if (isNamespaceImport(namedBindings)) {
+                    if (ts.isNamespaceImport(namedBindings)) {
                         namespaceImports.push(importDeclaration);
                     }
                     else {
@@ -275,7 +211,6 @@ namespace ts.OrganizeImports {
                     }
                 }
             }
-
             return {
                 importWithoutClause,
                 defaultImports,
@@ -284,53 +219,36 @@ namespace ts.OrganizeImports {
             };
         }
     }
-
     // Internal for testing
     /**
      * @param exportGroup a list of ExportDeclarations, all with the same module name.
      */
-    export function coalesceExports(exportGroup: readonly ExportDeclaration[]) {
+    export function coalesceExports(exportGroup: readonly ts.ExportDeclaration[]) {
         if (exportGroup.length === 0) {
             return exportGroup;
         }
-
         const { exportWithoutClause, namedExports } = getCategorizedExports(exportGroup);
-
-        const coalescedExports: ExportDeclaration[] = [];
-
+        const coalescedExports: ts.ExportDeclaration[] = [];
         if (exportWithoutClause) {
             coalescedExports.push(exportWithoutClause);
         }
-
         if (namedExports.length === 0) {
             return coalescedExports;
         }
-
-        const newExportSpecifiers: ExportSpecifier[] = [];
-        newExportSpecifiers.push(...flatMap(namedExports, i => (i.exportClause!).elements));
-
+        const newExportSpecifiers: ts.ExportSpecifier[] = [];
+        newExportSpecifiers.push(...ts.flatMap(namedExports, i => (i.exportClause!).elements));
         const sortedExportSpecifiers = sortSpecifiers(newExportSpecifiers);
-
         const exportDecl = namedExports[0];
-        coalescedExports.push(
-            updateExportDeclaration(
-                exportDecl,
-                exportDecl.decorators,
-                exportDecl.modifiers,
-                updateNamedExports(exportDecl.exportClause!, sortedExportSpecifiers),
-                exportDecl.moduleSpecifier));
-
+        coalescedExports.push(ts.updateExportDeclaration(exportDecl, exportDecl.decorators, exportDecl.modifiers, ts.updateNamedExports((exportDecl.exportClause!), sortedExportSpecifiers), exportDecl.moduleSpecifier));
         return coalescedExports;
-
         /*
          * Returns entire export declarations because they may already have been rewritten and
          * may lack parent pointers.  The desired parts can easily be recovered based on the
          * categorization.
          */
-        function getCategorizedExports(exportGroup: readonly ExportDeclaration[]) {
-            let exportWithoutClause: ExportDeclaration | undefined;
-            const namedExports: ExportDeclaration[] = [];
-
+        function getCategorizedExports(exportGroup: readonly ts.ExportDeclaration[]) {
+            let exportWithoutClause: ts.ExportDeclaration | undefined;
+            const namedExports: ts.ExportDeclaration[] = [];
             for (const exportDeclaration of exportGroup) {
                 if (exportDeclaration.exportClause === undefined) {
                     // Only the first such export is interesting - the others are redundant.
@@ -341,43 +259,29 @@ namespace ts.OrganizeImports {
                     namedExports.push(exportDeclaration);
                 }
             }
-
             return {
                 exportWithoutClause,
                 namedExports,
             };
         }
     }
-
-    function updateImportDeclarationAndClause(
-        importDeclaration: ImportDeclaration,
-        name: Identifier | undefined,
-        namedBindings: NamedImportBindings | undefined) {
-
-        return updateImportDeclaration(
-            importDeclaration,
-            importDeclaration.decorators,
-            importDeclaration.modifiers,
-            updateImportClause(importDeclaration.importClause!, name, namedBindings), // TODO: GH#18217
-            importDeclaration.moduleSpecifier);
+    function updateImportDeclarationAndClause(importDeclaration: ts.ImportDeclaration, name: ts.Identifier | undefined, namedBindings: ts.NamedImportBindings | undefined) {
+        return ts.updateImportDeclaration(importDeclaration, importDeclaration.decorators, importDeclaration.modifiers, ts.updateImportClause((importDeclaration.importClause!), name, namedBindings), // TODO: GH#18217
+        importDeclaration.moduleSpecifier);
     }
-
-    function sortSpecifiers<T extends ImportOrExportSpecifier>(specifiers: readonly T[]) {
-        return stableSort(specifiers, (s1, s2) =>
-            compareIdentifiers(s1.propertyName || s1.name, s2.propertyName || s2.name) ||
+    function sortSpecifiers<T extends ts.ImportOrExportSpecifier>(specifiers: readonly T[]) {
+        return ts.stableSort(specifiers, (s1, s2) => compareIdentifiers(s1.propertyName || s1.name, s2.propertyName || s2.name) ||
             compareIdentifiers(s1.name, s2.name));
     }
-
     /* internal */ // Exported for testing
-    export function compareModuleSpecifiers(m1: Expression, m2: Expression) {
+    export function compareModuleSpecifiers(m1: ts.Expression, m2: ts.Expression) {
         const name1 = getExternalModuleName(m1);
         const name2 = getExternalModuleName(m2);
-        return compareBooleans(name1 === undefined, name2 === undefined) ||
-            compareBooleans(isExternalModuleNameRelative(name1!), isExternalModuleNameRelative(name2!)) ||
-            compareStringsCaseInsensitive(name1!, name2!);
+        return ts.compareBooleans(name1 === undefined, name2 === undefined) ||
+            ts.compareBooleans(ts.isExternalModuleNameRelative((name1!)), ts.isExternalModuleNameRelative((name2!))) ||
+            ts.compareStringsCaseInsensitive((name1!), (name2!));
     }
-
-    function compareIdentifiers(s1: Identifier, s2: Identifier) {
-        return compareStringsCaseInsensitive(s1.text, s2.text);
+    function compareIdentifiers(s1: ts.Identifier, s2: ts.Identifier) {
+        return ts.compareStringsCaseInsensitive(s1.text, s2.text);
     }
 }

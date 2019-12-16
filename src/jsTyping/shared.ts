@@ -20,7 +20,6 @@ namespace ts.server {
     export const EventEndInstallTypes: EventEndInstallTypes = "event::endInstallTypes";
     /* @internal */
     export const EventInitializationFailed: EventInitializationFailed = "event::initializationFailed";
-
     /* @internal */
     export namespace Arguments {
         export const GlobalCacheLocation = "--globalTypingsCacheLocation";
@@ -39,20 +38,17 @@ namespace ts.server {
          */
         export const ValidateDefaultNpmLocation = "--validateDefaultNpmLocation";
     }
-
     /* @internal */
     export function hasArgument(argumentName: string) {
-        return sys.args.indexOf(argumentName) >= 0;
+        return ts.sys.args.indexOf(argumentName) >= 0;
     }
-
     /* @internal */
     export function findArgument(argumentName: string): string | undefined {
-        const index = sys.args.indexOf(argumentName);
-        return index >= 0 && index < sys.args.length - 1
-            ? sys.args[index + 1]
+        const index = ts.sys.args.indexOf(argumentName);
+        return index >= 0 && index < ts.sys.args.length - 1
+            ? ts.sys.args[index + 1]
             : undefined;
     }
-
     /* @internal */
     export function nowString() {
         // E.g. "12:34:56.789"

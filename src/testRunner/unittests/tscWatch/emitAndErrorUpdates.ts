@@ -1,45 +1,35 @@
 namespace ts.tscWatch {
     describe("unittests:: tsc-watch:: Emit times and Error updates in builder after program changes", () => {
-        const config: File = {
-            path: `${projectRoot}/tsconfig.json`,
+        const config: ts.tscWatch.File = {
+            path: `${ts.tscWatch.projectRoot}/tsconfig.json`,
             content: `{}`
         };
-        function getOutputFileStampAndError(host: WatchedSystem, watch: Watch, file: File) {
+        function getOutputFileStampAndError(host: ts.tscWatch.WatchedSystem, watch: ts.tscWatch.Watch, file: ts.tscWatch.File) {
             const builderProgram = watch.getBuilderProgram();
             const state = builderProgram.getState();
             return {
                 file,
                 fileStamp: host.getModifiedTime(file.path.replace(".ts", ".js")),
-                errors: builderProgram.getSemanticDiagnostics(watch().getSourceFileByPath(file.path as Path)),
+                errors: builderProgram.getSemanticDiagnostics(watch().getSourceFileByPath((file.path as ts.Path))),
                 errorsFromOldState: !!state.semanticDiagnosticsFromOldState && state.semanticDiagnosticsFromOldState.has(file.path),
                 dtsStamp: host.getModifiedTime(file.path.replace(".ts", ".d.ts"))
             };
         }
-
-        function getOutputFileStampsAndErrors(host: WatchedSystem, watch: Watch, directoryFiles: readonly File[]) {
+        function getOutputFileStampsAndErrors(host: ts.tscWatch.WatchedSystem, watch: ts.tscWatch.Watch, directoryFiles: readonly ts.tscWatch.File[]) {
             return directoryFiles.map(d => getOutputFileStampAndError(host, watch, d));
         }
-
-        function findStampAndErrors(stampsAndErrors: readonly ReturnType<typeof getOutputFileStampAndError>[], file: File) {
-            return find(stampsAndErrors, info => info.file === file)!;
+        function findStampAndErrors(stampsAndErrors: readonly ReturnType<typeof getOutputFileStampAndError>[], file: ts.tscWatch.File) {
+            return ts.find(stampsAndErrors, info => info.file === file)!;
         }
-
         interface VerifyOutputFileStampAndErrors {
-            file: File;
+            file: ts.tscWatch.File;
             jsEmitExpected: boolean;
             dtsEmitExpected: boolean;
             errorRefershExpected: boolean;
             beforeChangeFileStampsAndErrors: readonly ReturnType<typeof getOutputFileStampAndError>[];
             afterChangeFileStampsAndErrors: readonly ReturnType<typeof getOutputFileStampAndError>[];
         }
-        function verifyOutputFileStampsAndErrors({
-            file,
-            jsEmitExpected,
-            dtsEmitExpected,
-            errorRefershExpected,
-            beforeChangeFileStampsAndErrors,
-            afterChangeFileStampsAndErrors
-        }: VerifyOutputFileStampAndErrors) {
+        function verifyOutputFileStampsAndErrors({ file, jsEmitExpected, dtsEmitExpected, errorRefershExpected, beforeChangeFileStampsAndErrors, afterChangeFileStampsAndErrors }: VerifyOutputFileStampAndErrors) {
             const beforeChange = findStampAndErrors(beforeChangeFileStampsAndErrors, file);
             const afterChange = findStampAndErrors(afterChangeFileStampsAndErrors, file);
             if (jsEmitExpected) {
@@ -55,7 +45,7 @@ namespace ts.tscWatch {
                 assert.strictEqual(afterChange.dtsStamp, beforeChange.dtsStamp, `Did not expect new emit for file ${file.path}`);
             }
             if (errorRefershExpected) {
-                if (afterChange.errors !== emptyArray || beforeChange.errors !== emptyArray) {
+                if (afterChange.errors !== ts.emptyArray || beforeChange.errors !== ts.emptyArray) {
                     assert.notStrictEqual(afterChange.errors, beforeChange.errors, `Expected new errors for file ${file.path}`);
                 }
                 assert.isFalse(afterChange.errorsFromOldState, `Expected errors to be not copied from old state for file ${file.path}`);
@@ -65,36 +55,26 @@ namespace ts.tscWatch {
                 assert.isTrue(afterChange.errorsFromOldState, `Expected errors to be copied from old state for file ${file.path}`);
             }
         }
-
         interface VerifyEmitAndErrorUpdatesWorker extends VerifyEmitAndErrorUpdates {
-            configFile: File;
+            configFile: ts.tscWatch.File;
         }
-        function verifyEmitAndErrorUpdatesWorker({
-            fileWithChange,
-            filesWithNewEmit,
-            filesWithOnlyErrorRefresh,
-            filesNotTouched,
-            configFile,
-            change,
-            getInitialErrors,
-            getIncrementalErrors
-        }: VerifyEmitAndErrorUpdatesWorker) {
+        function verifyEmitAndErrorUpdatesWorker({ fileWithChange, filesWithNewEmit, filesWithOnlyErrorRefresh, filesNotTouched, configFile, change, getInitialErrors, getIncrementalErrors }: VerifyEmitAndErrorUpdatesWorker) {
             const nonLibFiles = [...filesWithNewEmit, ...filesWithOnlyErrorRefresh, ...filesNotTouched];
-            const files = [...nonLibFiles, configFile, libFile];
-            const compilerOptions = (JSON.parse(configFile.content).compilerOptions || {}) as CompilerOptions;
-            const host = createWatchedSystem(files, { currentDirectory: projectRoot });
-            const watch = createWatchOfConfigFile("tsconfig.json", host);
-            checkProgramActualFiles(watch(), [...nonLibFiles.map(f => f.path), libFile.path]);
-            checkOutputErrorsInitial(host, getInitialErrors(watch));
+            const files = [...nonLibFiles, configFile, ts.tscWatch.libFile];
+            const compilerOptions = ((JSON.parse(configFile.content).compilerOptions || {}) as ts.CompilerOptions);
+            const host = ts.tscWatch.createWatchedSystem(files, { currentDirectory: ts.tscWatch.projectRoot });
+            const watch = ts.tscWatch.createWatchOfConfigFile("tsconfig.json", host);
+            ts.tscWatch.checkProgramActualFiles(watch(), [...nonLibFiles.map(f => f.path), ts.tscWatch.libFile.path]);
+            ts.tscWatch.checkOutputErrorsInitial(host, getInitialErrors(watch));
             const beforeChange = getOutputFileStampsAndErrors(host, watch, nonLibFiles);
             change(host);
             host.runQueuedTimeoutCallbacks();
-            checkOutputErrorsIncremental(host, getIncrementalErrors(watch));
+            ts.tscWatch.checkOutputErrorsIncremental(host, getIncrementalErrors(watch));
             const afterChange = getOutputFileStampsAndErrors(host, watch, nonLibFiles);
             filesWithNewEmit.forEach(file => verifyOutputFileStampsAndErrors({
                 file,
                 jsEmitExpected: !compilerOptions.isolatedModules || fileWithChange === file,
-                dtsEmitExpected: getEmitDeclarations(compilerOptions),
+                dtsEmitExpected: ts.getEmitDeclarations(compilerOptions),
                 errorRefershExpected: true,
                 beforeChangeFileStampsAndErrors: beforeChange,
                 afterChangeFileStampsAndErrors: afterChange
@@ -102,7 +82,7 @@ namespace ts.tscWatch {
             filesWithOnlyErrorRefresh.forEach(file => verifyOutputFileStampsAndErrors({
                 file,
                 jsEmitExpected: false,
-                dtsEmitExpected: getEmitDeclarations(compilerOptions) && !file.path.endsWith(".d.ts"),
+                dtsEmitExpected: ts.getEmitDeclarations(compilerOptions) && !file.path.endsWith(".d.ts"),
                 errorRefershExpected: true,
                 beforeChangeFileStampsAndErrors: beforeChange,
                 afterChangeFileStampsAndErrors: afterChange
@@ -116,23 +96,21 @@ namespace ts.tscWatch {
                 afterChangeFileStampsAndErrors: afterChange
             }));
         }
-
-        function changeCompilerOptions(input: VerifyEmitAndErrorUpdates, additionalOptions: CompilerOptions): File {
+        function changeCompilerOptions(input: VerifyEmitAndErrorUpdates, additionalOptions: ts.CompilerOptions): ts.tscWatch.File {
             const configFile = input.configFile || config;
             const content = JSON.parse(configFile.content);
             content.compilerOptions = { ...content.compilerOptions, ...additionalOptions };
             return { path: configFile.path, content: JSON.stringify(content) };
         }
-
         interface VerifyEmitAndErrorUpdates {
-            change: (host: WatchedSystem) => void;
-            getInitialErrors: (watch: Watch) => readonly Diagnostic[] | readonly string[];
-            getIncrementalErrors: (watch: Watch) => readonly Diagnostic[] | readonly string[];
-            fileWithChange: File;
-            filesWithNewEmit: readonly File[];
-            filesWithOnlyErrorRefresh: readonly File[];
-            filesNotTouched: readonly File[];
-            configFile?: File;
+            change: (host: ts.tscWatch.WatchedSystem) => void;
+            getInitialErrors: (watch: ts.tscWatch.Watch) => readonly ts.Diagnostic[] | readonly string[];
+            getIncrementalErrors: (watch: ts.tscWatch.Watch) => readonly ts.Diagnostic[] | readonly string[];
+            fileWithChange: ts.tscWatch.File;
+            filesWithNewEmit: readonly ts.tscWatch.File[];
+            filesWithOnlyErrorRefresh: readonly ts.tscWatch.File[];
+            filesNotTouched: readonly ts.tscWatch.File[];
+            configFile?: ts.tscWatch.File;
         }
         function verifyEmitAndErrorUpdates(input: VerifyEmitAndErrorUpdates) {
             it("with default config", () => {
@@ -141,21 +119,18 @@ namespace ts.tscWatch {
                     configFile: input.configFile || config
                 });
             });
-
             it("with default config and --declaration", () => {
                 verifyEmitAndErrorUpdatesWorker({
                     ...input,
                     configFile: changeCompilerOptions(input, { declaration: true })
                 });
             });
-
             it("config with --isolatedModules", () => {
                 verifyEmitAndErrorUpdatesWorker({
                     ...input,
                     configFile: changeCompilerOptions(input, { isolatedModules: true })
                 });
             });
-
             it("config with --isolatedModules and --declaration", () => {
                 verifyEmitAndErrorUpdatesWorker({
                     ...input,
@@ -163,18 +138,16 @@ namespace ts.tscWatch {
                 });
             });
         }
-
         describe("deep import changes", () => {
-            const aFile: File = {
-                path: `${projectRoot}/a.ts`,
+            const aFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/a.ts`,
                 content: `import {B} from './b';
 declare var console: any;
 let b = new B();
 console.log(b.c.d);`
             };
-
-            function verifyDeepImportChange(bFile: File, cFile: File) {
-                const filesWithNewEmit: File[] = [];
+            function verifyDeepImportChange(bFile: ts.tscWatch.File, cFile: ts.tscWatch.File) {
+                const filesWithNewEmit: ts.tscWatch.File[] = [];
                 const filesWithOnlyErrorRefresh = [aFile];
                 addImportedModule(bFile);
                 addImportedModule(cFile);
@@ -182,15 +155,14 @@ console.log(b.c.d);`
                     fileWithChange: cFile,
                     filesWithNewEmit,
                     filesWithOnlyErrorRefresh,
-                    filesNotTouched: emptyArray,
+                    filesNotTouched: ts.emptyArray,
                     change: host => host.writeFile(cFile.path, cFile.content.replace("d", "d2")),
-                    getInitialErrors: () => emptyArray,
+                    getInitialErrors: () => ts.emptyArray,
                     getIncrementalErrors: watch => [
-                        getDiagnosticOfFileFromProgram(watch(), aFile.path, aFile.content.lastIndexOf("d"), 1, Diagnostics.Property_0_does_not_exist_on_type_1, "d", "C")
+                        ts.tscWatch.getDiagnosticOfFileFromProgram(watch(), aFile.path, aFile.content.lastIndexOf("d"), 1, ts.Diagnostics.Property_0_does_not_exist_on_type_1, "d", "C")
                     ]
                 });
-
-                function addImportedModule(file: File) {
+                function addImportedModule(file: ts.tscWatch.File) {
                     if (file.path.endsWith(".d.ts")) {
                         filesWithOnlyErrorRefresh.push(file);
                     }
@@ -199,18 +171,17 @@ console.log(b.c.d);`
                     }
                 }
             }
-
             describe("updates errors when deep import file changes", () => {
-                const bFile: File = {
-                    path: `${projectRoot}/b.ts`,
+                const bFile: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/b.ts`,
                     content: `import {C} from './c';
 export class B
 {
     c = new C();
 }`
                 };
-                const cFile: File = {
-                    path: `${projectRoot}/c.ts`,
+                const cFile: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/c.ts`,
                     content: `export class C
 {
     d = 1;
@@ -218,18 +189,17 @@ export class B
                 };
                 verifyDeepImportChange(bFile, cFile);
             });
-
             describe("updates errors when deep import through declaration file changes", () => {
-                const bFile: File = {
-                    path: `${projectRoot}/b.d.ts`,
+                const bFile: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/b.d.ts`,
                     content: `import {C} from './c';
 export class B
 {
     c: C;
 }`
                 };
-                const cFile: File = {
-                    path: `${projectRoot}/c.d.ts`,
+                const cFile: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/c.d.ts`,
                     content: `export class C
 {
     d: number;
@@ -238,10 +208,9 @@ export class B
                 verifyDeepImportChange(bFile, cFile);
             });
         });
-
         describe("updates errors in file not exporting a deep multilevel import that changes", () => {
-            const aFile: File = {
-                path: `${projectRoot}/a.ts`,
+            const aFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/a.ts`,
                 content: `export interface Point {
     name: string;
     c: Coords;
@@ -251,14 +220,14 @@ export interface Coords {
     y: number;
 }`
             };
-            const bFile: File = {
-                path: `${projectRoot}/b.ts`,
+            const bFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/b.ts`,
                 content: `import { Point } from "./a";
 export interface PointWrapper extends Point {
 }`
             };
-            const cFile: File = {
-                path: `${projectRoot}/c.ts`,
+            const cFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/c.ts`,
                 content: `import { PointWrapper } from "./b";
 export function getPoint(): PointWrapper {
     return {
@@ -270,13 +239,13 @@ export function getPoint(): PointWrapper {
     }
 };`
             };
-            const dFile: File = {
-                path: `${projectRoot}/d.ts`,
+            const dFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/d.ts`,
                 content: `import { getPoint } from "./c";
 getPoint().c.x;`
             };
-            const eFile: File = {
-                path: `${projectRoot}/e.ts`,
+            const eFile: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/e.ts`,
                 content: `import "./d";`
             };
             verifyEmitAndErrorUpdates({
@@ -286,28 +255,22 @@ getPoint().c.x;`
                 filesNotTouched: [eFile],
                 change: host => host.writeFile(aFile.path, aFile.content.replace("x2", "x")),
                 getInitialErrors: watch => [
-                    getDiagnosticOfFileFromProgram(watch(), cFile.path, cFile.content.indexOf("x: 1"), 4, chainDiagnosticMessages(
-                        chainDiagnosticMessages(/*details*/ undefined, Diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, "x", "Coords"),
-                        Diagnostics.Type_0_is_not_assignable_to_type_1,
-                        "{ x: number; y: number; }",
-                        "Coords"
-                    )),
-                    getDiagnosticOfFileFromProgram(watch(), dFile.path, dFile.content.lastIndexOf("x"), 1, Diagnostics.Property_0_does_not_exist_on_type_1, "x", "Coords")
+                    ts.tscWatch.getDiagnosticOfFileFromProgram(watch(), cFile.path, cFile.content.indexOf("x: 1"), 4, ts.chainDiagnosticMessages(ts.chainDiagnosticMessages(/*details*/ undefined, ts.Diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, "x", "Coords"), ts.Diagnostics.Type_0_is_not_assignable_to_type_1, "{ x: number; y: number; }", "Coords")),
+                    ts.tscWatch.getDiagnosticOfFileFromProgram(watch(), dFile.path, dFile.content.lastIndexOf("x"), 1, ts.Diagnostics.Property_0_does_not_exist_on_type_1, "x", "Coords")
                 ],
-                getIncrementalErrors: () => emptyArray
+                getIncrementalErrors: () => ts.emptyArray
             });
         });
-
         describe("updates errors when file transitively exported file changes", () => {
-            const config: File = {
-                path: `${projectRoot}/tsconfig.json`,
+            const config: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/tsconfig.json`,
                 content: JSON.stringify({
                     files: ["app.ts"],
                     compilerOptions: { baseUrl: "." }
                 })
             };
-            const app: File = {
-                path: `${projectRoot}/app.ts`,
+            const app: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/app.ts`,
                 content: `import { Data } from "lib2/public";
 export class App {
     public constructor() {
@@ -315,12 +278,12 @@ export class App {
     }
 }`
             };
-            const lib2Public: File = {
-                path: `${projectRoot}/lib2/public.ts`,
+            const lib2Public: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/lib2/public.ts`,
                 content: `export * from "./data";`
             };
-            const lib2Data: File = {
-                path: `${projectRoot}/lib2/data.ts`,
+            const lib2Data: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/lib2/data.ts`,
                 content: `import { ITest } from "lib1/public";
 export class Data {
     public test() {
@@ -331,22 +294,21 @@ export class Data {
     }
 }`
             };
-            const lib1Public: File = {
-                path: `${projectRoot}/lib1/public.ts`,
+            const lib1Public: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/lib1/public.ts`,
                 content: `export * from "./tools/public";`
             };
-            const lib1ToolsPublic: File = {
-                path: `${projectRoot}/lib1/tools/public.ts`,
+            const lib1ToolsPublic: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/lib1/tools/public.ts`,
                 content: `export * from "./tools.interface";`
             };
-            const lib1ToolsInterface: File = {
-                path: `${projectRoot}/lib1/tools/tools.interface.ts`,
+            const lib1ToolsInterface: ts.tscWatch.File = {
+                path: `${ts.tscWatch.projectRoot}/lib1/tools/tools.interface.ts`,
                 content: `export interface ITest {
     title: string;
 }`
             };
-
-            function verifyTransitiveExports(lib2Data: File, lib2Data2?: File) {
+            function verifyTransitiveExports(lib2Data: ts.tscWatch.File, lib2Data2?: ts.tscWatch.File) {
                 const filesWithNewEmit = [lib1ToolsInterface, lib1ToolsPublic];
                 const filesWithOnlyErrorRefresh = [app, lib2Public, lib1Public, lib2Data];
                 if (lib2Data2) {
@@ -356,10 +318,10 @@ export class Data {
                     fileWithChange: lib1ToolsInterface,
                     filesWithNewEmit,
                     filesWithOnlyErrorRefresh,
-                    filesNotTouched: emptyArray,
+                    filesNotTouched: ts.emptyArray,
                     configFile: config,
                     change: host => host.writeFile(lib1ToolsInterface.path, lib1ToolsInterface.content.replace("title", "title2")),
-                    getInitialErrors: () => emptyArray,
+                    getInitialErrors: () => ts.emptyArray,
                     getIncrementalErrors: () => [
                         "lib2/data.ts(5,13): error TS2322: Type '{ title: string; }' is not assignable to type 'ITest'.\n  Object literal may only specify known properties, but 'title' does not exist in type 'ITest'. Did you mean to write 'title2'?\n"
                     ]
@@ -368,10 +330,9 @@ export class Data {
             describe("when there are no circular import and exports", () => {
                 verifyTransitiveExports(lib2Data);
             });
-
             describe("when there are circular import and exports", () => {
-                const lib2Data: File = {
-                    path: `${projectRoot}/lib2/data.ts`,
+                const lib2Data: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/lib2/data.ts`,
                     content: `import { ITest } from "lib1/public"; import { Data2 } from "./data2";
 export class Data {
     public dat?: Data2; public test() {
@@ -382,8 +343,8 @@ export class Data {
     }
 }`
                 };
-                const lib2Data2: File = {
-                    path: `${projectRoot}/lib2/data2.ts`,
+                const lib2Data2: ts.tscWatch.File = {
+                    path: `${ts.tscWatch.projectRoot}/lib2/data2.ts`,
                     content: `import { Data } from "./data";
 export class Data2 {
     public dat?: Data;
@@ -392,31 +353,17 @@ export class Data2 {
                 verifyTransitiveExports(lib2Data, lib2Data2);
             });
         });
-
         it("with noEmitOnError", () => {
-            const projectLocation = `${TestFSWithWatch.tsbuildProjectsLocation}/noEmitOnError`;
+            const projectLocation = `${ts.TestFSWithWatch.tsbuildProjectsLocation}/noEmitOnError`;
             const allFiles = ["tsconfig.json", "shared/types/db.ts", "src/main.ts", "src/other.ts"]
-                .map(f => TestFSWithWatch.getTsBuildProjectFile("noEmitOnError", f));
-            const host = TestFSWithWatch.changeToHostTrackingWrittenFiles(
-                createWatchedSystem(
-                    [...allFiles, { path: libFile.path, content: libContent }],
-                    { currentDirectory: projectLocation }
-                )
-            );
-            const watch = createWatchOfConfigFile("tsconfig.json", host);
+                .map(f => ts.TestFSWithWatch.getTsBuildProjectFile("noEmitOnError", f));
+            const host = ts.TestFSWithWatch.changeToHostTrackingWrittenFiles(ts.tscWatch.createWatchedSystem([...allFiles, { path: ts.tscWatch.libFile.path, content: ts.libContent }], { currentDirectory: projectLocation }));
+            const watch = ts.tscWatch.createWatchOfConfigFile("tsconfig.json", host);
             const mainFile = allFiles.find(f => f.path === `${projectLocation}/src/main.ts`)!;
-            checkOutputErrorsInitial(host, [
-                getDiagnosticOfFileFromProgram(
-                    watch(),
-                    mainFile.path,
-                    mainFile.content.lastIndexOf(";"),
-                    1,
-                    Diagnostics._0_expected,
-                    ","
-                )
+            ts.tscWatch.checkOutputErrorsInitial(host, [
+                ts.tscWatch.getDiagnosticOfFileFromProgram(watch(), mainFile.path, mainFile.content.lastIndexOf(";"), 1, ts.Diagnostics._0_expected, ",")
             ]);
-            assert.equal(host.writtenFiles.size, 0, `Expected not to write any files: ${arrayFrom(host.writtenFiles.keys())}`);
-
+            assert.equal(host.writtenFiles.size, 0, `Expected not to write any files: ${ts.arrayFrom(host.writtenFiles.keys())}`);
             // Make changes
             host.writeFile(mainFile.path, `import { A } from "../shared/types/db";
 const a = {
@@ -424,14 +371,14 @@ const a = {
 };`);
             host.writtenFiles.clear();
             host.checkTimeoutQueueLengthAndRun(1); // build project
-            checkOutputErrorsIncremental(host, emptyArray);
-            assert.equal(host.writtenFiles.size, 3, `Expected to write 3 files: Actual:: ${arrayFrom(host.writtenFiles.keys())}`);
+            ts.tscWatch.checkOutputErrorsIncremental(host, ts.emptyArray);
+            assert.equal(host.writtenFiles.size, 3, `Expected to write 3 files: Actual:: ${ts.arrayFrom(host.writtenFiles.keys())}`);
             for (const f of [
                 `${projectLocation}/dev-build/shared/types/db.js`,
                 `${projectLocation}/dev-build/src/main.js`,
                 `${projectLocation}/dev-build/src/other.js`,
             ]) {
-                assert.isTrue(host.writtenFiles.has(f.toLowerCase()), `Expected to write file: ${f}:: Actual:: ${arrayFrom(host.writtenFiles.keys())}`);
+                assert.isTrue(host.writtenFiles.has(f.toLowerCase()), `Expected to write file: ${f}:: Actual:: ${ts.arrayFrom(host.writtenFiles.keys())}`);
             }
         });
     });

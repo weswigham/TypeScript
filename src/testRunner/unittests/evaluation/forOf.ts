@@ -11,15 +11,11 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
                 }
             }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         result.main();
-
         assert.strictEqual(result.output[0], 1);
         assert.strictEqual(result.output[1], 2);
         assert.strictEqual(result.output[2], 3);
-
     });
-
     it("es5 over a string with no Symbol", () => {
         const result = evaluator.evaluateTypeScript(`
             Symbol = undefined;
@@ -32,16 +28,13 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
                 }
             }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         result.main();
-
         assert.strictEqual(result.output[0], "h");
         assert.strictEqual(result.output[1], "e");
         assert.strictEqual(result.output[2], "l");
         assert.strictEqual(result.output[3], "l");
         assert.strictEqual(result.output[4], "o");
     });
-
     it("es5 over undefined with no Symbol", () => {
         const result = evaluator.evaluateTypeScript(`
         Symbol = undefined;
@@ -52,10 +45,8 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
             }
         }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         assert.throws(() => result.main(), "Symbol.iterator is not defined");
     });
-
     it("es5 over undefined with Symbol", () => {
         const result = evaluator.evaluateTypeScript(`
         export function main() {
@@ -65,10 +56,8 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
             }
         }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         assert.throws(() => result.main(), /cannot read property.*Symbol\(Symbol\.iterator\).*/i);
     });
-
     it("es5 over object with no Symbol.iterator with no Symbol", () => {
         const result = evaluator.evaluateTypeScript(`
         Symbol = undefined;
@@ -79,10 +68,8 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
             }
         }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         assert.throws(() => result.main(), "Symbol.iterator is not defined");
     });
-
     it("es5 over object with no Symbol.iterator with Symbol", () => {
         const result = evaluator.evaluateTypeScript(`
         export function main() {
@@ -92,10 +79,8 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
             }
         }
         `, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         assert.throws(() => result.main(), "Object is not iterable");
     });
-
     it("es5 over object with Symbol.iterator", () => {
         const result = evaluator.evaluateTypeScript(`
             export var output = [];
@@ -112,8 +97,6 @@ describe("unittests:: evaluation:: forOfEvaluation", () => {
                 }
 
             }`, { downlevelIteration: true, target: ts.ScriptTarget.ES5 });
-
         result.main();
     });
-
 });

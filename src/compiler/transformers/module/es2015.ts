@@ -1,63 +1,51 @@
 /*@internal*/
 namespace ts {
-    export function transformES2015Module(context: TransformationContext) {
+    export function transformES2015Module(context: ts.TransformationContext) {
         const compilerOptions = context.getCompilerOptions();
         const previousOnEmitNode = context.onEmitNode;
         const previousOnSubstituteNode = context.onSubstituteNode;
         context.onEmitNode = onEmitNode;
         context.onSubstituteNode = onSubstituteNode;
-        context.enableEmitNotification(SyntaxKind.SourceFile);
-        context.enableSubstitution(SyntaxKind.Identifier);
-
-        let helperNameSubstitutions: Map<Identifier> | undefined;
-        return chainBundle(transformSourceFile);
-
-        function transformSourceFile(node: SourceFile) {
+        context.enableEmitNotification(ts.SyntaxKind.SourceFile);
+        context.enableSubstitution(ts.SyntaxKind.Identifier);
+        let helperNameSubstitutions: ts.Map<ts.Identifier> | undefined;
+        return ts.chainBundle(transformSourceFile);
+        function transformSourceFile(node: ts.SourceFile) {
             if (node.isDeclarationFile) {
                 return node;
             }
-
-            if (isExternalModule(node) || compilerOptions.isolatedModules) {
-                const externalHelpersImportDeclaration = createExternalHelpersImportDeclarationIfNeeded(node, compilerOptions);
+            if (ts.isExternalModule(node) || compilerOptions.isolatedModules) {
+                const externalHelpersImportDeclaration = ts.createExternalHelpersImportDeclarationIfNeeded(node, compilerOptions);
                 if (externalHelpersImportDeclaration) {
-                    const statements: Statement[] = [];
-                    const statementOffset = addPrologue(statements, node.statements);
-                    append(statements, externalHelpersImportDeclaration);
-
-                    addRange(statements, visitNodes(node.statements, visitor, isStatement, statementOffset));
-                    return updateSourceFileNode(
-                        node,
-                        setTextRange(createNodeArray(statements), node.statements));
+                    const statements: ts.Statement[] = [];
+                    const statementOffset = ts.addPrologue(statements, node.statements);
+                    ts.append(statements, externalHelpersImportDeclaration);
+                    ts.addRange(statements, ts.visitNodes(node.statements, visitor, ts.isStatement, statementOffset));
+                    return ts.updateSourceFileNode(node, ts.setTextRange(ts.createNodeArray(statements), node.statements));
                 }
                 else {
-                    return visitEachChild(node, visitor, context);
+                    return ts.visitEachChild(node, visitor, context);
                 }
             }
-
             return node;
         }
-
-        function visitor(node: Node): VisitResult<Node> {
+        function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
             switch (node.kind) {
-                case SyntaxKind.ImportEqualsDeclaration:
+                case ts.SyntaxKind.ImportEqualsDeclaration:
                     // Elide `import=` as it is not legal with --module ES6
                     return undefined;
-                case SyntaxKind.ExportAssignment:
-                    return visitExportAssignment(<ExportAssignment>node);
+                case ts.SyntaxKind.ExportAssignment:
+                    return visitExportAssignment((<ts.ExportAssignment>node));
             }
-
             return node;
         }
-
-        function visitExportAssignment(node: ExportAssignment): VisitResult<ExportAssignment> {
+        function visitExportAssignment(node: ts.ExportAssignment): ts.VisitResult<ts.ExportAssignment> {
             // Elide `export=` as it is not legal with --module ES6
             return node.isExportEquals ? undefined : node;
         }
-
         //
         // Emit Notification
         //
-
         /**
          * Hook for node emit.
          *
@@ -65,9 +53,9 @@ namespace ts {
          * @param node The node to emit.
          * @param emit A callback used to emit the node in the printer.
          */
-        function onEmitNode(hint: EmitHint, node: Node, emitCallback: (hint: EmitHint, node: Node) => void): void {
-            if (isSourceFile(node)) {
-                helperNameSubstitutions = createMap<Identifier>();
+        function onEmitNode(hint: ts.EmitHint, node: ts.Node, emitCallback: (hint: ts.EmitHint, node: ts.Node) => void): void {
+            if (ts.isSourceFile(node)) {
+                helperNameSubstitutions = ts.createMap<ts.Identifier>();
                 previousOnEmitNode(hint, node, emitCallback);
                 helperNameSubstitutions = undefined;
             }
@@ -75,31 +63,27 @@ namespace ts {
                 previousOnEmitNode(hint, node, emitCallback);
             }
         }
-
         //
         // Substitutions
         //
-
         /**
          * Hooks node substitutions.
          *
          * @param hint A hint as to the intended usage of the node.
          * @param node The node to substitute.
          */
-        function onSubstituteNode(hint: EmitHint, node: Node) {
+        function onSubstituteNode(hint: ts.EmitHint, node: ts.Node) {
             node = previousOnSubstituteNode(hint, node);
-            if (helperNameSubstitutions && isIdentifier(node) && getEmitFlags(node) & EmitFlags.HelperName) {
+            if (helperNameSubstitutions && ts.isIdentifier(node) && ts.getEmitFlags(node) & ts.EmitFlags.HelperName) {
                 return substituteHelperName(node);
             }
-
             return node;
         }
-
-        function substituteHelperName(node: Identifier): Expression {
-            const name = idText(node);
+        function substituteHelperName(node: ts.Identifier): ts.Expression {
+            const name = ts.idText(node);
             let substitution = helperNameSubstitutions!.get(name);
             if (!substitution) {
-                helperNameSubstitutions!.set(name, substitution = createFileLevelUniqueName(name));
+                helperNameSubstitutions!.set(name, substitution = ts.createFileLevelUniqueName(name));
             }
             return substitution;
         }

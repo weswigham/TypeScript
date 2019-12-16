@@ -1,13 +1,13 @@
 namespace ts.projectSystem {
     export interface GetErrDiagnostics {
-        file: string | File;
-        syntax?: protocol.Diagnostic[];
-        semantic?: protocol.Diagnostic[];
-        suggestion?: protocol.Diagnostic[];
+        file: string | ts.projectSystem.File;
+        syntax?: ts.projectSystem.protocol.Diagnostic[];
+        semantic?: ts.projectSystem.protocol.Diagnostic[];
+        suggestion?: ts.projectSystem.protocol.Diagnostic[];
     }
     export interface VerifyGetErrRequestBase {
-        session: TestSession;
-        host: TestServerHost;
+        session: ts.projectSystem.TestSession;
+        host: ts.projectSystem.TestServerHost;
         onErrEvent?: () => void;
         existingTimeouts?: number;
     }
@@ -18,8 +18,8 @@ namespace ts.projectSystem {
         const { session, expected } = request;
         session.clearMessages();
         const expectedSequenceId = session.getNextSeq();
-        session.executeCommandSeq<protocol.GeterrRequest>({
-            command: protocol.CommandTypes.Geterr,
+        session.executeCommandSeq<ts.projectSystem.protocol.GeterrRequest>({
+            command: ts.projectSystem.protocol.CommandTypes.Geterr,
             arguments: {
                 delay: 0,
                 files: expected.map(f => filePath(f.file))
@@ -27,7 +27,6 @@ namespace ts.projectSystem {
         });
         checkAllErrors({ ...request, expectedSequenceId });
     }
-
     export interface CheckAllErrors extends VerifyGetErrRequest {
         expectedSequenceId: number;
     }
@@ -40,19 +39,15 @@ namespace ts.projectSystem {
             });
         }
     }
-
-    function filePath(file: string | File) {
-        return isString(file) ? file : file.path;
+    function filePath(file: string | ts.projectSystem.File) {
+        return ts.isString(file) ? file : file.path;
     }
     interface CheckErrorsInFile extends VerifyGetErrRequestBase {
         expected: GetErrDiagnostics;
         expectedSequenceId?: number;
     }
-    function checkErrorsInFile({
-        session, host, onErrEvent, existingTimeouts, expectedSequenceId,
-        expected: { file, syntax, semantic, suggestion },
-    }: CheckErrorsInFile) {
-        onErrEvent = onErrEvent || noop;
+    function checkErrorsInFile({ session, host, onErrEvent, existingTimeouts, expectedSequenceId, expected: { file, syntax, semantic, suggestion }, }: CheckErrorsInFile) {
+        onErrEvent = onErrEvent || ts.noop;
         if (existingTimeouts !== undefined) {
             host.checkTimeoutQueueLength(existingTimeouts + 1);
             host.runQueuedTimeoutCallbacks(host.getNextTimeoutId() - 1);
@@ -62,117 +57,104 @@ namespace ts.projectSystem {
         }
         if (syntax) {
             onErrEvent();
-            checkErrorMessage(session, "syntaxDiag", { file: filePath(file), diagnostics: syntax });
+            ts.projectSystem.checkErrorMessage(session, "syntaxDiag", { file: filePath(file), diagnostics: syntax });
         }
         if (semantic) {
             session.clearMessages();
-
             host.runQueuedImmediateCallbacks(1);
             onErrEvent();
-            checkErrorMessage(session, "semanticDiag", { file: filePath(file), diagnostics: semantic });
+            ts.projectSystem.checkErrorMessage(session, "semanticDiag", { file: filePath(file), diagnostics: semantic });
         }
         if (suggestion) {
             session.clearMessages();
-
             host.runQueuedImmediateCallbacks(1);
             onErrEvent();
-            checkErrorMessage(session, "suggestionDiag", { file: filePath(file), diagnostics: suggestion });
+            ts.projectSystem.checkErrorMessage(session, "suggestionDiag", { file: filePath(file), diagnostics: suggestion });
         }
         if (expectedSequenceId !== undefined) {
-            checkCompleteEvent(session, syntax || semantic || suggestion ? 2 : 1, expectedSequenceId);
+            ts.projectSystem.checkCompleteEvent(session, syntax || semantic || suggestion ? 2 : 1, expectedSequenceId);
         }
         session.clearMessages();
     }
-
     describe("unittests:: tsserver:: with project references and error reporting", () => {
-        const dependecyLocation = `${tscWatch.projectRoot}/dependency`;
-        const usageLocation = `${tscWatch.projectRoot}/usage`;
-
+        const dependecyLocation = `${ts.tscWatch.projectRoot}/dependency`;
+        const usageLocation = `${ts.tscWatch.projectRoot}/usage`;
         function verifyErrorsUsingGeterr({ allFiles, openFiles, expectedGetErr }: VerifyScenario) {
             it("verifies the errors in open file", () => {
-                const host = createServerHost([...allFiles(), libFile]);
-                const session = createSession(host, { canUseEvents: true, });
-                openFilesForSession(openFiles(), session);
-
+                const host = ts.projectSystem.createServerHost([...allFiles(), ts.projectSystem.libFile]);
+                const session = ts.projectSystem.createSession(host, { canUseEvents: true, });
+                ts.projectSystem.openFilesForSession(openFiles(), session);
                 verifyGetErrRequest({ session, host, expected: expectedGetErr() });
             });
         }
-
         function verifyErrorsUsingGeterrForProject({ allFiles, openFiles, expectedGetErrForProject }: VerifyScenario) {
             it("verifies the errors in projects", () => {
-                const host = createServerHost([...allFiles(), libFile]);
-                const session = createSession(host, { canUseEvents: true, });
-                openFilesForSession(openFiles(), session);
-
+                const host = ts.projectSystem.createServerHost([...allFiles(), ts.projectSystem.libFile]);
+                const session = ts.projectSystem.createSession(host, { canUseEvents: true, });
+                ts.projectSystem.openFilesForSession(openFiles(), session);
                 session.clearMessages();
                 for (const expected of expectedGetErrForProject()) {
                     const expectedSequenceId = session.getNextSeq();
-                    session.executeCommandSeq<protocol.GeterrForProjectRequest>({
-                        command: protocol.CommandTypes.GeterrForProject,
+                    session.executeCommandSeq<ts.projectSystem.protocol.GeterrForProjectRequest>({
+                        command: ts.projectSystem.protocol.CommandTypes.GeterrForProject,
                         arguments: {
                             delay: 0,
                             file: expected.project
                         }
                     });
-
                     checkAllErrors({ session, host, expected: expected.errors, expectedSequenceId });
                 }
             });
         }
-
         function verifyErrorsUsingSyncMethods({ allFiles, openFiles, expectedSyncDiagnostics }: VerifyScenario) {
             it("verifies the errors using sync commands", () => {
-                const host = createServerHost([...allFiles(), libFile]);
-                const session = createSession(host);
-                openFilesForSession(openFiles(), session);
+                const host = ts.projectSystem.createServerHost([...allFiles(), ts.projectSystem.libFile]);
+                const session = ts.projectSystem.createSession(host);
+                ts.projectSystem.openFilesForSession(openFiles(), session);
                 for (const { file, project, syntax, semantic, suggestion } of expectedSyncDiagnostics()) {
-                    const actualSyntax = session.executeCommandSeq<protocol.SyntacticDiagnosticsSyncRequest>({
-                        command: protocol.CommandTypes.SyntacticDiagnosticsSync,
+                    const actualSyntax = (session.executeCommandSeq<ts.projectSystem.protocol.SyntacticDiagnosticsSyncRequest>({
+                        command: ts.projectSystem.protocol.CommandTypes.SyntacticDiagnosticsSync,
                         arguments: {
                             file: filePath(file),
                             projectFileName: project
                         }
-                    }).response as protocol.Diagnostic[];
+                    }).response as ts.projectSystem.protocol.Diagnostic[]);
                     assert.deepEqual(actualSyntax, syntax, `Syntax diagnostics for file: ${filePath(file)}, project: ${project}`);
-                    const actualSemantic = session.executeCommandSeq<protocol.SemanticDiagnosticsSyncRequest>({
-                        command: protocol.CommandTypes.SemanticDiagnosticsSync,
+                    const actualSemantic = (session.executeCommandSeq<ts.projectSystem.protocol.SemanticDiagnosticsSyncRequest>({
+                        command: ts.projectSystem.protocol.CommandTypes.SemanticDiagnosticsSync,
                         arguments: {
                             file: filePath(file),
                             projectFileName: project
                         }
-                    }).response as protocol.Diagnostic[];
+                    }).response as ts.projectSystem.protocol.Diagnostic[]);
                     assert.deepEqual(actualSemantic, semantic, `Semantic diagnostics for file: ${filePath(file)}, project: ${project}`);
-                    const actualSuggestion = session.executeCommandSeq<protocol.SuggestionDiagnosticsSyncRequest>({
-                        command: protocol.CommandTypes.SuggestionDiagnosticsSync,
+                    const actualSuggestion = (session.executeCommandSeq<ts.projectSystem.protocol.SuggestionDiagnosticsSyncRequest>({
+                        command: ts.projectSystem.protocol.CommandTypes.SuggestionDiagnosticsSync,
                         arguments: {
                             file: filePath(file),
                             projectFileName: project
                         }
-                    }).response as protocol.Diagnostic[];
+                    }).response as ts.projectSystem.protocol.Diagnostic[]);
                     assert.deepEqual(actualSuggestion, suggestion, `Suggestion diagnostics for file: ${filePath(file)}, project: ${project}`);
                 }
             });
         }
-
         function verifyConfigFileErrors({ allFiles, openFiles, expectedConfigFileDiagEvents }: VerifyScenario) {
             it("verify config file errors", () => {
-                const host = createServerHost([...allFiles(), libFile]);
-                const { session, events } = createSessionWithEventTracking<server.ConfigFileDiagEvent>(host, server.ConfigFileDiagEvent);
-
+                const host = ts.projectSystem.createServerHost([...allFiles(), ts.projectSystem.libFile]);
+                const { session, events } = ts.projectSystem.createSessionWithEventTracking<ts.server.ConfigFileDiagEvent>(host, ts.server.ConfigFileDiagEvent);
                 for (const file of openFiles()) {
-                    session.executeCommandSeq<protocol.OpenRequest>({
-                        command: protocol.CommandTypes.Open,
+                    session.executeCommandSeq<ts.projectSystem.protocol.OpenRequest>({
+                        command: ts.projectSystem.protocol.CommandTypes.Open,
                         arguments: { file: file.path }
                     });
                 }
-
                 assert.deepEqual(events, expectedConfigFileDiagEvents().map(data => ({
-                    eventName: server.ConfigFileDiagEvent,
+                    eventName: ts.server.ConfigFileDiagEvent,
                     data
                 })));
             });
         }
-
         interface GetErrForProjectDiagnostics {
             project: string;
             errors: readonly GetErrDiagnostics[];
@@ -181,12 +163,12 @@ namespace ts.projectSystem {
             project?: string;
         }
         interface VerifyScenario {
-            allFiles: () => readonly File[];
-            openFiles: () => readonly File[];
+            allFiles: () => readonly ts.projectSystem.File[];
+            openFiles: () => readonly ts.projectSystem.File[];
             expectedGetErr: () => readonly GetErrDiagnostics[];
             expectedGetErrForProject: () => readonly GetErrForProjectDiagnostics[];
             expectedSyncDiagnostics: () => readonly SyncDiagnostics[];
-            expectedConfigFileDiagEvents: () => readonly server.ConfigFileDiagEvent["data"][];
+            expectedConfigFileDiagEvents: () => readonly ts.server.ConfigFileDiagEvent["data"][];
         }
         function verifyScenario(scenario: VerifyScenario) {
             verifyErrorsUsingGeterr(scenario);
@@ -194,25 +176,21 @@ namespace ts.projectSystem {
             verifyErrorsUsingSyncMethods(scenario);
             verifyConfigFileErrors(scenario);
         }
-
-        function emptyDiagnostics(file: File): GetErrDiagnostics {
+        function emptyDiagnostics(file: ts.projectSystem.File): GetErrDiagnostics {
             return {
                 file,
-                syntax: emptyArray,
-                semantic: emptyArray,
-                suggestion: emptyArray
+                syntax: ts.emptyArray,
+                semantic: ts.emptyArray,
+                suggestion: ts.emptyArray
             };
         }
-
         function syncDiagnostics(diagnostics: GetErrDiagnostics, project: string): SyncDiagnostics {
             return { project, ...diagnostics };
         }
-
         interface VerifyUsageAndDependency {
-            allFiles: readonly [File, File, File, File]; // dependencyTs, dependencyConfig, usageTs, usageConfig
+            allFiles: readonly [ts.projectSystem.File, ts.projectSystem.File, ts.projectSystem.File, ts.projectSystem.File]; // dependencyTs, dependencyConfig, usageTs, usageConfig
             usageDiagnostics(): GetErrDiagnostics;
             dependencyDiagnostics(): GetErrDiagnostics;
-
         }
         function verifyUsageAndDependency({ allFiles, usageDiagnostics, dependencyDiagnostics }: VerifyUsageAndDependency) {
             const [dependencyTs, dependencyConfig, usageTs, usageConfig] = allFiles;
@@ -225,7 +203,6 @@ namespace ts.projectSystem {
                     ]
                 };
             }
-
             function dependencyProjectDiagnostics(): GetErrForProjectDiagnostics {
                 return {
                     project: dependencyTs.path,
@@ -234,23 +211,20 @@ namespace ts.projectSystem {
                     ]
                 };
             }
-
-            function usageConfigDiag(): server.ConfigFileDiagEvent["data"] {
+            function usageConfigDiag(): ts.server.ConfigFileDiagEvent["data"] {
                 return {
                     triggerFile: usageTs.path,
                     configFileName: usageConfig.path,
-                    diagnostics: emptyArray
+                    diagnostics: ts.emptyArray
                 };
             }
-
-            function dependencyConfigDiag(): server.ConfigFileDiagEvent["data"] {
+            function dependencyConfigDiag(): ts.server.ConfigFileDiagEvent["data"] {
                 return {
                     triggerFile: dependencyTs.path,
                     configFileName: dependencyConfig.path,
-                    diagnostics: emptyArray
+                    diagnostics: ts.emptyArray
                 };
             }
-
             describe("when dependency project is not open", () => {
                 verifyScenario({
                     allFiles: () => allFiles,
@@ -281,7 +255,6 @@ namespace ts.projectSystem {
                     ],
                 });
             });
-
             describe("when the depedency file is open", () => {
                 verifyScenario({
                     allFiles: () => allFiles,
@@ -310,9 +283,8 @@ namespace ts.projectSystem {
                 });
             });
         }
-
         describe("with module scenario", () => {
-            const dependencyTs: File = {
+            const dependencyTs: ts.projectSystem.File = {
                 path: `${dependecyLocation}/fns.ts`,
                 content: `export function fn1() { }
 export function fn2() { }
@@ -321,11 +293,11 @@ export function fn2() { }
 // Error in dependency ts file
 export let x: string = 10;`
             };
-            const dependencyConfig: File = {
+            const dependencyConfig: ts.projectSystem.File = {
                 path: `${dependecyLocation}/tsconfig.json`,
                 content: JSON.stringify({ compilerOptions: { composite: true, declarationDir: "../decls" } })
             };
-            const usageTs: File = {
+            const usageTs: ts.projectSystem.File = {
                 path: `${usageLocation}/usage.ts`,
                 content: `import {
     fn1,
@@ -337,7 +309,7 @@ fn2();
 fnErr();
 `
             };
-            const usageConfig: File = {
+            const usageConfig: ts.projectSystem.File = {
                 path: `${usageLocation}/tsconfig.json`,
                 content: JSON.stringify({
                     compilerOptions: { composite: true },
@@ -347,46 +319,31 @@ fnErr();
             function usageDiagnostics(): GetErrDiagnostics {
                 return {
                     file: usageTs,
-                    syntax: emptyArray,
+                    syntax: ts.emptyArray,
                     semantic: [
-                        createDiagnostic(
-                            { line: 4, offset: 5 },
-                            { line: 4, offset: 10 },
-                            Diagnostics.Module_0_has_no_exported_member_1,
-                            [`"../dependency/fns"`, "fnErr"],
-                            "error",
-                        )
+                        ts.projectSystem.createDiagnostic({ line: 4, offset: 5 }, { line: 4, offset: 10 }, ts.Diagnostics.Module_0_has_no_exported_member_1, [`"../dependency/fns"`, "fnErr"], "error")
                     ],
-                    suggestion: emptyArray
+                    suggestion: ts.emptyArray
                 };
             }
-
             function dependencyDiagnostics(): GetErrDiagnostics {
                 return {
                     file: dependencyTs,
-                    syntax: emptyArray,
+                    syntax: ts.emptyArray,
                     semantic: [
-                        createDiagnostic(
-                            { line: 6, offset: 12 },
-                            { line: 6, offset: 13 },
-                            Diagnostics.Type_0_is_not_assignable_to_type_1,
-                            ["10", "string"],
-                            "error",
-                        )
+                        ts.projectSystem.createDiagnostic({ line: 6, offset: 12 }, { line: 6, offset: 13 }, ts.Diagnostics.Type_0_is_not_assignable_to_type_1, ["10", "string"], "error")
                     ],
-                    suggestion: emptyArray
+                    suggestion: ts.emptyArray
                 };
             }
-
             verifyUsageAndDependency({
                 allFiles: [dependencyTs, dependencyConfig, usageTs, usageConfig],
                 usageDiagnostics,
                 dependencyDiagnostics
             });
         });
-
         describe("with non module --out", () => {
-            const dependencyTs: File = {
+            const dependencyTs: ts.projectSystem.File = {
                 path: `${dependecyLocation}/fns.ts`,
                 content: `function fn1() { }
 function fn2() { }
@@ -395,18 +352,18 @@ function fn2() { }
 // Error in dependency ts file
 let x: string = 10;`
             };
-            const dependencyConfig: File = {
+            const dependencyConfig: ts.projectSystem.File = {
                 path: `${dependecyLocation}/tsconfig.json`,
                 content: JSON.stringify({ compilerOptions: { composite: true, outFile: "../dependency.js" } })
             };
-            const usageTs: File = {
+            const usageTs: ts.projectSystem.File = {
                 path: `${usageLocation}/usage.ts`,
                 content: `fn1();
 fn2();
 fnErr();
 `
             };
-            const usageConfig: File = {
+            const usageConfig: ts.projectSystem.File = {
                 path: `${usageLocation}/tsconfig.json`,
                 content: JSON.stringify({
                     compilerOptions: { composite: true, outFile: "../usage.js" },
@@ -416,37 +373,23 @@ fnErr();
             function usageDiagnostics(): GetErrDiagnostics {
                 return {
                     file: usageTs,
-                    syntax: emptyArray,
+                    syntax: ts.emptyArray,
                     semantic: [
-                        createDiagnostic(
-                            { line: 3, offset: 1 },
-                            { line: 3, offset: 6 },
-                            Diagnostics.Cannot_find_name_0,
-                            ["fnErr"],
-                            "error",
-                        )
+                        ts.projectSystem.createDiagnostic({ line: 3, offset: 1 }, { line: 3, offset: 6 }, ts.Diagnostics.Cannot_find_name_0, ["fnErr"], "error")
                     ],
-                    suggestion: emptyArray
+                    suggestion: ts.emptyArray
                 };
             }
-
             function dependencyDiagnostics(): GetErrDiagnostics {
                 return {
                     file: dependencyTs,
-                    syntax: emptyArray,
+                    syntax: ts.emptyArray,
                     semantic: [
-                        createDiagnostic(
-                            { line: 6, offset: 5 },
-                            { line: 6, offset: 6 },
-                            Diagnostics.Type_0_is_not_assignable_to_type_1,
-                            ["10", "string"],
-                            "error",
-                        )
+                        ts.projectSystem.createDiagnostic({ line: 6, offset: 5 }, { line: 6, offset: 6 }, ts.Diagnostics.Type_0_is_not_assignable_to_type_1, ["10", "string"], "error")
                     ],
-                    suggestion: emptyArray
+                    suggestion: ts.emptyArray
                 };
             }
-
             verifyUsageAndDependency({
                 allFiles: [dependencyTs, dependencyConfig, usageTs, usageConfig],
                 usageDiagnostics,

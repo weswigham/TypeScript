@@ -7,31 +7,26 @@ namespace ts.formatting {
         readonly action: RuleAction;
         readonly flags: RuleFlags;
     }
-
-    export type ContextPredicate = (context: FormattingContext) => boolean;
-    export const anyContext: readonly ContextPredicate[] = emptyArray;
-
+    export type ContextPredicate = (context: ts.formatting.FormattingContext) => boolean;
+    export const anyContext: readonly ContextPredicate[] = ts.emptyArray;
     export const enum RuleAction {
         StopProcessingSpaceActions = 1 << 0,
         StopProcessingTokenActions = 1 << 1,
-        InsertSpace                = 1 << 2,
-        InsertNewLine              = 1 << 3,
-        DeleteSpace                = 1 << 4,
-        DeleteToken                = 1 << 5,
-        InsertTrailingSemicolon    = 1 << 6,
-
+        InsertSpace = 1 << 2,
+        InsertNewLine = 1 << 3,
+        DeleteSpace = 1 << 4,
+        DeleteToken = 1 << 5,
+        InsertTrailingSemicolon = 1 << 6,
         StopAction = StopProcessingSpaceActions | StopProcessingTokenActions,
         ModifySpaceAction = InsertSpace | InsertNewLine | DeleteSpace,
-        ModifyTokenAction = DeleteToken | InsertTrailingSemicolon,
+        ModifyTokenAction = DeleteToken | InsertTrailingSemicolon
     }
-
     export const enum RuleFlags {
         None,
-        CanDeleteNewLines,
+        CanDeleteNewLines
     }
-
     export interface TokenRange {
-        readonly tokens: readonly SyntaxKind[];
+        readonly tokens: readonly ts.SyntaxKind[];
         readonly isSpecific: boolean;
     }
 }

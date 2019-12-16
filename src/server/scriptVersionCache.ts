@@ -1,19 +1,16 @@
 /*@internal*/
 namespace ts.server {
     const lineCollectionCapacity = 4;
-
     interface LineCollection {
         charCount(): number;
         lineCount(): number;
         isLeaf(): this is LineLeaf;
         walk(rangeStart: number, rangeLength: number, walkFns: LineIndexWalker): void;
     }
-
     export interface AbsolutePositionAndLineText {
         absolutePosition: number;
         lineText: string | undefined;
     }
-
     const enum CharRangeSection {
         PreStart,
         Start,
@@ -22,21 +19,16 @@ namespace ts.server {
         End,
         PostEnd
     }
-
     interface LineIndexWalker {
         goSubtree: boolean;
         done: boolean;
         leaf(relativeStart: number, relativeLength: number, lineCollection: LineLeaf): void;
-        pre?(relativeStart: number, relativeLength: number, lineCollection: LineCollection,
-            parent: LineNode, nodeType: CharRangeSection): void;
-        post?(relativeStart: number, relativeLength: number, lineCollection: LineCollection,
-            parent: LineNode, nodeType: CharRangeSection): void;
+        pre?(relativeStart: number, relativeLength: number, lineCollection: LineCollection, parent: LineNode, nodeType: CharRangeSection): void;
+        post?(relativeStart: number, relativeLength: number, lineCollection: LineCollection, parent: LineNode, nodeType: CharRangeSection): void;
     }
-
     class EditWalker implements LineIndexWalker {
         goSubtree = true;
         get done() { return false; }
-
         readonly lineIndex = new LineIndex();
         // path to start of range
         private readonly startPath: LineCollection[];
@@ -48,13 +40,11 @@ namespace ts.server {
         private lineCollectionAtBranch: LineCollection | undefined;
         private initialText = "";
         private trailingText = "";
-
         constructor() {
             this.lineIndex.root = new LineNode();
             this.startPath = [this.lineIndex.root];
             this.stack = [this.lineIndex.root];
         }
-
         insertLines(insertedText: string | undefined, suppressTrailingText: boolean) {
             if (suppressTrailingText) {
                 this.trailingText = "";
@@ -74,7 +64,6 @@ namespace ts.server {
             }
             let branchParent: LineNode | undefined;
             let lastZeroCount: LineCollection | undefined;
-
             for (let k = this.endBranch.length - 1; k >= 0; k--) {
                 (<LineNode>this.endBranch[k]).updateCounts();
                 if (this.endBranch[k].charCount() === 0) {
@@ -90,13 +79,10 @@ namespace ts.server {
             if (lastZeroCount) {
                 branchParent!.remove(lastZeroCount);
             }
-
             // path at least length two (root and leaf)
             const leafNode = <LineLeaf>this.startPath[this.startPath.length - 1];
-
             if (lines.length > 0) {
                 leafNode.text = lines[0];
-
                 if (lines.length > 1) {
                     let insertedNodes = <LineCollection[]>new Array(lines.length - 1);
                     let startNode = <LineCollection>leafNode;
@@ -134,10 +120,8 @@ namespace ts.server {
                     (<LineNode>this.startPath[j]).updateCounts();
                 }
             }
-
             return this.lineIndex;
         }
-
         post(_relativeStart: number, _relativeLength: number, lineCollection: LineCollection): void {
             // have visited the path for start of range, now looking for end
             // if range is on single line, we will never make this state transition
@@ -147,24 +131,22 @@ namespace ts.server {
             // always pop stack because post only called when child has been visited
             this.stack.pop();
         }
-
         pre(_relativeStart: number, _relativeLength: number, lineCollection: LineCollection, _parent: LineCollection, nodeType: CharRangeSection): void {
             // currentNode corresponds to parent, but in the new tree
             const currentNode = this.stack[this.stack.length - 1];
-
             if ((this.state === CharRangeSection.Entire) && (nodeType === CharRangeSection.Start)) {
                 // if range is on single line, we will never make this state transition
                 this.state = CharRangeSection.Start;
                 this.branchNode = currentNode;
                 this.lineCollectionAtBranch = lineCollection;
             }
-
             let child: LineCollection | undefined;
             function fresh(node: LineCollection): LineCollection {
                 if (node.isLeaf()) {
                     return new LineLeaf("");
                 }
-                else return new LineNode();
+                else
+                    return new LineNode();
             }
             switch (nodeType) {
                 case CharRangeSection.PreStart:
@@ -238,40 +220,31 @@ namespace ts.server {
             }
         }
     }
-
     // text change information
     class TextChange {
         constructor(public pos: number, public deleteLen: number, public insertedText?: string) {
         }
-
         getTextChangeRange() {
-            return createTextChangeRange(createTextSpan(this.pos, this.deleteLen),
-                this.insertedText ? this.insertedText.length : 0);
+            return ts.createTextChangeRange(ts.createTextSpan(this.pos, this.deleteLen), this.insertedText ? this.insertedText.length : 0);
         }
     }
-
     export class ScriptVersionCache {
         private changes: TextChange[] = [];
         private readonly versions: LineIndexSnapshot[] = new Array<LineIndexSnapshot>(ScriptVersionCache.maxVersions);
         private minVersion = 0; // no versions earlier than min version will maintain change history
-
         private currentVersion = 0;
-
         private static readonly changeNumberThreshold = 8;
         private static readonly changeLengthThreshold = 256;
         private static readonly maxVersions = 8;
-
         private versionToIndex(version: number) {
             if (version < this.minVersion || version > this.currentVersion) {
                 return undefined;
             }
             return version % ScriptVersionCache.maxVersions;
         }
-
         private currentVersionToIndex() {
             return this.currentVersion % ScriptVersionCache.maxVersions;
         }
-
         // REVIEW: can optimize by coalescing simple edits
         edit(pos: number, deleteLen: number, insertedText?: string) {
             this.changes.push(new TextChange(pos, deleteLen, insertedText));
@@ -281,9 +254,7 @@ namespace ts.server {
                 this.getSnapshot();
             }
         }
-
-        getSnapshot(): IScriptSnapshot { return this._getSnapshot(); }
-
+        getSnapshot(): ts.IScriptSnapshot { return this._getSnapshot(); }
         private _getSnapshot(): LineIndexSnapshot {
             let snap = this.versions[this.currentVersionToIndex()];
             if (this.changes.length > 0) {
@@ -292,66 +263,56 @@ namespace ts.server {
                     snapIndex = snapIndex.edit(change.pos, change.deleteLen, change.insertedText);
                 }
                 snap = new LineIndexSnapshot(this.currentVersion + 1, this, snapIndex, this.changes);
-
                 this.currentVersion = snap.version;
                 this.versions[this.currentVersionToIndex()] = snap;
                 this.changes = [];
-
                 if ((this.currentVersion - this.minVersion) >= ScriptVersionCache.maxVersions) {
                     this.minVersion = (this.currentVersion - ScriptVersionCache.maxVersions) + 1;
                 }
             }
             return snap;
         }
-
         getSnapshotVersion(): number {
             return this._getSnapshot().version;
         }
-
         getAbsolutePositionAndLineText(oneBasedLine: number): AbsolutePositionAndLineText {
             return this._getSnapshot().index.lineNumberToInfo(oneBasedLine);
         }
-
         lineOffsetToPosition(line: number, column: number): number {
             return this._getSnapshot().index.absolutePositionOfStartOfLine(line) + (column - 1);
         }
-
-        positionToLineOffset(position: number): protocol.Location {
+        positionToLineOffset(position: number): ts.server.protocol.Location {
             return this._getSnapshot().index.positionToLineOffset(position);
         }
-
-        lineToTextSpan(line: number): TextSpan {
+        lineToTextSpan(line: number): ts.TextSpan {
             const index = this._getSnapshot().index;
             const { lineText, absolutePosition } = index.lineNumberToInfo(line + 1);
             const len = lineText !== undefined ? lineText.length : index.absolutePositionOfStartOfLine(line + 2) - absolutePosition;
-            return createTextSpan(absolutePosition, len);
+            return ts.createTextSpan(absolutePosition, len);
         }
-
         getTextChangesBetweenVersions(oldVersion: number, newVersion: number) {
             if (oldVersion < newVersion) {
                 if (oldVersion >= this.minVersion) {
-                    const textChangeRanges: TextChangeRange[] = [];
+                    const textChangeRanges: ts.TextChangeRange[] = [];
                     for (let i = oldVersion + 1; i <= newVersion; i++) {
                         const snap = this.versions[this.versionToIndex(i)!]; // TODO: GH#18217
                         for (const textChange of snap.changesSincePreviousVersion) {
                             textChangeRanges.push(textChange.getTextChangeRange());
                         }
                     }
-                    return collapseTextChangeRangesAcrossMultipleVersions(textChangeRanges);
+                    return ts.collapseTextChangeRangesAcrossMultipleVersions(textChangeRanges);
                 }
                 else {
                     return undefined;
                 }
             }
             else {
-                return unchangedTextChangeRange;
+                return ts.unchangedTextChangeRange;
             }
         }
-
         getLineCount() {
             return this._getSnapshot().index.getLineCount();
         }
-
         static fromString(script: string) {
             const svc = new ScriptVersionCache();
             const snap = new LineIndexSnapshot(0, svc, new LineIndex());
@@ -361,23 +322,19 @@ namespace ts.server {
             return svc;
         }
     }
-
-    class LineIndexSnapshot implements IScriptSnapshot {
-        constructor(readonly version: number, readonly cache: ScriptVersionCache, readonly index: LineIndex, readonly changesSincePreviousVersion: readonly TextChange[] = emptyArray) {
+    class LineIndexSnapshot implements ts.IScriptSnapshot {
+        constructor(readonly version: number, readonly cache: ScriptVersionCache, readonly index: LineIndex, readonly changesSincePreviousVersion: readonly TextChange[] = ts.server.emptyArray) {
         }
-
         getText(rangeStart: number, rangeEnd: number) {
             return this.index.getText(rangeStart, rangeEnd - rangeStart);
         }
-
         getLength() {
             return this.index.getLength();
         }
-
-        getChangeRange(oldSnapshot: IScriptSnapshot): TextChangeRange | undefined {
+        getChangeRange(oldSnapshot: ts.IScriptSnapshot): ts.TextChangeRange | undefined {
             if (oldSnapshot instanceof LineIndexSnapshot && this.cache === oldSnapshot.cache) {
                 if (this.version <= oldSnapshot.version) {
-                    return unchangedTextChangeRange;
+                    return ts.unchangedTextChangeRange;
                 }
                 else {
                     return this.cache.getTextChangesBetweenVersions(oldSnapshot.version, this.version);
@@ -385,29 +342,26 @@ namespace ts.server {
             }
         }
     }
-
     export class LineIndex {
         root!: LineNode;
         // set this to true to check each edit for accuracy
         checkEdits = false;
-
         absolutePositionOfStartOfLine(oneBasedLine: number): number {
             return this.lineNumberToInfo(oneBasedLine).absolutePosition;
         }
-
-        positionToLineOffset(position: number): protocol.Location {
+        positionToLineOffset(position: number): ts.server.protocol.Location {
             const { oneBasedLine, zeroBasedColumn } = this.root.charOffsetToLineInfo(1, position);
             return { line: oneBasedLine, offset: zeroBasedColumn + 1 };
         }
-
-        private positionToColumnAndLineText(position: number): { zeroBasedColumn: number, lineText: string | undefined } {
+        private positionToColumnAndLineText(position: number): {
+            zeroBasedColumn: number;
+            lineText: string | undefined;
+        } {
             return this.root.charOffsetToLineInfo(1, position);
         }
-
         getLineCount() {
             return this.root.lineCount();
         }
-
         lineNumberToInfo(oneBasedLine: number): AbsolutePositionAndLineText {
             const lineCount = this.getLineCount();
             if (oneBasedLine <= lineCount) {
@@ -418,7 +372,6 @@ namespace ts.server {
                 return { absolutePosition: this.root.charCount(), lineText: undefined };
             }
         }
-
         load(lines: string[]) {
             if (lines.length > 0) {
                 const leaves: LineLeaf[] = [];
@@ -431,11 +384,9 @@ namespace ts.server {
                 this.root = new LineNode();
             }
         }
-
         walk(rangeStart: number, rangeLength: number, walkFns: LineIndexWalker) {
             this.root.walk(rangeStart, rangeLength, walkFns);
         }
-
         getText(rangeStart: number, rangeLength: number) {
             let accum = "";
             if ((rangeLength > 0) && (rangeStart < this.root.charCount())) {
@@ -449,11 +400,9 @@ namespace ts.server {
             }
             return accum;
         }
-
         getLength(): number {
             return this.root.charCount();
         }
-
         every(f: (ll: LineLeaf, s: number, len: number) => boolean, rangeStart: number, rangeEnd?: number) {
             if (!rangeEnd) {
                 rangeEnd = this.root.charCount();
@@ -470,10 +419,9 @@ namespace ts.server {
             this.walk(rangeStart, rangeEnd - rangeStart, walkFns);
             return !walkFns.done;
         }
-
         edit(pos: number, deleteLength: number, newText?: string): LineIndex {
             if (this.root.charCount() === 0) {
-                Debug.assert(deleteLength === 0); // Can't delete from empty document
+                ts.Debug.assert(deleteLength === 0); // Can't delete from empty document
                 if (newText !== undefined) {
                     this.load(LineIndex.linesFromText(newText).lines);
                     return this;
@@ -512,24 +460,19 @@ namespace ts.server {
                         newText = newText ? newText + lineText : lineText;
                     }
                 }
-
                 this.root.walk(pos, deleteLength, walker);
                 walker.insertLines(newText, suppressTrailingText);
-
                 if (this.checkEdits) {
                     const updatedText = walker.lineIndex.getText(0, walker.lineIndex.getLength());
-                    Debug.assert(checkText === updatedText, "buffer edit mismatch");
+                    ts.Debug.assert(checkText === updatedText, "buffer edit mismatch");
                 }
-
                 return walker.lineIndex;
             }
         }
-
         private static buildTreeFromBottom(nodes: LineCollection[]): LineNode {
             if (nodes.length < lineCollectionCapacity) {
                 return new LineNode(nodes);
             }
-
             const interiorNodes = new Array<LineNode>(Math.ceil(nodes.length / lineCollectionCapacity));
             let nodeIndex = 0;
             for (let i = 0; i < interiorNodes.length; i++) {
@@ -539,10 +482,8 @@ namespace ts.server {
             }
             return this.buildTreeFromBottom(interiorNodes);
         }
-
         static linesFromText(text: string) {
-            const lineMap = computeLineStarts(text);
-
+            const lineMap = ts.computeLineStarts(text);
             if (lineMap.length === 0) {
                 return { lines: <string[]>[], lineMap };
             }
@@ -551,7 +492,6 @@ namespace ts.server {
             for (let lmi = 0; lmi < lc; lmi++) {
                 lines[lmi] = text.substring(lineMap[lmi], lineMap[lmi + 1]);
             }
-
             const endText = text.substring(lineMap[lc]);
             if (endText.length > 0) {
                 lines[lc] = endText;
@@ -562,19 +502,16 @@ namespace ts.server {
             return { lines, lineMap };
         }
     }
-
     class LineNode implements LineCollection {
         totalChars = 0;
         totalLines = 0;
-
         constructor(private readonly children: LineCollection[] = []) {
-            if (children.length) this.updateCounts();
+            if (children.length)
+                this.updateCounts();
         }
-
         isLeaf() {
             return false;
         }
-
         updateCounts() {
             this.totalChars = 0;
             this.totalLines = 0;
@@ -583,7 +520,6 @@ namespace ts.server {
                 this.totalLines += child.lineCount();
             }
         }
-
         private execWalk(rangeStart: number, rangeLength: number, walkFns: LineIndexWalker, childIndex: number, nodeType: CharRangeSection) {
             if (walkFns.pre) {
                 walkFns.pre(rangeStart, rangeLength, this.children[childIndex], this, nodeType);
@@ -599,14 +535,12 @@ namespace ts.server {
             }
             return walkFns.done;
         }
-
         private skipChild(relativeStart: number, relativeLength: number, childIndex: number, walkFns: LineIndexWalker, nodeType: CharRangeSection) {
             if (walkFns.pre && (!walkFns.done)) {
                 walkFns.pre(relativeStart, relativeLength, this.children[childIndex], this, nodeType);
                 walkFns.goSubtree = true;
             }
         }
-
         walk(rangeStart: number, rangeLength: number, walkFns: LineIndexWalker) {
             // assume (rangeStart < this.totalChars) && (rangeLength <= this.totalChars)
             let childIndex = 0;
@@ -658,15 +592,17 @@ namespace ts.server {
                 }
             }
         }
-
         // Input position is relative to the start of this node.
         // Output line number is absolute.
-        charOffsetToLineInfo(lineNumberAccumulator: number, relativePosition: number): { oneBasedLine: number, zeroBasedColumn: number, lineText: string | undefined } {
+        charOffsetToLineInfo(lineNumberAccumulator: number, relativePosition: number): {
+            oneBasedLine: number;
+            zeroBasedColumn: number;
+            lineText: string | undefined;
+        } {
             if (this.children.length === 0) {
                 // Root node might have no children if this is an empty document.
                 return { oneBasedLine: lineNumberAccumulator, zeroBasedColumn: relativePosition, lineText: undefined };
             }
-
             for (const child of this.children) {
                 if (child.charCount() > relativePosition) {
                     if (child.isLeaf()) {
@@ -681,18 +617,19 @@ namespace ts.server {
                     lineNumberAccumulator += child.lineCount();
                 }
             }
-
             // Skipped all children
             const { leaf } = this.lineNumberToInfo(this.lineCount(), 0);
             return { oneBasedLine: this.lineCount(), zeroBasedColumn: leaf ? leaf.charCount() : 0, lineText: undefined };
         }
-
         /**
          * Input line number is relative to the start of this node.
          * Output line number is relative to the child.
          * positionAccumulator will be an absolute position once relativeLineNumber reaches 0.
          */
-        lineNumberToInfo(relativeOneBasedLine: number, positionAccumulator: number): { position: number, leaf: LineLeaf | undefined } {
+        lineNumberToInfo(relativeOneBasedLine: number, positionAccumulator: number): {
+            position: number;
+            leaf: LineLeaf | undefined;
+        } {
             for (const child of this.children) {
                 const childLineCount = child.lineCount();
                 if (childLineCount >= relativeOneBasedLine) {
@@ -703,10 +640,8 @@ namespace ts.server {
                     positionAccumulator += child.charCount();
                 }
             }
-
             return { position: positionAccumulator, leaf: undefined };
         }
-
         private splitAfter(childIndex: number) {
             let splitNode: LineNode | undefined;
             const clen = this.children.length;
@@ -723,7 +658,6 @@ namespace ts.server {
             this.children.length = endLength;
             return splitNode;
         }
-
         remove(child: LineCollection) {
             const childIndex = this.findChildIndex(child);
             const clen = this.children.length;
@@ -734,13 +668,11 @@ namespace ts.server {
             }
             this.children.pop();
         }
-
         private findChildIndex(child: LineCollection) {
             const childIndex = this.children.indexOf(child);
-            Debug.assert(childIndex !== -1);
+            ts.Debug.assert(childIndex !== -1);
             return childIndex;
         }
-
         insertAt(child: LineCollection, nodes: LineCollection[]) {
             let childIndex = this.findChildIndex(child);
             const clen = this.children.length;
@@ -794,38 +726,30 @@ namespace ts.server {
                 return splitNodes;
             }
         }
-
         // assume there is room for the item; return true if more room
         add(collection: LineCollection): void {
             this.children.push(collection);
-            Debug.assert(this.children.length <= lineCollectionCapacity);
+            ts.Debug.assert(this.children.length <= lineCollectionCapacity);
         }
-
         charCount() {
             return this.totalChars;
         }
-
         lineCount() {
             return this.totalLines;
         }
     }
-
     class LineLeaf implements LineCollection {
         constructor(public text: string) {
         }
-
         isLeaf() {
             return true;
         }
-
         walk(rangeStart: number, rangeLength: number, walkFns: LineIndexWalker) {
             walkFns.leaf(rangeStart, rangeLength, this);
         }
-
         charCount() {
             return this.text.length;
         }
-
         lineCount() {
             return 1;
         }
