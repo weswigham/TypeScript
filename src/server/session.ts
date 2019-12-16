@@ -34,7 +34,7 @@ namespace ts.server {
         // We still want to check .js files in a JS-only inferred or external project (e.g. if the
         // file has '// @ts-check').
 
-        if ((project.projectKind === ProjectKind.Inferred || project.projectKind === ProjectKind.External) &&
+        if ((isInferredProject(project) || isExternalProject(project)) &&
             project.isJsOnlyProject()) {
             const scriptInfo = project.getScriptInfoForNormalizedPath(file);
             return scriptInfo && !scriptInfo.isJavaScript();
@@ -284,6 +284,7 @@ namespace ts.server {
 
     function combineProjectOutputFromEveryProject<T>(projectService: ProjectService, action: (project: Project) => readonly T[], areEqual: (a: T, b: T) => boolean) {
         const outputs: T[] = [];
+        projectService.loadAncestorProjectTree();
         projectService.forEachEnabledProject(project => {
             const theseOutputs = action(project);
             outputs.push(...theseOutputs.filter(output => !outputs.some(o => areEqual(o, output))));
@@ -299,7 +300,7 @@ namespace ts.server {
         resultsEqual: (a: T, b: T) => boolean,
     ): T[] {
         const outputs: T[] = [];
-        combineProjectOutputWorker<undefined>(
+        combineProjectOutputWorker(
             projects,
             defaultProject,
             /*initialLocation*/ undefined,
@@ -310,7 +311,7 @@ namespace ts.server {
                     }
                 }
             },
-            /*getDefinition*/ undefined);
+        );
         return outputs;
     }
 
@@ -324,7 +325,7 @@ namespace ts.server {
     ): readonly RenameLocation[] {
         const outputs: RenameLocation[] = [];
 
-        combineProjectOutputWorker<DocumentPosition>(
+        combineProjectOutputWorker(
             projects,
             defaultProject,
             initialLocation,
@@ -335,7 +336,6 @@ namespace ts.server {
                     }
                 }
             },
-            () => getDefinitionLocation(defaultProject, initialLocation)
         );
 
         return outputs;
@@ -344,7 +344,7 @@ namespace ts.server {
     function getDefinitionLocation(defaultProject: Project, initialLocation: DocumentPosition): DocumentPosition | undefined {
         const infos = defaultProject.getLanguageService().getDefinitionAtPosition(initialLocation.fileName, initialLocation.pos);
         const info = infos && firstOrUndefined(infos);
-        return info && { fileName: info.fileName, pos: info.textSpan.start };
+        return info && !info.isLocal ? { fileName: info.fileName, pos: info.textSpan.start } : undefined;
     }
 
     function combineProjectOutputForReferences(
@@ -354,7 +354,7 @@ namespace ts.server {
     ): readonly ReferencedSymbol[] {
         const outputs: ReferencedSymbol[] = [];
 
-        combineProjectOutputWorker<DocumentPosition>(
+        combineProjectOutputWorker(
             projects,
             defaultProject,
             initialLocation,
@@ -384,7 +384,6 @@ namespace ts.server {
                     }
                 }
             },
-            () => getDefinitionLocation(defaultProject, initialLocation)
         );
 
         return outputs.filter(o => o.references.length !== 0);
@@ -417,8 +416,7 @@ namespace ts.server {
         projects: Projects,
         defaultProject: Project,
         initialLocation: TLocation,
-        cb: CombineProjectOutputCallback<TLocation>,
-        getDefinition: (() => DocumentPosition | undefined) | undefined,
+        cb: CombineProjectOutputCallback<TLocation>
     ): void {
         const projectService = defaultProject.projectService;
         let toDo: ProjectAndLocation<TLocation>[] | undefined;
@@ -430,15 +428,18 @@ namespace ts.server {
         });
 
         // After initial references are collected, go over every other project and see if it has a reference for the symbol definition.
-        if (getDefinition) {
-            const memGetDefinition = memoize(getDefinition);
-            projectService.forEachEnabledProject(project => {
-                if (!addToSeen(seenProjects, project.projectName)) return;
-                const definition = getDefinitionInProject(memGetDefinition(), defaultProject, project);
-                if (definition) {
-                    toDo = callbackProjectAndLocation<TLocation>({ project, location: definition as TLocation }, projectService, toDo, seenProjects, cb);
-                }
-            });
+        if (initialLocation) {
+            const defaultDefinition = getDefinitionLocation(defaultProject, initialLocation!);
+            if (defaultDefinition) {
+                projectService.loadAncestorProjectTree(seenProjects);
+                projectService.forEachEnabledProject(project => {
+                    if (!addToSeen(seenProjects, project)) return;
+                    const definition = mapDefinitionInProject(defaultDefinition, defaultProject, project);
+                    if (definition) {
+                        toDo = callbackProjectAndLocation<TLocation>({ project, location: definition as TLocation }, projectService, toDo, seenProjects, cb);
+                    }
+                });
+            }
         }
 
         while (toDo && toDo.length) {
@@ -446,10 +447,33 @@ namespace ts.server {
         }
     }
 
-    function getDefinitionInProject(definition: DocumentPosition | undefined, definingProject: Project, project: Project): DocumentPosition | undefined {
-        if (!definition || project.containsFile(toNormalizedPath(definition.fileName))) return definition;
-        const mappedDefinition = definingProject.getLanguageService().getSourceMapper().tryGetGeneratedPosition(definition);
+    function mapDefinitionInProject(definition: DocumentPosition | undefined, definingProject: Project, project: Project): DocumentPosition | undefined {
+        // If the definition is actually from the project, definition is correct as is
+        if (!definition ||
+            project.containsFile(toNormalizedPath(definition.fileName)) &&
+            !isLocationProjectReferenceRedirect(project, definition)) {
+            return definition;
+        }
+        const mappedDefinition = definingProject.isSourceOfProjectReferenceRedirect(definition.fileName) ?
+            definition :
+            definingProject.getLanguageService().getSourceMapper().tryGetGeneratedPosition(definition);
         return mappedDefinition && project.containsFile(toNormalizedPath(mappedDefinition.fileName)) ? mappedDefinition : undefined;
+    }
+
+    function isLocationProjectReferenceRedirect(project: Project, location: DocumentPosition | undefined) {
+        if (!location) return false;
+        const program = project.getLanguageService().getProgram();
+        if (!program) return false;
+        const sourceFile = program.getSourceFile(location.fileName);
+
+        // It is possible that location is attached to project but
+        // the program actually includes its redirect instead.
+        // This happens when rootFile in project is one of the file from referenced project
+        // Thus root is attached but program doesnt have the actual .ts file but .d.ts
+        // If this is not the file we were actually looking, return rest of the toDo
+        return !!sourceFile &&
+            sourceFile.resolvedPath !== sourceFile.path &&
+            sourceFile.resolvedPath !== project.toPath(location.fileName);
     }
 
     function callbackProjectAndLocation<TLocation extends DocumentPosition | undefined>(
@@ -459,9 +483,12 @@ namespace ts.server {
         seenProjects: Map<true>,
         cb: CombineProjectOutputCallback<TLocation>,
     ): ProjectAndLocation<TLocation>[] | undefined {
-        if (projectAndLocation.project.getCancellationToken().isCancellationRequested()) return undefined; // Skip rest of toDo if cancelled
+        const { project, location } = projectAndLocation;
+        if (project.getCancellationToken().isCancellationRequested()) return undefined; // Skip rest of toDo if cancelled
+        // If this is not the file we were actually looking, return rest of the toDo
+        if (isLocationProjectReferenceRedirect(project, location)) return toDo;
         cb(projectAndLocation, (project, location) => {
-            seenProjects.set(projectAndLocation.project.projectName, true);
+            addToSeen(seenProjects, projectAndLocation.project);
             const originalLocation = projectService.getOriginalLocationEnsuringConfiguredProject(project, location);
             if (!originalLocation) return undefined;
 
@@ -473,17 +500,25 @@ namespace ts.server {
             }
             const symlinkedProjectsMap = projectService.getSymlinkedProjects(originalScriptInfo);
             if (symlinkedProjectsMap) {
-                symlinkedProjectsMap.forEach((symlinkedProjects) => {
-                    for (const symlinkedProject of symlinkedProjects) addToTodo({ project: symlinkedProject, location: originalLocation as TLocation }, toDo!, seenProjects);
+                symlinkedProjectsMap.forEach((symlinkedProjects, symlinkedPath) => {
+                    for (const symlinkedProject of symlinkedProjects) addToTodo({ project: symlinkedProject, location: { fileName: symlinkedPath, pos: originalLocation.pos } as TLocation }, toDo!, seenProjects);
                 });
             }
-            return originalLocation;
+            return originalLocation === location ? undefined : originalLocation;
         });
         return toDo;
     }
 
     function addToTodo<TLocation extends DocumentPosition | undefined>(projectAndLocation: ProjectAndLocation<TLocation>, toDo: Push<ProjectAndLocation<TLocation>>, seenProjects: Map<true>): void {
-        if (addToSeen(seenProjects, projectAndLocation.project.projectName)) toDo.push(projectAndLocation);
+        if (addToSeen(seenProjects, projectAndLocation.project)) toDo.push(projectAndLocation);
+    }
+
+    function addToSeen(seenProjects: Map<true>, project: Project) {
+        return ts.addToSeen(seenProjects, getProjectKey(project));
+    }
+
+    function getProjectKey(project: Project) {
+        return isConfiguredProject(project) ? project.canonicalConfigFilePath : project.getProjectName();
     }
 
     function documentSpanLocation({ fileName, textSpan }: DocumentSpan): DocumentPosition {
@@ -1037,7 +1072,9 @@ namespace ts.server {
 
         private getEmitOutput(args: protocol.FileRequestArgs): EmitOutput {
             const { file, project } = this.getFileAndProject(args);
-            return project.getLanguageService().getEmitOutput(file);
+            return project.shouldEmitFile(project.getScriptInfo(file)) ?
+                project.getLanguageService().getEmitOutput(file) :
+                { emitSkipped: true, outputFiles: [] };
         }
 
         private mapDefinitionInfo(definitions: readonly DefinitionInfo[], project: Project): readonly protocol.FileSpanWithContext[] {
@@ -1672,10 +1709,10 @@ namespace ts.server {
             }
         }
 
-        private createCheckList(fileNames: string[], defaultProject?: Project): PendingErrorCheck[] {
+        private createCheckList(fileNames: string[]): PendingErrorCheck[] {
             return mapDefined<string, PendingErrorCheck>(fileNames, uncheckedFileName => {
                 const fileName = toNormalizedPath(uncheckedFileName);
-                const project = defaultProject || this.projectService.tryGetDefaultProjectForFile(fileName);
+                const project = this.projectService.tryGetDefaultProjectForFile(fileName);
                 return project && { fileName, project };
             });
         }
@@ -2119,7 +2156,7 @@ namespace ts.server {
 
         private handlers = createMapFromTemplate<(request: protocol.Request) => HandlerResponse>({
             [CommandNames.Status]: () => {
-                const response: protocol.StatusResponseBody = { version };
+                const response: protocol.StatusResponseBody = { version: ts.version }; // eslint-disable-line @typescript-eslint/no-unnecessary-qualifier
                 return this.requiredResponse(response);
             },
             [CommandNames.OpenExternalProject]: (request: protocol.OpenExternalProjectRequest) => {
