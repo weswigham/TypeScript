@@ -30,7 +30,7 @@
         "bdd",
         "--no-timeouts",
         "--colors",
-        "built/local/run.js",
+        "built/local/testRunner/Harness.js",
         "-f",
         // You can change this to be the name of a specific test file (without the file extension)
         // to consistently launch the same test
@@ -46,7 +46,7 @@
       "preLaunchTask": "tests",
       "console": "integratedTerminal",
       "outFiles": [
-        "${workspaceRoot}/built/local/run.js"
+        "${workspaceRoot}/built/local/testRunner/Harness.js"
       ]
     },
     {

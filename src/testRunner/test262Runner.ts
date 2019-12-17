@@ -1,5 +1,5 @@
 import { RunnerBase, Compiler, IO, Baseline, TestCaseParser, TestRunnerKind } from "./Harness";
-import { CompilerOptions, ScriptTarget, ModuleKind, removeFileExtension, map, normalizePath } from "./ts";
+import { CompilerOptions, ScriptTarget, ModuleKind, removeFileExtension, map, normalizePath } from "../compiler/ts";
 import { CompilationResult } from "./compiler";
 import { assertInvariants, sourceFileToJSON } from "./Utils";
 // In harness baselines, null is different than undefined. See `generateActual` in `harness.ts`.

@@ -1,5 +1,5 @@
 import { RunnerBase, TestRunnerKind, CompilerBaselineRunner, CompilerTestType, FourSlashRunner, Test262BaselineRunner, UserCodeRunner, DefinitelyTypedRunner, DockerfileRunner, IO, setLightMode, setShardId, setShards, GeneratedFourslashRunner } from "./Harness";
-import { forEach, Debug, getUILocale, setUILocale, noop } from "./ts";
+import { forEach, Debug, getUILocale, setUILocale, noop } from "../compiler/ts";
 import { FourSlashTestType } from "./FourSlash";
 import { ProjectRunner } from "./project";
 import { RWCRunner } from "./RWC";
@@ -229,10 +229,10 @@ export let isWorker: boolean;
 function startTestEnvironment() {
     isWorker = handleTestConfig();
     if (isWorker) {
-        return start();
+        return start(runUnitTests);
     }
     else if (taskConfigsFolder && workerCount && workerCount > 1) {
-        return Host.start();
+        return Host.start(runUnitTests);
     }
     beginTests();
 }

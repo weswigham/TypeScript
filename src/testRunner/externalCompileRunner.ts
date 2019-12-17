@@ -1,5 +1,5 @@
 import { RunnerBase, IO, isWorker, Baseline, TestRunnerKind } from "./Harness";
-import { Debug, flatten, comparePathsCaseSensitive, compareValues, compareStringsCaseSensitive, stringContains } from "./ts";
+import { Debug, flatten, comparePathsCaseSensitive, compareValues, compareStringsCaseSensitive, stringContains } from "../compiler/ts";
 const fs: typeof import("fs") = require("fs");
 const path: typeof import("path") = require("path");
 const del: typeof import("del") = require("del");

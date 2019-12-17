@@ -1,5 +1,5 @@
 import { TestRunnerKind } from "../Harness";
-import { noop } from "../ts";
+import { noop } from "../../compiler/ts";
 export interface RunnerTask {
     runner: TestRunnerKind;
     file: string;

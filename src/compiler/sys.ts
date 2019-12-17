@@ -1025,7 +1025,7 @@ export let sys: System = (() => {
                 }
             },
             getExecutingFilePath() {
-                return __filename;
+                return _path.join(_path.dirname(__filename), "..", _path.basename(__filename)); // COMPAT: return path in root of our dir, rather than direct location of sys impl
             },
             getCurrentDirectory() {
                 return process.cwd();

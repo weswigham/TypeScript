@@ -5,7 +5,7 @@ import { matchFiles, FileSystemEntries, notImplemented, generateDjb2Hash, Source
 import { TextDocument } from "./documents";
 import { SortedMap } from "./collections";
 import { lightMode } from "./Harness";
-import * as ts from "./ts";
+import * as ts from "../compiler/ts";
 /**
  * Fake implementations of various compiler dependencies.
  */

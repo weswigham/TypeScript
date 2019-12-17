@@ -1,7 +1,7 @@
 import { IoLog, wrapIO, newStyleLogIntoOldStyleLog } from "./Playback";
 import { IO, setHarnessIO, Compiler, Baseline, isDefaultLibraryFile, RunnerBase, TestRunnerKind } from "./Harness";
 import { CompilationResult } from "./compiler";
-import { CompilerOptions, getBaseFileName, ParsedCommandLine, parseCommandLine, forEach, parseJsonText, ParseConfigHost, parseJsonSourceFileConfigFileContent, getDirectoryPath, extend, setConfigFileInOptions, createMap, normalizeSlashes } from "./ts";
+import { CompilerOptions, getBaseFileName, ParsedCommandLine, parseCommandLine, forEach, parseJsonText, ParseConfigHost, parseJsonSourceFileConfigFileContent, getDirectoryPath, extend, setConfigFileInOptions, createMap, normalizeSlashes } from "../compiler/ts";
 import { isTsConfigFile } from "./vpath";
 // In harness baselines, null is different than undefined. See `generateActual` in `harness.ts`.
 function runWithIOLog(ioLog: IoLog, fn: (oldIO: IO) => void) {

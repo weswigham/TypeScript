@@ -1,11 +1,8 @@
-import { server, compareStringsCaseSensitive, map, arrayIsEqualTo, CompilerOptions, projectSystem, Extension, stringContains } from "../../ts";
-import { ServerHost, Session, protocol, ITypingsInstaller, SessionOptions, nullTypingsInstaller } from "../../ts.server";
+import { compareStringsCaseSensitive, map, arrayIsEqualTo, CompilerOptions, projectSystem, Extension, stringContains } from "../../ts";
+import { ServerHost, Session, protocol, ITypingsInstaller, SessionOptions, nullTypingsInstaller, CommandNames, nullCancellationToken } from "../../ts.server";
 import { TestTypingsInstaller, File, createHasErrorMessageLogger, makeSessionRequest, createServerHost, libFile, openFilesForSession, checkNumberOfProjects, checkProjectRootFiles, createSession, toExternalFiles, TestSession, checkProjectActualFiles } from "../../ts.projectSystem";
 import { byteLength } from "../../Utils";
 import { projectRoot } from "../../ts.tscWatch";
-import * as ts from "../../ts";
-import CommandNames = ts.server.CommandNames;
-const nullCancellationToken = server.nullCancellationToken;
 function createTestTypingsInstaller(host: ServerHost) {
     return new TestTypingsInstaller("/a/data/", /*throttleLimit*/ 5, host);
 }

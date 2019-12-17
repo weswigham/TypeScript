@@ -1,6 +1,6 @@
 import { FileBasedTest, RunnerBase, TestRunnerKind, IO, getFileBasedTestConfigurationDescription, FileBasedTestConfiguration, TestCaseParser, Compiler, getFileBasedTestConfigurations, Baseline } from "./Harness";
 import { normalizeSeparators, basename } from "./vpath";
-import { some, getDirectoryPath, CompilerOptions, cloneCompilerOptions, combinePaths, isRootedDiskPath, getNormalizedAbsolutePath, fileExtensionIs, Extension, length, toPath, identity } from "./ts";
+import { some, getDirectoryPath, CompilerOptions, cloneCompilerOptions, combinePaths, isRootedDiskPath, getNormalizedAbsolutePath, fileExtensionIs, Extension, length, toPath, identity } from "../services/ts";
 import { CompilationResult } from "./compiler";
 import { sanitizeTraceResolutionLogEntry, removeTestPathPrefixes } from "./Utils";
 import * as vpath from "./vpath";

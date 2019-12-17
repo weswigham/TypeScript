@@ -1,15 +1,15 @@
 {
     "extends": "../tsconfig-library-base",
     "compilerOptions": {
-        "outFile": "../../built/local/typescriptServices.out.js"
+        "outDir": "../../built/local"
     },
     "files": [
         "typescriptServices.ts"
     ],
     "references": [
-        { "path": "../shims", "prepend": true },
-        { "path": "../compiler", "prepend": true },
-        { "path": "../jsTyping", "prepend": true },
-        { "path": "../services", "prepend": true }
+        { "path": "../shims" },
+        { "path": "../compiler" },
+        { "path": "../jsTyping" },
+        { "path": "../services" }
     ]
 }

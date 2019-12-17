@@ -1,8 +1,8 @@
 import { Task, TaskResult, UnitTestTask, RunnerTask, ErrorInfo, TestInfo, ParallelHostMessage, ParallelClientMessage, shimNoopTestInterface } from "../Harness.Parallel";
-import { createMap } from "../ts";
-import { globalTimeout, createRunner, RunnerBase, runUnitTests } from "../Harness";
-import * as ts from "../ts";
-export function start() {
+import { createMap } from "../../compiler/ts";
+import { globalTimeout, createRunner, RunnerBase } from "../Harness";
+import * as ts from "../../compiler/ts";
+export function start(runUnitTests: boolean | undefined) {
     function hookUncaughtExceptions() {
         if (!exceptionsHooked) {
             process.on("uncaughtException", handleUncaughtException);

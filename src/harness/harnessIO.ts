@@ -150,7 +150,7 @@ function createNodeIO(): IO {
         log: s => console.log(s),
         args: () => sys.args,
         getExecutingFilePath: () => sys.getExecutingFilePath(),
-        getWorkspaceRoot: () => resolve(__dirname, "../.."),
+        getWorkspaceRoot: () => resolve(__dirname, "../../.."),
         exit: exitCode => sys.exit(exitCode),
         readDirectory: (path, extension, exclude, include, depth) => sys.readDirectory(path, extension, exclude, include, depth),
         getAccessibleFileSystemEntries,

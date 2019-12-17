@@ -1,7 +1,7 @@
-import { configOption, IO, TestRunnerKind, runners, workerCount, noColors, TestConfig, lightMode, runUnitTests, stackTraceLimit, globalTimeout, taskConfigsFolder, keepFailed } from "../Harness";
+import { configOption, IO, TestRunnerKind, runners, workerCount, noColors, TestConfig, lightMode, stackTraceLimit, globalTimeout, taskConfigsFolder, keepFailed } from "../Harness";
 import { Task, ErrorInfo, TestInfo, TaskTimeout, ParallelClientMessage, ParallelHostMessage, shimNoopTestInterface } from "../Harness.Parallel";
-import { createMap, combinePaths, Debug } from "../ts";
-export function start() {
+import { createMap, combinePaths, Debug } from "../../compiler/ts";
+export function start(runUnitTests: boolean | undefined) {
     const Mocha = require("mocha") as typeof import("mocha");
     const Base = Mocha.reporters.Base;
     const color = Base.color;
@@ -14,8 +14,8 @@ export function start() {
     const path = require("path") as typeof import("path");
     const { fork } = require("child_process") as typeof import("child_process");
     const { statSync } = require("fs") as typeof import("fs");
-    // NOTE: paths for module and types for FailedTestReporter _do not_ line up due to our use of --outFile for run.js
-    const FailedTestReporter = require(path.resolve(__dirname, "../../scripts/failed-tests")) as typeof import("../../../scripts/failed-tests");
+    // NOTE: paths for module and types for FailedTestReporter _do not_ line up due to our use of --outDir for results
+    const FailedTestReporter = require(path.resolve(__dirname, "../../../../scripts/failed-tests")) as typeof import("../../../scripts/failed-tests");
     const perfdataFileNameFragment = ".parallelperf";
     const perfData = readSavedPerfData(configOption);
     const newTasks: Task[] = [];

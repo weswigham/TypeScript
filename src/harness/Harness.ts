@@ -1,3 +1,5 @@
+import "../services/services"; // ensure services setup code is called
+import "./harnessGlobals";
 export * from "./runnerbase";
 export * from "./harnessIO";
 export * from "./typeWriter";

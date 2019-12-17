@@ -9,7 +9,9 @@ const fold = require("travis-fold");
 const rename = require("gulp-rename");
 const concat = require("gulp-concat");
 const merge2 = require("merge2");
+const through = require("through2");
 const mkdirp = require("mkdirp");
+const webpack = require("webpack-stream");
 const { src, dest, task, parallel, series, watch } = require("gulp");
 const { append, transform } = require("gulp-insert");
 const { prependFile } = require("./scripts/build/prepend");
@@ -17,7 +19,9 @@ const { exec, readJson, needsUpdate, getDiffTool, getDirSize, rm } = require("./
 const { runConsoleTests, refBaseline, localBaseline, refRwcBaseline, localRwcBaseline } = require("./scripts/build/tests");
 const { buildProject, cleanProject, watchProject } = require("./scripts/build/projects");
 const cmdLineOptions = require("./scripts/build/options");
+const { Extractor, ExtractorConfig } = require("@microsoft/api-extractor");
 
+const testRoot = "built/local/testRunner/Harness.js"
 const copyright = "CopyrightNotice.txt";
 const cleanTasks = [];
 
@@ -123,25 +127,62 @@ const localPreBuild = parallel(generateLibs, series(buildScripts, generateDiagno
 const preBuild = cmdLineOptions.lkg ? lkgPreBuild : localPreBuild;
 
 const buildServices = (() => {
-    // build typescriptServices.out.js
+    // build typescriptServices/typescriptServices.js
     const buildTypescriptServicesOut = () => buildProject("src/typescriptServices/tsconfig.json", cmdLineOptions);
 
     // create typescriptServices.js
-    const createTypescriptServicesJs = () => src("built/local/typescriptServices.out.js")
+    const createTypescriptServicesJs = () => src("built/local/typescriptServices/typescriptServices.js")
         .pipe(newer("built/local/typescriptServices.js"))
         .pipe(sourcemaps.init({ loadMaps: true }))
+        .pipe(webpack({
+            mode: "none",
+            devtool: "source-map",
+            externals: require("./package.json").browser,
+        }))
+        .pipe(through.obj(function (file, enc, cb) {
+            // Dont pipe through any source map files as it will be handled
+            // by gulp-sourcemaps
+            const isSourceMap = /\.map$/.test(file.path);
+            if (!isSourceMap) this.push(file);
+            cb();
+          }))
         .pipe(prependFile(copyright))
         .pipe(rename("typescriptServices.js"))
         .pipe(sourcemaps.write(".", { includeContent: false, destPath: "built/local" }))
         .pipe(dest("built/local"));
 
     // create typescriptServices.d.ts
-    const createTypescriptServicesDts = () => src("built/local/typescriptServices.out.d.ts")
-        .pipe(newer("built/local/typescriptServices.d.ts"))
-        .pipe(prependFile(copyright))
-        .pipe(transform(content => content.replace(/^(\s*)(export )?const enum (\S+) {(\s*)$/gm, "$1$2enum $3 {$4")))
-        .pipe(rename("typescriptServices.d.ts"))
-        .pipe(dest("built/local"));
+    const createTypescriptServicesDts = () => {
+        const result = Extractor.invoke(ExtractorConfig.prepare({
+            configObject: {
+                mainEntryPointFilePath: "built/local/typescriptServices/typescriptServices.d.ts",
+                dtsRollup: {
+                    enabled: true,
+                    untrimmedFilePath: "built/local/typescriptServices.out.d.ts"
+                },
+                compiler: {
+                    tsconfigFilePath: path.resolve(__dirname, "src/typescriptServices/tsconfig.json")
+                },
+                projectFolder: __dirname
+            },
+            packageJson: require("./package.json"),
+            packageJsonFullPath: path.resolve(__dirname, "package.json"),
+            configObjectFullPath: path.resolve(__dirname, "Gulpfile.js")
+        }), {
+            localBuild: !process.env.CI,
+            typescriptCompilerFolder: "lib",
+        });
+        if (!result.succeeded) {
+            throw new Error(`API Extractor reported ${result.errorCount} errors.`);
+        }
+        // TODO: have API extractor load/combine .d.ts maps
+        return src("built/local/typescriptServices.out.d.ts")
+            .pipe(newer("built/local/typescriptServices.d.ts"))
+            .pipe(prependFile(copyright))
+            .pipe(transform(content => content.replace(/^(\s*)(export )?const enum (\S+) {(\s*)$/gm, "$1$2enum $3 {$4")))
+            .pipe(rename("typescriptServices.d.ts"))
+            .pipe(dest("built/local"));
+    }
 
     // create typescript.js
     const createTypescriptJs = () => src("built/local/typescriptServices.js")
@@ -185,10 +226,9 @@ const cleanServices = async () => {
         await cleanProject("built/local/typescriptServices.tsconfig.json");
     }
     await del([
-        "built/local/typescriptServices.out.js",
-        "built/local/typescriptServices.out.d.ts",
-        "built/local/typescriptServices.out.tsbuildinfo",
+        "built/local/typescriptServices/**",
         "built/local/typescriptServices.js",
+        "built/local/typescriptServices.d.ts",
         "built/local/typescript.js",
         "built/local/typescript.d.ts",
         "built/local/typescript_standalone.d.ts"
@@ -205,6 +245,8 @@ const watchServices = () => watch([
     "src/jsTyping/**/*.ts",
     "src/services/tsconfig.json",
     "src/services/**/*.ts",
+    "src/shims/tsconfig.json",
+    "src/shims/**/*.ts",
 ], series(preBuild, buildServices));
 task("watch-services", series(preBuild, parallel(watchLib, watchDiagnostics, watchServices)));
 task("watch-services").description = "Watches for changes and rebuild language service only";
@@ -246,76 +288,76 @@ task("watch-min").flags = {
     "   --built": "Compile using the built version of the compiler."
 };
 
-const buildLssl = (() => {
-    // build tsserverlibrary.out.js
-    const buildServerLibraryOut = () => buildProject("src/tsserverlibrary/tsconfig.json", cmdLineOptions);
+// const buildLssl = (() => {
+//     // build tsserverlibrary.out.js
+//     const buildServerLibraryOut = () => buildProject("src/tsserverlibrary/tsconfig.json", cmdLineOptions);
 
-    // create tsserverlibrary.js
-    const createServerLibraryJs = () => src("built/local/tsserverlibrary.out.js")
-        .pipe(newer("built/local/tsserverlibrary.js"))
-        .pipe(sourcemaps.init({ loadMaps: true }))
-        .pipe(prependFile(copyright))
-        .pipe(rename("tsserverlibrary.js"))
-        .pipe(sourcemaps.write(".", { includeContent: false, destPath: "built/local" }))
-        .pipe(dest("built/local"));
+//     // create tsserverlibrary.js
+//     const createServerLibraryJs = () => src("built/local/tsserverlibrary.out.js")
+//         .pipe(newer("built/local/tsserverlibrary.js"))
+//         .pipe(sourcemaps.init({ loadMaps: true }))
+//         .pipe(prependFile(copyright))
+//         .pipe(rename("tsserverlibrary.js"))
+//         .pipe(sourcemaps.write(".", { includeContent: false, destPath: "built/local" }))
+//         .pipe(dest("built/local"));
 
-    // create tsserverlibrary.d.ts
-    const createServerLibraryDts = () => src("built/local/tsserverlibrary.out.d.ts")
-        .pipe(newer("built/local/tsserverlibrary.d.ts"))
-        .pipe(prependFile(copyright))
-        .pipe(transform(content => content.replace(/^(\s*)(export )?const enum (\S+) {(\s*)$/gm, "$1$2enum $3 {$4")))
-        .pipe(append("\nexport = ts;\nexport as namespace ts;"))
-        .pipe(rename("tsserverlibrary.d.ts"))
-        .pipe(dest("built/local"));
+//     // create tsserverlibrary.d.ts
+//     const createServerLibraryDts = () => src("built/local/tsserverlibrary.out.d.ts")
+//         .pipe(newer("built/local/tsserverlibrary.d.ts"))
+//         .pipe(prependFile(copyright))
+//         .pipe(transform(content => content.replace(/^(\s*)(export )?const enum (\S+) {(\s*)$/gm, "$1$2enum $3 {$4")))
+//         .pipe(append("\nexport = ts;\nexport as namespace ts;"))
+//         .pipe(rename("tsserverlibrary.d.ts"))
+//         .pipe(dest("built/local"));
 
-    return series(
-        buildServerLibraryOut,
-        createServerLibraryJs,
-        createServerLibraryDts,
-    );
-})();
-task("lssl", series(preBuild, buildLssl));
-task("lssl").description = "Builds language service server library";
-task("lssl").flags = {
-    "   --built": "Compile using the built version of the compiler."
-};
+//     return series(
+//         buildServerLibraryOut,
+//         createServerLibraryJs,
+//         createServerLibraryDts,
+//     );
+// })();
+// task("lssl", series(preBuild, buildLssl));
+// task("lssl").description = "Builds language service server library";
+// task("lssl").flags = {
+//     "   --built": "Compile using the built version of the compiler."
+// };
 
-const cleanLssl = async () => {
-    if (fs.existsSync("built/local/tsserverlibrary.tsconfig.json")) {
-        await cleanProject("built/local/tsserverlibrary.tsconfig.json");
-    }
-    await del([
-        "built/local/tsserverlibrary.out.js",
-        "built/local/tsserverlibrary.out.d.ts",
-        "built/local/tsserverlibrary.out.tsbuildinfo",
-        "built/local/tsserverlibrary.js",
-        "built/local/tsserverlibrary.d.ts",
-    ]);
-};
-cleanTasks.push(cleanLssl);
-task("clean-lssl", cleanLssl);
-task("clean-lssl").description = "Clean outputs for the language service server library";
+// const cleanLssl = async () => {
+//     if (fs.existsSync("built/local/tsserverlibrary.tsconfig.json")) {
+//         await cleanProject("built/local/tsserverlibrary.tsconfig.json");
+//     }
+//     await del([
+//         "built/local/tsserverlibrary.out.js",
+//         "built/local/tsserverlibrary.out.d.ts",
+//         "built/local/tsserverlibrary.out.tsbuildinfo",
+//         "built/local/tsserverlibrary.js",
+//         "built/local/tsserverlibrary.d.ts",
+//     ]);
+// };
+// cleanTasks.push(cleanLssl);
+// task("clean-lssl", cleanLssl);
+// task("clean-lssl").description = "Clean outputs for the language service server library";
 
-const watchLssl = () => watch([
-    "src/compiler/tsconfig.json",
-    "src/compiler/**/*.ts",
-    "src/jsTyping/tsconfig.json",
-    "src/jsTyping/**/*.ts",
-    "src/services/tsconfig.json",
-    "src/services/**/*.ts",
-    "src/server/tsconfig.json",
-    "src/server/**/*.ts",
-    "src/tsserver/tsconfig.json",
-    "src/tsserver/**/*.ts",
-], buildLssl);
-task("watch-lssl", series(preBuild, parallel(watchLib, watchDiagnostics, watchLssl)));
-task("watch-lssl").description = "Watch for changes and rebuild tsserverlibrary only";
-task("watch-lssl").flags = {
-    "   --built": "Compile using the built version of the compiler."
-};
+// const watchLssl = () => watch([
+//     "src/compiler/tsconfig.json",
+//     "src/compiler/**/*.ts",
+//     "src/jsTyping/tsconfig.json",
+//     "src/jsTyping/**/*.ts",
+//     "src/services/tsconfig.json",
+//     "src/services/**/*.ts",
+//     "src/server/tsconfig.json",
+//     "src/server/**/*.ts",
+//     "src/tsserver/tsconfig.json",
+//     "src/tsserver/**/*.ts",
+// ], buildLssl);
+// task("watch-lssl", series(preBuild, parallel(watchLib, watchDiagnostics, watchLssl)));
+// task("watch-lssl").description = "Watch for changes and rebuild tsserverlibrary only";
+// task("watch-lssl").flags = {
+//     "   --built": "Compile using the built version of the compiler."
+// };
 
 const buildTests = () => buildProject("src/testRunner");
-task("tests", series(preBuild, parallel(buildLssl, buildTests)));
+task("tests", series(preBuild, parallel(/*buildLssl,*/ buildTests)));
 task("tests").description = "Builds the test infrastructure";
 task("tests").flags = {
     "   --built": "Compile using the built version of the compiler."
@@ -425,28 +467,28 @@ task("other-outputs").description = "Builds miscelaneous scripts and documents d
 
 const buildFoldStart = async () => { if (fold.isTravis()) console.log(fold.start("build")); };
 const buildFoldEnd = async () => { if (fold.isTravis()) console.log(fold.end("build")); };
-task("local", series(buildFoldStart, preBuild, parallel(localize, buildTsc, buildServer, buildServices, buildLssl, buildOtherOutputs), buildFoldEnd));
+task("local", series(buildFoldStart, preBuild, parallel(localize, buildTsc, buildServer, /*buildServices, buildLssl,*/ buildOtherOutputs), buildFoldEnd));
 task("local").description = "Builds the full compiler and services";
 task("local").flags = {
     "   --built": "Compile using the built version of the compiler."
 };
 
-task("watch-local", series(preBuild, parallel(watchLib, watchDiagnostics, watchTsc, watchServices, watchServer, watchLssl)));
+task("watch-local", series(preBuild, parallel(watchLib, watchDiagnostics, watchTsc, /*watchServices,*/ watchServer/*, watchLssl*/)));
 task("watch-local").description = "Watches for changes to projects in src/ (but does not execute tests).";
 task("watch-local").flags = {
     "   --built": "Compile using the built version of the compiler."
 };
 
-const generateCodeCoverage = () => exec("istanbul", ["cover", "node_modules/mocha/bin/_mocha", "--", "-R", "min", "-t", "" + cmdLineOptions.testTimeout, "built/local/run.js"]);
+const generateCodeCoverage = () => exec("istanbul", ["cover", "node_modules/mocha/bin/_mocha", "--", "-R", "min", "-t", "" + cmdLineOptions.testTimeout, testRoot]);
 task("generate-code-coverage", series(preBuild, buildTests, generateCodeCoverage));
 task("generate-code-coverage").description = "Generates code coverage data via istanbul";
 
-const preTest = parallel(buildTsc, buildTests, buildServices, buildLssl);
+const preTest = parallel(buildTsc, buildTests/*, buildServices, buildLssl*/);
 preTest.displayName = "preTest";
 
 const postTest = (done) => cmdLineOptions.lint ? lint(done) : done();
 
-const runTests = () => runConsoleTests("built/local/run.js", "mocha-fivemat-progress-reporter", /*runInParallel*/ false, /*watchMode*/ false);
+const runTests = () => runConsoleTests(testRoot, "mocha-fivemat-progress-reporter", /*runInParallel*/ false, /*watchMode*/ false);
 task("runtests", series(preBuild, preTest, runTests, postTest));
 task("runtests").description = "Runs the tests using the built run.js file.";
 task("runtests").flags = {
@@ -467,7 +509,7 @@ task("runtests").flags = {
     "   --shardId": "1-based ID of this shard (default: 1)",
 };
 
-const runTestsParallel = () => runConsoleTests("built/local/run.js", "min", /*runInParallel*/ cmdLineOptions.workers > 1, /*watchMode*/ false);
+const runTestsParallel = () => runConsoleTests(testRoot, "min", /*runInParallel*/ cmdLineOptions.workers > 1, /*watchMode*/ false);
 task("runtests-parallel", series(preBuild, preTest, runTestsParallel, postTest));
 task("runtests-parallel").description = "Runs all the tests in parallel using the built run.js file.";
 task("runtests-parallel").flags = {
@@ -526,7 +568,7 @@ const cleanInstrumenter = () => cleanProject("src/instrumenter");
 cleanTasks.push(cleanInstrumenter);
 
 const tscInstrumented = () => exec(process.execPath, ["built/local/instrumenter.js", "record", cmdLineOptions.tests || "iocapture", "built/local"]);
-task("tsc-instrumented", series(lkgPreBuild, parallel(localize, buildTsc, buildServer, buildServices, buildLssl, buildLoggedIO, buildInstrumenter), tscInstrumented));
+task("tsc-instrumented", series(lkgPreBuild, parallel(localize, buildTsc, buildServer, /*buildServices, buildLssl,*/ buildLoggedIO, buildInstrumenter), tscInstrumented));
 task("tsc-instrumented").description = "Builds an instrumented tsc.js";
 task("tsc-instrumented").flags = {
     "-t --tests=<testname>": "The test to run."
@@ -581,7 +623,7 @@ const produceLKG = async () => {
     }
 };
 
-task("LKG", series(lkgPreBuild, parallel(localize, buildTsc, buildServer, buildServices, buildLssl, buildOtherOutputs, buildReleaseTsc), produceLKG));
+task("LKG", series(lkgPreBuild, parallel(localize, buildTsc, buildServer, /*buildServices, buildLssl,*/ buildOtherOutputs, buildReleaseTsc), produceLKG));
 task("LKG").description = "Makes a new LKG out of the built js files";
 task("LKG").flags = {
     "   --built": "Compile using the built version of the compiler.",
@@ -621,13 +663,13 @@ task("publish-nightly").description = "Runs `npm publish --tag next` to create a
 // write some kind of trigger file that indicates build completion that we could listen for instead.
 const watchRuntests = () => watch(["built/local/*.js", "tests/cases/**/*.ts", "tests/cases/**/tsconfig.json"], { delay: 5000 }, async () => {
     if (cmdLineOptions.tests || cmdLineOptions.failed) {
-        await runConsoleTests("built/local/run.js", "mocha-fivemat-progress-reporter", /*runInParallel*/ false, /*watchMode*/ true);
+        await runConsoleTests(testRoot, "mocha-fivemat-progress-reporter", /*runInParallel*/ false, /*watchMode*/ true);
     }
     else {
-        await runConsoleTests("built/local/run.js", "min", /*runInParallel*/ true, /*watchMode*/ true);
+        await runConsoleTests(testRoot, "min", /*runInParallel*/ true, /*watchMode*/ true);
     }
 });
-task("watch", series(preBuild, preTest, parallel(watchLib, watchDiagnostics, watchServices, watchLssl, watchTests, watchRuntests)));
+task("watch", series(preBuild, preTest, parallel(watchLib, watchDiagnostics, /*watchServices, watchLssl,*/ watchTests, watchRuntests)));
 task("watch").description = "Watches for changes and rebuilds and runs tests in parallel.";
 task("watch").flags = {
     "-t --tests=<regex>": "Pattern for tests to run. Forces tests to be run in a single worker.",

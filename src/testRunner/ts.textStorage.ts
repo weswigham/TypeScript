@@ -1,1 +1,1 @@
-export * from "./unittests/tsserver/textStorage";
+import "./unittests/tsserver/textStorage";

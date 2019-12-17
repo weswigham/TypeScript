@@ -1,11 +1,11 @@
-import { SourceFile, ModuleKind, Program, CompilerOptions, Diagnostic, SourceMapEmitResult, normalizePath, combinePaths, findConfigFile, readJsonConfigFile, parseJsonSourceFileConfigFileContent, getDirectoryPath, concatenate, normalizeSlashes, CharacterCodes, createProgram, getPreEmitDiagnostics, forEach, getNormalizedAbsolutePath, removeFileExtension, Extension, contains, isRootedDiskPath, ModuleResolutionKind, NewLineKind, arrayToMap, optionDeclarations, isString } from "./ts";
+import { SourceFile, ModuleKind, Program, CompilerOptions, Diagnostic, SourceMapEmitResult, normalizePath, combinePaths, findConfigFile, readJsonConfigFile, parseJsonSourceFileConfigFileContent, getDirectoryPath, concatenate, normalizeSlashes, CharacterCodes, createProgram, getPreEmitDiagnostics, forEach, getNormalizedAbsolutePath, removeFileExtension, Extension, contains, isRootedDiskPath, ModuleResolutionKind, NewLineKind, arrayToMap, optionDeclarations, isString } from "../compiler/ts";
 import { TextDocument } from "./documents";
 import { RunnerBase, shards, shardId, TestRunnerKind, IO, Baseline, isDefaultLibraryFile, Compiler } from "./Harness";
 import { CompilerHost, System, ParseConfigHost } from "./fakes";
 import { FileSystem, srcFolder, createFromFileSystem, createResolver, builtFolder, testLibFolder } from "./vfs";
 import { resolve, relative, combine, beneath, isAbsolute, extname, isDefaultLibrary } from "./vpath";
 import { removeTestPathPrefixes } from "./Utils";
-import * as ts from "./ts";
+import * as ts from "../compiler/ts";
 // Test case is json of below type in tests/cases/project/
 interface ProjectRunnerTestCase {
     scenario: string;

@@ -1,6 +1,6 @@
 import { RunnerBase, TestRunnerKind, IO } from "./Harness";
 import { FourSlashTestType, runFourSlashTest } from "./FourSlash";
-import { Debug, normalizeSlashes } from "./ts";
+import { Debug, normalizeSlashes } from "../compiler/ts";
 export class FourSlashRunner extends RunnerBase {
     protected basePath: string;
     protected testSuiteName: TestRunnerKind;
