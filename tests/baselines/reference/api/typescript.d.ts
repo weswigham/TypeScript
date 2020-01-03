@@ -2368,8 +2368,6 @@ declare namespace ts {
         flags: TypeFlags;
         symbol: Symbol;
         pattern?: DestructuringPattern;
-        aliasSymbol?: Symbol;
-        aliasTypeArguments?: readonly Type[];
     }
     export interface LiteralType extends Type {
         value: string | number | PseudoBigInt;
