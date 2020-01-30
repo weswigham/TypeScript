@@ -15515,6 +15515,13 @@ namespace ts {
                 return result;
             }
 
+            function getInstanceOfAliasOrReferenceWithMarker(input: Type, typeArguments: readonly Type[]) {
+                const s = input.aliasSymbol ? getTypeAliasInstantiation(input.aliasSymbol, typeArguments) : createTypeReference((<TypeReference>input).target, typeArguments);
+                if (s.aliasSymbol) s.aliasTypeArgumentsContainsMarker = true;
+                else (<TypeReference>s).objectFlags |= ObjectFlags.MarkerType;
+                return s;
+            }
+
             function structuredTypeRelatedTo(source: Type, target: Type, reportErrors: boolean, intersectionState: IntersectionState): Ternary {
                 const flags = source.flags & target.flags;
                 if (relation === identityRelation && !(flags & TypeFlags.Object)) {
@@ -15566,6 +15573,42 @@ namespace ts {
                     const varianceResult = relateVariances(source.aliasTypeArguments, target.aliasTypeArguments, variances, intersectionState);
                     if (varianceResult !== undefined) {
                         return varianceResult;
+                    }
+                }
+
+                // If a more _general_ version of the source and target are being compared, consider them related with assumptions
+                // eg, if { x: Q } and { x: Q, y: A } are being compared and we're about to look at { x: Q' } and { x: Q', y: A } where Q'
+                // is some specialization or subtype of Q
+                // This is difficult to detect generally, so we scan for prior comparisons of the same instantiated type, and match up matching
+                // type arguments into sets to create a canonicalization based on those matches
+                if (relation !== identityRelation && ((source.aliasSymbol && !source.aliasTypeArgumentsContainsMarker && source.aliasTypeArguments) || (getObjectFlags(source) & ObjectFlags.Reference && !!(<TypeReference>source).node && !(getObjectFlags(source) & ObjectFlags.MarkerType))) &&
+                ((target.aliasSymbol && !target.aliasTypeArgumentsContainsMarker && target.aliasTypeArguments) || (getObjectFlags(target) & ObjectFlags.Reference && !!(<TypeReference>target).node && !(getObjectFlags(target) & ObjectFlags.MarkerType)))) {
+                    if (source.aliasSymbol || target.aliasSymbol || (<TypeReference>source).target !== (<TypeReference>target).target) { // ensure like symbols are just handled by standard variance analysis
+                        const originalKey = getRelationKey(source, target, intersectionState, relation);
+                        const sourceTypeArguments = source.aliasTypeArguments || getTypeArguments(<TypeReference>source);
+                        const targetTypeArguments = target.aliasTypeArguments || getTypeArguments(<TypeReference>target);
+                        for (let i = 0; i < sourceTypeArguments.length; i++) {
+                            for (let j = 0; j < targetTypeArguments.length; j++) {
+                                if (!(sourceTypeArguments[i].flags & TypeFlags.TypeParameter) && isTypeIdenticalTo(sourceTypeArguments[i], targetTypeArguments[j])) {
+                                    const sourceClone = sourceTypeArguments.slice();
+                                    sourceClone[i] = markerOtherType;
+                                    const s = getInstanceOfAliasOrReferenceWithMarker(source, sourceClone);
+                                    const targetClone = targetTypeArguments.slice();
+                                    targetClone[j] = markerOtherType;
+                                    const t = getInstanceOfAliasOrReferenceWithMarker(target, targetClone);
+                                    // If the marker-instantiated form looks "the same" as the type we already have (eg,
+                                    // because we replace unconstrained generics with unconstrained generics), skip the check
+                                    // since we'll otherwise deliver a spurious `Maybe` result from the key _just_ set upon
+                                    // entry into `recursiveTypeRelatedTo`
+                                    if (getRelationKey(s, t, intersectionState, relation) !== originalKey) {
+                                        const result = isRelatedTo(s, t, /*reportErrors*/ false);
+                                        if (result) {
+                                            return result;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -16755,7 +16798,7 @@ namespace ts {
         // In addition, this will also detect when an indexed access has been chained off of 5 or more times (which is essentially
         // the dual of the structural comparison), and likewise mark the type as deeply nested, potentially adding false positives
         // for finite but deeply expanding indexed accesses (eg, for `Q[P1][P2][P3][P4][P5]`).
-        function isDeeplyNestedType(type: Type, stack: Type[], depth: number): boolean {
+        function isDeeplyNestedType(type: Type, stack: Type[], depth: number, maxCount = 5): boolean {
             // We track all object types that have an associated symbol (representing the origin of the type)
             if (depth >= 5 && type.flags & TypeFlags.Object && !isObjectOrArrayLiteralType(type)) {
                 const symbol = type.symbol;
@@ -16765,7 +16808,7 @@ namespace ts {
                         const t = stack[i];
                         if (t.flags & TypeFlags.Object && t.symbol === symbol) {
                             count++;
-                            if (count >= 5) return true;
+                            if (count >= maxCount) return true;
                         }
                     }
                 }
@@ -17798,18 +17841,44 @@ namespace ts {
         }
 
         function inferTypes(inferences: InferenceInfo[], originalSource: Type, originalTarget: Type, priority: InferencePriority = 0, contravariant = false) {
-            let symbolStack: Symbol[];
+            let sourceStack: Type[];
+            let targetStack: Type[];
+            let depth = 0;
             let visited: Map<number>;
             let bivariant = false;
             let propagationType: Type;
             let inferencePriority = InferencePriority.MaxValue;
             let allowComplexConstraintInference = true;
+            let expandingFlags = ExpandingFlags.None;
             inferFromTypes(originalSource, originalTarget);
 
             function inferFromTypes(source: Type, target: Type): void {
+                const maxdepth = every(inferences, i => !!(length(i.candidates) || length(i.contraCandidates))) ? 1 : 5; // Expand up to 5 layers deep unless we've found an inference, in which case stop at 1
+                const saveExpandingFlags = expandingFlags;
+                if (!(expandingFlags & ExpandingFlags.Source) && isDeeplyNestedType(source, sourceStack, depth, maxdepth)) expandingFlags |= ExpandingFlags.Source;
+                if (!(expandingFlags & ExpandingFlags.Target) && isDeeplyNestedType(target, targetStack, depth, maxdepth)) expandingFlags |= ExpandingFlags.Target;
+                if (expandingFlags === ExpandingFlags.Both) {
+                    expandingFlags = saveExpandingFlags;
+                    return;
+                }
+
+                if (!sourceStack) {
+                    sourceStack = [];
+                    targetStack = [];
+                }
+                sourceStack[depth] = source;
+                targetStack[depth] = target;
+                depth++;
+                inferFromTypesWorker(source, target);
+                depth--;
+                expandingFlags = saveExpandingFlags;
+            }
+
+            function inferFromTypesWorker(source: Type, target: Type): void {
                 if (!couldContainTypeVariables(target)) {
                     return;
                 }
+
                 if (source === wildcardType) {
                     // We are inferring from an 'any' type. We want to infer this type for every type parameter
                     // referenced in the target type, so we record it as the propagation type and infer from the
@@ -18230,28 +18299,6 @@ namespace ts {
             }
 
             function inferFromObjectTypes(source: Type, target: Type) {
-                // If we are already processing another target type with the same associated symbol (such as
-                // an instantiation of the same generic type), we do not explore this target as it would yield
-                // no further inferences. We exclude the static side of classes from this check since it shares
-                // its symbol with the instance side which would lead to false positives.
-                const isNonConstructorObject = target.flags & TypeFlags.Object &&
-                    !(getObjectFlags(target) & ObjectFlags.Anonymous && target.symbol && target.symbol.flags & SymbolFlags.Class);
-                const symbol = isNonConstructorObject ? target.symbol : undefined;
-                if (symbol) {
-                    if (contains(symbolStack, symbol)) {
-                        inferencePriority = InferencePriority.Circularity;
-                        return;
-                    }
-                    (symbolStack || (symbolStack = [])).push(symbol);
-                    inferFromObjectTypesWorker(source, target);
-                    symbolStack.pop();
-                }
-                else {
-                    inferFromObjectTypesWorker(source, target);
-                }
-            }
-
-            function inferFromObjectTypesWorker(source: Type, target: Type) {
                 if (getObjectFlags(source) & ObjectFlags.Reference && getObjectFlags(target) & ObjectFlags.Reference && (
                     (<TypeReference>source).target === (<TypeReference>target).target || isArrayType(source) && isArrayType(target))) {
                     // If source and target are references to the same generic type, infer from type arguments
