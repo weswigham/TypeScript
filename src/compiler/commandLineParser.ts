@@ -24,6 +24,7 @@ namespace ts {
         ["webworker", "lib.webworker.d.ts"],
         ["webworker.importscripts", "lib.webworker.importscripts.d.ts"],
         ["scripthost", "lib.scripthost.d.ts"],
+        ["ts", "lib.ts.d.ts"],
         // ES2015 Or ESNext By-feature options
         ["es2015.core", "lib.es2015.core.d.ts"],
         ["es2015.collection", "lib.es2015.collection.d.ts"],

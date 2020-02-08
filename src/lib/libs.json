@@ -15,6 +15,7 @@
         "webworker.generated",
         "webworker.importscripts",
         "scripthost",
+        "ts",
         // By-feature options
         "es2015.core",
         "es2015.collection",

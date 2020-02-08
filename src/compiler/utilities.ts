@@ -2334,6 +2334,10 @@ namespace ts {
         return isJSDocTypeAlias(node) || isTypeAliasDeclaration(node);
     }
 
+    export function isTypeFunctionDeclaration(node: Node): node is FunctionDeclaration {
+        return isFunctionDeclaration(node) && hasModifier(node, ModifierFlags.Type);
+    }
+
     function getSourceOfAssignment(node: Node): Node | undefined {
         return isExpressionStatement(node) &&
             isBinaryExpression(node.expression) &&
@@ -4272,6 +4276,7 @@ namespace ts {
             case SyntaxKind.DefaultKeyword: return ModifierFlags.Default;
             case SyntaxKind.AsyncKeyword: return ModifierFlags.Async;
             case SyntaxKind.ReadonlyKeyword: return ModifierFlags.Readonly;
+            case SyntaxKind.TypeKeyword: return ModifierFlags.Type;
         }
         return ModifierFlags.None;
     }

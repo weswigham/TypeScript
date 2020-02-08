@@ -3246,12 +3246,14 @@ namespace ts {
             }
 
             checkStrictModeFunctionName(node);
+            const flags = hasModifier(node, ModifierFlags.Type) ? SymbolFlags.TypeFunction : SymbolFlags.Function;
+            const excludes = hasModifier(node, ModifierFlags.Type) ? SymbolFlags.TypeAliasExcludes : SymbolFlags.FunctionExcludes;
             if (inStrictMode) {
                 checkStrictModeFunctionDeclaration(node);
-                bindBlockScopedDeclaration(node, SymbolFlags.Function, SymbolFlags.FunctionExcludes);
+                bindBlockScopedDeclaration(node, flags, excludes);
             }
             else {
-                declareSymbolAndAddToSymbolTable(node, SymbolFlags.Function, SymbolFlags.FunctionExcludes);
+                declareSymbolAndAddToSymbolTable(node, flags, excludes);
             }
         }
 
@@ -3835,7 +3837,7 @@ namespace ts {
         const modifierFlags = getModifierFlags(node);
         const body = node.body;
 
-        if (!body || (modifierFlags & ModifierFlags.Ambient)) {
+        if (!body || (modifierFlags & (ModifierFlags.Ambient | ModifierFlags.Type))) {
             // An ambient declaration is TypeScript syntax.
             // A FunctionDeclaration without a body is an overload and is TypeScript syntax.
             transformFlags = TransformFlags.AssertTypeScript;

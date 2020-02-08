@@ -2070,7 +2070,7 @@ namespace ts {
         }
 
         function visitFunctionDeclaration(node: FunctionDeclaration): VisitResult<Statement> {
-            if (!shouldEmitFunctionLikeDeclaration(node)) {
+            if (!shouldEmitFunctionLikeDeclaration(node) || hasModifier(node, ModifierFlags.Type)) {
                 return createNotEmittedStatement(node);
             }
             const updated = updateFunctionDeclaration(

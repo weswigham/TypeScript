@@ -444,4 +444,28 @@ namespace ts {
             }
         }
     }
+
+    /* @internal */
+    export function transformFunctionDeclarationForTypeFunctionUse(node: FunctionDeclaration, host: SourceFile): ReturnStatement {
+        const faked = updateSourceFileNode(host, [createReturn(createFunctionExpression(
+            /*modifiers*/ undefined,
+            /*asteriskToken*/ undefined,
+            node.name,
+            /*typeParameters*/ undefined,
+            node.parameters,
+            /*type*/ undefined,
+            node.body!
+        ))]);
+
+        const result = transformNodes(
+            /*resolver*/ undefined,
+            /*host*/ undefined,
+            { removeComments: true },
+            [faked],
+            getTransformers({ module: ModuleKind.CommonJS, target: ScriptTarget.ES5 }).scriptTransformers,
+            /*allowDts*/ true
+        );
+
+        return (result.transformed[0] as SourceFile).statements[0] as ReturnStatement;
+    }
 }

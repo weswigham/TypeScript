@@ -675,6 +675,7 @@ namespace ts {
         const substitutionTypes = createMap<SubstitutionType>();
         const evolvingArrayTypes: EvolvingArrayType[] = [];
         const undefinedProperties = createMap<Symbol>() as UnderscoreEscapedMap<Symbol>;
+        const typesUsedInMacros = createMap<Type>();
 
         const unknownSymbol = createSymbol(SymbolFlags.Property, "unknown" as __String);
         const resolvingSymbol = createSymbol(0, InternalSymbolName.Resolving);
@@ -860,6 +861,9 @@ namespace ts {
         let deferredGlobalExtractSymbol: Symbol;
         let deferredGlobalOmitSymbol: Symbol;
         let deferredGlobalBigIntType: ObjectType;
+        let deferredGlobalTSNamespace: Symbol;
+
+        let _typeFunctionContext: macro.FunctionContext;
 
         const allPotentiallyUnusedIdentifiers = createMap<PotentiallyUnusedIdentifier[]>(); // key is file name
 
@@ -4238,6 +4242,13 @@ namespace ts {
                 if (type.flags & TypeFlags.Substitution) {
                     return typeToTypeNodeHelper((<SubstitutionType>type).typeVariable, context);
                 }
+                if (type.flags & TypeFlags.TypeFunction) {
+                    // TODO: Map current type arguments
+                    return createTypeReferenceNode(
+                        symbolToName((type as TypeFunctionType).symbol, context, SymbolFlags.Type, /*expectsIdentifier*/ false),
+                        /*typeArguments*/ undefined
+                    );
+                }
 
                 return Debug.fail("Should be unreachable.");
 
@@ -7025,7 +7036,7 @@ namespace ts {
                 if (!omitTypeAlias) {
                     return errorType;
                 }
-                return getTypeAliasInstantiation(omitTypeAlias, [source, omitKeyType]);
+                return getTypeAliasOrFunctionInstantiation(omitTypeAlias, [source, omitKeyType]);
             }
             const members = createSymbolTable();
             for (const prop of getPropertiesOfType(source)) {
@@ -8430,6 +8441,133 @@ namespace ts {
             return <InterfaceType>links.declaredType;
         }
 
+        function getDeclaredTypeOfTypeFunction(symbol: Symbol): Type {
+            const links = getSymbolLinks(symbol);
+            if (!links.declaredType) {
+                const declaration = Debug.assertDefined(find(symbol.declarations, isTypeFunctionDeclaration), "Type function symbol with no valid declaration found");
+                const type = createType(TypeFlags.TypeFunction) as TypeFunctionType;
+                type.symbol = symbol;
+                type.definition = declaration;
+                const typeParameters = convertTypeFunctionArgumentTypesIntoTypeParameters(declaration);
+                if (length(typeParameters)) {
+                    // Initialize the instantiation cache for generic type aliases. The declared type corresponds to
+                    // an instantiation of the type alias with the type parameters supplied as type arguments.
+                    links.typeParameters = typeParameters;
+                    links.instantiations = createMap<Type>();
+                    links.instantiations.set(getTypeListId(typeParameters), type);
+                }
+                links.declaredType = type;
+            }
+            return links.declaredType;
+        }
+
+        function convertTypeFunctionArgumentTypesIntoTypeParameters(declaration: FunctionDeclaration): TypeParameter[] | undefined {
+            // TODO: Handle `...rest` parameters! (which can mean allowing instantiation with an arbitrary number of type arguments)
+            return map(declaration.parameters, p => {
+                const typeNodeType = getTypeFromTypeNode(p.type!);
+                const param = createTypeParameter();
+                param.resolvedBaseConstraint = convertMacroObjectTypeIntoRealType(typeNodeType);
+                return param;
+            });
+        }
+
+        function getTypeFunctionCode(node: FunctionDeclaration) {
+            const links = getNodeLinks(node);
+            if (!links.typeFunctionCode) {
+                const sourceFile = getSourceFileOfNode(node);
+                const transformed = transformFunctionDeclarationForTypeFunctionUse(node, sourceFile);
+                const writer = createTextWriter("");
+                const printer = createPrinter({ removeComments: true });
+                printer.writeNode(EmitHint.Unspecified, transformed, sourceFile, writer);
+                const result = writer.getText();
+                links.typeFunctionCode = (new Function(result))();
+            }
+            return links.typeFunctionCode!;
+        }
+
+        function getTypeFunctionContext() {
+            return _typeFunctionContext || (_typeFunctionContext = {
+                createLiteralType(value: string | number) {
+                    if (typeof value !== "string" && typeof value !== "number") {
+                        throw new Error(`createLiteralType expected a string or a number but got a ${typeof value}`);
+                    }
+                    return wrapTypeForMacroUse(getLiteralType(value));
+                }
+            });
+        }
+
+        function wrapTypeForMacroUse(type: LiteralType): macro.StringLiteralType | macro.NumberLiteralType;
+        function wrapTypeForMacroUse(type: Type): macro.Type;
+        function wrapTypeForMacroUse(type: Type): macro.Type {
+            typesUsedInMacros.set("" + getTypeId(type), type);
+            if (type.flags & TypeFlags.StringLiteral) {
+                return Object.freeze({
+                    id: getTypeId(type),
+                    kind: "stringliteral",
+                    value: (type as StringLiteralType).value
+                });
+            }
+            if (type.flags & TypeFlags.NumberLiteral) {
+                return Object.freeze({
+                    id: getTypeId(type),
+                    kind: "numberliteral",
+                    value: (type as NumberLiteralType).value
+                });
+            }
+            return undefined!; // TODO: exhaustively handle all types and throw is type is not found
+        }
+
+        function unwrapMacroType(type: macro.Type): Type | undefined {
+            return typesUsedInMacros.get("" + (type as any).id);
+        }
+
+        // TODO: pass in error location!
+        function executeTypeFunction(type: TypeFunctionType, typeArguments?: readonly Type[]): Type {
+            const contextObject = getTypeFunctionContext();
+            const f = getTypeFunctionCode(type.definition);
+            const wrappedArgs = map(typeArguments, wrapTypeForMacroUse);
+            let wrappedResult: unknown;
+            try {
+                wrappedResult = f.apply(contextObject, wrappedArgs);
+            }
+            catch (e) {
+                addRelatedInfo(
+                    error(
+                        type.definition,
+                        Diagnostics.Function_0_throws_on_input_argument_list_1_This_is_not_an_issue_with_TS_but_there_is_probably_an_issue_with_the_declaration_of_0,
+                        type.definition.name ? idText(type.definition.name) : "(anonymous function)",
+                        typeToString(createTupleType(typeArguments || []))
+                    ),
+                    createDiagnosticForNode(
+                        type.definition,
+                        Diagnostics.The_error_thrown_was_0,
+                        e?.message || "undefined"
+                    )
+                );
+            }
+            if (typeof wrappedResult !== "object" || wrappedResult === null || typeof (wrappedResult as any).id !== "number") {
+                error(type.definition, Diagnostics.Function_0_did_not_return_a_valid_type_object, type.definition.name ? idText(type.definition.name) : "(anonymous function)");
+                return errorType;
+            }
+            const unwrapped = unwrapMacroType(wrappedResult as macro.Type);
+            if (!unwrapped) {
+                error(type.definition, Diagnostics.Function_0_did_not_return_a_valid_type_object, type.definition.name ? idText(type.definition.name) : "(anonymous function)");
+                return errorType;
+            }
+            return unwrapped;
+        }
+
+        function convertMacroObjectTypeIntoRealType(type: Type) {
+            if (type.flags & TypeFlags.Union) {
+                return mapType(type, convertMacroObjectTypeIntoRealType);
+            }
+            switch (type) {
+                case getGlobalTSNamespaceType("StringLiteralType"): return stringType;
+                case getGlobalTSNamespaceType("NumberLiteralType"): return numberType;
+            }
+            return neverType;
+        }
+
         function getDeclaredTypeOfTypeAlias(symbol: Symbol): Type {
             const links = getSymbolLinks(symbol);
             if (!links.declaredType) {
@@ -8583,6 +8721,9 @@ namespace ts {
             }
             if (symbol.flags & SymbolFlags.TypeAlias) {
                 return getDeclaredTypeOfTypeAlias(symbol);
+            }
+            if (symbol.flags & SymbolFlags.TypeFunction) {
+                return getDeclaredTypeOfTypeFunction(symbol);   
             }
             if (symbol.flags & SymbolFlags.TypeParameter) {
                 return getDeclaredTypeOfTypeParameter(symbol);
@@ -10023,6 +10164,9 @@ namespace ts {
                 if (t.flags & TypeFlags.Substitution) {
                     return getBaseConstraint((<SubstitutionType>t).substitute);
                 }
+                if (t.flags & TypeFlags.TypeFunction) {
+                    return convertMacroObjectTypeIntoRealType(getReturnTypeFromBody((t as TypeFunctionType).definition));
+                }
                 return t;
             }
         }
@@ -11102,7 +11246,7 @@ namespace ts {
             return checkNoTypeArguments(node, symbol) ? type : errorType;
         }
 
-        function getTypeAliasInstantiation(symbol: Symbol, typeArguments: readonly Type[] | undefined): Type {
+        function getTypeAliasOrFunctionInstantiation(symbol: Symbol, typeArguments: readonly Type[] | undefined): Type {
             const type = getDeclaredTypeOfSymbol(symbol);
             const links = getSymbolLinks(symbol);
             const typeParameters = links.typeParameters!;
@@ -11119,7 +11263,7 @@ namespace ts {
          * references to the type parameters of the alias. We replace those with the actual type arguments by instantiating the
          * declared type. Instantiations are cached using the type identities of the type arguments as the key.
          */
-        function getTypeFromTypeAliasReference(node: NodeWithTypeArguments, symbol: Symbol): Type {
+        function getTypeFromTypeAliasOrFunctionReference(node: NodeWithTypeArguments, symbol: Symbol): Type {
             const type = getDeclaredTypeOfSymbol(symbol);
             const typeParameters = getSymbolLinks(symbol).typeParameters;
             if (typeParameters) {
@@ -11135,7 +11279,7 @@ namespace ts {
                         typeParameters.length);
                     return errorType;
                 }
-                return getTypeAliasInstantiation(symbol, typeArgumentsFromTypeReferenceNode(node));
+                return getTypeAliasOrFunctionInstantiation(symbol, typeArgumentsFromTypeReferenceNode(node));
             }
             return checkNoTypeArguments(node, symbol) ? type : errorType;
         }
@@ -11173,8 +11317,8 @@ namespace ts {
             if (symbol.flags & (SymbolFlags.Class | SymbolFlags.Interface)) {
                 return getTypeFromClassOrInterfaceReference(node, symbol);
             }
-            if (symbol.flags & SymbolFlags.TypeAlias) {
-                return getTypeFromTypeAliasReference(node, symbol);
+            if (symbol.flags & (SymbolFlags.TypeAlias | SymbolFlags.TypeFunction)) {
+                return getTypeFromTypeAliasOrFunctionReference(node, symbol);
             }
             // Get type from reference to named type that cannot be generic (enum or type parameter)
             const res = tryGetDeclaredTypeOfSymbol(symbol);
@@ -11520,6 +11664,19 @@ namespace ts {
 
         function getGlobalBigIntType(reportErrors: boolean) {
             return deferredGlobalBigIntType || (deferredGlobalBigIntType = getGlobalType("BigInt" as __String, /*arity*/ 0, reportErrors)) || emptyObjectType;
+        }
+
+        function getGlobalTSNamespace() {
+            return deferredGlobalTSNamespace || (deferredGlobalTSNamespace = getGlobalSymbol("ts" as __String, SymbolFlags.NamespaceModule, Diagnostics.Cannot_find_name_0)!);
+        }
+
+        function getGlobalTSNamespaceType(typeName: string) {
+            const s = getExportsOfSymbol(getGlobalTSNamespace()).get(escapeLeadingUnderscores(typeName));
+            if (!s) {
+                error(/*node*/ undefined, Diagnostics.Namespace_0_has_no_exported_member_1, "ts", typeName);
+                return emptyObjectType;
+            }
+            return getTypeOfGlobalSymbol(s, 0);
         }
 
         /**
@@ -12269,7 +12426,7 @@ namespace ts {
                 return type;
             }
             const extractTypeAlias = getGlobalExtractSymbol();
-            return extractTypeAlias ? getTypeAliasInstantiation(extractTypeAlias, [type, stringType]) : stringType;
+            return extractTypeAlias ? getTypeAliasOrFunctionInstantiation(extractTypeAlias, [type, stringType]) : stringType;
         }
 
         function getIndexTypeOrString(type: Type): Type {
@@ -13237,6 +13394,9 @@ namespace ts {
 
         function getThisType(node: Node): Type {
             const container = getThisContainer(node, /*includeArrowFunctions*/ false);
+            if (isTypeFunctionDeclaration(container)) {
+                return getGlobalTSNamespaceType("FunctionContext");
+            }
             const parent = container && container.parent;
             if (parent && (isClassLike(parent) || parent.kind === SyntaxKind.InterfaceDeclaration)) {
                 if (!hasModifier(container, ModifierFlags.Static) &&
@@ -13815,6 +13975,9 @@ namespace ts {
                     }
                     return sub;
                 }
+            }
+            if (flags & TypeFlags.TypeFunction) {
+                return executeTypeFunction(type as TypeFunctionType, instantiateTypes(getSymbolLinks((type as TypeFunctionType).symbol).typeParameters, mapper));
             }
             return type;
         }
@@ -16658,7 +16821,7 @@ namespace ts {
         function getAliasVariances(symbol: Symbol) {
             const links = getSymbolLinks(symbol);
             return getVariancesWorker(links.typeParameters, links, (_links, param, marker) => {
-                const type = getTypeAliasInstantiation(symbol, instantiateTypes(links.typeParameters!, makeUnaryTypeMapper(param, marker)));
+                const type = getTypeAliasOrFunctionInstantiation(symbol, instantiateTypes(links.typeParameters!, makeUnaryTypeMapper(param, marker)));
                 type.aliasTypeArgumentsContainsMarker = true;
                 return type;
             });
@@ -17241,7 +17404,7 @@ namespace ts {
             }
             // Use NonNullable global type alias if available to improve quick info/declaration emit
             if (deferredGlobalNonNullableTypeAlias !== unknownSymbol) {
-                return getTypeAliasInstantiation(deferredGlobalNonNullableTypeAlias, [type]);
+                return getTypeAliasOrFunctionInstantiation(deferredGlobalNonNullableTypeAlias, [type]);
             }
             return getTypeWithFacts(type, TypeFacts.NEUndefinedOrNull); // Type alias unavailable, fall back to non-higher-order behavior
         }
@@ -20948,6 +21111,9 @@ namespace ts {
         }
 
         function tryGetThisTypeAt(node: Node, includeGlobalThis = true, container = getThisContainer(node, /*includeArrowFunctions*/ false)): Type | undefined {
+            if (isTypeFunctionDeclaration(container)) {
+                return getGlobalTSNamespaceType("FunctionContext");
+            }
             const isInJS = isInJSFile(node);
             if (isFunctionLike(container) &&
                 (!isInParameterInitializerBeforeContainingFunction(node) || getThisParameter(container))) {
@@ -22066,7 +22232,7 @@ namespace ts {
                 }
                 else if (length(declaredManagedType.aliasTypeArguments) >= 2) {
                     const args = fillMissingTypeArguments([ctorType, attributesType], declaredManagedType.aliasTypeArguments, 2, isInJSFile(context));
-                    return getTypeAliasInstantiation(declaredManagedType.aliasSymbol!, args);
+                    return getTypeAliasOrFunctionInstantiation(declaredManagedType.aliasSymbol!, args);
                 }
             }
             return attributesType;
@@ -30146,7 +30312,18 @@ namespace ts {
                 checkGrammarForGenerator(node);
                 checkCollisionWithRequireExportsInGeneratedCode(node, node.name!);
                 checkCollisionWithGlobalPromiseInGeneratedCode(node, node.name!);
+                if (hasModifier(node, ModifierFlags.Type)) {
+                    checkTypeFunction(node);
+                }
             }
+        }
+
+        function checkTypeFunction(_node: FunctionDeclaration): void {
+            // TODO: Issue error is function is `async` or a generator
+
+            // TODO: Check that every parameter is annotated with either a type from `ts.Type` or a union thereof
+
+            // TODO: Issue error if return type is not either a type from `ts.Type` or a union thereof
         }
 
         function checkJSDocTypeAliasTag(node: JSDocTypedefTag | JSDocCallbackTag) {

@@ -4454,6 +4454,18 @@
         "category": "Message",
         "code": 6384
     },
+    "Function '{0}' throws on input argument list '{1}'. This is not an issue with TS, but there is probably an issue with the declaration of '{0}'.": {
+        "category": "Error",
+        "code": 6385
+    },
+    "The error thrown was '{0}'": {
+        "category": "Message",
+        "code": 6386
+    },
+    "Function '{0}' did not return a valid type object": {
+        "category": "Error",
+        "code": 6387
+    },
 
     "The expected type comes from property '{0}' which is declared here on type '{1}'": {
         "category": "Message",

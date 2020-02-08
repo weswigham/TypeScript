@@ -608,6 +608,7 @@ namespace ts {
         Async =              1 << 8,  // Property/Method/Function
         Default =            1 << 9,  // Function/Class (export default declaration)
         Const =              1 << 11, // Const enum
+        Type =               1 << 12, // type function
         HasComputedFlags =   1 << 29, // Modifier flags have been computed
 
         AccessibilityModifier = Public | Private | Protected,
@@ -3984,6 +3985,7 @@ namespace ts {
         Transient               = 1 << 25,  // Transient symbol (created during type check)
         Assignment              = 1 << 26,  // Assignment treated as declaration (eg `this.prop = 1`)
         ModuleExports           = 1 << 27,  // Symbol for CommonJS `module` of `module.exports`
+        TypeFunction            = 1 << 28,  // Symbol for `type function` statements
 
         /* @internal */
         All = FunctionScopedVariable | BlockScopedVariable | Property | EnumMember | Function | Class | Interface | ConstEnum | RegularEnum | ValueModule | NamespaceModule | TypeLiteral
@@ -3992,7 +3994,7 @@ namespace ts {
         Enum = RegularEnum | ConstEnum,
         Variable = FunctionScopedVariable | BlockScopedVariable,
         Value = Variable | Property | EnumMember | ObjectLiteral | Function | Class | Enum | ValueModule | Method | GetAccessor | SetAccessor,
-        Type = Class | Interface | Enum | EnumMember | TypeLiteral | TypeParameter | TypeAlias,
+        Type = Class | Interface | Enum | EnumMember | TypeLiteral | TypeParameter | TypeAlias | TypeFunction,
         Namespace = ValueModule | NamespaceModule | Enum,
         Module = ValueModule | NamespaceModule,
         Accessor = GetAccessor | SetAccessor,
@@ -4261,6 +4263,7 @@ namespace ts {
         instantiations?: Map<Type>;         // Instantiations of generic type alias (undefined if non-generic)
         isExhaustive?: boolean;           // Is node an exhaustive switch statement
         skipDirectInference?: true;         // Flag set by the API `getContextualType` call on a node when `Completions` is passed to force the checker to skip making inferences to a node's type
+        typeFunctionCode?: (...args: any[]) => unknown;      // Compiled code for the type function associated with this node
     }
 
     export const enum TypeFlags {
@@ -4291,6 +4294,7 @@ namespace ts {
         Conditional     = 1 << 24,  // T extends U ? X : Y
         Substitution    = 1 << 25,  // Type parameter substitution
         NonPrimitive    = 1 << 26,  // intrinsic object type
+        TypeFunction    = 1 << 27,  // `type function` type
 
         /* @internal */
         AnyOrUnknown = Any | Unknown,
@@ -4320,7 +4324,7 @@ namespace ts {
         UnionOrIntersection = Union | Intersection,
         StructuredType = Object | Union | Intersection,
         TypeVariable = TypeParameter | IndexedAccess,
-        InstantiableNonPrimitive = TypeVariable | Conditional | Substitution,
+        InstantiableNonPrimitive = TypeVariable | Conditional | Substitution | TypeFunction,
         InstantiablePrimitive = Index,
         Instantiable = InstantiableNonPrimitive | InstantiablePrimitive,
         StructuredOrInstantiable = StructuredType | Instantiable,
@@ -4753,6 +4757,11 @@ namespace ts {
     export interface SubstitutionType extends InstantiableType {
         typeVariable: TypeVariable;  // Target type variable
         substitute: Type;            // Type to substitute for type parameter
+    }
+
+    export interface TypeFunctionType extends InstantiableType {
+        symbol: Symbol;
+        definition: FunctionDeclaration;
     }
 
     /* @internal */
@@ -6638,5 +6647,25 @@ namespace ts {
     export interface PseudoBigInt {
         negative: boolean;
         base10Value: string;
+    }
+
+    export namespace macro {
+        export interface FunctionContext {
+            /*externalOnly*///createLiteralType(value: string): StringLiteralType;
+            /*externalOnly*///createLiteralType(value: number): NumberLiteralType;
+            createLiteralType(value: string | number): StringLiteralType | NumberLiteralType;
+        }
+        export type Type = StringLiteralType | NumberLiteralType;
+        export interface TypeBase {
+            readonly kind: Type["kind"];
+        }
+        export interface StringLiteralType extends TypeBase {
+            readonly kind: "stringliteral";
+            readonly value: string;
+        }
+        export interface NumberLiteralType extends TypeBase {
+            readonly kind: "numberliteral";
+            readonly value: number;
+        }
     }
 }
