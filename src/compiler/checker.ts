@@ -15105,8 +15105,18 @@ namespace ts {
                 // turn deferred type references into regular type references, simplify indexed access and
                 // conditional types, and resolve substitution types to either the substitution (on the source
                 // side) or the type variable (on the target side).
-                let source = getNormalizedType(originalSource, /*writing*/ false);
-                let target = getNormalizedType(originalTarget, /*writing*/ true);
+                let source = originalSource;
+                do {
+                    const s = getNormalizedType(source, /*writing*/ false);
+                    if (s === source) break;
+                    source = s;
+                } while (true);
+                let target = originalTarget;
+                do {
+                    const t = getNormalizedType(target, /*writing*/ true);
+                    if (t === target) break;
+                    target = t;
+                } while (true);
 
                 if (source === target) return Ternary.True;
 
