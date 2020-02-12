@@ -281,6 +281,7 @@ namespace ts {
         TypeKeyword,
         UndefinedKeyword,
         UniqueKeyword,
+        KindOfKeyword,
         UnknownKeyword,
         FromKeyword,
         GlobalKeyword,
@@ -328,6 +329,8 @@ namespace ts {
         IndexedAccessType,
         MappedType,
         LiteralType,
+        KindQuery,
+        TypeFunctionSignatureType,
         ImportType,
         // Binding patterns
         ObjectBindingPattern,
@@ -1259,6 +1262,11 @@ namespace ts {
         exprName: EntityName;
     }
 
+    export interface KindQueryNode extends TypeNode {
+        kind: SyntaxKind.KindQuery;
+        exprName: EntityName;
+    }
+
     // A TypeLiteral is the declaration node for an anonymous symbol.
     export interface TypeLiteralNode extends TypeNode, Declaration {
         kind: SyntaxKind.TypeLiteral;
@@ -1343,6 +1351,13 @@ namespace ts {
     export interface LiteralTypeNode extends TypeNode {
         kind: SyntaxKind.LiteralType;
         literal: BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
+    }
+
+    export interface TypeFunctionSignatureTypeNode extends TypeNode {
+        kind: SyntaxKind.TypeFunctionSignatureType;
+        typeParameters?: NodeArray<TypeParameterDeclaration>;
+        parameters: NodeArray<ParameterDeclaration>;
+        type: TypeNode;
     }
 
     export interface StringLiteral extends LiteralExpression, Declaration {
@@ -4291,6 +4306,7 @@ namespace ts {
         Conditional     = 1 << 24,  // T extends U ? X : Y
         Substitution    = 1 << 25,  // Type parameter substitution
         NonPrimitive    = 1 << 26,  // intrinsic object type
+        TypeFunction    = 1 << 27,  // `type function (...args: any[]) => any` or a mapping of a declared alias/interface to such a thing
 
         /* @internal */
         AnyOrUnknown = Any | Unknown,
@@ -4753,6 +4769,23 @@ namespace ts {
     export interface SubstitutionType extends InstantiableType {
         typeVariable: TypeVariable;  // Target type variable
         substitute: Type;            // Type to substitute for type parameter
+    }
+
+            // It's worth noting that since type function parameter types are really
+            // constraints, they are somewhat unique in that they can depend upon one another
+            // eg, `type Foo<A, B extends A> = {x: A, y: B}` becomes `type function (A: unknown, B: A) => {x: A, y: B}`
+            // which is to say that the "parameter declarations" are really _type_ parameter declarations (and introduce
+            // type names into the scope). It's just very useful to think of the construct like a signature (since it
+            // is applied like an expression-space signature).
+            // This generalization also allows constructs like `type function <T>(A: {x: T}, B: {y: T}) => T`, where
+            // you can express a type that "extracts" a common type from a pair of types. This would not be possible
+            // without the "signature" abstraction to introduce a new type parameter scope in (and marker to perform
+            // inference upon).
+            // There's an argument to be made that the introduction of a type argument/existential should not be tied
+            // to a signature; but without a full unification engine backing it, the signature analogy provides useful
+            // points where we know "ah, here we should find a solution to satisfy this, using these inputs".
+    export interface TypeFunctionType extends InstantiableType {
+        
     }
 
     /* @internal */

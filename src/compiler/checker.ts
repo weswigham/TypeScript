@@ -11381,6 +11381,19 @@ namespace ts {
             return links.resolvedType;
         }
 
+        function createTypeFunctionTypeForSymbol(symbol: Symbol): Type {
+            
+        }
+
+        function getTypeFromKindQueryNode(node: KindQueryNode): Type {
+            const links = getNodeLinks(node);
+            if (!links.resolvedType) {
+                const targetedSymbol = resolveEntityName(node.exprName, SymbolFlags.Type);
+                links.resolvedType = targetedSymbol && targetedSymbol !== unknownSymbol ? createTypeFunctionTypeForSymbol(targetedSymbol) : errorType;
+            }
+            return links.resolvedType;
+        }
+
         function getTypeOfGlobalSymbol(symbol: Symbol | undefined, arity: number): ObjectType {
 
             function getTypeDeclaration(symbol: Symbol): Declaration | undefined {
@@ -13321,6 +13334,8 @@ namespace ts {
                     return getTypeFromTypeReference(<ExpressionWithTypeArguments>node);
                 case SyntaxKind.TypeQuery:
                     return getTypeFromTypeQueryNode(<TypeQueryNode>node);
+                case SyntaxKind.KindQuery:
+                    return getTypeFromKindQueryNode(<KindQueryNode>node);
                 case SyntaxKind.ArrayType:
                 case SyntaxKind.TupleType:
                     return getTypeFromArrayOrTupleTypeNode(<ArrayTypeNode | TupleTypeNode>node);

@@ -2586,6 +2586,13 @@ namespace ts {
             return finishNode(node);
         }
 
+        function parseKindQuery(): KindQueryNode {
+            const node = <KindQueryNode>createNode(SyntaxKind.KindQuery);
+            parseExpected(SyntaxKind.KindOfKeyword);
+            node.exprName = parseEntityName(/*allowReservedWords*/ true);
+            return finishNode(node);
+        }
+
         function parseTypeParameter(): TypeParameterDeclaration {
             const node = <TypeParameterDeclaration>createNode(SyntaxKind.TypeParameter);
             node.name = parseIdentifier();
@@ -2679,7 +2686,7 @@ namespace ts {
         function fillSignature(
             returnToken: SyntaxKind.ColonToken | SyntaxKind.EqualsGreaterThanToken,
             flags: SignatureFlags,
-            signature: SignatureDeclaration): boolean {
+            signature: SignatureDeclaration | TypeFunctionSignatureTypeNode): boolean {
             if (!(flags & SignatureFlags.JSDoc)) {
                 signature.typeParameters = parseTypeParameters();
             }
@@ -2709,7 +2716,7 @@ namespace ts {
         }
 
         // Returns true on success.
-        function parseParameterList(signature: SignatureDeclaration, flags: SignatureFlags): boolean {
+        function parseParameterList(signature: SignatureDeclaration | TypeFunctionSignatureTypeNode, flags: SignatureFlags): boolean {
             // FormalParameters [Yield,Await]: (modified)
             //      [empty]
             //      FormalParameterList[?Yield,Await]
@@ -3056,6 +3063,9 @@ namespace ts {
             if (parseOptional(SyntaxKind.TypeOfKeyword)) {
                 node.isTypeOf = true;
             }
+            else if (parseOptional(SyntaxKind.KindOfKeyword)) {
+                // TODO: Support kind-querying import types
+            }
             parseExpected(SyntaxKind.ImportKeyword);
             parseExpected(SyntaxKind.OpenParenToken);
             node.argument = parseType();
@@ -3125,6 +3135,8 @@ namespace ts {
                 }
                 case SyntaxKind.TypeOfKeyword:
                     return lookAhead(isStartOfTypeOfImportType) ? parseImportType() : parseTypeQuery();
+                case SyntaxKind.KindOfKeyword:
+                    return lookAhead(isStartOfTypeOfImportType) ? parseImportType() : parseKindQuery();
                 case SyntaxKind.OpenBraceToken:
                     return lookAhead(isStartOfMappedType) ? parseMappedType() : parseTypeLiteral();
                 case SyntaxKind.OpenBracketToken:
@@ -3256,6 +3268,14 @@ namespace ts {
             return finishNode(node);
         }
 
+        function parseTypeFunctionType(): TypeNode {
+            const node = <TypeFunctionSignatureTypeNode>createNode(SyntaxKind.TypeFunctionSignatureType);
+            parseExpected(SyntaxKind.TypeKeyword);
+            parseExpected(SyntaxKind.FunctionKeyword);
+            fillSignature(SyntaxKind.EqualsGreaterThanToken, SignatureFlags.Type, node);
+            return finishNode(node);
+        }
+
         function parseTypeOperatorOrHigher(): TypeNode {
             const operator = token();
             switch (operator) {
@@ -3265,6 +3285,10 @@ namespace ts {
                     return parseTypeOperator(operator);
                 case SyntaxKind.InferKeyword:
                     return parseInferType();
+                case SyntaxKind.TypeKeyword:
+                    if (lookAhead(nextTokenIsFunctionKeywordOnSameLine)) {
+                        return parseTypeFunctionType();
+                    }
             }
             return parsePostfixTypeOrHigher();
         }
