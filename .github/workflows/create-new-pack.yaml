@@ -1,0 +1,69 @@
+name: Create New Package Drop
+
+on:
+  repository_dispatch:
+    types: create-new-pack
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use node version 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Install, prepare package, and pack
+      run: |
+        npm install
+        gulp configure-insiders
+        gulp LKG
+        gulp runtests-parallel
+        gulp clean
+        npm pack ./
+        mv typescript-*.tgz typescript.tgz
+      env:
+        CI: true
+    - name: Upload built tarfile
+      uses: actions/upload-artifact@v1
+      with:
+        name: tgz
+        path: typescript.tgz
+    - name: Reply with pack URL
+      uses: actions/github-script@0.5.0
+      run: |
+        try {
+          const link = "???";
+          await github.issues.createComment({
+            issue_number: +context.event.client_payload.source_issue,
+            owner: "Microsoft",
+            repo: "TypeScript",
+            body: `Hey @${context.event.client_payload.requesting_user}, I've packed this into [an installable tgz](${link}). You can install it for testing by referencing it in your \`package.json\` like so:
+          \`\`\`
+          {
+              "devDependencies": {
+                  "typescript": "${link}"
+              }
+          }
+          \`\`\`
+          and then running \`npm install\`.
+          `
+          });
+
+          // Chain the end of this into the playground build
+          await github.repos.createDispatchEvent({
+            owner: "orta",
+            repo: "make-monaco-builds",
+            event_type: context.event.client_payload.source_issue
+          });
+        }
+        catch (err) {
+          await github.issues.createComment({
+              issue_number: +context.event.client_payload.source_issue,
+              owner: "microsoft",
+              repo: "TypeScript",
+              body: `Hey @${context.event.client_payload.requesting_user}, something went wrong when looking for the build artifact. ([You can check the log here](https://github.com/microsoft/TypeScript/actions/runs/${process.env.GITHUB_RUN_ID})).`
+          });
+          throw err;
+        }
