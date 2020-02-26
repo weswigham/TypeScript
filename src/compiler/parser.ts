@@ -1696,7 +1696,7 @@ namespace ts {
                 case ParsingContext.ArrayBindingElements:
                     return token() === SyntaxKind.CommaToken || token() === SyntaxKind.DotDotDotToken || isIdentifierOrPrivateIdentifierOrPattern();
                 case ParsingContext.TypeParameters:
-                    return isIdentifier();
+                    return isIdentifier() || (token() === SyntaxKind.ConstKeyword && lookAhead(nextTokenIsIdentifierOnSameLine));
                 case ParsingContext.ArrayLiteralMembers:
                     switch (token()) {
                         case SyntaxKind.CommaToken:
@@ -2641,6 +2641,8 @@ namespace ts {
 
         function parseTypeParameter(): TypeParameterDeclaration {
             const node = <TypeParameterDeclaration>createNode(SyntaxKind.TypeParameter);
+            const listPos = getNodePos();
+            node.modifiers = parseOptional(SyntaxKind.ConstKeyword) ? createNodeArray([finishNode(<Modifier>createNode(SyntaxKind.ConstKeyword, listPos))], listPos) : undefined;
             node.name = parseIdentifier();
             if (parseOptional(SyntaxKind.ExtendsKeyword)) {
                 // It's not uncommon for people to write improper constraints to a generic.  If the
