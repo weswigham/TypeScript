@@ -1,0 +1,8 @@
+Exit Code: 1
+Standard output:
+node_modules/antd/lib/select/index.d.ts(13,69): error TS2344: Type 'VT' does not satisfy the constraint 'DefaultValueType'.
+  Type 'VT' is not assignable to type '(string | number)[]'.
+
+
+
+Standard error:

@@ -1,0 +1,19 @@
+Exit Code: 1
+Standard output:
+node_modules/@types/mongodb/index.d.ts(669,91): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(669,114): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(670,121): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(670,144): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(679,96): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(680,116): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(681,130): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(716,128): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(717,149): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongodb/index.d.ts(718,163): error TS2344: Type 'TSchema' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongoose/index.d.ts(247,116): error TS2344: Type 'T' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongoose/index.d.ts(248,91): error TS2344: Type 'T' does not satisfy the constraint '{ [key: string]: any; }'.
+node_modules/@types/mongoose/index.d.ts(249,172): error TS2344: Type 'T' does not satisfy the constraint '{ [key: string]: any; }'.
+
+
+
+Standard error:

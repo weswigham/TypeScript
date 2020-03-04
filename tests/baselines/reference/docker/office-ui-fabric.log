@@ -97,6 +97,12 @@ Standard output:
 @fluentui/docs: [XX:XX:XX] Time: ?s
 @fluentui/docs: Built at: XX/XX/XX XX:XX:XX XM
 @fluentui/docs: Entrypoint app = runtime~app.js 2.js app.js
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts(27,56):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint '{ [name: string]: any; }'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts(29,89):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint '{ [name: string]: any; }'.
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/examples/components/Toolbar/Content/ToolbarExampleMenuRadioGroup.shorthand.tsx
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/examples/components/Toolbar/Content/ToolbarExampleMenuRadioGroup.shorthand.tsx(35,25):
 @fluentui/docs: TS2345: Argument of type 'boolean' is not assignable to parameter of type '(prevState: undefined) => undefined'.
@@ -106,6 +112,40 @@ Standard output:
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx(64,31):
 @fluentui/docs: TS2538: Type 'undefined' cannot be used as an index type.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react-bindings/src/hooks/useAccessibility.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react-bindings/src/hooks/useAccessibility.ts(57,50):
+@fluentui/docs: TS2345: Argument of type 'Accessibility<Props>' is not assignable to parameter of type 'Accessibility<Record<string, any>>'.
+@fluentui/docs:   Type 'Props' is not assignable to type 'Record<string, any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/types.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/types.ts(62,59):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(48,42):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(79,5):
+@fluentui/docs: TS2322: Type 'CreateShorthandOptions<P>' is not assignable to type 'CreateShorthandOptions<ObjectOf<any>>'.
+@fluentui/docs:   Types of property 'render' are incompatible.
+@fluentui/docs:     Type 'ShorthandRenderFunction<P>' is not assignable to type 'ShorthandRenderFunction<ObjectOf<any>>'.
+@fluentui/docs:       Type 'P' is not assignable to type 'ObjectOf<any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(83,58):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(145,26):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/UIComponent.tsx
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/UIComponent.tsx(65,9):
+@fluentui/docs: TS2322: Type '(config: RenderResultConfig<P>) => ReactNode' is not assignable to type 'RenderComponentCallback<{}>'.
+@fluentui/docs:   Types of parameters 'config' and 'config' are incompatible.
+@fluentui/docs:     Type 'RenderResultConfig<{}>' is not assignable to type 'RenderResultConfig<P>'.
+@fluentui/docs:       Types of property 'ElementType' are incompatible.
+@fluentui/docs:         Type 'ElementType<{}>' is not assignable to type 'ElementType<P>'.
+@fluentui/docs:           Type '"symbol"' is not assignable to type 'ElementType<P>'.
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/styles/src/types.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/styles/src/types.ts(199,108):
+@fluentui/docs: TS2344: Type 'TProps' does not satisfy the constraint 'Extendable<{ variables?: any; styles?: ComponentSlotStyle<{}, {}>; }, any>'.
+@fluentui/docs:   Type 'TProps' is not assignable to type '{ variables?: any; styles?: ComponentSlotStyle<{}, {}>; }'.
 @fluentui/docs: Child HtmlWebpackCompiler:
 @fluentui/docs:     Entrypoint HtmlWebpackPlugin_0 = __child-HtmlWebpackPlugin_0
 @fluentui/docs: [XX:XX:XX] Webpack compiler encountered errors.
@@ -123,13 +163,43 @@ info cli using local version of lerna
 @fluentui/docs: [XX:XX:XX] 'build:docs:webpack' errored after 
 @fluentui/docs: [XX:XX:XX] Error in plugin 'webpack'
 @fluentui/docs: Message:
-@fluentui/docs:     /office-ui-fabric-react/packages/fluentui/docs/src/examples/components/Toolbar/Content/ToolbarExampleMenuRadioGroup.shorthand.tsx
+@fluentui/docs:     /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts(27,56):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint '{ [name: string]: any; }'.,/office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/node_modules/ability-attributes/dist/DevEnvTypes.d.ts(29,89):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint '{ [name: string]: any; }'.,/office-ui-fabric-react/packages/fluentui/docs/src/examples/components/Toolbar/Content/ToolbarExampleMenuRadioGroup.shorthand.tsx
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/examples/components/Toolbar/Content/ToolbarExampleMenuRadioGroup.shorthand.tsx(35,25):
 @fluentui/docs: TS2345: Argument of type 'boolean' is not assignable to parameter of type '(prevState: undefined) => undefined'.,/office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx(34,22):
 @fluentui/docs: TS2345: Argument of type 'number' is not assignable to parameter of type '(prevState: undefined) => undefined'.,/office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx
 @fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/docs/src/prototypes/VirtualizedTree/VirtualizedTree.tsx(64,31):
-@fluentui/docs: TS2538: Type 'undefined' cannot be used as an index type.
+@fluentui/docs: TS2538: Type 'undefined' cannot be used as an index type.,/office-ui-fabric-react/packages/fluentui/react-bindings/src/hooks/useAccessibility.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react-bindings/src/hooks/useAccessibility.ts(57,50):
+@fluentui/docs: TS2345: Argument of type 'Accessibility<Props>' is not assignable to parameter of type 'Accessibility<Record<string, any>>'.
+@fluentui/docs:   Type 'Props' is not assignable to type 'Record<string, any>'.,/office-ui-fabric-react/packages/fluentui/react/src/types.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/types.ts(62,59):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.,/office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(48,42):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.,/office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(79,5):
+@fluentui/docs: TS2322: Type 'CreateShorthandOptions<P>' is not assignable to type 'CreateShorthandOptions<ObjectOf<any>>'.
+@fluentui/docs:   Types of property 'render' are incompatible.
+@fluentui/docs:     Type 'ShorthandRenderFunction<P>' is not assignable to type 'ShorthandRenderFunction<ObjectOf<any>>'.
+@fluentui/docs:       Type 'P' is not assignable to type 'ObjectOf<any>'.,/office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(83,58):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.,/office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/factories.ts(145,26):
+@fluentui/docs: TS2344: Type 'P' does not satisfy the constraint 'ObjectOf<any>'.,/office-ui-fabric-react/packages/fluentui/react/src/utils/UIComponent.tsx
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/react/src/utils/UIComponent.tsx(65,9):
+@fluentui/docs: TS2322: Type '(config: RenderResultConfig<P>) => ReactNode' is not assignable to type 'RenderComponentCallback<{}>'.
+@fluentui/docs:   Types of parameters 'config' and 'config' are incompatible.
+@fluentui/docs:     Type 'RenderResultConfig<{}>' is not assignable to type 'RenderResultConfig<P>'.
+@fluentui/docs:       Types of property 'ElementType' are incompatible.
+@fluentui/docs:         Type 'ElementType<{}>' is not assignable to type 'ElementType<P>'.
+@fluentui/docs:           Type '"symbol"' is not assignable to type 'ElementType<P>'.,/office-ui-fabric-react/packages/fluentui/styles/src/types.ts
+@fluentui/docs: ERROR in /office-ui-fabric-react/packages/fluentui/styles/src/types.ts(199,108):
+@fluentui/docs: TS2344: Type 'TProps' does not satisfy the constraint 'Extendable<{ variables?: any; styles?: ComponentSlotStyle<{}, {}>; }, any>'.
+@fluentui/docs:   Type 'TProps' is not assignable to type '{ variables?: any; styles?: ComponentSlotStyle<{}, {}>; }'.
 @fluentui/docs: Details:
 @fluentui/docs:     domainThrown: true
 @fluentui/docs: [XX:XX:XX] 'build:docs' errored after 
