@@ -5090,7 +5090,8 @@ namespace ts {
 
     export enum ModuleResolutionKind {
         Classic  = 1,
-        NodeJs   = 2
+        NodeJs   = 2,
+        Browser  = 3,
     }
 
     export interface PluginImport {

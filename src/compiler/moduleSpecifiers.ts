@@ -131,7 +131,7 @@ namespace ts.moduleSpecifiers {
         }
 
         const importRelativeToBaseUrl = removeExtensionAndIndexPostFix(relativeToBaseUrl, ending, compilerOptions);
-        const fromPaths = paths && tryGetModuleNameFromPaths(removeFileExtension(relativeToBaseUrl), importRelativeToBaseUrl, paths);
+        const fromPaths = paths && tryGetModuleNameFromPaths(getEmitModuleResolutionKind(compilerOptions) !== ModuleResolutionKind.Browser ? removeFileExtension(relativeToBaseUrl) : relativeToBaseUrl, importRelativeToBaseUrl, paths);
         const nonRelative = fromPaths === undefined ? importRelativeToBaseUrl : fromPaths;
 
         if (relativePreference === RelativePreference.NonRelative) {

@@ -652,7 +652,7 @@ namespace ts {
         else {
             let moduleResolution = compilerOptions.moduleResolution;
             if (moduleResolution === undefined) {
-                moduleResolution = getEmitModuleKind(compilerOptions) === ModuleKind.CommonJS ? ModuleResolutionKind.NodeJs : ModuleResolutionKind.Classic;
+                moduleResolution = getEmitModuleResolutionKind(compilerOptions);
                 if (traceEnabled) {
                     trace(host, Diagnostics.Module_resolution_kind_is_not_specified_using_0, ModuleResolutionKind[moduleResolution]);
                 }
@@ -670,6 +670,9 @@ namespace ts {
                     break;
                 case ModuleResolutionKind.Classic:
                     result = classicNameResolver(moduleName, containingFile, compilerOptions, host, cache, redirectedReference);
+                    break;
+                case ModuleResolutionKind.Browser:
+                    result = browserNameResolver(moduleName, containingFile, compilerOptions, host, cache, redirectedReference);
                     break;
                 default:
                     return Debug.fail(`Unexpected moduleResolution: ${moduleResolution}`);
@@ -1080,6 +1083,38 @@ namespace ts {
         }
     }
 
+    function browserStyleLoadModuleFromFileExtensionRequired(extensions: Extensions, candidate: string, onlyRecordFailures: boolean, state: ModuleResolutionState): Resolved | undefined {
+
+        // First, try adding an extension. An import of "./foo.js" could be matched by a file "./foo.js.d.ts"
+        const resolvedByAddingExtension = tryAddingExtensions(candidate, Extensions.DtsOnly, onlyRecordFailures, state);
+        if (resolvedByAddingExtension) {
+            return noPackageId(resolvedByAddingExtension);
+        }
+
+        // Try stripping a ".js" or ".jsx" extension and replacing it with a TypeScript one;
+        // e.g. "./foo.js" can be matched by "./foo.ts" or "./foo.d.ts"
+        if (hasJSFileExtension(candidate) && extensions !== Extensions.JavaScript) {
+            const extensionless = removeFileExtension(candidate);
+            if (state.traceEnabled) {
+                const extension = candidate.substring(extensionless.length);
+                trace(state.host, Diagnostics.File_name_0_has_a_1_extension_stripping_it, candidate, extension);
+            }
+            return noPackageId(tryAddingExtensions(extensionless, extensions, onlyRecordFailures, state));
+        }
+        else if (extensions !== Extensions.TypeScript) { // TypeScript files shouldn't be directly referencable
+            const fromFile = tryFile(candidate, onlyRecordFailures, state);
+            if (fromFile) {
+                const resolved = resolvedIfExtensionMatches(extensions, fromFile);
+                if (resolved) {
+                    return noPackageId(resolved);
+                }
+                if (state.traceEnabled) {
+                    trace(state.host, Diagnostics.File_0_has_an_unsupported_extension_so_skipping_it, fromFile);
+                }
+            }
+        }
+    }
+
     /** Try to return an existing file that adds one of the `extensions` to `candidate`. */
     function tryAddingExtensions(candidate: string, extensions: Extensions, onlyRecordFailures: boolean, state: ModuleResolutionState): PathAndExtension | undefined {
         if (!onlyRecordFailures) {
@@ -1438,6 +1473,36 @@ namespace ts {
             }
             state.resultFromCache = result;
             return { value: result.resolvedModule && { path: result.resolvedModule.resolvedFileName, originalPath: result.resolvedModule.originalPath || true, extension: result.resolvedModule.extension, packageId: result.resolvedModule.packageId } };
+        }
+    }
+
+    export function browserNameResolver(moduleName: string, containingFile: string, compilerOptions: CompilerOptions, host: ModuleResolutionHost, _cache?: NonRelativeModuleNameResolutionCache, _redirectedReference?: ResolvedProjectReference): ResolvedModuleWithFailedLookupLocations {
+        const traceEnabled = isTraceEnabled(compilerOptions, host);
+        const failedLookupLocations: string[] = [];
+        const state: ModuleResolutionState = { compilerOptions, host, traceEnabled, failedLookupLocations };
+        const containingDirectory = getDirectoryPath(containingFile);
+        const extensions = compilerOptions.resolveJsonModule ? tsPlusJsonExtensions : tsExtensions;
+
+        const resolved = forEach(extensions, ext => tryResolve(ext));
+        return createResolvedModuleWithFailedLookupLocations(resolved && resolved.value, /*isExternalLibraryImport*/ false, failedLookupLocations, state.resultFromCache);
+
+        function tryResolve(extensions: Extensions): SearchResult<Resolved> {
+            // TODO: Should lookup thru `baseUrl` and `paths` use node-style resolution? Or still require extensions? For `rootDirs` I think you'd want all the local extension-requiring
+            // rules required; however for `paths` that, eg, point at an `@types` definition in a `node_modules` folder (in imitation of an import map), you'd maybe want arbitrary
+            // node-style import specifiers to function
+            const resolvedUsingSettings = tryLoadModuleUsingOptionalResolutionSettings(extensions, moduleName, containingDirectory, loadModuleFromFileNoPackageId, state);
+            if (resolvedUsingSettings) {
+                return { value: resolvedUsingSettings };
+            }
+
+            // The only way for nonlocal names to resolve is via a path mapping or base URL resolution
+            if (!isExternalModuleNameRelative(moduleName)) {
+                return { value: undefined };
+            }
+            else {
+                const candidate = normalizePath(combinePaths(containingDirectory, moduleName));
+                return toSearchResult(browserStyleLoadModuleFromFileExtensionRequired(extensions, candidate, /*onlyRecordFailures*/ false, state));
+            }
         }
     }
 

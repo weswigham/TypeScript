@@ -614,11 +614,12 @@ namespace ts {
             type: createMapFromTemplate({
                 node: ModuleResolutionKind.NodeJs,
                 classic: ModuleResolutionKind.Classic,
+                browser: ModuleResolutionKind.Browser,
             }),
             affectsModuleResolution: true,
             paramType: Diagnostics.STRATEGY,
             category: Diagnostics.Module_Resolution_Options,
-            description: Diagnostics.Specify_module_resolution_strategy_Colon_node_Node_js_or_classic_TypeScript_pre_1_6,
+            description: Diagnostics.Specify_module_resolution_strategy_Colon_browser_browser_native_modules_node_Node_js_or_classic_TypeScript_pre_1_6,
         },
         {
             name: "baseUrl",

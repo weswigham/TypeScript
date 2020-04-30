@@ -5515,7 +5515,8 @@ namespace ts {
     export function getEmitModuleResolutionKind(compilerOptions: CompilerOptions) {
         let moduleResolution = compilerOptions.moduleResolution;
         if (moduleResolution === undefined) {
-            moduleResolution = getEmitModuleKind(compilerOptions) === ModuleKind.CommonJS ? ModuleResolutionKind.NodeJs : ModuleResolutionKind.Classic;
+            const emitKind = getEmitModuleKind(compilerOptions);
+            moduleResolution = emitKind >= ModuleKind.ES2015 ? ModuleResolutionKind.Browser : emitKind === ModuleKind.CommonJS ? ModuleResolutionKind.NodeJs : ModuleResolutionKind.Classic;
         }
         return moduleResolution;
     }
