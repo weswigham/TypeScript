@@ -10201,6 +10201,11 @@ namespace ts {
                     if (constraint !== checkType) {
                         return getConditionalTypeInstantiation(<ConditionalType>type, prependTypeMapping((<ConditionalType>type).root.checkType, constraint, (<ConditionalType>type).mapper));
                     }
+                    const extendsType = (<ConditionalType>type).extendsType;
+                    const extendsConstraint = getConstraintOfType(extendsType);
+                    if (extendsConstraint && extendsType !== extendsConstraint && (<ConditionalType>type).root.extendsType.flags & TypeFlags.TypeParameter) {
+                        return getConditionalTypeInstantiation(<ConditionalType>type, prependTypeMapping((<ConditionalType>type).root.extendsType, extendsConstraint, (<ConditionalType>type).mapper));
+                    }
                 }
                 return type;
             }
