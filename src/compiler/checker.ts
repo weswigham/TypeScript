@@ -10754,6 +10754,12 @@ namespace ts {
                     return keyofConstraintType;
                 }
                 if (t.flags & TypeFlags.IndexedAccess) {
+                    if (isGenericMappedType((<IndexedAccessType>t).objectType)) {
+                        const distributed = substituteIndexedMappedType((<IndexedAccessType>t).objectType as MappedType, (<IndexedAccessType>t).indexType);
+                        if (distributed !== t) {
+                            return getBaseConstraint(distributed);
+                        }
+                    }
                     const baseObjectType = getBaseConstraint((<IndexedAccessType>t).objectType);
                     const baseIndexType = getBaseConstraint((<IndexedAccessType>t).indexType);
                     const baseIndexedAccess = baseObjectType && baseIndexType && getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType);
@@ -11030,6 +11036,12 @@ namespace ts {
                         (some(getPropertiesOfUnionOrIntersectionType(<IntersectionType>type), isNeverReducedProperty) ? ObjectFlags.IsNeverIntersection : 0);
                 }
                 return (<IntersectionType>type).objectFlags & ObjectFlags.IsNeverIntersection ? neverType : type;
+            }
+            else if (type.flags & TypeFlags.IndexedAccess && isGenericMappedType((type as IndexedAccessType).objectType)) {
+                const distributed = substituteIndexedMappedType((type as IndexedAccessType).objectType as MappedType, (type as IndexedAccessType).indexType);
+                if (distributed !== type) {
+                    return distributed;
+                }
             }
             return type;
         }
@@ -13586,12 +13598,6 @@ namespace ts {
                 if (elementType) {
                     return type[cache] = elementType;
                 }
-            }
-            // If the object type is a mapped type { [P in K]: E }, where K is generic, instantiate E using a mapper
-            // that substitutes the index type for P. For example, for an index access { [P in K]: Box<T[P]> }[X], we
-            // construct the type Box<T[X]>.
-            if (isGenericMappedType(objectType)) {
-                return type[cache] = mapType(substituteIndexedMappedType(objectType, type.indexType), t => getSimplifiedType(t, writing));
             }
             return type[cache] = type;
         }
@@ -16924,6 +16930,17 @@ namespace ts {
                     }
                 }
                 else if (target.flags & TypeFlags.IndexedAccess) {
+                    if (isGenericMappedType((<IndexedAccessType>target).objectType)) {
+                        const distributedTarget = substituteIndexedMappedType((<IndexedAccessType>target).objectType as MappedType, (<IndexedAccessType>target).indexType);
+                        if (distributedTarget !== target) {
+                            if (result = isRelatedTo(source, distributedTarget)) {
+                                resetErrorInfo(saveErrorInfo);
+                                return result;
+                            }
+                            originalErrorInfo = errorInfo;
+                            resetErrorInfo(saveErrorInfo);
+                        }
+                    }
                     // A type S is related to a type T[K] if S is related to C, where C is the base
                     // constraint of T[K] for writing.
                     if (relation === assignableRelation || relation === comparableRelation) {
@@ -16996,6 +17013,17 @@ namespace ts {
                         }
                     }
                     else {
+                        if (source.flags & TypeFlags.IndexedAccess && isGenericMappedType((<IndexedAccessType>source).objectType)) {
+                            const distributedSource = substituteIndexedMappedType((<IndexedAccessType>source).objectType as MappedType, (<IndexedAccessType>source).indexType);
+                            if (distributedSource !== source) {
+                                if (result = isRelatedTo(distributedSource, target)) {
+                                    resetErrorInfo(saveErrorInfo);
+                                    return result;
+                                }
+                                originalErrorInfo = errorInfo;
+                                resetErrorInfo(saveErrorInfo);
+                            }
+                        }
                         const constraint = getConstraintOfType(<TypeVariable>source);
                         if (!constraint || (source.flags & TypeFlags.TypeParameter && constraint.flags & TypeFlags.Any)) {
                             // A type variable with no constraint is not related to the non-primitive object type.
