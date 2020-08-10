@@ -541,7 +541,28 @@ namespace ts {
         }
 
         function declareModuleMember(node: Declaration, symbolFlags: SymbolFlags, symbolExcludes: SymbolFlags): Symbol {
-            const hasExportModifier = getCombinedModifierFlags(node) & ModifierFlags.Export;
+            let hasExportModifier = !!(getCombinedModifierFlags(node) & ModifierFlags.Export);
+            // jsdoc typedef handling is a bit of a doozy, but to summarize, treat the typedef as export if:
+            // 1. It has an explicit name (by default typedefs are always directly exported, either at the top level or into a container) or
+            // 2. The thing a nameless typedef pulls its name from is implicitly a direct export (either by assignment or actual export flag)
+            // This could potentially be simplified by having `delayedBindJSDocTypedefTag` pass in an override for `hasExportModifier`, since it should
+            // already have calculated and branched on most of this.
+            if (isJSDocTypeAlias(node)) {
+                if (!isJSDocEnumTag(node) && !!node.fullName) {
+                    hasExportModifier = true;
+                }
+                else {
+                    const declName = getNameOfDeclaration(node);
+                    if (declName) {
+                        if (isPropertyAccessEntityNameExpression(declName.parent) && isTopLevelNamespaceAssignment(declName.parent)) {
+                            hasExportModifier = true;
+                        }
+                        else if (isDeclaration(declName.parent) && !!(getCombinedModifierFlags(declName.parent) & ModifierFlags.Export)) {
+                            hasExportModifier = true;
+                        }
+                    }
+                }
+            }
             if (symbolFlags & SymbolFlags.Alias) {
                 if (node.kind === SyntaxKind.ExportSpecifier || (node.kind === SyntaxKind.ImportEqualsDeclaration && hasExportModifier)) {
                     return declareSymbol(container.symbol.exports!, container.symbol, node, symbolFlags, symbolExcludes);
@@ -567,7 +588,7 @@ namespace ts {
                 //       and this case is specially handled. Module augmentations should only be merged with original module definition
                 //       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
                 if (isJSDocTypeAlias(node)) Debug.assert(isInJSFile(node)); // We shouldn't add symbols for JSDoc nodes if not in a JS file.
-                if ((!isAmbientModule(node) && (hasExportModifier || container.flags & NodeFlags.ExportContext)) || isJSDocTypeAlias(node)) {
+                if ((!isAmbientModule(node) && (hasExportModifier || container.flags & NodeFlags.ExportContext))) {
                     if (!container.locals || (hasSyntacticModifier(node, ModifierFlags.Default) && !getDeclarationName(node))) {
                         return declareSymbol(container.symbol.exports!, container.symbol, node, symbolFlags, symbolExcludes); // No local symbol for an unnamed default!
                     }
