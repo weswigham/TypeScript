@@ -18999,10 +18999,27 @@ namespace ts {
                 if (skipPartial && targetProp && getCheckFlags(targetProp) & CheckFlags.ReadPartial) {
                     continue;
                 }
+                const discriminant = getDiscriminatingType();
+                const cache = (target.discriminantCache ||= new Map());
+                const discriminantId = "" + getTypeId(getRegularTypeOfLiteralType(discriminant));
+                const result = cache.get(propertyName)?.get(discriminantId);
+                if (result !== undefined) {
+                    forEach(discriminable, (_, i) => {
+                        if (result.indexOf(i) > -1) {
+                            discriminable[i] = discriminable[i] === undefined ? true : discriminable[i];
+                        }
+                        else {
+                            discriminable[i] = false;
+                        }
+                    });
+                    continue;
+                }
+                const cacheResult = [];
                 let i = 0;
                 for (const type of target.types) {
                     const targetType = getTypeOfPropertyOfType(type, propertyName);
-                    if (targetType && related(getDiscriminatingType(), targetType)) {
+                    if (targetType && related(discriminant, targetType)) {
+                        cacheResult.push(i);
                         discriminable[i] = discriminable[i] === undefined ? true : discriminable[i];
                     }
                     else {
@@ -19010,6 +19027,10 @@ namespace ts {
                     }
                     i++;
                 }
+                if (!cache.has(propertyName)) {
+                    cache.set(propertyName, new Map());
+                }
+                cache.get(propertyName)!.set(discriminantId, cacheResult);
             }
             const match = discriminable.indexOf(/*searchElement*/ true);
             if (match === -1) {

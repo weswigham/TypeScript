@@ -5303,6 +5303,8 @@ namespace ts {
         regularType?: UnionType;
         /* @internal */
         origin?: Type;  // Denormalized union, intersection, or index type in which union originates
+        /* @internal */
+        discriminantCache?: UnderscoreEscapedMap<Map<number[]>>;
     }
 
     export interface IntersectionType extends UnionOrIntersectionType {
