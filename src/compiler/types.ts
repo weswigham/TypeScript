@@ -4770,8 +4770,8 @@ namespace ts {
         extendedContainers?: Symbol[];              // Containers (other than the parent) which this symbol is aliased in
         extendedContainersByFile?: ESMap<NodeId, Symbol[]>; // Containers (other than the parent) which this symbol is aliased in
         variances?: VarianceFlags[];                // Alias symbol type argument variance cache
-        deferralConstituents?: Type[];              // Calculated list of constituents for a deferred type
-        deferralParent?: Type;                      // Source union/intersection of a deferred type
+        deferralConstituents?: () => Type[];        // Thunk for calculated list of constituents for a deferred type
+        deferralParentFlags?: TypeFlags;            // Source union/intersection flags of a deferred type
         cjsExportMerged?: Symbol;                   // Version of the symbol with all non export= exports merged with the export= target
         typeOnlyDeclaration?: TypeOnlyCompatibleAliasDeclaration | false; // First resolved alias declaration that makes the symbol only usable in type constructs
         isConstructorDeclaredProperty?: boolean;    // Property declared through 'this.x = ...' assignment in constructor

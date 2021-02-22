@@ -9089,9 +9089,9 @@ namespace ts {
         function getTypeOfSymbolWithDeferredType(symbol: Symbol) {
             const links = getSymbolLinks(symbol);
             if (!links.type) {
-                Debug.assertIsDefined(links.deferralParent);
+                Debug.assertIsDefined(links.deferralParentFlags);
                 Debug.assertIsDefined(links.deferralConstituents);
-                links.type = links.deferralParent.flags & TypeFlags.Union ? getUnionType(links.deferralConstituents) : getIntersectionType(links.deferralConstituents);
+                links.type = links.deferralParentFlags & TypeFlags.Union ? getUnionType(links.deferralConstituents()) : getIntersectionType(links.deferralConstituents());
             }
             return links.type;
         }
@@ -10445,17 +10445,22 @@ namespace ts {
             const needsExtraRestElement = eitherHasEffectiveRest && !hasEffectiveRestParameter(longest);
             const params = new Array<Symbol>(longestCount + (needsExtraRestElement ? 1 : 0));
             for (let i = 0; i < longestCount; i++) {
-                let longestParamType = tryGetTypeAtPosition(longest, i)!;
-                if (longest === right) {
-                    longestParamType = instantiateType(longestParamType, mapper);
+                const getLongestParamType = () => {
+                    let longestParamType = tryGetTypeAtPosition(longest, i)!;
+                    if (longest === right) {
+                        longestParamType = instantiateType(longestParamType, mapper);
+                    }
+                    return longestParamType;
                 }
-                let shorterParamType = tryGetTypeAtPosition(shorter, i) || unknownType;
-                if (shorter === right) {
-                    shorterParamType = instantiateType(shorterParamType, mapper);
+                const getShorterParamType = () => {
+                    let shorterParamType = tryGetTypeAtPosition(shorter, i) || unknownType;
+                    if (shorter === right) {
+                        shorterParamType = instantiateType(shorterParamType, mapper);
+                    }
+                    return shorterParamType;
                 }
-                const unionParamType = getIntersectionType([longestParamType, shorterParamType]);
                 const isRestParam = eitherHasEffectiveRest && !needsExtraRestElement && i === (longestCount - 1);
-                const isOptional = i >= getMinArgumentCount(longest) && i >= getMinArgumentCount(shorter);
+                const isOptional = getOptionalityAtPosition(longest, i) && getOptionalityAtPosition(shorter, i);
                 const leftName = i >= leftCount ? undefined : getParameterNameAtPosition(left, i);
                 const rightName = i >= rightCount ? undefined : getParameterNameAtPosition(right, i);
 
@@ -10467,7 +10472,17 @@ namespace ts {
                     SymbolFlags.FunctionScopedVariable | (isOptional && !isRestParam ? SymbolFlags.Optional : 0),
                     paramName || `arg${i}` as __String
                 );
-                paramSymbol.type = isRestParam ? createArrayType(unionParamType) : unionParamType;
+                if (!isRestParam) {
+                    // create deferred type on symbol to avoid normalizing the symbol's combined type until the type of the symbol is
+                    // formally requested
+                    paramSymbol.checkFlags |= CheckFlags.DeferredType;
+                    paramSymbol.deferralParentFlags = TypeFlags.Intersection;
+                    paramSymbol.deferralConstituents = () => [getLongestParamType(), getShorterParamType()];
+                }
+                else {
+                    const unionParamType = getIntersectionType([getLongestParamType(), getShorterParamType()]);
+                    paramSymbol.type = isRestParam ? createArrayType(unionParamType) : unionParamType;
+                }
                 params[i] = paramSymbol;
             }
             if (needsExtraRestElement) {
@@ -11504,8 +11519,8 @@ namespace ts {
             if (propTypes.length > 2) {
                 // When `propTypes` has the potential to explode in size when normalized, defer normalization until absolutely needed
                 result.checkFlags |= CheckFlags.DeferredType;
-                result.deferralParent = containingType;
-                result.deferralConstituents = propTypes;
+                result.deferralParentFlags = containingType.flags;
+                result.deferralConstituents = () => propTypes;
             }
             else {
                 result.type = isUnion ? getUnionType(propTypes) : getIntersectionType(propTypes);
@@ -13814,7 +13829,8 @@ namespace ts {
                                 // cross-product growth potential.
                                 runningResult = typeSet[i].flags & TypeFlags.Primitive && everyType(runningResult, t => !!(t.flags & TypeFlags.Object)) ? neverType : getReducedType(intersectTypes(runningResult, typeSet[i]));
                                 if (i === typeSet.length - 1 || isTypeAny(runningResult) || runningResult.flags & TypeFlags.Never) {
-                                    return runningResult;
+                                    result = runningResult;
+                                    break;
                                 }
                                 if (!(runningResult.flags & TypeFlags.Union) || (runningResult as UnionType).types.length > typeSet.length) {
                                     // save work done by the accumulated result thus far, even if we're bailing on the heuristic
@@ -13824,17 +13840,24 @@ namespace ts {
                                 }
                             }
                         }
+                        if (!result && getCrossProductUnionSize(typeSet) >= 100000 && some(typeSet, t => t !== getReducedType(t))) {
+                            // Projected intersection size is still too large, but we can reduce fidelity on some input member and reduce the
+                            // result down - so we eagerly reduce so we can still proceed.
+                            result = getIntersectionType(map(typeSet, getReducedType), aliasSymbol, aliasTypeArguments);
+                        }
                         // We are attempting to construct a type of the form X & (A | B) & (C | D). Transform this into a type of
                         // the form X & A & C | X & A & D | X & B & C | X & B & D. If the estimated size of the resulting union type
                         // exceeds 100000 constituents, report an error.
-                        if (!checkCrossProductUnion(typeSet)) {
-                            return errorType;
+                        else if (!checkCrossProductUnion(typeSet)) {
+                            result = errorType;
                         }
-                        const constituents = getCrossProductIntersections(typeSet);
-                        // We attach a denormalized origin type when at least one constituent of the cross-product union is an
-                        // intersection (i.e. when the intersection didn't just reduce one or more unions to smaller unions).
-                        const origin = some(constituents, t => !!(t.flags & TypeFlags.Intersection)) ? createOriginUnionOrIntersectionType(TypeFlags.Intersection, originalSet) : undefined;
-                        result = runningResult ? getIntersectionType([runningResult, getUnionType(constituents, UnionReduction.Literal)], aliasSymbol, aliasTypeArguments) : getUnionType(constituents, UnionReduction.Literal, aliasSymbol, aliasTypeArguments, origin);
+                        else {
+                            const constituents = getCrossProductIntersections(typeSet);
+                            // We attach a denormalized origin type when at least one constituent of the cross-product union is an
+                            // intersection (i.e. when the intersection didn't just reduce one or more unions to smaller unions).
+                            const origin = some(constituents, t => !!(t.flags & TypeFlags.Intersection)) ? createOriginUnionOrIntersectionType(TypeFlags.Intersection, originalSet) : undefined;
+                            result = runningResult ? getIntersectionType([runningResult, getUnionType(constituents, UnionReduction.Literal)], aliasSymbol, aliasTypeArguments) : getUnionType(constituents, UnionReduction.Literal, aliasSymbol, aliasTypeArguments, origin);
+                        }
                     }
                 }
                 else {
@@ -18424,11 +18447,11 @@ namespace ts {
                 if (getCheckFlags(targetProp) & CheckFlags.DeferredType && !getSymbolLinks(targetProp).type) {
                     // Rather than resolving (and normalizing) the type, relate constituent-by-constituent without performing normalization or seconadary passes
                     const links = getSymbolLinks(targetProp);
-                    Debug.assertIsDefined(links.deferralParent);
+                    Debug.assertIsDefined(links.deferralParentFlags);
                     Debug.assertIsDefined(links.deferralConstituents);
-                    const unionParent = !!(links.deferralParent.flags & TypeFlags.Union);
+                    const unionParent = !!(links.deferralParentFlags & TypeFlags.Union);
                     let result = unionParent ? Ternary.False : Ternary.True;
-                    const targetTypes = links.deferralConstituents;
+                    const targetTypes = links.deferralConstituents();
                     for (const targetType of targetTypes) {
                         const related = isRelatedTo(source, targetType, /*reportErrors*/ false, /*headMessage*/ undefined, unionParent ? 0 : IntersectionState.Target);
                         if (!unionParent) {
@@ -29310,6 +29333,24 @@ namespace ts {
         function getTupleElementLabel(d: ParameterDeclaration | NamedTupleMember) {
             Debug.assert(isIdentifier(d.name)); // Parameter declarations could be binding patterns, but we only allow identifier names
             return d.name.escapedText;
+        }
+
+        /**
+         * Gets if a signature is optional at a position without inspecting its type at that position (unless it has to look at a rest element tuple)
+         */
+        function getOptionalityAtPosition(signature: Signature, pos: number) {
+            const paramCount = signature.parameters.length - (signatureHasRestParameter(signature) ? 1 : 0);
+            if (pos < paramCount) {
+                return !!(signature.parameters[pos].flags & SymbolFlags.Optional);
+            }
+            const restParameter = signature.parameters[paramCount] || unknownSymbol;
+            const restType = getTypeOfSymbol(restParameter);
+            if (isTupleType(restType)) {
+                const associatedFlags = (<TupleType>(<TypeReference>restType).target).elementFlags;
+                const index = pos - paramCount;
+                return !!associatedFlags && !!(associatedFlags[index] & ElementFlags.NonRequired);
+            }
+            return true;
         }
 
         function getParameterNameAtPosition(signature: Signature, pos: number, overrideRestType?: Type) {
