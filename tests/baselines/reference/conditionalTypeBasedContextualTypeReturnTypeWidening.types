@@ -9,19 +9,19 @@ declare function useState2<S>(initialState: (S extends ((...args: any[]) => any)
 >args : any[]
 
 const func1 = useState1(() => () => 0);
->func1 : () => 0
->useState1(() => () => 0) : () => 0
+>func1 : () => number
+>useState1(() => () => 0) : () => number
 >useState1 : <S>(initialState: (S extends () => any ? never : S) | (() => S)) => S
->() => () => 0 : () => () => 0
->() => 0 : () => 0
+>() => () => 0 : () => () => number
+>() => 0 : () => number
 >0 : 0
 
 const func2 = useState2(() => () => 0);
->func2 : () => 0
->useState2(() => () => 0) : () => 0
+>func2 : () => number
+>useState2(() => () => 0) : () => number
 >useState2 : <S>(initialState: (S extends (...args: any[]) => any ? never : S) | (() => S)) => S
->() => () => 0 : () => () => 0
->() => 0 : () => 0
+>() => () => 0 : () => () => number
+>() => 0 : () => number
 >0 : 0
 
 declare function useState3<S, T extends S>(initialState: (T extends (() => any) ? never : T) | (() => S)): S; // No args
@@ -34,18 +34,18 @@ declare function useState4<S, T extends S>(initialState: (T extends ((...args: a
 >args : any[]
 
 const func3 = useState1(() => () => 0);
->func3 : () => 0
->useState1(() => () => 0) : () => 0
+>func3 : () => number
+>useState1(() => () => 0) : () => number
 >useState1 : <S>(initialState: (S extends () => any ? never : S) | (() => S)) => S
->() => () => 0 : () => () => 0
->() => 0 : () => 0
+>() => () => 0 : () => () => number
+>() => 0 : () => number
 >0 : 0
 
 const func4 = useState2(() => () => 0);
->func4 : () => 0
->useState2(() => () => 0) : () => 0
+>func4 : () => number
+>useState2(() => () => 0) : () => number
 >useState2 : <S>(initialState: (S extends (...args: any[]) => any ? never : S) | (() => S)) => S
->() => () => 0 : () => () => 0
->() => 0 : () => 0
+>() => () => 0 : () => () => number
+>() => 0 : () => number
 >0 : 0
 

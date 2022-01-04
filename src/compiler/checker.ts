@@ -31861,7 +31861,7 @@ namespace ts {
                     nextType && isUnitType(nextType)) {
                     const contextualSignature = getContextualSignatureForFunctionLikeDeclaration(func);
                     const contextualType = !contextualSignature ? undefined :
-                        contextualSignature === getSignatureFromDeclaration(func) ? isGenerator ? undefined : returnType :
+                        contextualSignature === getSignatureFromDeclaration(func) ? isGenerator || (returnType && isLiteralOfContextualType(returnType, returnType)) ? undefined : returnType :
                         instantiateContextualType(getReturnTypeOfSignature(contextualSignature), func);
                     if (isGenerator) {
                         yieldType = getWidenedLiteralLikeTypeForContextualIterationTypeIfNeeded(yieldType, contextualType, IterationTypeKind.Yield, isAsync);

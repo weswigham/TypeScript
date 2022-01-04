@@ -857,12 +857,12 @@ let case1 = foo({
 >case1 : void
 >foo({    [directive]: (x: string) => 'str',    addOne: (x: number) => x + 1,    double: (x: number) => x + x,}) : void
 >foo : <TArg, TRet, TDir>(options: { [x: string]: (arg: TArg) => TRet; } & { [directive]?: TDir | undefined; }) => void
->{    [directive]: (x: string) => 'str',    addOne: (x: number) => x + 1,    double: (x: number) => x + x,} : { [directive]: (x: string) => "str"; addOne: (x: number) => number; double: (x: number) => number; }
+>{    [directive]: (x: string) => 'str',    addOne: (x: number) => x + 1,    double: (x: number) => x + x,} : { [directive]: (x: string) => string; addOne: (x: number) => number; double: (x: number) => number; }
 
     [directive]: (x: string) => 'str',
->[directive] : (x: string) => "str"
+>[directive] : (x: string) => string
 >directive : unique symbol
->(x: string) => 'str' : (x: string) => "str"
+>(x: string) => 'str' : (x: string) => string
 >x : string
 >'str' : "str"
 
@@ -888,7 +888,7 @@ let case2 = foo({
 >case2 : void
 >foo({    addOne: (x: number) => x + 1,    double: (x: number) => x + x,    [directive]: (x: string) => 'str',}) : void
 >foo : <TArg, TRet, TDir>(options: { [x: string]: (arg: TArg) => TRet; } & { [directive]?: TDir | undefined; }) => void
->{    addOne: (x: number) => x + 1,    double: (x: number) => x + x,    [directive]: (x: string) => 'str',} : { addOne: (x: number) => number; double: (x: number) => number; [directive]: (x: string) => "str"; }
+>{    addOne: (x: number) => x + 1,    double: (x: number) => x + x,    [directive]: (x: string) => 'str',} : { addOne: (x: number) => number; double: (x: number) => number; [directive]: (x: string) => string; }
 
     addOne: (x: number) => x + 1,
 >addOne : (x: number) => number
@@ -907,9 +907,9 @@ let case2 = foo({
 >x : number
 
     [directive]: (x: string) => 'str',
->[directive] : (x: string) => "str"
+>[directive] : (x: string) => string
 >directive : unique symbol
->(x: string) => 'str' : (x: string) => "str"
+>(x: string) => 'str' : (x: string) => string
 >x : string
 >'str' : "str"
 

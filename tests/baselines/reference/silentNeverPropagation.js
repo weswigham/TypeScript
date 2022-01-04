@@ -52,5 +52,5 @@ declare const breaks: ModuleWithState<{
 } & MoreState> & ModuleWithState<{
     a: number;
 }> & {
-    foo(): true;
+    foo(): boolean;
 };

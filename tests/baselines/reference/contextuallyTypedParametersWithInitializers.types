@@ -183,33 +183,33 @@ declare function g6<T extends () => any>(x: T): T;
 >x : T
 
 g1((x = 1) => 0);  // number
->g1((x = 1) => 0) : (x?: number) => 0
+>g1((x = 1) => 0) : (x?: number) => number
 >g1 : <T>(x: T) => T
->(x = 1) => 0 : (x?: number) => 0
+>(x = 1) => 0 : (x?: number) => number
 >x : number
 >1 : 1
 >0 : 0
 
 g2((x = 1) => 0);  // number
->g2((x = 1) => 0) : (x?: number) => 0
+>g2((x = 1) => 0) : (x?: number) => number
 >g2 : <T extends unknown>(x: T) => T
->(x = 1) => 0 : (x?: number) => 0
+>(x = 1) => 0 : (x?: number) => number
 >x : number
 >1 : 1
 >0 : 0
 
 g3((x = 1) => 0);  // number
->g3((x = 1) => 0) : (x?: number) => 0
+>g3((x = 1) => 0) : (x?: number) => number
 >g3 : <T extends unknown>(x: T) => T
->(x = 1) => 0 : (x?: number) => 0
+>(x = 1) => 0 : (x?: number) => number
 >x : number
 >1 : 1
 >0 : 0
 
 g4((x = 1) => 0);  // number
->g4((x = 1) => 0) : (x?: number) => 0
+>g4((x = 1) => 0) : (x?: number) => number
 >g4 : <T extends Function>(x: T) => T
->(x = 1) => 0 : (x?: number) => 0
+>(x = 1) => 0 : (x?: number) => number
 >x : number
 >1 : 1
 >0 : 0
