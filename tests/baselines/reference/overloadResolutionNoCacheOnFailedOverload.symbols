@@ -1,0 +1,175 @@
+=== tests/cases/compiler/overloadResolutionNoCacheOnFailedOverload.ts ===
+interface TypegenDisabled {
+>TypegenDisabled : Symbol(TypegenDisabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 0, 0))
+
+    "@@xstate/typegen": false;
+>"@@xstate/typegen" : Symbol(TypegenDisabled["@@xstate/typegen"], Decl(overloadResolutionNoCacheOnFailedOverload.ts, 0, 27))
+}
+interface TypegenEnabled {
+>TypegenEnabled : Symbol(TypegenEnabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 2, 1))
+
+    "@@xstate/typegen": true;
+>"@@xstate/typegen" : Symbol(TypegenEnabled["@@xstate/typegen"], Decl(overloadResolutionNoCacheOnFailedOverload.ts, 3, 26))
+}
+interface EventObject {
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    type: string;
+>type : Symbol(EventObject.type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 6, 23))
+}
+interface ActionObject<TEvent extends EventObject> {
+>ActionObject : Symbol(ActionObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 8, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 9, 23))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    _TE: TEvent;
+>_TE : Symbol(ActionObject._TE, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 9, 52))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 9, 23))
+}
+
+interface StateMachine<
+>StateMachine : Symbol(StateMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 11, 1))
+
+    TEvent extends EventObject,
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 13, 23))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    TTypesMeta = TypegenDisabled
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 14, 31))
+>TypegenDisabled : Symbol(TypegenDisabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 0, 0))
+
+    > {
+    _TE: TEvent;
+>_TE : Symbol(StateMachine._TE, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 16, 7))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 13, 23))
+
+    _TRTM: TTypesMeta;
+>_TRTM : Symbol(StateMachine._TRTM, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 17, 16))
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 14, 31))
+}
+
+interface MachineOptions<TEvent extends EventObject> {
+>MachineOptions : Symbol(MachineOptions, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 19, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 21, 25))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    action?: ActionObject<TEvent>;
+>action : Symbol(MachineOptions.action, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 21, 54))
+>ActionObject : Symbol(ActionObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 8, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 21, 25))
+}
+
+type MaybeTypegenMachineOptions<
+>MaybeTypegenMachineOptions : Symbol(MaybeTypegenMachineOptions, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 23, 1))
+
+    TEvent extends EventObject,
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 25, 32))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    TTypesMeta = TypegenDisabled
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 26, 31))
+>TypegenDisabled : Symbol(TypegenDisabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 0, 0))
+
+    > = TTypesMeta extends TypegenEnabled
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 26, 31))
+>TypegenEnabled : Symbol(TypegenEnabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 2, 1))
+
+    ? {
+        action?: ActionObject<{ type: "WITH_TYPEGEN" }>;
+>action : Symbol(action, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 29, 7))
+>ActionObject : Symbol(ActionObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 8, 1))
+>type : Symbol(type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 30, 31))
+    }
+    : MachineOptions<TEvent>;
+>MachineOptions : Symbol(MachineOptions, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 19, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 25, 32))
+
+declare function assign<TEvent extends EventObject>(
+>assign : Symbol(assign, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 32, 29))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 34, 24))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    assignment: (ev: TEvent) => void
+>assignment : Symbol(assignment, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 34, 52))
+>ev : Symbol(ev, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 35, 17))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 34, 24))
+
+): ActionObject<TEvent>;
+>ActionObject : Symbol(ActionObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 8, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 34, 24))
+
+// atm I have a single signature and it **matches**
+// however, if I uncomment this additional overload then **no signature** matches
+// if later on I reorder the signatures then the first one (the one that is currently not commented out) matches
+
+// what happens here is that some inferences made when attempting to match the first overload are cached 
+// and "carried over" to matching the second overload - which makes the whole thing fail
+
+declare function useMachine<
+>useMachine : Symbol(useMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 36, 24), Decl(overloadResolutionNoCacheOnFailedOverload.ts, 51, 19))
+
+    TEvent extends EventObject,
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 45, 28))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    TTypesMeta extends TypegenEnabled
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 46, 31))
+>TypegenEnabled : Symbol(TypegenEnabled, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 2, 1))
+
+>(
+    getMachine: StateMachine<TEvent, TTypesMeta>,
+>getMachine : Symbol(getMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 48, 2))
+>StateMachine : Symbol(StateMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 11, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 45, 28))
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 46, 31))
+
+    options: MaybeTypegenMachineOptions<TEvent, TTypesMeta>
+>options : Symbol(options, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 49, 49))
+>MaybeTypegenMachineOptions : Symbol(MaybeTypegenMachineOptions, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 23, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 45, 28))
+>TTypesMeta : Symbol(TTypesMeta, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 46, 31))
+
+): { first: true };
+>first : Symbol(first, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 51, 4))
+
+declare function useMachine<TEvent extends EventObject>(
+>useMachine : Symbol(useMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 36, 24), Decl(overloadResolutionNoCacheOnFailedOverload.ts, 51, 19))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 52, 28))
+>EventObject : Symbol(EventObject, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 5, 1))
+
+    getMachine: StateMachine<TEvent>,
+>getMachine : Symbol(getMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 52, 56))
+>StateMachine : Symbol(StateMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 11, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 52, 28))
+
+    options?: MachineOptions<TEvent>
+>options : Symbol(options, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 53, 37))
+>MachineOptions : Symbol(MachineOptions, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 19, 1))
+>TEvent : Symbol(TEvent, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 52, 28))
+
+): { second: true };
+>second : Symbol(second, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 55, 4))
+
+const machine = {} as StateMachine<{ type: "WITHOUT_TYPEGEN" }>;
+>machine : Symbol(machine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 57, 5))
+>StateMachine : Symbol(StateMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 11, 1))
+>type : Symbol(type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 57, 36))
+
+const ret = useMachine(machine, { // should use 2nd overload without error
+>ret : Symbol(ret, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 59, 5))
+>useMachine : Symbol(useMachine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 36, 24), Decl(overloadResolutionNoCacheOnFailedOverload.ts, 51, 19))
+>machine : Symbol(machine, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 57, 5))
+
+    action: assign((_ev) => {
+>action : Symbol(action, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 59, 33))
+>assign : Symbol(assign, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 32, 29))
+>_ev : Symbol(_ev, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 60, 20))
+
+        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);
+>_type : Symbol(_type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 61, 10))
+>_ev.type : Symbol(type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 57, 36))
+>_ev : Symbol(_ev, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 60, 20))
+>type : Symbol(type, Decl(overloadResolutionNoCacheOnFailedOverload.ts, 57, 36))
+
+    }),
+});

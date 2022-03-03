@@ -1,0 +1,126 @@
+=== tests/cases/compiler/overloadResolutionNoCacheOnFailedOverload.ts ===
+interface TypegenDisabled {
+    "@@xstate/typegen": false;
+>"@@xstate/typegen" : false
+>false : false
+}
+interface TypegenEnabled {
+    "@@xstate/typegen": true;
+>"@@xstate/typegen" : true
+>true : true
+}
+interface EventObject {
+    type: string;
+>type : string
+}
+interface ActionObject<TEvent extends EventObject> {
+    _TE: TEvent;
+>_TE : TEvent
+}
+
+interface StateMachine<
+    TEvent extends EventObject,
+    TTypesMeta = TypegenDisabled
+    > {
+    _TE: TEvent;
+>_TE : TEvent
+
+    _TRTM: TTypesMeta;
+>_TRTM : TTypesMeta
+}
+
+interface MachineOptions<TEvent extends EventObject> {
+    action?: ActionObject<TEvent>;
+>action : ActionObject<TEvent>
+}
+
+type MaybeTypegenMachineOptions<
+>MaybeTypegenMachineOptions : MaybeTypegenMachineOptions<TEvent, TTypesMeta>
+
+    TEvent extends EventObject,
+    TTypesMeta = TypegenDisabled
+    > = TTypesMeta extends TypegenEnabled
+    ? {
+        action?: ActionObject<{ type: "WITH_TYPEGEN" }>;
+>action : ActionObject<{ type: "WITH_TYPEGEN"; }>
+>type : "WITH_TYPEGEN"
+    }
+    : MachineOptions<TEvent>;
+
+declare function assign<TEvent extends EventObject>(
+>assign : <TEvent extends EventObject>(assignment: (ev: TEvent) => void) => ActionObject<TEvent>
+
+    assignment: (ev: TEvent) => void
+>assignment : (ev: TEvent) => void
+>ev : TEvent
+
+): ActionObject<TEvent>;
+
+// atm I have a single signature and it **matches**
+// however, if I uncomment this additional overload then **no signature** matches
+// if later on I reorder the signatures then the first one (the one that is currently not commented out) matches
+
+// what happens here is that some inferences made when attempting to match the first overload are cached 
+// and "carried over" to matching the second overload - which makes the whole thing fail
+
+declare function useMachine<
+>useMachine : { <TEvent extends EventObject, TTypesMeta extends TypegenEnabled>(getMachine: StateMachine<TEvent, TTypesMeta>, options: MaybeTypegenMachineOptions<TEvent, TTypesMeta>): {    first: true;}; <TEvent extends EventObject>(getMachine: StateMachine<TEvent, TypegenDisabled>, options?: MachineOptions<TEvent>): { second: true; }; }
+
+    TEvent extends EventObject,
+    TTypesMeta extends TypegenEnabled
+>(
+    getMachine: StateMachine<TEvent, TTypesMeta>,
+>getMachine : StateMachine<TEvent, TTypesMeta>
+
+    options: MaybeTypegenMachineOptions<TEvent, TTypesMeta>
+>options : MaybeTypegenMachineOptions<TEvent, TTypesMeta>
+
+): { first: true };
+>first : true
+>true : true
+
+declare function useMachine<TEvent extends EventObject>(
+>useMachine : { <TEvent extends EventObject, TTypesMeta extends TypegenEnabled>(getMachine: StateMachine<TEvent, TTypesMeta>, options: MaybeTypegenMachineOptions<TEvent, TTypesMeta>): { first: true; }; <TEvent extends EventObject>(getMachine: StateMachine<TEvent>, options?: MachineOptions<TEvent>): {    second: true;}; }
+
+    getMachine: StateMachine<TEvent>,
+>getMachine : StateMachine<TEvent, TypegenDisabled>
+
+    options?: MachineOptions<TEvent>
+>options : MachineOptions<TEvent>
+
+): { second: true };
+>second : true
+>true : true
+
+const machine = {} as StateMachine<{ type: "WITHOUT_TYPEGEN" }>;
+>machine : StateMachine<{ type: "WITHOUT_TYPEGEN"; }, TypegenDisabled>
+>{} as StateMachine<{ type: "WITHOUT_TYPEGEN" }> : StateMachine<{ type: "WITHOUT_TYPEGEN"; }, TypegenDisabled>
+>{} : {}
+>type : "WITHOUT_TYPEGEN"
+
+const ret = useMachine(machine, { // should use 2nd overload without error
+>ret : { second: true; }
+>useMachine(machine, { // should use 2nd overload without error    action: assign((_ev) => {        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);    }),}) : { second: true; }
+>useMachine : { <TEvent extends EventObject, TTypesMeta extends TypegenEnabled>(getMachine: StateMachine<TEvent, TTypesMeta>, options: MaybeTypegenMachineOptions<TEvent, TTypesMeta>): { first: true; }; <TEvent extends EventObject>(getMachine: StateMachine<TEvent, TypegenDisabled>, options?: MachineOptions<TEvent>): { second: true; }; }
+>machine : StateMachine<{ type: "WITHOUT_TYPEGEN"; }, TypegenDisabled>
+>{ // should use 2nd overload without error    action: assign((_ev) => {        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);    }),} : { action: ActionObject<{ type: "WITHOUT_TYPEGEN"; }>; }
+
+    action: assign((_ev) => {
+>action : ActionObject<{ type: "WITHOUT_TYPEGEN"; }>
+>assign((_ev) => {        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);    }) : ActionObject<{ type: "WITHOUT_TYPEGEN"; }>
+>assign : <TEvent extends EventObject>(assignment: (ev: TEvent) => void) => ActionObject<TEvent>
+>(_ev) => {        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);    } : (_ev: { type: "WITHOUT_TYPEGEN"; }) => void
+>_ev : { type: "WITHOUT_TYPEGEN"; }
+
+        ((_type: "WITHOUT_TYPEGEN") => null)(_ev.type);
+>((_type: "WITHOUT_TYPEGEN") => null)(_ev.type) : any
+>((_type: "WITHOUT_TYPEGEN") => null) : (_type: "WITHOUT_TYPEGEN") => any
+>(_type: "WITHOUT_TYPEGEN") => null : (_type: "WITHOUT_TYPEGEN") => any
+>_type : "WITHOUT_TYPEGEN"
+>null : null
+>_ev.type : "WITHOUT_TYPEGEN"
+>_ev : { type: "WITHOUT_TYPEGEN"; }
+>type : "WITHOUT_TYPEGEN"
+
+    }),
+});

@@ -980,8 +980,8 @@ namespace ts {
         let suggestionCount = 0;
         const maximumSuggestionCount = 10;
         const mergedSymbols: Symbol[] = [];
-        const symbolLinks: SymbolLinks[] = [];
-        const nodeLinks: NodeLinks[] = [];
+        let symbolLinks: SymbolLinks[] = [];
+        let nodeLinks: NodeLinks[] = [];
         const flowLoopCaches: ESMap<string, Type>[] = [];
         const flowLoopNodes: FlowNode[] = [];
         const flowLoopKeys: string[] = [];
@@ -996,8 +996,8 @@ namespace ts {
         const potentialReflectCollisions: Node[] = [];
         const awaitedTypeStack: number[] = [];
 
-        const diagnostics = createDiagnosticCollection();
-        const suggestionDiagnostics = createDiagnosticCollection();
+        let diagnostics = createDiagnosticCollection();
+        let suggestionDiagnostics = createDiagnosticCollection();
 
         const typeofTypesByName: ReadonlyESMap<string, Type> = new Map(getEntries({
             string: stringType,
@@ -30350,6 +30350,15 @@ namespace ts {
 
                     let checkCandidate: Signature;
                     let inferenceContext: InferenceContext | undefined;
+                    // Save caches off before doing any contextual checking
+                    let oldSymbolLinks = symbolLinks;
+                    let oldNodeLinks = nodeLinks;
+                    let oldDiagnostics = diagnostics;
+                    let oldSuggestions = suggestionDiagnostics;
+                    symbolLinks = symbolLinks.slice();
+                    nodeLinks = nodeLinks.slice();
+                    diagnostics = diagnostics.clone();
+                    suggestionDiagnostics = suggestionDiagnostics.clone();
 
                     if (candidate.typeParameters) {
                         let typeArgumentTypes: Type[] | undefined;
@@ -30379,6 +30388,10 @@ namespace ts {
                     if (getSignatureApplicabilityError(node, args, checkCandidate, relation, argCheckMode, /*reportErrors*/ false, /*containingMessageChain*/ undefined)) {
                         // Give preference to error candidates that have no rest parameters (as they are more specific)
                         (candidatesForArgumentError || (candidatesForArgumentError = [])).push(checkCandidate);
+                        symbolLinks = oldSymbolLinks;
+                        nodeLinks = oldNodeLinks;
+                        diagnostics = oldDiagnostics;
+                        suggestionDiagnostics = oldSuggestions;
                         continue;
                     }
                     if (argCheckMode) {
@@ -30393,12 +30406,20 @@ namespace ts {
                             // signature with different arity and we need to perform another arity check.
                             if (getNonArrayRestType(candidate) && !hasCorrectArity(node, args, checkCandidate, signatureHelpTrailingComma)) {
                                 candidateForArgumentArityError = checkCandidate;
+                                symbolLinks = oldSymbolLinks;
+                                nodeLinks = oldNodeLinks;
+                                diagnostics = oldDiagnostics;
+                                suggestionDiagnostics = oldSuggestions;
                                 continue;
                             }
                         }
                         if (getSignatureApplicabilityError(node, args, checkCandidate, relation, argCheckMode, /*reportErrors*/ false, /*containingMessageChain*/ undefined)) {
                             // Give preference to error candidates that have no rest parameters (as they are more specific)
                             (candidatesForArgumentError || (candidatesForArgumentError = [])).push(checkCandidate);
+                            symbolLinks = oldSymbolLinks;
+                            nodeLinks = oldNodeLinks;
+                            diagnostics = oldDiagnostics;
+                            suggestionDiagnostics = oldSuggestions;
                             continue;
                         }
                     }
@@ -32459,43 +32480,36 @@ namespace ts {
         }
 
         function contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node: FunctionExpression | ArrowFunction | MethodDeclaration, checkMode?: CheckMode) {
-            const links = getNodeLinks(node);
-            // Check if function expression is contextually typed and assign parameter types if so.
-            if (!(links.flags & NodeCheckFlags.ContextChecked)) {
-                const contextualSignature = getContextualSignature(node);
-                // If a type check is started at a function expression that is an argument of a function call, obtaining the
-                // contextual type may recursively get back to here during overload resolution of the call. If so, we will have
-                // already assigned contextual types.
-                if (!(links.flags & NodeCheckFlags.ContextChecked)) {
-                    links.flags |= NodeCheckFlags.ContextChecked;
-                    const signature = firstOrUndefined(getSignaturesOfType(getTypeOfSymbol(getSymbolOfNode(node)), SignatureKind.Call));
-                    if (!signature) {
-                        return;
+            const contextualSignature = getContextualSignature(node);
+            // If a type check is started at a function expression that is an argument of a function call, obtaining the
+            // contextual type may recursively get back to here during overload resolution of the call. If so, we will have
+            // already assigned contextual types.
+            const signature = firstOrUndefined(getSignaturesOfType(getTypeOfSymbol(getSymbolOfNode(node)), SignatureKind.Call));
+            if (!signature) {
+                return;
+            }
+            if (isContextSensitive(node)) {
+                if (contextualSignature) {
+                    const inferenceContext = getInferenceContext(node);
+                    if (checkMode && checkMode & CheckMode.Inferential) {
+                        inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext!);
                     }
-                    if (isContextSensitive(node)) {
-                        if (contextualSignature) {
-                            const inferenceContext = getInferenceContext(node);
-                            if (checkMode && checkMode & CheckMode.Inferential) {
-                                inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext!);
-                            }
-                            const instantiatedContextualSignature = inferenceContext ?
-                                instantiateSignature(contextualSignature, inferenceContext.mapper) : contextualSignature;
-                            assignContextualParameterTypes(signature, instantiatedContextualSignature);
-                        }
-                        else {
-                            // Force resolution of all parameter types such that the absence of a contextual type is consistently reflected.
-                            assignNonContextualParameterTypes(signature);
-                        }
-                    }
-                    if (contextualSignature && !getReturnTypeFromAnnotation(node) && !signature.resolvedReturnType) {
-                        const returnType = getReturnTypeFromBody(node, checkMode);
-                        if (!signature.resolvedReturnType) {
-                            signature.resolvedReturnType = returnType;
-                        }
-                    }
-                    checkSignatureDeclaration(node);
+                    const instantiatedContextualSignature = inferenceContext ?
+                        instantiateSignature(contextualSignature, inferenceContext.mapper) : contextualSignature;
+                    assignContextualParameterTypes(signature, instantiatedContextualSignature);
+                }
+                else {
+                    // Force resolution of all parameter types such that the absence of a contextual type is consistently reflected.
+                    assignNonContextualParameterTypes(signature);
                 }
             }
+            if (contextualSignature && !getReturnTypeFromAnnotation(node) && !signature.resolvedReturnType) {
+                const returnType = getReturnTypeFromBody(node, checkMode);
+                if (!signature.resolvedReturnType) {
+                    signature.resolvedReturnType = returnType;
+                }
+            }
+            checkSignatureDeclaration(node);
         }
 
         function checkFunctionExpressionOrObjectLiteralMethodDeferred(node: ArrowFunction | FunctionExpression | MethodDeclaration) {

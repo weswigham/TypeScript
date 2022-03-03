@@ -8458,6 +8458,9 @@ namespace ts {
         // Otherwise, returns all the diagnostics (global and file associated) in this collection.
         getDiagnostics(): Diagnostic[];
         getDiagnostics(fileName: string): DiagnosticWithLocation[];
+
+        // Returns a clone of the diagnostic collection (the contained diagnostics will be the same)
+        clone(): DiagnosticCollection;
     }
 
     // SyntaxKind.SyntaxList

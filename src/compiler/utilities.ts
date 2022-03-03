@@ -3866,18 +3866,27 @@ namespace ts {
         });
     }
 
-    export function createDiagnosticCollection(): DiagnosticCollection {
-        let nonFileDiagnostics = [] as Diagnostic[] as SortedArray<Diagnostic>; // See GH#19873
-        const filesWithDiagnostics = [] as string[] as SortedArray<string>;
-        const fileDiagnostics = new Map<string, SortedArray<DiagnosticWithLocation>>();
-        let hasReadNonFileDiagnostics = false;
-
+    export function createDiagnosticCollection(
+        nonFileDiagnostics: SortedArray<Diagnostic> = [] as SortedArray<never>,
+        filesWithDiagnostics: SortedArray<string> = [] as SortedArray<never>,
+        fileDiagnostics: ESMap<string, SortedArray<DiagnosticWithLocation>> = new Map(),
+        hasReadNonFileDiagnostics: boolean = false,
+    ): DiagnosticCollection {
         return {
             add,
             lookup,
             getGlobalDiagnostics,
             getDiagnostics,
+            clone,
         };
+
+        function clone() {
+            const diagMap = new Map<string, SortedArray<DiagnosticWithLocation>>();
+            for (const [key, value] of arrayFrom(fileDiagnostics.entries())) {
+                diagMap.set(key, value.slice() as SortedArray<DiagnosticWithLocation>);
+            }
+            return createDiagnosticCollection(nonFileDiagnostics.slice() as SortedArray<Diagnostic>, filesWithDiagnostics.slice() as SortedArray<string>, diagMap, hasReadNonFileDiagnostics);
+        }
 
         function lookup(diagnostic: Diagnostic): Diagnostic | undefined {
             let diagnostics: SortedArray<Diagnostic> | undefined;
