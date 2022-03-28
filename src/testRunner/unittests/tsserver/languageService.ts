@@ -64,5 +64,49 @@ namespace ts.projectSystem {
             const proj2Diags = projectService.configuredProjects.get(files[4].path)!.getLanguageService().getProgram()!.getSemanticDiagnostics();
             Debug.assertEqual(proj2Diags.length, 1);
         });
+
+        it("should support a missing file being added which fulfills a missing import of a differing mode than an existing import", () => {
+            const files: TestFSWithWatch.FileOrFolderOrSymLink[] = [
+                {
+                    path: "/index.ts",
+                    content: Utils.dedent`
+                        import type {A as Alpha} from "pkg" assert { "resolution-mode": "import" };
+                        import type {B as Beta} from "pkg";
+                    `
+                },
+                {
+                    path: "/tsconfig.json",
+                    content: `{ "compilerOptions": { "module": "nodenext" } }`
+                },
+                {
+                    path: "/node_modules/pkg/package.json",
+                    content: Utils.dedent`
+                        {
+                            "name": "pkg",
+                            "version": "0.0.1",
+                            "exports": {
+                                "import": "./import.mjs",
+                                "require": "./require.js"
+                            }
+                        }
+                    `
+                },
+                {
+                    path: "/node_modules/pkg/import.d.mts",
+                    content: `export type A = 1;`
+                }
+            ];
+            const host = createServerHost(files, { executingFilePath: "/tsc.js", useCaseSensitiveFileNames: true });
+            const projectService = createProjectService(host);
+            projectService.openClientFile(files[0].path);
+            projectService.checkNumberOfProjects({ configuredProjects: 1 });
+            const proj1Diags = projectService.configuredProjects.get(files[1].path)!.getLanguageService().getProgram()!.getSemanticDiagnostics();
+            Debug.assertEqual(proj1Diags.length, 1);
+
+            host.writeFile("/node_modules/pkg/require.d.ts", `export type B = 2;`);
+
+            const proj1Diags2 = projectService.configuredProjects.get(files[1].path)!.getLanguageService().getProgram()!.getSemanticDiagnostics();
+            Debug.assertEqual(proj1Diags2.length, 0);
+        });
     });
 }
