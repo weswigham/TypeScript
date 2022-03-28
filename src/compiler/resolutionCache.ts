@@ -5,7 +5,7 @@ namespace ts {
         startRecordingFilesWithChangedResolutions(): void;
         finishRecordingFilesWithChangedResolutions(): Path[] | undefined;
 
-        resolveModuleNames(moduleNames: string[], containingFile: string, reusedNames: string[] | undefined, redirectedReference?: ResolvedProjectReference, containingSourceFile?: SourceFile): (ResolvedModuleFull | undefined)[];
+        resolveModuleNames(moduleNames: string[] | readonly FileReference[], containingFile: string, reusedNames: string[] | undefined, redirectedReference?: ResolvedProjectReference, containingSourceFile?: SourceFile): (ResolvedModuleFull | undefined)[];
         getResolvedModuleWithFailedLookupLocationsFromCache(moduleName: string, containingFile: string, resolutionMode?: ModuleKind.CommonJS | ModuleKind.ESNext): CachedResolvedModuleWithFailedLookupLocations | undefined;
         resolveTypeReferenceDirectives(typeDirectiveNames: string[] | readonly FileReference[], containingFile: string, redirectedReference?: ResolvedProjectReference, containingFileMode?: SourceFile["impliedNodeFormat"]): (ResolvedTypeReferenceDirective | undefined)[];
 
@@ -393,7 +393,7 @@ namespace ts {
             const seenNamesInFile = createModeAwareCache<true>();
             let i = 0;
             for (const entry of names) {
-                const name = isString(entry) ? entry : entry.fileName.toLowerCase();
+                const name = isString(entry) ? entry : entry.fileName;
                 // Imports supply a `containingSourceFile` but no `containingSourceFileMode` - it would be redundant
                 // they require calculating the mode for a given import from it's position in the resolution table, since a given
                 // import's syntax may override the file's default mode.
@@ -515,7 +515,7 @@ namespace ts {
 
         function resolveTypeReferenceDirectives(typeDirectiveNames: string[] | readonly FileReference[], containingFile: string, redirectedReference?: ResolvedProjectReference, containingFileMode?: SourceFile["impliedNodeFormat"]): (ResolvedTypeReferenceDirective | undefined)[] {
             return resolveNamesWithLocalCache<CachedResolvedTypeReferenceDirectiveWithFailedLookupLocations, ResolvedTypeReferenceDirective>({
-                names: typeDirectiveNames,
+                names: typeDirectiveNames.map(n => typeof n === "string" ? n.toLowerCase() : ({ ...n, fileName: n.fileName.toLowerCase() } as FileReference)) as string[] | FileReference[],
                 containingFile,
                 redirectedReference,
                 cache: resolvedTypeReferenceDirectives,
@@ -527,7 +527,7 @@ namespace ts {
             });
         }
 
-        function resolveModuleNames(moduleNames: string[], containingFile: string, reusedNames: string[] | undefined, redirectedReference?: ResolvedProjectReference, containingSourceFile?: SourceFile): (ResolvedModuleFull | undefined)[] {
+        function resolveModuleNames(moduleNames: string[] | readonly FileReference[], containingFile: string, reusedNames: string[] | undefined, redirectedReference?: ResolvedProjectReference, containingSourceFile?: SourceFile): (ResolvedModuleFull | undefined)[] {
             return resolveNamesWithLocalCache<CachedResolvedModuleWithFailedLookupLocations, ResolvedModuleFull>({
                 names: moduleNames,
                 containingFile,
