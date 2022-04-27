@@ -10987,6 +10987,10 @@ namespace ts {
                 const types = sameMap((type as IntersectionType).types, t => getTypeWithThisArgument(t, thisArgument, needApparentType));
                 return types !== (type as IntersectionType).types ? getIntersectionType(types) : type;
             }
+            else if (type.flags & TypeFlags.Union) {
+                const types = sameMap((type as UnionType).types, t => getTypeWithThisArgument(t, thisArgument, needApparentType));
+                return types !== (type as UnionType).types ? getUnionType(types) : type;
+            }
             return needApparentType ? getApparentType(type) : type;
         }
 
@@ -12341,7 +12345,7 @@ namespace ts {
                             singleProp = prop;
                         }
                         else if (prop !== singleProp) {
-                            const isInstantiation = (getTargetSymbol(prop) || prop) === (getTargetSymbol(singleProp) || singleProp);
+                            const isInstantiation = getSymbolOrFinalTarget(prop) === getSymbolOrFinalTarget(singleProp);
                             // If the symbols are instances of one another with identical types - consider the symbols
                             // equivalent and just use the first one, which thus allows us to avoid eliding private
                             // members when intersecting a (this-)instantiations of a class with it's raw base or another instance
@@ -12406,6 +12410,7 @@ namespace ts {
                     clone.parent = singleProp.valueDeclaration?.symbol?.parent;
                     clone.containingType = containingType;
                     clone.mapper = (singleProp as TransientSymbol).mapper;
+                    clone.target = (singleProp as TransientSymbol).target || singleProp;
                     return clone;
                 }
                 else {
@@ -12453,6 +12458,7 @@ namespace ts {
             result.containingType = containingType;
             if (!hasNonUniformValueDeclaration && firstValueDeclaration) {
                 result.valueDeclaration = firstValueDeclaration;
+                result.target = (props[0] as TransientSymbol).target || props[0];
 
                 // Inherit information about parent type.
                 if (firstValueDeclaration.symbol.parent) {
@@ -20954,6 +20960,12 @@ namespace ts {
             return compareProperties(sourceProp, targetProp, compareTypesIdentical) !== Ternary.False;
         }
 
+        function getSymbolOrFinalTarget(s: Symbol): Symbol {
+            // _most of the time_ a symbol should not recursively have a target. An exception is when a union-sourced clone of
+            // an instantiated symbol is made - there will be a target chain.
+            return (s as TransientSymbol).target ? getSymbolOrFinalTarget((s as TransientSymbol).target!) : s; 
+        }
+
         function compareProperties(sourceProp: Symbol, targetProp: Symbol, compareTypes: (source: Type, target: Type) => Ternary): Ternary {
             // Two members are considered identical when
             // - they are public properties with identical names, optionality, and types,
@@ -20967,7 +20979,7 @@ namespace ts {
                 return Ternary.False;
             }
             if (sourcePropAccessibility) {
-                if (getTargetSymbol(sourceProp) !== getTargetSymbol(targetProp)) {
+                if (getSymbolOrFinalTarget(sourceProp) !== getSymbolOrFinalTarget(targetProp)) {
                     return Ternary.False;
                 }
             }
@@ -35627,8 +35639,8 @@ namespace ts {
                         mapper = createTypeMapper(typeParameters, typeArguments);
                     }
                     result = result && checkTypeAssignableTo(
-                        typeArguments[i],
-                        instantiateType(constraint, mapper),
+                        getTypeWithThisArgument(typeArguments[i], typeArguments[i]),
+                        getTypeWithThisArgument(instantiateType(constraint, mapper), typeArguments[i]),
                         node.typeArguments![i],
                         Diagnostics.Type_0_does_not_satisfy_the_constraint_1);
                 }
