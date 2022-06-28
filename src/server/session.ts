@@ -504,18 +504,18 @@ namespace ts.server {
         // If `getResultsForPosition` returns results for a project, they go in here
         const resultsMap = new Map<Project, readonly TResult[]>();
 
-        const queue: ProjectAndLocation[] = [];
+        const queue = createQueue<ProjectAndLocation>();
 
         // In order to get accurate isDefinition values for `defaultProject`,
         // we need to ensure that it is searched from `initialLocation`.
         // The easiest way to do this is to search it first.
-        queue.push({ project: defaultProject, location: initialLocation });
+        queue.enqueue({ project: defaultProject, location: initialLocation });
 
         // This will queue `defaultProject` a second time, but it will be dropped
         // as a dup when it is dequeued.
         forEachProjectInProjects(projects, initialLocation.fileName, (project, path) => {
             const location = { fileName: path!, pos: initialLocation.pos };
-            queue.push({ project, location });
+            queue.enqueue({ project, location });
         });
 
         const projectService = defaultProject.projectService;
@@ -536,25 +536,13 @@ namespace ts.server {
         const searchedProjectKeys = new Set<string>();
 
         onCancellation:
-        while (queue.length) {
-            while (queue.length) {
+        while (!queue.isEmpty()) {
+            while (!queue.isEmpty()) {
                 if (cancellationToken.isCancellationRequested()) break onCancellation;
 
-                let skipCount = 0;
-                for (; skipCount < queue.length && resultsMap.has(queue[skipCount].project); skipCount++);
+                const { project, location } = queue.dequeue();
 
-                if (skipCount === queue.length) {
-                    queue.length = 0;
-                    break;
-                }
-
-                if (skipCount > 0) {
-                    queue.splice(0, skipCount);
-                }
-
-                // NB: we may still skip if it's a project reference redirect
-                const { project, location } = queue.shift()!;
-
+                if (resultsMap.has(project)) continue;
                 if (isLocationProjectReferenceRedirect(project, location)) continue;
 
                 const projectResults = searchPosition(project, location);
@@ -574,7 +562,7 @@ namespace ts.server {
                     if (resultsMap.has(project)) return; // Can loop forever without this (enqueue here, dequeue above, repeat)
                     const location = mapDefinitionInProject(defaultDefinition, project, getGeneratedDefinition, getSourceDefinition);
                     if (location) {
-                        queue.push({ project, location });
+                        queue.enqueue({ project, location });
                     }
                 });
             }
@@ -604,7 +592,7 @@ namespace ts.server {
 
                     for (const project of originalScriptInfo.containingProjects) {
                         if (!project.isOrphan() && !resultsMap.has(project)) { // Optimization: don't enqueue if will be discarded
-                            queue.push({ project, location: originalLocation });
+                            queue.enqueue({ project, location: originalLocation });
                         }
                     }
 
@@ -613,7 +601,7 @@ namespace ts.server {
                         symlinkedProjectsMap.forEach((symlinkedProjects, symlinkedPath) => {
                             for (const symlinkedProject of symlinkedProjects) {
                                 if (!symlinkedProject.isOrphan() && !resultsMap.has(symlinkedProject)) { // Optimization: don't enqueue if will be discarded
-                                    queue.push({ project: symlinkedProject, location: { fileName: symlinkedPath as string, pos: originalLocation.pos } });
+                                    queue.enqueue({ project: symlinkedProject, location: { fileName: symlinkedPath as string, pos: originalLocation.pos } });
                                 }
                             }
                         });
@@ -1707,7 +1695,8 @@ namespace ts.server {
         private getRenameInfo(args: protocol.FileLocationRequestArgs): RenameInfo {
             const { file, project } = this.getFileAndProject(args);
             const position = this.getPositionInFile(args, file);
-            return project.getLanguageService().getRenameInfo(file, position, { allowRenameOfImportPath: this.getPreferences(file).allowRenameOfImportPath });
+            const preferences = this.getPreferences(file);
+            return project.getLanguageService().getRenameInfo(file, position, preferences);
         }
 
         private getProjects(args: protocol.FileRequestArgs, getScriptInfoEnsuringProjectsUptoDate?: boolean, ignoreNoProjectError?: boolean): Projects {
@@ -1759,8 +1748,9 @@ namespace ts.server {
             const position = this.getPositionInFile(args, file);
             const projects = this.getProjects(args);
             const defaultProject = this.getDefaultProject(args);
+            const preferences = this.getPreferences(file);
             const renameInfo: protocol.RenameInfo = this.mapRenameInfo(
-                defaultProject.getLanguageService().getRenameInfo(file, position, { allowRenameOfImportPath: this.getPreferences(file).allowRenameOfImportPath }), Debug.checkDefined(this.projectService.getScriptInfo(file)));
+                defaultProject.getLanguageService().getRenameInfo(file, position, preferences), Debug.checkDefined(this.projectService.getScriptInfo(file)));
 
             if (!renameInfo.canRename) return simplifiedResult ? { info: renameInfo, locs: [] } : [];
 
@@ -1770,7 +1760,7 @@ namespace ts.server {
                 { fileName: args.file, pos: position },
                 !!args.findInStrings,
                 !!args.findInComments,
-                this.getPreferences(file)
+                preferences,
             );
             if (!simplifiedResult) return locations;
             return { info: renameInfo, locs: this.toSpanGroups(locations) };
