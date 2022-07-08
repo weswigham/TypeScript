@@ -237,7 +237,31 @@ ${patch ? vfs.formatPatch(patch) : ""}`
     /**
      * Verify by baselining after initializing FS and command line compile
      */
-     export function verifyTsc(input: TestTscCompile) {
+    export function verifyTsc(input: TestTscCompile) {
         verifyTscCompileLike(testTscCompile, input);
+    }
+
+    export function verifyMultiTsc(input: TestTscCompile & {nextArgs: TestTscCompile["commandLineArgs"]}) {
+        describe(`tsc ${input.commandLineArgs.join(" ")} ${input.scenario}:: ${input.subScenario}`, () => {
+            describe(input.scenario, () => {
+                describe(input.subScenario, () => {
+                    it(`Generates files matching the baseline`, () => {
+                        const result = testTscCompile({
+                            ...input,
+                            fs: () => input.fs().makeReadonly()
+                        });
+                        const { file, text } = result.baseLine();
+
+                        const { file: _, text: second } = testTscCompile({
+                            ...input,
+                            commandLineArgs: input.nextArgs,
+                            fs: () => result.vfs.makeReadonly()
+                        }).baseLine();
+
+                        Harness.Baseline.runBaseline(file, text + "\n\nnext:\n\n" + second);
+                    });
+                });
+            });
+        });
     }
 }

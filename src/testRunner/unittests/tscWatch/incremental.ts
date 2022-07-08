@@ -374,5 +374,19 @@ export const Fragment: unique symbol;
                 },
             });
         });
+
+        describe("invoking tsc multiple times with seperate arguments", () => {
+            verifyMultiTsc({
+                scenario: "commandLineOverridesConfig",
+                subScenario: "incremental build across multiple invocations invalidate buildinfo",
+                fs: () => loadProjectFromFiles({
+                    "/src/project/src/main.ts": "export const x = 10;",
+                    "/src/project/src/file.ts": "export const y: string = undefined;",
+                }),
+                commandLineArgs: ["--incremental", "--tsBuildInfoFile", ".tsbuildinfo", "--strict", "src/project/src/main.ts"],
+                environmentVariables: {},
+                nextArgs: ["--incremental", "--tsBuildInfoFile", ".tsbuildinfo", "--strict", "src/project/src/file.ts"]
+            });
+        });
     });
 }
