@@ -1630,6 +1630,24 @@ type Capitalize<S extends string> = intrinsic;
 type Uncapitalize<S extends string> = intrinsic;
 
 /**
+ * Resolve the call signatures within a type, following overload resolution
+ * 
+ * This type will remain deferred so long as any generics are present in its argument list
+ * until inference is performed on the type containing it, at which point it will attempt
+ * to be resolved.
+ */
+type ResolveCall<TWithCallSignatures, TArgs extends readonly any[]> = intrinsic;
+
+/**
+ * Resolve the call signatures within a type, following overload resolution
+ * 
+ * This type will remain deferred so long as any generics are present in its argument list
+ * until inference is performed on the type containing it, at which point it will attempt
+ * to be resolved.
+ */
+type ResolveConstruct<TWithCallSignatures, TArgs extends readonly any[]> = intrinsic;
+
+/**
  * Marker for contextual 'this' type
  */
 interface ThisType<T> { }

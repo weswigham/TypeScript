@@ -902,6 +902,7 @@ import {
     ResolutionMode,
     ResolvedModuleFull,
     ResolvedType,
+    ResolveSignatureType,
     resolveTripleslashReference,
     resolvingEmptyArray,
     RestTypeNode,
@@ -1323,14 +1324,25 @@ const enum IntrinsicTypeKind {
     Uppercase,
     Lowercase,
     Capitalize,
-    Uncapitalize
+    Uncapitalize,
+    ResolveCall,
+    ResolveConstruct,
 }
+
+const stringMappingTypeKinds: ReadonlyMap<string, IntrinsicTypeKind> = new Map(Object.entries({
+    Uppercase: IntrinsicTypeKind.Uppercase,
+    Lowercase: IntrinsicTypeKind.Lowercase,
+    Capitalize: IntrinsicTypeKind.Capitalize,
+    Uncapitalize: IntrinsicTypeKind.Uncapitalize,
+}));
 
 const intrinsicTypeKinds: ReadonlyMap<string, IntrinsicTypeKind> = new Map(Object.entries({
     Uppercase: IntrinsicTypeKind.Uppercase,
     Lowercase: IntrinsicTypeKind.Lowercase,
     Capitalize: IntrinsicTypeKind.Capitalize,
-    Uncapitalize: IntrinsicTypeKind.Uncapitalize
+    Uncapitalize: IntrinsicTypeKind.Uncapitalize,
+    ResolveCall: IntrinsicTypeKind.ResolveCall,
+    ResolveConstruct: IntrinsicTypeKind.ResolveConstruct,
 }));
 
 const SymbolLinks = class implements SymbolLinks {
@@ -1853,6 +1865,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
     const stringMappingTypes = new Map<string, StringMappingType>();
     const substitutionTypes = new Map<string, SubstitutionType>();
     const subtypeReductionCache = new Map<string, Type[]>();
+    const resolveSignatureTypes = new Map<string, Type>();
     const decoratorContextOverrideTypeCache = new Map<string, Type>();
     const cachedTypes = new Map<string, Type>();
     const evolvingArrayTypes: EvolvingArrayType[] = [];
@@ -6515,6 +6528,11 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             }
             if (type.flags & TypeFlags.Substitution) {
                 return typeToTypeNodeHelper((type as SubstitutionType).baseType, context);
+            }
+            if (type.flags & TypeFlags.ResolveSignature) {
+                const baseTypeNode = typeToTypeNodeHelper((type as ResolveSignatureType).base, context);
+                const argumentsTypeNode = typeToTypeNodeHelper((type as ResolveSignatureType).arguments, context);
+                return symbolToTypeNode((type as ResolveSignatureType).symbol, context, SymbolFlags.Type, [baseTypeNode, argumentsTypeNode]);
             }
 
             return Debug.fail("Should be unreachable.");
@@ -15018,8 +15036,8 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
 
     function getTypeAliasInstantiation(symbol: Symbol, typeArguments: readonly Type[] | undefined, aliasSymbol?: Symbol, aliasTypeArguments?: readonly Type[]): Type {
         const type = getDeclaredTypeOfSymbol(symbol);
-        if (type === intrinsicMarkerType && intrinsicTypeKinds.has(symbol.escapedName as string) && typeArguments && typeArguments.length === 1) {
-            return getStringMappingType(symbol, typeArguments[0]);
+        if (type === intrinsicMarkerType && typeArguments) {
+            return getIntrinsicTypeInstantiation(symbol, typeArguments);
         }
         const links = getSymbolLinks(symbol);
         const typeParameters = links.typeParameters!;
@@ -15031,6 +15049,18 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 aliasSymbol, aliasTypeArguments));
         }
         return instantiation;
+    }
+
+    function getIntrinsicTypeInstantiation(symbol: Symbol, typeArguments: readonly Type[]) {
+        if (stringMappingTypeKinds.has(symbol.escapedName as string)) {
+            return typeArguments.length === 1 ? getStringMappingType(symbol, typeArguments[0]) : intrinsicMarkerType;
+        }
+
+        const kind = intrinsicTypeKinds.get(symbol.escapedName as string);
+        if (kind === IntrinsicTypeKind.ResolveCall || kind === IntrinsicTypeKind.ResolveConstruct) {
+            return typeArguments.length === 2 ? getResolveSignaturesType(symbol, typeArguments[0], typeArguments[1]) : intrinsicMarkerType;
+        }
+        return intrinsicMarkerType;
     }
 
     /**
@@ -16909,6 +16939,216 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         return type;
     }
 
+    function getShouldDeferSignatureResolutionType(base: Type, argumentsType: Type) {
+        return isGenericType(base) || isGenericType(argumentsType) || (isTupleType(argumentsType) && some(getTypeArguments(argumentsType), isGenericType));
+    }
+
+    function getResolveSignaturesType(symbol: Symbol, typeWithSignatures: Type, argumentsType: Type): Type {
+        const id = `${symbol.id}|${getTypeId(typeWithSignatures)}|${getTypeId(argumentsType)}`;
+        const cachedResult = resolveSignatureTypes.get(id);
+        if (cachedResult) {
+            return cachedResult;
+        }
+        const result = getShouldDeferSignatureResolutionType(typeWithSignatures, argumentsType)
+            ? getNewDeferredResolveSignatureType(symbol, typeWithSignatures, argumentsType)
+            : resolveSignatureType(getSignatureKindForResolveSignatureType(symbol), typeWithSignatures, argumentsType);
+        resolveSignatureTypes.set(id, result);
+        return result;
+    }
+
+    function getSignatureKindForResolveSignatureType(symbol: Symbol): SignatureKind {
+        const kind = intrinsicTypeKinds.get(symbol.escapedName as string);
+        Debug.assert(kind);
+        Debug.assert(kind === IntrinsicTypeKind.ResolveCall || kind === IntrinsicTypeKind.ResolveConstruct);
+        return kind === IntrinsicTypeKind.ResolveCall ? SignatureKind.Call : SignatureKind.Construct;
+    }
+
+    function getNewDeferredResolveSignatureType(symbol: Symbol, base: Type, argumentsType: Type): ResolveSignatureType {
+        // TODO: `this` argument instantiation ???
+        const newType = createType(TypeFlags.ResolveSignature) as ResolveSignatureType;
+        newType.symbol = symbol;
+        newType.base = base;
+        newType.arguments = argumentsType;
+        return newType;
+    }
+
+    function resolveSignatureType(kind: SignatureKind, base: Type, argumentsType: Type): Type {
+        // TODO: Should this handle differing input checkMode's? Probably, since it'll be invoked by inference...
+        const signatures = getSignaturesOfType(base, kind);
+        if (!length(signatures)) {
+            return neverType;
+        }
+        
+        // This should look a _lot_ like `resolveCall`, with the notable difference that it
+        // returns the `neverType` any time call resolution fails, rather than creating any kind
+        // of error signature result.
+
+        const candidates: Signature[] = [];
+        // reorderCandidates fills up the candidates array directly
+        reorderCandidates(signatures, candidates, SignatureFlags.None);
+        if (!candidates.length) {
+            return neverType;
+        }
+
+        const isSingleNonGenericCandidate = candidates.length === 1 && !candidates[0].typeParameters;
+        let argCheckMode = CheckMode.Normal;
+
+        let result: Signature | undefined;
+        if (candidates.length > 1) {
+            result = chooseOverload(candidates, subtypeRelation, isSingleNonGenericCandidate);
+        }
+        if (!result) {
+            result = chooseOverload(candidates, assignableRelation, isSingleNonGenericCandidate);
+        }
+        if (result) {
+            return getReturnTypeOfSignature(result);
+        }
+        return neverType;
+
+        function hasMatchingArity(signature: Signature) {
+            if (isArrayType(argumentsType)) {
+                return true; // arrays provide a type for all argument positions
+            }
+            if (!isTupleType(argumentsType)) {
+                return false;
+            }
+            const min = getMinArgumentCount(signature);
+            for (let i = 0; i < min; i++) {
+                if (!getTupleElementTypeOrUndefined(argumentsType, i)) {
+                    return false;
+                }
+            }
+            // tuple provides enough arguments to satisfy the min count
+            if (!hasEffectiveRestParameter(signature)) {
+                // check that the tuple doesn't provide _too many_ elements
+                // TODO: maybe unnecessary, given array behavior?
+                const effectiveParameterCount = getParameterCount(signature);
+                return !getTupleElementTypeOrUndefined(argumentsType, effectiveParameterCount);
+            }
+            // any extra elements will be checked against the rest parameter
+            return true;
+        }
+
+        function getArgumentTypeAtIndex(index: number) {
+            return isArrayType(argumentsType) ? getTypeArguments(argumentsType)[0] : getTupleElementType(argumentsType, index);
+        }
+
+        function isSignatureApplicable(signature: Signature, relation: Map<string, RelationComparisonResult>, checkMode: CheckMode) {
+            // TODO: Handle `this` arguments... somehow.
+            const restType = getNonArrayRestType(signature);
+            const argCount = getParameterCount(signature) - (restType ? 1 : 0);
+            for (let i = 0; i < argCount; i++) {
+                const argType = getArgumentTypeAtIndex(i);
+                if (!argType) {
+                    return false;
+                }
+                const paramType = getTypeAtPosition(signature, i);
+                // If one or more arguments are still excluded (as indicated by CheckMode.SkipContextSensitive),
+                // we obtain the regular type of any object literal arguments because we may not have inferred complete
+                // parameter types yet and therefore excess property checks may yield false positives (see #17041).
+                const checkArgType = checkMode & CheckMode.SkipContextSensitive ? getRegularTypeOfObjectLiteral(argType) : argType;
+                if (!isTypeRelatedTo(checkArgType, paramType, relation)) {
+                    return false;
+                }
+            }
+            if (restType) {
+                if (!isTypeRelatedTo(getEffectiveArgumentSpreadType(signature), restType, relation)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function getEffectiveArgumentSpreadType(targetSignature: Signature) {
+            const argCount = getParameterCount(targetSignature) - 1;
+            return isArrayType(argumentsType)
+                ? getTypeArguments(argumentsType)[0]
+                : isTupleType(argumentsType)
+                    ? getElementTypeOfSliceOfTupleType(argumentsType, argCount) || neverType
+                    : neverType;
+        }
+
+        function chooseOverload(candidates: Signature[], relation: Map<string, RelationComparisonResult>, isSingleNonGenericCandidate: boolean) {
+            if (isSingleNonGenericCandidate) {
+                const candidate = candidates[0];
+                if (!hasMatchingArity(candidate)) {
+                    return undefined;
+                }
+                if (!isSignatureApplicable(candidate, relation, CheckMode.Normal)) {
+                    return undefined;
+                }
+                return candidate;
+            }
+
+            for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
+                const candidate = candidates[candidateIndex];
+                if (!hasMatchingArity(candidate)) {
+                    continue;
+                }
+
+                let checkCandidate: Signature;
+                let inferenceContext: InferenceContext | undefined;
+
+                if (candidate.typeParameters) {
+                    inferenceContext = createInferenceContext(candidate.typeParameters, candidate, InferenceFlags.None);
+                    const typeArgumentTypes = inferFromArgumentsType(candidate, inferenceContext);
+                    argCheckMode |= inferenceContext.flags & InferenceFlags.SkippedGenericFunction ? CheckMode.SkipGenericFunctions : CheckMode.Normal;
+                    checkCandidate = getSignatureInstantiation(candidate, typeArgumentTypes, isInJSFile(candidate.declaration), inferenceContext && inferenceContext.inferredTypeParameters);
+                    // If the original signature has a generic rest type, instantiation may produce a
+                    // signature with different arity and we need to perform another arity check.
+                    if (getNonArrayRestType(candidate) && !hasMatchingArity(candidate)) {
+                        continue;
+                    }
+                }
+                else {
+                    checkCandidate = candidate;
+                }
+                if (!isSignatureApplicable(checkCandidate, relation, argCheckMode)) {
+                    continue;
+                }
+                if (argCheckMode) {
+                    // If one or more context sensitive arguments were excluded, we start including
+                    // them now (and keeping do so for any subsequent candidates) and perform a second
+                    // round of type inference and applicability checking for this particular candidate.
+                    argCheckMode = CheckMode.Normal;
+                    if (inferenceContext) {
+                        const typeArgumentTypes = inferFromArgumentsType(candidate, inferenceContext);
+                        checkCandidate = getSignatureInstantiation(candidate, typeArgumentTypes, isInJSFile(candidate.declaration), inferenceContext.inferredTypeParameters);
+                        // If the original signature has a generic rest type, instantiation may produce a
+                        // signature with different arity and we need to perform another arity check.
+                        if (getNonArrayRestType(candidate) && !hasMatchingArity(checkCandidate)) {
+                            continue;
+                        }
+                    }
+                    if (!isSignatureApplicable(checkCandidate, relation, argCheckMode)) {
+                        continue;
+                    }
+                }
+                candidates[candidateIndex] = checkCandidate;
+                return checkCandidate;
+            }
+
+            return undefined;
+        }
+
+        function inferFromArgumentsType(signature: Signature, context: InferenceContext) {
+            const restType = getNonArrayRestType(signature);
+            const argCount = getParameterCount(signature) - (restType ? 1 : 0);
+            for (let i = 0; i < argCount; i++) {
+                const paramType = getTypeAtPosition(signature, i);
+                if (couldContainTypeVariables(paramType)) {
+                    inferTypes(context.inferences, getArgumentTypeAtIndex(i)!, paramType);
+                }
+            }
+
+            if (restType && couldContainTypeVariables(restType)) {
+                inferTypes(context.inferences, getEffectiveArgumentSpreadType(signature), restType);
+            }
+
+            return getInferredTypes(context);
+        }
+    }
+
     function getStringMappingType(symbol: Symbol, type: Type): Type {
         return type.flags & (TypeFlags.Union | TypeFlags.Never) ? mapType(type, t => getStringMappingType(symbol, t)) :
             type.flags & TypeFlags.StringLiteral ? getStringLiteralType(applyStringMapping(symbol, (type as StringLiteralType).value)) :
@@ -16922,7 +17162,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
     }
 
     function applyStringMapping(symbol: Symbol, str: string) {
-        switch (intrinsicTypeKinds.get(symbol.escapedName as string)) {
+        switch (stringMappingTypeKinds.get(symbol.escapedName as string)) {
             case IntrinsicTypeKind.Uppercase: return str.toUpperCase();
             case IntrinsicTypeKind.Lowercase: return str.toLowerCase();
             case IntrinsicTypeKind.Capitalize: return str.charAt(0).toUpperCase() + str.slice(1);
@@ -16932,7 +17172,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
     }
 
     function applyTemplateStringMapping(symbol: Symbol, texts: readonly string[], types: readonly Type[]): [texts: readonly string[], types: readonly Type[]] {
-        switch (intrinsicTypeKinds.get(symbol.escapedName as string)) {
+        switch (stringMappingTypeKinds.get(symbol.escapedName as string)) {
             case IntrinsicTypeKind.Uppercase: return [texts.map(t => t.toUpperCase()), types.map(t => getStringMappingType(symbol, t))];
             case IntrinsicTypeKind.Lowercase: return [texts.map(t => t.toLowerCase()), types.map(t => getStringMappingType(symbol, t))];
             case IntrinsicTypeKind.Capitalize: return [texts[0] === "" ? texts : [texts[0].charAt(0).toUpperCase() + texts[0].slice(1), ...texts.slice(1)], texts[0] === "" ? [getStringMappingType(symbol, types[0]), ...types.slice(1)] : types];
@@ -18814,6 +19054,9 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 return newBaseType;
             }
             return newBaseType.flags & TypeFlags.TypeVariable ? getSubstitutionType(newBaseType, newConstraint) : getIntersectionType([newConstraint, newBaseType]);
+        }
+        if (flags & TypeFlags.ResolveSignature) {
+            return getResolveSignaturesType((type as ResolveSignatureType).symbol, instantiateType((type as ResolveSignatureType).base, mapper), instantiateType((type as ResolveSignatureType).arguments, mapper));
         }
         return type;
     }
@@ -22901,6 +23144,19 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         }
         if (everyType(type, isTupleType)) {
             return mapType(type, t => getRestTypeOfTupleType(t as TupleTypeReference) || undefinedType);
+        }
+        return undefined;
+    }
+
+    function getTupleElementTypeOrUndefined(type: Type, index: number) {
+        const propType = getTypeOfPropertyOfType(type, "" + index as __String);
+        if (propType) {
+            return propType;
+        }
+        if (everyType(type, isTupleType)) {
+            let missing = false;
+            const result =  mapType(type, t => getRestTypeOfTupleType(t as TupleTypeReference) || (missing = true, undefined));
+            return missing ? undefined : result;
         }
         return undefined;
     }
