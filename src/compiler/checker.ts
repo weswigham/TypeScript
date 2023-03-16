@@ -30035,7 +30035,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                     hasComputedNumberProperty = false;
                     hasComputedSymbolProperty = false;
                 }
-                const type = getReducedType(checkExpression(memberDecl.expression));
+                const type = getReducedType(checkExpression(memberDecl.expression, checkMode));
                 if (isValidSpreadType(type)) {
                     const mergedType = tryMergeUnionOfObjectTypeAndEmptyObject(type, inConstContext);
                     if (allPropertiesTable) {
@@ -30048,7 +30048,9 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                     spread = getSpreadType(spread, mergedType, node.symbol, objectFlags, inConstContext);
                 }
                 else {
-                    error(memberDecl, Diagnostics.Spread_types_may_only_be_created_from_object_types);
+                    if (!checkMode) {
+                        error(memberDecl, Diagnostics.Spread_types_may_only_be_created_from_object_types);
+                    }
                     spread = errorType;
                 }
                 continue;
@@ -30285,7 +30287,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                     spread = getSpreadType(spread, createJsxAttributesType(), attributes.symbol, objectFlags, /*readonly*/ false);
                     attributesTable = createSymbolTable();
                 }
-                const exprType = getReducedType(checkExpression(attributeDecl.expression));
+                const exprType = getReducedType(checkExpression(attributeDecl.expression, checkMode));
                 if (isTypeAny(exprType)) {
                     hasSpreadAnyType = true;
                 }
@@ -30296,7 +30298,9 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                     }
                 }
                 else {
-                    error(attributeDecl.expression, Diagnostics.Spread_types_may_only_be_created_from_object_types);
+                    if (!checkMode) {
+                        error(attributeDecl.expression, Diagnostics.Spread_types_may_only_be_created_from_object_types);
+                    }
                     typeToIntersect = typeToIntersect ? getIntersectionType([typeToIntersect, exprType]) : exprType;
                 }
             }
