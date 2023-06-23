@@ -19958,7 +19958,8 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         }
 
         const kind = target.declaration ? target.declaration.kind : SyntaxKind.Unknown;
-        const strictVariance = !(checkMode & SignatureCheckMode.Callback) && strictFunctionTypes && kind !== SyntaxKind.MethodDeclaration &&
+        const strictFunctionChecking = outofbandVarianceMarkerHandler || strictFunctionTypes;
+        const strictVariance = !(checkMode & SignatureCheckMode.Callback) && strictFunctionChecking && kind !== SyntaxKind.MethodDeclaration &&
             kind !== SyntaxKind.MethodSignature && kind !== SyntaxKind.Constructor;
         let result = Ternary.True;
 
@@ -24729,7 +24730,8 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         }
 
         function inferFromContravariantTypesIfStrictFunctionTypes(source: Type, target: Type) {
-            if (strictFunctionTypes || priority & InferencePriority.AlwaysStrict) {
+            const strictFunctionChecking = outofbandVarianceMarkerHandler || strictFunctionTypes;
+            if (strictFunctionChecking || priority & InferencePriority.AlwaysStrict) {
                 inferFromContravariantTypes(source, target);
             }
             else {
