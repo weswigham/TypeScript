@@ -1773,7 +1773,7 @@ export interface Decorator extends Node {
 
 export interface TypeParameterDeclaration extends NamedDeclaration, JSDocContainer {
     readonly kind: SyntaxKind.TypeParameter;
-    readonly parent: DeclarationWithTypeParameterChildren | InferTypeNode;
+    readonly parent: DeclarationWithTypeParameterChildren | InferTypeNode | MappedTypeNode;
     readonly modifiers?: NodeArray<Modifier>;
     readonly name: Identifier;
     /** Note: Consider calling `getEffectiveConstraintOfTypeParameter` */
@@ -5751,6 +5751,13 @@ export interface Symbol {
     /** @internal */ isReplaceableByMethod?: boolean; // Can this Javascript class property be replaced by a method symbol?
     /** @internal */ isAssigned?: boolean;  // True if the symbol is a parameter with assignments
     /** @internal */ assignmentDeclarationMembers?: Map<number, Declaration>; // detected late-bound assignment declarations associated with the symbol
+    /** @internal */ references?: TypeParameterReference[]; // References associated with this symbol, and syntactically determined variance information for every reference - only calculated on TypeParameter symbols
+}
+
+/** @internal */
+export interface TypeParameterReference {
+    readonly node: TypeReferenceNode;
+    variance: VarianceFlags;
 }
 
 // dprint-ignore
@@ -5793,6 +5800,7 @@ export interface SymbolLinks {
     extendedContainers?: Symbol[];              // Containers (other than the parent) which this symbol is aliased in
     extendedContainersByFile?: Map<NodeId, Symbol[]>; // Containers (other than the parent) which this symbol is aliased in
     variances?: VarianceFlags[];                // Alias symbol type argument variance cache
+    syntacticVariances?: Map<TypeParameter, VarianceFlags>;
     deferralConstituents?: Type[];              // Calculated list of constituents for a deferred type
     deferralWriteConstituents?: Type[];         // Constituents of a deferred `writeType`
     deferralParent?: Type;                      // Source union/intersection of a deferred type

@@ -10058,7 +10058,7 @@ export function getContainingNodeArray(node: Node): NodeArray<Node> | undefined 
     switch (node.kind) {
         case SyntaxKind.TypeParameter:
             const { parent } = node as TypeParameterDeclaration;
-            return parent.kind === SyntaxKind.InferType ? undefined : parent.typeParameters;
+            return parent.kind === SyntaxKind.InferType || parent.kind === SyntaxKind.MappedType ? undefined : parent.typeParameters;
         case SyntaxKind.Parameter:
             return (node as ParameterDeclaration).parent.parameters;
         case SyntaxKind.TemplateLiteralTypeSpan:

@@ -208,6 +208,7 @@ import {
     FlowSwitchClause,
     FlowType,
     forEach,
+    forEachAncestor,
     forEachChild,
     forEachChildRecursively,
     forEachEnclosingBlockScopeContainer,
@@ -23236,39 +23237,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             links.variances = emptyArray;
             const variances = [];
             for (const tp of typeParameters) {
-                const modifiers = getTypeParameterModifiers(tp);
-                let variance = modifiers & ModifierFlags.Out ?
-                    modifiers & ModifierFlags.In ? VarianceFlags.Invariant : VarianceFlags.Covariant :
-                    modifiers & ModifierFlags.In ? VarianceFlags.Contravariant : undefined;
-                if (variance === undefined) {
-                    let unmeasurable = false;
-                    let unreliable = false;
-                    const oldHandler = outofbandVarianceMarkerHandler;
-                    outofbandVarianceMarkerHandler = onlyUnreliable => onlyUnreliable ? unreliable = true : unmeasurable = true;
-                    // We first compare instantiations where the type parameter is replaced with
-                    // marker types that have a known subtype relationship. From this we can infer
-                    // invariance, covariance, contravariance or bivariance.
-                    const typeWithSuper = createMarkerType(symbol, tp, markerSuperType);
-                    const typeWithSub = createMarkerType(symbol, tp, markerSubType);
-                    variance = (isTypeAssignableTo(typeWithSub, typeWithSuper) ? VarianceFlags.Covariant : 0) |
-                        (isTypeAssignableTo(typeWithSuper, typeWithSub) ? VarianceFlags.Contravariant : 0);
-                    // If the instantiations appear to be related bivariantly it may be because the
-                    // type parameter is independent (i.e. it isn't witnessed anywhere in the generic
-                    // type). To determine this we compare instantiations where the type parameter is
-                    // replaced with marker types that are known to be unrelated.
-                    if (variance === VarianceFlags.Bivariant && isTypeAssignableTo(createMarkerType(symbol, tp, markerOtherType), typeWithSuper)) {
-                        variance = VarianceFlags.Independent;
-                    }
-                    outofbandVarianceMarkerHandler = oldHandler;
-                    if (unmeasurable || unreliable) {
-                        if (unmeasurable) {
-                            variance |= VarianceFlags.Unmeasurable;
-                        }
-                        if (unreliable) {
-                            variance |= VarianceFlags.Unreliable;
-                        }
-                    }
-                }
+                const variance = getIndividualVarianceCached(symbol, tp);
                 variances.push(variance);
             }
             if (!oldVarianceComputation) {
@@ -23279,6 +23248,173 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             tracing?.pop({ variances: variances.map(Debug.formatVariance) });
         }
         return links.variances;
+    }
+
+    function getIndividualVarianceWorker(symbol: Symbol, tp: TypeParameter) {
+        const modifiers = getTypeParameterModifiers(tp);
+        let variance = modifiers & ModifierFlags.Out ?
+            modifiers & ModifierFlags.In ? VarianceFlags.Invariant : VarianceFlags.Covariant :
+            modifiers & ModifierFlags.In ? VarianceFlags.Contravariant : undefined;
+        if (variance === undefined) {
+            const syntacticVariance = tp.symbol ? aggregateSyntacticVariance(tp) : undefined;
+
+            let unmeasurable = false;
+            let unreliable = false;
+            const oldHandler = outofbandVarianceMarkerHandler;
+            outofbandVarianceMarkerHandler = onlyUnreliable => onlyUnreliable ? unreliable = true : unmeasurable = true;
+            // We first compare instantiations where the type parameter is replaced with
+            // marker types that have a known subtype relationship. From this we can infer
+            // invariance, covariance, contravariance or bivariance.
+            const typeWithSuper = createMarkerType(symbol, tp, markerSuperType);
+            const typeWithSub = createMarkerType(symbol, tp, markerSubType);
+            variance = (isTypeAssignableTo(typeWithSub, typeWithSuper) ? VarianceFlags.Covariant : 0) |
+                (isTypeAssignableTo(typeWithSuper, typeWithSub) ? VarianceFlags.Contravariant : 0);
+            // If the instantiations appear to be related bivariantly it may be because the
+            // type parameter is independent (i.e. it isn't witnessed anywhere in the generic
+            // type). To determine this we compare instantiations where the type parameter is
+            // replaced with marker types that are known to be unrelated.
+            if (variance === VarianceFlags.Bivariant && isTypeAssignableTo(createMarkerType(symbol, tp, markerOtherType), typeWithSuper)) {
+                variance = VarianceFlags.Independent;
+            }
+            outofbandVarianceMarkerHandler = oldHandler;
+            if (unmeasurable || unreliable) {
+                if (unmeasurable) {
+                    variance |= VarianceFlags.Unmeasurable;
+                }
+                if (unreliable) {
+                    variance |= VarianceFlags.Unreliable;
+                }
+            }
+            if (syntacticVariance !== undefined) {
+                Debug.assert(syntacticVariance === variance);
+            }
+        }
+        return variance;
+    }
+
+    function getIndividualVarianceCached(symbol: Symbol, tp: TypeParameter) {
+        const links = getSymbolLinks(symbol);
+        const cached = links.syntacticVariances?.get(tp);
+        if (cached !== undefined) {
+            return cached;
+        }
+        (links.syntacticVariances ??= new Map()).set(tp, VarianceFlags.Covariant);
+        let result;
+        links.syntacticVariances.set(tp, result = getIndividualVarianceWorker(symbol, tp));
+        return result;
+    }
+
+    function aggregateSyntacticVariance(tp: TypeParameter) {
+        const symbol = tp.symbol;
+        Debug.assert(symbol, "Caller should ensure type parameter has a symbol");
+        if (!symbol.references) {
+            return undefined;
+        }
+        let result = VarianceFlags.Independent;
+        // eslint-disable-next-line prefer-const
+        for (let { node, variance } of symbol.references) {
+            forEachAncestor(node, node => {
+                let idx: number;
+                if (node.parent && isTypeReferenceNode(node.parent) && node.parent.typeArguments && (idx = node.parent.typeArguments.indexOf(node as TypeNode)) >= 0) {
+                    const params = getTypeParametersForTypeReferenceOrImport(node.parent);
+                    const matching = params?.[idx];
+                    if (!matching) {
+                        return "quit";
+                    }
+                    const refSymbol = getNodeLinks(node.parent).resolvedSymbol!;
+                    const paramVariance = getIndividualVarianceCached(refSymbol, matching);
+                    variance = modifyVarianceFlagsByParentVariance(variance, paramVariance);
+                    if (paramVariance & VarianceFlags.Independent) {
+                        // If we see an unwitnessed position, we can bail fast
+                        return "quit";
+                    }
+                }
+            });
+            result = combineUsageVariances(result, variance);
+            if ((result & VarianceFlags.VarianceMask) === VarianceFlags.Invariant) {
+                break; // more usages can't do anything other than add unmeasurable/unreliable bits at this point, so bail early
+            }
+        }
+        return result;
+    }
+
+    /**
+     * When you have `A<T>`, we need to propegate the variance of `A`'s first type parameter's variance
+     * into the variance we measure for a usage within `T`, to emulate inlining A.
+     */
+    function modifyVarianceFlagsByParentVariance(variance: VarianceFlags, parent: VarianceFlags): VarianceFlags {
+        // If either is Independent, so is the result
+        if ((parent | variance) & VarianceFlags.Independent) {
+            return VarianceFlags.Independent;
+        }
+        // For sanity's sake, here's a table for how the rest of these values should combine:
+        // (Determined through emperical testing on our non-syntactic variance scheme)
+        // +---------------+---------------+---------------+-----------+-----------+
+        // | child\parent  |   Covariant   | Contravariant | Bivariant | Invariant |
+        // +---------------+---------------+---------------+-----------+-----------+
+        // | Covariant     | Covariant     | Contravariant | Bivariant | Invariant |
+        // | Contravariant | Contravariant | Covariant     | Bivariant | Invariant |
+        // | Bivariant     | Bivariant     | Bivariant     | Bivariant | Bivariant |
+        // | Invariant     | Invariant     | Invariant     | Invariant | Invariant |
+        // +---------------+---------------+---------------+-----------+-----------+
+        // The only surprising thing here is probably that the child's bivariant/invariant result will
+        // take priority over the parents' bivariant/invariant result, rather than bivariant/invariant
+        // having a clear priority between one another
+
+        const fallbackBits = (variance | parent) & VarianceFlags.AllowsStructuralFallback;
+        variance = variance & VarianceFlags.VarianceMask;
+        parent = parent & VarianceFlags.VarianceMask;
+
+        if (variance === VarianceFlags.Bivariant || variance === VarianceFlags.Invariant) {
+            return variance | fallbackBits;
+        }
+        if (parent === VarianceFlags.Bivariant || parent === VarianceFlags.Invariant) {
+            return parent | fallbackBits;
+        }
+        if (parent === variance) {
+            return VarianceFlags.Covariant | fallbackBits;
+        }
+        return VarianceFlags.Contravariant | fallbackBits;
+    }
+
+    /**
+     * Accumulates the variance of the position `usage` into `aggregate`
+     */
+    function combineUsageVariances(aggregate: VarianceFlags, usage: VarianceFlags): VarianceFlags {
+        const fallbackBits = (aggregate | usage) & VarianceFlags.AllowsStructuralFallback;
+        aggregate = aggregate & VarianceFlags.VarianceMask;
+        usage = usage & VarianceFlags.VarianceMask;
+
+        // if the aggregate variance is independent, `usage` is at least that or more specific, so use that
+        if (aggregate === VarianceFlags.Independent) {
+            return usage | fallbackBits;
+        }
+        // if the usage is independent, the aggregate value is more strict
+        if (usage === VarianceFlags.Independent) {
+            return aggregate | fallbackBits;
+        }
+
+        // if the aggregate variance is bivariant, `usage` is at least that or more specific, so use that
+        if (aggregate === VarianceFlags.Bivariant) {
+            return usage | fallbackBits;
+        }
+        // if the usage is bivariant, the aggregate value is either the same or more strict
+        if (usage === VarianceFlags.Bivariant) {
+            return aggregate | fallbackBits;
+        }
+
+        // the only remaining possible values are Invariant, Covariant, or Contravariant
+        // Invariant has higher priority than both of the others, and if both of the others are present they produce an Invariant
+        // For clarity, here's a table for how they augha be combined
+        // +-----------------+-----------+-----------+---------------+
+        // | aggregate\usage | Invariant | Covariant | Contravariant |
+        // +-----------------+-----------+-----------+---------------+
+        // | Invariant       | Invariant | Invariant | Invariant     |
+        // | Covariant       | Invariant | Covariant | Invariant     |
+        // | Contravariant   | Invariant | Invariant | Contravariant |
+        // +-----------------+-----------+-----------+---------------+
+        // As you can see, unless the aggregate and usage are the same at this point, the result must be Invariant
+        return (aggregate !== usage ? VarianceFlags.Invariant : aggregate) | fallbackBits;
     }
 
     function createMarkerType(symbol: Symbol, source: TypeParameter, target: Type) {
@@ -41171,7 +41307,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
 
             const name = idText(typeParameter.name);
             const { parent } = typeParameter;
-            if (parent.kind !== SyntaxKind.InferType && parent.typeParameters!.every(isTypeParameterUnused)) {
+            if (parent.kind !== SyntaxKind.InferType && parent.kind !== SyntaxKind.MappedType && parent.typeParameters!.every(isTypeParameterUnused)) {
                 if (tryAddToSet(seenParentsWithEveryUnused, parent)) {
                     const sourceFile = getSourceFileOfNode(parent);
                     const range = isJSDocTemplateTag(parent)

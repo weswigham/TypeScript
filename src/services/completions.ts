@@ -199,6 +199,7 @@ import {
     isKnownSymbol,
     isLabeledStatement,
     isLiteralImportTypeNode,
+    isMappedTypeNode,
     isMemberName,
     isMethodDeclaration,
     isModifier,
@@ -2619,7 +2620,7 @@ export function getCompletionEntriesFromSymbols(
             ) {
                 const symbolDeclarationPos = symbolDeclaration.pos;
                 const parameters = isParameter(variableOrParameterDeclaration) ? variableOrParameterDeclaration.parent.parameters :
-                    isInferTypeNode(variableOrParameterDeclaration.parent) ? undefined :
+                    isInferTypeNode(variableOrParameterDeclaration.parent) || isMappedTypeNode(variableOrParameterDeclaration.parent) ? undefined :
                     variableOrParameterDeclaration.parent.typeParameters;
                 if (symbolDeclarationPos >= variableOrParameterDeclaration.pos && parameters && symbolDeclarationPos < parameters.end) {
                     return false;

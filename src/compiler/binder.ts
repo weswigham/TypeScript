@@ -105,6 +105,7 @@ import {
     getSourceTextOfNodeFromSourceFile,
     getSpanOfTokenAtPosition,
     getStrictOptionValue,
+    getSymbolId,
     getSymbolNameForPrivateIdentifier,
     getTextOfIdentifierOrLiteral,
     getThisContainer,
@@ -179,6 +180,7 @@ import {
     isLogicalOrCoalescingAssignmentOperator,
     isLogicalOrCoalescingBinaryExpression,
     isLogicalOrCoalescingBinaryOperator,
+    isMappedTypeNode,
     isModuleAugmentationExternal,
     isModuleBlock,
     isModuleDeclaration,
@@ -194,6 +196,7 @@ import {
     isOptionalChain,
     isOptionalChainRoot,
     isOutermostOptionalChain,
+    isParameter,
     isParameterDeclaration,
     isParameterPropertyDeclaration,
     isParenthesizedExpression,
@@ -220,6 +223,8 @@ import {
     isThisInitializedDeclaration,
     isTypeAliasDeclaration,
     isTypeOfExpression,
+    isTypeParameterDeclaration,
+    isTypeReferenceNode,
     isVariableDeclaration,
     isVariableDeclarationInitializedToBareOrAccessedRequire,
     isVariableStatement,
@@ -307,11 +312,13 @@ import {
     TryStatement,
     TypeLiteralNode,
     TypeOfExpression,
+    TypeOperatorNode,
     TypeParameterDeclaration,
     unescapeLeadingUnderscores,
     unreachableCodeIsError,
     unusedLabelIsError,
     VariableDeclaration,
+    VarianceFlags,
     WhileStatement,
     WithStatement,
 } from "./_namespaces/ts";
@@ -540,6 +547,9 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
     // state used for emit helpers
     var emitFlags: NodeFlags;
 
+    // State used by variance analysis
+    var variance: VarianceFlags;
+
     // If this file is an external module, then it is automatically in strict-mode according to
     // ES6.  If it is not an external module, then we'll determine if it is in strict mode or
     // not depending on if we see "use strict" in certain places or if we hit a class/namespace
@@ -577,6 +587,7 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
         inStrictMode = bindInStrictMode(file, opts);
         classifiableNames = new Set();
         symbolCount = 0;
+        variance = VarianceFlags.Covariant;
 
         Symbol = objectAllocator.getSymbolConstructor();
 
@@ -1088,6 +1099,12 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
         // and set it before we descend into nodes that could actually be part of an assignment pattern.
         inAssignmentPattern = false;
         if (checkUnreachable(node)) {
+            if (isParameter(node)) {
+                preBindParameter(node);
+            }
+            else if (isTypeParameterDeclaration(node)) {
+                return bindTypeParameterDeclaration(node);
+            }
             bindEachChild(node);
             bindJSDoc(node);
             inAssignmentPattern = saveInAssignmentPattern;
@@ -1192,9 +1209,15 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
             case SyntaxKind.BindingElement:
                 bindBindingElementFlow(node as BindingElement);
                 break;
-            case SyntaxKind.Parameter:
+            case SyntaxKind.Parameter: {
+                preBindParameter(node as ParameterDeclaration);
                 bindParameterFlow(node as ParameterDeclaration);
                 break;
+            }
+            case SyntaxKind.TypeParameter: {
+                bindTypeParameterDeclaration(node as TypeParameterDeclaration);
+                break;
+            }
             case SyntaxKind.ObjectLiteralExpression:
             case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.PropertyAssignment:
@@ -1209,6 +1232,36 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
         }
         bindJSDoc(node);
         inAssignmentPattern = saveInAssignmentPattern;
+    }
+
+    function preBindParameter(node: ParameterDeclaration) {
+        if (!getStrictOptionValue(options, "strictFunctionTypes") || node.parent.kind === SyntaxKind.MethodDeclaration || node.parent.kind === SyntaxKind.MethodSignature || node.parent.kind === SyntaxKind.Constructor) {
+            variance = VarianceFlags.Bivariant;
+        }
+        else {
+            invertVariance();
+        }
+        if (node.dotDotDotToken) {
+            variance |= VarianceFlags.Unreliable;
+        }
+    }
+
+    function bindTypeParameterDeclaration(node: TypeParameterDeclaration) {
+        forEach(node.modifiers, bind);
+        bind(node.name);
+        // type parameter constraints in mapped types add unreliable or unmeasurable flags to usages within the constraint
+        // since the mapped type's mapping over the constraint isn't strictly co- or contra- variant
+        const saveVariance = variance;
+        if (node.parent.kind === SyntaxKind.MappedType) {
+            Debug.assertNode(node.parent, isMappedTypeNode);
+            invertVariance(); // mapped type constraints are related contravariantly
+            variance |= node.parent.questionToken?.kind === SyntaxKind.PlusToken ? VarianceFlags.Unmeasurable : VarianceFlags.Unreliable;
+        }
+        bind(node.constraint);
+        variance = saveVariance;
+        bind(node.default);
+        bind(node.expression);
+        bindJSDoc(node);
     }
 
     function isNarrowingExpression(expr: Expression): boolean {
@@ -2654,6 +2707,7 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
         setParent(node, parent);
         if (tracing) (node as TracingNode).tracingPath = file.path;
         const saveInStrictMode = inStrictMode;
+        const saveVariance = variance;
 
         // Even though in the AST the jsdoc @typedef node belongs to the current node,
         // its symbol might be in the same scope with the current node's symbol. Consider:
@@ -2700,6 +2754,7 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
             parent = saveParent;
         }
         inStrictMode = saveInStrictMode;
+        variance = saveVariance;
     }
 
     function bindJSDoc(node: Node) {
@@ -2985,7 +3040,54 @@ function createBinder(): (file: SourceFile, options: CompilerOptions) => void {
                 return (delayedTypeAliases || (delayedTypeAliases = [])).push(node as JSDocTypedefTag | JSDocCallbackTag | JSDocEnumTag);
             case SyntaxKind.JSDocOverloadTag:
                 return bind((node as JSDocOverloadTag).typeExpression);
+            case SyntaxKind.TypeOperator:
+                if ((node as TypeOperatorNode).operator === SyntaxKind.KeyOfKeyword) {
+                    invertVariance();
+                }
+                return;
+            case SyntaxKind.TemplateLiteralType:
+                // Report unreliable variance for type variables referenced in template literal type placeholders.
+                // For example, `foo-${number}` is related to `foo-${string}` even though number isn't related to string.
+                variance |= VarianceFlags.Unreliable;
+                return;
+            case SyntaxKind.TypeReference: {
+                Debug.assertNode(node, isTypeReferenceNode);
+                if (node.typeName.kind === SyntaxKind.Identifier) {
+                    const boundSymbol = lookupSymbolInCurrentScope(node.typeName.escapedText);
+                    if (boundSymbol && boundSymbol.flags & SymbolFlags.TypeParameter) {
+                        getSymbolId(boundSymbol);
+                        const existing = boundSymbol.references?.find(r => r.node === node);
+                        if (existing) {
+                            // symbol reused from old compiation. TODO: `references` is a lot like `declarations`, but is the below assert actually guaranteed?
+                            Debug.assert(existing.variance === variance, "Original variance should match new variance on reused symbols");
+                        }
+                        else {
+                            (boundSymbol.references ??= []).push({ node, variance });
+                        }
+                    }
+                }
+                return;
+            }
         }
+    }
+
+    function invertVariance() {
+        if ((variance & VarianceFlags.Covariant && !(variance & VarianceFlags.Contravariant)) ||
+            (variance & VarianceFlags.Contravariant && !(variance & VarianceFlags.Covariant))) {
+            variance ^= VarianceFlags.Bivariant;
+        }
+    }
+
+    function lookupSymbolInCurrentScope(name: __String) {
+        let check: Node | undefined = container;
+        while (check) {
+            const result = lookupSymbolForName(check, name);
+            if (result) {
+                return result;
+            }
+            check = findAncestor(check.parent, n => canHaveLocals(n) || canHaveSymbol(n));
+        }
+        return undefined;
     }
 
     function bindPropertyWorker(node: PropertyDeclaration | PropertySignature) {
