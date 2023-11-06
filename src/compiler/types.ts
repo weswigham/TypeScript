@@ -5801,6 +5801,8 @@ export interface SymbolLinks {
     _symbolLinksBrand: any;
     immediateTarget?: Symbol;                   // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
     aliasTarget?: Symbol,                       // Resolved (non-alias) target of an alias
+    referrers?: Map<SymbolId, Symbol>;          // Set of all symbols which immediately aliased this symbol
+    cumulativeReferrers?: Set<Symbol>;          // Set of all symbols which aliased this symbol
     target?: Symbol;                            // Original version of an instantiated symbol
     type?: Type;                                // Type of value symbol
     writeType?: Type;                           // Type of value symbol in write contexts
@@ -5846,6 +5848,7 @@ export interface SymbolLinks {
     tupleLabelDeclaration?: NamedTupleMember | ParameterDeclaration; // Declaration associated with the tuple's label
     accessibleChainCache?: Map<string, Symbol[] | undefined>;
     filteredIndexSymbolCache?: Map<string, Symbol> //Symbol with applicable declarations
+    directlyAccessibleWithin?: Map<string, Symbol | undefined>; // Direct (unqualified) accessibility cache
 }
 
 /** @internal */
@@ -6029,6 +6032,7 @@ export interface NodeLinks {
     parameterInitializerContainsUndefined?: boolean; // True if this is a parameter declaration whose type annotation contains "undefined".
     fakeScopeForSignatureDeclaration?: boolean; // True if this is a fake scope injected into an enclosing declaration chain.
     assertionExpressionType?: Type;     // Cached type of the expression of a type assertion
+    resolveNameCache?: Record<string, Symbol | undefined>; // Cache of resolved names at this node
 }
 
 /** @internal */

@@ -644,7 +644,6 @@ import {
     isNamedTupleMember,
     isNamespaceExport,
     isNamespaceExportDeclaration,
-    isNamespaceReexportDeclaration,
     isNewExpression,
     isNodeDescendantOf,
     isNonNullAccess,
@@ -741,7 +740,6 @@ import {
     isTypeReferenceNode,
     isTypeReferenceType,
     isTypeUsableAsPropertyName,
-    isUMDExportSymbol,
     isValidBigIntString,
     isValidESSymbolDeclaration,
     isValidTypeOnlyAliasUseSite,
@@ -1462,6 +1460,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
     var nodeBuilder = createNodeBuilder();
 
     var globals = createSymbolTable();
+    var globalResolveNameCache: NonNullable<NodeLinks["resolveNameCache"]> = {};
     var undefinedSymbol = createSymbol(SymbolFlags.Property, "undefined" as __String);
     undefinedSymbol.declarations = [];
 
@@ -3091,6 +3090,15 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
 
         loop:
         while (location) {
+            const cache = (getNodeLinks(location).resolveNameCache ||= {});
+            const cacheKey = `${meaning}|${excludeGlobals ? 1 : 0}|${name}`;
+            // We *actually* want prototype-walking `in` operator behavior here
+            // eslint-disable-next-line local/no-in-operator
+            if (cacheKey in cache) {
+                lastLocation = undefined;
+                result = cache[cacheKey];
+                break loop;
+            }
             if (name === "const" && isConstAssertion(location)) {
                 // `const` in an `as const` has no symbol, but issues no error because there is no *actual* lookup of the type
                 // (it refers to the constant type of the expression instead)
@@ -3421,6 +3429,12 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             location = isJSDocTemplateTag(location) ? getEffectiveContainerForJSDocTemplateTag(location) || location.parent :
                 isJSDocParameterTag(location) || isJSDocReturnTag(location) ? getHostSignatureFromJSDoc(location) || location.parent :
                 location.parent;
+            const nextCache = location ? (getNodeLinks(location).resolveNameCache ||= {}) : globalResolveNameCache;
+            if (Object.getPrototypeOf(cache) === Object.prototype) {
+                // Set up prototype chain between cache objects so runtime handles efficient cache entry fallthrough
+                // This is *much* more memory efficient than the naive stack-of-maps implementation
+                Object.setPrototypeOf(cache, nextCache);
+            }
         }
 
         // We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
@@ -3470,6 +3484,10 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             }
             return false;
         }
+
+        const cache = location ? (getNodeLinks(location).resolveNameCache ||= {}) : globalResolveNameCache;
+        const cacheKey = `${meaning}|${excludeGlobals ? 1 : 0}|${name}`;
+        cache[cacheKey] = result;
 
         if (!result) {
             if (nameNotFoundMessage) {
@@ -4504,6 +4522,9 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             }
             else {
                 error(node, Diagnostics.Circular_definition_of_import_alias_0, symbolToString(symbol));
+            }
+            if (target) {
+                (getSymbolLinks(target).referrers ||= new Map()).set(getSymbolId(symbol), symbol);
             }
         }
         else if (links.aliasTarget === resolvingSymbol) {
@@ -5870,112 +5891,116 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
     }
 
     function getQualifiedLeftMeaning(rightMeaning: SymbolFlags) {
-        // If we are looking in value space, the parent meaning is value, other wise it is namespace
-        return rightMeaning === SymbolFlags.Value ? SymbolFlags.Value : SymbolFlags.Namespace;
+        // If we are looking in value space (or All), the parent meaning is value (or All), other wise it is namespace
+        return rightMeaning === SymbolFlags.All ? SymbolFlags.All : rightMeaning === SymbolFlags.Value ? SymbolFlags.Value : SymbolFlags.Namespace;
     }
 
-    function getAccessibleSymbolChain(symbol: Symbol | undefined, enclosingDeclaration: Node | undefined, meaning: SymbolFlags, useOnlyExternalAliasing: boolean, visitedSymbolTablesMap = new Map<SymbolId, SymbolTable[]>()): Symbol[] | undefined {
+    function getAccessibleSymbolChain(symbol: Symbol | undefined, enclosingDeclaration: Node | undefined, meaning: SymbolFlags, useOnlyExternalAliasing: boolean): Symbol[] | undefined {
         if (!(symbol && !isPropertyOrMethodDeclarationSymbol(symbol))) {
             return undefined;
         }
         const links = getSymbolLinks(symbol);
         const cache = (links.accessibleChainCache ||= new Map());
-        // Go from enclosingDeclaration to the first scope we check, so the cache is keyed off the scope and thus shared more
-        const firstRelevantLocation = forEachSymbolTableInScope(enclosingDeclaration, (_, __, ___, node) => node);
-        const key = `${useOnlyExternalAliasing ? 0 : 1}|${firstRelevantLocation && getNodeId(firstRelevantLocation)}|${meaning}`;
+        const key = `${useOnlyExternalAliasing ? 0 : 1}|${enclosingDeclaration && getNodeId(enclosingDeclaration)}|${meaning}`;
         if (cache.has(key)) {
             return cache.get(key);
         }
-
-        const id = getSymbolId(symbol);
-        let visitedSymbolTables = visitedSymbolTablesMap.get(id);
-        if (!visitedSymbolTables) {
-            visitedSymbolTablesMap.set(id, visitedSymbolTables = []);
+        cache.set(key, undefined);
+        const resolved = resolveSymbol(symbol);
+        if (!(resolved.flags & meaning)) {
+            // If the target symbol meaning doesn't macth the input meaning, we can immediately bail
+            //  - we'll never resolve to this symbol even if it's accessible under some other meaning
+            return undefined;
         }
-        const result = forEachSymbolTableInScope(enclosingDeclaration, getAccessibleSymbolChainFromSymbolTable);
-        cache.set(key, result);
-        return result;
 
-        /**
-         * @param {ignoreQualification} boolean Set when a symbol is being looked for through the exports of another symbol (meaning we have a route to qualify it already)
-         */
-        function getAccessibleSymbolChainFromSymbolTable(symbols: SymbolTable, ignoreQualification?: boolean, isLocalNameLookup?: boolean): Symbol[] | undefined {
-            if (!pushIfUnique(visitedSymbolTables!, symbols)) {
-                return undefined;
-            }
+        // TODO: Actually implement useOnlyExternalAliasing (must thread into container generation logic)
+        // TODO: Consistently get merged symbols throughout this whole process (resolveName returns merged symbols already)
 
-            const result = trySymbolTable(symbols, ignoreQualification, isLocalNameLookup);
-            visitedSymbolTables!.pop();
+        const directResult = isSymbolDirectlyAccessible(symbol, enclosingDeclaration, meaning);
+        if (directResult) {
+            const result = [directResult];
+            cache.set(key, result);
             return result;
         }
 
-        function canQualifySymbol(symbolFromSymbolTable: Symbol, meaning: SymbolFlags) {
-            // If the symbol is equivalent and doesn't need further qualification, this symbol is accessible
-            return !needsQualification(symbolFromSymbolTable, enclosingDeclaration, meaning) ||
-                // If symbol needs qualification, make sure that parent is accessible, if it is then this symbol is accessible too
-                !!getAccessibleSymbolChain(symbolFromSymbolTable.parent, enclosingDeclaration, getQualifiedLeftMeaning(meaning), useOnlyExternalAliasing, visitedSymbolTablesMap);
-        }
+        // Look up the containers of the target symbol, and see of any of those are accessible. If not, we get their
+        // containers and check those, and so on. This is done within getContainersOfSymbol, which calls back into
+        // getAccessibleSymbolChain for certain container kinds which can themselves be contained.
+        // Note: Not all containers returned by `getContainersOfSymbol` may be themselves accessible.
 
-        function isAccessible(symbolFromSymbolTable: Symbol, resolvedAliasSymbol?: Symbol, ignoreQualification?: boolean) {
-            return (symbol === (resolvedAliasSymbol || symbolFromSymbolTable) || getMergedSymbol(symbol) === getMergedSymbol(resolvedAliasSymbol || symbolFromSymbolTable)) &&
-                // if the symbolFromSymbolTable is not external module (it could be if it was determined as ambient external module and would be in globals table)
-                // and if symbolFromSymbolTable or alias resolution matches the symbol,
-                // check the symbol can be qualified, it is only then this symbol is accessible
-                !some(symbolFromSymbolTable.declarations, hasNonGlobalAugmentationExternalModuleSymbol) &&
-                (ignoreQualification || canQualifySymbol(getMergedSymbol(symbolFromSymbolTable), meaning));
-        }
+        const containers = getContainersOfSymbol(symbol, enclosingDeclaration, getQualifiedLeftMeaning(meaning));
+        if (containers) {
+            for (const container of containers) {
+                const localContainer = isSymbolDirectlyAccessible(container, enclosingDeclaration, getQualifiedLeftMeaning(meaning));
+                if (!localContainer) break;
 
-        function trySymbolTable(symbols: SymbolTable, ignoreQualification: boolean | undefined, isLocalNameLookup: boolean | undefined): Symbol[] | undefined {
-            // If symbol is directly available by its name in the symbol table
-            if (isAccessible(symbols.get(symbol!.escapedName)!, /*resolvedAliasSymbol*/ undefined, ignoreQualification)) {
-                return [symbol!];
-            }
-
-            // Check if symbol is any of the aliases in scope
-            const result = forEachEntry(symbols, symbolFromSymbolTable => {
-                if (
-                    symbolFromSymbolTable.flags & SymbolFlags.Alias
-                    && symbolFromSymbolTable.escapedName !== InternalSymbolName.ExportEquals
-                    && symbolFromSymbolTable.escapedName !== InternalSymbolName.Default
-                    && !(isUMDExportSymbol(symbolFromSymbolTable) && enclosingDeclaration && isExternalModule(getSourceFileOfNode(enclosingDeclaration)))
-                    // If `!useOnlyExternalAliasing`, we can use any type of alias to get the name
-                    && (!useOnlyExternalAliasing || some(symbolFromSymbolTable.declarations, isExternalModuleImportEqualsDeclaration))
-                    // If we're looking up a local name to reference directly, omit namespace reexports, otherwise when we're trawling through an export list to make a dotted name, we can keep it
-                    && (isLocalNameLookup ? !some(symbolFromSymbolTable.declarations, isNamespaceReexportDeclaration) : true)
-                    // While exports are generally considered to be in scope, export-specifier declared symbols are _not_
-                    // See similar comment in `resolveName` for details
-                    && (ignoreQualification || !getDeclarationOfKind(symbolFromSymbolTable, SyntaxKind.ExportSpecifier))
-                ) {
-                    const resolvedImportedSymbol = resolveAlias(symbolFromSymbolTable);
-                    const candidate = getCandidateListForSymbol(symbolFromSymbolTable, resolvedImportedSymbol, ignoreQualification);
-                    if (candidate) {
-                        return candidate;
-                    }
-                }
-                if (symbolFromSymbolTable.escapedName === symbol!.escapedName && symbolFromSymbolTable.exportSymbol) {
-                    if (isAccessible(getMergedSymbol(symbolFromSymbolTable.exportSymbol), /*resolvedAliasSymbol*/ undefined, ignoreQualification)) {
-                        return [symbol!];
-                    }
-                }
-            });
-
-            // If there's no result and we're looking at the global symbol table, treat `globalThis` like an alias and try to lookup thru that
-            return result || (symbols === globals ? getCandidateListForSymbol(globalThisSymbol, globalThisSymbol, ignoreQualification) : undefined);
-        }
-
-        function getCandidateListForSymbol(symbolFromSymbolTable: Symbol, resolvedImportedSymbol: Symbol, ignoreQualification: boolean | undefined) {
-            if (isAccessible(symbolFromSymbolTable, resolvedImportedSymbol, ignoreQualification)) {
-                return [symbolFromSymbolTable];
-            }
-
-            // Look in the exported members, if we can find accessibleSymbolChain, symbol is accessible using this chain
-            // but only if the symbolFromSymbolTable can be qualified
-            const candidateTable = getExportsOfSymbol(resolvedImportedSymbol);
-            const accessibleSymbolsFromExports = candidateTable && getAccessibleSymbolChainFromSymbolTable(candidateTable, /*ignoreQualification*/ true);
-            if (accessibleSymbolsFromExports && canQualifySymbol(symbolFromSymbolTable, getQualifiedLeftMeaning(meaning))) {
-                return [symbolFromSymbolTable].concat(accessibleSymbolsFromExports);
+                // This relies on the ordering of `getContainersOfSymbol` being the display-priority-ordered list of containers
+                const result = [...getAccessibleSymbolChain(localContainer, enclosingDeclaration, getQualifiedLeftMeaning(meaning), useOnlyExternalAliasing) || [], symbol];
+                cache.set(key, result);
+                return result;
             }
         }
+
+        cache.set(key, undefined);
+        return undefined;
+    }
+
+    /**
+     * Returns the full set of all alias symbols which transitively refer to this symbol
+     */
+    function getAllSymbolReferrers(symbol: Symbol): Set<Symbol> {
+        const links = getSymbolLinks(symbol);
+        if (links.cumulativeReferrers) {
+            return links.cumulativeReferrers;
+        }
+        // Immediate referrers are collected by `resolveAlias` as it is called on alias symbols.
+        // As such, this function only caches complete results if *all* alias symbols in a program
+        // have been `resolveAlias`'d already.
+        // This invariant should probably be checked by a checker-local guard, but simultaneously, it's maybe not always true.
+        // - Certainly, it'll be true for a post-check declaration node generation, but for an error message node generation,
+        //   it may not be. And in such cases, this function may cache an incomplete list of overall referrers. Ideally we'd go
+        //   discover those aliases, or defer error string generation until all aliases have been traversed. Right now, this case
+        //   is just silently wrong, but doesn't matter, since if there is an error, declaration emit is disabled... unless
+        //   that error is //@ts-ignore'd (which still generates the error string!).
+        const immediate = new Set(links.referrers?.values() || []);
+        links.cumulativeReferrers = immediate;
+        const result = new Set<Symbol>();
+        immediate.forEach(r => {
+            result.add(r);
+            getAllSymbolReferrers(r).forEach(s => result.add(s));
+        });
+        return links.cumulativeReferrers = result;
+    }
+
+    /**
+     * Returns the symbol by which the input symbol can be directly referred to inside the enclosingDeclaration scope
+     */
+    function isSymbolDirectlyAccessible(symbol: Symbol, enclosingDeclaration: Node | undefined, meaning: SymbolFlags): Symbol | undefined {
+        const links = getSymbolLinks(symbol);
+        const cache = (links.directlyAccessibleWithin ||= new Map());
+        const key = `${enclosingDeclaration && getNodeId(enclosingDeclaration)}|${meaning}`;
+        if (cache.has(key)) {
+            return cache.get(key);
+        }
+        cache.set(key, undefined);
+
+        const aliases = arrayFrom(getAllSymbolReferrers(symbol));
+        // PROBLEM: It is *possible* the symbol name does not equal the name the symbol is found under in the host symbol table
+        // It's unclear when, exactly, this occurs, though, since in the common case, the symbol name matches the key in the symbol
+        // table the symbol should be found at.
+
+        let result: Symbol | undefined;
+        // Prefer accessible aliases of the symbol to the symbol directly (since alternate names are usually there to be used)
+        for (const s of [...aliases, symbol]) {
+            const lookup = resolveName(enclosingDeclaration, s.escapedName, meaning, /*nameNotFoundMessage*/ undefined, /*nameArg*/ undefined, /*isUse*/ false);
+            if (lookup === s || lookup?.exportSymbol === s) {
+                result = s;
+                break;
+            }
+        }
+
+        cache.set(key, result);
+        return result;
     }
 
     function needsQualification(symbol: Symbol, enclosingDeclaration: Node | undefined, meaning: SymbolFlags) {
@@ -5988,7 +6013,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 return false;
             }
             // If the symbol with this name is present it should refer to the symbol
-            if (symbolFromSymbolTable === symbol) {
+            if (symbolFromSymbolTable === symbol || symbolFromSymbolTable.exportSymbol === symbol) {
                 // No need to qualify
                 return true;
             }
@@ -6305,7 +6330,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         return writer ? symbolToStringWorker(writer).getText() : usingSingleLineStringWriter(symbolToStringWorker);
 
         function symbolToStringWorker(writer: EmitTextWriter) {
-            const entity = builder(symbol, meaning!, enclosingDeclaration, nodeFlags)!; // TODO: GH#18217
+            const entity = builder(symbol, meaning || SymbolFlags.All, enclosingDeclaration, nodeFlags)!; // TODO: GH#18217
             // add neverAsciiEscape for GH#39027
             const printer = enclosingDeclaration?.kind === SyntaxKind.SourceFile
                 ? createPrinterWithRemoveCommentsNeverAsciiEscape()
@@ -6937,7 +6962,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 }
                 context.visitedTypes.add(typeId);
                 const startLength = context.approximateLength;
-                const result = transform(type);
+                const result = !checkTruncationLength(context) ? transform(type) : factory.createTypeReferenceNode("...", /*typeArguments*/ undefined);
                 const addedLength = context.approximateLength - startLength;
                 if (!context.reportedDiagnostic && !context.encounteredError) {
                     links?.serializedTypes?.set(key, { node: result, truncating: context.truncating, addedLength });
@@ -7509,61 +7534,20 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 && signature.declaration
                 && signature.declaration !== context.enclosingDeclaration
                 && !isInJSFile(signature.declaration)
-                && (some(expandedParams) || some(signature.typeParameters))
+                && signature.declaration.locals?.size
             ) {
-                // As a performance optimization, reuse the same fake scope within this chain.
-                // This is especially needed when we are working on an excessively deep type;
-                // if we don't do this, then we spend all of our time adding more and more
-                // scopes that need to be searched in isSymbolAccessible later. Since all we
-                // really want to do is to mark certain names as unavailable, we can just keep
-                // all of the names we're introducing in one large table and push/pop from it as
-                // needed; isSymbolAccessible will walk upward and find the closest "fake" scope,
-                // which will conveniently report on any and all faked scopes in the chain.
-                //
-                // It'd likely be better to store this somewhere else for isSymbolAccessible, but
-                // since that API _only_ uses the enclosing declaration (and its parents), this is
-                // seems like the best way to inject names into that search process.
-                //
-                // Note that we only check the most immediate enclosingDeclaration; the only place we
-                // could potentially add another fake scope into the chain is right here, so we don't
-                // traverse all ancestors.
-                const existingFakeScope = getNodeLinks(context.enclosingDeclaration).fakeScopeForSignatureDeclaration ? context.enclosingDeclaration : undefined;
-                Debug.assertOptionalNode(existingFakeScope, isBlock);
+                // Use a Block for this; the type of the node doesn't matter so long as it
+                // has locals, and this is cheaper/easier than using a function-ish Node.
+                const fakeScope = parseNodeFactory.createBlock(emptyArray);
+                getNodeLinks(fakeScope).fakeScopeForSignatureDeclaration = true;
+                fakeScope.locals = signature.declaration.locals;
 
-                const locals = existingFakeScope?.locals ?? createSymbolTable();
+                const saveEnclosingDeclaration = context.enclosingDeclaration;
+                setParent(fakeScope, saveEnclosingDeclaration);
+                context.enclosingDeclaration = fakeScope;
 
-                let newLocals: __String[] | undefined;
-                for (const param of concatenate(expandedParams, map(signature.typeParameters, p => p.symbol))) {
-                    if (!locals.has(param.escapedName)) {
-                        newLocals = append(newLocals, param.escapedName);
-                        locals.set(param.escapedName, param);
-                    }
-                }
-
-                if (newLocals) {
-                    function removeNewLocals() {
-                        forEach(newLocals, s => locals.delete(s));
-                    }
-
-                    if (existingFakeScope) {
-                        cleanup = removeNewLocals;
-                    }
-                    else {
-                        // Use a Block for this; the type of the node doesn't matter so long as it
-                        // has locals, and this is cheaper/easier than using a function-ish Node.
-                        const fakeScope = parseNodeFactory.createBlock(emptyArray);
-                        getNodeLinks(fakeScope).fakeScopeForSignatureDeclaration = true;
-                        fakeScope.locals = locals;
-
-                        const saveEnclosingDeclaration = context.enclosingDeclaration;
-                        setParent(fakeScope, saveEnclosingDeclaration);
-                        context.enclosingDeclaration = fakeScope;
-
-                        cleanup = () => {
-                            context.enclosingDeclaration = saveEnclosingDeclaration;
-                            removeNewLocals();
-                        };
-                    }
+                cleanup = () => {
+                    context.enclosingDeclaration = saveEnclosingDeclaration;
                 }
             }
 
@@ -8327,7 +8311,10 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         }
 
         function getEnclosingDeclarationIgnoringFakeScope(enclosingDeclaration: Node) {
-            return getNodeLinks(enclosingDeclaration).fakeScopeForSignatureDeclaration ? enclosingDeclaration.parent : enclosingDeclaration;
+            while (getNodeLinks(enclosingDeclaration).fakeScopeForSignatureDeclaration) {
+                enclosingDeclaration = enclosingDeclaration.parent;
+            }
+            return enclosingDeclaration;
         }
 
         /**
