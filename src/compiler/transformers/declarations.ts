@@ -1,7 +1,6 @@
 import {
     AccessorDeclaration,
     addRelatedInfo,
-    AllAccessorDeclarations,
     append,
     ArrayBindingElement,
     BindingElement,
@@ -366,7 +365,7 @@ export function transformDeclarations(context: TransformationContext) {
         }
     }
 
-    function transformDeclarationsForJS(sourceFile: SourceFile, bundled?: boolean) {
+    function transformDeclarationsForJS(sourceFile: SourceFile) {
         const oldDiag = getSymbolAccessibilityDiagnostic;
         getSymbolAccessibilityDiagnostic = s => (s.errorNode && canProduceDiagnostics(s.errorNode) ? createGetSymbolAccessibilityDiagnosticForNode(s.errorNode)(s) : ({
             diagnosticMessage: s.errorModuleName
@@ -374,7 +373,7 @@ export function transformDeclarations(context: TransformationContext) {
                 : Diagnostics.Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit,
             errorNode: s.errorNode || sourceFile,
         }));
-        const result = resolver.getDeclarationStatementsForSourceFile(sourceFile, declarationEmitNodeBuilderFlags, symbolTracker, bundled);
+        const result = resolver.getDeclarationStatementsForSourceFile(sourceFile, declarationEmitNodeBuilderFlags, symbolTracker);
         getSymbolAccessibilityDiagnostic = oldDiag;
         return result;
     }
@@ -409,7 +408,7 @@ export function transformDeclarations(context: TransformationContext) {
                     if (isExternalOrCommonJsModule(sourceFile) || isJsonSourceFile(sourceFile)) {
                         resultHasExternalModuleIndicator = false; // unused in external module bundle emit (all external modules are within module blocks, therefore are known to be modules)
                         needsDeclare = false;
-                        const statements = isSourceFileJS(sourceFile) ? factory.createNodeArray(transformDeclarationsForJS(sourceFile, /*bundled*/ true)) : visitNodes(sourceFile.statements, visitDeclarationStatements, isStatement);
+                        const statements = isSourceFileJS(sourceFile) ? factory.createNodeArray(transformDeclarationsForJS(sourceFile)) : visitNodes(sourceFile.statements, visitDeclarationStatements, isStatement);
                         const newFile = factory.updateSourceFile(
                             sourceFile,
                             [factory.createModuleDeclaration(
@@ -563,7 +562,7 @@ export function transformDeclarations(context: TransformationContext) {
         }
     }
 
-    function ensureParameter(p: ParameterDeclaration, modifierMask?: ModifierFlags, type?: TypeNode): ParameterDeclaration {
+    function ensureParameter(p: ParameterDeclaration, modifierMask?: ModifierFlags): ParameterDeclaration {
         let oldDiag: typeof getSymbolAccessibilityDiagnostic | undefined;
         if (!suppressNewDiagnosticContexts) {
             oldDiag = getSymbolAccessibilityDiagnostic;
@@ -575,7 +574,7 @@ export function transformDeclarations(context: TransformationContext) {
             p.dotDotDotToken,
             filterBindingPatternInitializers(p.name),
             resolver.isOptionalParameter(p) ? (p.questionToken || factory.createToken(SyntaxKind.QuestionToken)) : undefined,
-            ensureType(p, type || p.type, /*ignorePrivate*/ true), // Ignore private param props, since this type is going straight back into a param
+            ensureType(p, /*ignorePrivate*/ true), // Ignore private param props, since this type is going straight back into a param
             ensureNoInitializer(p),
         );
         if (!suppressNewDiagnosticContexts) {
@@ -608,7 +607,7 @@ export function transformDeclarations(context: TransformationContext) {
         | PropertyDeclaration
         | PropertySignature;
 
-    function ensureType(node: HasInferredType, type: TypeNode | undefined, ignorePrivate?: boolean): TypeNode | undefined {
+    function ensureType(node: HasInferredType, ignorePrivate?: boolean): TypeNode | undefined {
         if (!ignorePrivate && hasEffectiveModifier(node, ModifierFlags.Private)) {
             // Private nodes emit no types (except private parameter properties, whose parameter types are actually visible)
             return;
@@ -616,10 +615,6 @@ export function transformDeclarations(context: TransformationContext) {
         if (shouldPrintWithInitializer(node)) {
             // Literal const declarations will have an initializer ensured rather than a type
             return;
-        }
-        const shouldAddImplicitUndefined = node.kind === SyntaxKind.Parameter && resolver.requiresAddingImplicitUndefined(node);
-        if (type && !shouldAddImplicitUndefined) {
-            return visitNode(type, visitDeclarationSubtree, isTypeNode);
         }
 
         errorNameNode = node.name;
@@ -635,7 +630,7 @@ export function transformDeclarations(context: TransformationContext) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.BindingElement:
             case SyntaxKind.VariableDeclaration:
-                typeNode = resolver.createTypeOfDeclaration(node, enclosingDeclaration, declarationEmitNodeBuilderFlags, symbolTracker, shouldAddImplicitUndefined);
+                typeNode = resolver.createTypeOfDeclaration(node, enclosingDeclaration, declarationEmitNodeBuilderFlags, symbolTracker);
                 break;
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ConstructSignature:
@@ -727,8 +722,7 @@ export function transformDeclarations(context: TransformationContext) {
             if (!isPrivate) {
                 const valueParameter = getSetAccessorValueParameter(input);
                 if (valueParameter) {
-                    const accessorType = getTypeAnnotationFromAllAccessorDeclarations(input, resolver.getAllAccessorDeclarations(input));
-                    newValueParameter = ensureParameter(valueParameter, /*modifierMask*/ undefined, accessorType);
+                    newValueParameter = ensureParameter(valueParameter);
                 }
             }
             if (!newValueParameter) {
@@ -1005,7 +999,7 @@ export function transformDeclarations(context: TransformationContext) {
                         input,
                         ensureTypeParams(input, input.typeParameters),
                         updateParamsList(input, input.parameters),
-                        ensureType(input, input.type),
+                        ensureType(input),
                     ));
                 case SyntaxKind.Constructor: {
                     // A constructor declaration may not have a type annotation
@@ -1027,7 +1021,7 @@ export function transformDeclarations(context: TransformationContext) {
                         input.questionToken,
                         ensureTypeParams(input, input.typeParameters),
                         updateParamsList(input, input.parameters),
-                        ensureType(input, input.type),
+                        ensureType(input),
                         /*body*/ undefined,
                     );
                     return cleanup(sig);
@@ -1036,13 +1030,12 @@ export function transformDeclarations(context: TransformationContext) {
                     if (isPrivateIdentifier(input.name)) {
                         return cleanup(/*returnValue*/ undefined);
                     }
-                    const accessorType = getTypeAnnotationFromAllAccessorDeclarations(input, resolver.getAllAccessorDeclarations(input));
                     return cleanup(factory.updateGetAccessorDeclaration(
                         input,
                         ensureModifiers(input),
                         input.name,
                         updateAccessorParamsList(input, hasEffectiveModifier(input, ModifierFlags.Private)),
-                        ensureType(input, accessorType),
+                        ensureType(input),
                         /*body*/ undefined,
                     ));
                 }
@@ -1067,7 +1060,7 @@ export function transformDeclarations(context: TransformationContext) {
                         ensureModifiers(input),
                         input.name,
                         input.questionToken,
-                        ensureType(input, input.type),
+                        ensureType(input),
                         ensureNoInitializer(input),
                     ));
                 case SyntaxKind.PropertySignature:
@@ -1079,7 +1072,7 @@ export function transformDeclarations(context: TransformationContext) {
                         ensureModifiers(input),
                         input.name,
                         input.questionToken,
-                        ensureType(input, input.type),
+                        ensureType(input),
                     ));
                 case SyntaxKind.MethodSignature: {
                     if (isPrivateIdentifier(input.name)) {
@@ -1092,7 +1085,7 @@ export function transformDeclarations(context: TransformationContext) {
                         input.questionToken,
                         ensureTypeParams(input, input.typeParameters),
                         updateParamsList(input, input.parameters),
-                        ensureType(input, input.type),
+                        ensureType(input),
                     ));
                 }
                 case SyntaxKind.CallSignature: {
@@ -1101,7 +1094,7 @@ export function transformDeclarations(context: TransformationContext) {
                             input,
                             ensureTypeParams(input, input.typeParameters),
                             updateParamsList(input, input.parameters),
-                            ensureType(input, input.type),
+                            ensureType(input),
                         ),
                     );
                 }
@@ -1119,7 +1112,7 @@ export function transformDeclarations(context: TransformationContext) {
                     }
                     shouldEnterSuppressNewDiagnosticsContextContext = true;
                     suppressNewDiagnosticContexts = true; // Variable declaration types also suppress new diagnostic contexts, provided the contexts wouldn't be made for binding pattern types
-                    return cleanup(factory.updateVariableDeclaration(input, input.name, /*exclamationToken*/ undefined, ensureType(input, input.type), ensureNoInitializer(input)));
+                    return cleanup(factory.updateVariableDeclaration(input, input.name, /*exclamationToken*/ undefined, ensureType(input), ensureNoInitializer(input)));
                 }
                 case SyntaxKind.TypeParameter: {
                     if (isPrivateMethodTypeParameter(input) && (input.default || input.constraint)) {
@@ -1361,7 +1354,7 @@ export function transformDeclarations(context: TransformationContext) {
                     input.name,
                     ensureTypeParams(input, input.typeParameters),
                     updateParamsList(input, input.parameters),
-                    ensureType(input, input.type),
+                    ensureType(input),
                     /*body*/ undefined,
                 ));
                 if (clean && resolver.isExpandoFunctionDeclaration(input) && shouldEmitFunctionProperties(input)) {
@@ -1517,7 +1510,7 @@ export function transformDeclarations(context: TransformationContext) {
                                     ensureModifiers(param),
                                     param.name,
                                     param.questionToken,
-                                    ensureType(param, param.type),
+                                    ensureType(param),
                                     ensureNoInitializer(param),
                                 ),
                                 param,
@@ -1540,7 +1533,7 @@ export function transformDeclarations(context: TransformationContext) {
                                     ensureModifiers(param),
                                     elem.name as Identifier,
                                     /*questionOrExclamationToken*/ undefined,
-                                    ensureType(elem, /*type*/ undefined),
+                                    ensureType(elem),
                                     /*initializer*/ undefined,
                                 ));
                             }
@@ -1688,7 +1681,7 @@ export function transformDeclarations(context: TransformationContext) {
                 return recreateBindingPattern(e.name);
             }
             else {
-                return factory.createVariableDeclaration(e.name, /*exclamationToken*/ undefined, ensureType(e, /*type*/ undefined), /*initializer*/ undefined);
+                return factory.createVariableDeclaration(e.name, /*exclamationToken*/ undefined, ensureType(e), /*initializer*/ undefined);
             }
         }
     }
@@ -1742,21 +1735,6 @@ export function transformDeclarations(context: TransformationContext) {
         return maskModifierFlags(node, mask, additions);
     }
 
-    function getTypeAnnotationFromAllAccessorDeclarations(node: AccessorDeclaration, accessors: AllAccessorDeclarations) {
-        let accessorType = getTypeAnnotationFromAccessor(node);
-        if (!accessorType && node !== accessors.firstAccessor) {
-            accessorType = getTypeAnnotationFromAccessor(accessors.firstAccessor);
-            // If we end up pulling the type from the second accessor, we also need to change the diagnostic context to get the expected error message
-            getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(accessors.firstAccessor);
-        }
-        if (!accessorType && accessors.secondAccessor && node !== accessors.secondAccessor) {
-            accessorType = getTypeAnnotationFromAccessor(accessors.secondAccessor);
-            // If we end up pulling the type from the second accessor, we also need to change the diagnostic context to get the expected error message
-            getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(accessors.secondAccessor);
-        }
-        return accessorType;
-    }
-
     function transformHeritageClauses(nodes: NodeArray<HeritageClause> | undefined) {
         return factory.createNodeArray(filter(
             map(nodes, clause =>
@@ -1798,16 +1776,6 @@ function maskModifierFlags(node: Node, modifierMask: ModifierFlags = ModifierFla
         flags ^= ModifierFlags.Ambient; // `declare` is never required alongside `default` (and would be an error if printed)
     }
     return flags;
-}
-
-function getTypeAnnotationFromAccessor(accessor: AccessorDeclaration): TypeNode | undefined {
-    if (accessor) {
-        return accessor.kind === SyntaxKind.GetAccessor
-            ? accessor.type // Getter - return type
-            : accessor.parameters.length > 0
-            ? accessor.parameters[0].type // Setter parameter type
-            : undefined;
-    }
 }
 
 type CanHaveLiteralInitializer = VariableDeclaration | PropertyDeclaration | PropertySignature | ParameterDeclaration;
