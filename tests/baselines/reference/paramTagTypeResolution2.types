@@ -35,9 +35,9 @@ f({ x: 42 }, { x(param) { param.toFixed() } });
 >param.toFixed() : string
 >                : ^^^^^^
 >param.toFixed : (fractionDigits?: number) => string
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^
 >param : number
 >      : ^^^^^^
 >toFixed : (fractionDigits?: number) => string
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^
 

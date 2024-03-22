@@ -84,7 +84,7 @@ if (c !== undefined) {
 >never(c) : never
 >         : ^^^^^
 >never : (_: never) => never
->      : ^^^^^^^^^^^^^^^^^^^
+>      : ^^^^     ^^^^^^^^^^
 >c : never
 >  : ^^^^^
     }

@@ -108,7 +108,7 @@ let k1 = <Comp a={10} b="hi"><></><Button /><AnotherButton /></Comp>;
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 >Comp : (p: Prop) => JSX.Element
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -134,7 +134,7 @@ let k2 = <Comp a={10} b="hi"><><Button /></><AnotherButton /></Comp>;
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 >Comp : (p: Prop) => JSX.Element
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -160,7 +160,7 @@ let k3 = <Comp a={10} b="hi"><><Button /><AnotherButton /></></Comp>;
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 >Comp : (p: Prop) => JSX.Element
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -224,7 +224,7 @@ let k4 = <SingleChildComp a={10} b="hi"><><Button /><AnotherButton /></></Single
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 >SingleChildComp : (p: SingleChildProp) => JSX.Element
 >                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -251,7 +251,7 @@ let k5 = <SingleChildComp a={10} b="hi"><></><Button /><AnotherButton /></Single
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 >SingleChildComp : (p: SingleChildProp) => JSX.Element
 >                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

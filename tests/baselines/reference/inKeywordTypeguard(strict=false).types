@@ -601,7 +601,7 @@ type AOrB = { aProp: number } | { bProp: number };
 
 declare function isAOrB(x: unknown): x is AOrB;
 >isAOrB : (x: unknown) => x is AOrB
->       : ^^^^       ^^^^^^^^^^^^^^
+>       : ^^^^       ^^^^^     ^^^^
 >x : unknown
 >  : ^^^^^^^
 
@@ -613,7 +613,7 @@ if (isAOrB(x)) {
 >isAOrB(x) : boolean
 >          : ^^^^^^^
 >isAOrB : (x: unknown) => x is AOrB
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^       ^^^^^^^^^^^^^^
 >x : unknown
 >  : ^^^^^^^
 
@@ -1711,11 +1711,11 @@ function test1<T extends any[] | Record<string, any>>(obj: T) {
 >Array.isArray(obj) : boolean
 >                   : ^^^^^^^
 >Array.isArray : (arg: any) => arg is any[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >Array : ArrayConstructor
 >      : ^^^^^^^^^^^^^^^^
 >isArray : (arg: any) => arg is any[]
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >obj : any[] | Record<string, any>
 >    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >'length' in obj : boolean
@@ -1746,11 +1746,11 @@ function test2<T extends any[] | Record<string, any>>(obj: T) {
 >Array.isArray(obj) : boolean
 >                   : ^^^^^^^
 >Array.isArray : (arg: any) => arg is any[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >Array : ArrayConstructor
 >      : ^^^^^^^^^^^^^^^^
 >isArray : (arg: any) => arg is any[]
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >obj : any[] | Record<string, any>
 >    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

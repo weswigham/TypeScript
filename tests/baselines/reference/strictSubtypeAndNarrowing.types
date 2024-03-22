@@ -149,7 +149,7 @@ const a42 = [x41, x42];
 
 declare function isFunction<T>(x: unknown): x is T;
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^       ^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^     ^
 >x : unknown
 >  : ^^^^^^^
 
@@ -191,7 +191,7 @@ function fx1(f: (() => void) | undefined) {
 >isFunction<A>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : (() => void) | undefined
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -219,7 +219,7 @@ function fx2(f: (() => void) | undefined) {
 >isFunction<B>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : (() => void) | undefined
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -247,7 +247,7 @@ function fx3(f: (() => void) | undefined) {
 >isFunction<C>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : (() => void) | undefined
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -275,7 +275,7 @@ function fx4(f: (() => void) | undefined) {
 >isFunction<D>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : (() => void) | undefined
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -303,7 +303,7 @@ function checkA(f: FnTypes) {
 >isFunction<A>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : FnTypes
 >  : ^^^^^^^
 
@@ -331,7 +331,7 @@ function checkB(f: FnTypes) {
 >isFunction<B>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : FnTypes
 >  : ^^^^^^^
 
@@ -359,7 +359,7 @@ function checkC(f: FnTypes) {
 >isFunction<C>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : FnTypes
 >  : ^^^^^^^
 
@@ -387,7 +387,7 @@ function checkD(f: FnTypes) {
 >isFunction<C>(f) : boolean
 >                 : ^^^^^^^
 >isFunction : <T>(x: unknown) => x is T
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^       ^^^^^^^^^^^
 >f : FnTypes
 >  : ^^^^^^^
 
@@ -410,12 +410,12 @@ function checkD(f: FnTypes) {
 function fx10(obj1: { x?: number }, obj2: { x?: number, y?: number }) {
 >fx10 : (obj1: { x?: number; }, obj2: { x?: number; y?: number; }) => void
 >     : ^^^^^^^               ^^^^^^^^                           ^^^^^^^^^
->obj1 : { x?: number | undefined; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>obj1 : { x?: number; }
+>     : ^^^^^^      ^^^
 >x : number | undefined
 >  : ^^^^^^^^^^^^^^^^^^
->obj2 : { x?: number | undefined; y?: number | undefined; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>obj2 : { x?: number; y?: number; }
+>     : ^^^^^^      ^^^^^^      ^^^
 >x : number | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 >y : number | undefined
@@ -469,8 +469,8 @@ function fx11(): { x?: number } {
 >  : ^^^^^^^^^^^^^^^^^^
 
     let obj: { x?: number, y?: number };
->obj : { x?: number | undefined; y?: number | undefined; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>obj : { x?: number; y?: number; }
+>    : ^^^^^^      ^^^^^^      ^^^
 >x : number | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 >y : number | undefined
@@ -497,7 +497,7 @@ function fx11(): { x?: number } {
 
 declare function isArrayLike(value: any): value is { length: number };
 >isArrayLike : (value: any) => value is { length: number; }
->            : ^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^      ^^^
+>            : ^^^^^^^^   ^^^^^                            
 >value : any
 >      : ^^^
 >length : number
@@ -517,7 +517,7 @@ function ff1(value: { [index: number]: boolean, length: number } | undefined) {
 >isArrayLike(value) : boolean
 >                   : ^^^^^^^
 >isArrayLike : (value: any) => value is { length: number; }
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : { [index: number]: boolean; length: number; } | undefined
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -549,7 +549,7 @@ function ff2(value: { [index: number]: boolean, length: number } | string) {
 >isArrayLike(value) : boolean
 >                   : ^^^^^^^
 >isArrayLike : (value: any) => value is { length: number; }
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : string | { [index: number]: boolean; length: number; }
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -585,7 +585,7 @@ function ff3(value: string | string[] | { [index: number]: boolean, length: numb
 >isArrayLike(value) : boolean
 >                   : ^^^^^^^
 >isArrayLike : (value: any) => value is { length: number; }
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : string | number | { [index: number]: boolean; length: number; } | [number, boolean] | { length: string; } | { a: string; } | string[] | null | undefined
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -634,7 +634,7 @@ type NarrowByDeepValue<ObjT, DeepPathT, ValueT> = DeepPathT extends readonly [
 
 declare function doesValueAtDeepPathSatisfy<
 >doesValueAtDeepPathSatisfy : <ObjT extends object, const DeepPathT extends readonly (string | number)[], ValueT>(obj: ObjT, deepPath: DeepPathT, predicate: (arg: unknown) => arg is ValueT) => obj is NarrowByDeepValue<ObjT, DeepPathT, ValueT>
->                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         ^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^ ^^^^  ^^^^^^^^^  ^^^^^^ 
 
     ObjT extends object,
     const DeepPathT extends ReadonlyArray<number | string>,
@@ -650,7 +650,7 @@ declare function doesValueAtDeepPathSatisfy<
 
     predicate: (arg: unknown) => arg is ValueT,
 >predicate : (arg: unknown) => arg is ValueT
->          : ^^^^^^       ^^^^^^^^^^^^^^^^^^
+>          : ^^^^^^       ^^^^^       ^^^^^^
 >arg : unknown
 >    : ^^^^^^^
 
@@ -674,20 +674,20 @@ type Foo = {value: {type: 'A'}; a?: number} | {value: {type: 'B'}; b?: number};
 >  : ^^^^^^^^^^^^^^^^^^
 
 declare function isA(arg: unknown): arg is 'A';
->isA : (arg: unknown) => arg is "A"
->    : ^^^^^^       ^^^^^^^^^^^^^^^
+>isA : (arg: unknown) => arg is 'A'
+>    : ^^^^^^       ^^^^^          
 >arg : unknown
 >    : ^^^^^^^
 
 declare function isB(arg: unknown): arg is 'B';
->isB : (arg: unknown) => arg is "B"
->    : ^^^^^^       ^^^^^^^^^^^^^^^
+>isB : (arg: unknown) => arg is 'B'
+>    : ^^^^^^       ^^^^^          
 >arg : unknown
 >    : ^^^^^^^
 
 declare function assert(condition: boolean): asserts condition;
 >assert : (condition: boolean) => asserts condition
->       : ^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^       ^^^^^                 
 >condition : boolean
 >          : ^^^^^^^
 
@@ -707,11 +707,11 @@ function test1(foo: Foo): {value: {type: 'A'}; a?: number} {
 >assert(doesValueAtDeepPathSatisfy(foo, ['value', 'type'], isA)) : void
 >                                                                : ^^^^
 >assert : (condition: boolean) => asserts condition
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^
 >doesValueAtDeepPathSatisfy(foo, ['value', 'type'], isA) : boolean
 >                                                        : ^^^^^^^
 >doesValueAtDeepPathSatisfy : <ObjT extends object, const DeepPathT extends readonly (string | number)[], ValueT>(obj: ObjT, deepPath: DeepPathT, predicate: (arg: unknown) => arg is ValueT) => obj is NarrowByDeepValue<ObjT, DeepPathT, ValueT>
->                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >foo : Foo
 >    : ^^^
 >['value', 'type'] : ["value", "type"]
@@ -721,7 +721,7 @@ function test1(foo: Foo): {value: {type: 'A'}; a?: number} {
 >'type' : "type"
 >       : ^^^^^^
 >isA : (arg: unknown) => arg is "A"
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^       ^^^^^^^^^^^^^^^
 
     return foo;
 >foo : { value: { type: "A"; }; a?: number | undefined; }
@@ -744,13 +744,13 @@ function test2(foo: Foo): {value: {type: 'A'}; a?: number} {
 >assert(!doesValueAtDeepPathSatisfy(foo, ['value', 'type'], isB)) : void
 >                                                                 : ^^^^
 >assert : (condition: boolean) => asserts condition
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^
 >!doesValueAtDeepPathSatisfy(foo, ['value', 'type'], isB) : boolean
 >                                                         : ^^^^^^^
 >doesValueAtDeepPathSatisfy(foo, ['value', 'type'], isB) : boolean
 >                                                        : ^^^^^^^
 >doesValueAtDeepPathSatisfy : <ObjT extends object, const DeepPathT extends readonly (string | number)[], ValueT>(obj: ObjT, deepPath: DeepPathT, predicate: (arg: unknown) => arg is ValueT) => obj is NarrowByDeepValue<ObjT, DeepPathT, ValueT>
->                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >foo : Foo
 >    : ^^^
 >['value', 'type'] : ["value", "type"]
@@ -760,7 +760,7 @@ function test2(foo: Foo): {value: {type: 'A'}; a?: number} {
 >'type' : "type"
 >       : ^^^^^^
 >isB : (arg: unknown) => arg is "B"
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^       ^^^^^^^^^^^^^^^
 
     return foo;
 >foo : { value: { type: "A"; }; a?: number | undefined; }
@@ -798,8 +798,8 @@ type Union = { premium: false } | { premium: true };
 >     : ^^^^
 
 declare const checkIsPremium: (a: Union) => a is Union & Premium;
->checkIsPremium : (a: Union) => a is { premium: true; } & Premium
->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>checkIsPremium : (a: Union) => a is Union & Premium
+>               : ^^^^^^^^^^^^^^     ^^^^^   ^^^^^^^
 >a : Union
 >  : ^^^^^
 

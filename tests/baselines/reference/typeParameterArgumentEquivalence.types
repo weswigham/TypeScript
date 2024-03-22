@@ -21,16 +21,16 @@ function foo<T>() {
 >x = y : (item: T) => boolean
 >      : ^^^^^^^^^^^^^^^^^^^^
 >x : (item: number) => boolean
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>  : ^^^^^^^      ^^^^^^^^^^^^
 >y : (item: T) => boolean
 >  : ^^^^^^^^^^^^^^^^^^^^
 
     y = x;  // Shound be an error
 >y = x : (item: number) => boolean
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^      ^^^^^^^^^^^^
 >y : (item: T) => boolean
 >  : ^^^^^^^^^^^^^^^^^^^^
 >x : (item: number) => boolean
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>  : ^^^^^^^      ^^^^^^^^^^^^
 }
 

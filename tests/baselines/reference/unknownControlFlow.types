@@ -960,21 +960,21 @@ function deepEquals<T>(a: T, b: T): boolean {
 >Array.isArray(a) : boolean
 >                 : ^^^^^^^
 >Array.isArray : (arg: any) => arg is any[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >Array : ArrayConstructor
 >      : ^^^^^^^^^^^^^^^^
 >isArray : (arg: any) => arg is any[]
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >a : T & object
 >  : ^^^^^^^^^^
 >Array.isArray(b) : boolean
 >                 : ^^^^^^^
 >Array.isArray : (arg: any) => arg is any[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >Array : ArrayConstructor
 >      : ^^^^^^^^^^^^^^^^
 >isArray : (arg: any) => arg is any[]
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >b : T & object
 >  : ^^^^^^^^^^
 
@@ -990,11 +990,11 @@ function deepEquals<T>(a: T, b: T): boolean {
 >Object.keys(a) : string[]
 >               : ^^^^^^^^
 >Object.keys : (o: object) => string[]
->            : ^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^      ^^^^^^^^^^^^^
 >Object : ObjectConstructor
 >       : ^^^^^^^^^^^^^^^^^
 >keys : (o: object) => string[]
->     : ^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^      ^^^^^^^^^^^^^
 >a : T & object
 >  : ^^^^^^^^^^
 >length : number
@@ -1004,11 +1004,11 @@ function deepEquals<T>(a: T, b: T): boolean {
 >Object.keys(b) : string[]
 >               : ^^^^^^^^
 >Object.keys : (o: object) => string[]
->            : ^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^      ^^^^^^^^^^^^^
 >Object : ObjectConstructor
 >       : ^^^^^^^^^^^^^^^^^
 >keys : (o: object) => string[]
->     : ^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^      ^^^^^^^^^^^^^
 >b : T & object
 >  : ^^^^^^^^^^
 >length : number
@@ -1125,7 +1125,7 @@ ff1(null, 'foo');  // Error
 >ff1(null, 'foo') : void
 >                 : ^^^^
 >ff1 : <T>(t: T, k: keyof T) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^      ^^^^^^^^^^
 >'foo' : "foo"
 >      : ^^^^^
 
@@ -1133,7 +1133,7 @@ ff2(null, 'foo');  // Error
 >ff2(null, 'foo') : void
 >                 : ^^^^
 >ff2 : <T>(t: T & {}, k: keyof T) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^     ^^^^^      ^^^^^^^^^^
 >'foo' : "foo"
 >      : ^^^^^
 
@@ -1141,7 +1141,7 @@ ff3(null, 'foo');
 >ff3(null, 'foo') : void
 >                 : ^^^^
 >ff3 : <T>(t: T, k: keyof (T & {})) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^       ^      ^^^^^^^^^
 >'foo' : "foo"
 >      : ^^^^^
 
@@ -1149,7 +1149,7 @@ ff4(null, 'foo');  // Error
 >ff4(null, 'foo') : void
 >                 : ^^^^
 >ff4 : <T>(t: T & {}, k: keyof (T & {})) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^     ^^^^^       ^      ^^^^^^^^^
 >'foo' : "foo"
 >      : ^^^^^
 
@@ -1611,7 +1611,7 @@ function fx20(value: Either) {
 >assertNever(value) : never
 >                   : ^^^^^
 >assertNever : (v: never) => never
->            : ^^^^^^^^^^^^^^^^^^^
+>            : ^^^^     ^^^^^^^^^^
 >value : never
 >      : ^^^^^
     }

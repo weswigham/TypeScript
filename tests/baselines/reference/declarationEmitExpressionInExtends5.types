@@ -20,8 +20,8 @@ namespace Test
 >        : ^^^^^^^
 >getClass<IFace>() : IFace
 >                  : ^^^^^
->getClass : <T>() => new () => T
->         : ^^^^^^^^^^^^^^^^^^^^
+>getClass : <T>() => (new () => T)
+>         : ^^^^^^^^^           ^ 
 	{
 	}
 

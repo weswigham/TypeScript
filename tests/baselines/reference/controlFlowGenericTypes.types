@@ -133,13 +133,13 @@ interface Box<T> {
 
 declare function isBox(x: any): x is Box<unknown>;
 >isBox : (x: any) => x is Box<unknown>
->      : ^^^^   ^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^   ^^^^^     ^^^         
 >x : any
 >  : ^^^
 
 declare function isUndefined(x: unknown): x is undefined;
 >isUndefined : (x: unknown) => x is undefined
->            : ^^^^       ^^^^^^^^^^^^^^^^^^^
+>            : ^^^^       ^^^^^              
 >x : unknown
 >  : ^^^^^^^
 
@@ -159,7 +159,7 @@ function g1<T extends Box<T> | undefined>(x: T) {
 >isBox(x) : boolean
 >         : ^^^^^^^
 >isBox : (x: any) => x is Box<unknown>
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^   ^^^^^^^^^^^^^^^^^^^^^^
 >x : Box<T> | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 
@@ -185,7 +185,7 @@ function g2<T extends Box<T> | undefined>(x: T) {
 >isUndefined(x) : boolean
 >               : ^^^^^^^
 >isUndefined : (x: unknown) => x is undefined
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^       ^^^^^^^^^^^^^^^^^^^
 >x : Box<T> | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 
@@ -211,7 +211,7 @@ function g3<T extends Box<T> | undefined>(x: T) {
 >isBox(x) : boolean
 >         : ^^^^^^^
 >isBox : (x: any) => x is Box<unknown>
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^   ^^^^^^^^^^^^^^^^^^^^^^
 >x : Box<T> | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 
@@ -235,7 +235,7 @@ function g4<T extends Box<T> | undefined>(x: T) {
 >isUndefined(x) : boolean
 >               : ^^^^^^^
 >isUndefined : (x: unknown) => x is undefined
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^       ^^^^^^^^^^^^^^^^^^^
 >x : Box<T> | undefined
 >  : ^^^^^^^^^^^^^^^^^^
 
@@ -274,8 +274,8 @@ export function bounceAndTakeIfA<AB extends 'A' | 'B'>(value: AB): AB {
         takeA(value);
 >takeA(value) : void
 >             : ^^^^
->takeA : (val: "A") => void
->      : ^^^^^^^^^^^^^^^^^^
+>takeA : (val: 'A') => void
+>      : ^^^^^^   ^^^^^^^^^
 >value : "A"
 >      : ^^^
 
@@ -803,11 +803,11 @@ class SqlTable<T> {
 >this.validateRow(row) : void
 >                      : ^^^^
 >this.validateRow : (_row: Partial<SqlInsertSet<T>>) => void
->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                 : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^ ^  ^^^^^^^^^
 >this : this
 >     : ^^^^
 >validateRow : (_row: Partial<SqlInsertSet<T>>) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^ ^  ^^^^^^^^^
 >row : SqlInsertSet<T>
 >    : ^^^^^^^^^^^^^^^
     }

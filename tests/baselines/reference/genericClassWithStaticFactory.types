@@ -726,11 +726,11 @@ module Editor {
 >this.insertEntryBefore(entry) : List<T>
 >                              : ^^^^^^^
 >this.insertEntryBefore : (entry: List<T>) => List<T>
->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                       : ^^^^^^^^^^^^ ^ ^^^^^^^^^^^^
 >this : this
 >     : ^^^^
 >insertEntryBefore : (entry: List<T>) => List<T>
->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                  : ^^^^^^^^^^^^ ^ ^^^^^^^^^^^^
 >entry : List<T>
 >      : ^^^^^^^
         }

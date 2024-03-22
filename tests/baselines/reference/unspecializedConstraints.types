@@ -154,11 +154,11 @@ module ts {
 >this.getProperty(i) : Property
 >                    : ^^^^^^^^
 >this.getProperty : (index: number) => Property
->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                 : ^^^^^^^^      ^^^^^^^^^^^^^
 >this : this
 >     : ^^^^
 >getProperty : (index: number) => Property
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^      ^^^^^^^^^^^^^
 >i : number
 >  : ^^^^^^
 
@@ -168,11 +168,11 @@ module ts {
 >that.getPropertyByName(thisProp.name) : Property
 >                                      : ^^^^^^^^
 >that.getPropertyByName : (name: string) => Property
->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                       : ^^^^^^^      ^^^^^^^^^^^^^
 >that : Type
 >     : ^^^^
 >getPropertyByName : (name: string) => Property
->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                  : ^^^^^^^      ^^^^^^^^^^^^^
 >thisProp.name : string
 >              : ^^^^^^
 >thisProp : Property
@@ -237,7 +237,7 @@ module ts {
 >setEquals(this.getSignatures(), that.getSignatures()) : boolean
 >                                                      : ^^^^^^^
 >setEquals : <T extends Equals<T>>(a: T[], b: T[]) => boolean
->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^  ^^^^^^^^^^^^
 >this.getSignatures() : Signature[]
 >                     : ^^^^^^^^^^^
 >this.getSignatures : () => Signature[]
@@ -540,7 +540,7 @@ module ts {
 >arrayEquals(this.parameters, other.parameters) : boolean
 >                                               : ^^^^^^^
 >arrayEquals : <T extends Equals<T>>(a: T[], b: T[]) => boolean
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^  ^^^^^^^^^^^^
 >this.parameters : Parameter[]
 >                : ^^^^^^^^^^^
 >this : this
@@ -558,7 +558,7 @@ module ts {
 >arrayEquals(this.typeParameters, other.typeParameters) : boolean
 >                                                       : ^^^^^^^
 >arrayEquals : <T extends Equals<T>>(a: T[], b: T[]) => boolean
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^  ^^^^^^^^^^^^
 >this.typeParameters : TypeParameter[]
 >                    : ^^^^^^^^^^^^^^^
 >this : this
@@ -744,11 +744,11 @@ module ts {
 >hasOwnProperty.call(map, key) : any
 >                              : ^^^
 >hasOwnProperty.call : (this: Function, thisArg: any, ...argArray: any[]) => any
->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^     ^^^^^^^^
 >hasOwnProperty : (v: PropertyKey) => boolean
 >               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >call : (this: Function, thisArg: any, ...argArray: any[]) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^     ^^^^^^^^
 >map : Map<T>
 >    : ^^^^^^
 >key : string
@@ -777,11 +777,11 @@ module ts {
 >hasOwnProperty.call(map, key) : any
 >                              : ^^^
 >hasOwnProperty.call : (this: Function, thisArg: any, ...argArray: any[]) => any
->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^     ^^^^^^^^
 >hasOwnProperty : (v: PropertyKey) => boolean
 >               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >call : (this: Function, thisArg: any, ...argArray: any[]) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^     ^^^^^^^^
 >map : Map<T>
 >    : ^^^^^^
 >key : string

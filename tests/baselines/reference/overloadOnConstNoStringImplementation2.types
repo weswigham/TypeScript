@@ -28,8 +28,8 @@ class C implements I {
 >  : ^^^^
 
     x1(a: number, callback: (x: any) => number) {
->x1 : (a: number, callback: (x: "hi") => number) => any
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x1 : (a: number, callback: (x: 'hi') => number) => any
+>   : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >a : number
 >  : ^^^^^^
 >callback : (x: any) => number
@@ -41,7 +41,7 @@ class C implements I {
 >callback('hi') : number
 >               : ^^^^^^
 >callback : (x: any) => number
->         : ^^^^^^^^^^^^^^^^^^
+>         : ^^^^   ^^^^^^^^^^^
 >'hi' : "hi"
 >     : ^^^^
 
@@ -49,7 +49,7 @@ class C implements I {
 >callback('bye') : number
 >                : ^^^^^^
 >callback : (x: any) => number
->         : ^^^^^^^^^^^^^^^^^^
+>         : ^^^^   ^^^^^^^^^^^
 >'bye' : "bye"
 >      : ^^^^^
 
@@ -63,7 +63,7 @@ class C implements I {
 >callback(hm) : number
 >             : ^^^^^^
 >callback : (x: any) => number
->         : ^^^^^^^^^^^^^^^^^^
+>         : ^^^^   ^^^^^^^^^^^
 >hm : string
 >   : ^^^^^^
 
@@ -71,7 +71,7 @@ class C implements I {
 >callback(1) : number
 >            : ^^^^^^
 >callback : (x: any) => number
->         : ^^^^^^^^^^^^^^^^^^
+>         : ^^^^   ^^^^^^^^^^^
 >1 : 1
 >  : ^
     }
@@ -84,12 +84,12 @@ var c: C;
 c.x1(1, (x: 'hi') => { return 1; } );
 >c.x1(1, (x: 'hi') => { return 1; } ) : any
 >                                     : ^^^
->c.x1 : (a: number, callback: (x: "hi") => number) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>c.x1 : (a: number, callback: (x: 'hi') => number) => any
+>     : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >c : C
 >  : ^
->x1 : (a: number, callback: (x: "hi") => number) => any
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x1 : (a: number, callback: (x: 'hi') => number) => any
+>   : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >1 : 1
 >  : ^
 >(x: 'hi') => { return 1; } : (x: 'hi') => number
@@ -102,12 +102,12 @@ c.x1(1, (x: 'hi') => { return 1; } );
 c.x1(1, (x: 'bye') => { return 1; } ); 
 >c.x1(1, (x: 'bye') => { return 1; } ) : any
 >                                      : ^^^
->c.x1 : (a: number, callback: (x: "hi") => number) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>c.x1 : (a: number, callback: (x: 'hi') => number) => any
+>     : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >c : C
 >  : ^
->x1 : (a: number, callback: (x: "hi") => number) => any
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x1 : (a: number, callback: (x: 'hi') => number) => any
+>   : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >1 : 1
 >  : ^
 >(x: 'bye') => { return 1; } : (x: 'bye') => number
@@ -120,12 +120,12 @@ c.x1(1, (x: 'bye') => { return 1; } );
 c.x1(1, (x: string) => { return 1; } );
 >c.x1(1, (x: string) => { return 1; } ) : any
 >                                       : ^^^
->c.x1 : (a: number, callback: (x: "hi") => number) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>c.x1 : (a: number, callback: (x: 'hi') => number) => any
+>     : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >c : C
 >  : ^
->x1 : (a: number, callback: (x: "hi") => number) => any
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x1 : (a: number, callback: (x: 'hi') => number) => any
+>   : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >1 : 1
 >  : ^
 >(x: string) => { return 1; } : (x: string) => number
@@ -138,12 +138,12 @@ c.x1(1, (x: string) => { return 1; } );
 c.x1(1, (x: number) => { return 1; } );
 >c.x1(1, (x: number) => { return 1; } ) : any
 >                                       : ^^^
->c.x1 : (a: number, callback: (x: "hi") => number) => any
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>c.x1 : (a: number, callback: (x: 'hi') => number) => any
+>     : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >c : C
 >  : ^
->x1 : (a: number, callback: (x: "hi") => number) => any
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x1 : (a: number, callback: (x: 'hi') => number) => any
+>   : ^^^^      ^^^^^^^^^^^^                   ^^^^^^^^
 >1 : 1
 >  : ^
 >(x: number) => { return 1; } : (x: number) => number

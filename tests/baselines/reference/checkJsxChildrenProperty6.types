@@ -111,7 +111,7 @@ let k1 =
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 
     </Comp>;
 >Comp : (p: Prop) => JSX.Element
@@ -145,7 +145,7 @@ let k2 =
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 
     </Comp>;
 >Comp : (p: Prop) => JSX.Element
@@ -173,7 +173,7 @@ let k3 = <Comp a={10} b="hi"><Button />
 ><AnotherButton /> : JSX.Element
 >                  : ^^^^^^^^^^^
 >AnotherButton : (p: any) => JSX.Element
->              : ^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^   ^^^^^^^^^^^^^^^^
 
 </Comp>;
 >Comp : (p: Prop) => JSX.Element

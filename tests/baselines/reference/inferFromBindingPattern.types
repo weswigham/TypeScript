@@ -97,8 +97,8 @@ const [person] = selectJohn();
 >       : ^^^^^^
 >selectJohn() : SelectResult<Person, Person>
 >             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->selectJohn : <K = Person>(props?: SelectProps<Person, K> | undefined) => SelectResult<Person, K>
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>selectJohn : <K = Person>(props?: SelectProps<Person, K>) => SelectResult<Person, K>
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 const [any, whatever] = selectJohn();
 >any : Person
@@ -107,16 +107,16 @@ const [any, whatever] = selectJohn();
 >         : ^^^^^^
 >selectJohn() : SelectResult<Person, Person>
 >             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->selectJohn : <K = Person>(props?: SelectProps<Person, K> | undefined) => SelectResult<Person, K>
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>selectJohn : <K = Person>(props?: SelectProps<Person, K>) => SelectResult<Person, K>
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 const john = selectJohn();
 >john : SelectResult<Person, Person>
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >selectJohn() : SelectResult<Person, Person>
 >             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->selectJohn : <K = Person>(props?: SelectProps<Person, K> | undefined) => SelectResult<Person, K>
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>selectJohn : <K = Person>(props?: SelectProps<Person, K>) => SelectResult<Person, K>
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 const [personAgain, nufinspecial] = john;
 >personAgain : Person
@@ -149,8 +149,8 @@ const isStringTuple = makeTuple(stringy());  // [string]
 >          : ^^^^^^^^^^^^^^^^^^^^^
 >stringy() : string
 >          : ^^^^^^
->stringy : <T = string>(arg?: T | undefined) => T
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>stringy : <T = string>(arg?: T) => T
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 const [isAny] = makeTuple(stringy());  // [string]
 >isAny : string
@@ -161,6 +161,6 @@ const [isAny] = makeTuple(stringy());  // [string]
 >          : ^^^^^^^^^^^^^^^^^^^^^
 >stringy() : string
 >          : ^^^^^^
->stringy : <T = string>(arg?: T | undefined) => T
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>stringy : <T = string>(arg?: T) => T
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 

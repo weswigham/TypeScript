@@ -6,8 +6,8 @@ type X = {
 >  : ^
 
   y?: {
->y : { z?: string | undefined; } | undefined
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>y : { z?: string; } | undefined
+>  : ^^^^^^      ^^^^^^^^^^^^^^^
 
     z?: string;
 >z : string | undefined
@@ -31,7 +31,7 @@ const x: X = {
 // type guard
 function isNotNull<A>(x: A): x is NonNullable<A> {
 >isNotNull : <A>(x: A) => x is NonNullable<A>
->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^^^^     ^^^^^^^^^^^ ^ 
 >x : A
 >  : ^
 
@@ -99,7 +99,7 @@ isNotNull(x?.y?.z) ? title(x.y.z) : null; // should not error
 >title(x.y.z) : string
 >             : ^^^^^^
 >title : (str: string) => string
->      : ^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^      ^^^^^^^^^^^
 >x.y.z : string
 >      : ^^^^^^
 >x.y : { z?: string | undefined; }

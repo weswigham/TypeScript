@@ -54,16 +54,16 @@ f1(TestType.bar)
 f2('foo')
 >f2('foo') : void
 >          : ^^^^
->f2 : (f: "foo" | "bar") => void
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>f2 : (f: TestTypeStr) => void
+>   : ^^^^^^^^^^^^^^^^^^^^^^^^
 >'foo' : "foo"
 >      : ^^^^^
 
 f2('bar')
 >f2('bar') : void
 >          : ^^^^
->f2 : (f: "foo" | "bar") => void
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>f2 : (f: TestTypeStr) => void
+>   : ^^^^^^^^^^^^^^^^^^^^^^^^
 >'bar' : "bar"
 >      : ^^^^^
 

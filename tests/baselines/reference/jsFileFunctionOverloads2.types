@@ -68,7 +68,7 @@ function flatMap(array, iterable = identity) {
 >array : unknown[]
 >      : ^^^^^^^^^
 >iterable : (x: unknown) => unknown
->         : ^^^^^^^^^^^^^^^^^^^^^^^
+>         : ^^^^       ^^^^^^^^^^^^
 >identity : <T_1>(x: T_1) => T_1
 >         : ^^^^^^^^^^^^^^^^^^^^
 
@@ -117,7 +117,7 @@ function flatMap(array, iterable = identity) {
 >iterable(array[i]) : unknown
 >                   : ^^^^^^^
 >iterable : (x: unknown) => unknown
->         : ^^^^^^^^^^^^^^^^^^^^^^^
+>         : ^^^^       ^^^^^^^^^^^^
 >array[i] : unknown
 >         : ^^^^^^^
 >array : unknown[]

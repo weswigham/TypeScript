@@ -71,7 +71,7 @@ var a = bar(1, 1, g);      // Should be number
 >bar(1, 1, g) : number
 >             : ^^^^^^
 >bar : <T, U, V>(x: T, y: U, cb: (x: T, y: U) => V) => V
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >1 : 1
 >  : ^
 >1 : 1
@@ -85,7 +85,7 @@ var a = baz(1, 1, g);      // Should be number
 >baz(1, 1, g) : number
 >             : ^^^^^^
 >baz : <T, U>(x: T, y: T, cb: (x: T, y: T) => U) => U
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >1 : 1
 >  : ^
 >1 : 1
@@ -103,7 +103,7 @@ var b = foo(g);            // Error, number and string are disjoint types
 >foo(g) : unknown
 >       : ^^^^^^^
 >foo : <T>(cb: (x: number, y: string) => T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^                          ^^^^^^^
 >g : <T>(x: T, y: T) => T
 >  : ^^^^^^^^^^^^^^^^^^^^
 
@@ -113,7 +113,7 @@ var b = bar(1, "one", g);  // Error, number and string are disjoint types
 >bar(1, "one", g) : unknown
 >                 : ^^^^^^^
 >bar : <T, U, V>(x: T, y: U, cb: (x: T, y: U) => V) => V
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >1 : 1
 >  : ^
 >"one" : "one"
@@ -127,7 +127,7 @@ var b = bar("one", 1, g);  // Error, number and string are disjoint types
 >bar("one", 1, g) : unknown
 >                 : ^^^^^^^
 >bar : <T, U, V>(x: T, y: U, cb: (x: T, y: U) => V) => V
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >"one" : "one"
 >      : ^^^^^
 >1 : 1
@@ -141,7 +141,7 @@ var b = baz(b, b, g);      // Should be number | string
 >baz(b, b, g) : string | number
 >             : ^^^^^^^^^^^^^^^
 >baz : <T, U>(x: T, y: T, cb: (x: T, y: T) => U) => U
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >b : string | number
 >  : ^^^^^^^^^^^^^^^
 >b : string | number
@@ -159,7 +159,7 @@ var d = foo(h);            // Should be number[] | string[]
 >foo(h) : number[] | string[]
 >       : ^^^^^^^^^^^^^^^^^^^
 >foo : <T>(cb: (x: number, y: string) => T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^                          ^^^^^^^
 >h : <T, U>(x: T, y: U) => T[] | U[]
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -169,7 +169,7 @@ var d = bar(1, "one", h);  // Should be number[] | string[]
 >bar(1, "one", h) : number[] | string[]
 >                 : ^^^^^^^^^^^^^^^^^^^
 >bar : <T, U, V>(x: T, y: U, cb: (x: T, y: U) => V) => V
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >1 : 1
 >  : ^
 >"one" : "one"
@@ -183,7 +183,7 @@ var d = bar("one", 1, h);  // Should be number[] | string[]
 >bar("one", 1, h) : number[] | string[]
 >                 : ^^^^^^^^^^^^^^^^^^^
 >bar : <T, U, V>(x: T, y: U, cb: (x: T, y: U) => V) => V
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >"one" : "one"
 >      : ^^^^^
 >1 : 1
@@ -197,7 +197,7 @@ var d = baz(d, d, g);      // Should be number[] | string[]
 >baz(d, d, g) : number[] | string[]
 >             : ^^^^^^^^^^^^^^^^^^^
 >baz : <T, U>(x: T, y: T, cb: (x: T, y: T) => U) => U
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^    ^     ^     ^^^^^^^
 >d : number[] | string[]
 >  : ^^^^^^^^^^^^^^^^^^^
 >d : number[] | string[]

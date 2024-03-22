@@ -30,7 +30,7 @@ f(1, 2, 3);  // no error
 >f(1, 2, 3) : any
 >           : ^^^
 >f : (x: number, y: number, z: number) => any
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  : ^^^^      ^^^^^      ^^^^^      ^^^^^^^^
 >1 : 1
 >  : ^
 >2 : 2
@@ -130,7 +130,7 @@ o.hasOwnProperty(Symbol.hasInstance);
 >o.hasOwnProperty : (v: PropertyKey) => boolean
 >                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >o : { [x: number]: (value: any) => boolean; a: number; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  : ^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^
 >hasOwnProperty : (v: PropertyKey) => boolean
 >               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Symbol.hasInstance : any

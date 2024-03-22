@@ -155,7 +155,7 @@ var ff1 = ff("hello", ["foo", x => x.length]);
 >ff("hello", ["foo", x => x.length]) : number
 >                                    : ^^^^^^
 >ff : <T, U>(a: T, b: [T, (x: T) => U]) => U
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^^^^^^^^^^^^^ ^      ^     ^ ^^^^^^
 >"hello" : "hello"
 >        : ^^^^^^^
 >["foo", x => x.length] : [string, (x: string) => number]

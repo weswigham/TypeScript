@@ -28,8 +28,8 @@ declare function id3<T extends (x: { foo: any }) => any>(input: T): T;
 declare function id4<T extends (x: { foo?: number }) => any>(input: T): T;
 >id4 : <T extends (x: { foo?: number; }) => any>(input: T) => T
 >    : ^^^^^^^^^^^^^^^                 ^^^^^   ^^^^^^^^^^^^^^^^
->x : { foo?: number | undefined; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>x : { foo?: number; }
+>  : ^^^^^^^^      ^^^
 >foo : number | undefined
 >    : ^^^^^^^^^^^^^^^^^^
 >input : T
@@ -77,7 +77,7 @@ const f12 = id2(function ({ foo = 42 }) { return foo });
 >id2(function ({ foo = 42 }) { return foo }) : ({ foo }: any) => any
 >                                            : ^^^^^^^^^^^^^^^^^^^^^
 >id2 : <T extends (x: any) => any>(input: T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^
 >function ({ foo = 42 }) { return foo } : ({ foo }: any) => any
 >                                       : ^^^^^^^^^^^^^^^^^^^^^
 >foo : any
@@ -93,7 +93,7 @@ const f13 = id3(function ({ foo = 42 }) { return foo });
 >id3(function ({ foo = 42 }) { return foo }) : ({ foo }: { foo: any; }) => any
 >                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >id3 : <T extends (x: { foo: any; }) => any>(input: T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^             ^^^^^^^^^^^^^^^^^^^^^^^^
 >function ({ foo = 42 }) { return foo } : ({ foo }: { foo: any; }) => any
 >                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >foo : any
@@ -108,8 +108,8 @@ const f14 = id4(function ({ foo = 42 }) { return foo });
 >    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >id4(function ({ foo = 42 }) { return foo }) : ({ foo }: { foo?: number | undefined; }) => number
 >                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->id4 : <T extends (x: { foo?: number | undefined; }) => any>(input: T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>id4 : <T extends (x: { foo?: number; }) => any>(input: T) => T
+>    : ^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^^^^^^^
 >function ({ foo = 42 }) { return foo } : ({ foo }: { foo?: number | undefined; }) => number
 >                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >foo : number
@@ -153,7 +153,7 @@ const f22 = id2(function (foo = 42) { return foo });
 >id2(function (foo = 42) { return foo }) : (foo?: any) => any
 >                                        : ^^^^^^^^^^^^^^^^^^
 >id2 : <T extends (x: any) => any>(input: T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^
 >function (foo = 42) { return foo } : (foo?: any) => any
 >                                   : ^^^^^^^^^^^^^^^^^^
 >foo : any
@@ -168,8 +168,8 @@ const f25 = id5(function (foo = 42) { return foo });
 >    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >id5(function (foo = 42) { return foo }) : (foo?: number | undefined) => number
 >                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->id5 : <T extends (x?: number | undefined) => any>(input: T) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>id5 : <T extends (x?: number) => any>(input: T) => T
+>    : ^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^
 >function (foo = 42) { return foo } : (foo?: number | undefined) => number
 >                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >foo : number | undefined
@@ -371,7 +371,7 @@ g5((x = 1) => 0);  // any
 >g5((x = 1) => 0) : (x?: any) => number
 >                 : ^^^^^^^^^^^^^^^^^^^
 >g5 : <T extends (...args: any[]) => any>(x: T) => T
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^
 >(x = 1) => 0 : (x?: any) => number
 >             : ^^^^^^^^^^^^^^^^^^^
 >x : any
@@ -502,13 +502,13 @@ function add(x: number, y = 0): number {
 }
 const memoizedAdd = memoize(add);
 >memoizedAdd : (x: number, y?: number) => number
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 >memoize(add) : (x: number, y?: number) => number
->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>             : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 >memoize : <F extends Function>(func: F) => F
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >add : (x: number, y?: number) => number
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 
 const add2 = (x: number, y = 0): number => x + y;
 >add2 : (x: number, y?: number) => number
@@ -530,13 +530,13 @@ const add2 = (x: number, y = 0): number => x + y;
 
 const memoizedAdd2 = memoize(add2);
 >memoizedAdd2 : (x: number, y?: number) => number
->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>             : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 >memoize(add2) : (x: number, y?: number) => number
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 >memoize : <F extends Function>(func: F) => F
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >add2 : (x: number, y?: number) => number
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 
 const memoizedAdd3 = memoize((x: number, y = 0): number => x + y);
 >memoizedAdd3 : (x: number, y?: number) => number
@@ -576,7 +576,7 @@ export function executeSomething() {
 >execute((root: HTMLElement, debug = true) => {        if (debug) {            root.innerHTML = '';        }    }) : Promise<string>
 >                                                                                                                  : ^^^^^^^^^^^^^^^
 >execute : (script: string | Function) => Promise<string>
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >(root: HTMLElement, debug = true) => {        if (debug) {            root.innerHTML = '';        }    } : (root: HTMLElement, debug?: boolean) => void
 >                                                                                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >root : HTMLElement

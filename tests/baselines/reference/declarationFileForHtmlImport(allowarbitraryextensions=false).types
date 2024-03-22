@@ -37,7 +37,7 @@ window.customElements.define("my-html5-element", mod.HTML5Element);
 >window.customElements.define("my-html5-element", mod.HTML5Element) : void
 >                                                                   : ^^^^
 >window.customElements.define : (name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) => void
->                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                             : ^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >window.customElements : CustomElementRegistry
 >                      : ^^^^^^^^^^^^^^^^^^^^^
 >window : Window & typeof globalThis
@@ -45,7 +45,7 @@ window.customElements.define("my-html5-element", mod.HTML5Element);
 >customElements : CustomElementRegistry
 >               : ^^^^^^^^^^^^^^^^^^^^^
 >define : (name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >"my-html5-element" : "my-html5-element"
 >                   : ^^^^^^^^^^^^^^^^^^
 >mod.HTML5Element : any

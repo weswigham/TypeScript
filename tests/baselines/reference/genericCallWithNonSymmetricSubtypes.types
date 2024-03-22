@@ -159,15 +159,15 @@ var s2: (x: string) => string;
 
 var r7 = foo(s1, s2); // (x: Object) => string;
 >r7 : (x: string) => string
->   : ^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^      ^^^^^^^^^^^
 >foo(s1, s2) : (x: string) => string
->            : ^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^      ^^^^^^^^^^^
 >foo : <T>(x: T, y: T) => T
 >    : ^^^^^^^^^^^^^^^^^^^^
 >s1 : (x: Object) => string
 >   : ^^^^^^^^^^^^^^^^^^^^^
 >s2 : (x: string) => string
->   : ^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^      ^^^^^^^^^^^
 
 var r8 = foo(s2, s1); // (x: string) => string;
 >r8 : (x: Object) => string
@@ -177,7 +177,7 @@ var r8 = foo(s2, s1); // (x: string) => string;
 >foo : <T>(x: T, y: T) => T
 >    : ^^^^^^^^^^^^^^^^^^^^
 >s2 : (x: string) => string
->   : ^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^      ^^^^^^^^^^^
 >s1 : (x: Object) => string
 >   : ^^^^^^^^^^^^^^^^^^^^^
 

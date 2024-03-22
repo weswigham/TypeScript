@@ -32,7 +32,7 @@ interface I {
 
 declare function foo(i: I): I;
 >foo : { (i: I): I; (a: any): any; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >i : I
 >  : ^
 
@@ -43,7 +43,7 @@ declare function foo(a: any): any;
 
 declare function bar(i: C): C;
 >bar : { (i: C): C; (a: any): any; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >i : C
 >  : ^
 
@@ -56,7 +56,7 @@ foo(new C);
 >foo(new C) : I
 >           : ^
 >foo : { (i: I): I; (a: any): any; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >new C : C
 >      : ^
 >C : typeof C
@@ -69,7 +69,7 @@ var i: I;
 bar(i);
 >bar(i) : any
 >bar : { (i: C): C; (a: any): any; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >i : I
 >  : ^
 

@@ -38,8 +38,8 @@ cases(fn(opts => { }));
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^
 >fn(opts => { }) : Mock<[opts: any]>
 >                : ^^^^^^^^^^^^^^^^^
->fn : <Y extends any[]>(implementation?: ((...args: Y) => any) | undefined) => Mock<Y>
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>fn : <Y extends any[]>(implementation?: (...args: Y) => any) => Mock<Y>
+>   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^          ^        ^^^^^^^^^^^^
 >opts => { } : (opts: any) => void
 >            : ^^^^^^^^^^^^^^^^^^^
 >opts : any

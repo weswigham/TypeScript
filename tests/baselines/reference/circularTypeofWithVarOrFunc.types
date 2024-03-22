@@ -22,8 +22,8 @@ type typeAlias2 = typeof varOfAliasedType2;
 >                  : ^^^
 
 function func(): typeAlias3 { return null; }
->func : () => any
->     : ^^^^^^^^^
+>func : () => typeAlias3
+>     : ^^^^^^^^^^^^^^^^
 
 var varOfAliasedType3 = func();
 >varOfAliasedType3 : any
@@ -58,8 +58,8 @@ type R = ReturnType<typeof mul>;
 >    : ^^^^^^^^^^^^^^^^^^^^^
 
 function mul(input: Input): R {
->mul : (input: Input) => any
->    : ^^^^^^^^^^^^^^^^^^^^^
+>mul : (input: Input) => R
+>    : ^^^^^^^^^^^^^^^^^^^
 >input : Input
 >      : ^^^^^
 
@@ -89,8 +89,8 @@ type R2 = ReturnType<typeof f>;
 >  : ^^^^^^^^^
 
 function f(): R2 { return 0; }
->f : () => any
->  : ^^^^^^^^^
+>f : () => R2
+>  : ^^^^^^^^
 >0 : 0
 >  : ^
 

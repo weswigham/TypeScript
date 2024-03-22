@@ -641,8 +641,8 @@ function C2(transform: "-moz-initial" | (string & {})) { return 12; }
 C2(`rotate(${interpolatedStyle.rotate}dig)`);
 >C2(`rotate(${interpolatedStyle.rotate}dig)`) : number
 >                                             : ^^^^^^
->C2 : (transform: (string & {}) | "-moz-initial") => number
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>C2 : (transform: "-moz-initial" | (string & {})) => number
+>   : ^^^^^^^^^^^^                              ^^^^^^^^^^^
 >`rotate(${interpolatedStyle.rotate}dig)` : `rotate(${number}dig)`
 >                                         : ^^^^^^^^^^^^^^^^^^^^^^
 >interpolatedStyle.rotate : number

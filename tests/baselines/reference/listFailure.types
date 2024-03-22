@@ -133,7 +133,7 @@ module Editor {
 >ListRemoveEntry(this.next) : List<T>
 >                           : ^^^^^^^
 >ListRemoveEntry : <U>(entry: List<U>) => List<U>
->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                : ^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^
 >this.next : List<T>
 >          : ^^^^^^^
 >this : this

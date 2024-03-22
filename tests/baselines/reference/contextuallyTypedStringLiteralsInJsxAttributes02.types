@@ -113,11 +113,11 @@ const b0 = <MainButton {...{onClick: (k) => {console.log(k)}}} extra />;  // k h
 >console.log(k) : void
 >               : ^^^^
 >console.log : (message?: any, ...optionalParams: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (message?: any, ...optionalParams: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >k : "left" | "right"
 >  : ^^^^^^^^^^^^^^^^
 >extra : true
@@ -139,11 +139,11 @@ const b2 = <MainButton onClick={(k)=>{console.log(k)}} extra />;  // k has type 
 >console.log(k) : void
 >               : ^^^^
 >console.log : (message?: any, ...optionalParams: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (message?: any, ...optionalParams: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >k : "left" | "right"
 >  : ^^^^^^^^^^^^^^^^
 >extra : true
@@ -205,11 +205,11 @@ const c1 = <NoOverload  {...{onClick: (k) => {console.log(k)}}} extra />;  // k 
 >console.log(k) : void
 >               : ^^^^
 >console.log : (message?: any, ...optionalParams: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (message?: any, ...optionalParams: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^
 >k : "left" | "right"
 >  : ^^^^^^^^^^^^^^^^
 >extra : true

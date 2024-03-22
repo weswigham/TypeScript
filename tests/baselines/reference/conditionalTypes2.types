@@ -97,7 +97,7 @@ function f3<A, B extends A>(a: Invariant<A>, b: Invariant<B>) {
 // Extract<T, Function> is a T that is known to be a Function
 function isFunction<T>(value: T): value is Extract<T, Function> {
 >isFunction : <T>(value: T) => value is Extract<T, Function>
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^^^^^^^^^^^         ^^^^^^^ ^  ^^^^^^^^ 
 >value : T
 >      : ^
 
@@ -260,7 +260,7 @@ function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBar(x) : void
 >          : ^^^^
 >fooBar : (x: { foo: string; bar: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >x : Extract<Extract<T, Foo>, Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -268,7 +268,7 @@ function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBar(y) : void
 >          : ^^^^
 >fooBar : (x: { foo: string; bar: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >y : Extract<T, Foo & Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^
 
@@ -276,7 +276,7 @@ function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBar(z) : void
 >          : ^^^^
 >fooBar : (x: { foo: string; bar: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >z : Extract2<T, Foo, Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^
 }
@@ -295,7 +295,7 @@ function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBat(x) : void
 >          : ^^^^
 >fooBat : (x: { foo: string; bat: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >x : Extract<Extract<T, Foo>, Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -303,7 +303,7 @@ function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBat(y) : void
 >          : ^^^^
 >fooBat : (x: { foo: string; bat: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >y : Extract<T, Foo & Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^
 
@@ -311,7 +311,7 @@ function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: E
 >fooBat(z) : void
 >          : ^^^^
 >fooBat : (x: { foo: string; bat: string; }) => void
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^                             ^^^^^^^^^
 >z : Extract2<T, Foo, Bar>
 >  : ^^^^^^^^^^^^^^^^^^^^^
 }
@@ -356,15 +356,15 @@ class Vector<T> implements Seq<T> {
     }
     partition2<U extends T>(predicate:(v:T)=>v is U): [Vector<U>,Vector<Exclude<T, U>>];
 >partition2 : { <U extends T>(predicate: (v: T) => v is U): [Vector<U>, Vector<Exclude<T, U>>]; (predicate: (x: T) => boolean): [Vector<T>, Vector<T>]; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^          ^^^^ ^^^^^^ ^   ^^^^^^ ^^^^^^^ ^  ^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^          ^^^^ ^^^^^^ ^   ^^^^^^ ^^^^^^^ ^  ^   ^^^^^^^^^^^^^^    ^            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >predicate : (v: T) => v is U
->          : ^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^     ^
 >v : T
 >  : ^
 
     partition2(predicate:(x:T)=>boolean): [Vector<T>,Vector<T>];
 >partition2 : { <U extends T>(predicate: (v: T) => v is U): [Vector<U>, Vector<Exclude<T, U>>]; (predicate: (x: T) => boolean): [Vector<T>, Vector<T>]; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^            ^^^ ^^^^^^ ^   ^^^^^^ ^  ^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^            ^^^ ^^^^^^ ^   ^^^^^^ ^  ^^^
 >predicate : (x: T) => boolean
 >          : ^^^^^^^^^^       
 >x : T
@@ -372,7 +372,7 @@ class Vector<T> implements Seq<T> {
 
     partition2<U extends T>(predicate:(v:T)=>boolean): [Vector<U>,Vector<any>] {
 >partition2 : { <U_1 extends T>(predicate: (v: T) => v is U_1): [Vector<U_1>, Vector<Exclude<T, U_1>>]; (predicate: (x: T) => boolean): [Vector<T>, Vector<T>]; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >predicate : (v: T) => boolean
 >          : ^^^^^^^^^^       
 >v : T
@@ -438,7 +438,7 @@ function foo<T>(value: T) {
 >toString1(value) : string
 >                 : ^^^^^^
 >toString1 : (value: object | Function) => string
->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^         ^^^^^^^^^^^^^^^^^^^
 >value : Extract<T, Function>
 >      : ^^^^^^^^^^^^^^^^^^^^
 
@@ -652,9 +652,9 @@ exportCommand(save);
 >exportCommand(save) : void
 >                    : ^^^^
 >exportCommand : <TResponse>(functionToCall: IExportCallback<TResponse>) => void
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->save : (_response: IResponse<string>) => void
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^ ^^^^^^^^^
+>save : (_response: IRootResponse<string>) => void
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 
 declare function exportCommand<TResponse>(functionToCall: IExportCallback<TResponse>): void;
 >exportCommand : <TResponse>(functionToCall: IExportCallback<TResponse>) => void
@@ -745,9 +745,9 @@ gg(ff);
 >gg(ff) : void
 >       : ^^^^
 >gg : <T>(f: (x: Foo3<T>) => void) => void
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->ff : (x: { x: string; }) => void
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^^^^    ^^^^ ^          ^^^^^^^^^
+>ff : (x: Foo3<string>) => void
+>   : ^^^^^^^^        ^^^^^^^^^
 
 // Repro from #41613
 

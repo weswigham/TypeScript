@@ -454,7 +454,7 @@ function doWork<T>(): Result<T> {
 
 function isSuccess<T>(result: Result<T>): result is T {
 >isSuccess : <T>(result: Result<T>) => result is T
->          : ^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^^^^^^^^^ ^ ^^^^^          ^
 >result : Result<T>
 >       : ^^^^^^^^^
 
@@ -470,8 +470,8 @@ function isSuccess<T>(result: Result<T>): result is T {
 }
 
 function isFailure<T>(result: Result<T>): result is FAILURE {
->isFailure : <T>(result: Result<T>) => result is "FAILURE"
->          : ^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^
+>isFailure : <T>(result: Result<T>) => result is FAILURE
+>          : ^^^^^^^^^^^^^^^^^^ ^ ^^^^^          ^^^^^^^
 >result : Result<T>
 >       : ^^^^^^^^^
 
@@ -511,7 +511,7 @@ if (isSuccess(result)) {
 >isSuccess(result) : boolean
 >                  : ^^^^^^^
 >isSuccess : <T>(result: Result<T>) => result is T
->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^
 >result : Result<number>
 >       : ^^^^^^^^^^^^^^
 
@@ -519,7 +519,7 @@ if (isSuccess(result)) {
 >increment(result) : number
 >                  : ^^^^^^
 >increment : (x: number) => number
->          : ^^^^^^^^^^^^^^^^^^^^^
+>          : ^^^^      ^^^^^^^^^^^
 >result : number
 >       : ^^^^^^
 }
@@ -568,11 +568,11 @@ export function Set<K extends string>(...keys: K[]): Record<K, true | undefined>
 >keys.forEach(key => result[key] = true) : void
 >                                        : ^^^^
 >keys.forEach : (callbackfn: (value: K, index: number, array: K[]) => void, thisArg?: any) => void
->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >keys : K[]
 >     : ^^^
 >forEach : (callbackfn: (value: K, index: number, array: K[]) => void, thisArg?: any) => void
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^
 >key => result[key] = true : (key: K) => boolean
 >                          : ^^^^^^^^^^^^^^^^^^^
 >key : K
@@ -605,11 +605,11 @@ export function keys<K extends string, V>(obj: Record<K, V>): K[] {
 >Object.keys(obj) : string[]
 >                 : ^^^^^^^^
 >Object.keys : (o: object) => string[]
->            : ^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^      ^^^^^^^^^^^^^
 >Object : ObjectConstructor
 >       : ^^^^^^^^^^^^^^^^^
 >keys : (o: object) => string[]
->     : ^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^      ^^^^^^^^^^^^^
 >obj : Record<K, V>
 >    : ^^^^^^^^^^^^
 }
@@ -626,7 +626,7 @@ const langCodeSet = Set('fr', 'en', 'es', 'it', 'nl')
 >Set('fr', 'en', 'es', 'it', 'nl') : Record<"fr" | "en" | "es" | "it" | "nl", true>
 >                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Set : <K extends string>(...keys: K[]) => Record<K, true>
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
 >'fr' : "fr"
 >     : ^^^^
 >'en' : "en"
@@ -650,7 +650,7 @@ export const langCodes = keys(langCodeSet)
 >keys(langCodeSet) : ("fr" | "en" | "es" | "it" | "nl")[]
 >                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >keys : <K extends string, V>(obj: Record<K, V>) => K[]
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^  ^ ^^^^^^  
 >langCodeSet : Record<"fr" | "en" | "es" | "it" | "nl", true>
 >            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -660,11 +660,11 @@ const arr: Obj[] = langCodes.map(code => ({ code }))
 >langCodes.map(code => ({ code })) : { code: "fr" | "en" | "es" | "it" | "nl"; }[]
 >                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >langCodes.map : <U>(callbackfn: (value: "fr" | "en" | "es" | "it" | "nl", index: number, array: ("fr" | "en" | "es" | "it" | "nl")[]) => U, thisArg?: any) => U[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^
 >langCodes : ("fr" | "en" | "es" | "it" | "nl")[]
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >map : <U>(callbackfn: (value: "fr" | "en" | "es" | "it" | "nl", index: number, array: ("fr" | "en" | "es" | "it" | "nl")[]) => U, thisArg?: any) => U[]
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^
 >code => ({ code }) : (code: "fr" | "en" | "es" | "it" | "nl") => { code: "fr" | "en" | "es" | "it" | "nl"; }
 >                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >code : "fr" | "en" | "es" | "it" | "nl"

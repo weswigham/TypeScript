@@ -39,7 +39,7 @@ function impl<A, B extends keyof A>(a: A, b: B) {
 >find(item) : [A, B]
 >           : ^^^^^^
 >find : <T, K extends keyof T>(o: T[K]) => [T, K]
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^
 >item : A[B]
 >     : ^^^^
 }

@@ -213,7 +213,7 @@ function Comp() {
 >displayEnum("VALUE") : Capitalize<string>
 >                     : ^^^^^^^^^^^^^^^^^^
 >displayEnum : (value: string) => Capitalize<string>
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^
 >"VALUE" : "VALUE"
 >        : ^^^^^^^
 

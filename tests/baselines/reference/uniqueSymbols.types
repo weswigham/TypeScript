@@ -683,16 +683,16 @@ declare function f<T>(x: T): T;
 >  : ^
 
 declare function g(x: typeof s): void;
->g : { (x: typeof s): void; (x: unique symbol): void; }
->  : ^^^^^^       ^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
+>  : ^^^^^^       ^^^^    ^^^^^^       ^  ^^^^^^^^^^
 >x : unique symbol
 >  : ^^^^^^^^^^^^^
 >s : unique symbol
 >  : ^^^^^^^^^^^^^
 
 declare function g(x: typeof N.s): void;
->g : { (x: unique symbol): void; (x: typeof N.s): void; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^  ^^^    ^^^
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
+>  : ^^^^^^       ^^^^^^^^^^^^^^       ^  ^^^    ^^^
 >x : unique symbol
 >  : ^^^^^^^^^^^^^
 >N.s : unique symbol
@@ -1066,16 +1066,16 @@ f<typeof N.s>(N["s"]);
 g(s);
 >g(s) : void
 >     : ^^^^
->g : { (x: unique symbol): void; (x: unique symbol): void; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
+>  : ^^^^^^       ^^^^^^^^^^^^^^       ^  ^^^^^^^^^^
 >s : unique symbol
 >  : ^^^^^^^^^^^^^
 
 g(N.s);
 >g(N.s) : void
 >       : ^^^^
->g : { (x: unique symbol): void; (x: unique symbol): void; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
+>  : ^^^^^^       ^^^^^^^^^^^^^^       ^  ^^^^^^^^^^
 >N.s : unique symbol
 >    : ^^^^^^^^^^^^^
 >N : typeof N
@@ -1086,8 +1086,8 @@ g(N.s);
 g(N["s"]);
 >g(N["s"]) : void
 >          : ^^^^
->g : { (x: unique symbol): void; (x: unique symbol): void; }
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
+>  : ^^^^^^       ^^^^^^^^^^^^^^       ^  ^^^^^^^^^^
 >N["s"] : unique symbol
 >       : ^^^^^^^^^^^^^
 >N : typeof N
@@ -1442,7 +1442,7 @@ function funcInferredReturnType(obj: { method(p: typeof s): void }) {
 >  : ^^^^^^^^^^^^^
 
     return obj;
->obj : { method(p: unique symbol): void; }
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>obj : { method(p: typeof s): void; }
+>    : ^^^^^^^^^^^^       ^^^^^^^^^^^
 }
 

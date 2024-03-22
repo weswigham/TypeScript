@@ -25,9 +25,9 @@ type MyUnion = A | B | C;
 
 const isA = (x: MyUnion): x is A => x.type === "A";
 >isA : (x: MyUnion) => x is A
->    : ^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^     ^
 >(x: MyUnion): x is A => x.type === "A" : (x: MyUnion) => x is A
->                                       : ^^^^^^^^^^^^^^^^^^^^^^
+>                                       : ^^^^^^^^^^^^^^^^     ^
 >x : MyUnion
 >  : ^^^^^^^
 >x.type === "A" : boolean
@@ -233,11 +233,11 @@ function test3(foo: unknown) {
 >Array.isArray(foo) : boolean
 >                   : ^^^^^^^
 >Array.isArray : (arg: any) => arg is any[]
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >Array : ArrayConstructor
 >      : ^^^^^^^^^^^^^^^^
 >isArray : (arg: any) => arg is any[]
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^   ^^^^^^^^^^^^^^^^^
 >foo : unknown
 >    : ^^^^^^^
 >false : false
@@ -305,11 +305,11 @@ function test4() {
 >console.error(err) : void
 >                   : ^^^^
 >console.error : (...data: any[]) => void
->              : ^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >error : (...data: any[]) => void
->      : ^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^     ^^^^^^^^^
 >err : unknown
 >    : ^^^^^^^
         }
@@ -337,7 +337,7 @@ interface Actor extends Entity {
 }
 function isActor(entity: Entity): entity is Actor {
 >isActor : (entity: Entity) => entity is Actor
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^          ^^^^^
 >entity : Entity
 >       : ^^^^^^
 
@@ -413,7 +413,7 @@ function test6(bin: Entity) {
 // https://github.com/microsoft/TypeScript/issues/53005
 function isFunction(x: unknown): x is Function {
 >isFunction : (x: unknown) => x is Function
->           : ^^^^       ^^^^^^^^^^^^^^^^^^
+>           : ^^^^       ^^^^^     ^^^^^^^^
 >x : unknown
 >  : ^^^^^^^
 
@@ -440,7 +440,7 @@ function test7(x: unknown) {
 >isFunction(x) : boolean
 >              : ^^^^^^^
 >isFunction : (x: unknown) => x is Function
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^       ^^^^^^^^^^^^^^^^^^
 >x : unknown
 >  : ^^^^^^^
 >false : false
@@ -456,7 +456,7 @@ function test7(x: unknown) {
 >isFunction(x) : boolean
 >              : ^^^^^^^
 >isFunction : (x: unknown) => x is Function
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^       ^^^^^^^^^^^^^^^^^^
 >x : unknown
 >  : ^^^^^^^
 >true : true

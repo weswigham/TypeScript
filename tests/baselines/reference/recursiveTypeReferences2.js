@@ -84,16 +84,16 @@ type JsonArray = ReadonlyArray<Json>;
 type JsonRecord = {
     readonly [key: string]: Json;
 };
-type Json = boolean | number | string | null | JsonRecord | readonly Json[] | readonly [];
+type Json = boolean | number | string | null | JsonRecord | JsonArray | readonly [];
 /**
  * <T>
  */
 type XMLObject<T> = {
     $A: { [K in keyof T]?: XMLObject<T[K]>[]; };
-    $O: { [K_1 in keyof T]?: {
+    $O: { [K_2 in keyof T]?: {
         $$?: Record<string, string>;
-    } & (T[K_1] extends string ? {
+    } & (T[K_2] extends string ? {
         $: string;
-    } : XMLObject<T[K_1]>); };
+    } : XMLObject<T[K_2]>); };
     $$?: Record<string, string>;
-} & { [K_2 in keyof T]?: T[K_2] extends string ? string : XMLObject<T[K_2]>; };
+} & { [K_3 in keyof T]?: T[K_3] extends string ? string : XMLObject<T[K_3]>; };

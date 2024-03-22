@@ -25,7 +25,7 @@ var s = map("", () => { return { x: identity }; });
 >map("", () => { return { x: identity }; }) : string
 >                                           : ^^^^^^
 >map : <T, U>(x: T, f: () => { x: (s: T) => U; }) => U
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^               ^     ^   ^^^^^^
 >"" : ""
 >   : ^^
 >() => { return { x: identity }; } : () => { x: (y: string) => string; }

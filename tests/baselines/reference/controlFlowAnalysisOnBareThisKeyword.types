@@ -3,7 +3,7 @@
 === controlFlowAnalysisOnBareThisKeyword.ts ===
 declare function isBig(x: any): x is { big: true };
 >isBig : (x: any) => x is { big: true; }
->      : ^^^^   ^^^^^^^^^^^^^^^^^    ^^^
+>      : ^^^^   ^^^^^                   
 >x : any
 >big : true
 >    : ^^^^
@@ -20,7 +20,7 @@ function bigger(this: {}) {
 >isBig(this) : boolean
 >            : ^^^^^^^
 >isBig : (x: any) => x is { big: true; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^
 >this : {}
 >     : ^^
 

@@ -81,7 +81,7 @@ function foo5(x: any) { }
 
 function foo5b(x: A);
 >foo5b : { (x: A): any; (x: C<string>): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : A
 >  : ^
 
@@ -93,7 +93,7 @@ function foo5b(x: C<string>); // ok
 
 function foo5b(x: any) { }
 >foo5b : { (x: A): any; (x: C<string>): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : any
 
 function foo6(x: A);
@@ -114,8 +114,8 @@ function foo6(x: any) { }
 >x : any
 
 function foo7(x: A);
->foo7 : { (x: A): any; (x: { foo: RegExp; }): any; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo7 : { (x: A): any; (x: typeof a): any; }
+>     : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : A
 >  : ^
 
@@ -128,8 +128,8 @@ function foo7(x: typeof a); // ok
 >  : ^^^^^^^^^^^^^^^^
 
 function foo7(x: any) { }
->foo7 : { (x: A): any; (x: { foo: RegExp; }): any; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo7 : { (x: A): any; (x: typeof a): any; }
+>     : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : any
 
 function foo8(x: B);
@@ -151,7 +151,7 @@ function foo8(x: any) { }
 
 function foo9(x: B);
 >foo9 : { (x: B): any; (x: C<string>): any; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : B
 >  : ^
 
@@ -163,12 +163,12 @@ function foo9(x: C<string>); // ok
 
 function foo9(x: any) { }
 >foo9 : { (x: B): any; (x: C<string>): any; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : any
 
 function foo10(x: B);
->foo10 : { (x: B): any; (x: { foo: RegExp; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo10 : { (x: B): any; (x: typeof a): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : B
 >  : ^
 
@@ -181,13 +181,13 @@ function foo10(x: typeof a); // ok
 >  : ^^^^^^^^^^^^^^^^
 
 function foo10(x: any) { }
->foo10 : { (x: B): any; (x: { foo: RegExp; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo10 : { (x: B): any; (x: typeof a): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : any
 
 function foo11(x: B);
->foo11 : { (x: B): any; (x: { foo: E; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo11 : { (x: B): any; (x: typeof b): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : B
 >  : ^
 
@@ -200,13 +200,13 @@ function foo11(x: typeof b); // ok
 >  : ^^^^^^^^^^^
 
 function foo11(x: any) { }
->foo11 : { (x: B): any; (x: { foo: E; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo11 : { (x: B): any; (x: typeof b): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : any
 
 function foo12(x: I);
 >foo12 : { (x: I): any; (x: C<string>): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : I
 >  : ^
 
@@ -218,12 +218,12 @@ function foo12(x: C<string>); // ok
 
 function foo12(x: any) { }
 >foo12 : { (x: I): any; (x: C<string>): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >x : any
 
 function foo13(x: I);
->foo13 : { (x: I): any; (x: { foo: RegExp; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo13 : { (x: I): any; (x: typeof a): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : I
 >  : ^
 
@@ -236,13 +236,13 @@ function foo13(x: typeof a); // ok
 >  : ^^^^^^^^^^^^^^^^
 
 function foo13(x: any) { }
->foo13 : { (x: I): any; (x: { foo: RegExp; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo13 : { (x: I): any; (x: typeof a): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : any
 
 function foo14(x: I);
->foo14 : { (x: I): any; (x: { foo: E; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo14 : { (x: I): any; (x: typeof b): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : I
 >  : ^
 
@@ -255,7 +255,7 @@ function foo14(x: typeof b); // ok
 >  : ^^^^^^^^^^^
 
 function foo14(x: any) { }
->foo14 : { (x: I): any; (x: { foo: E; }): any; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>foo14 : { (x: I): any; (x: typeof b): any; }
+>      : ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^
 >x : any
 

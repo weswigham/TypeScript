@@ -247,11 +247,11 @@ class NotReferencedClass {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
     }
@@ -267,11 +267,11 @@ class NotReferencedClass {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
     }
@@ -291,11 +291,11 @@ class ReferencedInCodeClas {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
 	}
@@ -311,11 +311,11 @@ class ReferencedInCodeClas {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
     }
@@ -331,11 +331,11 @@ class ReferencedInCodeClas {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
     }
@@ -359,11 +359,11 @@ class ReferencedInSignartureClass {
 >console.log(alias) : void
 >                   : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >alias : string
 >      : ^^^^^^
 	}
@@ -435,8 +435,8 @@ let notReferencedFnType: ({ name: alias }: Named) => void;
 >      : ^^^^^^
 
 let referencedInSignartureReturnTypeFnType: ({ name: alias }: Named) => typeof alias;
->referencedInSignartureReturnTypeFnType : ({ name: alias }: Named) => string
->                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>referencedInSignartureReturnTypeFnType : ({ name: alias }: Named) => typeof alias
+>                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^
 >name : any
 >     : ^^^
 >alias : string
@@ -445,8 +445,8 @@ let referencedInSignartureReturnTypeFnType: ({ name: alias }: Named) => typeof a
 >      : ^^^^^^
 
 let referencedInSignartureParamTypeFnType: ({ name: alias }: Named, p: typeof alias) => void;
->referencedInSignartureParamTypeFnType : ({ name: alias }: Named, p: string) => void
->                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
+>referencedInSignartureParamTypeFnType : ({ name: alias }: Named, p: typeof alias) => void
+>                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^    
 >name : any
 >     : ^^^
 >alias : string
@@ -465,8 +465,8 @@ let notReferencedCtorType: new ({ name: alias }: Named) => void;
 >      : ^^^^^^
 
 let referencedInSignartureReturnTypeCtorType: new ({ name: alias }: Named) => typeof alias;
->referencedInSignartureReturnTypeCtorType : new ({ name: alias }: Named) => string
->                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>referencedInSignartureReturnTypeCtorType : new ({ name: alias }: Named) => typeof alias
+>                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^
 >name : any
 >     : ^^^
 >alias : string
@@ -475,8 +475,8 @@ let referencedInSignartureReturnTypeCtorType: new ({ name: alias }: Named) => ty
 >      : ^^^^^^
 
 let referencedInSignartureParamTypeCtorType: new  ({ name: alias }: Named, p: typeof alias) => void;
->referencedInSignartureParamTypeCtorType : new ({ name: alias }: Named, p: string) => void
->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
+>referencedInSignartureParamTypeCtorType : new ({ name: alias }: Named, p: typeof alias) => void
+>                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^    
 >name : any
 >     : ^^^
 >alias : string

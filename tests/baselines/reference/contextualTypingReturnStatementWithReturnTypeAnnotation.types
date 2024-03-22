@@ -7,7 +7,7 @@ type PropOfRaw<T> = readonly T[] | "not-array" | "no-prop";
 
 declare function isString(text: unknown): text is string;
 >isString : (text: unknown) => text is string
->         : ^^^^^^^       ^^^^^^^^^^^^^^^^^^^
+>         : ^^^^^^^       ^^^^^              
 >text : unknown
 >     : ^^^^^^^
 
@@ -44,11 +44,11 @@ function getSpecsFromRaw(
 >getPropFromRaw(prop, isString, "string") : PropOfRaw<string>
 >                                         : ^^^^^^^^^^^^^^^^^
 >getPropFromRaw : <T>(prop: "files" | "include" | "exclude" | "references", validateElement: (value: unknown) => boolean, elementTypeName: string) => PropOfRaw<T>
->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>               : ^^^^^^^^^^                                              ^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^
 >prop : "files" | "include" | "exclude"
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isString : (text: unknown) => text is string
->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>         : ^^^^^^^       ^^^^^^^^^^^^^^^^^^^
 >"string" : "string"
 >         : ^^^^^^^^
 }

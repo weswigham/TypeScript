@@ -53,7 +53,7 @@ const breaks = convert(
 >convert(    createModule({ a: 12 }, { foo() { return true } })) : ModuleWithState<{ a: number; } & MoreState> & ModuleWithState<{ a: number; }> & { foo(): true; }
 >                                                                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >convert : <TState, TActions>(m: ModuleWithState<TState> & TActions) => ModuleWithState<TState & MoreState> & TActions
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     createModule({ a: 12 }, { foo() { return true } })
 >createModule({ a: 12 }, { foo() { return true } }) : ModuleWithState<{ a: number; }> & { foo(): true; }

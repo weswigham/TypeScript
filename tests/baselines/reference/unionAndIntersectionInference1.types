@@ -90,8 +90,8 @@ var result = destructure(value, text => 'string', y => 'other one'); // text: st
 >       : ^^^^^^
 >destructure(value, text => 'string', y => 'other one') : string
 >                                                       : ^^^^^^
->destructure : <a, r>(something: Y | a, haveValue: (value: a) => r, haveY: (value: Y) => r) => r
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>destructure : <a, r>(something: a | Y, haveValue: (value: a) => r, haveY: (value: Y) => r) => r
+>            : ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^        ^     ^^^^^^^^^^        ^     ^^^^^^^
 >value : string | Y
 >      : ^^^^^^^^^^
 >text => 'string' : (text: string) => string
@@ -111,7 +111,7 @@ var result = destructure(value, text => 'string', y => 'other one'); // text: st
 
 function isVoid<a>(value: void | a): value is void {
 >isVoid : <a>(value: void | a) => value is void
->       : ^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^       ^^^^^^             
 >value : void | a
 >      : ^^^^^^^^
 
@@ -122,7 +122,7 @@ function isVoid<a>(value: void | a): value is void {
 
 function isNonVoid<a>(value: void | a) : value is a {
 >isNonVoid : <a>(value: void | a) => value is a
->          : ^^^^^^^^^^^       ^^^^^^^^^^^^^^^^
+>          : ^^^^^^^^^^^       ^^^^^^         ^
 >value : void | a
 >      : ^^^^^^^^
 
@@ -207,8 +207,8 @@ get(foo).toUpperCase(); // Ok
 >                     : ^^^^^^^^^^^^
 >get(foo) : string
 >         : ^^^^^^
->get : <U>(x: void | U) => U
->    : ^^^^^^^^^^^^^^^^^^^^^
+>get : <U>(x: U | void) => U
+>    : ^^^^^^^^       ^^^^^^
 >foo : Maybe<string>
 >    : ^^^^^^^^^^^^^
 >toUpperCase : () => string
@@ -250,7 +250,7 @@ pigify(mbp).oinks; // OK, mbp is treated as Pig
 >pigify(mbp) : Man & Pig
 >            : ^^^^^^^^^
 >pigify : <T>(y: T & Bear) => T & Pig
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^   ^^^^^^^^^^^^^^^^
 >mbp : Man & Bear
 >    : ^^^^^^^^^^
 >oinks : boolean
@@ -262,7 +262,7 @@ pigify(mbp).walks; // Ok, mbp is treated as Man
 >pigify(mbp) : Man & Pig
 >            : ^^^^^^^^^
 >pigify : <T>(y: T & Bear) => T & Pig
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^   ^^^^^^^^^^^^^^^^
 >mbp : Man & Bear
 >    : ^^^^^^^^^^
 >walks : boolean
@@ -284,7 +284,7 @@ const createTestAsync = (): Promise<ITest> => Promise.resolve().then(() => ({ na
 >Promise.resolve().then(() => ({ name: 'test' })) : Promise<ITest | { name: "test"; }>
 >                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Promise.resolve().then : <TResult1 = void, TResult2 = never>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Promise.resolve() : Promise<void>
 >                  : ^^^^^^^^^^^^^
 >Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T_1>(value: T_1 | PromiseLike<T_1>): Promise<Awaited<T_1>>; }
@@ -294,7 +294,7 @@ const createTestAsync = (): Promise<ITest> => Promise.resolve().then(() => ({ na
 >resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T_1>(value: T_1 | PromiseLike<T_1>): Promise<Awaited<T_1>>; }
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >then : <TResult1 = void, TResult2 = never>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >() => ({ name: 'test' }) : () => { name: "test"; }
 >                         : ^^^^^^^^^^^^^^^^^^^^^^^
 >({ name: 'test' }) : { name: "test"; }
@@ -341,7 +341,7 @@ let x1: string = f1('a');
 >f1('a') : "a"
 >        : ^^^
 >f1 : <T, U>(x: T | U) => T | U
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^^^^^^^^   ^^^^^^^^^^^
 >'a' : "a"
 >    : ^^^
 
@@ -377,11 +377,11 @@ const assign = <T, U>(a: T, b: U) => Object.assign(a, b);
 >Object.assign(a, b) : T & U
 >                    : ^^^^^
 >Object.assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_2 extends {}, U_2, V>(target: T_2, source1: U_2, source2: V): T_2 & U_2 & V; <T_3 extends {}, U_3, V_1, W>(target: T_3, source1: U_3, source2: V_1, source3: W): T_3 & U_3 & V_1 & W; (target: object, ...sources: any[]): any; }
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^     ^^^^^^^^^
 >Object : ObjectConstructor
 >       : ^^^^^^^^^^^^^^^^^
 >assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_2 extends {}, U_2, V>(target: T_2, source1: U_2, source2: V): T_2 & U_2 & V; <T_3 extends {}, U_3, V_1, W>(target: T_3, source1: U_3, source2: V_1, source3: W): T_3 & U_3 & V_1 & W; (target: object, ...sources: any[]): any; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^     ^^^^^^^^^
 >a : T
 >  : ^
 >b : U

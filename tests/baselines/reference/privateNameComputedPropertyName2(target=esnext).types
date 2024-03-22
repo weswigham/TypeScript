@@ -44,11 +44,11 @@ console.log(getX(new A));
 >console.log(getX(new A)) : void
 >                         : ^^^^
 >console.log : (...data: any[]) => void
->            : ^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^     ^^^^^^^^^
 >console : Console
 >        : ^^^^^^^
 >log : (...data: any[]) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^^^^^^^^^
 >getX(new A) : number
 >            : ^^^^^^
 >getX : (a: A) => number

@@ -55,13 +55,13 @@ var fn: (s: string) => boolean;
 
 var fn = A.fn;
 >fn : (s: string) => boolean
->   : ^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^      ^^^^^^^^^^^^
 >A.fn : (s: string) => boolean
->     : ^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^      ^^^^^^^^^^^^
 >A : typeof A
 >  : ^^^^^^^^
 >fn : (s: string) => boolean
->   : ^^^^^^^^^^^^^^^^^^^^^^
+>   : ^^^^      ^^^^^^^^^^^^
 
 var fng: <T, U>(s: T) => U;
 >fng : <T, U>(s: T) => U

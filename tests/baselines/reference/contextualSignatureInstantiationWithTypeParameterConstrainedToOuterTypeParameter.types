@@ -31,7 +31,7 @@ var x = h("", f<string>()); // Call should succeed and x should be string. All t
 >h("", f<string>()) : string
 >                   : ^^^^^^
 >h : <V, W>(v: V, func: (v: V) => W) => W
->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  : ^^^^^^^^^^^^^^^^^^^    ^     ^^^^^^^
 >"" : ""
 >   : ^^
 >f<string>() : <U extends string>(u: U) => U

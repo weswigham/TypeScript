@@ -19,13 +19,13 @@ declare function cast<T, U extends T>(x: T, test: (x: T) => x is U): U;
 >x : T
 >  : ^
 >test : (x: T) => x is U
->     : ^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^     ^
 >x : T
 >  : ^
 
 declare function isC(x: A): x is C;
 >isC : (x: A) => x is C
->    : ^^^^^^^^^^^^^^^^
+>    : ^^^^^^^^^^     ^
 >x : A
 >  : ^
 
@@ -43,7 +43,7 @@ function f1(a: A, b: B) {
 >cast(a, isC) : C
 >             : ^
 >cast : <T, U extends T>(x: T, test: (x: T) => x is U) => U
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^          ^^^^^^^
 >a : A
 >  : ^
 >isC : (x: A) => x is C
@@ -55,7 +55,7 @@ function f1(a: A, b: B) {
 >cast(b, isC) : C
 >             : ^
 >cast : <T, U extends T>(x: T, test: (x: T) => x is U) => U
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^          ^^^^^^^
 >b : B
 >  : ^
 >isC : (x: A) => x is C
@@ -92,7 +92,7 @@ function f2(b: B, c: C) {
 >consume(b, c, useA) : void
 >                    : ^^^^
 >consume : <T, U extends T>(t: T, u: U, f: (x: T) => void) => void
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^         ^^^^^^^^^
 >b : B
 >  : ^
 >c : C
@@ -104,7 +104,7 @@ function f2(b: B, c: C) {
 >consume(c, b, useA) : void
 >                    : ^^^^
 >consume : <T, U extends T>(t: T, u: U, f: (x: T) => void) => void
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^         ^^^^^^^^^
 >c : C
 >  : ^
 >b : B
@@ -116,7 +116,7 @@ function f2(b: B, c: C) {
 >consume(b, b, useA) : void
 >                    : ^^^^
 >consume : <T, U extends T>(t: T, u: U, f: (x: T) => void) => void
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^         ^^^^^^^^^
 >b : B
 >  : ^
 >b : B
@@ -128,7 +128,7 @@ function f2(b: B, c: C) {
 >consume(c, c, useA) : void
 >                    : ^^^^
 >consume : <T, U extends T>(t: T, u: U, f: (x: T) => void) => void
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^         ^^^^^^^^^
 >c : C
 >  : ^
 >c : C
@@ -139,11 +139,11 @@ function f2(b: B, c: C) {
 
 declare function every<T, U extends T>(array: readonly T[], f: (x: T) => x is U): array is readonly U[];
 >every : <T, U extends T>(array: readonly T[], f: (x: T) => x is U) => array is readonly U[]
->      : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^    ^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^    ^          ^^^^^^                  ^  
 >array : readonly T[]
 >      : ^^^^^^^^^^^^
 >f : (x: T) => x is U
->  : ^^^^^^^^^^^^^^^^
+>  : ^^^^^^^^^^     ^
 >x : T
 >  : ^
 
@@ -157,7 +157,7 @@ function f3(arr: readonly B[] | readonly C[]) {
 >every(arr, isC) : boolean
 >                : ^^^^^^^
 >every : <T, U extends T>(array: readonly T[], f: (x: T) => x is U) => array is readonly U[]
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^    ^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >arr : readonly B[] | readonly C[]
 >    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isC : (x: A) => x is C
@@ -241,23 +241,23 @@ type HasLocals = Block | FunctionDeclaration;
 
 declare function canHaveLocals(node: Node): node is HasLocals;
 >canHaveLocals : (node: Node) => node is HasLocals
->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>              : ^^^^^^^^^^^^^^^^        ^^^^^^^^^
 >node : Node
 >     : ^^^^
 
 declare function assertNode<T extends Node, U extends T>(node: T | undefined, test: (node: T) => node is U): asserts node is U;
 >assertNode : { <T extends Node, U extends T>(node: T | undefined, test: (node: T) => node is U): asserts node is U; (node: Node | undefined, test: ((node: Node) => boolean) | undefined): void; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^       ^             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^       ^             ^^^^                ^^^^^^^^^^^^^^            ^^^^^^^^        ^^^^                         ^^^^^^^^^^
 >node : T | undefined
 >     : ^^^^^^^^^^^^^
 >test : (node: T) => node is U
->     : ^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^        ^
 >node : T
 >     : ^
 
 declare function assertNode(node: Node | undefined, test: ((node: Node) => boolean) | undefined): void;
 >assertNode : { <T extends Node, U extends T>(node: T | undefined, test: (node: T) => node is U): asserts node is U; (node: Node | undefined, test: ((node: Node) => boolean) | undefined): void; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^^                         ^^^    ^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^       ^             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^^                         ^^^    ^^^
 >node : Node | undefined
 >     : ^^^^^^^^^^^^^^^^
 >test : ((node: Node) => boolean) | undefined
@@ -275,7 +275,7 @@ function foo(node: FunctionDeclaration | CaseClause) {
 >assertNode(node, canHaveLocals) : void
 >                                : ^^^^
 >assertNode : { <T extends Node, U extends T>(node: T | undefined, test: (node: T) => node is U): asserts node is U; (node: Node | undefined, test: ((node: Node) => boolean) | undefined): void; }
->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^       ^             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^^                         ^^^^^^^^^^
 >node : CaseClause | FunctionDeclaration
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >canHaveLocals : (node: Node) => node is HasLocals
@@ -288,7 +288,7 @@ function foo(node: FunctionDeclaration | CaseClause) {
 
 declare function isExpression(node: Node): node is Expression;
 >isExpression : (node: Node) => node is Expression
->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>             : ^^^^^^^^^^^^^^^^        ^^^^^^^^^^
 >node : Node
 >     : ^^^^
 
@@ -298,7 +298,7 @@ declare function tryCast<TOut extends TIn, TIn = any>(value: TIn | undefined, te
 >value : TIn | undefined
 >      : ^^^^^^^^^^^^^^^
 >test : (value: TIn) => value is TOut
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^         ^^^^
 >value : TIn
 >      : ^^^
 
@@ -314,7 +314,7 @@ function bar(node: Identifier | FunctionDeclaration) {
 >tryCast(node, isExpression) : Expression
 >                            : ^^^^^^^^^^
 >tryCast : <TOut extends TIn, TIn = any>(value: TIn | undefined, test: (value: TIn) => value is TOut) => TOut
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^              ^^^^^^^^^^^^^
 >node : Identifier | FunctionDeclaration
 >     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isExpression : (node: Node) => node is Expression
@@ -369,7 +369,7 @@ type ClassLike1 = ClassExpression1 | ClassStatement1;
 
 declare function isClassLike(node: Node1): node is ClassLike1;
 >isClassLike : (node: Node1) => node is ClassLike1
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^        ^^^^^^^^^^
 >node : Node1
 >     : ^^^^^
 
@@ -383,7 +383,7 @@ const maybeClassStatement = tryCast(statement, isClassLike);  // ClassLike1
 >tryCast(statement, isClassLike) : ClassLike1
 >                                : ^^^^^^^^^^
 >tryCast : <TOut extends TIn, TIn = any>(value: TIn | undefined, test: (value: TIn) => value is TOut) => TOut
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^              ^^^^^^^^^^^^^
 >statement : Statement1 | undefined
 >          : ^^^^^^^^^^^^^^^^^^^^^^
 >isClassLike : (node: Node1) => node is ClassLike1
@@ -405,7 +405,7 @@ interface NodeArray<T extends Node> extends Array<T> {
 
 declare function isNodeArray<T extends Node>(array: readonly T[]): array is NodeArray<T>;
 >isNodeArray : <T extends Node>(array: readonly T[]) => array is NodeArray<T>
->            : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^         ^^^^^^^^^ ^ 
 >array : readonly T[]
 >      : ^^^^^^^^^^^^
 
@@ -419,9 +419,9 @@ const x = tryCast(types, isNodeArray);  // NodeAray<TypeNode>
 >tryCast(types, isNodeArray) : NodeArray<TypeNode>
 >                            : ^^^^^^^^^^^^^^^^^^^
 >tryCast : <TOut extends TIn, TIn = any>(value: TIn | undefined, test: (value: TIn) => value is TOut) => TOut
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            ^^^^^^^^        ^^^              ^^^^^^^^^^^^^
 >types : readonly TypeNode[]
 >      : ^^^^^^^^^^^^^^^^^^^
 >isNodeArray : <T extends Node>(array: readonly T[]) => array is NodeArray<T>
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
 

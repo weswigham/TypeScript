@@ -131,17 +131,17 @@ type T73<T extends "a" | "b", U extends T | "c"> = U & string;
 
 declare function isA(x: any): x is "a";
 >isA : (x: any) => x is "a"
->    : ^^^^   ^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^        
 >x : any
 
 declare function isB(x: any): x is "b";
 >isB : (x: any) => x is "b"
->    : ^^^^   ^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^        
 >x : any
 
 declare function isC(x: any): x is "c";
 >isC : (x: any) => x is "c"
->    : ^^^^   ^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^        
 >x : any
 
 function foo<K extends "a" | "b">(x: K) {
@@ -154,7 +154,7 @@ function foo<K extends "a" | "b">(x: K) {
 >isA(x) : boolean
 >       : ^^^^^^^
 >isA : (x: any) => x is "a"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "a" | "b"
 >  : ^^^^^^^^^
 
@@ -166,7 +166,7 @@ function foo<K extends "a" | "b">(x: K) {
 >isB(x) : boolean
 >       : ^^^^^^^
 >isB : (x: any) => x is "b"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "a" | "b"
 >  : ^^^^^^^^^
 
@@ -178,7 +178,7 @@ function foo<K extends "a" | "b">(x: K) {
 >isC(x) : boolean
 >       : ^^^^^^^
 >isC : (x: any) => x is "c"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "a" | "b"
 >  : ^^^^^^^^^
 
@@ -192,13 +192,13 @@ function foo<K extends "a" | "b">(x: K) {
 >isA(x) : boolean
 >       : ^^^^^^^
 >isA : (x: any) => x is "a"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "a" | "b"
 >  : ^^^^^^^^^
 >isB(x) : boolean
 >       : ^^^^^^^
 >isB : (x: any) => x is "b"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "b"
 >  : ^^^
 
@@ -216,13 +216,13 @@ function foo<K extends "a" | "b">(x: K) {
 >isA(x) : boolean
 >       : ^^^^^^^
 >isA : (x: any) => x is "a"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "a" | "b"
 >  : ^^^^^^^^^
 >isB(x) : boolean
 >       : ^^^^^^^
 >isB : (x: any) => x is "b"
->    : ^^^^^^^^^^^^^^^^^^^^
+>    : ^^^^   ^^^^^^^^^^^^^
 >x : "b"
 >  : ^^^
 

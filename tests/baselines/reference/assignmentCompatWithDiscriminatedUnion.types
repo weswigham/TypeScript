@@ -444,7 +444,7 @@ namespace GH30170 {
 >draw({ color: currentColor }) : void
 >                              : ^^^^
 >draw : (val: Blue | Yellow) => void
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^   ^^^^^^^^^^^^^^^
 >{ color: currentColor } : { color: "blue" | "yellow"; }
 >                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >color : "blue" | "yellow"
