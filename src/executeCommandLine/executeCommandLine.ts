@@ -58,6 +58,7 @@ import {
     isIncrementalCompilation,
     isWatchSet,
     JSDocParsingMode,
+    loadPreCachedLib,
     normalizePath,
     optionDeclarations,
     optionsForBuild,
@@ -898,7 +899,7 @@ function performCompilation(
     config: ParsedCommandLine,
 ) {
     const { fileNames, options, projectReferences } = config;
-    const host = createCompilerHostWorker(options, /*setParentNodes*/ undefined, sys);
+    const host = loadPreCachedLib(createCompilerHostWorker(options, /*setParentNodes*/ undefined, sys));
     host.jsDocParsingMode = defaultJSDocParsingMode;
     const currentDirectory = host.getCurrentDirectory();
     const getCanonicalFileName = createGetCanonicalFileName(host.useCaseSensitiveFileNames());

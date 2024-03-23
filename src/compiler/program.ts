@@ -1,3 +1,4 @@
+import { getCachedLibSourceFile } from "../lib-cache/index";
 import {
     __String,
     addInternalEmitFlags,
@@ -387,6 +388,42 @@ export function computeCommonSourceDirectoryOfFilenames(fileNames: readonly stri
     }
 
     return getPathFromPathComponents(commonPathComponents);
+}
+
+/** @internal */
+export function loadPreCachedLib(
+    base: CompilerHost,
+    setParentNodes?: boolean
+): CompilerHost {
+    const libCache = new Map<string, SourceFile>();
+    return {
+        ...base,
+        getSourceFile: (fileName, ...args) => tryGetCachedLib(fileName) || base.getSourceFile(fileName, ...args),
+        getSourceFileByPath: base.getSourceFileByPath && ((fileName, ...args) => tryGetCachedLib(fileName) || base.getSourceFileByPath!(fileName, ...args))
+    };
+
+    function tryGetCachedLib(fileName: string) {
+        if (libCache.has(fileName)) {
+            return libCache.get(fileName);
+        }
+        if (base.getDefaultLibLocation) {
+            const dir = getDirectoryPath(fileName);
+            if (dir === base.getDefaultLibLocation()) {
+                const name = getBaseFileName(fileName);
+                const maybeNewCacheItem = getCachedLibSourceFile(name);
+                if (maybeNewCacheItem) {
+                    const sf = maybeNewCacheItem as SourceFile;
+                    if (setParentNodes) {
+                        setParentRecursive(sf, /*incremental*/ false);
+                    }
+                    sf.fileName = fileName;
+                    libCache.set(fileName, sf);
+                    return sf;
+                }
+            }
+        }
+        return undefined;
+    }
 }
 
 export function createCompilerHost(options: CompilerOptions, setParentNodes?: boolean): CompilerHost {
@@ -1547,7 +1584,7 @@ export function createProgram(rootNamesOrOptions: readonly string[] | CreateProg
     tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
     performance.mark("beforeProgram");
 
-    const host = createProgramOptions.host || createCompilerHost(options);
+    const host = createProgramOptions.host || loadPreCachedLib(createCompilerHost(options));
     const configParsingHost = parseConfigHostFromCompilerHostLike(host);
 
     let skipDefaultLib = options.noLib;

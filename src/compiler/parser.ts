@@ -1485,6 +1485,7 @@ namespace Parser {
     var parseDiagnostics: DiagnosticWithDetachedLocation[];
     var jsDocDiagnostics: DiagnosticWithDetachedLocation[];
     var syntaxCursor: IncrementalParser.SyntaxCursor | undefined;
+    var setParentNodes: boolean | undefined;
 
     var currentToken: SyntaxKind;
     var nodeCount: number;
@@ -1601,7 +1602,7 @@ namespace Parser {
             return result;
         }
 
-        initializeState(fileName, sourceText, languageVersion, syntaxCursor, scriptKind, jsDocParsingMode);
+        initializeState(fileName, sourceText, languageVersion, syntaxCursor, scriptKind, jsDocParsingMode, setParentNodes);
 
         const result = parseSourceFileWorker(languageVersion, setParentNodes, scriptKind, setExternalModuleIndicatorOverride || setExternalModuleIndicator, jsDocParsingMode);
 
@@ -1612,7 +1613,7 @@ namespace Parser {
 
     export function parseIsolatedEntityName(content: string, languageVersion: ScriptTarget): EntityName | undefined {
         // Choice of `isDeclarationFile` should be arbitrary
-        initializeState("", content, languageVersion, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll);
+        initializeState("", content, languageVersion, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll, /*setParentNodes*/ true);
         // Prime the scanner.
         nextToken();
         const entityName = parseEntityName(/*allowReservedWords*/ true);
@@ -1622,7 +1623,7 @@ namespace Parser {
     }
 
     export function parseJsonText(fileName: string, sourceText: string, languageVersion: ScriptTarget = ScriptTarget.ES2015, syntaxCursor?: IncrementalParser.SyntaxCursor, setParentNodes = false): JsonSourceFile {
-        initializeState(fileName, sourceText, languageVersion, syntaxCursor, ScriptKind.JSON, JSDocParsingMode.ParseAll);
+        initializeState(fileName, sourceText, languageVersion, syntaxCursor, ScriptKind.JSON, JSDocParsingMode.ParseAll, setParentNodes);
         sourceFlags = contextFlags;
 
         // Prime the scanner.
@@ -1710,7 +1711,7 @@ namespace Parser {
         return result;
     }
 
-    function initializeState(_fileName: string, _sourceText: string, _languageVersion: ScriptTarget, _syntaxCursor: IncrementalParser.SyntaxCursor | undefined, _scriptKind: ScriptKind, _jsDocParsingMode: JSDocParsingMode) {
+    function initializeState(_fileName: string, _sourceText: string, _languageVersion: ScriptTarget, _syntaxCursor: IncrementalParser.SyntaxCursor | undefined, _scriptKind: ScriptKind, _jsDocParsingMode: JSDocParsingMode, _setParentNodes: boolean | undefined) {
         NodeConstructor = objectAllocator.getNodeConstructor();
         TokenConstructor = objectAllocator.getTokenConstructor();
         IdentifierConstructor = objectAllocator.getIdentifierConstructor();
@@ -1723,6 +1724,7 @@ namespace Parser {
         syntaxCursor = _syntaxCursor;
         scriptKind = _scriptKind;
         languageVariant = getLanguageVariant(_scriptKind);
+        setParentNodes = _setParentNodes;
 
         parseDiagnostics = [];
         parsingContext = 0;
@@ -1769,6 +1771,7 @@ namespace Parser {
         syntaxCursor = undefined;
         scriptKind = undefined!;
         languageVariant = undefined!;
+        setParentNodes = undefined;
         sourceFlags = 0;
         parseDiagnostics = undefined!;
         jsDocDiagnostics = undefined!;
@@ -8688,7 +8691,7 @@ namespace Parser {
 
     export namespace JSDocParser {
         export function parseJSDocTypeExpressionForTests(content: string, start: number | undefined, length: number | undefined): { jsDocTypeExpression: JSDocTypeExpression; diagnostics: Diagnostic[]; } | undefined {
-            initializeState("file.js", content, ScriptTarget.Latest, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll);
+            initializeState("file.js", content, ScriptTarget.Latest, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll, /*setParentNodes*/ true);
             scanner.setText(content, start, length);
             currentToken = scanner.scan();
             const jsDocTypeExpression = parseJSDocTypeExpression();
@@ -8714,7 +8717,9 @@ namespace Parser {
             }
 
             const result = factory.createJSDocTypeExpression(type);
-            fixupParentReferences(result);
+            if (setParentNodes) {
+                fixupParentReferences(result);
+            }
             return finishNode(result, pos);
         }
 
@@ -8733,12 +8738,14 @@ namespace Parser {
             }
 
             const result = factory.createJSDocNameReference(entityName);
-            fixupParentReferences(result);
+            if (setParentNodes) {
+                fixupParentReferences(result);
+            }
             return finishNode(result, pos);
         }
 
         export function parseIsolatedJSDocComment(content: string, start: number | undefined, length: number | undefined): { jsDoc: JSDoc; diagnostics: Diagnostic[]; } | undefined {
-            initializeState("", content, ScriptTarget.Latest, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll);
+            initializeState("", content, ScriptTarget.Latest, /*syntaxCursor*/ undefined, ScriptKind.JS, JSDocParsingMode.ParseAll, /*setParentNodes*/ true);
             const jsDoc = doInsideOfContext(NodeFlags.JSDoc, () => parseJSDocCommentWorker(start, length));
 
             const sourceFile = { languageVariant: LanguageVariant.Standard, text: content } as SourceFile;
@@ -8754,7 +8761,9 @@ namespace Parser {
             const saveParseErrorBeforeNextFinishedNode = parseErrorBeforeNextFinishedNode;
 
             const comment = doInsideOfContext(NodeFlags.JSDoc, () => parseJSDocCommentWorker(start, length));
-            setParent(comment, parent);
+            if (setParentNodes) {
+                setParent(comment, parent);
+            }
 
             if (contextFlags & NodeFlags.JavaScriptFile) {
                 if (!jsDocDiagnostics) {
