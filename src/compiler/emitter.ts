@@ -1087,7 +1087,7 @@ export const notImplementedResolver: EmitResolver = {
     isValueAliasDeclaration: notImplemented,
     isReferencedAliasDeclaration: notImplemented,
     isTopLevelValueImportEqualsWithEntityName: notImplemented,
-    getNodeCheckFlags: notImplemented,
+    hasNodeCheckFlag: notImplemented,
     isDeclarationVisible: notImplemented,
     isLateBound: (_node): _node is LateBoundDeclaration => false,
     collectLinkedAliases: notImplemented,

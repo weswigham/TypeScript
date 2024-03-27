@@ -1388,6 +1388,7 @@ const SymbolLinks = class implements SymbolLinks {
 
 function NodeLinks(this: NodeLinks) {
     this.flags = NodeCheckFlags.None;
+    this.calculatedFlags = NodeCheckFlags.None;
 }
 
 /** @internal */
@@ -29140,6 +29141,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         const links = getNodeLinks(parent);
         if (!(links.flags & NodeCheckFlags.AssignmentsMarked)) {
             links.flags |= NodeCheckFlags.AssignmentsMarked;
+            links.calculatedFlags |= NodeCheckFlags.AssignmentsMarked;
             if (!hasParentWithAssignmentsMarked(parent)) {
                 markNodeAssignments(parent);
             }
@@ -48877,9 +48879,14 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                 // Synthesized nodes are always treated as referenced.
                 return node && canCollectSymbolAliasAccessabilityData ? isReferencedAliasDeclaration(node, checkChildren) : true;
             },
-            getNodeCheckFlags: nodeIn => {
+            hasNodeCheckFlag: (nodeIn, flag) => {
                 const node = getParseTreeNode(nodeIn);
-                return node ? getNodeCheckFlags(node) : 0;
+                if (!node) return false;
+                if (getNodeLinks(node).calculatedFlags & flag) {
+                    return !!(getNodeCheckFlags(node) & flag);
+                }
+                // TODO: Calculate flag
+                return node ? !!(getNodeCheckFlags(node) & flag) : false;
             },
             isTopLevelValueImportEqualsWithEntityName,
             isDeclarationVisible,
