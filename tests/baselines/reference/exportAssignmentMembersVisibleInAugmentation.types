@@ -36,7 +36,7 @@ declare module "foo" {
 
     export function g(): foo.T; // OK
 >g : () => foo.T
->  : ^^^^^^^^^ ^
+>  : ^^^^^^     
 >foo : any
 >    : ^^^
 }

@@ -140,7 +140,7 @@ declare module 'math2d' {
 	interface Vector {
 		reverse(): Math2d.Point;
 >reverse : () => Math2d.Point
->        : ^^^^^^^^^^^^ ^^^^^
+>        : ^^^^^^            
 >Math2d : any
 >       : ^^^
 	}

@@ -705,7 +705,7 @@ module Harness {
 
         export function compilerWarning(result: Compiler.CompilerResult, line: number, column: number, desc: string) {
 >compilerWarning : (result: Compiler.CompilerResult, line: number, column: number, desc: string) => void
->                : ^^^^^^^^^^^^^^^^^               ^^^^^^^^      ^^^^^^^^^^      ^^^^^^^^      ^^^^^^^^^
+>                : ^^^^^^^^^                       ^^^^^^^^      ^^^^^^^^^^      ^^^^^^^^      ^^^^^^^^^
 >result : Compiler.CompilerResult
 >       : ^^^^^^^^^^^^^^^^^^^^^^^
 >Compiler : any
@@ -5081,7 +5081,7 @@ module Harness {
 >compileString(testCode, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
 >                                                                                                                                    : ^^^^
 >compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >testCode : any
 >         : ^^^
 >'test.ts' : "test.ts"
@@ -6106,7 +6106,7 @@ module Harness {
 >compileString(code, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
 >                                                                                                                                : ^^^^
 >compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >code : string
 >     : ^^^^^^
 >'test.ts' : "test.ts"
@@ -7420,7 +7420,7 @@ module Harness {
           */
         export function generateDeclFile(code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]): string {
 >generateDeclFile : (code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]) => string
->                 : ^^^^^^^      ^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^      
+>                 : ^^^^^^^      ^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^                                   ^^^^^^^^^^^^^^^                           ^^^^^      
 >code : string
 >     : ^^^^^^
 >verifyNoDeclFile : boolean
@@ -8977,7 +8977,7 @@ module Harness {
 >compileString(code, filename, callback, context, references) : void
 >                                                             : ^^^^
 >compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >code : string
 >     : ^^^^^^
 >filename : string
@@ -9037,13 +9037,13 @@ module Harness {
 
         export function compileUnits(units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void , settingsCallback?: () => void ) {
 >compileUnits : (units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void, settingsCallback?: () => void) => void
->             : ^^^^^^^^^^^^^^^^^^^^^^               ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^          ^^^^^^^^^
+>             : ^^^^^^^^                             ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^          ^^^^^^^^^
 >units : TestCaseParser.TestUnitData[]
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >TestCaseParser : any
 >               : ^^^
 >callback : (res: Compiler.CompilerResult) => void
->         : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^    
+>         : ^^^^^^                       ^^^^^    
 >res : CompilerResult
 >    : ^^^^^^^^^^^^^^
 >Compiler : any
@@ -9125,7 +9125,7 @@ module Harness {
 >Harness.Compiler.defineCompilationContextForTest(unitName, dependencies) : CompilationContext
 >                                                                         : ^^^^^^^^^^^^^^^^^^
 >Harness.Compiler.defineCompilationContextForTest : (filename: string, dependencies: TestCaseParser.TestUnitData[]) => CompilationContext
->                                                 : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^               ^^^^^^^^^^^^^^^^^^^^^^^
+>                                                 : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^                             ^^^^^^^^^^^^^^^^^^^^^^^
 >Harness.Compiler : typeof Compiler
 >                 : ^^^^^^^^^^^^^^^
 >Harness : typeof Harness
@@ -9133,7 +9133,7 @@ module Harness {
 >Compiler : typeof Compiler
 >         : ^^^^^^^^^^^^^^^
 >defineCompilationContextForTest : (filename: string, dependencies: TestCaseParser.TestUnitData[]) => CompilationContext
->                                : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^               ^^^^^^^^^^^^^^^^^^^^^^^
+>                                : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^                             ^^^^^^^^^^^^^^^^^^^^^^^
 >unitName : string
 >         : ^^^^^^
 >dependencies : TestCaseParser.TestUnitData[]
@@ -9153,7 +9153,7 @@ module Harness {
 >unitName : string
 >         : ^^^^^^
 >callback : (res: Compiler.CompilerResult) => void
->         : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^
+>         : ^^^^^^                       ^^^^^^^^^
 >settingsCallback : () => void
 >                 : ^^^^^^^^^^
 >compilationContext : CompilationContext
@@ -9187,7 +9187,7 @@ module Harness {
 
         export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: boolean) {
 >emit : (ioHost: TypeScript.EmitterIOHost, usePullEmitter?: boolean) => void
->     : ^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
+>     : ^^^^^^^^^                        ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
 >ioHost : TypeScript.EmitterIOHost
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^
 >TypeScript : any
@@ -9212,13 +9212,13 @@ module Harness {
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
 >compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >code : string
 >     : ^^^^^^
 >unitName : string
 >         : ^^^^^^
 >callback : (res: Compiler.CompilerResult) => void
->         : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^    
+>         : ^^^^^^                       ^^^^^    
 >res : CompilerResult
 >    : ^^^^^^^^^^^^^^
 >Compiler : any
@@ -9363,7 +9363,7 @@ module Harness {
 >emit(stdout, true) : void
 >                   : ^^^^
 >emit : (ioHost: TypeScript.EmitterIOHost, usePullEmitter?: boolean) => void
->     : ^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
+>     : ^^^^^^^^^                        ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
 >stdout : EmitterIOHost
 >       : ^^^^^^^^^^^^^
 >true : true
@@ -9386,7 +9386,7 @@ module Harness {
 >emit(stdout, false) : void
 >                    : ^^^^
 >emit : (ioHost: TypeScript.EmitterIOHost, usePullEmitter?: boolean) => void
->     : ^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
+>     : ^^^^^^^^^                        ^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^
 >stdout : EmitterIOHost
 >       : ^^^^^^^^^^^^^
 >false : false
@@ -9423,7 +9423,7 @@ module Harness {
 >callback(new CompilerResult(stdout.toArray(), errors, scripts)) : void
 >                                                                : ^^^^
 >callback : (res: Compiler.CompilerResult) => void
->         : ^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^
+>         : ^^^^^^                       ^^^^^^^^^
 >new CompilerResult(stdout.toArray(), errors, scripts) : CompilerResult
 >                                                      : ^^^^^^^^^^^^^^
 >CompilerResult : typeof CompilerResult
@@ -9447,7 +9447,7 @@ module Harness {
          */
         export function defineCompilationContextForTest(filename: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
 >defineCompilationContextForTest : (filename: string, dependencies: TestCaseParser.TestUnitData[]) => CompilationContext
->                                : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^               ^^^^^^^^^^^^^^^^^^^^^^^
+>                                : ^^^^^^^^^^^      ^^^^^^^^^^^^^^^^                             ^^^^^^^^^^^^^^^^^^^^^^^
 >filename : string
 >         : ^^^^^^
 >dependencies : TestCaseParser.TestUnitData[]
@@ -10739,8 +10739,8 @@ module Harness {
 >                 : ^^^
 >entries.map(x => x.editRange.minChar).reduce((prev, current) => Math.min(prev, current)) : any
 >                                                                                         : ^^^
->entries.map(x => x.editRange.minChar).reduce : { (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any; <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U; }
->                                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>entries.map(x => x.editRange.minChar).reduce : { (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any, initialValue: T): any; <U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: any[]) => U, initialValue: U): U; }
+>                                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >entries.map(x => x.editRange.minChar) : any[]
 >                                      : ^^^^^
 >entries.map : <U>(callbackfn: (value: { length: number; editRange: TypeScript.ScriptEditRange; }, index: number, array: { length: number; editRange: TypeScript.ScriptEditRange; }[]) => U, thisArg?: any) => U[]
@@ -10763,8 +10763,8 @@ module Harness {
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 >minChar : any
 >        : ^^^
->reduce : { (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any; <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>reduce : { (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any, initialValue: T): any; <U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: any[]) => U, initialValue: U): U; }
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >(prev, current) => Math.min(prev, current) : (prev: any, current: any) => number
 >                                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >prev : any
@@ -10847,8 +10847,8 @@ module Harness {
 >         : ^^^
 >entries.map(x => x.editRange.delta).reduce((prev, current) => prev + current) : any
 >                                                                              : ^^^
->entries.map(x => x.editRange.delta).reduce : { (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any; <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U; }
->                                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>entries.map(x => x.editRange.delta).reduce : { (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any, initialValue: T): any; <U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: any[]) => U, initialValue: U): U; }
+>                                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >entries.map(x => x.editRange.delta) : any[]
 >                                    : ^^^^^
 >entries.map : <U>(callbackfn: (value: { length: number; editRange: TypeScript.ScriptEditRange; }, index: number, array: { length: number; editRange: TypeScript.ScriptEditRange; }[]) => U, thisArg?: any) => U[]
@@ -10871,8 +10871,8 @@ module Harness {
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 >delta : any
 >      : ^^^
->reduce : { (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any; <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>reduce : { (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any): any; (callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: any[]) => any, initialValue: T): any; <U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: any[]) => U, initialValue: U): U; }
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >(prev, current) => prev + current : (prev: any, current: any) => any
 >                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >prev : any
@@ -12993,11 +12993,11 @@ module Harness {
 >Compiler.compileString(code, unitName, function (res) {                runJSString(res.code, callback);            }) : void
 >                                                                                                                      : ^^^^
 >Compiler.compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->                       : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>                       : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >Compiler : typeof Compiler
 >         : ^^^^^^^^^^^^^^^
 >compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
->              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
+>              : ^^^^^^^      ^^^^^^^^^^^^      ^^^^^^^^^^^^                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                           ^^^^^^^^^
 >code : string
 >     : ^^^^^^
 >unitName : string

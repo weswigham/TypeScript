@@ -235,7 +235,7 @@ export interface publicInterfaceWithPrivatModuleTypeParameters {
 
     myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;  // Error
 >myMethod : <T extends privateModule.publicClass>() => privateModule.publicClass
->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^
+>         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         
 >privateModule : any
 >              : ^^^
 >privateModule : any
@@ -281,7 +281,7 @@ interface privateInterfaceWithPrivatModuleTypeParameters {
 
     myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;
 >myMethod : <T extends privateModule.publicClass>() => privateModule.publicClass
->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^
+>         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         
 >privateModule : any
 >              : ^^^
 >privateModule : any
@@ -550,7 +550,7 @@ export module publicModule {
 
         myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;  // Error
 >myMethod : <T extends privateModule.publicClass>() => privateModule.publicClass
->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^
+>         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         
 >privateModule : any
 >              : ^^^
 >privateModule : any
@@ -596,7 +596,7 @@ export module publicModule {
 
         myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;  
 >myMethod : <T extends privateModule.publicClass>() => privateModule.publicClass
->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^
+>         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                         
 >privateModule : any
 >              : ^^^
 >privateModule : any

@@ -7,7 +7,7 @@ import commands = require('./visibilityOfCrossModuleTypeUsage_commands');
 
 function run(configuration: commands.IConfiguration) {
 >run : (configuration: commands.IConfiguration) => void
->    : ^^^^^^^^^^^^^^^^^^^^^^^^               ^^^^^^^^^
+>    : ^^^^^^^^^^^^^^^^                       ^^^^^^^^^
 >configuration : commands.IConfiguration
 >              : ^^^^^^^^^^^^^^^^^^^^^^^
 >commands : any

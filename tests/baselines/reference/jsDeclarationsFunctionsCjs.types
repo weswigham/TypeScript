@@ -131,7 +131,7 @@ module.exports.d = function d(a, b) { return /** @type {*} */(null); }
  */
 module.exports.e = function e(a, b) { return /** @type {*} */(null); }
 >module.exports.e = function e(a, b) { return /** @type {*} */(null); } : <T, U>(a: T, b: U) => T & U
->                                                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                                                                       : ^^^^^^^^^^^^^^^^^^^^^^^   ^
 >module.exports.e : <T, U>(a: T, b: U) => T & U
 >                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >module.exports : typeof module.exports

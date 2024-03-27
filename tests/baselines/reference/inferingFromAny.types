@@ -124,13 +124,13 @@ declare function f16<T>(x: Partial<T>): T;
 
 declare function f17<T, K>(x: {[P in keyof T]: K}): T;
 >f17 : <T, K>(x: { [P in keyof T]: K; }) => T
->    : ^^^^^^^^^^   ^          ^   ^   ^^^^^^
+>    : ^^^^^^^^^^              ^   ^   ^^^^^^
 >x : { [P in keyof T]: K; }
 >  : ^^^^^^^^^^^^^^^^^^^^^^
 
 declare function f18<T, K extends keyof T>(x: {[P in K]: T[P]}): T;
 >f18 : <T, K extends keyof T>(x: { [P in K]: T[P]; }) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^    ^   ^ ^    ^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^        ^   ^ ^    ^^^^^^
 >x : { [P in K]: T[P]; }
 >  : ^^^^^^^^^^^^^^^^^^^
 
@@ -267,14 +267,14 @@ var a = f17(a);
 >a : any
 >f17(a) : any
 >f17 : <T, K>(x: { [P in keyof T]: K; }) => T
->    : ^^^^^^^^^^   ^          ^   ^   ^^^^^^
+>    : ^^^^^^^^^^              ^   ^   ^^^^^^
 >a : any
 
 var a = f18(a);
 >a : any
 >f18(a) : any
 >f18 : <T, K extends keyof T>(x: { [P in K]: T[P]; }) => T
->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^    ^   ^ ^    ^^^^^^
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^^^        ^   ^ ^    ^^^^^^
 >a : any
 
 var a = f19(a, a);

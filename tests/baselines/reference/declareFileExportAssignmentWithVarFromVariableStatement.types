@@ -30,7 +30,7 @@ var x = 10, m2: {
 >10 : 10
 >   : ^^
 >m2 : { (): m2.connectExport; test1: m2.connectModule; test2(): m2.connectModule; }
->   : ^^^^^^^^              ^^^^^^^^^^^              ^^^^^^^^^^^^^              ^^^
+>   : ^^^^^^                ^^^^^^^^^                ^^^^^^^^^^^                ^^^
 
     (): m2.connectExport;
 >m2 : any
@@ -44,7 +44,7 @@ var x = 10, m2: {
 
     test2(): m2.connectModule;
 >test2 : () => m2.connectModule
->      : ^^^^^^^^              
+>      : ^^^^^^                
 >m2 : any
 >   : ^^^
 

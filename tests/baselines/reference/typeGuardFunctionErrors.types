@@ -67,7 +67,7 @@ function hasMissingIsKeyword(): x {
 
 function hasMissingParameter(): x is A {
 >hasMissingParameter : () => x is A
->                    : ^^^^^^     ^
+>                    : ^^^^^^^    ^
 
     return true;
 >true : true
@@ -87,7 +87,7 @@ function hasMissingTypeInTypeGuardType(x): x is {
 
 function hasNonMatchingParameter(y): x is A {
 >hasNonMatchingParameter : (y: any) => x is A
->                        : ^^^^^^^^^^^^     ^
+>                        : ^^^^^^^^^^^^^    ^
 >y : any
 >  : ^^^
 

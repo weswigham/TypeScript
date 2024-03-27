@@ -156,7 +156,7 @@ module Errors {
             };
         var a17: {
 >a17 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
->    : ^^^^^^   ^         ^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^     ^^^^^^   ^         ^^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^     ^^^
+>    : ^^^^^^             ^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^     ^^^^^^             ^^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^     ^^^
 
                 (x: {
 >x : { <T extends Derived>(a: T): T; <T_1 extends Base>(a: T_1): T_1; }
@@ -425,17 +425,17 @@ module Errors {
 >a17 = b17 : <T>(x: (a: T) => T) => any[]
 >          : ^^^^^^^    ^     ^^^^^^^^^^^
 >a17 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
->    : ^^^^^^   ^         ^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^^^^   ^         ^^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^
+>    : ^^^^^^             ^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^^^^             ^^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^
 >b17 : <T>(x: (a: T) => T) => any[]
 >    : ^^^^^^^    ^     ^^^^^^^^^^^
 
         b17 = a17;
 >b17 = a17 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
->          : ^^^^^^   ^         ^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^^^^   ^         ^^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^
+>          : ^^^^^^             ^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^^^^             ^^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^
 >b17 : <T>(x: (a: T) => T) => any[]
 >    : ^^^^^^^    ^     ^^^^^^^^^^^
 >a17 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
->    : ^^^^^^   ^         ^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^^^^   ^         ^^^^^^^^     ^   ^   ^         ^^^^     ^   ^   ^^^^^^^^^^^
+>    : ^^^^^^             ^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^^^^             ^^^^^^^^     ^   ^             ^^^^     ^   ^   ^^^^^^^^^^^
     }
 
     module WithGenericSignaturesInBaseType {

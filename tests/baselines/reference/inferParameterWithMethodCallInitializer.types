@@ -23,7 +23,7 @@ class Example {
     }
     doSomething(a = this.getNumber()): typeof a {
 >doSomething : (a?: number) => typeof a
->            : ^^^^^^^^^^^^^^^^       ^
+>            : ^^^^^^^^^^^^^^^^        
 >a : number
 >  : ^^^^^^
 >this.getNumber() : number

@@ -112,7 +112,7 @@ const c  = <MyComp2 x={2}/>; // Should be OK, `context` is allowed, per react ru
 
 declare function MyTagWithOptionalNonJSXBits(props: MyProps, context: any, nonReactArg?: string): JSX.Element;
 >MyTagWithOptionalNonJSXBits : (props: MyProps, context: any, nonReactArg?: string) => JSX.Element
->                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^      ^^^^^^^^ ^^^^^^^
+>                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^      ^^^^^           
 >props : MyProps
 >      : ^^^^^^^
 >context : any

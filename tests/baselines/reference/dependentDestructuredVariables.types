@@ -709,8 +709,8 @@ function unrefined1<T>(ab: AB<T>): void {
         printValueList<T>(value);
 >printValueList<T>(value) : void
 >                         : ^^^^
->printValueList : <T_1>(t: T_1[]) => void
->               : ^^^^^^^^^^^^^^^^^^^^^^^
+>printValueList : <T_1>(t: Array<T_1>) => void
+>               : ^^^^^^^^^^^^^^ ^^^ ^^^^^^^^^
 >value : T[]
 >      : ^^^
     }

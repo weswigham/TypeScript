@@ -7,7 +7,7 @@ import React = require('react');
 
 declare function Component<T>(props: T) : JSX.Element;
 >Component : <T>(props: T) => JSX.Element
->          : ^^^^^^^^^^^^^^^^^^^^ ^^^^^^^
+>          : ^^^^^^^^^^^^^^^^^           
 >props : T
 >      : ^
 >JSX : any

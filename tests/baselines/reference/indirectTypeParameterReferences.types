@@ -126,7 +126,7 @@ combined(comb => {
 
 declare function f<T>(a: T): { a: typeof a };
 >f : <T>(a: T) => { a: typeof a; }
->  : ^^^^^^^^^^^^^            ^   
+>  : ^^^^^^^^^^^^^                
 >a : T
 >  : ^
 >a : T

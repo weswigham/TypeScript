@@ -410,7 +410,7 @@ function f3(x: Boxified<Foo>) {
 
 function f4(x: { [P in keyof Foo]: Foo[P] }) {
 >f4 : (x: { [P in keyof Foo]: Foo[P]; }) => void
->   : ^^^^   ^          ^^^   ^^^ ^    ^^^^^^^^^
+>   : ^^^^              ^^^   ^^^ ^    ^^^^^^^^^
 >x : { [x: string]: number; prop: number; }
 >  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

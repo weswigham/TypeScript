@@ -144,7 +144,7 @@ module WinJS {
 
         public then<U>(success?: (value: V) => TPromise<U>, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>;
 >then : { <U>(success?: (value: V) => TPromise<U>, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>; <U_1>(success?: (value: V) => TPromise<U_1>, error?: (err: any) => U_1, progress?: ProgressCallback): TPromise<U_1>; <U_2>(success?: (value: V) => U_2, error?: (err: any) => TPromise<U_2>, progress?: ProgressCallback): TPromise<U_2>; <U_3>(success?: (value: V) => U_3, error?: (err: any) => U_3, progress?: ProgressCallback): TPromise<U_3>; }
->     : ^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^ ^^^^^^^^^^              ^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^ ^^^^^^^^^^              ^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >success : (value: V) => TPromise<U>
 >        : ^^^^^^^^^^^^^^^^^^^^^^ ^ 
 >value : V
@@ -158,7 +158,7 @@ module WinJS {
 
         public then<U>(success?: (value: V) => TPromise<U>, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>;
 >then : { <U_1>(success?: (value: V) => TPromise<U_1>, error?: (err: any) => TPromise<U_1>, progress?: ProgressCallback): TPromise<U_1>; <U>(success?: (value: V) => TPromise<U>, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>; <U_2>(success?: (value: V) => U_2, error?: (err: any) => TPromise<U_2>, progress?: ProgressCallback): TPromise<U_2>; <U_3>(success?: (value: V) => U_3, error?: (err: any) => U_3, progress?: ProgressCallback): TPromise<U_3>; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^ ^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^ ^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >success : (value: V) => TPromise<U>
 >        : ^^^^^^^^^^^^^^^^^^^^^^ ^ 
 >value : V
@@ -172,7 +172,7 @@ module WinJS {
 
         public then<U>(success?: (value: V) => U, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>;
 >then : { <U_1>(success?: (value: V) => TPromise<U_1>, error?: (err: any) => TPromise<U_1>, progress?: ProgressCallback): TPromise<U_1>; <U_2>(success?: (value: V) => TPromise<U_2>, error?: (err: any) => U_2, progress?: ProgressCallback): TPromise<U_2>; <U>(success?: (value: V) => U, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>; <U_3>(success?: (value: V) => U_3, error?: (err: any) => U_3, progress?: ProgressCallback): TPromise<U_3>; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^              ^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     : ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^              ^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >success : (value: V) => U
 >        : ^^^^^^^^^^^^^^^
 >value : V
@@ -186,7 +186,7 @@ module WinJS {
 
         public then<U>(success?: (value: V) => U, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>;
 >then : { <U_1>(success?: (value: V) => TPromise<U_1>, error?: (err: any) => TPromise<U_1>, progress?: ProgressCallback): TPromise<U_1>; <U_2>(success?: (value: V) => TPromise<U_2>, error?: (err: any) => U_2, progress?: ProgressCallback): TPromise<U_2>; <U_3>(success?: (value: V) => U_3, error?: (err: any) => TPromise<U_3>, progress?: ProgressCallback): TPromise<U_3>; <U>(success?: (value: V) => U, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>; }
->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^
+>     : ^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^ ^^^ ^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^^^              ^^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^     ^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^
 >success : (value: V) => U
 >        : ^^^^^^^^^^^^^^^
 >value : V
@@ -315,7 +315,7 @@ module Services {
          */
         makeRequest(options: WinJS.IXHROptions): WinJS.Promise;
 >makeRequest : (options: WinJS.IXHROptions) => WinJS.Promise
->            : ^^^^^^^^^^^^^^^            ^^^^^^^^^^ ^^^^^^^
+>            : ^^^^^^^^^^                 ^^^^^             
 >options : WinJS.IXHROptions
 >        : ^^^^^^^^^^^^^^^^^
 >WinJS : any
@@ -379,7 +379,7 @@ class FileService {
 
     public uploadData(): WinJS.TPromise<Files.IUploadResult> {
 >uploadData : () => WinJS.TPromise<Files.IUploadResult>
->           : ^^^^^^^^^^^          ^^^^^               
+>           : ^^^^^^                                   
 >WinJS : any
 >      : ^^^
 >Files : any
@@ -399,7 +399,7 @@ class FileService {
 >this.requestService.makeRequest({            url: this.requestService.getRequestUrl('root', path),            type: 'POST',            headers: {},            data: "someData"        }) : WinJS.Promise
 >                                                                                                                                                                                          : ^^^^^^^^^^^^^
 >this.requestService.makeRequest : (options: WinJS.IXHROptions) => WinJS.Promise
->                                : ^^^^^^^^^^^^^^^            ^^^^^^^^^^^^^^^^^^
+>                                : ^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^
 >this.requestService : Services.IRequestService
 >                    : ^^^^^^^^^^^^^^^^^^^^^^^^
 >this : this
@@ -407,7 +407,7 @@ class FileService {
 >requestService : Services.IRequestService
 >               : ^^^^^^^^^^^^^^^^^^^^^^^^
 >makeRequest : (options: WinJS.IXHROptions) => WinJS.Promise
->            : ^^^^^^^^^^^^^^^            ^^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^
 >{            url: this.requestService.getRequestUrl('root', path),            type: 'POST',            headers: {},            data: "someData"        } : { url: string; type: string; headers: {}; data: string; }
 >                                                                                                                                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

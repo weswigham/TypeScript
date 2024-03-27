@@ -7,7 +7,7 @@ import React = require('react')
 
 declare function ComponentWithTwoAttributes<K,V>(l: {key1: K, value: V}): JSX.Element;
 >ComponentWithTwoAttributes : <K, V>(l: { key1: K; value: V; }) => JSX.Element
->                           : ^^^^^^^^^^        ^         ^   ^^^^^^^^ ^^^^^^^
+>                           : ^^^^^^^^^^        ^         ^   ^^^^^           
 >l : { key1: K; value: V; }
 >  : ^^^^^^^^^^^^^^^^^^^^^^
 >key1 : K
@@ -63,7 +63,7 @@ function Baz<T,U>(key1: T, value: U) {
 
 declare function Link<U>(l: {func: (arg: U)=>void}): JSX.Element;
 >Link : <U>(l: { func: (arg: U) => void; }) => JSX.Element
->     : ^^^^^^^              ^            ^^^^^^^^ ^^^^^^^
+>     : ^^^^^^^              ^            ^^^^^           
 >l : { func: (arg: U) => void; }
 >  : ^^^^^^^^      ^         ^^^
 >func : (arg: U) => void
@@ -130,7 +130,7 @@ interface InferParamProp<T> {
 
 declare function InferParamComponent<T>(attr: InferParamProp<T>): JSX.Element;
 >InferParamComponent : <T>(attr: InferParamProp<T>) => JSX.Element
->                    : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^ ^^^^^^^
+>                    : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^           
 >attr : InferParamProp<T>
 >     : ^^^^^^^^^^^^^^^^^
 >JSX : any

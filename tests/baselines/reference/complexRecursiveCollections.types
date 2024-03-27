@@ -42,7 +42,7 @@ interface Collection<K, V> {
     // these seem necessary to push it over the top for memory usage
     reduce<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
 >reduce : { <R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R; <R_1>(reducer: (reduction: V | R_1, value: V, key: K, iter: this) => R_1): R_1; }
->       : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^^^         ^       ^                 ^^^^^^^^^^^^
 >reducer : (reduction: R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : R
@@ -60,7 +60,7 @@ interface Collection<K, V> {
 
     reduce<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
 >reduce : { <R_1>(reducer: (reduction: R_1, value: V, key: K, iter: this) => R_1, initialReduction: R_1, context?: any): R_1; <R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^            ^^^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
 >reducer : (reduction: V | R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : V | R
@@ -146,11 +146,11 @@ declare module Immutable {
 
   export function fromJS(jsValue: any, reviver?: (key: string | number, sequence: Collection.Keyed<string, any> | Collection.Indexed<any>, path?: Array<string | number>) => any): any;
 >fromJS : (jsValue: any, reviver?: (key: string | number, sequence: Collection.Keyed<string, any> | Collection.Indexed<any>, path?: Array<string | number>) => any) => any
->       : ^^^^^^^^^^   ^^^^^^^^^^^^                                 ^^^^^^^^^^                      ^^^^^^^^^^                      ^^^^^                         ^^^^^   
+>       : ^^^^^^^^^^   ^^^^^^^^^^^^                                                                                                 ^^^^^                         ^^^^^   
 >jsValue : any
 >        : ^^^
 >reviver : (key: string | number, sequence: Collection.Keyed<string, any> | Collection.Indexed<any>, path?: Array<string | number>) => any
->        : ^^^^^^               ^^^^^^^^^^^^^^^^^^^^^^                      ^^^^^^^^^^             ^^^^^^^^^^^^^^                 ^^^^^   
+>        : ^^^^^^               ^^^^^^^^^^^^                                                       ^^^^^^^^^^^^^^                 ^^^^^   
 >key : string | number
 >    : ^^^^^^^^^^^^^^^
 >sequence : Collection.Keyed<string, any> | Collection.Indexed<any>
@@ -190,7 +190,7 @@ declare module Immutable {
 
   export function isKeyed(maybeKeyed: any): maybeKeyed is Collection.Keyed<any, any>;
 >isKeyed : (maybeKeyed: any) => maybeKeyed is Collection.Keyed<any, any>
->        : ^^^^^^^^^^^^^   ^^^^^              ^^^^^^^^^^                
+>        : ^^^^^^^^^^^^^   ^^^^^                                        
 >maybeKeyed : any
 >           : ^^^
 >Collection : any
@@ -198,7 +198,7 @@ declare module Immutable {
 
   export function isIndexed(maybeIndexed: any): maybeIndexed is Collection.Indexed<any>;
 >isIndexed : (maybeIndexed: any) => maybeIndexed is Collection.Indexed<any>
->          : ^^^^^^^^^^^^^^^   ^^^^^                ^^^^^^^^^^             
+>          : ^^^^^^^^^^^^^^^   ^^^^^                                       
 >maybeIndexed : any
 >             : ^^^
 >Collection : any
@@ -206,7 +206,7 @@ declare module Immutable {
 
   export function isAssociative(maybeAssociative: any): maybeAssociative is Collection.Keyed<any, any> | Collection.Indexed<any>;
 >isAssociative : (maybeAssociative: any) => maybeAssociative is Collection.Keyed<any, any> | Collection.Indexed<any>
->              : ^^^^^^^^^^^^^^^^^^^   ^^^^^                    ^^^^^^^^^^                   ^^^^^^^^^^             
+>              : ^^^^^^^^^^^^^^^^^^^   ^^^^^                                                                        
 >maybeAssociative : any
 >                 : ^^^
 >Collection : any
@@ -356,7 +356,7 @@ declare module Immutable {
 
     merge(...collections: Array<Collection.Indexed<T> | Array<T>>): this;
 >merge : (...collections: Array<Collection.Indexed<T> | Array<T>>) => this
->      : ^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^         ^    ^^^^^ ^  ^^^^^    
+>      : ^^^^^^^^^^^^^^^^^^^^^^                    ^    ^^^^^ ^  ^^^^^    
 >collections : (Collection.Indexed<T> | T[])[]
 >            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -364,7 +364,7 @@ declare module Immutable {
 
     mergeWith(merger: (oldVal: T, newVal: T, key: number) => T, ...collections: Array<Collection.Indexed<T> | Array<T>>): this;
 >mergeWith : (merger: (oldVal: T, newVal: T, key: number) => T, ...collections: Array<Collection.Indexed<T> | Array<T>>) => this
->          : ^^^^^^^^^         ^          ^                  ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^         ^    ^^^^^ ^  ^^^^^    
+>          : ^^^^^^^^^         ^          ^                  ^^^^^^^^^^^^^^^^^^^^^^^^                    ^    ^^^^^ ^  ^^^^^    
 >merger : (oldVal: T, newVal: T, key: number) => T
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^
 >oldVal : T
@@ -380,7 +380,7 @@ declare module Immutable {
 
     mergeDeep(...collections: Array<Collection.Indexed<T> | Array<T>>): this;
 >mergeDeep : (...collections: Array<Collection.Indexed<T> | Array<T>>) => this
->          : ^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^         ^    ^^^^^ ^  ^^^^^    
+>          : ^^^^^^^^^^^^^^^^^^^^^^                    ^    ^^^^^ ^  ^^^^^    
 >collections : (Collection.Indexed<T> | T[])[]
 >            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -388,7 +388,7 @@ declare module Immutable {
 
     mergeDeepWith(merger: (oldVal: T, newVal: T, key: number) => T, ...collections: Array<Collection.Indexed<T> | Array<T>>): this;
 >mergeDeepWith : (merger: (oldVal: T, newVal: T, key: number) => T, ...collections: Array<Collection.Indexed<T> | Array<T>>) => this
->              : ^^^^^^^^^         ^          ^                  ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^         ^    ^^^^^ ^  ^^^^^    
+>              : ^^^^^^^^^         ^          ^                  ^^^^^^^^^^^^^^^^^^^^^^^^                    ^    ^^^^^ ^  ^^^^^    
 >merger : (oldVal: T, newVal: T, key: number) => T
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^
 >oldVal : T
@@ -1326,7 +1326,7 @@ declare module Immutable {
 
     zipWith<U, Z>(zipper: (value: T, otherValue: U) => Z, otherCollection: Collection<any, U>): OrderedSet<Z>;
 >zipWith : { <U, Z>(zipper: (value: T, otherValue: U) => Z, otherCollection: Collection<any, U>): OrderedSet<Z>; <U_1, V, Z_1>(zipper: (value: T, otherValue: U_1, thirdValue: V) => Z_1, otherCollection: Collection<any, U_1>, thirdCollection: Collection<any, V>): OrderedSet<Z_1>; <Z_2>(zipper: (...any: Array<any>) => Z_2, ...collections: Array<Collection<any, any>>): OrderedSet<Z_2>; }
->        : ^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^^^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^
 >zipper : (value: T, otherValue: U) => Z
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : T
@@ -1338,7 +1338,7 @@ declare module Immutable {
 
     zipWith<U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): OrderedSet<Z>;
 >zipWith : { <U_1, Z_1>(zipper: (value: T, otherValue: U_1) => Z_1, otherCollection: Collection<any, U_1>): OrderedSet<Z_1>; <U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): OrderedSet<Z>; <Z_2>(zipper: (...any: Array<any>) => Z_2, ...collections: Array<Collection<any, any>>): OrderedSet<Z_2>; }
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^        ^              ^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^^^^
 >zipper : (value: T, otherValue: U, thirdValue: V) => Z
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : T
@@ -1354,7 +1354,7 @@ declare module Immutable {
 
     zipWith<Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): OrderedSet<Z>;
 >zipWith : { <U, Z_1>(zipper: (value: T, otherValue: U) => Z_1, otherCollection: Collection<any, U>): OrderedSet<Z_1>; <U_1, V, Z_2>(zipper: (value: T, otherValue: U_1, thirdValue: V) => Z_2, otherCollection: Collection<any, U_1>, thirdCollection: Collection<any, V>): OrderedSet<Z_2>; <Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): OrderedSet<Z>; }
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^ ^ ^^^
+>        : ^^^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^^^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^ ^ ^^^
 >zipper : (...any: Array<any>) => Z
 >       : ^^^^^^^^^^^^^^     ^^^^^^
 >any : any[]
@@ -1520,7 +1520,7 @@ declare module Immutable {
   }
   export function Range(start?: number, end?: number, step?: number): Seq.Indexed<number>;
 >Range : (start?: number, end?: number, step?: number) => Seq.Indexed<number>
->      : ^^^^^^^^^      ^^^^^^^^      ^^^^^^^^^      ^^^^^^^^                
+>      : ^^^^^^^^^      ^^^^^^^^      ^^^^^^^^^      ^^^^^                   
 >start : number
 >      : ^^^^^^
 >end : number
@@ -1532,7 +1532,7 @@ declare module Immutable {
 
   export function Repeat<T>(value: T, times?: number): Seq.Indexed<T>;
 >Repeat : <T>(value: T, times?: number) => Seq.Indexed<T>
->       : ^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^         ^ 
+>       : ^^^^^^^^^^^^^^^^^^^^^^      ^^^^^            ^ 
 >value : T
 >      : ^
 >times : number
@@ -1546,7 +1546,7 @@ declare module Immutable {
 
     export function isRecord(maybeRecord: any): maybeRecord is Record.Instance<any>;
 >isRecord : (maybeRecord: any) => maybeRecord is Record.Instance<any>
->         : ^^^^^^^^^^^^^^   ^^^^^               ^^^^^^ ^^^^^^^^     
+>         : ^^^^^^^^^^^^^^   ^^^^^                                   
 >maybeRecord : any
 >            : ^^^
 >Record : any
@@ -1734,7 +1734,7 @@ declare module Immutable {
       // Conversion to JavaScript types
       toJS(): { [K in keyof T]: any };
 >toJS : () => { [K in keyof T]: any; }
->     : ^^^^^^   ^          ^         
+>     : ^^^^^^              ^         
 
       toJSON(): T;
 >toJSON : () => T
@@ -1764,7 +1764,7 @@ declare module Immutable {
       // Sequence algorithms
       toSeq(): Seq.Keyed<keyof T, T[keyof T]>;
 >toSeq : () => Seq.Keyed<keyof T, T[keyof T]>
->      : ^^^^^^^^^             ^  ^       ^  
+>      : ^^^^^^                ^  ^       ^  
 >Seq : any
 >    : ^^^
 
@@ -1795,7 +1795,7 @@ declare module Immutable {
 
     function isSeq(maybeSeq: any): maybeSeq is Seq.Indexed<any> | Seq.Keyed<any, any>;
 >isSeq : (maybeSeq: any) => maybeSeq is Seq.Indexed<any> | Seq.Keyed<any, any>
->      : ^^^^^^^^^^^   ^^^^^            ^^^ ^^^^^^^        ^^^ ^^^^^          
+>      : ^^^^^^^^^^^   ^^^^^                                                  
 >maybeSeq : any
 >         : ^^^
 >Seq : any
@@ -1805,7 +1805,7 @@ declare module Immutable {
 
     function of<T>(...values: Array<T>): Seq.Indexed<T>;
 >of : <T>(...values: Array<T>) => Seq.Indexed<T>
->   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^ ^^^^^^^ ^ 
+>   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^            ^ 
 >values : T[]
 >       : ^^^
 >Seq : any
@@ -1814,7 +1814,7 @@ declare module Immutable {
     export module Keyed {}
     export function Keyed<K, V>(collection: Iterable<[K, V]>): Seq.Keyed<K, V>;
 >Keyed : { <K, V>(collection: Iterable<[K, V]>): Seq.Keyed<K, V>; <V_1>(obj: { [key: string]: V_1; }): Keyed<string, V_1>; <K_1, V_2>(): Keyed<K_1, V_2>; (): Keyed<any, any>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^^^^ ^^^^^ ^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^          ^  ^ ^^^^^^^^^^^^^                 ^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >collection : Iterable<[K, V]>
 >           : ^^^^^^^^^^^^^^^^
 >Seq : any
@@ -1822,7 +1822,7 @@ declare module Immutable {
 
     export function Keyed<V>(obj: {[key: string]: V}): Seq.Keyed<string, V>;
 >Keyed : { <K, V_1>(collection: Iterable<[K, V_1]>): Keyed<K, V_1>; <V>(obj: { [key: string]: V; }): Seq.Keyed<string, V>; <K_1, V_2>(): Keyed<K_1, V_2>; (): Keyed<any, any>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^   ^^^^^^ ^^^^^         ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^   ^^^                  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >obj : { [key: string]: V; }
 >    : ^^^^^^^^^^^^^^^^^^^^^
 >key : string
@@ -1832,13 +1832,13 @@ declare module Immutable {
 
     export function Keyed<K, V>(): Seq.Keyed<K, V>;
 >Keyed : { <K_1, V_1>(collection: Iterable<[K_1, V_1]>): Keyed<K_1, V_1>; <V_2>(obj: { [key: string]: V_2; }): Keyed<string, V_2>; <K, V>(): Seq.Keyed<K, V>; (): Keyed<any, any>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^ ^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^  ^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^          ^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^
 >Seq : any
 >    : ^^^
 
     export function Keyed(): Seq.Keyed<any, any>;
 >Keyed : { <K, V>(collection: Iterable<[K, V]>): Keyed<K, V>; <V_1>(obj: { [key: string]: V_1; }): Keyed<string, V_1>; <K_1, V_2>(): Keyed<K_1, V_2>; (): Seq.Keyed<any, any>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^          ^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                   ^^^
 >Seq : any
 >    : ^^^
 
@@ -1862,7 +1862,7 @@ declare module Immutable {
 
       concat<KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Seq.Keyed<K | KC, V | VC>;
 >concat : { <KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Seq.Keyed<K | KC, V | VC>; <C>(...collections: Array<{ [key: string]: C; }>): Keyed<string | K, V | C>; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^ ^^^^^ ^   ^^  ^   ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^          ^   ^^  ^   ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >collections : Iterable<[KC, VC]>[]
 >            : ^^^^^^^^^^^^^^^^^^^^
 >Seq : any
@@ -1870,7 +1870,7 @@ declare module Immutable {
 
       concat<C>(...collections: Array<{[key: string]: C}>): Seq.Keyed<K | string, V | C>;
 >concat : { <KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Keyed<K | KC, V | VC>; <C>(...collections: Array<{ [key: string]: C; }>): Seq.Keyed<K | string, V | C>; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^ ^^^^^ ^           ^   ^ ^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^          ^           ^   ^ ^^^
 >collections : { [key: string]: C; }[]
 >            : ^^^^^^^^^^^^^^^^^^^^^^^
 >key : string
@@ -1880,7 +1880,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): Seq.Keyed<K, M>;
 >map : <M>(mapper: (value: V, key: K, iter: this) => M, context?: any) => Seq.Keyed<K, M>
->    : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^^^^ ^^^^^ ^  ^ 
+>    : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^          ^  ^ 
 >mapper : (value: V, key: K, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >value : V
@@ -1896,7 +1896,7 @@ declare module Immutable {
 
       mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): Seq.Keyed<M, V>;
 >mapKeys : <M>(mapper: (key: K, value: V, iter: this) => M, context?: any) => Seq.Keyed<M, V>
->        : ^^^^^^^^^^^^      ^         ^                 ^^^^^^^^^^^^^   ^^^^^^^^ ^^^^^ ^  ^ 
+>        : ^^^^^^^^^^^^      ^         ^                 ^^^^^^^^^^^^^   ^^^^^          ^  ^ 
 >mapper : (key: K, value: V, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >key : K
@@ -1912,7 +1912,7 @@ declare module Immutable {
 
       mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): Seq.Keyed<KM, VM>;
 >mapEntries : <KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any) => Seq.Keyed<KM, VM>
->           : ^^^^^^^^^^^^^^^^^         ^  ^                                  ^^  ^^ ^^^^^^^^^^^^   ^^^^^^^^ ^^^^^ ^^  ^^ 
+>           : ^^^^^^^^^^^^^^^^^         ^  ^                                  ^^  ^^ ^^^^^^^^^^^^   ^^^^^          ^^  ^^ 
 >mapper : (entry: [K, V], index: number, iter: this) => [KM, VM]
 >       : ^^^^^^^^ ^  ^ ^^^^^^^^^      ^^^^^^^^    ^^^^^ ^^  ^^ 
 >entry : [K, V]
@@ -1928,7 +1928,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Seq.Keyed<any, any>;
 >flatMap : <M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any) => Seq.Keyed<any, any>
->        : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^ ^^^^^          
+>        : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^                   
 >mapper : (value: V, key: K, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : V
@@ -1944,7 +1944,7 @@ declare module Immutable {
 
       filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Seq.Keyed<K, F>;
 >filter : { <F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Seq.Keyed<K, F>; (predicate: (value: V, key: K, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^       ^                          ^^^^^^^^^^^^^   ^^^^^^ ^^^^^ ^  ^ ^^^^^^^^^^^^^^        ^       ^                    ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^       ^                          ^^^^^^^^^^^^^   ^^^          ^  ^ ^^^^^^^^^^^^^^        ^       ^                    ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: V, key: K, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^         ^
 >value : V
@@ -1978,7 +1978,7 @@ declare module Immutable {
 
       function of<T>(...values: Array<T>): Seq.Indexed<T>;
 >of : <T>(...values: Array<T>) => Seq.Indexed<T>
->   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^ ^^^^^^^ ^ 
+>   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^            ^ 
 >values : T[]
 >       : ^^^
 >Seq : any
@@ -2022,7 +2022,7 @@ declare module Immutable {
 
       concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): Seq.Indexed<T | C>;
 >concat : <C>(...valuesOrCollections: Array<Iterable<C> | C>) => Seq.Indexed<T | C>
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^^^^ ^^^^^^^ ^   ^ 
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^            ^   ^ 
 >valuesOrCollections : (C | Iterable<C>)[]
 >                    : ^^^^^^^^^^^^^^^^^^^
 >Seq : any
@@ -2030,7 +2030,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): Seq.Indexed<M>;
 >map : <M>(mapper: (value: T, key: number, iter: this) => M, context?: any) => Seq.Indexed<M>
->    : ^^^^^^^^^^^^        ^                              ^^^^^^^^^^^^^   ^^^^^^^^ ^^^^^^^ ^ 
+>    : ^^^^^^^^^^^^        ^                              ^^^^^^^^^^^^^   ^^^^^            ^ 
 >mapper : (value: T, key: number, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^^
 >value : T
@@ -2046,7 +2046,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): Seq.Indexed<M>;
 >flatMap : <M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any) => Seq.Indexed<M>
->        : ^^^^^^^^^^^^        ^                              ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^ ^^^^^^^ ^ 
+>        : ^^^^^^^^^^^^        ^                              ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^            ^ 
 >mapper : (value: T, key: number, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : T
@@ -2062,7 +2062,7 @@ declare module Immutable {
 
       filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Seq.Indexed<F>;
 >filter : { <F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Seq.Indexed<F>; (predicate: (value: T, index: number, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                         ^^^^^^^^^^^^^   ^^^^^^ ^^^^^^^ ^ ^^^^^^^^^^^^^^        ^                                   ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                         ^^^^^^^^^^^^^   ^^^            ^ ^^^^^^^^^^^^^^        ^                                   ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: T, index: number, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^         ^
 >value : T
@@ -2096,7 +2096,7 @@ declare module Immutable {
 
       function of<T>(...values: Array<T>): Seq.Set<T>;
 >of : <T>(...values: Array<T>) => Seq.Set<T>
->   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^ ^^^ ^ 
+>   : ^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^        ^ 
 >values : T[]
 >       : ^^^
 >Seq : any
@@ -2140,7 +2140,7 @@ declare module Immutable {
 
       concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): Seq.Set<T | C>;
 >concat : <C>(...valuesOrCollections: Array<Iterable<C> | C>) => Seq.Set<T | C>
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^^^^ ^^^ ^   ^ 
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^        ^   ^ 
 >valuesOrCollections : (C | Iterable<C>)[]
 >                    : ^^^^^^^^^^^^^^^^^^^
 >Seq : any
@@ -2148,7 +2148,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): Seq.Set<M>;
 >map : <M>(mapper: (value: T, key: never, iter: this) => M, context?: any) => Seq.Set<M>
->    : ^^^^^^^^^^^^        ^                             ^^^^^^^^^^^^^   ^^^^^^^^ ^^^ ^ 
+>    : ^^^^^^^^^^^^        ^                             ^^^^^^^^^^^^^   ^^^^^        ^ 
 >mapper : (value: T, key: never, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^^
 >value : T
@@ -2164,7 +2164,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any): Seq.Set<M>;
 >flatMap : <M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any) => Seq.Set<M>
->        : ^^^^^^^^^^^^        ^                             ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^ ^^^ ^ 
+>        : ^^^^^^^^^^^^        ^                             ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^        ^ 
 >mapper : (value: T, key: never, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : T
@@ -2180,7 +2180,7 @@ declare module Immutable {
 
       filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Seq.Set<F>;
 >filter : { <F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Seq.Set<F>; (predicate: (value: T, key: never, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                      ^^^^^^^^^^^^^   ^^^^^^ ^^^ ^ ^^^^^^^^^^^^^^        ^                                ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                      ^^^^^^^^^^^^^   ^^^        ^ ^^^^^^^^^^^^^^        ^                                ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: T, key: never, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^         ^
 >value : T
@@ -2340,7 +2340,7 @@ declare module Immutable {
 
     function isKeyed(maybeKeyed: any): maybeKeyed is Collection.Keyed<any, any>;
 >isKeyed : (maybeKeyed: any) => maybeKeyed is Collection.Keyed<any, any>
->        : ^^^^^^^^^^^^^   ^^^^^              ^^^^^^^^^^ ^^^^^          
+>        : ^^^^^^^^^^^^^   ^^^^^                                        
 >maybeKeyed : any
 >           : ^^^
 >Collection : any
@@ -2348,7 +2348,7 @@ declare module Immutable {
 
     function isIndexed(maybeIndexed: any): maybeIndexed is Collection.Indexed<any>;
 >isIndexed : (maybeIndexed: any) => maybeIndexed is Collection.Indexed<any>
->          : ^^^^^^^^^^^^^^^   ^^^^^                ^^^^^^^^^^ ^^^^^^^     
+>          : ^^^^^^^^^^^^^^^   ^^^^^                                       
 >maybeIndexed : any
 >             : ^^^
 >Collection : any
@@ -2356,7 +2356,7 @@ declare module Immutable {
 
     function isAssociative(maybeAssociative: any): maybeAssociative is Collection.Keyed<any, any> | Collection.Indexed<any>;
 >isAssociative : (maybeAssociative: any) => maybeAssociative is Collection.Keyed<any, any> | Collection.Indexed<any>
->              : ^^^^^^^^^^^^^^^^^^^   ^^^^^                    ^^^^^^^^^^ ^^^^^             ^^^^^^^^^^ ^^^^^^^     
+>              : ^^^^^^^^^^^^^^^^^^^   ^^^^^                                                                        
 >maybeAssociative : any
 >                 : ^^^
 >Collection : any
@@ -2373,7 +2373,7 @@ declare module Immutable {
     export module Keyed {}
     export function Keyed<K, V>(collection: Iterable<[K, V]>): Collection.Keyed<K, V>;
 >Keyed : { <K, V>(collection: Iterable<[K, V]>): Collection.Keyed<K, V>; <V_1>(obj: { [key: string]: V_1; }): Keyed<string, V_1>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^^^^^^^^^^^ ^^^^^ ^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^  ^^^                 ^  ^ ^^^^^^^^^^^^^                 ^^^   ^^^^^^^^^^^^^^^^^^^^^^^^
 >collection : Iterable<[K, V]>
 >           : ^^^^^^^^^^^^^^^^
 >Collection : any
@@ -2381,7 +2381,7 @@ declare module Immutable {
 
     export function Keyed<V>(obj: {[key: string]: V}): Collection.Keyed<string, V>;
 >Keyed : { <K, V_1>(collection: Iterable<[K, V_1]>): Keyed<K, V_1>; <V>(obj: { [key: string]: V; }): Collection.Keyed<string, V>; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^   ^^^^^^^^^^^^^ ^^^^^         ^ ^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^  ^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^   ^^^                         ^ ^^^
 >obj : { [key: string]: V; }
 >    : ^^^^^^^^^^^^^^^^^^^^^
 >key : string
@@ -2402,7 +2402,7 @@ declare module Immutable {
 
       toSeq(): Seq.Keyed<K, V>;
 >toSeq : () => Seq.Keyed<K, V>
->      : ^^^^^^^^^ ^^^^^ ^  ^ 
+>      : ^^^^^^          ^  ^ 
 >Seq : any
 >    : ^^^
 
@@ -2413,7 +2413,7 @@ declare module Immutable {
 
       concat<KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Collection.Keyed<K | KC, V | VC>;
 >concat : { <KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Collection.Keyed<K | KC, V | VC>; <C>(...collections: Array<{ [key: string]: C; }>): Keyed<string | K, V | C>; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^^^^^^^^ ^^^^^ ^   ^^  ^   ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^                 ^   ^^  ^   ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >collections : Iterable<[KC, VC]>[]
 >            : ^^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -2421,7 +2421,7 @@ declare module Immutable {
 
       concat<C>(...collections: Array<{[key: string]: C}>): Collection.Keyed<K | string, V | C>;
 >concat : { <KC, VC>(...collections: Array<Iterable<[KC, VC]>>): Keyed<K | KC, V | VC>; <C>(...collections: Array<{ [key: string]: C; }>): Collection.Keyed<K | string, V | C>; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^^^^^^^^^^^ ^^^^^ ^           ^   ^ ^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^  ^^  ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^    ^^^                 ^           ^   ^ ^^^
 >collections : { [key: string]: C; }[]
 >            : ^^^^^^^^^^^^^^^^^^^^^^^
 >key : string
@@ -2431,7 +2431,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): Collection.Keyed<K, M>;
 >map : <M>(mapper: (value: V, key: K, iter: this) => M, context?: any) => Collection.Keyed<K, M>
->    : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^ ^  ^ 
+>    : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^                 ^  ^ 
 >mapper : (value: V, key: K, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >value : V
@@ -2447,7 +2447,7 @@ declare module Immutable {
 
       mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): Collection.Keyed<M, V>;
 >mapKeys : <M>(mapper: (key: K, value: V, iter: this) => M, context?: any) => Collection.Keyed<M, V>
->        : ^^^^^^^^^^^^      ^         ^                 ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^ ^  ^ 
+>        : ^^^^^^^^^^^^      ^         ^                 ^^^^^^^^^^^^^   ^^^^^                 ^  ^ 
 >mapper : (key: K, value: V, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >key : K
@@ -2463,7 +2463,7 @@ declare module Immutable {
 
       mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): Collection.Keyed<KM, VM>;
 >mapEntries : <KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any) => Collection.Keyed<KM, VM>
->           : ^^^^^^^^^^^^^^^^^         ^  ^                                  ^^  ^^ ^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^ ^^  ^^ 
+>           : ^^^^^^^^^^^^^^^^^         ^  ^                                  ^^  ^^ ^^^^^^^^^^^^   ^^^^^                 ^^  ^^ 
 >mapper : (entry: [K, V], index: number, iter: this) => [KM, VM]
 >       : ^^^^^^^^ ^  ^ ^^^^^^^^^      ^^^^^^^^    ^^^^^ ^^  ^^ 
 >entry : [K, V]
@@ -2479,7 +2479,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Collection.Keyed<any, any>;
 >flatMap : <M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any) => Collection.Keyed<any, any>
->        : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^          
+>        : ^^^^^^^^^^^^        ^       ^                 ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^                          
 >mapper : (value: V, key: K, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : V
@@ -2495,7 +2495,7 @@ declare module Immutable {
 
       filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Collection.Keyed<K, F>;
 >filter : { <F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Collection.Keyed<K, F>; (predicate: (value: V, key: K, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^       ^                          ^^^^^^^^^^^^^   ^^^^^^^^^^^^^ ^^^^^ ^  ^ ^^^^^^^^^^^^^^        ^       ^                    ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^       ^                          ^^^^^^^^^^^^^   ^^^                 ^  ^ ^^^^^^^^^^^^^^        ^       ^                    ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: V, key: K, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^         ^
 >value : V
@@ -2536,7 +2536,7 @@ declare module Immutable {
     export module Indexed {}
     export function Indexed<T>(collection: Iterable<T>): Collection.Indexed<T>;
 >Indexed : <T>(collection: Iterable<T>) => Collection.Indexed<T>
->        : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^ ^^^^^^^ ^ 
+>        : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^                   ^ 
 >collection : Iterable<T>
 >           : ^^^^^^^^^^^
 >Collection : any
@@ -2569,13 +2569,13 @@ declare module Immutable {
       // Conversion to Seq
       toSeq(): Seq.Indexed<T>;
 >toSeq : () => Seq.Indexed<T>
->      : ^^^^^^^^^ ^^^^^^^ ^ 
+>      : ^^^^^^            ^ 
 >Seq : any
 >    : ^^^
 
       fromEntrySeq(): Seq.Keyed<any, any>;
 >fromEntrySeq : () => Seq.Keyed<any, any>
->             : ^^^^^^^^^ ^^^^^          
+>             : ^^^^^^                   
 >Seq : any
 >    : ^^^
 
@@ -2604,7 +2604,7 @@ declare module Immutable {
 
       zip(...collections: Array<Collection<any, any>>): Collection.Indexed<any>;
 >zip : (...collections: Array<Collection<any, any>>) => Collection.Indexed<any>
->    : ^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^ ^^^^^^^     
+>    : ^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^                       
 >collections : Collection<any, any>[]
 >            : ^^^^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -2612,7 +2612,7 @@ declare module Immutable {
 
       zipWith<U, Z>(zipper: (value: T, otherValue: U) => Z, otherCollection: Collection<any, U>): Collection.Indexed<Z>;
 >zipWith : { <U, Z>(zipper: (value: T, otherValue: U) => Z, otherCollection: Collection<any, U>): Collection.Indexed<Z>; <U_1, V, Z_1>(zipper: (value: T, otherValue: U_1, thirdValue: V) => Z_1, otherCollection: Collection<any, U_1>, thirdCollection: Collection<any, V>): Indexed<Z_1>; <Z_2>(zipper: (...any: Array<any>) => Z_2, ...collections: Array<Collection<any, any>>): Indexed<Z_2>; }
->        : ^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^                   ^ ^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^^^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
 >zipper : (value: T, otherValue: U) => Z
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : T
@@ -2626,7 +2626,7 @@ declare module Immutable {
 
       zipWith<U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): Collection.Indexed<Z>;
 >zipWith : { <U_1, Z_1>(zipper: (value: T, otherValue: U_1) => Z_1, otherCollection: Collection<any, U_1>): Indexed<Z_1>; <U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): Collection.Indexed<Z>; <Z_2>(zipper: (...any: Array<any>) => Z_2, ...collections: Array<Collection<any, any>>): Indexed<Z_2>; }
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^ ^^^^^^^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
+>        : ^^^^^^^^^^^^^^^^^^^^^        ^              ^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^                   ^ ^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^^^^^^
 >zipper : (value: T, otherValue: U, thirdValue: V) => Z
 >       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >value : T
@@ -2644,7 +2644,7 @@ declare module Immutable {
 
       zipWith<Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): Collection.Indexed<Z>;
 >zipWith : { <U, Z_1>(zipper: (value: T, otherValue: U) => Z_1, otherCollection: Collection<any, U>): Indexed<Z_1>; <U_1, V, Z_2>(zipper: (value: T, otherValue: U_1, thirdValue: V) => Z_2, otherCollection: Collection<any, U_1>, thirdCollection: Collection<any, V>): Indexed<Z_2>; <Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): Collection.Indexed<Z>; }
->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^^^^^^^^^^^ ^^^^^^^ ^ ^^^
+>        : ^^^^^^^^^^^^^^^^^^^        ^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^              ^^^              ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^          ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^           ^^^                   ^ ^^^
 >zipper : (...any: Array<any>) => Z
 >       : ^^^^^^^^^^^^^^     ^^^^^^
 >any : any[]
@@ -2698,7 +2698,7 @@ declare module Immutable {
       // Sequence algorithms
       concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): Collection.Indexed<T | C>;
 >concat : <C>(...valuesOrCollections: Array<Iterable<C> | C>) => Collection.Indexed<T | C>
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^^^^^^^^^^^ ^^^^^^^ ^   ^ 
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^                   ^   ^ 
 >valuesOrCollections : (C | Iterable<C>)[]
 >                    : ^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -2706,7 +2706,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): Collection.Indexed<M>;
 >map : <M>(mapper: (value: T, key: number, iter: this) => M, context?: any) => Collection.Indexed<M>
->    : ^^^^^^^^^^^^        ^                              ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^^^ ^ 
+>    : ^^^^^^^^^^^^        ^                              ^^^^^^^^^^^^^   ^^^^^                   ^ 
 >mapper : (value: T, key: number, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^^
 >value : T
@@ -2722,7 +2722,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): Collection.Indexed<M>;
 >flatMap : <M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any) => Collection.Indexed<M>
->        : ^^^^^^^^^^^^        ^                              ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^^^^^ ^ 
+>        : ^^^^^^^^^^^^        ^                              ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^                   ^ 
 >mapper : (value: T, key: number, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : T
@@ -2738,7 +2738,7 @@ declare module Immutable {
 
       filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Collection.Indexed<F>;
 >filter : { <F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Collection.Indexed<F>; (predicate: (value: T, index: number, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                         ^^^^^^^^^^^^^   ^^^^^^^^^^^^^ ^^^^^^^ ^ ^^^^^^^^^^^^^^        ^                                   ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                         ^^^^^^^^^^^^^   ^^^                   ^ ^^^^^^^^^^^^^^        ^                                   ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: T, index: number, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^^^      ^^^^^^^^    ^^^^^         ^
 >value : T
@@ -2779,7 +2779,7 @@ declare module Immutable {
     export module Set {}
     export function Set<T>(collection: Iterable<T>): Collection.Set<T>;
 >Set : <T>(collection: Iterable<T>) => Collection.Set<T>
->    : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^^^^^^^^^^^ ^^^ ^ 
+>    : ^^^^^^^^^^^^^^^^^^^^^^^^ ^ ^^^^^               ^ 
 >collection : Iterable<T>
 >           : ^^^^^^^^^^^
 >Collection : any
@@ -2796,14 +2796,14 @@ declare module Immutable {
 
       toSeq(): Seq.Set<T>;
 >toSeq : () => Seq.Set<T>
->      : ^^^^^^^^^ ^^^ ^ 
+>      : ^^^^^^        ^ 
 >Seq : any
 >    : ^^^
 
       // Sequence algorithms
       concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): Collection.Set<T | C>;
 >concat : <C>(...valuesOrCollections: Array<Iterable<C> | C>) => Collection.Set<T | C>
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^^^^^^^^^^^ ^^^ ^   ^ 
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^ ^    ^ ^^^^^               ^   ^ 
 >valuesOrCollections : (C | Iterable<C>)[]
 >                    : ^^^^^^^^^^^^^^^^^^^
 >Collection : any
@@ -2811,7 +2811,7 @@ declare module Immutable {
 
       map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): Collection.Set<M>;
 >map : <M>(mapper: (value: T, key: never, iter: this) => M, context?: any) => Collection.Set<M>
->    : ^^^^^^^^^^^^        ^                             ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^ ^ 
+>    : ^^^^^^^^^^^^        ^                             ^^^^^^^^^^^^^   ^^^^^               ^ 
 >mapper : (value: T, key: never, iter: this) => M
 >       : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^^
 >value : T
@@ -2827,7 +2827,7 @@ declare module Immutable {
 
       flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any):  Collection.Set<M>;
 >flatMap : <M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any) => Collection.Set<M>
->        : ^^^^^^^^^^^^        ^                             ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^^^^^^^^^^^ ^^^ ^ 
+>        : ^^^^^^^^^^^^        ^                             ^^^^^^^^ ^ ^^^^^^^^^^^^   ^^^^^               ^ 
 >mapper : (value: T, key: never, iter: this) => Iterable<M>
 >       : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^^^^^^^^^ ^ 
 >value : T
@@ -2843,7 +2843,7 @@ declare module Immutable {
 
       filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Collection.Set<F>;
 >filter : { <F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Collection.Set<F>; (predicate: (value: T, key: never, iter: this) => any, context?: any): this; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                      ^^^^^^^^^^^^^   ^^^^^^^^^^^^^ ^^^ ^ ^^^^^^^^^^^^^^        ^                                ^^^^^^^^^^^^   ^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^                                      ^^^^^^^^^^^^^   ^^^               ^ ^^^^^^^^^^^^^^        ^                                ^^^^^^^^^^^^   ^^^^^^^^^^
 >predicate : (value: T, key: never, iter: this) => value is F
 >          : ^^^^^^^^^^^^^^^^     ^^^^^^^^    ^^^^^         ^
 >value : T
@@ -3038,19 +3038,19 @@ declare module Immutable {
 
     toKeyedSeq(): Seq.Keyed<K, V>;
 >toKeyedSeq : () => Seq.Keyed<K, V>
->           : ^^^^^^^^^       ^  ^ 
+>           : ^^^^^^          ^  ^ 
 >Seq : any
 >    : ^^^
 
     toIndexedSeq(): Seq.Indexed<V>;
 >toIndexedSeq : () => Seq.Indexed<V>
->             : ^^^^^^^^^         ^ 
+>             : ^^^^^^            ^ 
 >Seq : any
 >    : ^^^
 
     toSetSeq(): Seq.Set<V>;
 >toSetSeq : () => Seq.Set<V>
->         : ^^^^^^^^^ ^^^ ^ 
+>         : ^^^^^^        ^ 
 >Seq : any
 >    : ^^^
 
@@ -3070,19 +3070,19 @@ declare module Immutable {
     // Collections (Seq)
     keySeq(): Seq.Indexed<K>;
 >keySeq : () => Seq.Indexed<K>
->       : ^^^^^^^^^         ^ 
+>       : ^^^^^^            ^ 
 >Seq : any
 >    : ^^^
 
     valueSeq(): Seq.Indexed<V>;
 >valueSeq : () => Seq.Indexed<V>
->         : ^^^^^^^^^         ^ 
+>         : ^^^^^^            ^ 
 >Seq : any
 >    : ^^^
 
     entrySeq(): Seq.Indexed<[K, V]>;
 >entrySeq : () => Seq.Indexed<[K, V]>
->         : ^^^^^^^^^          ^  ^  
+>         : ^^^^^^             ^  ^  
 >Seq : any
 >    : ^^^
 
@@ -3177,7 +3177,7 @@ declare module Immutable {
 
     groupBy<G>(grouper: (value: V, key: K, iter: this) => G, context?: any): /*Map*/Seq.Keyed<G, /*this*/Collection<K, V>>;
 >groupBy : <G>(grouper: (value: V, key: K, iter: this) => G, context?: any) => Seq.Keyed<G, Collection<K, V>>
->        : ^^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^^^^       ^  ^^^^^^^^^^ ^  ^  
+>        : ^^^^^^^^^^^^^        ^       ^                 ^^^^^^^^^^^^^   ^^^^^          ^  ^^^^^^^^^^ ^  ^  
 >grouper : (value: V, key: K, iter: this) => G
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >value : V
@@ -3339,7 +3339,7 @@ declare module Immutable {
     // Reducing a value
     reduce<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
 >reduce : { <R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R; <R_1>(reducer: (reduction: V | R_1, value: V, key: K, iter: this) => R_1): R_1; }
->       : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^
+>       : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^^^         ^       ^                 ^^^^^^^^^^^^
 >reducer : (reduction: R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : R
@@ -3357,7 +3357,7 @@ declare module Immutable {
 
     reduce<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
 >reduce : { <R_1>(reducer: (reduction: R_1, value: V, key: K, iter: this) => R_1, initialReduction: R_1, context?: any): R_1; <R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R; }
->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
+>       : ^^^^^^^^^^^^^^^^^            ^^^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
 >reducer : (reduction: V | R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : V | R
@@ -3371,7 +3371,7 @@ declare module Immutable {
 
     reduceRight<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
 >reduceRight : { <R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R; <R_1>(reducer: (reduction: V | R_1, value: V, key: K, iter: this) => R_1): R_1; }
->            : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^
+>            : ^^^^^^^^^^^^^^^            ^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^^^         ^       ^                 ^^^^^^^^^^^^
 >reducer : (reduction: R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : R
@@ -3389,7 +3389,7 @@ declare module Immutable {
 
     reduceRight<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
 >reduceRight : { <R_1>(reducer: (reduction: R_1, value: V, key: K, iter: this) => R_1, initialReduction: R_1, context?: any): R_1; <R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R; }
->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
+>            : ^^^^^^^^^^^^^^^^^            ^^^         ^       ^                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^            ^   ^         ^       ^                 ^^^^^^^^
 >reducer : (reduction: V | R, value: V, key: K, iter: this) => R
 >        : ^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^
 >reduction : V | R

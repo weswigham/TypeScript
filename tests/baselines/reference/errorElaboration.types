@@ -39,7 +39,7 @@ foo(a);
 
 function test(): {[A in "foo"]: A} {
 >test : () => { [A in "foo"]: A; }
->     : ^^^^^^   ^            ^   
+>     : ^^^^^^                ^   
 
   return {foo: "bar"};
 >{foo: "bar"} : { foo: "bar"; }

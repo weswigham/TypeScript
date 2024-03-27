@@ -96,7 +96,7 @@ module m {
 
     function foo111(param: m2.public2) {
 >foo111 : (param: m2.public2) => void
->       : ^^^^^^^^^^        ^^^^^^^^^
+>       : ^^^^^^^^          ^^^^^^^^^
 >param : m2.public2
 >      : ^^^^^^^^^^
 >m2 : any
@@ -119,7 +119,7 @@ module m {
 
     export function foo113(param: m2.public2) {
 >foo113 : (param: m2.public2) => void
->       : ^^^^^^^^^^        ^^^^^^^^^
+>       : ^^^^^^^^          ^^^^^^^^^
 >param : m2.public2
 >      : ^^^^^^^^^^
 >m2 : any

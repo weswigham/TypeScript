@@ -25,7 +25,7 @@ export type AnimalInfo = CatInfo | DogInfo;
 
 function AnimalComponent(info: AnimalInfo): JSX.Element {
 >AnimalComponent : (info: AnimalInfo) => JSX.Element
->                : ^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^
+>                : ^^^^^^^^^^^^^^^^^^^^^^           
 >info : AnimalInfo
 >     : ^^^^^^^^^^
 >JSX : any

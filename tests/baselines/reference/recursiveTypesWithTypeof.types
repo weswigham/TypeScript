@@ -99,13 +99,13 @@ var h = h();
 
 var i: (x: typeof i) => typeof x;
 >i : (x: typeof i) => typeof x
->  : ^^^^       ^^^^^^       ^
+>  : ^^^^       ^^^^^^        
 >x : (x: typeof i) => any
 >  : ^^^^       ^^^^^^^^^
 >i : (x: typeof i) => any
 >  : ^^^^       ^^^^^^^^^
 >x : (x: typeof i) => typeof x
->  : ^^^^       ^^^^^^       ^
+>  : ^^^^       ^^^^^^        
 
 var i = i(i);
 >i : (x: typeof i) => any
@@ -152,13 +152,13 @@ var h2 = new h2();
 
 var i2: new (x: typeof i2) => typeof x;
 >i2 : new (x: typeof i2) => typeof x
->   : ^^^^^^^^       ^^^^^^^       ^
+>   : ^^^^^^^^       ^^^^^^^        
 >x : new (x: typeof i2) => any
 >  : ^^^^^^^^       ^^^^^^^^^^
 >i2 : new (x: typeof i2) => any
 >   : ^^^^^^^^       ^^^^^^^^^^
 >x : new (x: typeof i2) => typeof x
->  : ^^^^^^^^       ^^^^^^^       ^
+>  : ^^^^^^^^       ^^^^^^^        
 
 var i2 = new i2(i2);
 >i2 : new (x: typeof i2) => any

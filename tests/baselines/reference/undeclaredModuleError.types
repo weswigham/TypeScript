@@ -7,11 +7,11 @@ import fs = require('fs');
 
 function readdir(path: string, accept: (stat: fs.Stats, name: string) => boolean, callback: (error: Error, results: { name: string; stat: fs.Stats; }[]) => void ) {}
 >readdir : (path: string, accept: (stat: fs.Stats, name: string) => boolean, callback: (error: Error, results: { name: string; stat: fs.Stats; }[]) => void) => void
->        : ^^^^^^^      ^^^^^^^^^^       ^^                                ^^^^^^^^^^^^        ^^^^^                                 ^^                    ^^^^^^^^^
+>        : ^^^^^^^      ^^^^^^^^^^                                         ^^^^^^^^^^^^        ^^^^^                                                       ^^^^^^^^^
 >path : string
 >     : ^^^^^^
 >accept : (stat: fs.Stats, name: string) => boolean
->       : ^^^^^^^^^      ^^^^^^^^      ^^^^^       
+>       : ^^^^^^^        ^^^^^^^^      ^^^^^       
 >stat : fs.Stats
 >     : ^^^^^^^^
 >fs : any
@@ -19,11 +19,11 @@ function readdir(path: string, accept: (stat: fs.Stats, name: string) => boolean
 >name : string
 >     : ^^^^^^
 >callback : (error: Error, results: { name: string; stat: fs.Stats; }[]) => void
->         : ^^^^^^^^^^^^^^^^^^^^^^^^                      ^^           ^^^^^    
+>         : ^^^^^^^^^^^^^^^^^^^^^^^^                                   ^^^^^    
 >error : Error
 >      : ^^^^^
 >results : { name: string; stat: fs.Stats; }[]
->        : ^^^^^^^^      ^^^^^^^^^^      ^^^^^
+>        : ^^^^^^^^      ^^^^^^^^        ^^^^^
 >name : string
 >     : ^^^^^^
 >stat : fs.Stats
@@ -65,7 +65,7 @@ function instrumentFile(covFileDir: string, covFileName: string, originalFilePat
 >readdir(covFileDir, () => {        } , (error: Error, files: {}[]) => {                files.forEach((file) => {                    var fullPath = join(IDoNotExist);                } );            } ) : void
 >                                                                                                                                                                                                         : ^^^^
 >readdir : (path: string, accept: (stat: fs.Stats, name: string) => boolean, callback: (error: Error, results: { name: string; stat: fs.Stats; }[]) => void) => void
->        : ^^^^^^^      ^^^^^^^^^^       ^^                                ^^^^^^^^^^^^        ^^^^^                                 ^^                    ^^^^^^^^^
+>        : ^^^^^^^      ^^^^^^^^^^                                         ^^^^^^^^^^^^        ^^^^^                                                       ^^^^^^^^^
 >covFileDir : string
 >           : ^^^^^^
 >() => {        } : () => void

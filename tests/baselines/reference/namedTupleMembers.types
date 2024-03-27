@@ -150,7 +150,7 @@ export const func = null as any as Func<SegmentAnnotated>;
 
 export function useState<T>(initial: T): [value: T, setter: (T) => void] {
 >useState : <T>(initial: T) => [value: T, setter: (T: any) => void]
->         : ^^^^^^^^^^^^^^^^^^^        ^           ^  ^^^          
+>         : ^^^^^^^^^^^^^^^^^^^        ^              ^^^          
 >initial : T
 >        : ^
 >T : any

@@ -25,7 +25,7 @@ interface PropsWithConvert<T> extends PropsBase<T> {
 
 function ShouldInferFromData<T>(props: Props<T>): JSX.Element {
 >ShouldInferFromData : <T>(props: Props<T>) => JSX.Element
->                    : ^^^^^^^^^^^^^^^^ ^ ^^^^^^^^ ^^^^^^^
+>                    : ^^^^^^^^^^^^^^^^ ^ ^^^^^           
 >props : Props<T>
 >      : ^^^^^^^^
 >JSX : any

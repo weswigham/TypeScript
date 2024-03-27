@@ -61,7 +61,7 @@ Date.prototype.toLocaleString();
 >Date.prototype.toLocaleString() : string
 >                                : ^^^^^^
 >Date.prototype.toLocaleString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->                              : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>                              : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 >Date.prototype : Date
 >               : ^^^^
 >Date : DateConstructor
@@ -69,13 +69,13 @@ Date.prototype.toLocaleString();
 >prototype : Date
 >          : ^^^^
 >toLocaleString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->               : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>               : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 
 Date.prototype.toLocaleDateString();
 >Date.prototype.toLocaleDateString() : string
 >                                    : ^^^^^^
 >Date.prototype.toLocaleDateString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 >Date.prototype : Date
 >               : ^^^^
 >Date : DateConstructor
@@ -83,13 +83,13 @@ Date.prototype.toLocaleDateString();
 >prototype : Date
 >          : ^^^^
 >toLocaleDateString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>                   : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 
 Date.prototype.toLocaleTimeString();
 >Date.prototype.toLocaleTimeString() : string
 >                                    : ^^^^^^
 >Date.prototype.toLocaleTimeString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 >Date.prototype : Date
 >               : ^^^^
 >Date : DateConstructor
@@ -97,7 +97,7 @@ Date.prototype.toLocaleTimeString();
 >prototype : Date
 >          : ^^^^
 >toLocaleTimeString : { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; }
->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^^
+>                   : ^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^                          ^^^^^^^^^^^^
 
 Date.prototype.valueOf();
 >Date.prototype.valueOf() : number

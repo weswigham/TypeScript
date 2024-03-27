@@ -38,7 +38,7 @@ type T2 = ObjectHasKey<{ a: string }, 'b'>;  // 'false'
 
 declare function f1<A extends string, B extends string>(a: A, b: B): { [P in A | B]: any };
 >f1 : <A extends string, B extends string>(a: A, b: B) => { [P in A | B]: any; }
->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^    ^   ^         
+>   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^   ^         
 >a : A
 >  : ^
 >b : B

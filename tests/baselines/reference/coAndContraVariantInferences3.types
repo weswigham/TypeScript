@@ -246,7 +246,7 @@ declare const updateImportDeclaration: {
 
 declare function every<T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[];
 >every : { <T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[]; <T_1, U_1 extends T_1>(array: readonly T_1[] | undefined, callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^                  ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^                  ^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >array : readonly T[]
 >      : ^^^^^^^^^^^^
 >callback : (element: T, index: number) => element is U
@@ -258,7 +258,7 @@ declare function every<T, U extends T>(array: readonly T[], callback: (element: 
 
 declare function every<T, U extends T>(array: readonly T[] | undefined, callback: (element: T, index: number) => element is U): array is readonly U[] | undefined;
 >every : { <T_1, U_1 extends T_1>(array: readonly T_1[], callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[]; <T, U extends T>(array: readonly T[] | undefined, callback: (element: T, index: number) => element is U): array is readonly U[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^              ^^^^^^^^^^^^          ^                               ^^^^                  ^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^  ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^              ^^^^^^^^^^^^          ^                               ^^^^                  ^              ^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >array : readonly T[] | undefined
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^
 >callback : (element: T, index: number) => element is U
@@ -270,7 +270,7 @@ declare function every<T, U extends T>(array: readonly T[] | undefined, callback
 
 declare function every<T>(array: readonly T[] | undefined, callback: (element: T, index: number) => boolean): boolean;
 >every : { <T_1, U extends T_1>(array: readonly T_1[], callback: (element: T_1, index: number) => element is U): array is readonly U[]; <T_2, U_1 extends T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => element is U_1): array is readonly U_1[] | undefined; <T>(array: readonly T[] | undefined, callback: (element: T, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^              ^^^^^^^^^^^^          ^                           ^^^       ^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^  ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^              ^^^^^^^^^^^^          ^                           ^^^       ^^^
 >array : readonly T[] | undefined
 >      : ^^^^^^^^^^^^^^^^^^^^^^^^
 >callback : (element: T, index: number) => boolean
@@ -441,7 +441,7 @@ buildOverload("updateImportDeclaration")
 >every(modifiers, isModifier) : boolean
 >                             : ^^^^^^^
 >every : { <T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[]; <T_1, U_1 extends T_1>(array: readonly T_1[] | undefined, callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >modifiers : readonly Modifier[] | readonly Decorator[]
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isModifier : (node: Node) => node is Modifier
@@ -543,7 +543,7 @@ buildOverload("updateImportDeclaration")
 >every(decorators, isDecorator) : boolean
 >                               : ^^^^^^^
 >every : { <T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[]; <T_1, U_1 extends T_1>(array: readonly T_1[] | undefined, callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >decorators : readonly Modifier[] | readonly Decorator[]
 >           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isDecorator : (node: Node) => node is Decorator
@@ -652,7 +652,7 @@ function foo() {
 >every(modifiers, isModifier) : boolean
 >                             : ^^^^^^^
 >every : { <T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[]; <T_1, U_1 extends T_1>(array: readonly T_1[] | undefined, callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >modifiers : readonly Modifier[] | readonly Decorator[]
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isModifier : (node: Node) => node is Modifier
@@ -662,7 +662,7 @@ function foo() {
 >every(modifiers, isDecorator) : boolean
 >                              : ^^^^^^^
 >every : { <T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[]; <T_1, U_1 extends T_1>(array: readonly T_1[] | undefined, callback: (element: T_1, index: number) => element is U_1): array is readonly U_1[] | undefined; <T_2>(array: readonly T_2[] | undefined, callback: (element: T_2, index: number) => boolean): boolean; }
->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>      : ^^^^^^^^^^^^^^^^^^^^^^^^^^         ^  ^^^^^^^^^^^^          ^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^              ^^^^^^^^^^^^          ^^^                           ^^^^^^^^^^^^^
 >modifiers : readonly Modifier[] | readonly Decorator[]
 >          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 >isDecorator : (node: Node) => node is Decorator
