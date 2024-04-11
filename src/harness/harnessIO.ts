@@ -980,9 +980,17 @@ export namespace Compiler {
             jsCode += "\r\n\r\n";
             jsCode += getErrorBaseline(tsConfigFiles.concat(declFileCompilationResult.declInputFiles, declFileCompilationResult.declOtherFiles), declFileCompilationResult.declResult.diagnostics);
         }
-        else if (!options.noCheck && !options.noEmit && (options.composite || options.declaration || options.emitDeclarationOnly)) {
-            const withoutChecking = result.repeat({ noCheck: "true", emitDeclarationOnly: "true" });
-            compareResultFileSets(withoutChecking.dts, result.dts);
+        else if (!options.noCheck && !options.noEmit) {
+            const isDeclarationEmitting = options.emitDeclarationOnly || options.composite || options.declaration;
+            const isEmittingNoCheckCompatible = !options.emitDeclarationOnly && options.verbatimModuleSyntax && ts.getEmitScriptTarget(options) === ts.ScriptTarget.ESNext;
+            if (isDeclarationEmitting || isEmittingNoCheckCompatible) {
+                const newOptions: TestCaseParser.CompilerSettings = !isEmittingNoCheckCompatible ? { noCheck: "true", emitDeclarationOnly: "true" } : { noCheck: "true" };
+                const withoutChecking = result.repeat(newOptions);
+                compareResultFileSets(withoutChecking.dts, result.dts);
+                if (isEmittingNoCheckCompatible) {
+                    compareResultFileSets(withoutChecking.js, result.js);
+                }
+            }
         }
 
         // eslint-disable-next-line no-null/no-null

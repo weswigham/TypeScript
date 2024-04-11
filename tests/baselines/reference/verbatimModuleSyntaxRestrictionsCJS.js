@@ -123,3 +123,15 @@ exports.default = I; // error
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = esmy; // error
+
+
+!!!! File /main7.js differs from original emit in noCheck emit
+//// [main7.js]
+===================================================================
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -1,3 +1,3 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.default = esmy; // error
++exports.default = decl_1.default; // error
