@@ -29470,14 +29470,15 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         return type;
     }
 
-    function checkIdentifier(node: Identifier, checkMode: CheckMode | undefined): Type {
-        if (isThisInTypeQuery(node)) {
-            return checkThisExpression(node);
-        }
-
+    /**
+     * This part of `checkIdentifier` is kept seperate from the rest, so `NodeCheckFlags` (and related diagnostics) can be lazily calculated
+     * without calculating the flow type of the identifier.
+     */
+    function checkIdentifierCalculateNodeCheckFlags(node: Identifier) {
+        if (isThisInTypeQuery(node)) return;
         const symbol = getResolvedSymbol(node);
         if (symbol === unknownSymbol) {
-            return errorType;
+            return;
         }
 
         // As noted in ECMAScript 6 language spec, arrow functions never have an arguments objects.
@@ -29489,7 +29490,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         if (symbol === argumentsSymbol) {
             if (isInPropertyInitializerOrClassStaticBlock(node)) {
                 error(node, Diagnostics.arguments_cannot_be_referenced_in_property_initializers);
-                return errorType;
+                return;
             }
 
             let container = getContainingFunction(node);
@@ -29511,11 +29512,6 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                     }
                 }
             }
-            return getTypeOfSymbol(symbol);
-        }
-
-        if (shouldMarkIdentifierAliasReferenced(node)) {
-            markAliasReferenced(symbol, node);
         }
 
         const localOrExportSymbol = getExportSymbolOfValueSymbolIfExported(symbol);
@@ -29524,7 +29520,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             addDeprecatedSuggestion(node, targetSymbol.declarations, node.escapedText as string);
         }
 
-        let declaration = localOrExportSymbol.valueDeclaration;
+        const declaration = localOrExportSymbol.valueDeclaration;
         if (declaration && localOrExportSymbol.flags & SymbolFlags.Class) {
             // When we downlevel classes we may emit some code outside of the class body. Due to the fact the
             // class name is double-bound, we must ensure we mark references to the class name so that we can
@@ -29544,6 +29540,33 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         }
 
         checkNestedBlockScopedBinding(node, symbol);
+    }
+
+    function checkIdentifier(node: Identifier, checkMode: CheckMode | undefined): Type {
+        if (isThisInTypeQuery(node)) {
+            return checkThisExpression(node);
+        }
+
+        const symbol = getResolvedSymbol(node);
+        if (symbol === unknownSymbol) {
+            return errorType;
+        }
+
+        checkIdentifierCalculateNodeCheckFlags(node);
+
+        if (symbol === argumentsSymbol) {
+            if (isInPropertyInitializerOrClassStaticBlock(node)) {
+                return errorType;
+            }
+            return getTypeOfSymbol(symbol);
+        }
+
+        if (shouldMarkIdentifierAliasReferenced(node)) {
+            markAliasReferenced(symbol, node);
+        }
+
+        const localOrExportSymbol = getExportSymbolOfValueSymbolIfExported(symbol);
+        let declaration = localOrExportSymbol.valueDeclaration;
 
         let type = getNarrowedTypeOfSymbol(localOrExportSymbol, node, checkMode);
         const assignmentKind = getAssignmentTargetKind(node);
@@ -40449,24 +40472,28 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
 
     function setNodeLinksForPrivateIdentifierScope(node: PropertyDeclaration | PropertySignature | MethodDeclaration | MethodSignature | AccessorDeclaration) {
         if (isPrivateIdentifier(node.name)) {
-            if (
-                languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks ||
-                languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators ||
-                !useDefineForClassFields
-            ) {
-                for (let lexicalScope = getEnclosingBlockScopeContainer(node); !!lexicalScope; lexicalScope = getEnclosingBlockScopeContainer(lexicalScope)) {
-                    getNodeLinks(lexicalScope).flags |= NodeCheckFlags.ContainsClassWithPrivateIdentifiers;
-                }
+            setNodeLinksForPrivateIdentifier(node.name, node);
+        }
+    }
 
-                // If this is a private element in a class expression inside the body of a loop,
-                // then we must use a block-scoped binding to store the additional variables required
-                // to transform private elements.
-                if (isClassExpression(node.parent)) {
-                    const enclosingIterationStatement = getEnclosingIterationStatement(node.parent);
-                    if (enclosingIterationStatement) {
-                        getNodeLinks(node.name).flags |= NodeCheckFlags.BlockScopedBindingInLoop;
-                        getNodeLinks(enclosingIterationStatement).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
-                    }
+    function setNodeLinksForPrivateIdentifier(node: PrivateIdentifier, parent: Node) {
+        if (
+            languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks ||
+            languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators ||
+            !useDefineForClassFields
+        ) {
+            for (let lexicalScope = getEnclosingBlockScopeContainer(parent); !!lexicalScope; lexicalScope = getEnclosingBlockScopeContainer(lexicalScope)) {
+                getNodeLinks(lexicalScope).flags |= NodeCheckFlags.ContainsClassWithPrivateIdentifiers;
+            }
+
+            // If this is a private element in a class expression inside the body of a loop,
+            // then we must use a block-scoped binding to store the additional variables required
+            // to transform private elements.
+            if (isClassExpression(parent.parent)) {
+                const enclosingIterationStatement = getEnclosingIterationStatement(parent.parent);
+                if (enclosingIterationStatement) {
+                    getNodeLinks(node).flags |= NodeCheckFlags.BlockScopedBindingInLoop;
+                    getNodeLinks(enclosingIterationStatement).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
                 }
             }
         }
@@ -48513,6 +48540,86 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         return nodeLinks[nodeId]?.flags || 0;
     }
 
+    function hasNodeCheckFlag(node: Node, flag: NodeCheckFlags) {
+        calculateNodeCheckFlagWorker(node, flag);
+        return !!(getNodeCheckFlags(node) & flag);
+    }
+
+    function calculateNodeCheckFlagWorker(node: Node, flag: NodeCheckFlags) {
+        const links = getNodeLinks(node);
+        if (links.calculatedFlags & flag) {
+            return;
+        }
+        links.calculatedFlags |= flag;
+        // This is only the set of `NodeCheckFlags` our emitter actually looks for, not all of them
+        switch (flag) {
+            case NodeCheckFlags.SuperInstance:
+            case NodeCheckFlags.SuperStatic:
+                return checkSingleSuperExpression(node);
+            case NodeCheckFlags.MethodWithSuperPropertyAccessInAsync:
+            case NodeCheckFlags.MethodWithSuperPropertyAssignmentInAsync:
+            case NodeCheckFlags.ContainsSuperPropertyInStaticInitializer:
+                return checkChildSuperExpressions(node);
+            case NodeCheckFlags.CaptureArguments:
+            case NodeCheckFlags.ContainsCapturedBlockScopeBinding:
+            case NodeCheckFlags.NeedsLoopOutParameter:
+            case NodeCheckFlags.ContainsConstructorReference:
+                return checkChildIdentifiers(node);
+            case NodeCheckFlags.ConstructorReference:
+            case NodeCheckFlags.CapturedBlockScopedBinding:
+                return checkSingleIdentifier(node);
+            case NodeCheckFlags.BlockScopedBindingInLoop:
+                return checkSingleLoopBlockScopeBinding(node);
+            case NodeCheckFlags.LoopWithCapturedBlockScopedBinding:
+                return checkChildLoopBlockScopeBindings(node);
+            default:
+                return Debug.fail(`Unhandled node check flag calculation: ${Debug.formatNodeCheckFlags(flag)}`);
+        }
+
+        function checkChildSuperExpressions(node: Node) {
+            links.calculatedFlags |= (NodeCheckFlags.MethodWithSuperPropertyAccessInAsync | NodeCheckFlags.MethodWithSuperPropertyAssignmentInAsync | NodeCheckFlags.ContainsSuperPropertyInStaticInitializer);
+            forEachChildRecursively(node, checkSingleSuperExpression);
+        }
+
+        function checkSingleSuperExpression(node: Node) {
+            const nodeLinks = getNodeLinks(node); // This is called on sub-nodes of the original input, make sure we set `calculatedFlags` on the correct node 
+            nodeLinks.calculatedFlags |= (NodeCheckFlags.SuperInstance | NodeCheckFlags.SuperStatic); // Yes, we set this on non-applicable nodes, so we can entirely skip the traversal on future calls
+            if (node.kind === SyntaxKind.SuperKeyword) {
+                checkSuperExpression(node);
+            }
+        }
+
+        function checkChildIdentifiers(node: Node) {
+            links.calculatedFlags |= (NodeCheckFlags.CaptureArguments | NodeCheckFlags.ContainsCapturedBlockScopeBinding | NodeCheckFlags.NeedsLoopOutParameter | NodeCheckFlags.ContainsConstructorReference);
+            forEachChildRecursively(node, checkSingleIdentifier);
+        }
+
+        function checkSingleIdentifier(node: Node) {
+            const nodeLinks = getNodeLinks(node);
+            nodeLinks.calculatedFlags |= (NodeCheckFlags.ConstructorReference | NodeCheckFlags.CapturedBlockScopedBinding | NodeCheckFlags.BlockScopedBindingInLoop);
+            if (isIdentifier(node)) {
+                checkIdentifierCalculateNodeCheckFlags(node);
+            }
+        }
+
+        function checkChildLoopBlockScopeBindings(node: Node) {
+            links.calculatedFlags |= (NodeCheckFlags.CaptureArguments | NodeCheckFlags.ContainsCapturedBlockScopeBinding | NodeCheckFlags.NeedsLoopOutParameter | NodeCheckFlags.ContainsConstructorReference | NodeCheckFlags.LoopWithCapturedBlockScopedBinding);
+            forEachChildRecursively(node, checkSingleLoopBlockScopeBinding);
+        }
+
+        function checkSingleLoopBlockScopeBinding(node: Node) {
+            const nodeLinks = getNodeLinks(node);
+            nodeLinks.calculatedFlags |= (NodeCheckFlags.ConstructorReference | NodeCheckFlags.CapturedBlockScopedBinding | NodeCheckFlags.BlockScopedBindingInLoop);
+            checkSingleIdentifier(node);
+            if (isComputedPropertyName(node)) {
+                checkComputedPropertyName(node);
+            }
+            if (isPrivateIdentifier(node) && isClassElement(node.parent)) {
+                setNodeLinksForPrivateIdentifier(node, node.parent)
+            }
+        }
+    }
+
     function getEnumMemberValue(node: EnumMember): string | number | undefined {
         computeEnumMemberValues(node.parent);
         return getNodeLinks(node).enumMemberValue;
@@ -48882,11 +48989,7 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
             hasNodeCheckFlag: (nodeIn, flag) => {
                 const node = getParseTreeNode(nodeIn);
                 if (!node) return false;
-                if (getNodeLinks(node).calculatedFlags & flag) {
-                    return !!(getNodeCheckFlags(node) & flag);
-                }
-                // TODO: Calculate flag
-                return node ? !!(getNodeCheckFlags(node) & flag) : false;
+                return hasNodeCheckFlag(node, flag);
             },
             isTopLevelValueImportEqualsWithEntityName,
             isDeclarationVisible,
