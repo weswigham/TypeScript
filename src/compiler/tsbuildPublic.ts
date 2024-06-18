@@ -24,6 +24,7 @@ import {
     createModuleResolutionLoader,
     CreateProgram,
     createProgramHost,
+    createToBuildInfoCompilerOptionsForDirectory,
     createTypeReferenceDirectiveResolutionCache,
     createTypeReferenceResolutionLoader,
     createWatchFactory,
@@ -87,6 +88,8 @@ import {
     mutateMapSkippingNewValues,
     NonIncrementalBuildInfo,
     noop,
+    optionDeclarations,
+    optionsHaveChanges,
     ParseConfigFileHost,
     parseConfigHostFromCompilerHostLike,
     ParsedCommandLine,
@@ -324,12 +327,12 @@ function getCompilerOptionsOfBuildOptions(buildOptions: BuildOptions): CompilerO
     return result;
 }
 
-export function createSolutionBuilder<T extends BuilderProgram>(host: SolutionBuilderHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions): SolutionBuilder<T> {
-    return createSolutionBuilderWorker(/*watch*/ false, host, rootNames, defaultOptions);
+export function createSolutionBuilder<T extends BuilderProgram>(host: SolutionBuilderHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, overrideOptions?: CompilerOptions): SolutionBuilder<T> {
+    return createSolutionBuilderWorker(/*watch*/ false, host, rootNames, defaultOptions, /*baseWatchOptions*/ undefined, overrideOptions);
 }
 
-export function createSolutionBuilderWithWatch<T extends BuilderProgram>(host: SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, baseWatchOptions?: WatchOptions): SolutionBuilder<T> {
-    return createSolutionBuilderWorker(/*watch*/ true, host, rootNames, defaultOptions, baseWatchOptions);
+export function createSolutionBuilderWithWatch<T extends BuilderProgram>(host: SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, baseWatchOptions?: WatchOptions, overrideOptions?: CompilerOptions): SolutionBuilder<T> {
+    return createSolutionBuilderWorker(/*watch*/ true, host, rootNames, defaultOptions, baseWatchOptions, overrideOptions);
 }
 
 type ConfigFileCacheEntry = ParsedCommandLine | Diagnostic;
@@ -367,6 +370,7 @@ interface SolutionBuilderState<T extends BuilderProgram> extends WatchFactory<Wa
     // State of solution
     readonly options: BuildOptions;
     readonly baseCompilerOptions: CompilerOptions;
+    readonly overrideCompilerOptions: CompilerOptions | undefined;
     readonly rootNames: readonly string[];
     readonly baseWatchOptions: WatchOptions | undefined;
 
@@ -413,7 +417,7 @@ interface SolutionBuilderState<T extends BuilderProgram> extends WatchFactory<Wa
     writeLog: (s: string) => void;
 }
 
-function createSolutionBuilderState<T extends BuilderProgram>(watch: boolean, hostOrHostWithWatch: SolutionBuilderHost<T> | SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], options: BuildOptions, baseWatchOptions: WatchOptions | undefined): SolutionBuilderState<T> {
+function createSolutionBuilderState<T extends BuilderProgram>(watch: boolean, hostOrHostWithWatch: SolutionBuilderHost<T> | SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], options: BuildOptions, baseWatchOptions: WatchOptions | undefined, overrideOptions: CompilerOptions | undefined): SolutionBuilderState<T> {
     const host = hostOrHostWithWatch as SolutionBuilderHost<T>;
     const hostWithWatch = hostOrHostWithWatch as SolutionBuilderWithWatchHost<T>;
 
@@ -489,6 +493,7 @@ function createSolutionBuilderState<T extends BuilderProgram>(watch: boolean, ho
         // State of solution
         options,
         baseCompilerOptions,
+        overrideCompilerOptions: overrideOptions,
         rootNames,
         baseWatchOptions,
 
@@ -571,7 +576,7 @@ function parseConfigFile<T extends BuilderProgram>(state: SolutionBuilderState<T
 
     performance.mark("SolutionBuilder::beforeConfigFileParsing");
     let diagnostic: Diagnostic | undefined;
-    const { parseConfigFileHost, baseCompilerOptions, baseWatchOptions, extendedConfigCache, host } = state;
+    const { parseConfigFileHost, baseCompilerOptions, overrideCompilerOptions, baseWatchOptions, extendedConfigCache, host } = state;
     let parsed: ParsedCommandLine | undefined;
     if (host.getParsedCommandLine) {
         parsed = host.getParsedCommandLine(configFileName);
@@ -581,6 +586,11 @@ function parseConfigFile<T extends BuilderProgram>(state: SolutionBuilderState<T
         parseConfigFileHost.onUnRecoverableConfigFileDiagnostic = d => diagnostic = d;
         parsed = getParsedCommandLineOfConfigFile(configFileName, baseCompilerOptions, parseConfigFileHost, extendedConfigCache, baseWatchOptions);
         parseConfigFileHost.onUnRecoverableConfigFileDiagnostic = noop;
+    }
+    if (overrideCompilerOptions && parsed) {
+        for (const key in overrideCompilerOptions) {
+            parsed.options[key] = overrideCompilerOptions[key];
+        }
     }
     configFileCache.set(configFilePath, parsed || diagnostic!);
     performance.mark("SolutionBuilder::afterConfigFileParsing");
@@ -1711,6 +1721,14 @@ function getUpToDateStatusWorker<T extends BuilderProgram>(state: SolutionBuilde
     );
     if (dependentPackageFileStatus) return dependentPackageFileStatus;
 
+    // Check override options
+    if (compareOptionsOutOfDate(createToBuildInfoCompilerOptionsForDirectory(getDirectoryPath(buildInfoPath), state.compilerHost)(project.options), buildInfo.options)) {
+        return {
+            type: UpToDateStatusType.OutOfDateOptions,
+            buildInfoFile: buildInfoPath,
+        };
+    }
+
     // Up to date
     return {
         type: pseudoUpToDate ?
@@ -1722,6 +1740,10 @@ function getUpToDateStatusWorker<T extends BuilderProgram>(state: SolutionBuilde
         newestInputFileName,
         oldestOutputFileName,
     };
+}
+
+function compareOptionsOutOfDate(newOptions: CompilerOptions | undefined, oldOptions: CompilerOptions | undefined): boolean {
+    return optionsHaveChanges(newOptions || {}, oldOptions || {}, optionDeclarations);
 }
 
 function hasSameBuildInfo<T extends BuilderProgram>(state: SolutionBuilderState<T>, buildInfoCacheEntry: BuildInfoCacheEntry, resolvedRefPath: ResolvedConfigFilePath) {
@@ -2182,10 +2204,10 @@ function stopWatching<T extends BuilderProgram>(state: SolutionBuilderState<T>) 
  * A SolutionBuilder has an immutable set of rootNames that are the "entry point" projects, but
  * can dynamically add/remove other projects based on changes on the rootNames' references
  */
-function createSolutionBuilderWorker<T extends BuilderProgram>(watch: false, host: SolutionBuilderHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions): SolutionBuilder<T>;
-function createSolutionBuilderWorker<T extends BuilderProgram>(watch: true, host: SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, baseWatchOptions?: WatchOptions): SolutionBuilder<T>;
-function createSolutionBuilderWorker<T extends BuilderProgram>(watch: boolean, hostOrHostWithWatch: SolutionBuilderHost<T> | SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], options: BuildOptions, baseWatchOptions?: WatchOptions): SolutionBuilder<T> {
-    const state = createSolutionBuilderState(watch, hostOrHostWithWatch, rootNames, options, baseWatchOptions);
+function createSolutionBuilderWorker<T extends BuilderProgram>(watch: false, host: SolutionBuilderHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, baseWatchOptions?: undefined, overrideOptions?: CompilerOptions): SolutionBuilder<T>;
+function createSolutionBuilderWorker<T extends BuilderProgram>(watch: true, host: SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], defaultOptions: BuildOptions, baseWatchOptions?: WatchOptions, overrideOptions?: CompilerOptions): SolutionBuilder<T>;
+function createSolutionBuilderWorker<T extends BuilderProgram>(watch: boolean, hostOrHostWithWatch: SolutionBuilderHost<T> | SolutionBuilderWithWatchHost<T>, rootNames: readonly string[], options: BuildOptions, baseWatchOptions?: WatchOptions, overrideOptions?: CompilerOptions): SolutionBuilder<T> {
+    const state = createSolutionBuilderState(watch, hostOrHostWithWatch, rootNames, options, baseWatchOptions, overrideOptions);
     return {
         build: (project, cancellationToken, writeFile, getCustomTransformers) => build(state, project, cancellationToken, writeFile, getCustomTransformers),
         clean: project => clean(state, project),

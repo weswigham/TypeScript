@@ -7480,6 +7480,7 @@ export interface ParsedCommandLine {
     fileNames: string[];
     projectReferences?: readonly ProjectReference[];
     watchOptions?: WatchOptions;
+    overrideOptions?: CompilerOptions;
     raw?: any;
     errors: Diagnostic[];
     wildcardDirectories?: MapLike<WatchDirectoryFlags>;
@@ -9540,6 +9541,7 @@ export interface Printer {
 
 /** @internal */
 export interface BuildInfo {
+    options: CompilerOptions | undefined;
     version: string;
 }
 

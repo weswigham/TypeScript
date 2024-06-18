@@ -1836,6 +1836,7 @@ export function parseCommandLineWorker(
     readFile?: (path: string) => string | undefined,
 ) {
     const options = {} as OptionsBase;
+    let overrideOptions: OptionsBase | undefined;
     let watchOptions: WatchOptions | undefined;
     const fileNames: string[] = [];
     const errors: Diagnostic[] = [];
@@ -1843,6 +1844,7 @@ export function parseCommandLineWorker(
     parseStrings(commandLine);
     return {
         options,
+        overrideOptions,
         watchOptions,
         fileNames,
         errors,
@@ -1868,7 +1870,13 @@ export function parseCommandLineWorker(
                         i = parseOptionValue(args, i, watchOptionsDidYouMeanDiagnostics, watchOpt, watchOptions || (watchOptions = {}), errors);
                     }
                     else {
-                        errors.push(createUnknownOptionError(inputOptionName, diagnostics, s));
+                        const overrideOpt = getOptionDeclarationFromName(getOptionsNameMap, inputOptionName, /*allowShort*/ true);
+                        if (overrideOpt && !overrideOpt.isFilePath) { // TODO: Define file paths relative to config files? Allow ${configDir}?
+                            i = parseOptionValue(args, i, diagnostics, overrideOpt, overrideOptions ??= {}, errors);
+                        }
+                        else {
+                            errors.push(createUnknownOptionError(inputOptionName, diagnostics, s));
+                        }
                     }
                 }
             }
@@ -2025,6 +2033,7 @@ function getOptionDeclarationFromName(getOptionNameMap: () => OptionsNameMap, op
 export interface ParsedBuildCommand {
     buildOptions: BuildOptions;
     watchOptions: WatchOptions | undefined;
+    overrideOptions: CompilerOptions | undefined;
     projects: string[];
     errors: Diagnostic[];
 }
@@ -2050,7 +2059,7 @@ const buildOptionsDidYouMeanDiagnostics: ParseCommandLineWorkerDiagnostics = {
 
 /** @internal */
 export function parseBuildCommand(args: readonly string[]): ParsedBuildCommand {
-    const { options, watchOptions, fileNames: projects, errors } = parseCommandLineWorker(
+    const { options, overrideOptions, watchOptions, fileNames: projects, errors } = parseCommandLineWorker(
         buildOptionsDidYouMeanDiagnostics,
         args,
     );
@@ -2075,7 +2084,7 @@ export function parseBuildCommand(args: readonly string[]): ParsedBuildCommand {
         errors.push(createCompilerDiagnostic(Diagnostics.Options_0_and_1_cannot_be_combined, "watch", "dry"));
     }
 
-    return { buildOptions, watchOptions, projects, errors };
+    return { buildOptions, overrideOptions, watchOptions, projects, errors };
 }
 
 /** @internal */

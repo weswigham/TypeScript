@@ -54,6 +54,7 @@ import {
     createGetCanonicalFileName,
     createSourceMapGenerator,
     createTextWriter,
+    createToBuildInfoCompilerOptionsForDirectory,
     Debug,
     DebuggerStatement,
     DeclarationName,
@@ -791,7 +792,7 @@ export function emitFiles(
             emitSkipped = true;
             return;
         }
-        const buildInfo = host.getBuildInfo() || { version };
+        const buildInfo = host.getBuildInfo() || { version, options: createToBuildInfoCompilerOptionsForDirectory(getDirectoryPath(buildInfoPath), host)(compilerOptions) };
         // Pass buildinfo as additional data to avoid having to reparse
         writeFile(host, emitterDiagnostics, buildInfoPath, getBuildInfoText(buildInfo), /*writeByteOrderMark*/ false, /*sourceFiles*/ undefined, { buildInfo });
         emittedFilesList?.push(buildInfoPath);

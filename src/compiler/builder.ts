@@ -9,7 +9,6 @@ import {
     BuilderState,
     BuildInfo,
     CancellationToken,
-    CommandLineOption,
     compareStringsCaseSensitive,
     compareValues,
     CompilerHost,
@@ -17,12 +16,12 @@ import {
     compilerOptionsAffectDeclarationPath,
     compilerOptionsAffectEmit,
     compilerOptionsAffectSemanticDiagnostics,
-    CompilerOptionsValue,
     concatenate,
     convertToOptionsWithAbsolutePaths,
     createGetCanonicalFileName,
     createModuleNotFoundChain,
     createProgram,
+    createToBuildInfoCompilerOptionsForDirectory,
     CustomTransformers,
     Debug,
     Diagnostic,
@@ -46,8 +45,6 @@ import {
     getEmitDeclarations,
     getIsolatedModules,
     getNormalizedAbsolutePath,
-    getOptionsNameMap,
-    getOwnKeys,
     getRelativePathFromDirectory,
     getSourceFileOfNode,
     getTsBuildInfoEmitOutputFilePath,
@@ -1087,7 +1084,6 @@ export interface IncrementalBuildInfoBase extends BuildInfo {
     fileNames: readonly string[];
     root: readonly IncrementalBuildInfoRoot[];
     resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
-    options: CompilerOptions | undefined;
     semanticDiagnosticsPerFile: IncrementalBuildInfoDiagnostic[] | undefined;
     emitDiagnosticsPerFile: IncrementalBuildInfoEmitDiagnostic[] | undefined;
     // Because this is only output file in the program, we dont need fileId to deduplicate name
@@ -1191,6 +1187,7 @@ function getBuildInfoEmitPending(state: BuilderProgramStateWithDefinedProgram) {
 function getBuildInfo(state: BuilderProgramStateWithDefinedProgram): BuildInfo {
     const currentDirectory = state.program.getCurrentDirectory();
     const buildInfoDirectory = getDirectoryPath(getNormalizedAbsolutePath(getTsBuildInfoEmitOutputFilePath(state.compilerOptions)!, currentDirectory));
+    const toIncrementalBuildInfoCompilerOptions = createToBuildInfoCompilerOptionsForDirectory(buildInfoDirectory, state.program);
     // Convert the file name to Path here if we set the fileName instead to optimize multiple d.ts file emits and having to compute Canonical path
     const latestChangedDtsFile = state.latestChangedDtsFile ? relativeToBuildInfoEnsuringAbsolutePath(state.latestChangedDtsFile) : undefined;
     const fileNames: string[] = [];
@@ -1199,6 +1196,7 @@ function getBuildInfo(state: BuilderProgramStateWithDefinedProgram): BuildInfo {
     ensureHasErrorsForState(state);
     if (!isIncrementalCompilation(state.compilerOptions)) {
         const buildInfo: NonIncrementalBuildInfo = {
+            options: toIncrementalBuildInfoCompilerOptions(state.compilerOptions),
             root: arrayFrom(rootFileNames, r => relativeToBuildInfo(r)),
             errors: state.hasErrors ? true : undefined,
             checkPending: state.checkPending,
@@ -1387,40 +1385,6 @@ function getBuildInfo(state: BuilderProgramStateWithDefinedProgram): BuildInfo {
             }
         });
         return result;
-    }
-
-    /**
-     * @param optionKey key of CommandLineOption to use to determine if the option should be serialized in tsbuildinfo
-     */
-    function toIncrementalBuildInfoCompilerOptions(options: CompilerOptions) {
-        let result: CompilerOptions | undefined;
-        const { optionsNameMap } = getOptionsNameMap();
-        for (const name of getOwnKeys(options).sort(compareStringsCaseSensitive)) {
-            const optionInfo = optionsNameMap.get(name.toLowerCase());
-            if (optionInfo?.affectsBuildInfo) {
-                (result ||= {})[name] = toReusableCompilerOptionValue(
-                    optionInfo,
-                    options[name] as CompilerOptionsValue,
-                );
-            }
-        }
-        return result;
-    }
-
-    function toReusableCompilerOptionValue(option: CommandLineOption | undefined, value: CompilerOptionsValue) {
-        if (option) {
-            Debug.assert(option.type !== "listOrElement");
-            if (option.type === "list") {
-                const values = value as readonly string[];
-                if (option.element.isFilePath && values.length) {
-                    return values.map(relativeToBuildInfoEnsuringAbsolutePath);
-                }
-            }
-            else if (option.isFilePath) {
-                return relativeToBuildInfoEnsuringAbsolutePath(value as string);
-            }
-        }
-        return value;
     }
 
     function toIncrementalBuildInfoDiagnostics() {

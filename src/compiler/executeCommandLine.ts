@@ -750,13 +750,14 @@ export function executeCommandLine(
     commandLineArgs: readonly string[],
 ): void | SolutionBuilder<EmitAndSemanticDiagnosticsBuilderProgram> | WatchOfConfigFile<EmitAndSemanticDiagnosticsBuilderProgram> {
     if (isBuild(commandLineArgs)) {
-        const { buildOptions, watchOptions, projects, errors } = parseBuildCommand(commandLineArgs.slice(1));
+        const { buildOptions, overrideOptions, watchOptions, projects, errors } = parseBuildCommand(commandLineArgs.slice(1));
         if (buildOptions.generateCpuProfile && system.enableCPUProfiler) {
             system.enableCPUProfiler(buildOptions.generateCpuProfile, () =>
                 performBuild(
                     system,
                     cb,
                     buildOptions,
+                    overrideOptions,
                     watchOptions,
                     projects,
                     errors,
@@ -767,6 +768,7 @@ export function executeCommandLine(
                 system,
                 cb,
                 buildOptions,
+                overrideOptions,
                 watchOptions,
                 projects,
                 errors,
@@ -804,6 +806,7 @@ function performBuild(
     sys: System,
     cb: ExecuteCommandLineCallbacks,
     buildOptions: BuildOptions,
+    overrideOptions: CompilerOptions | undefined,
     watchOptions: WatchOptions | undefined,
     projects: string[],
     errors: Diagnostic[],
@@ -866,7 +869,7 @@ function performBuild(
                 reportSolutionBuilderTimes(builder, solutionPerformance);
             }
         };
-        const builder = createSolutionBuilderWithWatch(buildHost, projects, buildOptions, watchOptions);
+        const builder = createSolutionBuilderWithWatch(buildHost, projects, buildOptions, watchOptions, overrideOptions);
         builder.build();
         reportSolutionBuilderTimes(builder, solutionPerformance);
         reportBuildStatistics = true;
@@ -883,7 +886,7 @@ function performBuild(
     buildHost.jsDocParsingMode = defaultJSDocParsingMode;
     const solutionPerformance = enableSolutionPerformance(sys, buildOptions);
     updateSolutionBuilderHost(sys, cb, buildHost, solutionPerformance);
-    const builder = createSolutionBuilder(buildHost, projects, buildOptions);
+    const builder = createSolutionBuilder(buildHost, projects, buildOptions, overrideOptions);
     const exitStatus = buildOptions.clean ? builder.clean() : builder.build();
     reportSolutionBuilderTimes(builder, solutionPerformance);
     dumpTracingLegend(); // Will no-op if there hasn't been any tracing

@@ -67,6 +67,7 @@ import {
     compareValues,
     Comparison,
     CompilerOptions,
+    CompilerOptionsValue,
     ComputedPropertyName,
     computeLineAndCharacterOfPosition,
     computeLineOfPosition,
@@ -194,10 +195,12 @@ import {
     getNodeChildren,
     getNormalizedAbsolutePath,
     getNormalizedPathComponents,
+    getOptionsNameMap,
     getOwnKeys,
     getParseTreeNode,
     getPathComponents,
     getPathFromPathComponents,
+    getRelativePathFromDirectory,
     getRelativePathToDirectoryOrUrl,
     getResolutionModeOverride,
     getRootLength,
@@ -11785,5 +11788,54 @@ export function hasInferredType(node: Node): node is HasInferredType {
         default:
             assertType<never>(node);
             return false;
+    }
+}
+
+/** @internal */
+export function createToBuildInfoCompilerOptionsForDirectory(buildInfoDirectory: string, host: {
+    getCurrentDirectory(): string;
+    getCanonicalFileName(path: string): string;
+}) {
+    return toBuildInfoCompilerOptions;
+    /**
+     * @param optionKey key of CommandLineOption to use to determine if the option should be serialized in tsbuildinfo
+     */
+    function toBuildInfoCompilerOptions(options: CompilerOptions) {
+        let result: CompilerOptions | undefined;
+        const { optionsNameMap } = getOptionsNameMap();
+        for (const name of getOwnKeys(options).sort(compareStringsCaseSensitive)) {
+            const optionInfo = optionsNameMap.get(name.toLowerCase());
+            if (optionInfo?.affectsBuildInfo) {
+                (result ||= {})[name] = toReusableCompilerOptionValue(
+                    optionInfo,
+                    options[name] as CompilerOptionsValue,
+                );
+            }
+        }
+        return result;
+    }
+
+    function toReusableCompilerOptionValue(option: CommandLineOption | undefined, value: CompilerOptionsValue) {
+        if (option) {
+            Debug.assert(option.type !== "listOrElement");
+            if (option.type === "list") {
+                const values = value as readonly string[];
+                if (option.element.isFilePath && values.length) {
+                    return values.map(relativeToBuildInfoEnsuringAbsolutePath);
+                }
+            }
+            else if (option.isFilePath) {
+                return relativeToBuildInfoEnsuringAbsolutePath(value as string);
+            }
+        }
+        return value;
+    }
+
+    function relativeToBuildInfoEnsuringAbsolutePath(path: string) {
+        return relativeToBuildInfo(getNormalizedAbsolutePath(path, host.getCurrentDirectory()));
+    }
+
+    function relativeToBuildInfo(path: string) {
+        return ensurePathIsNonModuleName(getRelativePathFromDirectory(buildInfoDirectory, path, host.getCanonicalFileName));
     }
 }
