@@ -599,6 +599,27 @@ const { main: watchGuard, watch: watchWatchGuard } = entrypointBuildTask({
     output: "./built/local/watchGuard.js",
 });
 
+const { main: registerHooks, watch: watchRegisterHooks } = entrypointBuildTask({
+    name: "register",
+    project: "src/register",
+    srcEntrypoint: "./src/register/register.ts",
+    builtEntrypoint: "./built/local/register/register.js",
+    output: "./built/local/register.js",
+});
+
+const { main: hooksImpl, watch: watchHooksImpl } = entrypointBuildTask({
+    name: "hooks",
+    buildDeps: [generateDiagnostics],
+    project: "src/hooks",
+    srcEntrypoint: "./src/hooks/hooks.ts",
+    builtEntrypoint: "./built/local/hooks/hooks.js",
+    output: "./built/local/hooks.js",
+    mainDeps: [services],
+    bundlerOptions: { usePublicAPI: true },
+});
+
+export { hooksImpl, registerHooks };
+
 export const generateTypesMap = task({
     name: "generate-types-map",
     run: async () => {
@@ -628,14 +649,14 @@ const copyBuiltLocalDiagnosticMessages = task({
 export const otherOutputs = task({
     name: "other-outputs",
     description: "Builds miscelaneous scripts and documents distributed with the LKG",
-    dependencies: [cancellationToken, typingsInstaller, watchGuard, generateTypesMap, copyBuiltLocalDiagnosticMessages],
+    dependencies: [cancellationToken, typingsInstaller, watchGuard, registerHooks, hooksImpl, generateTypesMap, copyBuiltLocalDiagnosticMessages],
 });
 
 export const watchOtherOutputs = task({
     name: "watch-other-outputs",
     description: "Builds miscelaneous scripts and documents distributed with the LKG",
     hiddenFromTaskList: true,
-    dependencies: [watchCancellationToken, watchTypingsInstaller, watchWatchGuard, generateTypesMap, copyBuiltLocalDiagnosticMessages],
+    dependencies: [watchCancellationToken, watchTypingsInstaller, watchWatchGuard, watchRegisterHooks, watchHooksImpl, generateTypesMap, copyBuiltLocalDiagnosticMessages],
 });
 
 export const local = task({
@@ -892,6 +913,8 @@ export const produceLKG = task({
             "built/local/typescript.d.ts",
             "built/local/typingsInstaller.js",
             "built/local/watchGuard.js",
+            "built/local/hooks.js",
+            "built/local/register.js",
         ].concat(libs().map(lib => lib.target));
         const missingFiles = expectedFiles
             .concat(localizationTargets)

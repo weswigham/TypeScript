@@ -55,6 +55,8 @@ async function copyScriptOutputs() {
     await copyFromBuiltLocal("typescript.js");
     await copyFromBuiltLocal("typingsInstaller.js");
     await copyFromBuiltLocal("watchGuard.js");
+    await copyFromBuiltLocal("register.js");
+    await copyFromBuiltLocal("hooks.js");
 }
 
 async function copyDeclarationOutputs() {
