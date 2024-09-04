@@ -13324,12 +13324,25 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
      * - The type of its expression is a string or numeric literal type, or is a `unique symbol` type.
      */
     function isLateBindableName(node: DeclarationName): node is LateBoundName {
+        return isLateBindableAST(node)
+            && isTypeUsableAsPropertyName(isComputedPropertyName(node) ? checkComputedPropertyName(node) : checkExpressionCached(expr));
+    }
+
+    function isLateBindableIndexSignature(node: DeclarationName): node is LateBoundName {
+        return isLateBindableAST(node)
+            && isTypeUsableAsIndexSignature(isComputedPropertyName(node) ? checkComputedPropertyName(node) : checkExpressionCached(expr));
+    }
+
+    function isLateBindableAST(node: DeclarationName) {
         if (!isComputedPropertyName(node) && !isElementAccessExpression(node)) {
             return false;
         }
         const expr = isComputedPropertyName(node) ? node.expression : node.argumentExpression;
-        return isEntityNameExpression(expr)
-            && isTypeUsableAsPropertyName(isComputedPropertyName(node) ? checkComputedPropertyName(node) : checkExpressionCached(expr));
+        return isEntityNameExpression(expr);
+    }
+
+    function isTypeUsableAsIndexSignature(type: Type): boolean {
+        return isTypeAssignableTo(type, stringNumberSymbolType);
     }
 
     function isLateBoundName(name: __String): boolean {
@@ -13342,6 +13355,11 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
      * Indicates whether a declaration has a late-bindable dynamic name.
      */
     function hasLateBindableName(node: Declaration): node is LateBoundDeclaration | LateBoundBinaryExpressionDeclaration {
+        const name = getNameOfDeclaration(node);
+        return !!name && isLateBindableName(name);
+    }
+
+    function hasLateBindableIndexSignature(node: Declaration) {
         const name = getNameOfDeclaration(node);
         return !!name && isLateBindableName(name);
     }
@@ -13453,6 +13471,17 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
         return links.resolvedSymbol;
     }
 
+    function lateBindIndexSignature(symbol: Symbol, decl: LateBoundDeclaration | LateBoundBinaryExpressionDeclaration) {
+        // TODO: Combine index signatures inferred for each member? Or make an index info for each?
+        // Combined?
+        // Pros: Easily made, definite compatability with all relevant signatures.
+        // Cons: Unspecific. Can't make the signature until all declarations are processed
+        // Individual?
+        // Pros: Can inject one at a time. Accurate read types via index info applicability filtering.
+        // Cons: Can't tell at-a-glance which signatures apply? Potentially lots of signatures to track?
+        // Individual probably better.
+    }
+
     function getResolvedMembersOrExportsOfSymbol(symbol: Symbol, resolutionKind: MembersOrExportsResolutionKind): Map<__String, Symbol> {
         const links = getSymbolLinks(symbol);
         if (!links[resolutionKind]) {
@@ -13475,6 +13504,9 @@ export function createTypeChecker(host: TypeCheckerHost): TypeChecker {
                         if (isStatic === hasStaticModifier(member)) {
                             if (hasLateBindableName(member)) {
                                 lateBindMember(symbol, earlySymbols, lateSymbols, member);
+                            }
+                            else if (hasLateBindableIndexSignature(member)) {
+                                lateBindIndexSignature(symbol, member);
                             }
                         }
                     }
