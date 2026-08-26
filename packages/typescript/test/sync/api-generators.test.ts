@@ -396,6 +396,39 @@ describe("API - generator batching", () => {
         }
     });
 
+    test("propagates uncaught request errors to sibling generators", () => {
+        const api = spawnAPI();
+        const events: string[] = [];
+
+        function* failingRequest(): Generator<APIRequest, void, APIResponse["result"]> {
+            try {
+                yield { method: "unknown", params: null } as unknown as APIRequest;
+            }
+            finally {
+                events.push("failing finally");
+            }
+        }
+
+        function* siblingRequest(): Generator<APIRequest, void, APIResponse["result"]> {
+            try {
+                yield { method: "parseCommandLine", params: { commandLine: [] } };
+            }
+            finally {
+                events.push("sibling finally start");
+                yield { method: "readConfigFile", params: { file: "/tsconfig.json" } };
+                events.push("sibling finally end");
+            }
+        }
+
+        try {
+            assert.throws(() => api.batch(failingRequest(), siblingRequest()), /unknown API method/);
+            assert.deepEqual(events, ["failing finally", "sibling finally start", "sibling finally end"]);
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("lazily caches generator-enabled methods", () => {
         const api = spawnAPI();
         const prototype = Object.getPrototypeOf(api);
