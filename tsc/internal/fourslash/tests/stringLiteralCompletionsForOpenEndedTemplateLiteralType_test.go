@@ -24,9 +24,7 @@ conversionTest("/**/");`
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
-				"dataDowncast",
 				"downcast",
-				"editingDowncast",
 			},
 		},
 	})
