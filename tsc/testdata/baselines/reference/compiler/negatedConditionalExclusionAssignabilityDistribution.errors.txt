@@ -1,0 +1,77 @@
+negatedConditionalExclusionAssignabilityDistribution.ts(2,5): error TS2322: Type 'T & not U' is not assignable to type 'T[] extends U[] ? never : T[]'.
+negatedConditionalExclusionAssignabilityDistribution.ts(6,5): error TS2322: Type '[T] & [string]' is not assignable to type '[T] extends [string] ? [T] : never'.
+negatedConditionalExclusionAssignabilityDistribution.ts(12,5): error TS2322: Type '[T]' is not assignable to type '[T] extends [string] ? [T] : [T] & not [string]'.
+negatedConditionalExclusionAssignabilityDistribution.ts(22,5): error TS2322: Type 'T' is not assignable to type 'Partition<T, U>'.
+negatedConditionalExclusionAssignabilityDistribution.ts(26,5): error TS2322: Type '(T & U) | (T & V)' is not assignable to type 'T extends U ? T : T & V'.
+  Type 'T & U' is not assignable to type 'T extends U ? T : T & V'.
+negatedConditionalExclusionAssignabilityDistribution.ts(30,5): error TS2322: Type 'T | V' is not assignable to type 'Partition<T, U>'.
+  Type 'T' is not assignable to type 'Partition<T, U>'.
+negatedConditionalExclusionAssignabilityDistribution.ts(35,7): error TS2322: Type 'boolean' is not assignable to type 'string | number'.
+negatedConditionalExclusionAssignabilityDistribution.ts(36,7): error TS2322: Type '"value"' is not assignable to type 'never'.
+negatedConditionalExclusionAssignabilityDistribution.ts(41,5): error TS2322: Type 'number' is not assignable to type 'StringFilter<T>'.
+
+
+==== negatedConditionalExclusionAssignabilityDistribution.ts (9 errors) ====
+    function nonDistributiveArrays<T, U>(value: T & not U): T[] extends U[] ? never : T[] {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not U' is not assignable to type 'T[] extends U[] ? never : T[]'.
+    }
+    
+    function nonDistributiveTrueBranch<T>(value: [T] & [string]): [T] extends [string] ? [T] : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '[T] & [string]' is not assignable to type '[T] extends [string] ? [T] : never'.
+    }
+    
+    const nonDistributiveNever: never = nonDistributiveTrueBranch<string | number>(["value"]);
+    
+    function nonDistributiveFalseBranch<T>(value: [T]): [T] extends [string] ? [T] : [T] & not [string] {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '[T]' is not assignable to type '[T] extends [string] ? [T] : [T] & not [string]'.
+    }
+    
+    function nonDistributiveCommonBranch<T, V>(value: [T] & V): [T] extends [string] ? V : [T] {
+        return value;
+    }
+    
+    type Partition<T, U> = T extends U ? T & U : T & not U;
+    
+    function partition<T, U>(value: T): Partition<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'Partition<T, U>'.
+    }
+    
+    function unionSource<T, U, V>(value: (T & U) | (T & not U & V)): T extends U ? T : T & V {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '(T & U) | (T & V)' is not assignable to type 'T extends U ? T : T & V'.
+!!! error TS2322:   Type 'T & U' is not assignable to type 'T extends U ? T : T & V'.
+    }
+    
+    function missingUnionBranch<T, U, V>(value: T | V): Partition<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T | V' is not assignable to type 'Partition<T, U>'.
+!!! error TS2322:   Type 'T' is not assignable to type 'Partition<T, U>'.
+    }
+    
+    const stringPartition: Partition<string | number, string> = "value";
+    const numberPartition: Partition<string | number, string> = 1;
+    const outsidePartition: Partition<string | number, string> = true;
+          ~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'boolean' is not assignable to type 'string | number'.
+    const emptyPartition: Partition<never, string> = "value";
+          ~~~~~~~~~~~~~~
+!!! error TS2322: Type '"value"' is not assignable to type 'never'.
+    
+    type StringFilter<T> = T extends string ? never : T;
+    
+    function wrongCheckDomain<T>(value: number & not string): StringFilter<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'StringFilter<T>'.
+    }
+    

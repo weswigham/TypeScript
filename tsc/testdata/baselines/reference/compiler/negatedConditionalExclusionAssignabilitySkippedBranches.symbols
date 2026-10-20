@@ -1,0 +1,303 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilitySkippedBranches.ts] ////
+
+=== negatedConditionalExclusionAssignabilitySkippedBranches.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 12))
+
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 15))
+
+type Branches<T, U, V, W> = T extends U ? V : W;
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 14))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 16))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 19))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 14))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 16))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 19))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 22))
+
+function alwaysFalseString<T>(value: { value: T }): Filter<{ value: T }, string> {
+>alwaysFalseString : Symbol(alwaysFalseString, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 48))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 27))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 60))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 4, 30))
+}
+
+function alwaysFalseNumber<T>(value: { value: T }): Filter<{ value: T }, number> {
+>alwaysFalseNumber : Symbol(alwaysFalseNumber, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 6, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 27))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 60))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 8, 30))
+}
+
+function alwaysFalseArray<T>(value: T[]): Filter<T[], string> {
+>alwaysFalseArray : Symbol(alwaysFalseArray, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 10, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 12, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 12, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 12, 26))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 12, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 12, 29))
+}
+
+function alwaysFalseBranchShape<T>(
+>alwaysFalseBranchShape : Symbol(alwaysFalseBranchShape, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 14, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 32))
+
+    value: { value: T; other: T },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 35))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 17, 12))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 32))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 17, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 32))
+
+): Branches<{ value: T }, string, never, { other: T }> {
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 18, 13))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 32))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 18, 42))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 32))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 16, 35))
+}
+
+function alwaysFalseRejectsTrueBranch<T>(value: { value: T }): Extracted<{ value: T }, string> {
+>alwaysFalseRejectsTrueBranch : Symbol(alwaysFalseRejectsTrueBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 20, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 38))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 41))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 49))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 38))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 44))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 74))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 38))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 22, 41))
+}
+
+function alwaysFalseRejectsMissingProperty<T>(
+>alwaysFalseRejectsMissingProperty : Symbol(alwaysFalseRejectsMissingProperty, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 43))
+
+    value: { value: T },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 46))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 27, 12))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 43))
+
+): Branches<{ value: T }, string, { value: T }, { other: T }> {
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 28, 13))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 43))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 28, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 43))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 28, 49))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 43))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 26, 46))
+}
+
+function alwaysTrueObject<T>(value: { value: T }): Extracted<{ value: T }, { value: unknown }> {
+>alwaysTrueObject : Symbol(alwaysTrueObject, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 30, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 29))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 26))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 44))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 62))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 76))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 32, 29))
+}
+
+function alwaysTrueArray<T>(value: T[]): Extracted<T[], readonly unknown[]> {
+>alwaysTrueArray : Symbol(alwaysTrueArray, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 34, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 36, 25))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 36, 28))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 36, 25))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 36, 25))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 36, 28))
+}
+
+function alwaysTrueRejectsFalseBranch<T>(value: { value: T }): Filter<{ value: T }, { value: unknown }> {
+>alwaysTrueRejectsFalseBranch : Symbol(alwaysTrueRejectsFalseBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 38, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 38))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 41))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 49))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 38))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 71))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 38))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 85))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 40, 41))
+}
+
+function alwaysTrueRejectsMissingProperty<T>(
+>alwaysTrueRejectsMissingProperty : Symbol(alwaysTrueRejectsMissingProperty, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 42, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 42))
+
+    value: { value: T },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 45))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 45, 12))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 42))
+
+): Branches<{ value: T }, { value: unknown }, { other: T }, { value: T }> {
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 46, 13))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 42))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 46, 27))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 46, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 42))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 46, 61))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 42))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 44, 45))
+}
+
+function deferredBranch<T>(value: { value: T }): Filter<{ value: T }, { value: string }> {
+>deferredBranch : Symbol(deferredBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 48, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 24))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 24))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 57))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 24))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 71))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 50, 27))
+}
+
+function alwaysFalseNever<T>(value: T): Branches<T, never, { impossible: true }, T> {
+>alwaysFalseNever : Symbol(alwaysFalseNever, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 52, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 26))
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 26))
+>impossible : Symbol(impossible, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 60))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 54, 29))
+}
+
+function alwaysFalseNeverRejectsTrueBranch<T>(
+>alwaysFalseNeverRejectsTrueBranch : Symbol(alwaysFalseNeverRejectsTrueBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 56, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 43))
+
+    value: T,
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 46))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 43))
+
+): Branches<T, never, T, T & { required: true }> {
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 43))
+>required : Symbol(required, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 60, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 58, 46))
+}
+
+function alwaysTrueUnknown<T>(value: T): Branches<T, unknown, T, { impossible: true }> {
+>alwaysTrueUnknown : Symbol(alwaysTrueUnknown, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 62, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 27))
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 27))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 27))
+>impossible : Symbol(impossible, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 66))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 64, 30))
+}
+
+function alwaysTrueUnknownRejectsFalseBranch<T>(
+>alwaysTrueUnknownRejectsFalseBranch : Symbol(alwaysTrueUnknownRejectsFalseBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 66, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 45))
+
+    value: T,
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 48))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 45))
+
+): Branches<T, unknown, T & { required: true }, T> {
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 45))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 45))
+>required : Symbol(required, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 70, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 45))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 68, 48))
+}
+
+const falseStringValue: { value: number } = alwaysFalseString({ value: 1 });
+>falseStringValue : Symbol(falseStringValue, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 74, 5))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 74, 25))
+>alwaysFalseString : Symbol(alwaysFalseString, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 2, 48))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 74, 63))
+
+const trueObjectValue: { value: number } = alwaysTrueObject({ value: 1 });
+>trueObjectValue : Symbol(trueObjectValue, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 75, 5))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 75, 24))
+>alwaysTrueObject : Symbol(alwaysTrueObject, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 30, 1))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 75, 61))
+
+const unresolvedStringValue: never = deferredBranch<string>({ value: "value" });
+>unresolvedStringValue : Symbol(unresolvedStringValue, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 76, 5))
+>deferredBranch : Symbol(deferredBranch, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 48, 1))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 76, 61))
+
+const falseNeverValue: string = alwaysFalseNever("value");
+>falseNeverValue : Symbol(falseNeverValue, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 77, 5))
+>alwaysFalseNever : Symbol(alwaysFalseNever, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 52, 1))
+
+const trueUnknownValue: string = alwaysTrueUnknown("value");
+>trueUnknownValue : Symbol(trueUnknownValue, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 78, 5))
+>alwaysTrueUnknown : Symbol(alwaysTrueUnknown, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 62, 1))
+
+const emptyCheck: Branches<never, never, string, number> = 1;
+>emptyCheck : Symbol(emptyCheck, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 79, 5))
+>Branches : Symbol(Branches, Decl(negatedConditionalExclusionAssignabilitySkippedBranches.ts, 1, 47))
+

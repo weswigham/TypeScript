@@ -1,0 +1,56 @@
+negatedConditionalExclusionAssignabilityPartialOverlap.ts(4,5): error TS2322: Type 'T & U' is not assignable to type 'Extracted<T, U>'.
+negatedConditionalExclusionAssignabilityPartialOverlap.ts(10,5): error TS2322: Type 'T & { kind: "chosen"; }' is not assignable to type 'T extends { kind: "chosen"; } ? T : never'.
+negatedConditionalExclusionAssignabilityPartialOverlap.ts(16,5): error TS2322: Type 'T' is not assignable to type 'T extends "chosen" ? T : T & not "chosen"'.
+negatedConditionalExclusionAssignabilityPartialOverlap.ts(24,5): error TS2322: Type 'T' is not assignable to type 'T extends { kind: "chosen"; } ? T : T & not { kind: "chosen"; }'.
+
+
+==== negatedConditionalExclusionAssignabilityPartialOverlap.ts (4 errors) ====
+    type Extracted<T, U> = T extends U ? T : never;
+    
+    function partialLiteralExtraction<T, U>(value: T & U): Extracted<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U' is not assignable to type 'Extracted<T, U>'.
+    }
+    
+    const literalNever: never = partialLiteralExtraction<string, "chosen">("chosen");
+    
+    function partialObjectExtraction<T>(value: T & { kind: "chosen" }): T extends { kind: "chosen" } ? T : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & { kind: "chosen"; }' is not assignable to type 'T extends { kind: "chosen"; } ? T : never'.
+    }
+    
+    const objectNever: never = partialObjectExtraction<{ kind: string }>({ kind: "chosen" });
+    
+    function partialLiteralExclusion<T>(value: T): T extends "chosen" ? T : T & not "chosen" {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'T extends "chosen" ? T : T & not "chosen"'.
+    }
+    
+    const excludedLiteral: string & not "chosen" = partialLiteralExclusion<string>("chosen");
+    
+    function partialObjectExclusion<T>(
+        value: T,
+    ): T extends { kind: "chosen" } ? T : T & not { kind: "chosen" } {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'T extends { kind: "chosen"; } ? T : T & not { kind: "chosen"; }'.
+    }
+    
+    const excludedObject: { kind: string } & not { kind: "chosen" } =
+        partialObjectExclusion<{ kind: string }>({ kind: "chosen" });
+    
+    function disjointLiteralExclusion<T>(value: T & not "chosen"): T extends "chosen" ? never : T {
+        return value;
+    }
+    
+    function disjointObjectExclusion<T>(
+        value: T & not { kind: "chosen" },
+    ): T extends { kind: "chosen" } ? never : T {
+        return value;
+    }
+    
+    const excludedOtherLiteral: string = disjointLiteralExclusion<string>("other");
+    

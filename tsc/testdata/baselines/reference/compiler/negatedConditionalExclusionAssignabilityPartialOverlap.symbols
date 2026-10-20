@@ -1,0 +1,130 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityPartialOverlap.ts] ////
+
+=== negatedConditionalExclusionAssignabilityPartialOverlap.ts ===
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 15))
+
+function partialLiteralExtraction<T, U>(value: T & U): Extracted<T, U> {
+>partialLiteralExtraction : Symbol(partialLiteralExtraction, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 47))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 34))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 36))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 34))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 36))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 34))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 36))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 2, 40))
+}
+
+const literalNever: never = partialLiteralExtraction<string, "chosen">("chosen");
+>literalNever : Symbol(literalNever, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 6, 5))
+>partialLiteralExtraction : Symbol(partialLiteralExtraction, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 0, 47))
+
+function partialObjectExtraction<T>(value: T & { kind: "chosen" }): T extends { kind: "chosen" } ? T : never {
+>partialObjectExtraction : Symbol(partialObjectExtraction, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 6, 81))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 33))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 48))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 33))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 79))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 8, 36))
+}
+
+const objectNever: never = partialObjectExtraction<{ kind: string }>({ kind: "chosen" });
+>objectNever : Symbol(objectNever, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 12, 5))
+>partialObjectExtraction : Symbol(partialObjectExtraction, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 6, 81))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 12, 52))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 12, 70))
+
+function partialLiteralExclusion<T>(value: T): T extends "chosen" ? T : T & not "chosen" {
+>partialLiteralExclusion : Symbol(partialLiteralExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 12, 89))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 14, 36))
+}
+
+const excludedLiteral: string & not "chosen" = partialLiteralExclusion<string>("chosen");
+>excludedLiteral : Symbol(excludedLiteral, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 18, 5))
+>partialLiteralExclusion : Symbol(partialLiteralExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 12, 89))
+
+function partialObjectExclusion<T>(
+>partialObjectExclusion : Symbol(partialObjectExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 18, 89))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 32))
+
+    value: T,
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 32))
+
+): T extends { kind: "chosen" } ? T : T & not { kind: "chosen" } {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 32))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 22, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 32))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 22, 47))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 20, 35))
+}
+
+const excludedObject: { kind: string } & not { kind: "chosen" } =
+>excludedObject : Symbol(excludedObject, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 26, 5))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 26, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 26, 46))
+
+    partialObjectExclusion<{ kind: string }>({ kind: "chosen" });
+>partialObjectExclusion : Symbol(partialObjectExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 18, 89))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 27, 28))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 27, 46))
+
+function disjointLiteralExclusion<T>(value: T & not "chosen"): T extends "chosen" ? never : T {
+>disjointLiteralExclusion : Symbol(disjointLiteralExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 27, 65))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 34))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 29, 37))
+}
+
+function disjointObjectExclusion<T>(
+>disjointObjectExclusion : Symbol(disjointObjectExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 31, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 33))
+
+    value: T & not { kind: "chosen" },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 33))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 34, 20))
+
+): T extends { kind: "chosen" } ? never : T {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 33))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 35, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 33, 36))
+}
+
+const excludedOtherLiteral: string = disjointLiteralExclusion<string>("other");
+>excludedOtherLiteral : Symbol(excludedOtherLiteral, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 39, 5))
+>disjointLiteralExclusion : Symbol(disjointLiteralExclusion, Decl(negatedConditionalExclusionAssignabilityPartialOverlap.ts, 27, 65))
+

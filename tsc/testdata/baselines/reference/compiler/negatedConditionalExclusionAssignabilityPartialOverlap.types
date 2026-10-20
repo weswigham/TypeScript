@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityPartialOverlap.ts] ////
+
+=== negatedConditionalExclusionAssignabilityPartialOverlap.ts ===
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Extracted<T, U>
+
+function partialLiteralExtraction<T, U>(value: T & U): Extracted<T, U> {
+>partialLiteralExtraction : <T, U>(value: T & U) => Extracted<T, U>
+>value : T & U
+
+    return value;
+>value : T & U
+}
+
+const literalNever: never = partialLiteralExtraction<string, "chosen">("chosen");
+>literalNever : never
+>partialLiteralExtraction<string, "chosen">("chosen") : never
+>partialLiteralExtraction : <T, U>(value: T & U) => Extracted<T, U>
+>"chosen" : "chosen"
+
+function partialObjectExtraction<T>(value: T & { kind: "chosen" }): T extends { kind: "chosen" } ? T : never {
+>partialObjectExtraction : <T>(value: T & { kind: "chosen"; }) => T extends { kind: "chosen"; } ? T : never
+>value : T & { kind: "chosen"; }
+>kind : "chosen"
+>kind : "chosen"
+
+    return value;
+>value : T & { kind: "chosen"; }
+}
+
+const objectNever: never = partialObjectExtraction<{ kind: string }>({ kind: "chosen" });
+>objectNever : never
+>partialObjectExtraction<{ kind: string }>({ kind: "chosen" }) : never
+>partialObjectExtraction : <T>(value: T & { kind: "chosen"; }) => T extends { kind: "chosen"; } ? T : never
+>kind : string
+>{ kind: "chosen" } : { kind: "chosen"; }
+>kind : "chosen"
+>"chosen" : "chosen"
+
+function partialLiteralExclusion<T>(value: T): T extends "chosen" ? T : T & not "chosen" {
+>partialLiteralExclusion : <T>(value: T) => T extends "chosen" ? T : T & not "chosen"
+>value : T
+
+    return value;
+>value : T
+}
+
+const excludedLiteral: string & not "chosen" = partialLiteralExclusion<string>("chosen");
+>excludedLiteral : string & not "chosen"
+>partialLiteralExclusion<string>("chosen") : string & not "chosen"
+>partialLiteralExclusion : <T>(value: T) => T extends "chosen" ? T : T & not "chosen"
+>"chosen" : "chosen"
+
+function partialObjectExclusion<T>(
+>partialObjectExclusion : <T>(value: T) => T extends { kind: "chosen"; } ? T : T & not { kind: "chosen"; }
+
+    value: T,
+>value : T
+
+): T extends { kind: "chosen" } ? T : T & not { kind: "chosen" } {
+>kind : "chosen"
+>kind : "chosen"
+
+    return value;
+>value : T
+}
+
+const excludedObject: { kind: string } & not { kind: "chosen" } =
+>excludedObject : { kind: string; }
+>kind : string
+>kind : "chosen"
+
+    partialObjectExclusion<{ kind: string }>({ kind: "chosen" });
+>partialObjectExclusion<{ kind: string }>({ kind: "chosen" }) : { kind: string; }
+>partialObjectExclusion : <T>(value: T) => T extends { kind: "chosen"; } ? T : T & not { kind: "chosen"; }
+>kind : string
+>{ kind: "chosen" } : { kind: string; }
+>kind : string
+>"chosen" : "chosen"
+
+function disjointLiteralExclusion<T>(value: T & not "chosen"): T extends "chosen" ? never : T {
+>disjointLiteralExclusion : <T>(value: T & not "chosen") => T extends "chosen" ? never : T
+>value : T & not "chosen"
+
+    return value;
+>value : T & not "chosen"
+}
+
+function disjointObjectExclusion<T>(
+>disjointObjectExclusion : <T>(value: T & not { kind: "chosen"; }) => T extends { kind: "chosen"; } ? never : T
+
+    value: T & not { kind: "chosen" },
+>value : T & not { kind: "chosen"; }
+>kind : "chosen"
+
+): T extends { kind: "chosen" } ? never : T {
+>kind : "chosen"
+
+    return value;
+>value : T & not { kind: "chosen"; }
+}
+
+const excludedOtherLiteral: string = disjointLiteralExclusion<string>("other");
+>excludedOtherLiteral : string
+>disjointLiteralExclusion<string>("other") : string
+>disjointLiteralExclusion : <T>(value: T & not "chosen") => T extends "chosen" ? never : T
+>"other" : "other"
+

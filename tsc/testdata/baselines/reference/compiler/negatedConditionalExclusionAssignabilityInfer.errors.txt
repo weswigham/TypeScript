@@ -1,0 +1,57 @@
+negatedConditionalExclusionAssignabilityInfer.ts(7,5): error TS2322: Type 'T' is not assignable to type 'InferValue<T>'.
+negatedConditionalExclusionAssignabilityInfer.ts(11,5): error TS2322: Type 'T & { value: V; }' is not assignable to type 'InferValue<T>'.
+negatedConditionalExclusionAssignabilityInfer.ts(15,5): error TS2322: Type 'T' is not assignable to type 'InferIndependent<T>'.
+negatedConditionalExclusionAssignabilityInfer.ts(19,5): error TS2322: Type 'T & ((arg: V) => void)' is not assignable to type 'InferConsumer<T>'.
+negatedConditionalExclusionAssignabilityInfer.ts(23,5): error TS2322: Type 'string' is not assignable to type 'InferConstrained<T>'.
+negatedConditionalExclusionAssignabilityInfer.ts(27,7): error TS2322: Type 'number' is not assignable to type 'string'.
+negatedConditionalExclusionAssignabilityInfer.ts(28,7): error TS2322: Type '"value"' is not assignable to type 'never'.
+negatedConditionalExclusionAssignabilityInfer.ts(29,7): error TS2322: Type '123' is not assignable to type 'never'.
+
+
+==== negatedConditionalExclusionAssignabilityInfer.ts (8 errors) ====
+    type InferValue<T> = T extends { value: infer U } ? U : never;
+    type InferIndependent<T> = T extends { value: infer U } ? T | U : T;
+    type InferConsumer<T> = T extends { value: infer U } ? (value: U) => void : never;
+    type InferConstrained<T> = T extends { value: infer U extends string } ? U : never;
+    
+    function unresolvedInference<T>(value: T): InferValue<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'InferValue<T>'.
+    }
+    
+    function unrelatedInferredValue<T, V>(value: T & { value: V }): InferValue<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & { value: V; }' is not assignable to type 'InferValue<T>'.
+    }
+    
+    function independentInference<T>(value: T): InferIndependent<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'InferIndependent<T>'.
+    }
+    
+    function inferredWrite<T, V>(value: T & ((arg: V) => void)): InferConsumer<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & ((arg: V) => void)' is not assignable to type 'InferConsumer<T>'.
+    }
+    
+    function constrainedInference<T>(value: string): InferConstrained<T> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'InferConstrained<T>'.
+    }
+    
+    const inferredValue: InferValue<{ value: string }> = "value";
+    const incorrectInferredValue: InferValue<{ value: string }> = 123;
+          ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+    const inferredNever: InferValue<{}> = "value";
+          ~~~~~~~~~~~~~
+!!! error TS2322: Type '"value"' is not assignable to type 'never'.
+    const inferredConstraint: InferConstrained<{ value: number }> = 123;
+          ~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '123' is not assignable to type 'never'.
+    

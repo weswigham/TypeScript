@@ -1,0 +1,149 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilitySpecialTypes.ts] ////
+
+=== negatedConditionalExclusionAssignabilitySpecialTypes.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 12))
+
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 15))
+
+function unknownSource<U>(value: unknown & not U): Filter<unknown, U> {
+>unknownSource : Symbol(unknownSource, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 1, 47))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 3, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 3, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 3, 23))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 3, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 3, 26))
+}
+
+function anySource<T, U>(value: any): Filter<T, U> {
+>anySource : Symbol(anySource, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 5, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 25))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 21))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 7, 25))
+}
+
+function neverSource<T, U>(value: never): Filter<T, U> {
+>neverSource : Symbol(neverSource, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 9, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 27))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 11, 27))
+}
+
+function excludedNever<T>(value: T): Filter<T, never> {
+>excludedNever : Symbol(excludedNever, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 13, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 15, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 15, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 15, 23))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 15, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 15, 26))
+}
+
+function excludedUnknown<T>(value: T): Filter<T, unknown> {
+>excludedUnknown : Symbol(excludedUnknown, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 17, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 19, 25))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 19, 28))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 19, 25))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 19, 25))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 19, 28))
+}
+
+function extractedUnknown<T>(value: T): Extracted<T, unknown> {
+>extractedUnknown : Symbol(extractedUnknown, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 21, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 23, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 23, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 23, 26))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 23, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 23, 29))
+}
+
+function nullable<T>(value: T & not (null | undefined)): Filter<T, null | undefined> {
+>nullable : Symbol(nullable, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 25, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 27, 18))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 27, 21))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 27, 18))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 27, 18))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 27, 21))
+}
+
+function extractedNullish<T>(value: T & (null | undefined)): Extracted<T, null | undefined> {
+>extractedNullish : Symbol(extractedNullish, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 29, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 31, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 31, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 31, 26))
+>Extracted : Symbol(Extracted, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 31, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 31, 29))
+}
+
+function nullableUnion<T>(value: T | null): Filter<T, string> {
+>nullableUnion : Symbol(nullableUnion, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 33, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 35, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 35, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 35, 23))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 35, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 35, 26))
+}
+
+const anyFilter: Filter<any, string> = 123;
+>anyFilter : Symbol(anyFilter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 39, 5))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+
+const unknownFilter: Filter<unknown, string> = 123;
+>unknownFilter : Symbol(unknownFilter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 40, 5))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+
+const emptyFilter: Filter<never, string> = 123;
+>emptyFilter : Symbol(emptyFilter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 41, 5))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+
+const excludedAny: Filter<string, any> = "value";
+>excludedAny : Symbol(excludedAny, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 42, 5))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+
+const unknownExcludedValue: Filter<string, unknown> = "value";
+>unknownExcludedValue : Symbol(unknownExcludedValue, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 43, 5))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilitySpecialTypes.ts, 0, 0))
+

@@ -1,0 +1,101 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilitySpecialTypes.ts] ////
+
+=== negatedConditionalExclusionAssignabilitySpecialTypes.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Filter<T, U>
+
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Extracted<T, U>
+
+function unknownSource<U>(value: unknown & not U): Filter<unknown, U> {
+>unknownSource : <U>(value: unknown & not U) => Filter<unknown, U>
+>value : not U
+
+    return value;
+>value : not U
+}
+
+function anySource<T, U>(value: any): Filter<T, U> {
+>anySource : <T, U>(value: any) => Filter<T, U>
+>value : any
+
+    return value;
+>value : any
+}
+
+function neverSource<T, U>(value: never): Filter<T, U> {
+>neverSource : <T, U>(value: never) => Filter<T, U>
+>value : never
+
+    return value;
+>value : never
+}
+
+function excludedNever<T>(value: T): Filter<T, never> {
+>excludedNever : <T>(value: T) => Filter<T, never>
+>value : T
+
+    return value;
+>value : T
+}
+
+function excludedUnknown<T>(value: T): Filter<T, unknown> {
+>excludedUnknown : <T>(value: T) => Filter<T, unknown>
+>value : T
+
+    return value;
+>value : T
+}
+
+function extractedUnknown<T>(value: T): Extracted<T, unknown> {
+>extractedUnknown : <T>(value: T) => Extracted<T, unknown>
+>value : T
+
+    return value;
+>value : T
+}
+
+function nullable<T>(value: T & not (null | undefined)): Filter<T, null | undefined> {
+>nullable : <T>(value: T & not (null | undefined)) => Filter<T, null | undefined>
+>value : T & not undefined & not null
+
+    return value;
+>value : T & not undefined & not null
+}
+
+function extractedNullish<T>(value: T & (null | undefined)): Extracted<T, null | undefined> {
+>extractedNullish : <T>(value: T & (null | undefined)) => Extracted<T, null | undefined>
+>value : T & (null | undefined)
+
+    return value;
+>value : T & (null | undefined)
+}
+
+function nullableUnion<T>(value: T | null): Filter<T, string> {
+>nullableUnion : <T>(value: T | null) => Filter<T, string>
+>value : T | null
+
+    return value;
+>value : T | null
+}
+
+const anyFilter: Filter<any, string> = 123;
+>anyFilter : any
+>123 : 123
+
+const unknownFilter: Filter<unknown, string> = 123;
+>unknownFilter : unknown
+>123 : 123
+
+const emptyFilter: Filter<never, string> = 123;
+>emptyFilter : never
+>123 : 123
+
+const excludedAny: Filter<string, any> = "value";
+>excludedAny : never
+>"value" : "value"
+
+const unknownExcludedValue: Filter<string, unknown> = "value";
+>unknownExcludedValue : never
+>"value" : "value"
+

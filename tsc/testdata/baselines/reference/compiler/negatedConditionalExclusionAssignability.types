@@ -1,0 +1,121 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignability.ts] ////
+
+=== negatedConditionalExclusionAssignability.ts ===
+type ConditionalExclude<T, U> = T extends U ? never : T;
+>ConditionalExclude : ConditionalExclude<T, U>
+
+type ConditionalExtract<T, U> = T extends U ? T : never;
+>ConditionalExtract : ConditionalExtract<T, U>
+
+function conditionalExclude<T, U>(value: T & not U): ConditionalExclude<T, U> {
+>conditionalExclude : <T, U>(value: T & not U) => ConditionalExclude<T, U>
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function conditionalExcludeSubset<T, U, V>(value: T & not U & V): ConditionalExclude<T, U> {
+>conditionalExcludeSubset : <T, U, V>(value: T & not U & V) => ConditionalExclude<T, U>
+>value : T & not U & V
+
+    return value;
+>value : T & not U & V
+}
+
+function unfiltered<T, U>(value: T): ConditionalExclude<T, U> {
+>unfiltered : <T, U>(value: T) => ConditionalExclude<T, U>
+>value : T
+
+    return value;
+>value : T
+}
+
+function unrelated<T, U>(value: not U): ConditionalExclude<T, U> {
+>unrelated : <T, U>(value: not U) => ConditionalExclude<T, U>
+>value : not U
+
+    return value;
+>value : not U
+}
+
+function reverse<T, U>(value: ConditionalExclude<T, U>): T & not U {
+>reverse : <T, U>(value: ConditionalExclude<T, U>) => T & not U
+>value : ConditionalExclude<T, U>
+
+    return value;
+>value : ConditionalExclude<T, U>
+}
+
+function conditionalExtract<T, U>(value: T & U): ConditionalExtract<T, U> {
+>conditionalExtract : <T, U>(value: T & U) => ConditionalExtract<T, U>
+>value : T & U
+
+    return value;
+>value : T & U
+}
+
+function nonNeverTrueBranch<T, U>(value: T & not U): T extends U ? "replacement" : T {
+>nonNeverTrueBranch : <T, U>(value: T & not U) => T extends U ? "replacement" : T
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function genericTrueBranch<T, U, V>(value: T & not U): T extends U ? V : T {
+>genericTrueBranch : <T, U, V>(value: T & not U) => T extends U ? V : T
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function trueBranchOnly<T, U>(value: "replacement"): T extends U ? "replacement" : T {
+>trueBranchOnly : <T, U>(value: "replacement") => T extends U ? "replacement" : T
+>value : "replacement"
+
+    return value;
+>value : "replacement"
+}
+
+function falseBranchIntersection<T, U, V>(value: T & not U & V): T extends U ? never : T & V {
+>falseBranchIntersection : <T, U, V>(value: T & not U & V) => T extends U ? never : T & V
+>value : T & not U & V
+
+    return value;
+>value : T & not U & V
+}
+
+function falseBranchUnion<T, U, V>(value: T & not U): T extends U ? never : T | V {
+>falseBranchUnion : <T, U, V>(value: T & not U) => T extends U ? never : T | V
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function bothBranches<T, U, V, W>(value: T & V & W): T extends U ? V : W {
+>bothBranches : <T, U, V, W>(value: T & V & W) => T extends U ? V : W
+>value : T & V & W
+
+    return value;
+>value : T & V & W
+}
+
+function missingFalseBranchConstraint<T, U, V>(value: T & not U): T extends U ? never : T & V {
+>missingFalseBranchConstraint : <T, U, V>(value: T & not U) => T extends U ? never : T & V
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function missingTrueBranchConstraint<T, U, V>(value: T & U): T extends U ? V : T {
+>missingTrueBranchConstraint : <T, U, V>(value: T & U) => T extends U ? V : T
+>value : T & U
+
+    return value;
+>value : T & U
+}
+

@@ -1,0 +1,122 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityInfer.ts] ////
+
+=== negatedConditionalExclusionAssignabilityInfer.ts ===
+type InferValue<T> = T extends { value: infer U } ? U : never;
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 16))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 16))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 45))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 45))
+
+type InferIndependent<T> = T extends { value: infer U } ? T | U : T;
+>InferIndependent : Symbol(InferIndependent, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 62))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 22))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 38))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 51))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 22))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 51))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 22))
+
+type InferConsumer<T> = T extends { value: infer U } ? (value: U) => void : never;
+>InferConsumer : Symbol(InferConsumer, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 68))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 19))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 19))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 35))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 48))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 56))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 48))
+
+type InferConstrained<T> = T extends { value: infer U extends string } ? U : never;
+>InferConstrained : Symbol(InferConstrained, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 82))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 22))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 38))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 51))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 51))
+
+function unresolvedInference<T>(value: T): InferValue<T> {
+>unresolvedInference : Symbol(unresolvedInference, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 3, 83))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 5, 29))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 5, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 5, 29))
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 5, 29))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 5, 32))
+}
+
+function unrelatedInferredValue<T, V>(value: T & { value: V }): InferValue<T> {
+>unrelatedInferredValue : Symbol(unrelatedInferredValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 7, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 32))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 50))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 34))
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 32))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 9, 38))
+}
+
+function independentInference<T>(value: T): InferIndependent<T> {
+>independentInference : Symbol(independentInference, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 11, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 13, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 13, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 13, 30))
+>InferIndependent : Symbol(InferIndependent, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 62))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 13, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 13, 33))
+}
+
+function inferredWrite<T, V>(value: T & ((arg: V) => void)): InferConsumer<T> {
+>inferredWrite : Symbol(inferredWrite, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 15, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 23))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 25))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 23))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 42))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 25))
+>InferConsumer : Symbol(InferConsumer, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 1, 68))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 17, 29))
+}
+
+function constrainedInference<T>(value: string): InferConstrained<T> {
+>constrainedInference : Symbol(constrainedInference, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 19, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 21, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 21, 33))
+>InferConstrained : Symbol(InferConstrained, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 82))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 21, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 21, 33))
+}
+
+const inferredValue: InferValue<{ value: string }> = "value";
+>inferredValue : Symbol(inferredValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 25, 5))
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 25, 33))
+
+const incorrectInferredValue: InferValue<{ value: string }> = 123;
+>incorrectInferredValue : Symbol(incorrectInferredValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 26, 5))
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 26, 42))
+
+const inferredNever: InferValue<{}> = "value";
+>inferredNever : Symbol(inferredNever, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 27, 5))
+>InferValue : Symbol(InferValue, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 0, 0))
+
+const inferredConstraint: InferConstrained<{ value: number }> = 123;
+>inferredConstraint : Symbol(inferredConstraint, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 28, 5))
+>InferConstrained : Symbol(InferConstrained, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 2, 82))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityInfer.ts, 28, 44))
+

@@ -1,0 +1,195 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityVariance.ts] ////
+
+=== negatedConditionalExclusionAssignabilityVariance.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 12))
+
+function covariant<T, U>(value: () => T & not U): () => Filter<T, U> {
+>covariant : Symbol(covariant, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 25))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 21))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 21))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 2, 25))
+}
+
+function contravariant<T, U>(value: (arg: Filter<T, U>) => void): (arg: T & not U) => void {
+>contravariant : Symbol(contravariant, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 4, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 25))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 29))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 37))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 25))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 67))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 25))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 6, 29))
+}
+
+function covariantReverse<T, U>(value: () => Filter<T, U>): () => T & not U {
+>covariantReverse : Symbol(covariantReverse, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 8, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 28))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 32))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 28))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 28))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 10, 32))
+}
+
+function contravariantReverse<T, U>(value: (arg: T & not U) => void): (arg: Filter<T, U>) => void {
+>contravariantReverse : Symbol(contravariantReverse, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 12, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 32))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 36))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 32))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 71))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 32))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 14, 36))
+}
+
+function arrays<T, U>(value: (T & not U)[]): Filter<T, U>[] {
+>arrays : Symbol(arrays, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 16, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 16))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 18))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 16))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 18))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 16))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 18))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 18, 22))
+}
+
+function readonlyTuples<T, U>(value: readonly [T & not U]): readonly [Filter<T, U>] {
+>readonlyTuples : Symbol(readonlyTuples, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 20, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 24))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 24))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 26))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 24))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 22, 30))
+}
+
+function invariant<T, U>(value: { get: () => T & not U; set: (arg: T & not U) => void }): {
+>invariant : Symbol(invariant, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 25))
+>get : Symbol(get, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 21))
+>set : Symbol(set, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 55))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 62))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 21))
+
+    get: () => Filter<T, U>;
+>get : Symbol(get, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 91))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 21))
+
+    set: (arg: Filter<T, U>) => void;
+>set : Symbol(set, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 27, 28))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 28, 10))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 21))
+
+} {
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 26, 25))
+}
+
+function conditionalFunctionBranches<T, U, V, W>(
+>conditionalFunctionBranches : Symbol(conditionalFunctionBranches, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 31, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 37))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 39))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 42))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 45))
+
+    value: T & ((arg: V | W) => V & W),
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 49))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 37))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 34, 17))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 42))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 45))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 42))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 45))
+
+): T extends U ? (arg: V) => V : (arg: W) => W {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 37))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 39))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 35, 18))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 42))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 42))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 35, 34))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 45))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 45))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 33, 49))
+}
+
+function wrongFunctionBranch<T, U, V, W>(
+>wrongFunctionBranch : Symbol(wrongFunctionBranch, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 37, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 34))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 37))
+
+    value: T & not U & ((arg: V) => V),
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 41))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 31))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 40, 25))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 34))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 34))
+
+): T extends U ? (arg: V) => V : (arg: W) => W {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 31))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 41, 18))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 34))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 34))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 41, 34))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 37))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 37))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityVariance.ts, 39, 41))
+}
+

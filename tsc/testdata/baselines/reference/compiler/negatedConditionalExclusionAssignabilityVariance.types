@@ -1,0 +1,107 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityVariance.ts] ////
+
+=== negatedConditionalExclusionAssignabilityVariance.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Filter<T, U>
+
+function covariant<T, U>(value: () => T & not U): () => Filter<T, U> {
+>covariant : <T, U>(value: () => T & not U) => () => Filter<T, U>
+>value : () => T & not U
+
+    return value;
+>value : () => T & not U
+}
+
+function contravariant<T, U>(value: (arg: Filter<T, U>) => void): (arg: T & not U) => void {
+>contravariant : <T, U>(value: (arg: Filter<T, U>) => void) => (arg: T & not U) => void
+>value : (arg: Filter<T, U>) => void
+>arg : Filter<T, U>
+>arg : T & not U
+
+    return value;
+>value : (arg: Filter<T, U>) => void
+}
+
+function covariantReverse<T, U>(value: () => Filter<T, U>): () => T & not U {
+>covariantReverse : <T, U>(value: () => Filter<T, U>) => () => T & not U
+>value : () => Filter<T, U>
+
+    return value;
+>value : () => Filter<T, U>
+}
+
+function contravariantReverse<T, U>(value: (arg: T & not U) => void): (arg: Filter<T, U>) => void {
+>contravariantReverse : <T, U>(value: (arg: T & not U) => void) => (arg: Filter<T, U>) => void
+>value : (arg: T & not U) => void
+>arg : T & not U
+>arg : Filter<T, U>
+
+    return value;
+>value : (arg: T & not U) => void
+}
+
+function arrays<T, U>(value: (T & not U)[]): Filter<T, U>[] {
+>arrays : <T, U>(value: (T & not U)[]) => Filter<T, U>[]
+>value : (T & not U)[]
+
+    return value;
+>value : (T & not U)[]
+}
+
+function readonlyTuples<T, U>(value: readonly [T & not U]): readonly [Filter<T, U>] {
+>readonlyTuples : <T, U>(value: readonly [T & not U]) => readonly [Filter<T, U>]
+>value : readonly [T & not U]
+
+    return value;
+>value : readonly [T & not U]
+}
+
+function invariant<T, U>(value: { get: () => T & not U; set: (arg: T & not U) => void }): {
+>invariant : <T, U>(value: { get: () => T & not U; set: (arg: T & not U) => void; }) => { get: () => Filter<T, U>; set: (arg: Filter<T, U>) => void; }
+>value : { get: () => T & not U; set: (arg: T & not U) => void; }
+>get : () => T & not U
+>set : (arg: T & not U) => void
+>arg : T & not U
+
+    get: () => Filter<T, U>;
+>get : () => Filter<T, U>
+
+    set: (arg: Filter<T, U>) => void;
+>set : (arg: Filter<T, U>) => void
+>arg : Filter<T, U>
+
+} {
+    return value;
+>value : { get: () => T & not U; set: (arg: T & not U) => void; }
+}
+
+function conditionalFunctionBranches<T, U, V, W>(
+>conditionalFunctionBranches : <T, U, V, W>(value: T & ((arg: V | W) => V & W)) => T extends U ? (arg: V) => V : (arg: W) => W
+
+    value: T & ((arg: V | W) => V & W),
+>value : T & ((arg: V | W) => V & W)
+>arg : V | W
+
+): T extends U ? (arg: V) => V : (arg: W) => W {
+>arg : V
+>arg : W
+
+    return value;
+>value : T & ((arg: V | W) => V & W)
+}
+
+function wrongFunctionBranch<T, U, V, W>(
+>wrongFunctionBranch : <T, U, V, W>(value: T & not U & ((arg: V) => V)) => T extends U ? (arg: V) => V : (arg: W) => W
+
+    value: T & not U & ((arg: V) => V),
+>value : T & not U & ((arg: V) => V)
+>arg : V
+
+): T extends U ? (arg: V) => V : (arg: W) => W {
+>arg : V
+>arg : W
+
+    return value;
+>value : T & not U & ((arg: V) => V)
+}
+

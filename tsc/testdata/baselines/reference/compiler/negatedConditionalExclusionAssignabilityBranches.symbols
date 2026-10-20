@@ -1,0 +1,312 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityBranches.ts] ////
+
+=== negatedConditionalExclusionAssignabilityBranches.ts ===
+function narrowedTrueBranch<T, U>(value: T & U): T extends U ? T & U : never {
+>narrowedTrueBranch : Symbol(narrowedTrueBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 0, 34))
+}
+
+function extraTrueConstraint<T, U, V>(value: T & U & V): T extends U ? T & V : never {
+>extraTrueConstraint : Symbol(extraTrueConstraint, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 2, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 29))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 34))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 4, 38))
+}
+
+function expandedTrueBranch<T, U, V>(value: T & U): T extends U ? T | V : never {
+>expandedTrueBranch : Symbol(expandedTrueBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 6, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 30))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 28))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 8, 37))
+}
+
+function identicalBranches<T, U>(value: T): T extends U ? T : T {
+>identicalBranches : Symbol(identicalBranches, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 10, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 29))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 27))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 27))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 12, 33))
+}
+
+function bothBranchConstraints<T, U, V, W>(value: T & V & W): T extends U ? T & V : T & W {
+>bothBranchConstraints : Symbol(bothBranchConstraints, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 14, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 33))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 36))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 39))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 36))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 31))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 39))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 16, 43))
+}
+
+function trueBranchRefinement<T, U>(value: T): T extends U ? T & U : T {
+>trueBranchRefinement : Symbol(trueBranchRefinement, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 18, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 32))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 20, 36))
+}
+
+function trueBranchSupertype<T, U>(value: T): T extends U ? U : T {
+>trueBranchSupertype : Symbol(trueBranchSupertype, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 22, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 31))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 29))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 24, 35))
+}
+
+function differentBranchShapes<T, U, V>(value: T & V): T extends U ? U : V {
+>differentBranchShapes : Symbol(differentBranchShapes, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 26, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 33))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 36))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 33))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 33))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 36))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 28, 40))
+}
+
+function widenedFalseBranch<T, U, V>(value: T): T extends U ? T & U : T | V {
+>widenedFalseBranch : Symbol(widenedFalseBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 30, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 30))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 28))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 28))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 32, 37))
+}
+
+function missingBothConstraints<T, U, V, W>(value: T): T extends U ? T & V : T & W {
+>missingBothConstraints : Symbol(missingBothConstraints, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 34, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 34))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 37))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 40))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 32))
+>W : Symbol(W, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 40))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 36, 44))
+}
+
+function missingFalseConstraint<T, U, V>(value: T): T extends U ? T : T & V {
+>missingFalseConstraint : Symbol(missingFalseConstraint, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 38, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 34))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 37))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 41))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 34))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 37))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 40, 41))
+}
+
+function missingTrueConstraint<T, U, V>(value: T): T extends U ? T & V : T {
+>missingTrueConstraint : Symbol(missingTrueConstraint, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 42, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 33))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 36))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 31))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 44, 40))
+}
+
+function indexedTrueBranch<T extends { value: unknown }, U>(
+>indexedTrueBranch : Symbol(indexedTrueBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 46, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 38))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 56))
+
+    value: T & U & T["value"],
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 60))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 56))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 27))
+
+): T extends U ? T["value"] : never {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 56))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 48, 60))
+}
+
+// Nested distribution currently retains distinct type-parameter identities in these properties.
+function narrowedObjectBranches<T, U>(value: T & { value: T & U; other: T }): T extends U ? { value: T } : { other: T } {
+>narrowedObjectBranches : Symbol(narrowedObjectBranches, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 52, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 50))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 34))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 64))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 93))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 108))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 32))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 55, 38))
+}
+
+function unrefinedObjectBranches<T, U>(value: T & { value: T; other: T }): T extends U ? { value: T } : { other: T } {
+>unrefinedObjectBranches : Symbol(unrefinedObjectBranches, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 57, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 35))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 51))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 61))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 35))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 90))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+>other : Symbol(other, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 105))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 33))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 59, 39))
+}
+
+function nestedFalseBranch<T, U, V>(value: T & not U & not V): T extends U ? never : T extends V ? never : T {
+>nestedFalseBranch : Symbol(nestedFalseBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 61, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 29))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 32))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 29))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 27))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 63, 36))
+}
+
+function nestedTrueBranch<T, U, V>(value: T & U & V): T extends U ? T extends V ? T : never : never {
+>nestedTrueBranch : Symbol(nestedTrueBranch, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 65, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 28))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 31))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 28))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 26))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 28))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 26))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityBranches.ts, 67, 35))
+}
+

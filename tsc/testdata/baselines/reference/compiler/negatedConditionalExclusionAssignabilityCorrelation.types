@@ -1,0 +1,238 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityCorrelation.ts] ////
+
+=== negatedConditionalExclusionAssignabilityCorrelation.ts ===
+type Pair<T> = T extends { kind: "excluded" } ? never : { first: T; second: T };
+>Pair : Pair<T>
+>kind : "excluded"
+>first : T
+>second : T
+
+type TruePair<T> = T extends { kind: string } ? { first: T; second: T } : never;
+>TruePair : TruePair<T>
+>kind : string
+>first : T
+>second : T
+
+type Tuple<T> = T extends { kind: "excluded" } ? never : [T, T];
+>Tuple : Tuple<T>
+>kind : "excluded"
+
+type Consumer<T> = T extends { kind: "excluded" } ? never : (value: T) => T;
+>Consumer : Consumer<T>
+>kind : "excluded"
+>value : T
+
+function mixedPair<T>(value: T & not { kind: "excluded" } & { first: T; second: T }): Pair<T> {
+>mixedPair : <T>(value: T & not { kind: "excluded"; } & { first: T; second: T; }) => Pair<T>
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+>kind : "excluded"
+>first : T
+>second : T
+
+    return value;
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+}
+
+function mixedTruePair<T>(value: T & { first: T; second: T }): TruePair<T> {
+>mixedTruePair : <T>(value: T & { first: T; second: T; }) => TruePair<T>
+>value : T & { first: T; second: T; }
+>first : T
+>second : T
+
+    return value;
+>value : T & { first: T; second: T; }
+}
+
+function mixedTuple<T>(value: T & not { kind: "excluded" } & [T, T]): Tuple<T> {
+>mixedTuple : <T>(value: T & not { kind: "excluded"; } & [T, T]) => Tuple<T>
+>value : T & not { kind: "excluded"; } & [T, T]
+>kind : "excluded"
+
+    return value;
+>value : T & not { kind: "excluded"; } & [T, T]
+}
+
+function mixedConsumer<T>(value: T & not { kind: "excluded" } & ((value: T) => T)): Consumer<T> {
+>mixedConsumer : <T>(value: T & not { kind: "excluded"; } & ((value: T) => T)) => Consumer<T>
+>value : T & not { kind: "excluded"; } & ((value: T) => T)
+>kind : "excluded"
+>value : T
+
+    return value;
+>value : T & not { kind: "excluded"; } & ((value: T) => T)
+}
+
+type A = { kind: "a" };
+>A : A
+>kind : "a"
+
+type B = { kind: "b" };
+>B : B
+>kind : "b"
+
+const a: A = { kind: "a" };
+>a : A
+>{ kind: "a" } : { kind: "a"; }
+>kind : "a"
+>"a" : "a"
+
+const b: B = { kind: "b" };
+>b : B
+>{ kind: "b" } : { kind: "b"; }
+>kind : "b"
+>"b" : "b"
+
+const mixed: A & { first: A | B; second: A | B } = { kind: "a", first: a, second: b };
+>mixed : A & { first: A | B; second: A | B; }
+>first : A | B
+>second : A | B
+>{ kind: "a", first: a, second: b } : { kind: "a"; first: A; second: B; }
+>kind : "a"
+>"a" : "a"
+>first : A
+>a : A
+>second : B
+>b : B
+
+const result: { first: A; second: A } | { first: B; second: B } = mixedPair<A | B>(mixed);
+>result : { first: A; second: A; } | { first: B; second: B; }
+>first : A
+>second : A
+>first : B
+>second : B
+>mixedPair<A | B>(mixed) : { first: A; second: A; } | { first: B; second: B; }
+>mixedPair : <T>(value: T & not { kind: "excluded"; } & { first: T; second: T; }) => Pair<T>
+>mixed : A & { first: A | B; second: A | B; }
+
+const trueResult: { first: A; second: A } | { first: B; second: B } = mixedTruePair<A | B>(mixed);
+>trueResult : { first: A; second: A; } | { first: B; second: B; }
+>first : A
+>second : A
+>first : B
+>second : B
+>mixedTruePair<A | B>(mixed) : { first: A; second: A; } | { first: B; second: B; }
+>mixedTruePair : <T>(value: T & { first: T; second: T; }) => TruePair<T>
+>mixed : A & { first: A | B; second: A | B; }
+
+type Identity<T> = T extends { kind: "excluded" } ? never : T;
+>Identity : Identity<T>
+>kind : "excluded"
+
+function identity<T>(value: T & not { kind: "excluded" }): Identity<T> {
+>identity : <T>(value: T & not { kind: "excluded"; }) => Identity<T>
+>value : T & not { kind: "excluded"; }
+>kind : "excluded"
+
+    return value;
+>value : T & not { kind: "excluded"; }
+}
+const identityA: A | B = identity<A | B>(a);
+>identityA : A | B
+>identity<A | B>(a) : A | B
+>identity : <T>(value: T & not { kind: "excluded"; }) => Identity<T>
+>a : A
+
+type IndependentPair<T, U> = T extends { kind: "excluded" } ? never : { first: U; second: U };
+>IndependentPair : IndependentPair<T, U>
+>kind : "excluded"
+>first : U
+>second : U
+
+function independentPair<T, U>(value: T & not { kind: "excluded" } & { first: U; second: U }): IndependentPair<T, U> {
+>independentPair : <T, U>(value: T & not { kind: "excluded"; } & { first: U; second: U; }) => IndependentPair<T, U>
+>value : T & not { kind: "excluded"; } & { first: U; second: U; }
+>kind : "excluded"
+>first : U
+>second : U
+
+    return value;
+>value : T & not { kind: "excluded"; } & { first: U; second: U; }
+}
+const independentResult: { first: A | B; second: A | B } = independentPair<A | B, A | B>(mixed);
+>independentResult : { first: A | B; second: A | B; }
+>first : A | B
+>second : A | B
+>independentPair<A | B, A | B>(mixed) : { first: A | B; second: A | B; }
+>independentPair : <T, U>(value: T & not { kind: "excluded"; } & { first: U; second: U; }) => IndependentPair<T, U>
+>mixed : A & { first: A | B; second: A | B; }
+
+function repeatedIndependentArgument<T>(
+>repeatedIndependentArgument : <T>(value: T & not { kind: "excluded"; } & { first: T; second: T; }) => IndependentPair<T, T>
+
+    value: T & not { kind: "excluded" } & { first: T; second: T },
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+>kind : "excluded"
+>first : T
+>second : T
+
+): IndependentPair<T, T> {
+    return value;
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+}
+
+type ForwardedPair<T> = Pair<T>;
+>ForwardedPair : ForwardedPair<T>
+
+function forwardedPair<T>(value: T & not { kind: "excluded" } & { first: T; second: T }): ForwardedPair<T> {
+>forwardedPair : <T>(value: T & not { kind: "excluded"; } & { first: T; second: T; }) => ForwardedPair<T>
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+>kind : "excluded"
+>first : T
+>second : T
+
+    return value;
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+}
+
+type PairShape<T> = { first: T; second: T };
+>PairShape : PairShape<T>
+>first : T
+>second : T
+
+type AliasedPair<T> = T extends { kind: "excluded" } ? never : PairShape<T>;
+>AliasedPair : AliasedPair<T>
+>kind : "excluded"
+
+function aliasedPair<T>(value: T & not { kind: "excluded" } & PairShape<T>): AliasedPair<T> {
+>aliasedPair : <T>(value: T & not { kind: "excluded"; } & PairShape<T>) => AliasedPair<T>
+>value : T & not { kind: "excluded"; } & PairShape<T>
+>kind : "excluded"
+
+    return value;
+>value : T & not { kind: "excluded"; } & PairShape<T>
+}
+
+function inlinePair<T>(
+>inlinePair : <T>(value: T & not { kind: "excluded"; } & { first: T; second: T; }) => T extends { kind: "excluded"; } ? never : { first: T; second: T; }
+
+    value: T & not { kind: "excluded" } & { first: T; second: T },
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+>kind : "excluded"
+>first : T
+>second : T
+
+): T extends { kind: "excluded" } ? never : { first: T; second: T } {
+>kind : "excluded"
+>first : T
+>second : T
+
+    return value;
+>value : T & not { kind: "excluded"; } & { first: T; second: T; }
+}
+
+type EqualsTest<T> = <A>() => A extends T ? 1 : 0;
+>EqualsTest : EqualsTest<T>
+
+type Equals<T, U> = EqualsTest<T> extends EqualsTest<U> ? true : false;
+>Equals : Equals<T, U>
+>true : true
+>false : false
+
+const equal: Equals<string, string> = true;
+>equal : true
+>true : true
+
+const unequal: Equals<string, number> = false;
+>unequal : false
+>false : false
+

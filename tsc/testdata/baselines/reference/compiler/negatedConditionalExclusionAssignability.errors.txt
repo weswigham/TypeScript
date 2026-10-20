@@ -1,0 +1,96 @@
+negatedConditionalExclusionAssignability.ts(13,5): error TS2322: Type 'T' is not assignable to type 'ConditionalExclude<T, U>'.
+negatedConditionalExclusionAssignability.ts(17,5): error TS2322: Type 'not U' is not assignable to type 'ConditionalExclude<T, U>'.
+  Type 'unknown' is not assignable to type 'ConditionalExclude<T, U>'.
+negatedConditionalExclusionAssignability.ts(21,5): error TS2322: Type 'ConditionalExclude<T, U>' is not assignable to type 'T & not U'.
+  Type 'T' is not assignable to type 'T & not U'.
+    Type 'T' is not assignable to type 'not U'.
+      Type 'ConditionalExclude<T, U>' is not assignable to type 'not U'.
+        Type 'T' is not assignable to type 'not U'.
+negatedConditionalExclusionAssignability.ts(25,5): error TS2322: Type 'T & U' is not assignable to type 'ConditionalExtract<T, U>'.
+negatedConditionalExclusionAssignability.ts(37,5): error TS2322: Type '"replacement"' is not assignable to type 'T extends U ? "replacement" : T'.
+negatedConditionalExclusionAssignability.ts(53,5): error TS2322: Type 'T & not U' is not assignable to type 'T extends U ? never : T & V'.
+negatedConditionalExclusionAssignability.ts(57,5): error TS2322: Type 'T & U' is not assignable to type 'T extends U ? V : T'.
+
+
+==== negatedConditionalExclusionAssignability.ts (7 errors) ====
+    type ConditionalExclude<T, U> = T extends U ? never : T;
+    type ConditionalExtract<T, U> = T extends U ? T : never;
+    
+    function conditionalExclude<T, U>(value: T & not U): ConditionalExclude<T, U> {
+        return value;
+    }
+    
+    function conditionalExcludeSubset<T, U, V>(value: T & not U & V): ConditionalExclude<T, U> {
+        return value;
+    }
+    
+    function unfiltered<T, U>(value: T): ConditionalExclude<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'ConditionalExclude<T, U>'.
+    }
+    
+    function unrelated<T, U>(value: not U): ConditionalExclude<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'not U' is not assignable to type 'ConditionalExclude<T, U>'.
+!!! error TS2322:   Type 'unknown' is not assignable to type 'ConditionalExclude<T, U>'.
+    }
+    
+    function reverse<T, U>(value: ConditionalExclude<T, U>): T & not U {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'ConditionalExclude<T, U>' is not assignable to type 'T & not U'.
+!!! error TS2322:   Type 'T' is not assignable to type 'T & not U'.
+!!! error TS2322:     Type 'T' is not assignable to type 'not U'.
+!!! error TS2322:       Type 'ConditionalExclude<T, U>' is not assignable to type 'not U'.
+!!! error TS2322:         Type 'T' is not assignable to type 'not U'.
+!!! related TS2208 negatedConditionalExclusionAssignability.ts:20:18: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignability.ts:20:18: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignability.ts:20:18: This type parameter might need an `extends T & not U` constraint.
+    }
+    
+    function conditionalExtract<T, U>(value: T & U): ConditionalExtract<T, U> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U' is not assignable to type 'ConditionalExtract<T, U>'.
+    }
+    
+    function nonNeverTrueBranch<T, U>(value: T & not U): T extends U ? "replacement" : T {
+        return value;
+    }
+    
+    function genericTrueBranch<T, U, V>(value: T & not U): T extends U ? V : T {
+        return value;
+    }
+    
+    function trueBranchOnly<T, U>(value: "replacement"): T extends U ? "replacement" : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '"replacement"' is not assignable to type 'T extends U ? "replacement" : T'.
+    }
+    
+    function falseBranchIntersection<T, U, V>(value: T & not U & V): T extends U ? never : T & V {
+        return value;
+    }
+    
+    function falseBranchUnion<T, U, V>(value: T & not U): T extends U ? never : T | V {
+        return value;
+    }
+    
+    function bothBranches<T, U, V, W>(value: T & V & W): T extends U ? V : W {
+        return value;
+    }
+    
+    function missingFalseBranchConstraint<T, U, V>(value: T & not U): T extends U ? never : T & V {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not U' is not assignable to type 'T extends U ? never : T & V'.
+    }
+    
+    function missingTrueBranchConstraint<T, U, V>(value: T & U): T extends U ? V : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U' is not assignable to type 'T extends U ? V : T'.
+    }
+    

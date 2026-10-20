@@ -1,0 +1,207 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityConstraints.ts] ////
+
+=== negatedConditionalExclusionAssignabilityConstraints.ts ===
+function constrainedCheck<T extends string>(value: string): T extends number ? never : T {
+>constrainedCheck : Symbol(constrainedCheck, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 0, 44))
+}
+
+function constrainedExclusion<T extends string | number>(value: T & not string): T extends string ? never : T {
+>constrainedExclusion : Symbol(constrainedExclusion, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 2, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 57))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 4, 57))
+}
+
+function constrainedExtraction<T extends string | number>(value: T & string): T extends string ? T : never {
+>constrainedExtraction : Symbol(constrainedExtraction, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 6, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 31))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 58))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 31))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 8, 58))
+}
+
+function narrowerCheck<T, V extends T>(value: V & not string): T extends string ? never : T {
+>narrowerCheck : Symbol(narrowerCheck, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 10, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 23))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 25))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 39))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 25))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 12, 39))
+}
+
+function onlyConstraintMatches<T extends { value: string }, U>(value: { value: string } & not U): T extends U ? never : T {
+>onlyConstraintMatches : Symbol(onlyConstraintMatches, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 14, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 31))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 42))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 59))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 63))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 71))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 59))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 59))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 31))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 16, 63))
+}
+
+function dependentBranches<T, V>(value: T & V): T extends { value: T } ? V : T {
+>dependentBranches : Symbol(dependentBranches, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 18, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 27))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 29))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 27))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 59))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 27))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 20, 33))
+}
+
+function dependentExclude<T>(
+>dependentExclude : Symbol(dependentExclude, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 22, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+
+    value: T & not ((arg: T) => void),
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 29))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 25, 21))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+
+): T extends ((arg: T) => void) ? never : T {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+>arg : Symbol(arg, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 26, 15))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 24, 29))
+}
+
+function recursiveConstraint<T extends { next?: T }, U>(value: T & not U): T extends U ? never : T {
+>recursiveConstraint : Symbol(recursiveConstraint, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 28, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 29))
+>next : Symbol(next, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 52))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 56))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 52))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 52))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 29))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 30, 56))
+}
+
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 12))
+
+type WrappedFilter<T, U> = Filter<T, U>;
+>WrappedFilter : Symbol(WrappedFilter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 35, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 35, 21))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 35, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 35, 21))
+
+function instantiatedAlias<T, U>(value: T & not U): WrappedFilter<T, U> {
+>instantiatedAlias : Symbol(instantiatedAlias, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 35, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 29))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 29))
+>WrappedFilter : Symbol(WrappedFilter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 34, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 27))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 29))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 37, 33))
+}
+
+function excludedUnion<T, U, V>(value: T & not U & not V): Filter<T, U | V> {
+>excludedUnion : Symbol(excludedUnion, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 39, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 25))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 28))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 25))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 28))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 23))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 25))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 28))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 41, 32))
+}
+
+// The negation of a generic intersection is not reduced here.
+function excludedIntersection<T, U, V>(value: T & not (U & V)): Filter<T, U & V> {
+>excludedIntersection : Symbol(excludedIntersection, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 43, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 35))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 35))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 30))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 32))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 35))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 46, 39))
+}
+
+function incompleteExclusion<T, U, V>(value: T & not U): Filter<T, U | V> {
+>incompleteExclusion : Symbol(incompleteExclusion, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 48, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 34))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 31))
+>Filter : Symbol(Filter, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 31))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 34))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityConstraints.ts, 50, 38))
+}
+

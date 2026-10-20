@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityDistribution.ts] ////
+
+=== negatedConditionalExclusionAssignabilityDistribution.ts ===
+function nonDistributiveArrays<T, U>(value: T & not U): T[] extends U[] ? never : T[] {
+>nonDistributiveArrays : <T, U>(value: T & not U) => T[] extends U[] ? never : T[]
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function nonDistributiveTrueBranch<T>(value: [T] & [string]): [T] extends [string] ? [T] : never {
+>nonDistributiveTrueBranch : <T>(value: [T] & [string]) => [T] extends [string] ? [T] : never
+>value : [T] & [string]
+
+    return value;
+>value : [T] & [string]
+}
+
+const nonDistributiveNever: never = nonDistributiveTrueBranch<string | number>(["value"]);
+>nonDistributiveNever : never
+>nonDistributiveTrueBranch<string | number>(["value"]) : never
+>nonDistributiveTrueBranch : <T>(value: [T] & [string]) => [T] extends [string] ? [T] : never
+>["value"] : [string]
+>"value" : "value"
+
+function nonDistributiveFalseBranch<T>(value: [T]): [T] extends [string] ? [T] : [T] & not [string] {
+>nonDistributiveFalseBranch : <T>(value: [T]) => [T] extends [string] ? [T] : [T] & not [string]
+>value : [T]
+
+    return value;
+>value : [T]
+}
+
+function nonDistributiveCommonBranch<T, V>(value: [T] & V): [T] extends [string] ? V : [T] {
+>nonDistributiveCommonBranch : <T, V>(value: [T] & V) => [T] extends [string] ? V : [T]
+>value : [T] & V
+
+    return value;
+>value : [T] & V
+}
+
+type Partition<T, U> = T extends U ? T & U : T & not U;
+>Partition : Partition<T, U>
+
+function partition<T, U>(value: T): Partition<T, U> {
+>partition : <T, U>(value: T) => Partition<T, U>
+>value : T
+
+    return value;
+>value : T
+}
+
+function unionSource<T, U, V>(value: (T & U) | (T & not U & V)): T extends U ? T : T & V {
+>unionSource : <T, U, V>(value: (T & U) | (T & not U & V)) => T extends U ? T : T & V
+>value : (T & U) | (T & V)
+
+    return value;
+>value : (T & U) | (T & V)
+}
+
+function missingUnionBranch<T, U, V>(value: T | V): Partition<T, U> {
+>missingUnionBranch : <T, U, V>(value: T | V) => Partition<T, U>
+>value : T | V
+
+    return value;
+>value : T | V
+}
+
+const stringPartition: Partition<string | number, string> = "value";
+>stringPartition : string | number
+>"value" : "value"
+
+const numberPartition: Partition<string | number, string> = 1;
+>numberPartition : string | number
+>1 : 1
+
+const outsidePartition: Partition<string | number, string> = true;
+>outsidePartition : string | number
+>true : true
+
+const emptyPartition: Partition<never, string> = "value";
+>emptyPartition : never
+>"value" : "value"
+
+type StringFilter<T> = T extends string ? never : T;
+>StringFilter : StringFilter<T>
+
+function wrongCheckDomain<T>(value: number & not string): StringFilter<T> {
+>wrongCheckDomain : <T>(value: number & not string) => StringFilter<T>
+>value : number
+
+    return value;
+>value : number
+}
+

@@ -1,0 +1,104 @@
+negatedConditionalExclusionAssignabilityBranches.ts(2,5): error TS2322: Type 'T & U' is not assignable to type 'T extends U ? T & U : never'.
+negatedConditionalExclusionAssignabilityBranches.ts(6,5): error TS2322: Type 'T & U & V' is not assignable to type 'T extends U ? T & V : never'.
+negatedConditionalExclusionAssignabilityBranches.ts(10,5): error TS2322: Type 'T & U' is not assignable to type 'T extends U ? V | T : never'.
+negatedConditionalExclusionAssignabilityBranches.ts(38,5): error TS2322: Type 'T' is not assignable to type 'T extends U ? T & V : T & W'.
+negatedConditionalExclusionAssignabilityBranches.ts(42,5): error TS2322: Type 'T' is not assignable to type 'T extends U ? T : T & V'.
+negatedConditionalExclusionAssignabilityBranches.ts(46,5): error TS2322: Type 'T' is not assignable to type 'T extends U ? T & V : T'.
+negatedConditionalExclusionAssignabilityBranches.ts(52,5): error TS2322: Type 'T & U & T["value"]' is not assignable to type 'T extends U ? T["value"] : never'.
+negatedConditionalExclusionAssignabilityBranches.ts(57,5): error TS2322: Type 'T & { value: T & U; other: T; }' is not assignable to type 'T extends U ? { value: T; } : { other: T; }'.
+negatedConditionalExclusionAssignabilityBranches.ts(61,5): error TS2322: Type 'T & { value: T; other: T; }' is not assignable to type 'T extends U ? { value: T; } : { other: T; }'.
+negatedConditionalExclusionAssignabilityBranches.ts(69,5): error TS2322: Type 'T & U & V' is not assignable to type 'T extends U ? T extends V ? T : never : never'.
+
+
+==== negatedConditionalExclusionAssignabilityBranches.ts (10 errors) ====
+    function narrowedTrueBranch<T, U>(value: T & U): T extends U ? T & U : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U' is not assignable to type 'T extends U ? T & U : never'.
+    }
+    
+    function extraTrueConstraint<T, U, V>(value: T & U & V): T extends U ? T & V : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U & V' is not assignable to type 'T extends U ? T & V : never'.
+    }
+    
+    function expandedTrueBranch<T, U, V>(value: T & U): T extends U ? T | V : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U' is not assignable to type 'T extends U ? V | T : never'.
+    }
+    
+    function identicalBranches<T, U>(value: T): T extends U ? T : T {
+        return value;
+    }
+    
+    function bothBranchConstraints<T, U, V, W>(value: T & V & W): T extends U ? T & V : T & W {
+        return value;
+    }
+    
+    function trueBranchRefinement<T, U>(value: T): T extends U ? T & U : T {
+        return value;
+    }
+    
+    function trueBranchSupertype<T, U>(value: T): T extends U ? U : T {
+        return value;
+    }
+    
+    function differentBranchShapes<T, U, V>(value: T & V): T extends U ? U : V {
+        return value;
+    }
+    
+    function widenedFalseBranch<T, U, V>(value: T): T extends U ? T & U : T | V {
+        return value;
+    }
+    
+    function missingBothConstraints<T, U, V, W>(value: T): T extends U ? T & V : T & W {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'T extends U ? T & V : T & W'.
+    }
+    
+    function missingFalseConstraint<T, U, V>(value: T): T extends U ? T : T & V {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'T extends U ? T : T & V'.
+    }
+    
+    function missingTrueConstraint<T, U, V>(value: T): T extends U ? T & V : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'T extends U ? T & V : T'.
+    }
+    
+    function indexedTrueBranch<T extends { value: unknown }, U>(
+        value: T & U & T["value"],
+    ): T extends U ? T["value"] : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U & T["value"]' is not assignable to type 'T extends U ? T["value"] : never'.
+    }
+    
+    // Nested distribution currently retains distinct type-parameter identities in these properties.
+    function narrowedObjectBranches<T, U>(value: T & { value: T & U; other: T }): T extends U ? { value: T } : { other: T } {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & { value: T & U; other: T; }' is not assignable to type 'T extends U ? { value: T; } : { other: T; }'.
+    }
+    
+    function unrefinedObjectBranches<T, U>(value: T & { value: T; other: T }): T extends U ? { value: T } : { other: T } {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & { value: T; other: T; }' is not assignable to type 'T extends U ? { value: T; } : { other: T; }'.
+    }
+    
+    function nestedFalseBranch<T, U, V>(value: T & not U & not V): T extends U ? never : T extends V ? never : T {
+        return value;
+    }
+    
+    function nestedTrueBranch<T, U, V>(value: T & U & V): T extends U ? T extends V ? T : never : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & U & V' is not assignable to type 'T extends U ? T extends V ? T : never : never'.
+    }
+    

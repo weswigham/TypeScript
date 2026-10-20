@@ -3639,28 +3639,50 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryMaybe
 		}
 		c := target.AsConditionalType()
-		// We check for a relationship to a conditional type target only when the conditional type has no
-		// 'infer' positions, is not distributive or is distributive but doesn't reference the check type
-		// parameter in either of the result types, and the source isn't an instantiation of the same
-		// conditional type (as happens when computing variance).
-		if c.root.inferTypeParameters == nil && !r.c.isDistributionDependent(c.root) && !(source.flags&TypeFlagsConditional != 0 && source.AsConditionalType().root == c.root) {
-			// Check if the conditional is always true or always false but still deferred for distribution purposes.
-			skipTrue := !r.c.isTypeAssignableTo(r.c.getPermissiveInstantiation(c.checkType), r.c.getPermissiveInstantiation(c.extendsType))
-			skipFalse := !skipTrue && r.c.isTypeAssignableTo(r.c.getRestrictiveInstantiation(c.checkType), r.c.getRestrictiveInstantiation(c.extendsType))
-			// TODO: Find a nice way to include potential conditional type breakdowns in error output, if they seem good (they usually don't)
-			if skipTrue {
-				result = TernaryTrue
-			} else {
-				result = r.isRelatedToEx(source, r.c.getTrueTypeFromConditionalType(target), RecursionFlagsTarget, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+		// We check conditional type targets without 'infer' positions unless the source is an instantiation
+		// of the same conditional type (as happens when computing variance).
+		if c.root.inferTypeParameters == nil && !(source.flags&TypeFlagsConditional != 0 && source.AsConditionalType().root == c.root) {
+			checkType := c.checkType
+			trueSource := source
+			falseSource := source
+			canRelateBranches := !r.c.isDistributionDependent(c.root)
+			recursionFlags := RecursionFlagsTarget
+			result = TernaryTrue
+			if c.root.isDistributive &&
+				!r.c.isDistributionDependentInNestedType(c.root, c.root.node.TrueType) &&
+				!r.c.isDistributionDependentInNestedType(c.root, c.root.node.FalseType) {
+				nonDistributedCheckType := getNonDistributedTypeParameter(checkType)
+				related := r.isRelatedTo(r.c.getRestrictiveInstantiation(source), r.c.getRestrictiveInstantiation(nonDistributedCheckType), RecursionFlagsBoth, false /*reportErrors*/)
+				if related != TernaryFalse {
+					// Only direct constituent references can be related without losing nested union correlations.
+					// Negated types let S & not U prove the matching portion empty even for higher-order S.
+					if checkType != nonDistributedCheckType {
+						falseSource = r.c.getIntersectionType([]*Type{source, checkType})
+					}
+					trueSource = r.c.getIntersectionType([]*Type{falseSource, c.extendsType})
+					recursionFlags = RecursionFlagsBoth
+					result = related
+					canRelateBranches = true
+				}
 			}
-			if result != TernaryFalse {
-				if skipFalse {
-					result &= TernaryTrue
-				} else {
-					result &= r.isRelatedToEx(source, r.c.getFalseTypeFromConditionalType(target), RecursionFlagsTarget, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+			// Distribution-dependent branches require the source to be a subtype of the check type.
+			if canRelateBranches {
+				// Check if the conditional is always true or always false but still deferred for distribution purposes.
+				skipTrue := !r.c.isTypeAssignableTo(r.c.getPermissiveInstantiation(checkType), r.c.getPermissiveInstantiation(c.extendsType))
+				skipFalse := !skipTrue && r.c.isTypeAssignableTo(r.c.getRestrictiveInstantiation(checkType), r.c.getRestrictiveInstantiation(c.extendsType))
+				// TODO: Find a nice way to include potential conditional type breakdowns in error output, if they seem good (they usually don't)
+				if !skipTrue {
+					trueTarget := r.c.getTrueTypeFromConditionalType(target)
+					result &= r.isRelatedToEx(trueSource, trueTarget, recursionFlags, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
 				}
 				if result != TernaryFalse {
-					return result
+					if !skipFalse {
+						falseTarget := r.c.getFalseTypeFromConditionalType(target)
+						result &= r.isRelatedToEx(falseSource, falseTarget, recursionFlags, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+					}
+					if result != TernaryFalse {
+						return result
+					}
 				}
 			}
 		}
@@ -5109,6 +5131,36 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 
 func (c *Checker) isDistributionDependent(root *ConditionalRoot) bool {
 	return root.isDistributive && (c.isTypeParameterPossiblyReferenced(root.checkType, root.node.TrueType) || c.isTypeParameterPossiblyReferenced(root.checkType, root.node.FalseType))
+}
+
+func (c *Checker) isDistributionDependentInNestedType(root *ConditionalRoot, node *ast.Node) bool {
+	node = ast.SkipTypeParentheses(node)
+	if isSimpleIdentifierTypeReference(node) && c.getSymbolFromTypeReference(node) == root.checkType.symbol {
+		return false
+	}
+	if ast.IsUnionTypeNode(node) || ast.IsIntersectionTypeNode(node) {
+		return node.ForEachChild(func(t *ast.Node) bool {
+			return c.isDistributionDependentInNestedType(root, t)
+		})
+	}
+	if ast.IsConditionalTypeNode(node) {
+		conditional := node.AsConditionalTypeNode()
+		return c.isDistributionDependentInNestedType(root, conditional.CheckType) ||
+			c.isTypeParameterPossiblyReferenced(root.checkType, conditional.ExtendsType) ||
+			c.isDistributionDependentInNestedType(root, conditional.TrueType) ||
+			c.isDistributionDependentInNestedType(root, conditional.FalseType)
+	}
+	var containsReference func(*ast.Node) bool
+	containsReference = func(node *ast.Node) bool {
+		if isSimpleIdentifierTypeReference(node) && c.getSymbolFromTypeReference(node) == root.checkType.symbol {
+			return true
+		}
+		if ast.IsTypeQueryNode(node) || node.Kind == ast.KindThisType {
+			return c.isTypeParameterPossiblyReferenced(root.checkType, node)
+		}
+		return node.ForEachChild(containsReference)
+	}
+	return containsReference(node)
 }
 
 func (r *Relater) traceUnionsOrIntersectionsTooLarge(source *Type, target *Type) {

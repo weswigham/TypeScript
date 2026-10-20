@@ -1,0 +1,130 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityMappedKeys.ts] ////
+
+=== negatedConditionalExclusionAssignabilityMappedKeys.ts ===
+function filteredStringKeys<T>(value: keyof T & string & not "_key"): keyof {
+>filteredStringKeys : <T>(value: keyof T & string & not "_key") => keyof { [K in keyof T & string as K extends "_key" ? never : K]: T[K]; }
+>value : keyof T & string & not "_key"
+
+    [K in keyof T & string as K extends "_key" ? never : K]: T[K];
+} {
+    return value;
+>value : keyof T & string & not "_key"
+}
+
+function filteredNumberKeys<T>(value: keyof T & number & not 0): keyof {
+>filteredNumberKeys : <T>(value: keyof T & number & not 0) => keyof { [K in keyof T & number as K extends 0 ? never : K]: T[K]; }
+>value : keyof T & number & not 0
+
+    [K in keyof T & number as K extends 0 ? never : K]: T[K];
+} {
+    return value;
+>value : keyof T & number & not 0
+}
+
+declare const hiddenKey: unique symbol;
+>hiddenKey : unique symbol
+
+function filteredSymbolKeys<T>(value: keyof T & symbol & not typeof hiddenKey): keyof {
+>filteredSymbolKeys : <T>(value: keyof T & symbol & not typeof hiddenKey) => keyof { [K in keyof T & symbol as K extends typeof hiddenKey ? never : K]: T[K]; }
+>value : keyof T & symbol & not unique symbol
+>hiddenKey : unique symbol
+
+    [K in keyof T & symbol as K extends typeof hiddenKey ? never : K]: T[K];
+>hiddenKey : unique symbol
+
+} {
+    return value;
+>value : keyof T & symbol & not unique symbol
+}
+
+function multipleExcludedKeys<T>(value: keyof T & not ("first" | "second")): keyof {
+>multipleExcludedKeys : <T>(value: keyof T & not ("first" | "second")) => keyof { [K in keyof T & {} as K extends "first" | "second" ? never : K]: T[K]; }
+>value : keyof T & not "first" & not "second"
+
+    [K in keyof T & {} as K extends "first" | "second" ? never : K]: T[K];
+} {
+    return value;
+>value : keyof T & not "first" & not "second"
+}
+
+type FilteredKeys<T, U> = keyof {
+>FilteredKeys : keyof { [K in keyof T & string as K extends U ? never : K]: T[K]; }
+
+    [K in keyof T & string as K extends U ? never : K]: T[K];
+};
+
+function genericFilteredKeys<T, U>(value: keyof T & string & not U): FilteredKeys<T, U> {
+>genericFilteredKeys : <T, U>(value: keyof T & string & not U) => FilteredKeys<T, U>
+>value : keyof T & string & not U
+
+    return value;
+>value : keyof T & string & not U
+}
+
+function unfilteredKeys<T>(value: keyof T & string): FilteredKeys<T, "_key"> {
+>unfilteredKeys : <T>(value: keyof T & string) => FilteredKeys<T, "_key">
+>value : keyof T & string
+
+    return value;
+>value : keyof T & string
+}
+
+function excludedKey<T>(value: keyof T & "_key"): FilteredKeys<T, "_key"> {
+>excludedKey : <T>(value: keyof T & "_key") => FilteredKeys<T, "_key">
+>value : keyof T & "_key"
+
+    return value;
+>value : keyof T & "_key"
+}
+
+type ChildPaths<T> = [PathTuples<T>] extends [never] ? [] : PathTuples<T>;
+>ChildPaths : ChildPaths<T>
+
+type PathTuples<T> = T extends object ? {
+>PathTuples : PathTuples<T>
+
+    [K in keyof T & string as K extends "_key" ? never : K]:
+        [PathTuples<T[K]>] extends [never] ? never : readonly [K, ...ChildPaths<T[K]>];
+}[keyof T & string & not "_key"] : [];
+
+const nestedPath: PathTuples<{ _key: string; child: { value: number } }> = ["child", "value"];
+>nestedPath : readonly ["child", "value"]
+>_key : string
+>child : { value: number; }
+>value : number
+>["child", "value"] : ["child", "value"]
+>"child" : "child"
+>"value" : "value"
+
+const excludedPath: PathTuples<{ _key: string; child: { value: number } }> = ["_key"];
+>excludedPath : readonly ["child", "value"]
+>_key : string
+>child : { value: number; }
+>value : number
+>["_key"] : ["_key"]
+>"_key" : "_key"
+
+type RecursivePaths<T> = {
+>RecursivePaths : RecursivePaths<T>
+
+    [K in keyof T & string as K extends "_key" ? never : K]:
+        T[K] extends object ? readonly [K, ...RecursivePaths<T[K]>] : readonly [K];
+}[keyof T & string & not "_key"];
+
+const recursivePath: RecursivePaths<{ _key: string; child: { value: number } }> = ["child", "value"];
+>recursivePath : readonly ["child", "value"]
+>_key : string
+>child : { value: number; }
+>value : number
+>["child", "value"] : ["child", "value"]
+>"child" : "child"
+>"value" : "value"
+
+const recursiveExcludedPath: RecursivePaths<{ _key: string; child: { value: number } }> = ["_key"];
+>recursiveExcludedPath : readonly ["child", "value"]
+>_key : string
+>child : { value: number; }
+>value : number
+>["_key"] : ["_key"]
+>"_key" : "_key"
+

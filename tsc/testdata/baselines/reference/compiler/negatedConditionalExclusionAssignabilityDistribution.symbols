@@ -1,0 +1,157 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityDistribution.ts] ////
+
+=== negatedConditionalExclusionAssignabilityDistribution.ts ===
+function nonDistributiveArrays<T, U>(value: T & not U): T[] extends U[] ? never : T[] {
+>nonDistributiveArrays : Symbol(nonDistributiveArrays, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 31))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 31))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 0, 37))
+}
+
+function nonDistributiveTrueBranch<T>(value: [T] & [string]): [T] extends [string] ? [T] : never {
+>nonDistributiveTrueBranch : Symbol(nonDistributiveTrueBranch, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 2, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 35))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 35))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 4, 38))
+}
+
+const nonDistributiveNever: never = nonDistributiveTrueBranch<string | number>(["value"]);
+>nonDistributiveNever : Symbol(nonDistributiveNever, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 8, 5))
+>nonDistributiveTrueBranch : Symbol(nonDistributiveTrueBranch, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 2, 1))
+
+function nonDistributiveFalseBranch<T>(value: [T]): [T] extends [string] ? [T] : [T] & not [string] {
+>nonDistributiveFalseBranch : Symbol(nonDistributiveFalseBranch, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 8, 90))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 36))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 36))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 36))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 10, 39))
+}
+
+function nonDistributiveCommonBranch<T, V>(value: [T] & V): [T] extends [string] ? V : [T] {
+>nonDistributiveCommonBranch : Symbol(nonDistributiveCommonBranch, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 12, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 37))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 39))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 37))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 37))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 37))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 14, 43))
+}
+
+type Partition<T, U> = T extends U ? T & U : T & not U;
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 15))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 17))
+
+function partition<T, U>(value: T): Partition<T, U> {
+>partition : Symbol(partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 18, 55))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 25))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 19))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 19))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 21))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 20, 25))
+}
+
+function unionSource<T, U, V>(value: (T & U) | (T & not U & V)): T extends U ? T : T & V {
+>unionSource : Symbol(unionSource, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 22, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 23))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 23))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 21))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 24, 30))
+}
+
+function missingUnionBranch<T, U, V>(value: T | V): Partition<T, U> {
+>missingUnionBranch : Symbol(missingUnionBranch, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 26, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 30))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 33))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 28))
+>V : Symbol(V, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 33))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 28))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 30))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 28, 37))
+}
+
+const stringPartition: Partition<string | number, string> = "value";
+>stringPartition : Symbol(stringPartition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 32, 5))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+
+const numberPartition: Partition<string | number, string> = 1;
+>numberPartition : Symbol(numberPartition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 33, 5))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+
+const outsidePartition: Partition<string | number, string> = true;
+>outsidePartition : Symbol(outsidePartition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 34, 5))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+
+const emptyPartition: Partition<never, string> = "value";
+>emptyPartition : Symbol(emptyPartition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 35, 5))
+>Partition : Symbol(Partition, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 16, 1))
+
+type StringFilter<T> = T extends string ? never : T;
+>StringFilter : Symbol(StringFilter, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 35, 57))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 37, 18))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 37, 18))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 37, 18))
+
+function wrongCheckDomain<T>(value: number & not string): StringFilter<T> {
+>wrongCheckDomain : Symbol(wrongCheckDomain, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 37, 52))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 39, 26))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 39, 29))
+>StringFilter : Symbol(StringFilter, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 35, 57))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 39, 26))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityDistribution.ts, 39, 29))
+}
+

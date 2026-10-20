@@ -1,0 +1,364 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityCorrelation.ts] ////
+
+=== negatedConditionalExclusionAssignabilityCorrelation.ts ===
+type Pair<T> = T extends { kind: "excluded" } ? never : { first: T; second: T };
+>Pair : Symbol(Pair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 10))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 10))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 26))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 57))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 10))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 67))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 10))
+
+type TruePair<T> = T extends { kind: string } ? { first: T; second: T } : never;
+>TruePair : Symbol(TruePair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 80))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 14))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 30))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 49))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 14))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 59))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 14))
+
+type Tuple<T> = T extends { kind: "excluded" } ? never : [T, T];
+>Tuple : Symbol(Tuple, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 80))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 11))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 11))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 27))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 11))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 11))
+
+type Consumer<T> = T extends { kind: "excluded" } ? never : (value: T) => T;
+>Consumer : Symbol(Consumer, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 64))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 14))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 61))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 14))
+
+function mixedPair<T>(value: T & not { kind: "excluded" } & { first: T; second: T }): Pair<T> {
+>mixedPair : Symbol(mixedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 76))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 19))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 19))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 38))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 61))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 19))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 71))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 19))
+>Pair : Symbol(Pair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 19))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 5, 22))
+}
+
+function mixedTruePair<T>(value: T & { first: T; second: T }): TruePair<T> {
+>mixedTruePair : Symbol(mixedTruePair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 7, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 23))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 38))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 48))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 23))
+>TruePair : Symbol(TruePair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 80))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 9, 26))
+}
+
+function mixedTuple<T>(value: T & not { kind: "excluded" } & [T, T]): Tuple<T> {
+>mixedTuple : Symbol(mixedTuple, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 11, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 20))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 20))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 20))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 20))
+>Tuple : Symbol(Tuple, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 1, 80))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 20))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 13, 23))
+}
+
+function mixedConsumer<T>(value: T & not { kind: "excluded" } & ((value: T) => T)): Consumer<T> {
+>mixedConsumer : Symbol(mixedConsumer, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 15, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 42))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 66))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 23))
+>Consumer : Symbol(Consumer, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 2, 64))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 17, 26))
+}
+
+type A = { kind: "a" };
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 10))
+
+type B = { kind: "b" };
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 22, 10))
+
+const a: A = { kind: "a" };
+>a : Symbol(a, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 23, 5))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 23, 14))
+
+const b: B = { kind: "b" };
+>b : Symbol(b, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 24, 5))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 24, 14))
+
+const mixed: A & { first: A | B; second: A | B } = { kind: "a", first: a, second: b };
+>mixed : Symbol(mixed, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 5))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 18))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 32))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 52))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 63))
+>a : Symbol(a, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 23, 5))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 73))
+>b : Symbol(b, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 24, 5))
+
+const result: { first: A; second: A } | { first: B; second: B } = mixedPair<A | B>(mixed);
+>result : Symbol(result, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 26, 5))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 26, 15))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 26, 25))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 26, 41))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 26, 51))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>mixedPair : Symbol(mixedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 3, 76))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>mixed : Symbol(mixed, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 5))
+
+const trueResult: { first: A; second: A } | { first: B; second: B } = mixedTruePair<A | B>(mixed);
+>trueResult : Symbol(trueResult, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 5))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 19))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 29))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 45))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 55))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>mixedTruePair : Symbol(mixedTruePair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 7, 1))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>mixed : Symbol(mixed, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 5))
+
+type Identity<T> = T extends { kind: "excluded" } ? never : T;
+>Identity : Symbol(Identity, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 98))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 14))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 14))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 30))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 14))
+
+function identity<T>(value: T & not { kind: "excluded" }): Identity<T> {
+>identity : Symbol(identity, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 62))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 18))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 21))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 18))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 37))
+>Identity : Symbol(Identity, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 27, 98))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 18))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 30, 21))
+}
+const identityA: A | B = identity<A | B>(a);
+>identityA : Symbol(identityA, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 33, 5))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>identity : Symbol(identity, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 29, 62))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>a : Symbol(a, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 23, 5))
+
+type IndependentPair<T, U> = T extends { kind: "excluded" } ? never : { first: U; second: U };
+>IndependentPair : Symbol(IndependentPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 33, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 21))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 21))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 40))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 71))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 81))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 23))
+
+function independentPair<T, U>(value: T & not { kind: "excluded" } & { first: U; second: U }): IndependentPair<T, U> {
+>independentPair : Symbol(independentPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 94))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 25))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 27))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 25))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 47))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 70))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 27))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 80))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 27))
+>IndependentPair : Symbol(IndependentPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 33, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 25))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 27))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 36, 31))
+}
+const independentResult: { first: A | B; second: A | B } = independentPair<A | B, A | B>(mixed);
+>independentResult : Symbol(independentResult, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 39, 5))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 39, 26))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 39, 40))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>independentPair : Symbol(independentPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 35, 94))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 19, 1))
+>B : Symbol(B, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 21, 23))
+>mixed : Symbol(mixed, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 25, 5))
+
+function repeatedIndependentArgument<T>(
+>repeatedIndependentArgument : Symbol(repeatedIndependentArgument, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 39, 96))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+
+    value: T & not { kind: "excluded" } & { first: T; second: T },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 40))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 42, 20))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 42, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 42, 53))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+
+): IndependentPair<T, T> {
+>IndependentPair : Symbol(IndependentPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 33, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 37))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 41, 40))
+}
+
+type ForwardedPair<T> = Pair<T>;
+>ForwardedPair : Symbol(ForwardedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 45, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 47, 19))
+>Pair : Symbol(Pair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 47, 19))
+
+function forwardedPair<T>(value: T & not { kind: "excluded" } & { first: T; second: T }): ForwardedPair<T> {
+>forwardedPair : Symbol(forwardedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 47, 32))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 23))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 26))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 23))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 42))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 65))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 23))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 75))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 23))
+>ForwardedPair : Symbol(ForwardedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 45, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 23))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 48, 26))
+}
+
+type PairShape<T> = { first: T; second: T };
+>PairShape : Symbol(PairShape, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 50, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 15))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 21))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 15))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 15))
+
+type AliasedPair<T> = T extends { kind: "excluded" } ? never : PairShape<T>;
+>AliasedPair : Symbol(AliasedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 53, 17))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 53, 17))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 53, 33))
+>PairShape : Symbol(PairShape, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 50, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 53, 17))
+
+function aliasedPair<T>(value: T & not { kind: "excluded" } & PairShape<T>): AliasedPair<T> {
+>aliasedPair : Symbol(aliasedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 53, 76))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 24))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 21))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 40))
+>PairShape : Symbol(PairShape, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 50, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 21))
+>AliasedPair : Symbol(AliasedPair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 52, 44))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 21))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 54, 24))
+}
+
+function inlinePair<T>(
+>inlinePair : Symbol(inlinePair, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 56, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+
+    value: T & not { kind: "excluded" } & { first: T; second: T },
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 23))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 59, 20))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 59, 43))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 59, 53))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+
+): T extends { kind: "excluded" } ? never : { first: T; second: T } {
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+>kind : Symbol(kind, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 60, 14))
+>first : Symbol(first, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 60, 45))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+>second : Symbol(second, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 60, 55))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 20))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 58, 23))
+}
+
+type EqualsTest<T> = <A>() => A extends T ? 1 : 0;
+>EqualsTest : Symbol(EqualsTest, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 62, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 16))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 22))
+>A : Symbol(A, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 22))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 16))
+
+type Equals<T, U> = EqualsTest<T> extends EqualsTest<U> ? true : false;
+>Equals : Symbol(Equals, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 50))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 65, 12))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 65, 14))
+>EqualsTest : Symbol(EqualsTest, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 62, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 65, 12))
+>EqualsTest : Symbol(EqualsTest, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 62, 1))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 65, 14))
+
+const equal: Equals<string, string> = true;
+>equal : Symbol(equal, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 66, 5))
+>Equals : Symbol(Equals, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 50))
+
+const unequal: Equals<string, number> = false;
+>unequal : Symbol(unequal, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 67, 5))
+>Equals : Symbol(Equals, Decl(negatedConditionalExclusionAssignabilityCorrelation.ts, 64, 50))
+

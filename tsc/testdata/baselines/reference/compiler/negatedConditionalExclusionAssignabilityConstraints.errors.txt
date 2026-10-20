@@ -1,0 +1,80 @@
+negatedConditionalExclusionAssignabilityConstraints.ts(2,5): error TS2322: Type 'string' is not assignable to type 'T'.
+  'string' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string'.
+negatedConditionalExclusionAssignabilityConstraints.ts(10,5): error TS2322: Type 'T & string' is not assignable to type 'T extends string ? T : never'.
+negatedConditionalExclusionAssignabilityConstraints.ts(14,5): error TS2322: Type 'V & not string' is not assignable to type 'T extends string ? never : T'.
+negatedConditionalExclusionAssignabilityConstraints.ts(18,5): error TS2322: Type '{ value: string; } & not U' is not assignable to type 'T extends U ? never : T'.
+negatedConditionalExclusionAssignabilityConstraints.ts(28,5): error TS2322: Type 'T & not ((arg: T) => void)' is not assignable to type 'T extends (arg: T) => void ? never : T'.
+negatedConditionalExclusionAssignabilityConstraints.ts(48,5): error TS2322: Type 'T & not (U & V)' is not assignable to type 'Filter<T, U & V>'.
+negatedConditionalExclusionAssignabilityConstraints.ts(52,5): error TS2322: Type 'T & not U' is not assignable to type 'Filter<T, U | V>'.
+
+
+==== negatedConditionalExclusionAssignabilityConstraints.ts (7 errors) ====
+    function constrainedCheck<T extends string>(value: string): T extends number ? never : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'T'.
+!!! error TS2322:   'string' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'string'.
+    }
+    
+    function constrainedExclusion<T extends string | number>(value: T & not string): T extends string ? never : T {
+        return value;
+    }
+    
+    function constrainedExtraction<T extends string | number>(value: T & string): T extends string ? T : never {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & string' is not assignable to type 'T extends string ? T : never'.
+    }
+    
+    function narrowerCheck<T, V extends T>(value: V & not string): T extends string ? never : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'V & not string' is not assignable to type 'T extends string ? never : T'.
+    }
+    
+    function onlyConstraintMatches<T extends { value: string }, U>(value: { value: string } & not U): T extends U ? never : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '{ value: string; } & not U' is not assignable to type 'T extends U ? never : T'.
+    }
+    
+    function dependentBranches<T, V>(value: T & V): T extends { value: T } ? V : T {
+        return value;
+    }
+    
+    function dependentExclude<T>(
+        value: T & not ((arg: T) => void),
+    ): T extends ((arg: T) => void) ? never : T {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not ((arg: T) => void)' is not assignable to type 'T extends (arg: T) => void ? never : T'.
+    }
+    
+    function recursiveConstraint<T extends { next?: T }, U>(value: T & not U): T extends U ? never : T {
+        return value;
+    }
+    
+    type Filter<T, U> = T extends U ? never : T;
+    type WrappedFilter<T, U> = Filter<T, U>;
+    
+    function instantiatedAlias<T, U>(value: T & not U): WrappedFilter<T, U> {
+        return value;
+    }
+    
+    function excludedUnion<T, U, V>(value: T & not U & not V): Filter<T, U | V> {
+        return value;
+    }
+    
+    // The negation of a generic intersection is not reduced here.
+    function excludedIntersection<T, U, V>(value: T & not (U & V)): Filter<T, U & V> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not (U & V)' is not assignable to type 'Filter<T, U & V>'.
+    }
+    
+    function incompleteExclusion<T, U, V>(value: T & not U): Filter<T, U | V> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not U' is not assignable to type 'Filter<T, U | V>'.
+    }
+    

@@ -1,0 +1,220 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityMappedKeys.ts] ////
+
+=== negatedConditionalExclusionAssignabilityMappedKeys.ts ===
+function filteredStringKeys<T>(value: keyof T & string & not "_key"): keyof {
+>filteredStringKeys : Symbol(filteredStringKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 0))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 28))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 28))
+
+    [K in keyof T & string as K extends "_key" ? never : K]: T[K];
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 1, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 1, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 1, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 1, 5))
+
+} {
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 0, 31))
+}
+
+function filteredNumberKeys<T>(value: keyof T & number & not 0): keyof {
+>filteredNumberKeys : Symbol(filteredNumberKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 4, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 28))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 28))
+
+    [K in keyof T & number as K extends 0 ? never : K]: T[K];
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 7, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 7, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 7, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 7, 5))
+
+} {
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 6, 31))
+}
+
+declare const hiddenKey: unique symbol;
+>hiddenKey : Symbol(hiddenKey, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 12, 13))
+
+function filteredSymbolKeys<T>(value: keyof T & symbol & not typeof hiddenKey): keyof {
+>filteredSymbolKeys : Symbol(filteredSymbolKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 12, 39))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 28))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 31))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 28))
+>hiddenKey : Symbol(hiddenKey, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 12, 13))
+
+    [K in keyof T & symbol as K extends typeof hiddenKey ? never : K]: T[K];
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 15, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 15, 5))
+>hiddenKey : Symbol(hiddenKey, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 12, 13))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 15, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 28))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 15, 5))
+
+} {
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 14, 31))
+}
+
+function multipleExcludedKeys<T>(value: keyof T & not ("first" | "second")): keyof {
+>multipleExcludedKeys : Symbol(multipleExcludedKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 18, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 30))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 33))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 30))
+
+    [K in keyof T & {} as K extends "first" | "second" ? never : K]: T[K];
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 21, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 30))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 21, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 21, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 30))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 21, 5))
+
+} {
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 20, 33))
+}
+
+type FilteredKeys<T, U> = keyof {
+>FilteredKeys : Symbol(FilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 26, 18))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 26, 20))
+
+    [K in keyof T & string as K extends U ? never : K]: T[K];
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 27, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 26, 18))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 27, 5))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 26, 20))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 27, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 26, 18))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 27, 5))
+
+};
+
+function genericFilteredKeys<T, U>(value: keyof T & string & not U): FilteredKeys<T, U> {
+>genericFilteredKeys : Symbol(genericFilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 28, 2))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 31))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 35))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 31))
+>FilteredKeys : Symbol(FilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 29))
+>U : Symbol(U, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 31))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 30, 35))
+}
+
+function unfilteredKeys<T>(value: keyof T & string): FilteredKeys<T, "_key"> {
+>unfilteredKeys : Symbol(unfilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 32, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 34, 24))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 34, 27))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 34, 24))
+>FilteredKeys : Symbol(FilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 34, 24))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 34, 27))
+}
+
+function excludedKey<T>(value: keyof T & "_key"): FilteredKeys<T, "_key"> {
+>excludedKey : Symbol(excludedKey, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 36, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 38, 21))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 38, 24))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 38, 21))
+>FilteredKeys : Symbol(FilteredKeys, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 24, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 38, 21))
+
+    return value;
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 38, 24))
+}
+
+type ChildPaths<T> = [PathTuples<T>] extends [never] ? [] : PathTuples<T>;
+>ChildPaths : Symbol(ChildPaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 40, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 16))
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 16))
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 16))
+
+type PathTuples<T> = T extends object ? {
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+
+    [K in keyof T & string as K extends "_key" ? never : K]:
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+
+        [PathTuples<T[K]>] extends [never] ? never : readonly [K, ...ChildPaths<T[K]>];
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+>ChildPaths : Symbol(ChildPaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 40, 1))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 44, 5))
+
+}[keyof T & string & not "_key"] : [];
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 43, 16))
+
+const nestedPath: PathTuples<{ _key: string; child: { value: number } }> = ["child", "value"];
+>nestedPath : Symbol(nestedPath, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 48, 5))
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>_key : Symbol(_key, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 48, 30))
+>child : Symbol(child, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 48, 44))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 48, 53))
+
+const excludedPath: PathTuples<{ _key: string; child: { value: number } }> = ["_key"];
+>excludedPath : Symbol(excludedPath, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 5))
+>PathTuples : Symbol(PathTuples, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 42, 74))
+>_key : Symbol(_key, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 32))
+>child : Symbol(child, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 46))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 55))
+
+type RecursivePaths<T> = {
+>RecursivePaths : Symbol(RecursivePaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 86))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 51, 20))
+
+    [K in keyof T & string as K extends "_key" ? never : K]:
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 51, 20))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+
+        T[K] extends object ? readonly [K, ...RecursivePaths<T[K]>] : readonly [K];
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 51, 20))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+>RecursivePaths : Symbol(RecursivePaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 86))
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 51, 20))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+>K : Symbol(K, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 52, 5))
+
+}[keyof T & string & not "_key"];
+>T : Symbol(T, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 51, 20))
+
+const recursivePath: RecursivePaths<{ _key: string; child: { value: number } }> = ["child", "value"];
+>recursivePath : Symbol(recursivePath, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 56, 5))
+>RecursivePaths : Symbol(RecursivePaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 86))
+>_key : Symbol(_key, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 56, 37))
+>child : Symbol(child, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 56, 51))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 56, 60))
+
+const recursiveExcludedPath: RecursivePaths<{ _key: string; child: { value: number } }> = ["_key"];
+>recursiveExcludedPath : Symbol(recursiveExcludedPath, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 57, 5))
+>RecursivePaths : Symbol(RecursivePaths, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 49, 86))
+>_key : Symbol(_key, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 57, 45))
+>child : Symbol(child, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 57, 59))
+>value : Symbol(value, Decl(negatedConditionalExclusionAssignabilityMappedKeys.ts, 57, 68))
+

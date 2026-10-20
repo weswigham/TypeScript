@@ -1,0 +1,107 @@
+negatedConditionalExclusionAssignabilityVariance.ts(12,5): error TS2322: Type '() => Filter<T, U>' is not assignable to type '() => T & not U'.
+  Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+    Type 'T' is not assignable to type 'T & not U'.
+      Type 'T' is not assignable to type 'not U'.
+        Type 'Filter<T, U>' is not assignable to type 'not U'.
+          Type 'T' is not assignable to type 'not U'.
+negatedConditionalExclusionAssignabilityVariance.ts(16,5): error TS2322: Type '(arg: T & not U) => void' is not assignable to type '(arg: Filter<T, U>) => void'.
+  Types of parameters 'arg' and 'arg' are incompatible.
+    Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+      Type 'T' is not assignable to type 'T & not U'.
+        Type 'T' is not assignable to type 'not U'.
+          Type 'Filter<T, U>' is not assignable to type 'not U'.
+            Type 'T' is not assignable to type 'not U'.
+negatedConditionalExclusionAssignabilityVariance.ts(31,5): error TS2322: Type '{ get: () => T & not U; set: (arg: T & not U) => void; }' is not assignable to type '{ get: () => Filter<T, U>; set: (arg: Filter<T, U>) => void; }'.
+  Types of property 'set' are incompatible.
+    Type '(arg: T & not U) => void' is not assignable to type '(arg: Filter<T, U>) => void'.
+      Types of parameters 'arg' and 'arg' are incompatible.
+        Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+          Type 'T' is not assignable to type 'T & not U'.
+            Type 'T' is not assignable to type 'not U'.
+              Type 'Filter<T, U>' is not assignable to type 'not U'.
+                Type 'T' is not assignable to type 'not U'.
+negatedConditionalExclusionAssignabilityVariance.ts(43,5): error TS2322: Type 'T & not U & ((arg: V) => V)' is not assignable to type 'T extends U ? (arg: V) => V : (arg: W) => W'.
+
+
+==== negatedConditionalExclusionAssignabilityVariance.ts (4 errors) ====
+    type Filter<T, U> = T extends U ? never : T;
+    
+    function covariant<T, U>(value: () => T & not U): () => Filter<T, U> {
+        return value;
+    }
+    
+    function contravariant<T, U>(value: (arg: Filter<T, U>) => void): (arg: T & not U) => void {
+        return value;
+    }
+    
+    function covariantReverse<T, U>(value: () => Filter<T, U>): () => T & not U {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '() => Filter<T, U>' is not assignable to type '() => T & not U'.
+!!! error TS2322:   Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+!!! error TS2322:     Type 'T' is not assignable to type 'T & not U'.
+!!! error TS2322:       Type 'T' is not assignable to type 'not U'.
+!!! error TS2322:         Type 'Filter<T, U>' is not assignable to type 'not U'.
+!!! error TS2322:           Type 'T' is not assignable to type 'not U'.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:11:27: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:11:27: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:11:27: This type parameter might need an `extends T & not U` constraint.
+    }
+    
+    function contravariantReverse<T, U>(value: (arg: T & not U) => void): (arg: Filter<T, U>) => void {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '(arg: T & not U) => void' is not assignable to type '(arg: Filter<T, U>) => void'.
+!!! error TS2322:   Types of parameters 'arg' and 'arg' are incompatible.
+!!! error TS2322:     Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+!!! error TS2322:       Type 'T' is not assignable to type 'T & not U'.
+!!! error TS2322:         Type 'T' is not assignable to type 'not U'.
+!!! error TS2322:           Type 'Filter<T, U>' is not assignable to type 'not U'.
+!!! error TS2322:             Type 'T' is not assignable to type 'not U'.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:15:31: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:15:31: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:15:31: This type parameter might need an `extends T & not U` constraint.
+    }
+    
+    function arrays<T, U>(value: (T & not U)[]): Filter<T, U>[] {
+        return value;
+    }
+    
+    function readonlyTuples<T, U>(value: readonly [T & not U]): readonly [Filter<T, U>] {
+        return value;
+    }
+    
+    function invariant<T, U>(value: { get: () => T & not U; set: (arg: T & not U) => void }): {
+        get: () => Filter<T, U>;
+        set: (arg: Filter<T, U>) => void;
+    } {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type '{ get: () => T & not U; set: (arg: T & not U) => void; }' is not assignable to type '{ get: () => Filter<T, U>; set: (arg: Filter<T, U>) => void; }'.
+!!! error TS2322:   Types of property 'set' are incompatible.
+!!! error TS2322:     Type '(arg: T & not U) => void' is not assignable to type '(arg: Filter<T, U>) => void'.
+!!! error TS2322:       Types of parameters 'arg' and 'arg' are incompatible.
+!!! error TS2322:         Type 'Filter<T, U>' is not assignable to type 'T & not U'.
+!!! error TS2322:           Type 'T' is not assignable to type 'T & not U'.
+!!! error TS2322:             Type 'T' is not assignable to type 'not U'.
+!!! error TS2322:               Type 'Filter<T, U>' is not assignable to type 'not U'.
+!!! error TS2322:                 Type 'T' is not assignable to type 'not U'.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:27:20: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:27:20: This type parameter might need an `extends not U` constraint.
+!!! related TS2208 negatedConditionalExclusionAssignabilityVariance.ts:27:20: This type parameter might need an `extends T & not U` constraint.
+    }
+    
+    function conditionalFunctionBranches<T, U, V, W>(
+        value: T & ((arg: V | W) => V & W),
+    ): T extends U ? (arg: V) => V : (arg: W) => W {
+        return value;
+    }
+    
+    function wrongFunctionBranch<T, U, V, W>(
+        value: T & not U & ((arg: V) => V),
+    ): T extends U ? (arg: V) => V : (arg: W) => W {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not U & ((arg: V) => V)' is not assignable to type 'T extends U ? (arg: V) => V : (arg: W) => W'.
+    }
+    

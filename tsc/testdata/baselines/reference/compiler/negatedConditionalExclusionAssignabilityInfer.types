@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityInfer.ts] ////
+
+=== negatedConditionalExclusionAssignabilityInfer.ts ===
+type InferValue<T> = T extends { value: infer U } ? U : never;
+>InferValue : InferValue<T>
+>value : U
+
+type InferIndependent<T> = T extends { value: infer U } ? T | U : T;
+>InferIndependent : InferIndependent<T>
+>value : U
+
+type InferConsumer<T> = T extends { value: infer U } ? (value: U) => void : never;
+>InferConsumer : InferConsumer<T>
+>value : U
+>value : U
+
+type InferConstrained<T> = T extends { value: infer U extends string } ? U : never;
+>InferConstrained : InferConstrained<T>
+>value : U
+
+function unresolvedInference<T>(value: T): InferValue<T> {
+>unresolvedInference : <T>(value: T) => InferValue<T>
+>value : T
+
+    return value;
+>value : T
+}
+
+function unrelatedInferredValue<T, V>(value: T & { value: V }): InferValue<T> {
+>unrelatedInferredValue : <T, V>(value: T & { value: V; }) => InferValue<T>
+>value : T & { value: V; }
+>value : V
+
+    return value;
+>value : T & { value: V; }
+}
+
+function independentInference<T>(value: T): InferIndependent<T> {
+>independentInference : <T>(value: T) => InferIndependent<T>
+>value : T
+
+    return value;
+>value : T
+}
+
+function inferredWrite<T, V>(value: T & ((arg: V) => void)): InferConsumer<T> {
+>inferredWrite : <T, V>(value: T & ((arg: V) => void)) => InferConsumer<T>
+>value : T & ((arg: V) => void)
+>arg : V
+
+    return value;
+>value : T & ((arg: V) => void)
+}
+
+function constrainedInference<T>(value: string): InferConstrained<T> {
+>constrainedInference : <T>(value: string) => InferConstrained<T>
+>value : string
+
+    return value;
+>value : string
+}
+
+const inferredValue: InferValue<{ value: string }> = "value";
+>inferredValue : string
+>value : string
+>"value" : "value"
+
+const incorrectInferredValue: InferValue<{ value: string }> = 123;
+>incorrectInferredValue : string
+>value : string
+>123 : 123
+
+const inferredNever: InferValue<{}> = "value";
+>inferredNever : never
+>"value" : "value"
+
+const inferredConstraint: InferConstrained<{ value: number }> = 123;
+>inferredConstraint : never
+>value : number
+>123 : 123
+

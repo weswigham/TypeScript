@@ -1,0 +1,116 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilityConstraints.ts] ////
+
+=== negatedConditionalExclusionAssignabilityConstraints.ts ===
+function constrainedCheck<T extends string>(value: string): T extends number ? never : T {
+>constrainedCheck : <T extends string>(value: string) => T extends number ? never : T
+>value : string
+
+    return value;
+>value : string
+}
+
+function constrainedExclusion<T extends string | number>(value: T & not string): T extends string ? never : T {
+>constrainedExclusion : <T extends string | number>(value: T & not string) => T extends string ? never : T
+>value : T & not string
+
+    return value;
+>value : T & not string
+}
+
+function constrainedExtraction<T extends string | number>(value: T & string): T extends string ? T : never {
+>constrainedExtraction : <T extends string | number>(value: T & string) => T extends string ? T : never
+>value : T & string
+
+    return value;
+>value : T & string
+}
+
+function narrowerCheck<T, V extends T>(value: V & not string): T extends string ? never : T {
+>narrowerCheck : <T, V extends T>(value: V & not string) => T extends string ? never : T
+>value : V & not string
+
+    return value;
+>value : V & not string
+}
+
+function onlyConstraintMatches<T extends { value: string }, U>(value: { value: string } & not U): T extends U ? never : T {
+>onlyConstraintMatches : <T extends { value: string; }, U>(value: { value: string; } & not U) => T extends U ? never : T
+>value : string
+>value : { value: string; } & not U
+>value : string
+
+    return value;
+>value : { value: string; } & not U
+}
+
+function dependentBranches<T, V>(value: T & V): T extends { value: T } ? V : T {
+>dependentBranches : <T, V>(value: T & V) => T extends { value: T; } ? V : T
+>value : T & V
+>value : T
+
+    return value;
+>value : T & V
+}
+
+function dependentExclude<T>(
+>dependentExclude : <T>(value: T & not ((arg: T) => void)) => T extends ((arg: T) => void) ? never : T
+
+    value: T & not ((arg: T) => void),
+>value : T & not ((arg: T) => void)
+>arg : T
+
+): T extends ((arg: T) => void) ? never : T {
+>arg : T
+
+    return value;
+>value : T & not ((arg: T) => void)
+}
+
+function recursiveConstraint<T extends { next?: T }, U>(value: T & not U): T extends U ? never : T {
+>recursiveConstraint : <T extends { next?: T; }, U>(value: T & not U) => T extends U ? never : T
+>next : T | undefined
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Filter<T, U>
+
+type WrappedFilter<T, U> = Filter<T, U>;
+>WrappedFilter : WrappedFilter<T, U>
+
+function instantiatedAlias<T, U>(value: T & not U): WrappedFilter<T, U> {
+>instantiatedAlias : <T, U>(value: T & not U) => WrappedFilter<T, U>
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+
+function excludedUnion<T, U, V>(value: T & not U & not V): Filter<T, U | V> {
+>excludedUnion : <T, U, V>(value: T & not U & not V) => Filter<T, U | V>
+>value : T & not U & not V
+
+    return value;
+>value : T & not U & not V
+}
+
+// The negation of a generic intersection is not reduced here.
+function excludedIntersection<T, U, V>(value: T & not (U & V)): Filter<T, U & V> {
+>excludedIntersection : <T, U, V>(value: T & not (U & V)) => Filter<T, U & V>
+>value : T & not (U & V)
+
+    return value;
+>value : T & not (U & V)
+}
+
+function incompleteExclusion<T, U, V>(value: T & not U): Filter<T, U | V> {
+>incompleteExclusion : <T, U, V>(value: T & not U) => Filter<T, U | V>
+>value : T & not U
+
+    return value;
+>value : T & not U
+}
+

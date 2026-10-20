@@ -1,0 +1,230 @@
+//// [tests/cases/compiler/negatedConditionalExclusionAssignabilitySkippedBranches.ts] ////
+
+=== negatedConditionalExclusionAssignabilitySkippedBranches.ts ===
+type Filter<T, U> = T extends U ? never : T;
+>Filter : Filter<T, U>
+
+type Extracted<T, U> = T extends U ? T : never;
+>Extracted : Extracted<T, U>
+
+type Branches<T, U, V, W> = T extends U ? V : W;
+>Branches : Branches<T, U, V, W>
+
+function alwaysFalseString<T>(value: { value: T }): Filter<{ value: T }, string> {
+>alwaysFalseString : <T>(value: { value: T; }) => Filter<{ value: T; }, string>
+>value : { value: T; }
+>value : T
+>value : T
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysFalseNumber<T>(value: { value: T }): Filter<{ value: T }, number> {
+>alwaysFalseNumber : <T>(value: { value: T; }) => Filter<{ value: T; }, number>
+>value : { value: T; }
+>value : T
+>value : T
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysFalseArray<T>(value: T[]): Filter<T[], string> {
+>alwaysFalseArray : <T>(value: T[]) => Filter<T[], string>
+>value : T[]
+
+    return value;
+>value : T[]
+}
+
+function alwaysFalseBranchShape<T>(
+>alwaysFalseBranchShape : <T>(value: { value: T; other: T; }) => Branches<{ value: T; }, string, never, { other: T; }>
+
+    value: { value: T; other: T },
+>value : { value: T; other: T; }
+>value : T
+>other : T
+
+): Branches<{ value: T }, string, never, { other: T }> {
+>value : T
+>other : T
+
+    return value;
+>value : { value: T; other: T; }
+}
+
+function alwaysFalseRejectsTrueBranch<T>(value: { value: T }): Extracted<{ value: T }, string> {
+>alwaysFalseRejectsTrueBranch : <T>(value: { value: T; }) => Extracted<{ value: T; }, string>
+>value : { value: T; }
+>value : T
+>value : T
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysFalseRejectsMissingProperty<T>(
+>alwaysFalseRejectsMissingProperty : <T>(value: { value: T; }) => Branches<{ value: T; }, string, { value: T; }, { other: T; }>
+
+    value: { value: T },
+>value : { value: T; }
+>value : T
+
+): Branches<{ value: T }, string, { value: T }, { other: T }> {
+>value : T
+>value : T
+>other : T
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysTrueObject<T>(value: { value: T }): Extracted<{ value: T }, { value: unknown }> {
+>alwaysTrueObject : <T>(value: { value: T; }) => Extracted<{ value: T; }, { value: unknown; }>
+>value : { value: T; }
+>value : T
+>value : T
+>value : unknown
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysTrueArray<T>(value: T[]): Extracted<T[], readonly unknown[]> {
+>alwaysTrueArray : <T>(value: T[]) => Extracted<T[], readonly unknown[]>
+>value : T[]
+
+    return value;
+>value : T[]
+}
+
+function alwaysTrueRejectsFalseBranch<T>(value: { value: T }): Filter<{ value: T }, { value: unknown }> {
+>alwaysTrueRejectsFalseBranch : <T>(value: { value: T; }) => Filter<{ value: T; }, { value: unknown; }>
+>value : { value: T; }
+>value : T
+>value : T
+>value : unknown
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysTrueRejectsMissingProperty<T>(
+>alwaysTrueRejectsMissingProperty : <T>(value: { value: T; }) => Branches<{ value: T; }, { value: unknown; }, { other: T; }, { value: T; }>
+
+    value: { value: T },
+>value : { value: T; }
+>value : T
+
+): Branches<{ value: T }, { value: unknown }, { other: T }, { value: T }> {
+>value : T
+>value : unknown
+>other : T
+>value : T
+
+    return value;
+>value : { value: T; }
+}
+
+function deferredBranch<T>(value: { value: T }): Filter<{ value: T }, { value: string }> {
+>deferredBranch : <T>(value: { value: T; }) => Filter<{ value: T; }, { value: string; }>
+>value : { value: T; }
+>value : T
+>value : T
+>value : string
+
+    return value;
+>value : { value: T; }
+}
+
+function alwaysFalseNever<T>(value: T): Branches<T, never, { impossible: true }, T> {
+>alwaysFalseNever : <T>(value: T) => Branches<T, never, { impossible: true; }, T>
+>value : T
+>impossible : true
+>true : true
+
+    return value;
+>value : T
+}
+
+function alwaysFalseNeverRejectsTrueBranch<T>(
+>alwaysFalseNeverRejectsTrueBranch : <T>(value: T) => Branches<T, never, T, T & { required: true; }>
+
+    value: T,
+>value : T
+
+): Branches<T, never, T, T & { required: true }> {
+>required : true
+>true : true
+
+    return value;
+>value : T
+}
+
+function alwaysTrueUnknown<T>(value: T): Branches<T, unknown, T, { impossible: true }> {
+>alwaysTrueUnknown : <T>(value: T) => Branches<T, unknown, T, { impossible: true; }>
+>value : T
+>impossible : true
+>true : true
+
+    return value;
+>value : T
+}
+
+function alwaysTrueUnknownRejectsFalseBranch<T>(
+>alwaysTrueUnknownRejectsFalseBranch : <T>(value: T) => Branches<T, unknown, T & { required: true; }, T>
+
+    value: T,
+>value : T
+
+): Branches<T, unknown, T & { required: true }, T> {
+>required : true
+>true : true
+
+    return value;
+>value : T
+}
+
+const falseStringValue: { value: number } = alwaysFalseString({ value: 1 });
+>falseStringValue : { value: number; }
+>value : number
+>alwaysFalseString({ value: 1 }) : { value: number; }
+>alwaysFalseString : <T>(value: { value: T; }) => Filter<{ value: T; }, string>
+>{ value: 1 } : { value: number; }
+>value : number
+>1 : 1
+
+const trueObjectValue: { value: number } = alwaysTrueObject({ value: 1 });
+>trueObjectValue : { value: number; }
+>value : number
+>alwaysTrueObject({ value: 1 }) : { value: number; }
+>alwaysTrueObject : <T>(value: { value: T; }) => Extracted<{ value: T; }, { value: unknown; }>
+>{ value: 1 } : { value: number; }
+>value : number
+>1 : 1
+
+const unresolvedStringValue: never = deferredBranch<string>({ value: "value" });
+>unresolvedStringValue : never
+>deferredBranch<string>({ value: "value" }) : never
+>deferredBranch : <T>(value: { value: T; }) => Filter<{ value: T; }, { value: string; }>
+>{ value: "value" } : { value: string; }
+>value : string
+>"value" : "value"
+
+const falseNeverValue: string = alwaysFalseNever("value");
+>falseNeverValue : string
+>alwaysFalseNever("value") : "value"
+>alwaysFalseNever : <T>(value: T) => Branches<T, never, { impossible: true; }, T>
+>"value" : "value"
+
+const trueUnknownValue: string = alwaysTrueUnknown("value");
+>trueUnknownValue : string
+>alwaysTrueUnknown("value") : "value"
+>alwaysTrueUnknown : <T>(value: T) => Branches<T, unknown, T, { impossible: true; }>
+>"value" : "value"
+
+const emptyCheck: Branches<never, never, string, number> = 1;
+>emptyCheck : never
+>1 : 1
+

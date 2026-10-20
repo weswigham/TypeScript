@@ -1,0 +1,67 @@
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(21,5): error TS2322: Type 'T' is not assignable to type 'Filter<T, unknown>'.
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(29,5): error TS2322: Type 'T & not null' is not assignable to type 'Filter<T, null>'.
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(37,5): error TS2322: Type 'T' is not assignable to type 'Filter<T, string>'.
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(42,7): error TS2322: Type '123' is not assignable to type 'never'.
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(43,7): error TS2322: Type '"value"' is not assignable to type 'never'.
+negatedConditionalExclusionAssignabilitySpecialTypes.ts(44,7): error TS2322: Type '"value"' is not assignable to type 'never'.
+
+
+==== negatedConditionalExclusionAssignabilitySpecialTypes.ts (6 errors) ====
+    type Filter<T, U> = T extends U ? never : T;
+    type Extracted<T, U> = T extends U ? T : never;
+    
+    function unknownSource<U>(value: unknown & not U): Filter<unknown, U> {
+        return value;
+    }
+    
+    function anySource<T, U>(value: any): Filter<T, U> {
+        return value;
+    }
+    
+    function neverSource<T, U>(value: never): Filter<T, U> {
+        return value;
+    }
+    
+    function excludedNever<T>(value: T): Filter<T, never> {
+        return value;
+    }
+    
+    function excludedUnknown<T>(value: T): Filter<T, unknown> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'Filter<T, unknown>'.
+!!! related TS2208 negatedConditionalExclusionAssignabilitySpecialTypes.ts:20:26: This type parameter might need an `extends Filter<T, unknown>` constraint.
+    }
+    
+    function extractedUnknown<T>(value: T): Extracted<T, unknown> {
+        return value;
+    }
+    
+    function nullable<T>(value: T & not (null | undefined)): Filter<T, null | undefined> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T & not null' is not assignable to type 'Filter<T, null>'.
+    }
+    
+    function extractedNullish<T>(value: T & (null | undefined)): Extracted<T, null | undefined> {
+        return value;
+    }
+    
+    function nullableUnion<T>(value: T | null): Filter<T, string> {
+        return value;
+        ~~~~~~
+!!! error TS2322: Type 'T' is not assignable to type 'Filter<T, string>'.
+    }
+    
+    const anyFilter: Filter<any, string> = 123;
+    const unknownFilter: Filter<unknown, string> = 123;
+    const emptyFilter: Filter<never, string> = 123;
+          ~~~~~~~~~~~
+!!! error TS2322: Type '123' is not assignable to type 'never'.
+    const excludedAny: Filter<string, any> = "value";
+          ~~~~~~~~~~~
+!!! error TS2322: Type '"value"' is not assignable to type 'never'.
+    const unknownExcludedValue: Filter<string, unknown> = "value";
+          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '"value"' is not assignable to type 'never'.
+    
