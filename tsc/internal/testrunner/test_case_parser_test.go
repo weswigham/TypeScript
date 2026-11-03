@@ -40,3 +40,19 @@ function bar() { return "b"; }`,
 		cmp.AllowUnexported(testCaseContent{}, testUnit{}),
 	)
 }
+
+func TestFormattingDirectivesPreserveSourceAnnotations(t *testing.T) {
+	t.Parallel()
+	settings := extractCompilerSettings(`// @formatOnly: true
+// @formatDiagnostics: true
+// @ts-ignore: expected error
+// @ts-expect-error: expected error
+// @box-extension: .tsx
+`)
+	assert.Equal(t, settings["formatonly"], "true")
+	assert.Equal(t, settings["formatdiagnostics"], "true")
+	for _, annotation := range []string{"ts-ignore", "ts-expect-error", "box-extension"} {
+		_, ok := settings[annotation]
+		assert.Assert(t, !ok)
+	}
+}

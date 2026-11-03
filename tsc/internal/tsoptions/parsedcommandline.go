@@ -43,7 +43,8 @@ func (p *ParsedCommandLine) fileGlobPatterns() (fileGlob string, recursiveFileGl
 }
 
 type ParsedCommandLine struct {
-	ParsedConfig *ParsedOptions `json:"parsedConfig"`
+	FormattingRanges map[tspath.PathKey][]FormattingLineRange `json:"-"`
+	ParsedConfig     *ParsedOptions                           `json:"parsedConfig"`
 
 	ConfigFile    *TsConfigSourceFile `json:"configFile"` // TsConfigSourceFile, used in Program and ExecuteCommandLine
 	Errors        []*ast.Diagnostic   `json:"errors"`
@@ -107,6 +108,7 @@ func (p *ParsedCommandLine) WithFileNames(fileNames []tspath.RootedFilePath) *Pa
 		Errors:                      p.Errors,
 		Raw:                         p.Raw,
 		CompileOnSave:               p.CompileOnSave,
+		FormattingRanges:            p.FormattingRanges,
 		configFileSpecs:             p.configFileSpecs,
 		baseDirectory:               p.baseDirectory,
 		caseSensitivity:             p.caseSensitivity,

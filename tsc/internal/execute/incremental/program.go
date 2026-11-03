@@ -342,6 +342,10 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
+	saved, _ := readFormattingBuildInfo(p.program.Host().FS(), buildInfoFileName)
+	if saved.Formatting != nil && saved.Formatting.CompilationPending {
+		p.snapshot.buildInfoEmitPending.Store(true)
+	}
 	if !p.snapshot.buildInfoEmitPending.Load() {
 		return nil
 	}
@@ -357,6 +361,7 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			},
 		}
 	}
+	buildInfo.inheritFormatting(saved.Formatting)
 	text, err := json.Marshal(buildInfo)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to marshal build info: %v", err))

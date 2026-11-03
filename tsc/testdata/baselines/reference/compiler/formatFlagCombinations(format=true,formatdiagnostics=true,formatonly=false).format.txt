@@ -1,0 +1,2 @@
+//// [formatFlagCombinations.ts]
+export const value:string=1;

@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strconv"
@@ -53,13 +54,16 @@ type taskResult struct {
 }
 
 type BuildTask struct {
-	config     tspath.RootedFilePath
-	path       tspath.PathKey
-	resolved   *tsoptions.ParsedCommandLine
-	upStream   []*upstreamTask
-	downStream []*BuildTask // Only set and used in watch mode
-	status     *upToDateStatus
-	done       chan struct{}
+	formatInputFiles  []tspath.RootedFilePath
+	formatSourceFiles []*ast.SourceFile
+	formatDiagnostics []*ast.Diagnostic
+	config            tspath.RootedFilePath
+	path              tspath.PathKey
+	resolved          *tsoptions.ParsedCommandLine
+	upStream          []*upstreamTask
+	downStream        []*BuildTask // Only set and used in watch mode
+	status            *upToDateStatus
+	done              chan struct{}
 
 	// task reporting
 	result *taskResult
@@ -147,6 +151,51 @@ func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.PathKey
 	// Wait on upstream tasks to complete
 	t.waitOnUpstream()
 	if t.pending.Load() {
+		if t.resolved != nil && tsc.FormattingEnabled(t.resolved.CompilerOptions()) && !orchestrator.opts.Command.BuildOptions.Dry.IsTrue() {
+			project, err := t.getContentMapperProject(orchestrator)
+			if err != nil {
+				t.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
+				t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+				t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+				t.unblockDownstream()
+				return
+			}
+			formatHost := &compilerHost{
+				host:                 orchestrator.host,
+				trace:                tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
+				contentMapperProject: project,
+			}
+			formatted := tsc.FormatInputFiles(context.Background(), formatHost, t.resolved)
+			t.formatDiagnostics = formatted.Diagnostics
+			t.formatSourceFiles = formatted.SourceFiles
+			t.formatInputFiles = formatted.InputFiles
+			for _, file := range formatted.ChangedFiles {
+				orchestrator.host.mTimes.Delete(orchestrator.caseSensitivity.PathKey(file.AsPath()))
+				orchestrator.host.sourceFiles.entries.Range(func(options ast.SourceFileParseOptions, _ *parseCacheEntry[*ast.SourceFile]) bool {
+					if options.FileName == file {
+						orchestrator.host.sourceFiles.entries.Delete(options)
+					}
+					return true
+				})
+			}
+			t.buildInfoEntryMu.Lock()
+			t.buildInfoEntry = nil
+			t.buildInfoEntryMu.Unlock()
+			t.status = nil
+			if t.resolved.CompilerOptions().FormatOnly.IsTrue() {
+				for _, diagnostic := range formatted.Diagnostics {
+					t.reportDiagnostic(diagnostic)
+				}
+				if len(t.errors) > 0 {
+					t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+					t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+				} else {
+					t.status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
+				}
+				t.unblockDownstream()
+				return
+			}
+		}
 		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
@@ -157,6 +206,9 @@ func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.PathKey
 				for _, diagnostic := range t.resolved.GetConfigFileParsingDiagnostics() {
 					t.reportDiagnostic(diagnostic)
 				}
+			}
+			for _, diagnostic := range t.formatDiagnostics {
+				t.reportDiagnostic(diagnostic)
 			}
 			if len(t.errors) > 0 {
 				t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
@@ -238,11 +290,12 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 		t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		return
 	}
-	compilerHost := &compilerHost{
+	var compilerHost compiler.CompilerHost = &compilerHost{
 		host:                 orchestrator.host,
 		trace:                tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
 		contentMapperProject: contentMapperProject,
 	}
+	compilerHost = tsc.WithFormattingSourceFiles(compilerHost, t.formatSourceFiles)
 	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
 		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, compilerHost)
 	}
@@ -268,20 +321,21 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 		WriteFile: func(fileName tspath.RootedFilePath, text string, data *compiler.WriteFileData) error {
 			return t.writeFile(orchestrator, fileName, text, data)
 		},
-		CompileTimes:       &compileTimes,
-		Testing:            orchestrator.opts.Testing,
-		TestingMTimesCache: orchestrator.host.mTimes,
+		CompileTimes:          &compileTimes,
+		Testing:               orchestrator.opts.Testing,
+		TestingMTimesCache:    orchestrator.host.mTimes,
+		FormattingDiagnostics: t.formatDiagnostics,
 	})
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
-	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
+	if (!program.Options().NoEmitOnError.IsTrue() || len(result.CompilationDiagnostics) == 0) &&
 		(len(result.EmitResult.EmittedFiles) > 0 || t.status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 		// Update time stamps for rest of the outputs
 		t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 	}
 	t.result.buildKind = buildKindProgram
-	if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
+	if len(result.CompilationDiagnostics) > 0 {
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 	} else {
 		var oldestOutputFileName tspath.RootedFilePath
@@ -377,6 +431,9 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	buildInfo, buildInfoTime := t.loadOrStoreBuildInfo(orchestrator, buildInfoPath)
 	if buildInfo == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: buildInfoPath}
+	}
+	if len(t.formatDiagnostics) > 0 || buildInfo.Formatting != nil && buildInfo.Formatting.CompilationPending {
+		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 	}
 
 	// build info version

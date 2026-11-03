@@ -231,6 +231,7 @@ const (
 
 	// Diagnostic methods
 	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
+	MethodGetFormattingDiagnostics        Method = "getFormattingDiagnostics"
 	MethodGetBindDiagnostics              Method = "getBindDiagnostics"
 	MethodGetSemanticDiagnostics          Method = "getSemanticDiagnostics"
 	MethodGetSuggestionDiagnostics        Method = "getSuggestionDiagnostics"
@@ -767,6 +768,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWellKnownSymbols:               unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetWellKnownSignatures:            unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
+	MethodGetFormattingDiagnostics:          unmarshallerFor[GetFormattingDiagnosticsParams],
 	MethodGetBindDiagnostics:                unmarshallerFor[GetDiagnosticsParams],
 	MethodGetSemanticDiagnostics:            unmarshallerFor[GetDiagnosticsParams],
 	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
@@ -1906,6 +1908,20 @@ type GetDiagnosticsParams struct {
 	Snapshot SnapshotID           `json:"snapshot"`
 	Project  project.Handle       `json:"project"`
 	Files    []DocumentIdentifier `json:"files,omitempty"`
+}
+
+// FormattingSpan is a half-open range of UTF-16 code unit offsets within a source file.
+type FormattingSpan struct {
+	Pos int `json:"pos"`
+	End int `json:"end"`
+}
+
+type GetFormattingDiagnosticsParams struct {
+	Snapshot SnapshotID           `json:"snapshot"`
+	Project  project.Handle       `json:"project"`
+	Files    []DocumentIdentifier `json:"files,omitempty"`
+	// Spans are applied to each requested file. Omitted spans format whole files; an empty list formats nothing.
+	Spans []FormattingSpan `json:"spans,omitempty"`
 }
 
 // GetProjectDiagnosticsParams are parameters for project-wide diagnostic methods.

@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/formatNoEmitWhitespace.ts] ////
+
+=== input.ts ===
+export function value(input:number){
+>value : Symbol(value, Decl(input.ts, 0, 0))
+>input : Symbol(input, Decl(input.ts, 0, 22))
+
+const result={value:input+1};
+>result : Symbol(result, Decl(input.ts, 1, 5))
+>value : Symbol(value, Decl(input.ts, 1, 14))
+>input : Symbol(input, Decl(input.ts, 0, 22))
+
+return result;
+>result : Symbol(result, Decl(input.ts, 1, 5))
+}

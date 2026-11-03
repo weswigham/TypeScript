@@ -9,8 +9,9 @@ import (
 )
 
 type ParsedOptions struct {
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
-	TypeAcquisition *core.TypeAcquisition `json:"typeAcquisition"`
+	CompilerOptions   *core.CompilerOptions   `json:"compilerOptions"`
+	TypeAcquisition   *core.TypeAcquisition   `json:"typeAcquisition"`
+	FormattingOptions *core.FormattingOptions `json:"formattingOptions,omitzero"`
 
 	FileNames         []tspath.RootedFilePath  `json:"fileNames"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences"`
@@ -26,7 +27,8 @@ func (p *ParsedOptions) Equals(other *ParsedOptions) bool {
 		return false
 	}
 	if !p.CompilerOptions.Equals(other.CompilerOptions) ||
-		!p.TypeAcquisition.Equals(other.TypeAcquisition) {
+		!p.TypeAcquisition.Equals(other.TypeAcquisition) ||
+		!p.FormattingOptions.Equals(other.FormattingOptions) {
 		return false
 	}
 	return (p.FileNames == nil) == (other.FileNames == nil) &&

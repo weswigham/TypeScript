@@ -278,6 +278,12 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Help = ParseTristate(value)
 	case "all":
 		allOptions.All = ParseTristate(value)
+	case "format":
+		allOptions.Format = ParseTristate(value)
+	case "formatOnly":
+		allOptions.FormatOnly = ParseTristate(value)
+	case "formatDiagnostics":
+		allOptions.FormatDiagnostics = ParseTristate(value)
 	case "runExternalCode":
 		allOptions.RunExternalCode = ParseTristate(value)
 	case "pprofDir":
@@ -317,6 +323,220 @@ func getDefaultTypeAcquisition(configFileName tspath.RootedFilePath) *core.TypeA
 		}
 	}
 	return &core.TypeAcquisition{}
+}
+
+func ParseFormattingOptions(name string, value any, options *core.FormattingOptions) {
+	switch name {
+	case "baseIndentSize":
+		if value == nil {
+			options.BaseIndentSize = nil
+		} else {
+			options.BaseIndentSize = parseNumber(value)
+		}
+	case "convertTabsToSpaces":
+		options.ConvertTabsToSpaces = ParseTristate(value)
+	case "indentSize":
+		if value == nil {
+			options.IndentSize = nil
+		} else {
+			options.IndentSize = parseNumber(value)
+		}
+	case "indentStyle":
+		if value == nil {
+			options.IndentStyle = nil
+		} else {
+			parsed := core.FormattingIndentStyle(value.(int))
+			options.IndentStyle = &parsed
+		}
+	case "newLineCharacter":
+		if value == nil {
+			options.NewLineCharacter = nil
+		} else {
+			options.NewLineCharacter = new(value.(string))
+		}
+	case "tabSize":
+		if value == nil {
+			options.TabSize = nil
+		} else {
+			options.TabSize = parseNumber(value)
+		}
+	case "trimTrailingWhitespace":
+		options.TrimTrailingWhitespace = ParseTristate(value)
+	case "indentMultiLineObjectLiteralBeginningOnBlankLine":
+		options.IndentMultiLineObjectLiteralBeginningOnBlankLine = ParseTristate(value)
+	case "indentSwitchCase":
+		options.IndentSwitchCase = ParseTristate(value)
+	case "insertSpaceAfterCommaDelimiter":
+		options.InsertSpaceAfterCommaDelimiter = ParseTristate(value)
+	case "insertSpaceAfterConstructor":
+		options.InsertSpaceAfterConstructor = ParseTristate(value)
+	case "insertSpaceAfterFunctionKeywordForAnonymousFunctions":
+		options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = ParseTristate(value)
+	case "insertSpaceAfterKeywordsInControlFlowStatements":
+		options.InsertSpaceAfterKeywordsInControlFlowStatements = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingEmptyBraces":
+		options.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces":
+		options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces":
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets":
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis":
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = ParseTristate(value)
+	case "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces":
+		options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = ParseTristate(value)
+	case "insertSpaceAfterSemicolonInForStatements":
+		options.InsertSpaceAfterSemicolonInForStatements = ParseTristate(value)
+	case "insertSpaceAfterTypeAssertion":
+		options.InsertSpaceAfterTypeAssertion = ParseTristate(value)
+	case "insertSpaceBeforeAndAfterBinaryOperators":
+		options.InsertSpaceBeforeAndAfterBinaryOperators = ParseTristate(value)
+	case "insertSpaceBeforeFunctionParenthesis":
+		options.InsertSpaceBeforeFunctionParenthesis = ParseTristate(value)
+	case "insertSpaceBeforeTypeAnnotation":
+		options.InsertSpaceBeforeTypeAnnotation = ParseTristate(value)
+	case "placeOpenBraceOnNewLineForControlBlocks":
+		options.PlaceOpenBraceOnNewLineForControlBlocks = ParseTristate(value)
+	case "placeOpenBraceOnNewLineForFunctions":
+		options.PlaceOpenBraceOnNewLineForFunctions = ParseTristate(value)
+	case "semicolons":
+		if value == nil {
+			options.Semicolons = nil
+		} else {
+			parsed := core.FormattingSemicolonPreference(value.(string))
+			options.Semicolons = &parsed
+		}
+	}
+}
+
+func mergeFormattingOptions(base, override *parsedFormattingOptions) *parsedFormattingOptions {
+	if base == nil && override == nil {
+		return nil
+	}
+	result := &parsedFormattingOptions{FormattingOptions: &core.FormattingOptions{}}
+	if base != nil {
+		result.FormattingOptions = base.FormattingOptions.Clone()
+		for name := range base.nullFields.Keys() {
+			result.nullFields.Add(name)
+		}
+	}
+	if override == nil {
+		return result
+	}
+	if override.BaseIndentSize != nil {
+		result.BaseIndentSize = override.BaseIndentSize
+		result.nullFields.Delete("baseIndentSize")
+	}
+	if !override.ConvertTabsToSpaces.IsUnknown() {
+		result.ConvertTabsToSpaces = override.ConvertTabsToSpaces
+		result.nullFields.Delete("convertTabsToSpaces")
+	}
+	if override.IndentSize != nil {
+		result.IndentSize = override.IndentSize
+		result.nullFields.Delete("indentSize")
+	}
+	if override.IndentStyle != nil {
+		result.IndentStyle = override.IndentStyle
+		result.nullFields.Delete("indentStyle")
+	}
+	if override.NewLineCharacter != nil {
+		result.NewLineCharacter = override.NewLineCharacter
+		result.nullFields.Delete("newLineCharacter")
+	}
+	if override.TabSize != nil {
+		result.TabSize = override.TabSize
+		result.nullFields.Delete("tabSize")
+	}
+	if !override.TrimTrailingWhitespace.IsUnknown() {
+		result.TrimTrailingWhitespace = override.TrimTrailingWhitespace
+		result.nullFields.Delete("trimTrailingWhitespace")
+	}
+	if !override.IndentMultiLineObjectLiteralBeginningOnBlankLine.IsUnknown() {
+		result.IndentMultiLineObjectLiteralBeginningOnBlankLine = override.IndentMultiLineObjectLiteralBeginningOnBlankLine
+		result.nullFields.Delete("indentMultiLineObjectLiteralBeginningOnBlankLine")
+	}
+	if !override.IndentSwitchCase.IsUnknown() {
+		result.IndentSwitchCase = override.IndentSwitchCase
+		result.nullFields.Delete("indentSwitchCase")
+	}
+	if !override.InsertSpaceAfterCommaDelimiter.IsUnknown() {
+		result.InsertSpaceAfterCommaDelimiter = override.InsertSpaceAfterCommaDelimiter
+		result.nullFields.Delete("insertSpaceAfterCommaDelimiter")
+	}
+	if !override.InsertSpaceAfterConstructor.IsUnknown() {
+		result.InsertSpaceAfterConstructor = override.InsertSpaceAfterConstructor
+		result.nullFields.Delete("insertSpaceAfterConstructor")
+	}
+	if !override.InsertSpaceAfterFunctionKeywordForAnonymousFunctions.IsUnknown() {
+		result.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = override.InsertSpaceAfterFunctionKeywordForAnonymousFunctions
+		result.nullFields.Delete("insertSpaceAfterFunctionKeywordForAnonymousFunctions")
+	}
+	if !override.InsertSpaceAfterKeywordsInControlFlowStatements.IsUnknown() {
+		result.InsertSpaceAfterKeywordsInControlFlowStatements = override.InsertSpaceAfterKeywordsInControlFlowStatements
+		result.nullFields.Delete("insertSpaceAfterKeywordsInControlFlowStatements")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces = override.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingEmptyBraces")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = override.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = override.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis")
+	}
+	if !override.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces.IsUnknown() {
+		result.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = override.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces
+		result.nullFields.Delete("insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces")
+	}
+	if !override.InsertSpaceAfterSemicolonInForStatements.IsUnknown() {
+		result.InsertSpaceAfterSemicolonInForStatements = override.InsertSpaceAfterSemicolonInForStatements
+		result.nullFields.Delete("insertSpaceAfterSemicolonInForStatements")
+	}
+	if !override.InsertSpaceAfterTypeAssertion.IsUnknown() {
+		result.InsertSpaceAfterTypeAssertion = override.InsertSpaceAfterTypeAssertion
+		result.nullFields.Delete("insertSpaceAfterTypeAssertion")
+	}
+	if !override.InsertSpaceBeforeAndAfterBinaryOperators.IsUnknown() {
+		result.InsertSpaceBeforeAndAfterBinaryOperators = override.InsertSpaceBeforeAndAfterBinaryOperators
+		result.nullFields.Delete("insertSpaceBeforeAndAfterBinaryOperators")
+	}
+	if !override.InsertSpaceBeforeFunctionParenthesis.IsUnknown() {
+		result.InsertSpaceBeforeFunctionParenthesis = override.InsertSpaceBeforeFunctionParenthesis
+		result.nullFields.Delete("insertSpaceBeforeFunctionParenthesis")
+	}
+	if !override.InsertSpaceBeforeTypeAnnotation.IsUnknown() {
+		result.InsertSpaceBeforeTypeAnnotation = override.InsertSpaceBeforeTypeAnnotation
+		result.nullFields.Delete("insertSpaceBeforeTypeAnnotation")
+	}
+	if !override.PlaceOpenBraceOnNewLineForControlBlocks.IsUnknown() {
+		result.PlaceOpenBraceOnNewLineForControlBlocks = override.PlaceOpenBraceOnNewLineForControlBlocks
+		result.nullFields.Delete("placeOpenBraceOnNewLineForControlBlocks")
+	}
+	if !override.PlaceOpenBraceOnNewLineForFunctions.IsUnknown() {
+		result.PlaceOpenBraceOnNewLineForFunctions = override.PlaceOpenBraceOnNewLineForFunctions
+		result.nullFields.Delete("placeOpenBraceOnNewLineForFunctions")
+	}
+	if override.Semicolons != nil {
+		result.Semicolons = override.Semicolons
+		result.nullFields.Delete("semicolons")
+	}
+	for name := range override.nullFields.Keys() {
+		ParseFormattingOptions(name, nil, result.FormattingOptions)
+		result.nullFields.Add(name)
+	}
+	return result
 }
 
 func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisition) {
@@ -1301,6 +1521,21 @@ func mergeCompilerOptionFields(targetOptions, sourceOptions *core.CompilerOption
 		targetOptions.All = core.TSUnknown
 	} else if sourceOptions.All != core.TSUnknown {
 		targetOptions.All = sourceOptions.All
+	}
+	if explicitNullFields.Has("format") {
+		targetOptions.Format = core.TSUnknown
+	} else if sourceOptions.Format != core.TSUnknown {
+		targetOptions.Format = sourceOptions.Format
+	}
+	if explicitNullFields.Has("formatOnly") {
+		targetOptions.FormatOnly = core.TSUnknown
+	} else if sourceOptions.FormatOnly != core.TSUnknown {
+		targetOptions.FormatOnly = sourceOptions.FormatOnly
+	}
+	if explicitNullFields.Has("formatDiagnostics") {
+		targetOptions.FormatDiagnostics = core.TSUnknown
+	} else if sourceOptions.FormatDiagnostics != core.TSUnknown {
+		targetOptions.FormatDiagnostics = sourceOptions.FormatDiagnostics
 	}
 	if explicitNullFields.Has("runExternalCode") {
 		targetOptions.RunExternalCode = core.TSUnknown

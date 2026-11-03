@@ -3,6 +3,7 @@ package tsoptions
 import (
 	"cmp"
 	"maps"
+	"math"
 	"reflect"
 	"slices"
 	"strings"
@@ -26,6 +27,7 @@ import (
 
 type extendsResult struct {
 	options             *parsedCompilerOptions
+	formattingOptions   *parsedFormattingOptions
 	include             []any
 	exclude             []any
 	files               []any
@@ -88,6 +90,7 @@ type parsedTsconfig struct {
 	raw                 any
 	options             *parsedCompilerOptions
 	typeAcquisition     *core.TypeAcquisition
+	formattingOptions   *parsedFormattingOptions
 	extendedConfigPaths []tspath.RootedFilePath
 }
 
@@ -111,6 +114,7 @@ func parseOwnConfigOfJsonSourceFile(
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	compilerOptions := getDefaultCompilerOptions(configFileName)
 	typeAcquisition := getDefaultTypeAcquisition(configFileName)
+	var formattingOptions *parsedFormattingOptions
 	var extendedConfigPaths []tspath.RootedFilePath
 	var rootCompilerOptions []*ast.PropertyName
 	var errors []*ast.Diagnostic
@@ -125,6 +129,12 @@ func parseOwnConfigOfJsonSourceFile(
 		var propertySetErrors []*ast.Diagnostic
 		if option != nil && option != extendsOptionDeclaration {
 			value, propertySetErrors = convertJsonOption(option, value, basePath, propertyAssignment, propertyAssignment.Initializer, sourceFile)
+		}
+		if parentOption == formattingOptionsDeclaration && option != nil && len(propertySetErrors) == 0 {
+			if formattingOptions == nil {
+				formattingOptions = &parsedFormattingOptions{FormattingOptions: &core.FormattingOptions{}}
+			}
+			formattingOptions.ParseOption(option.Name, value)
 		}
 		if parentOption != nil && parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
@@ -202,6 +212,7 @@ func parseOwnConfigOfJsonSourceFile(
 		raw:                 json,
 		options:             compilerOptions,
 		typeAcquisition:     typeAcquisition,
+		formattingOptions:   formattingOptions,
 		extendedConfigPaths: extendedConfigPaths,
 	}, errors
 }
@@ -389,6 +400,32 @@ func convertJsonOption(
 	valueExpression *ast.Expression,
 	sourceFile *ast.SourceFile,
 ) (any, []*ast.Diagnostic) {
+	if formattingOptionsDeclaration.ElementOptions.Get(opt.Name) == opt {
+		if opt.Kind == CommandLineOptionTypeNumber {
+			var number float64
+			switch value := value.(type) {
+			case int:
+				number = float64(value)
+			case float64:
+				number = value
+			default:
+				number = 0
+			}
+			if number < 0 || number >= float64(math.MaxInt) || math.IsNaN(number) || math.IsInf(number, 0) || math.Trunc(number) != number {
+				return nil, []*ast.Diagnostic{CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression,
+					diagnostics.Argument_for_0_option_must_be_Colon_1, "formattingOptions."+opt.Name, "a non-negative integer")}
+			}
+			if _, ok := value.(int); ok {
+				value = number
+			}
+		}
+		if opt.Name == "newLineCharacter" {
+			if text, ok := value.(string); ok && text != "" && text != "\n" && text != "\r\n" && text != "\r" {
+				return nil, []*ast.Diagnostic{CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression,
+					diagnostics.Argument_for_0_option_must_be_Colon_1, "formattingOptions.newLineCharacter", `"\n", "\r\n", or "\r"`)}
+			}
+		}
+	}
 	if opt.IsCommandLineOnly {
 		var nodeValue *ast.Node
 		if propertyAssignment != nil {
@@ -890,6 +927,8 @@ func parseOwnConfigOfJson(
 	options, err := convertCompilerOptionsFromJsonWorker(json.GetOrZero("compilerOptions"), basePath, configFileName)
 	typeAcquisition, err2 := convertTypeAcquisitionFromJsonWorker(json.GetOrZero("typeAcquisition"), basePath, configFileName)
 	errors = append(append(errors, err...), err2...)
+	formattingOptions, formatErrors := parseFormattingOptions(json.GetOrZero("formattingOptions"), basePath)
+	errors = append(errors, formatErrors...)
 	if compileOnSave, ok := json.Get("compileOnSave"); ok {
 		converted, compileOnSaveErrors := convertJsonOption(compileOnSaveCommandLineOption, compileOnSave, basePath, nil, nil, nil)
 		errors = append(errors, compileOnSaveErrors...)
@@ -904,6 +943,7 @@ func parseOwnConfigOfJson(
 		raw:                 json,
 		options:             options,
 		typeAcquisition:     typeAcquisition,
+		formattingOptions:   formattingOptions,
 		extendedConfigPaths: extendedConfigPaths,
 	}
 	return parsedConfig, errors
@@ -1094,6 +1134,7 @@ func parseConfig(
 				}
 			}
 			mergeParsedCompilerOptions(result.options, extendedConfig.options, extendsRaw)
+			result.formattingOptions = mergeFormattingOptions(result.formattingOptions, extendedConfig.formattingOptions)
 		}
 	}
 
@@ -1132,6 +1173,7 @@ func parseConfig(
 			}
 		}
 		ownConfig.options = mergeParsedCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
+		ownConfig.formattingOptions = mergeFormattingOptions(result.formattingOptions, ownConfig.formattingOptions)
 	}
 	return ownConfig, errors
 }
@@ -1497,6 +1539,7 @@ func parseJsonConfigFileContentWorker(
 		ParsedConfig: &ParsedOptions{
 			CompilerOptions:   parsedConfig.options.CompilerOptions,
 			TypeAcquisition:   parsedConfig.typeAcquisition,
+			FormattingOptions: getFormattingOptions(parsedConfig.formattingOptions),
 			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 			ContentMappers:    contentMappers,

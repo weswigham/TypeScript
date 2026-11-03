@@ -34,31 +34,41 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
 [1mCOMMAND LINE FLAGS[22m
 
-[94m      --help, -h  [39mPrint this message.
+[94m             --format  [39mFormat input files before compiling.
 
 
-[94m     --watch, -w  [39mWatch input files.
+[94m         --formatOnly  [39mFormat input files without checking or emitting JavaScript or declarations.
 
 
-[94m           --all  [39mShow all compiler options.
+[94m  --formatDiagnostics  [39mReport formatting changes as diagnostics instead of writing input files.
 
 
-[94m   --version, -v  [39mPrint the compiler's version.
+[94m           --help, -h  [39mPrint this message.
 
 
-[94m          --init  [39mInitializes a TypeScript project and creates a tsconfig.json file.
+[94m          --watch, -w  [39mWatch input files.
 
 
-[94m   --project, -p  [39mCompile the project given the path to its configuration file, or to a folder with a 'tsconfig.json'.
+[94m                --all  [39mShow all compiler options.
 
 
-[94m    --showConfig  [39mPrint the final configuration instead of building.
+[94m        --version, -v  [39mPrint the compiler's version.
 
 
-[94m  --ignoreConfig  [39mIgnore the tsconfig found and build with commandline options and files.
+[94m               --init  [39mInitializes a TypeScript project and creates a tsconfig.json file.
 
 
-[94m     --build, -b  [39mBuild one or more projects and their dependencies, if out of date
+[94m        --project, -p  [39mCompile the project given the path to its configuration file, or to a folder with a 'tsconfig.jso
+                       n'.
+
+
+[94m         --showConfig  [39mPrint the final configuration instead of building.
+
+
+[94m       --ignoreConfig  [39mIgnore the tsconfig found and build with commandline options and files.
+
+
+[94m          --build, -b  [39mBuild one or more projects and their dependencies, if out of date
 
 
 [1mCOMMON COMPILER OPTIONS[22m

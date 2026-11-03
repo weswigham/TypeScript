@@ -3922,6 +3922,88 @@ var Content_mapper_extension_0_must_not_contain_path_separators = &Message{code:
 
 var The_content_mapper_package_0_is_outside_the_open_workspace_and_will_not_be_loaded = &Message{code: 18124, category: CategoryError, key: "The_content_mapper_package_0_is_outside_the_open_workspace_and_will_not_be_loaded_18124", text: "The content mapper package '{0}' is outside the open workspace and will not be loaded."}
 
+var Format_input_files_before_compiling = &Message{code: 18125, category: CategoryMessage, key: "Format_input_files_before_compiling_18125", text: "Format input files before compiling."}
+
+var Format_input_files_without_checking_or_emitting_JavaScript_or_declarations = &Message{code: 18126, category: CategoryMessage, key: "Format_input_files_without_checking_or_emitting_JavaScript_or_declarations_18126", text: "Format input files without checking or emitting JavaScript or declarations."}
+
+var Report_formatting_changes_as_diagnostics_instead_of_writing_input_files = &Message{code: 18127, category: CategoryMessage, key: "Report_formatting_changes_as_diagnostics_instead_of_writing_input_files_18127", text: "Report formatting changes as diagnostics instead of writing input files."}
+
+var Formatting_change_required_Colon_replace_0_with_1 = &Message{code: 18128, category: CategoryError, key: "Formatting_change_required_Colon_replace_0_with_1_18128", text: "Formatting change required: replace {0} with {1}."}
+
+var Invalid_formatting_line_range_0_Expected_positive_inclusive_line_ranges_such_as_120_500_1001_2100 = &Message{code: 18129, category: CategoryError, key: "Invalid_formatting_line_range_0_Expected_positive_inclusive_line_ranges_such_as_120_500_1001_2100_18129", text: "Invalid formatting line range '{0}'. Expected positive, inclusive line ranges such as '120-500,1001-2100'."}
+
+var Formatting_line_range_0_is_outside_file_1 = &Message{code: 18130, category: CategoryError, key: "Formatting_line_range_0_is_outside_file_1_18130", text: "Formatting line range '{0}' is outside file '{1}'."}
+
+var File_line_ranges_require_formatOnly = &Message{code: 18131, category: CategoryError, key: "File_line_ranges_require_formatOnly_18131", text: "File line ranges require '--formatOnly'."}
+
+var Formatting_line_ranges_cannot_be_combined_with_watch = &Message{code: 18132, category: CategoryError, key: "Formatting_line_ranges_cannot_be_combined_with_watch_18132", text: "Formatting line ranges cannot be combined with '--watch'."}
+
+var Expected_a_space_before_the_binary_operator_1 = &Message{code: 18133, category: CategoryError, key: "Expected_a_space_before_the_binary_operator_1_18133", text: "Expected a space before the binary operator '{1}'."}
+
+var Expected_a_space_after_the_binary_operator_0 = &Message{code: 18134, category: CategoryError, key: "Expected_a_space_after_the_binary_operator_0_18134", text: "Expected a space after the binary operator '{0}'."}
+
+var Expected_indentation_of_0_columns = &Message{code: 18135, category: CategoryError, key: "Expected_indentation_of_0_columns_18135", text: "Expected indentation of {0} columns."}
+
+var Trailing_whitespace_is_not_allowed = &Message{code: 18136, category: CategoryError, key: "Trailing_whitespace_is_not_allowed_18136", text: "Trailing whitespace is not allowed."}
+
+var Expected_a_space_between_0_and_1 = &Message{code: 18137, category: CategoryError, key: "Expected_a_space_between_0_and_1_18137", text: "Expected a space between '{0}' and '{1}'."}
+
+var Unexpected_whitespace_between_0_and_1 = &Message{code: 18138, category: CategoryError, key: "Unexpected_whitespace_between_0_and_1_18138", text: "Unexpected whitespace between '{0}' and '{1}'."}
+
+var Expected_a_line_break_between_0_and_1 = &Message{code: 18139, category: CategoryError, key: "Expected_a_line_break_between_0_and_1_18139", text: "Expected a line break between '{0}' and '{1}'."}
+
+var Expected_a_space_before_1 = &Message{code: 18140, category: CategoryError, key: "Expected_a_space_before_1_18140", text: "Expected a space before '{1}'."}
+
+var Expected_a_space_after_0 = &Message{code: 18141, category: CategoryError, key: "Expected_a_space_after_0_18141", text: "Expected a space after '{0}'."}
+
+var Unexpected_whitespace_before_1 = &Message{code: 18142, category: CategoryError, key: "Unexpected_whitespace_before_1_18142", text: "Unexpected whitespace before '{1}'."}
+
+var Unexpected_whitespace_after_0 = &Message{code: 18143, category: CategoryError, key: "Unexpected_whitespace_after_0_18143", text: "Unexpected whitespace after '{0}'."}
+
+var Expected_a_space_before_the_function_parameter_list = &Message{code: 18144, category: CategoryError, key: "Expected_a_space_before_the_function_parameter_list_18144", text: "Expected a space before the function parameter list."}
+
+var Unexpected_whitespace_before_the_function_parameter_list = &Message{code: 18145, category: CategoryError, key: "Unexpected_whitespace_before_the_function_parameter_list_18145", text: "Unexpected whitespace before the function parameter list."}
+
+var Unexpected_whitespace_before_the_argument_list = &Message{code: 18146, category: CategoryError, key: "Unexpected_whitespace_before_the_argument_list_18146", text: "Unexpected whitespace before the argument list."}
+
+var Expected_the_opening_brace_of_the_function_body_on_a_new_line = &Message{code: 18147, category: CategoryError, key: "Expected_the_opening_brace_of_the_function_body_on_a_new_line_18147", text: "Expected the opening brace of the function body on a new line."}
+
+var Expected_a_space_before_the_function_body = &Message{code: 18148, category: CategoryError, key: "Expected_a_space_before_the_function_body_18148", text: "Expected a space before the function body."}
+
+var Expected_the_opening_brace_of_the_control_flow_block_on_a_new_line = &Message{code: 18149, category: CategoryError, key: "Expected_the_opening_brace_of_the_control_flow_block_on_a_new_line_18149", text: "Expected the opening brace of the control flow block on a new line."}
+
+var Expected_a_space_before_the_control_flow_block = &Message{code: 18150, category: CategoryError, key: "Expected_a_space_before_the_control_flow_block_18150", text: "Expected a space before the control flow block."}
+
+var Expected_the_opening_brace_of_the_declaration_body_on_a_new_line = &Message{code: 18151, category: CategoryError, key: "Expected_the_opening_brace_of_the_declaration_body_on_a_new_line_18151", text: "Expected the opening brace of the declaration body on a new line."}
+
+var Expected_a_space_before_the_declaration_body = &Message{code: 18152, category: CategoryError, key: "Expected_a_space_before_the_declaration_body_18152", text: "Expected a space before the declaration body."}
+
+var Expected_a_space_before_the_type_annotation = &Message{code: 18153, category: CategoryError, key: "Expected_a_space_before_the_type_annotation_18153", text: "Expected a space before the type annotation."}
+
+var Unexpected_whitespace_before_the_type_annotation = &Message{code: 18154, category: CategoryError, key: "Unexpected_whitespace_before_the_type_annotation_18154", text: "Unexpected whitespace before the type annotation."}
+
+var Expected_a_semicolon_at_the_end_of_the_statement = &Message{code: 18155, category: CategoryError, key: "Expected_a_semicolon_at_the_end_of_the_statement_18155", text: "Expected a semicolon at the end of the statement."}
+
+var Unnecessary_semicolon = &Message{code: 18156, category: CategoryError, key: "Unnecessary_semicolon_18156", text: "Unnecessary semicolon."}
+
+var Unexpected_whitespace_before_the_binary_operator_1 = &Message{code: 18157, category: CategoryError, key: "Unexpected_whitespace_before_the_binary_operator_1_18157", text: "Unexpected whitespace before the binary operator '{1}'."}
+
+var Unexpected_whitespace_after_the_binary_operator_0 = &Message{code: 18158, category: CategoryError, key: "Unexpected_whitespace_after_the_binary_operator_0_18158", text: "Unexpected whitespace after the binary operator '{0}'."}
+
+var Expected_a_space_before_the_JSX_attribute = &Message{code: 18159, category: CategoryError, key: "Expected_a_space_before_the_JSX_attribute_18159", text: "Expected a space before the JSX attribute."}
+
+var Expected_a_space_before_the_self_closing_JSX_tag_terminator = &Message{code: 18160, category: CategoryError, key: "Expected_a_space_before_the_self_closing_JSX_tag_terminator_18160", text: "Expected a space before the self-closing JSX tag terminator."}
+
+var Unexpected_whitespace_inside_the_JSX_tag_terminator = &Message{code: 18161, category: CategoryError, key: "Unexpected_whitespace_inside_the_JSX_tag_terminator_18161", text: "Unexpected whitespace inside the JSX tag terminator."}
+
+var Expected_a_space_after_the_decorator = &Message{code: 18162, category: CategoryError, key: "Expected_a_space_after_the_decorator_18162", text: "Expected a space after the decorator."}
+
+var Unexpected_whitespace_before_the_non_null_assertion_operator = &Message{code: 18163, category: CategoryError, key: "Unexpected_whitespace_before_the_non_null_assertion_operator_18163", text: "Unexpected whitespace before the non-null assertion operator."}
+
+var Expected_a_line_break_before_the_closing_brace = &Message{code: 18164, category: CategoryError, key: "Expected_a_line_break_before_the_closing_brace_18164", text: "Expected a line break before the closing brace."}
+
+var Expected_a_line_break_after_the_opening_brace = &Message{code: 18165, category: CategoryError, key: "Expected_a_line_break_after_the_opening_brace_18165", text: "Expected a line break after the opening brace."}
+
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
 var File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module = &Message{code: 80001, category: CategorySuggestion, key: "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001", text: "File is a CommonJS module; it may be converted to an ES module."}
@@ -6423,6 +6505,47 @@ var allMessages = [...]**Message{
 	&The_typescript_contentMapper_outputExtensions_of_the_content_mapper_package_0_must_be_an_object_with_string_values,
 	&Content_mapper_extension_0_must_not_contain_path_separators,
 	&The_content_mapper_package_0_is_outside_the_open_workspace_and_will_not_be_loaded,
+	&Format_input_files_before_compiling,
+	&Format_input_files_without_checking_or_emitting_JavaScript_or_declarations,
+	&Report_formatting_changes_as_diagnostics_instead_of_writing_input_files,
+	&Formatting_change_required_Colon_replace_0_with_1,
+	&Invalid_formatting_line_range_0_Expected_positive_inclusive_line_ranges_such_as_120_500_1001_2100,
+	&Formatting_line_range_0_is_outside_file_1,
+	&File_line_ranges_require_formatOnly,
+	&Formatting_line_ranges_cannot_be_combined_with_watch,
+	&Expected_a_space_before_the_binary_operator_1,
+	&Expected_a_space_after_the_binary_operator_0,
+	&Expected_indentation_of_0_columns,
+	&Trailing_whitespace_is_not_allowed,
+	&Expected_a_space_between_0_and_1,
+	&Unexpected_whitespace_between_0_and_1,
+	&Expected_a_line_break_between_0_and_1,
+	&Expected_a_space_before_1,
+	&Expected_a_space_after_0,
+	&Unexpected_whitespace_before_1,
+	&Unexpected_whitespace_after_0,
+	&Expected_a_space_before_the_function_parameter_list,
+	&Unexpected_whitespace_before_the_function_parameter_list,
+	&Unexpected_whitespace_before_the_argument_list,
+	&Expected_the_opening_brace_of_the_function_body_on_a_new_line,
+	&Expected_a_space_before_the_function_body,
+	&Expected_the_opening_brace_of_the_control_flow_block_on_a_new_line,
+	&Expected_a_space_before_the_control_flow_block,
+	&Expected_the_opening_brace_of_the_declaration_body_on_a_new_line,
+	&Expected_a_space_before_the_declaration_body,
+	&Expected_a_space_before_the_type_annotation,
+	&Unexpected_whitespace_before_the_type_annotation,
+	&Expected_a_semicolon_at_the_end_of_the_statement,
+	&Unnecessary_semicolon,
+	&Unexpected_whitespace_before_the_binary_operator_1,
+	&Unexpected_whitespace_after_the_binary_operator_0,
+	&Expected_a_space_before_the_JSX_attribute,
+	&Expected_a_space_before_the_self_closing_JSX_tag_terminator,
+	&Unexpected_whitespace_inside_the_JSX_tag_terminator,
+	&Expected_a_space_after_the_decorator,
+	&Unexpected_whitespace_before_the_non_null_assertion_operator,
+	&Expected_a_line_break_before_the_closing_brace,
+	&Expected_a_line_break_after_the_opening_brace,
 	&X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	&File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module,
 	&This_constructor_function_may_be_converted_to_a_class_declaration,

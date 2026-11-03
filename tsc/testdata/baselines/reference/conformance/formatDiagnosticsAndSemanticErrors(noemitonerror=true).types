@@ -1,0 +1,7 @@
+//// [tests/cases/conformance/formatting/formatDiagnosticsAndSemanticErrors.ts] ////
+
+=== formatDiagnosticsAndSemanticErrors.ts ===
+const value:string=1;
+>value : string
+>1 : 1
+

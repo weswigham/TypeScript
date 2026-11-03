@@ -1,0 +1,11 @@
+formatDiagnosticsNoEmitOnError.ts(1,12): error TS18133: Expected a space before the binary operator '='.
+formatDiagnosticsNoEmitOnError.ts(1,13): error TS18134: Expected a space after the binary operator '='.
+
+
+==== formatDiagnosticsNoEmitOnError.ts (2 errors) ====
+    const value=1;
+               
+!!! error TS18133: Expected a space before the binary operator '='.
+                
+!!! error TS18134: Expected a space after the binary operator '='.
+    

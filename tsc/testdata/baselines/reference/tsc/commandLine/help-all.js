@@ -20,11 +20,20 @@ Build one or more projects and their dependencies, if out of date
 [94m--checkers[39m
 Set the number of checkers per project.
 
-[94m--help, -h[39m
-Print this message.
+[94m--format[39m
+Format input files before compiling.
+
+[94m--formatDiagnostics[39m
+Report formatting changes as diagnostics instead of writing input files.
+
+[94m--formatOnly[39m
+Format input files without checking or emitting JavaScript or declarations.
 
 [94m--help, -?[39m
 
+
+[94m--help, -h[39m
+Print this message.
 
 [94m--ignoreConfig[39m
 Ignore the tsconfig found and build with commandline options and files.

@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/formatBuildInfoInputCollision.ts] ////
+
+=== /app/input.ts ===
+export const value=1;
+>value : Symbol(value, Decl(input.ts, 0, 12))
+

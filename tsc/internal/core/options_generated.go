@@ -3,6 +3,7 @@
 package core
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
@@ -155,6 +156,9 @@ type CompilerOptions struct {
 	Build               Tristate                   `json:"build,omitzero"`
 	Help                Tristate                   `json:"help,omitzero"`
 	All                 Tristate                   `json:"all,omitzero"`
+	Format              Tristate                   `json:"format,omitzero"`
+	FormatOnly          Tristate                   `json:"formatOnly,omitzero"`
+	FormatDiagnostics   Tristate                   `json:"formatDiagnostics,omitzero"`
 	RunExternalCode     Tristate                   `json:"runExternalCode,omitzero"`
 	PprofDir            tspath.RootedDirectoryPath `json:"pprofDir,omitzero"`
 	SingleThreaded      Tristate                   `json:"singleThreaded,omitzero"`
@@ -292,6 +296,9 @@ func (options *CompilerOptions) Clone() *CompilerOptions {
 		Build:                                   options.Build,
 		Help:                                    options.Help,
 		All:                                     options.All,
+		Format:                                  options.Format,
+		FormatOnly:                              options.FormatOnly,
+		FormatDiagnostics:                       options.FormatDiagnostics,
 		RunExternalCode:                         options.RunExternalCode,
 		PprofDir:                                options.PprofDir,
 		SingleThreaded:                          options.SingleThreaded,
@@ -692,6 +699,15 @@ func (options *CompilerOptions) Equals(other *CompilerOptions) bool {
 	if options.All != other.All {
 		return false
 	}
+	if options.Format != other.Format {
+		return false
+	}
+	if options.FormatOnly != other.FormatOnly {
+		return false
+	}
+	if options.FormatDiagnostics != other.FormatDiagnostics {
+		return false
+	}
 	if options.RunExternalCode != other.RunExternalCode {
 		return false
 	}
@@ -708,6 +724,168 @@ func (options *CompilerOptions) Equals(other *CompilerOptions) bool {
 		return false
 	}
 	return true
+}
+
+type FormattingIndentStyle int
+
+const (
+	FormattingIndentStyleNone  FormattingIndentStyle = 0
+	FormattingIndentStyleBlock FormattingIndentStyle = 1
+	FormattingIndentStyleSmart FormattingIndentStyle = 2
+)
+
+func (value FormattingIndentStyle) MarshalJSON() ([]byte, error) {
+	switch value {
+	case FormattingIndentStyleNone:
+		return []byte("\"none\""), nil
+	case FormattingIndentStyleBlock:
+		return []byte("\"block\""), nil
+	case FormattingIndentStyleSmart:
+		return []byte("\"smart\""), nil
+	}
+	return nil, fmt.Errorf("invalid FormattingIndentStyle: %v", value)
+}
+
+func (value *FormattingIndentStyle) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "\"none\"", "0":
+		*value = FormattingIndentStyleNone
+		return nil
+	case "\"block\"", "1":
+		*value = FormattingIndentStyleBlock
+		return nil
+	case "\"smart\"", "2":
+		*value = FormattingIndentStyleSmart
+		return nil
+	}
+	return fmt.Errorf("invalid FormattingIndentStyle: %s", data)
+}
+
+type FormattingSemicolonPreference string
+
+const (
+	FormattingSemicolonPreferenceIgnore FormattingSemicolonPreference = "ignore"
+	FormattingSemicolonPreferenceInsert FormattingSemicolonPreference = "insert"
+	FormattingSemicolonPreferenceRemove FormattingSemicolonPreference = "remove"
+)
+
+func (value FormattingSemicolonPreference) MarshalJSON() ([]byte, error) {
+	switch value {
+	case FormattingSemicolonPreferenceIgnore:
+		return []byte("\"ignore\""), nil
+	case FormattingSemicolonPreferenceInsert:
+		return []byte("\"insert\""), nil
+	case FormattingSemicolonPreferenceRemove:
+		return []byte("\"remove\""), nil
+	}
+	return nil, fmt.Errorf("invalid FormattingSemicolonPreference: %v", value)
+}
+
+func (value *FormattingSemicolonPreference) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "\"ignore\"":
+		*value = FormattingSemicolonPreferenceIgnore
+		return nil
+	case "\"insert\"":
+		*value = FormattingSemicolonPreferenceInsert
+		return nil
+	case "\"remove\"":
+		*value = FormattingSemicolonPreferenceRemove
+		return nil
+	}
+	return fmt.Errorf("invalid FormattingSemicolonPreference: %s", data)
+}
+
+type FormattingOptions struct {
+	BaseIndentSize                                              *int                           `json:"baseIndentSize,omitzero"`
+	ConvertTabsToSpaces                                         Tristate                       `json:"convertTabsToSpaces,omitzero"`
+	IndentSize                                                  *int                           `json:"indentSize,omitzero"`
+	IndentStyle                                                 *FormattingIndentStyle         `json:"indentStyle,omitzero"`
+	NewLineCharacter                                            *string                        `json:"newLineCharacter,omitzero"`
+	TabSize                                                     *int                           `json:"tabSize,omitzero"`
+	TrimTrailingWhitespace                                      Tristate                       `json:"trimTrailingWhitespace,omitzero"`
+	IndentMultiLineObjectLiteralBeginningOnBlankLine            Tristate                       `json:"indentMultiLineObjectLiteralBeginningOnBlankLine,omitzero"`
+	IndentSwitchCase                                            Tristate                       `json:"indentSwitchCase,omitzero"`
+	InsertSpaceAfterCommaDelimiter                              Tristate                       `json:"insertSpaceAfterCommaDelimiter,omitzero"`
+	InsertSpaceAfterConstructor                                 Tristate                       `json:"insertSpaceAfterConstructor,omitzero"`
+	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        Tristate                       `json:"insertSpaceAfterFunctionKeywordForAnonymousFunctions,omitzero"`
+	InsertSpaceAfterKeywordsInControlFlowStatements             Tristate                       `json:"insertSpaceAfterKeywordsInControlFlowStatements,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingEmptyBraces,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis,omitzero"`
+	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces Tristate                       `json:"insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces,omitzero"`
+	InsertSpaceAfterSemicolonInForStatements                    Tristate                       `json:"insertSpaceAfterSemicolonInForStatements,omitzero"`
+	InsertSpaceAfterTypeAssertion                               Tristate                       `json:"insertSpaceAfterTypeAssertion,omitzero"`
+	InsertSpaceBeforeAndAfterBinaryOperators                    Tristate                       `json:"insertSpaceBeforeAndAfterBinaryOperators,omitzero"`
+	InsertSpaceBeforeFunctionParenthesis                        Tristate                       `json:"insertSpaceBeforeFunctionParenthesis,omitzero"`
+	InsertSpaceBeforeTypeAnnotation                             Tristate                       `json:"insertSpaceBeforeTypeAnnotation,omitzero"`
+	PlaceOpenBraceOnNewLineForControlBlocks                     Tristate                       `json:"placeOpenBraceOnNewLineForControlBlocks,omitzero"`
+	PlaceOpenBraceOnNewLineForFunctions                         Tristate                       `json:"placeOpenBraceOnNewLineForFunctions,omitzero"`
+	Semicolons                                                  *FormattingSemicolonPreference `json:"semicolons,omitzero"`
+}
+
+func (options *FormattingOptions) Clone() *FormattingOptions {
+	if options == nil {
+		return nil
+	}
+	result := *options
+	if options.BaseIndentSize != nil {
+		result.BaseIndentSize = new(*options.BaseIndentSize)
+	}
+	if options.IndentSize != nil {
+		result.IndentSize = new(*options.IndentSize)
+	}
+	if options.IndentStyle != nil {
+		result.IndentStyle = new(*options.IndentStyle)
+	}
+	if options.NewLineCharacter != nil {
+		result.NewLineCharacter = new(*options.NewLineCharacter)
+	}
+	if options.TabSize != nil {
+		result.TabSize = new(*options.TabSize)
+	}
+	if options.Semicolons != nil {
+		result.Semicolons = new(*options.Semicolons)
+	}
+	return &result
+}
+
+func (options *FormattingOptions) Equals(other *FormattingOptions) bool {
+	if options == other {
+		return true
+	}
+	if options == nil || other == nil {
+		return false
+	}
+	return (options.BaseIndentSize == nil) == (other.BaseIndentSize == nil) && (options.BaseIndentSize == nil || *options.BaseIndentSize == *other.BaseIndentSize) &&
+		options.ConvertTabsToSpaces == other.ConvertTabsToSpaces &&
+		(options.IndentSize == nil) == (other.IndentSize == nil) && (options.IndentSize == nil || *options.IndentSize == *other.IndentSize) &&
+		(options.IndentStyle == nil) == (other.IndentStyle == nil) && (options.IndentStyle == nil || *options.IndentStyle == *other.IndentStyle) &&
+		(options.NewLineCharacter == nil) == (other.NewLineCharacter == nil) && (options.NewLineCharacter == nil || *options.NewLineCharacter == *other.NewLineCharacter) &&
+		(options.TabSize == nil) == (other.TabSize == nil) && (options.TabSize == nil || *options.TabSize == *other.TabSize) &&
+		options.TrimTrailingWhitespace == other.TrimTrailingWhitespace &&
+		options.IndentMultiLineObjectLiteralBeginningOnBlankLine == other.IndentMultiLineObjectLiteralBeginningOnBlankLine &&
+		options.IndentSwitchCase == other.IndentSwitchCase &&
+		options.InsertSpaceAfterCommaDelimiter == other.InsertSpaceAfterCommaDelimiter &&
+		options.InsertSpaceAfterConstructor == other.InsertSpaceAfterConstructor &&
+		options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions == other.InsertSpaceAfterFunctionKeywordForAnonymousFunctions &&
+		options.InsertSpaceAfterKeywordsInControlFlowStatements == other.InsertSpaceAfterKeywordsInControlFlowStatements &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces == other.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces == other.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces == other.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets == other.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis == other.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis &&
+		options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces == other.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces &&
+		options.InsertSpaceAfterSemicolonInForStatements == other.InsertSpaceAfterSemicolonInForStatements &&
+		options.InsertSpaceAfterTypeAssertion == other.InsertSpaceAfterTypeAssertion &&
+		options.InsertSpaceBeforeAndAfterBinaryOperators == other.InsertSpaceBeforeAndAfterBinaryOperators &&
+		options.InsertSpaceBeforeFunctionParenthesis == other.InsertSpaceBeforeFunctionParenthesis &&
+		options.InsertSpaceBeforeTypeAnnotation == other.InsertSpaceBeforeTypeAnnotation &&
+		options.PlaceOpenBraceOnNewLineForControlBlocks == other.PlaceOpenBraceOnNewLineForControlBlocks &&
+		options.PlaceOpenBraceOnNewLineForFunctions == other.PlaceOpenBraceOnNewLineForFunctions &&
+		(options.Semicolons == nil) == (other.Semicolons == nil) && (options.Semicolons == nil || *options.Semicolons == *other.Semicolons)
 }
 
 type ModuleDetectionKind int32

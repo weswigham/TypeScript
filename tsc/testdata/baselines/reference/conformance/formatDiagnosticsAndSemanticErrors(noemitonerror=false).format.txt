@@ -1,0 +1,3 @@
+//// [formatDiagnosticsAndSemanticErrors.ts]
+const value:string=1;
+

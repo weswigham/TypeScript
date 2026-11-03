@@ -1,0 +1,5 @@
+//// [formatDiagnostics.ts]
+function value(input:number){
+return input+1;
+}
+

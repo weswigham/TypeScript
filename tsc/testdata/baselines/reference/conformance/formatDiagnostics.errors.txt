@@ -1,0 +1,22 @@
+formatDiagnostics.ts(1,22): error TS18141: Expected a space after ':'.
+formatDiagnostics.ts(1,29): error TS18148: Expected a space before the function body.
+formatDiagnostics.ts(2,1): error TS18135: Expected indentation of 4 columns.
+formatDiagnostics.ts(2,13): error TS18133: Expected a space before the binary operator '+'.
+formatDiagnostics.ts(2,14): error TS18134: Expected a space after the binary operator '+'.
+
+
+==== formatDiagnostics.ts (5 errors) ====
+    function value(input:number){
+                         
+!!! error TS18141: Expected a space after ':'.
+                                
+!!! error TS18148: Expected a space before the function body.
+    return input+1;
+    
+!!! error TS18135: Expected indentation of 4 columns.
+                
+!!! error TS18133: Expected a space before the binary operator '+'.
+                 
+!!! error TS18134: Expected a space after the binary operator '+'.
+    }
+    

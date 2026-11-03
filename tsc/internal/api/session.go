@@ -34,6 +34,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/ls"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/autoimport"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
+	"github.com/microsoft/TypeScript/tsc/internal/ls/lsutil"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp/lsproto"
 	"github.com/microsoft/TypeScript/tsc/internal/module"
 	"github.com/microsoft/TypeScript/tsc/internal/nodebuilder"
@@ -1211,6 +1212,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetWellKnownSignatures(ctx, parsed.(*GetIntrinsicTypeParams))
 	case string(MethodGetSyntacticDiagnostics):
 		return s.handleGetSyntacticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetFormattingDiagnostics):
+		return s.handleGetFormattingDiagnostics(ctx, parsed.(*GetFormattingDiagnosticsParams))
 	case string(MethodGetBindDiagnostics):
 		return s.handleGetBindDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetSemanticDiagnostics):
@@ -5328,6 +5331,73 @@ func (s *Session) getDiagnostics(ctx context.Context, params *GetDiagnosticsPara
 func (s *Session) handleGetSyntacticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
 	return s.getDiagnostics(ctx, params, (*compiler.Program).GetSyntacticDiagnostics)
+}
+
+// @gen-proto-nullable
+func (s *Session) handleGetFormattingDiagnostics(ctx context.Context, params *GetFormattingDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+	files := program.GetSourceFiles()
+	if params.Files != nil {
+		files = make([]*ast.SourceFile, 0, len(params.Files))
+		for _, name := range params.Files {
+			file, err := s.resolveOptionalSourceFile(program, &name)
+			if err != nil {
+				return nil, err
+			}
+			files = append(files, file)
+		}
+	}
+	formatOptions := lsutil.GetDefaultFormatCodeSettings().WithOptions(program.CommandLine().FormattingOptions())
+	ctx = format.WithFormatCodeSettings(ctx, formatOptions, formatOptions.NewLineCharacter)
+	ranges := make([][]core.TextRange, len(files))
+	for i, file := range files {
+		if !program.IsFormattingInput(file) {
+			continue
+		}
+		if params.Spans != nil {
+			ranges[i] = make([]core.TextRange, len(params.Spans))
+			positionMap := file.GetPositionMap()
+			length := positionMap.UTF8ToUTF16(len(file.Text()))
+			for j, span := range params.Spans {
+				if span.Pos < 0 || span.End < span.Pos || span.End > length {
+					return nil, fmt.Errorf("%w: invalid formatting span [%d, %d) in %s", ErrClientError, span.Pos, span.End, file.FileName())
+				}
+				ranges[i][j] = core.NewTextRange(positionMap.UTF16ToUTF8(span.Pos), positionMap.UTF16ToUTF8(span.End))
+			}
+		}
+	}
+	diagnosticsPerFile := make([][]*ast.Diagnostic, len(files))
+	errors := make([]error, len(files))
+	group := core.NewWorkGroup(program.SingleThreaded())
+	for i, file := range files {
+		if !program.IsFormattingInput(file) {
+			continue
+		}
+		group.Queue(func() {
+			_, diagnostics, formatErr := format.FormatRangesWithDiagnostics(ctx, file, ranges[i])
+			if formatErr != nil {
+				errors[i] = formatErr
+				return
+			}
+			diagnosticsPerFile[i] = diagnostics
+		})
+	}
+	group.RunAndWait()
+	var allDiagnostics []*ast.Diagnostic
+	for i, diagnostics := range diagnosticsPerFile {
+		if errors[i] != nil {
+			return nil, fmt.Errorf("%w: %w", ErrClientError, errors[i])
+		}
+		allDiagnostics = append(allDiagnostics, diagnostics...)
+	}
+	return NewDiagnosticResponses(compiler.SortAndDeduplicateDiagnostics(allDiagnostics)), nil
 }
 
 // @gen-proto-nullable

@@ -1,0 +1,6 @@
+//// [tests/cases/conformance/formatting/formatDiagnosticsAndSemanticErrors.ts] ////
+
+=== formatDiagnosticsAndSemanticErrors.ts ===
+const value:string=1;
+>value : Symbol(value, Decl(formatDiagnosticsAndSemanticErrors.ts, 0, 5))
+

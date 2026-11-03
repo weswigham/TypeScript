@@ -176,6 +176,10 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerTest.options)
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName)
+	compilerTest.verifyFormatting(t, r.testSuitName)
+	if compilerTest.options.FormatOnly.IsTrue() {
+		return
+	}
 	compilerTest.verifyContentMapper(t, r.testSuitName)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName)
@@ -317,7 +321,8 @@ func newCompilerTest(
 	// compiler actually parses and reports positions against. Baseline that text (rather than the original
 	// foreign source) so the type, symbol, and error baselines line up with the compiler's positions.
 	for _, file := range core.Concatenate(toBeCompiled, otherFiles) {
-		if sf := result.Program.GetSourceFile(tspath.ToRootedFilePath(file.UnitName, currentDirectory)); sf != nil && sf.ContentMapper() != "" {
+		if sf := result.Program.GetSourceFile(tspath.ToRootedFilePath(file.UnitName, currentDirectory)); sf != nil &&
+			(sf.ContentMapper() != "" || (result.Options.Format.IsTrue() || result.Options.FormatOnly.IsTrue()) && !result.Options.FormatDiagnostics.IsTrue()) {
 			file.Content = sf.Text()
 		}
 	}
@@ -336,6 +341,24 @@ func newCompilerTest(
 		otherFiles:       otherFiles,
 		hasNonDtsFiles:   hasNonDtsFiles,
 	}
+}
+
+func (c *compilerTest) verifyFormatting(t *testing.T, suiteName string) {
+	if !c.options.Format.IsTrue() && !c.options.FormatOnly.IsTrue() {
+		return
+	}
+	t.Run("format", func(t *testing.T) {
+		var output strings.Builder
+		for _, file := range c.result.Formatted {
+			fmt.Fprintf(&output, "//// [%s]\n%s\n", tspath.ConvertToRelativePath(file.UnitName, c.currentDirectory, tspath.CaseSensitive), file.Content)
+		}
+		content := output.String()
+		if output.Len() == 0 {
+			content = baseline.NoContent
+		}
+		baseline.Run(t, strings.TrimSuffix(c.configuredName, tspath.GetAnyExtensionFromPath(c.configuredName, nil, tspath.CaseSensitive))+".format.txt",
+			content, baseline.Options{Subfolder: suiteName})
+	})
 }
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string) {

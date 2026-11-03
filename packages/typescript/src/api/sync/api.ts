@@ -104,6 +104,7 @@ import type {
     DocumentPosition,
     EmitOutputResponse as ProtocolEmitOutputResponse,
     FileNotifications,
+    FormattingSpan,
     ImportAdderAction,
     InferredProjectId,
     IntrinsicTypeMethod,
@@ -233,6 +234,7 @@ export type {
     EmitResult,
     FileNotifications,
     FormatDiagnosticsHost,
+    FormattingSpan,
     FreshableType,
     GenericType,
     GetImportEditsForSymbolsOptions,
@@ -3541,6 +3543,45 @@ export class Program<Id extends ProjectId = ProjectId> implements FormatDiagnost
                     snapshot: owner.snapshotId,
                     project: owner.project.handle,
                     files,
+                });
+                return data ?? [];
+            },
+        );
+    }
+
+    /**
+     * Report formatting changes without writing source files or compilation state.
+     * Uses project formattingOptions and excludes dependency and default-library inputs.
+     * @param file - Optional source file(s) or file identifiers. Omitted means all project formatting inputs.
+     * @param spans - Optional half-open UTF-16 ranges applied to each requested file. An empty list returns no diagnostics.
+     */
+    get getFormattingDiagnostics(): {
+        (file?: DocumentIdentifier | SourceFile | readonly (DocumentIdentifier | SourceFile)[], spans?: readonly FormattingSpan[]): readonly Diagnostic[];
+        gen(file?: DocumentIdentifier | SourceFile | readonly (DocumentIdentifier | SourceFile)[], spans?: readonly FormattingSpan[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]>;
+    } {
+        const owner = this;
+        return cacheGeneratorMethod(
+            owner,
+            "getFormattingDiagnostics",
+            function (file?: DocumentIdentifier | SourceFile | readonly (DocumentIdentifier | SourceFile)[], spans?: readonly FormattingSpan[]): readonly Diagnostic[] {
+                const files = file === undefined ? undefined
+                    : (Array.isArray(file) ? file : [file]).map(file => typeof file === "object" && "fileName" in file ? file.fileName : file);
+                const data = owner.client.apiRequest("getFormattingDiagnostics", {
+                    snapshot: owner.snapshotId,
+                    project: owner.project.handle,
+                    files,
+                    spans,
+                });
+                return data ?? [];
+            },
+            function* (file?: DocumentIdentifier | SourceFile | readonly (DocumentIdentifier | SourceFile)[], spans?: readonly FormattingSpan[]): Generator<ProtocolRequest, readonly Diagnostic[], ProtocolResponse["result"]> {
+                const files = file === undefined ? undefined
+                    : (Array.isArray(file) ? file : [file]).map(file => typeof file === "object" && "fileName" in file ? file.fileName : file);
+                const data = yield* apiRequest("getFormattingDiagnostics", {
+                    snapshot: owner.snapshotId,
+                    project: owner.project.handle,
+                    files,
+                    spans,
                 });
                 return data ?? [];
             },

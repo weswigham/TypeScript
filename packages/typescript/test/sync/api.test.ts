@@ -8665,6 +8665,83 @@ doThing();
 });
 
 describe("Program - diagnostics", { concurrency }, () => {
+    test("getFormattingDiagnostics uses project options without writing files", () => {
+        const source = "export function value(input:number){\nreturn input+1;\n}\n";
+        const fs = createVirtualFileSystem({
+            "/base.json": JSON.stringify({ formattingOptions: { indentSize: 2, tabSize: 2 } }),
+            "/tsconfig.json": JSON.stringify({ extends: "./base.json", compilerOptions: { incremental: true, tsBuildInfoFile: "/state.tsbuildinfo" }, files: ["/src/index.ts"] }),
+            "/src/index.ts": source,
+        });
+        const writes: string[] = [];
+        using api = new API({
+            cwd: "/",
+            fs: {
+                ...fs,
+                writeFile: fileName => {
+                    writes.push(fileName);
+                },
+            },
+        });
+        const snapshot = api.createSnapshot({ openProjects: ["/tsconfig.json"] });
+        const program = snapshot.getConfiguredProject("/tsconfig.json")!.program;
+        const file = (program.getSourceFile("/src/index.ts"))!;
+        const diagnostics = program.getFormattingDiagnostics(file);
+        assert.ok(diagnostics.length > 0);
+        assert.ok(diagnostics.every(d => d.code !== 18128 && d.category === DiagnosticCategory.Error));
+        assert.ok(diagnostics.some(d => d.text === "Expected indentation of 2 columns."));
+        assert.ok(diagnostics.some(d => d.text === "Expected a space before the function body."));
+        assert.deepEqual(program.getFormattingDiagnostics("/src/index.ts"), diagnostics);
+        assert.deepEqual(program.getFormattingDiagnostics(), diagnostics);
+        assert.equal(fs.readFile(toRootedFilePath("/src/index.ts", undefined)), source);
+        assert.equal(file.text, source);
+        assert.equal(fs.readFile(toRootedFilePath("/state.tsbuildinfo", undefined)), serverFS.useOS);
+        assert.deepEqual(writes, []);
+        assert.deepEqual(program.getFormattingDiagnostics(file, []), []);
+        assert.deepEqual(program.getFormattingDiagnostics([]), []);
+    });
+
+    test("getFormattingDiagnostics supports disjoint UTF-16 spans", () => {
+        const source = "// \u03bb \ud83d\ude00\r\nconst first=1;\r\nconst middle=2;\r\nconst last=3;";
+        using api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+        });
+        const snapshot = api.createSnapshot({ openProjects: ["/tsconfig.json"] });
+        const program = snapshot.getConfiguredProject("/tsconfig.json")!.program;
+        const spans = [
+            { pos: source.indexOf("const last"), end: source.length },
+            { pos: source.indexOf("const first"), end: source.indexOf("const middle") },
+        ];
+        const diagnostics = program.getFormattingDiagnostics("/src/index.ts", spans);
+        assert.equal(diagnostics.length, 4);
+        assert.ok(diagnostics.every(d => spans.some(span => d.pos >= span.pos && d.end <= span.end)));
+        assert.deepEqual(program.getFormattingDiagnostics("/src/index.ts", [...spans, spans[0]]), diagnostics);
+        assert.ok((program.getFormattingDiagnostics("/src/index.ts")).length > diagnostics.length);
+        for (const span of [{ pos: -1, end: 0 }, { pos: 20, end: 10 }, { pos: 0, end: source.length + 1 }, { pos: 1.5, end: 2 }]) {
+            assert.throws(() => program.getFormattingDiagnostics("/src/index.ts", [span]));
+        }
+        const surrogate = source.indexOf("\ud83d\ude00") + 1;
+        assert.throws(() => program.getFormattingDiagnostics("/src/index.ts", [{ pos: surrogate, end: surrogate + 1 }]));
+        assert.throws(() => program.getFormattingDiagnostics("/src/missing.ts"));
+    });
+
+    test("getFormattingDiagnostics follows local inputs and skips dependencies", () => {
+        using api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ files: ["/src/index.ts"] }),
+            "/src/index.ts": 'import { value } from "./helper";\nimport type { Dependency } from "dep";\nexport const result = value;\n',
+            "/src/helper.ts": "export const value=1;\n",
+            "/node_modules/dep/package.json": JSON.stringify({ name: "dep", version: "1.0.0", types: "index.d.ts" }),
+            "/node_modules/dep/index.d.ts": "export interface Dependency{value:number;}\n",
+        });
+        const snapshot = api.createSnapshot({ openProjects: ["/tsconfig.json"] });
+        const program = snapshot.getConfiguredProject("/tsconfig.json")!.program;
+        const diagnostics = program.getFormattingDiagnostics();
+        assert.equal(diagnostics.length, 2);
+        assert.ok(diagnostics.every(d => d.fileName === "/src/helper.ts"));
+        assert.deepEqual(program.getFormattingDiagnostics(["/src/helper.ts", "/src/index.ts"]), diagnostics);
+        assert.deepEqual(program.getFormattingDiagnostics("/node_modules/dep/index.d.ts"), []);
+    });
+
     test("getSyntacticDiagnostics", () => {
         const source = `const x: = 1;`;
         using api = spawnAPI({

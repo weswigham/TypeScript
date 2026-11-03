@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/module"
 	"github.com/microsoft/TypeScript/tsc/internal/nativepath"
+	"github.com/microsoft/TypeScript/tsc/internal/packagejson"
 	"github.com/microsoft/TypeScript/tsc/internal/parser"
 	"github.com/microsoft/TypeScript/tsc/internal/spanmap"
 	"github.com/microsoft/TypeScript/tsc/internal/tracing"
@@ -388,8 +389,11 @@ func (p *fileLoader) loadSourceFileMetaData(fileName tspath.RootedFilePath) ast.
 	}
 
 	packageJsonScope := p.resolver.GetResolutionData().NewResolver(p.projectReferences.host).GetPackageScopeForPath(fileName.Directory())
-	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
+	return GetSourceFileMetaDataFromPackageScope(fileName, p.opts.Config.CompilerOptions(), packageJsonScope)
+}
 
+func GetSourceFileMetaDataFromPackageScope(fileName tspath.RootedFilePath, options *core.CompilerOptions, packageJsonScope *packagejson.InfoCacheEntry) ast.SourceFileMetaData {
+	moduleResolutionKind := options.GetModuleResolutionKind()
 	var packageJsonType string
 	var packageJsonDirectory tspath.RootedDirectoryPath
 	if packageJsonScope.Exists() {

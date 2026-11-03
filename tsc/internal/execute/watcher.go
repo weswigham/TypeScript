@@ -36,7 +36,7 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 	info := h.CompilerHost.FS().Stat(opts.FileName.AsPath())
 
 	if cached, ok := h.cache.Load(opts.PathKey); ok {
-		if info != nil && info.ModTime().Equal(cached.modTime) {
+		if info != nil && info.ModTime().Equal(cached.modTime) && cached.file.ParseOptions() == opts {
 			return cached.file
 		}
 	}
@@ -56,6 +56,8 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 }
 
 type Watcher struct {
+	formatDiagnostics              []*ast.Diagnostic
+	formattingSelection            tsoptions.FormattingSelection
 	sys                            tsc.System
 	configFileName                 tspath.RootedFilePath
 	config                         *tsoptions.ParsedCommandLine
@@ -425,7 +427,7 @@ func (w *Watcher) doBuild() error {
 	reloadedFileNames := false
 	if w.watchSetDirty {
 		if w.config.ConfigFile != nil && len(w.config.WildcardDirectories()) > 0 {
-			newConfig := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
+			newConfig := w.formattingSelection.Apply(w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS()))
 			reloadedFileNames = true
 			if !slices.Equal(w.config.FileNames(), newConfig.FileNames()) {
 				w.config = newConfig
@@ -438,6 +440,13 @@ func (w *Watcher) doBuild() error {
 		}
 	}
 
+	formatHost := compiler.NewCompilerHost(w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperProject)
+	formatted := tsc.FormatInputFiles(context.Background(), formatHost, w.config)
+	w.formatDiagnostics = formatted.Diagnostics
+	for _, file := range formatted.ChangedFiles {
+		w.sourceFileCache.Delete(w.sys.FS().CaseSensitivity().PathKey(file.AsPath()))
+	}
+
 	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty && !w.forceFullRebuild {
 		cached := cachedvfs.From(w.sys.FS())
 		innerHost := compiler.NewCompilerHost(
@@ -447,6 +456,7 @@ func (w *Watcher) doBuild() error {
 			getTraceFromSys(w.sys, w.config.Locale(), w.testing),
 			w.contentMapperProject,
 		)
+		innerHost = tsc.WithFormattingSourceFiles(innerHost, formatted.SourceFiles)
 		host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 		if w.tryUpdateProgram(host) {
@@ -485,6 +495,7 @@ func (w *Watcher) doBuild() error {
 		getTraceFromSys(w.sys, w.config.Locale(), w.testing),
 		w.contentMapperProject,
 	)
+	innerHost = tsc.WithFormattingSourceFiles(innerHost, formatted.SourceFiles)
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 	if w.config.ConfigFile != nil {
@@ -492,7 +503,7 @@ func (w *Watcher) doBuild() error {
 			tfs.SeenFiles.Add(dir.AsPath())
 		}
 		if !reloadedFileNames && !w.watchSetDirty && len(w.config.WildcardDirectories()) > 0 {
-			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
+			w.config = w.formattingSelection.Apply(w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS()))
 		}
 	}
 	for _, path := range w.configFilePaths {
@@ -626,16 +637,28 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[tspath.RootedPath]fsw
 }
 
 func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
+	if w.config.CompilerOptions().FormatOnly.IsTrue() {
+		for _, diagnostic := range compiler.SortAndDeduplicateDiagnostics(w.formatDiagnostics) {
+			w.reportDiagnostic(diagnostic)
+		}
+		w.reportErrorSummary(w.formatDiagnostics)
+		status := tsc.ExitStatusSuccess
+		if len(w.formatDiagnostics) > 0 {
+			status = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+		}
+		return tsc.CompileAndEmitResult{Status: status, Diagnostics: w.formatDiagnostics, EmitResult: &compiler.EmitResult{EmitSkipped: true}}
+	}
 	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
-		Sys:                w.sys,
-		ProgramLike:        w.program,
-		Program:            w.program.GetProgram(),
-		Config:             w.config,
-		ReportDiagnostic:   w.reportDiagnostic,
-		ReportErrorSummary: w.reportErrorSummary,
-		Writer:             w.sys.Writer(),
-		CompileTimes:       &tsc.CompileTimes{},
-		Testing:            w.testing,
+		FormattingDiagnostics: w.formatDiagnostics,
+		Sys:                   w.sys,
+		ProgramLike:           w.program,
+		Program:               w.program.GetProgram(),
+		Config:                w.config,
+		ReportDiagnostic:      w.reportDiagnostic,
+		ReportErrorSummary:    w.reportErrorSummary,
+		Writer:                w.sys.Writer(),
+		CompileTimes:          &tsc.CompileTimes{},
+		Testing:               w.testing,
 	})
 }
 
@@ -719,5 +742,5 @@ func (w *Watcher) parseConfigFile() *tsoptions.ParsedCommandLine {
 		return nil
 	}
 	w.extendedConfigCache = extendedConfigCache
-	return configParseResult
+	return w.formattingSelection.Apply(configParseResult)
 }

@@ -33,6 +33,15 @@ tsc: The TypeScript Compiler - Version FakeTSVersion
 
 [1mCOMMAND LINE FLAGS[22m
 
+[94m--format[39m
+Format input files before compiling.
+
+[94m--formatOnly[39m
+Format input files without checking or emitting JavaScript or declarations.
+
+[94m--formatDiagnostics[39m
+Report formatting changes as diagnostics instead of writing input files.
+
 [94m--help, -h[39m
 Print this message.
 

@@ -38,6 +38,22 @@ func (s schema) writePreferenceMethods(out *bytes.Buffer, imports map[string]str
 		return errors.New("preference schema must define UserPreferences as its root")
 	}
 	imports["json"] = "github.com/microsoft/TypeScript/tsc/internal/json"
+	out.WriteString("func (p FormatCodeSettings) WithOptions(options *core.FormattingOptions) FormatCodeSettings {\n")
+	out.WriteString("if options == nil { return p }\n")
+	for _, field := range s.flattenedFields("FormatCodeSettings", "") {
+		name := "options." + goName(field.name)
+		goType, _ := field.goType()
+		if goType == "core.Tristate" {
+			fmt.Fprintf(out, "if !%s.IsUnknown() { p.%s = %s }\n", name, field.selector, name)
+		} else {
+			value := "*" + name
+			if goType != field.goKind() {
+				value = goType + "(" + value + ")"
+			}
+			fmt.Fprintf(out, "if %s != nil { p.%s = %s }\n", name, field.selector, value)
+		}
+	}
+	out.WriteString("return p\n}\n\n")
 	fields := s.flattenedFields(root, "")
 	enumTypes := map[string]property{}
 	for _, field := range fields {

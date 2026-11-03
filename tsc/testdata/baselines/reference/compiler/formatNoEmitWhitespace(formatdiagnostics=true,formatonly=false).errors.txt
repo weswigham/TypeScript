@@ -1,0 +1,58 @@
+input.ts(1,29): error TS18141: Expected a space after ':'.
+input.ts(1,36): error TS18148: Expected a space before the function body.
+input.ts(2,1): error TS18135: Expected indentation of 2 columns.
+input.ts(2,13): error TS18133: Expected a space before the binary operator '='.
+input.ts(2,14): error TS18134: Expected a space after the binary operator '='.
+input.ts(2,15): error TS18141: Expected a space after '{'.
+input.ts(2,21): error TS18141: Expected a space after ':'.
+input.ts(2,26): error TS18133: Expected a space before the binary operator '+'.
+input.ts(2,27): error TS18134: Expected a space after the binary operator '+'.
+input.ts(2,28): error TS18140: Expected a space before '}'.
+input.ts(2,29): error TS18156: Unnecessary semicolon.
+input.ts(3,1): error TS18135: Expected indentation of 2 columns.
+input.ts(3,14): error TS18156: Unnecessary semicolon.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "formattingOptions": {
+            "indentSize": 2,
+            "tabSize": 2,
+            "convertTabsToSpaces": false,
+            "newLineCharacter": "\r\n",
+            "semicolons": "remove"
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (13 errors) ====
+    export function value(input:number){
+                                
+!!! error TS18141: Expected a space after ':'.
+                                       
+!!! error TS18148: Expected a space before the function body.
+    const result={value:input+1};
+    
+!!! error TS18135: Expected indentation of 2 columns.
+                
+!!! error TS18133: Expected a space before the binary operator '='.
+                 
+!!! error TS18134: Expected a space after the binary operator '='.
+                  
+!!! error TS18141: Expected a space after '{'.
+                        
+!!! error TS18141: Expected a space after ':'.
+                             
+!!! error TS18133: Expected a space before the binary operator '+'.
+                              
+!!! error TS18134: Expected a space after the binary operator '+'.
+                               
+!!! error TS18140: Expected a space before '}'.
+                                ~
+!!! error TS18156: Unnecessary semicolon.
+    return result;
+    
+!!! error TS18135: Expected indentation of 2 columns.
+                 ~
+!!! error TS18156: Unnecessary semicolon.
+    }

@@ -4,7 +4,10 @@ import {
     type GoValue,
     optionKind,
 } from "./options-model.ts";
-import { options } from "./options.ts";
+import {
+    formattingProperties,
+    options,
+} from "./options.ts";
 
 export interface JSONSchema {
     $schema?: string;
@@ -183,6 +186,7 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
     ]));
     const descriptions: Record<string, string> = {
         compilerOptions: "Options for the TypeScript compiler.",
+        formattingOptions: "Formatting preferences, inherited per property and overriding editor formatting preferences.",
         typeAcquisition: "Options for automatic type acquisition in JavaScript projects.",
         extends: "Configuration file or files to inherit from. Later entries take precedence. Relative paths are resolved relative to the configuration file in which they occur.",
         files: "Files to include in the project, in addition to files matched by include.",
@@ -214,6 +218,22 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         definitions: {
             compilerOptions: optionObject(compilerProperties),
             typeAcquisition: optionObject(acquisitionProperties),
+            formattingOptions: {
+                type: ["object", "null"],
+                properties: Object.fromEntries(
+                    Object.entries(formattingProperties).map(([name, property]) => [
+                        name,
+                        nullable(
+                            "enum" in property ? stringEnumSchema(property.enum) : {
+                                type: property.type,
+                                ...(name === "newLineCharacter" ? { enum: ["", "\n", "\r\n", "\r"] } : {}),
+                                ...(property.type === "integer" ? { minimum: 0 } : {}),
+                            },
+                        ),
+                    ]),
+                ),
+                additionalProperties: false,
+            },
         },
     };
 }

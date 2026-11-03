@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/formatCompositeModuleDetection.ts] ////
+
+=== input.ts ===
+await
+>await    Promise.resolve({ value: 1 }) : { value: number; }
+
+    Promise.resolve({ value: 1 });
+>Promise.resolve({ value: 1 }) : Promise<{ value: number; }>
+>Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
+>Promise : PromiseConstructor
+>resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
+>{ value: 1 } : { value: number; }
+>value : number
+>1 : 1
+

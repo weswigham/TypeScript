@@ -1,0 +1,5 @@
+//// [input.ts]
+function value(input: number,other: number) {
+  return input+other;
+}
+

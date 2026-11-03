@@ -16,6 +16,33 @@ var BuildOpts = slices.Concat(commonOptionsWithBuild, OptionsForBuild)
 
 var commonOptionsWithBuild = []*CommandLineOption{
 	{
+		Name:                     "format",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Format_input_files_before_compiling,
+		DefaultValueDescription:  false,
+	},
+	{
+		Name:                     "formatOnly",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Format_input_files_without_checking_or_emitting_JavaScript_or_declarations,
+		DefaultValueDescription:  false,
+	},
+	{
+		Name:                     "formatDiagnostics",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Report_formatting_changes_as_diagnostics_instead_of_writing_input_files,
+		DefaultValueDescription:  false,
+	},
+	{
 		Name:                     "help",
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShortName:                "h",
@@ -1115,6 +1142,124 @@ var compilerOptionsDeclaration = &CommandLineOption{
 	ElementOptions: CommandLineCompilerOptionsMap,
 }
 
+var formattingOptionsDeclaration = &CommandLineOption{
+	Name: "formattingOptions",
+	Kind: CommandLineOptionTypeObject,
+	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
+		{
+			Name:     "baseIndentSize",
+			Kind:     CommandLineOptionTypeNumber,
+			minValue: 0,
+		},
+		{
+			Name: "convertTabsToSpaces",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name:     "indentSize",
+			Kind:     CommandLineOptionTypeNumber,
+			minValue: 0,
+		},
+		{
+			Name: "indentStyle",
+			Kind: CommandLineOptionTypeEnum,
+		},
+		{
+			Name: "newLineCharacter",
+			Kind: CommandLineOptionTypeString,
+		},
+		{
+			Name:     "tabSize",
+			Kind:     CommandLineOptionTypeNumber,
+			minValue: 0,
+		},
+		{
+			Name: "trimTrailingWhitespace",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "indentMultiLineObjectLiteralBeginningOnBlankLine",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "indentSwitchCase",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterCommaDelimiter",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterConstructor",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterFunctionKeywordForAnonymousFunctions",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterKeywordsInControlFlowStatements",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingEmptyBraces",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterSemicolonInForStatements",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceAfterTypeAssertion",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceBeforeAndAfterBinaryOperators",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceBeforeFunctionParenthesis",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "insertSpaceBeforeTypeAnnotation",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "placeOpenBraceOnNewLineForControlBlocks",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "placeOpenBraceOnNewLineForFunctions",
+			Kind: CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "semicolons",
+			Kind: CommandLineOptionTypeEnum,
+		},
+	}),
+}
+
 var typeAcquisitionDeclaration = &CommandLineOption{
 	Name:           "typeAcquisition",
 	Kind:           CommandLineOptionTypeObject,
@@ -1143,6 +1288,7 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 	Kind: CommandLineOptionTypeObject,
 	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
 		compilerOptionsDeclaration,
+		formattingOptionsDeclaration,
 		typeAcquisitionDeclaration,
 		extendsOptionDeclaration,
 		{
@@ -1168,6 +1314,18 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 		compileOnSaveCommandLineOption,
 	}),
 }
+
+var indentStyleFormattingOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "none", Value: 0},
+	{Key: "block", Value: 1},
+	{Key: "smart", Value: 2},
+})
+
+var semicolonsFormattingOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "ignore", Value: "ignore"},
+	{Key: "insert", Value: "insert"},
+	{Key: "remove", Value: "remove"},
+})
 
 var LibMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "es5", Value: "lib.es5.d.ts"},
@@ -1352,6 +1510,8 @@ var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[
 })
 
 var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
+	"indentStyle":      indentStyleFormattingOptionMap,
+	"semicolons":       semicolonsFormattingOptionMap,
 	"lib":              LibMap,
 	"moduleResolution": moduleResolutionOptionMap,
 	"module":           moduleOptionMap,

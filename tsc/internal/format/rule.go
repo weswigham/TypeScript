@@ -1,12 +1,16 @@
 package format
 
-import "github.com/microsoft/TypeScript/tsc/internal/ast"
+import (
+	"github.com/microsoft/TypeScript/tsc/internal/ast"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+)
 
 type ruleImpl struct {
-	debugName string
-	context   []contextPredicate
-	action    ruleAction
-	flags     ruleFlags
+	debugName  string
+	context    []contextPredicate
+	action     ruleAction
+	flags      ruleFlags
+	diagnostic *diagnostics.Message
 }
 
 func (r ruleImpl) Action() ruleAction {
@@ -23,6 +27,21 @@ func (r ruleImpl) Flags() ruleFlags {
 
 func (r ruleImpl) String() string {
 	return r.debugName
+}
+
+func (r ruleImpl) Diagnostic(context *FormattingContext) *diagnostics.Message {
+	if context.nextTokenSpan.Kind == ast.KindLessThanToken {
+		switch context.nextTokenParent.Kind {
+		case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement, ast.KindJsxOpeningFragment:
+			switch r.diagnostic {
+			case diagnostics.Expected_a_space_before_the_binary_operator_1:
+				return diagnostics.Expected_a_space_before_1
+			case diagnostics.Unexpected_whitespace_before_the_binary_operator_1:
+				return diagnostics.Unexpected_whitespace_before_1
+			}
+		}
+	}
+	return r.diagnostic
 }
 
 type tokenRange struct {
@@ -42,13 +61,17 @@ type ruleSpec struct {
  * whitespace annotation be between these tokens via the action param.
  *
  * @param debugName Name to print
+ * @param diagnostic Message for a violated rule; nil is allowed for non-editing rules
  * @param left The left side of the comparison
  * @param right The right side of the comparison
  * @param context A set of filters to narrow down the space in which this formatter rule applies
  * @param action a declaration of the expected whitespace
  * @param flags whether the rule deletes a line or not, defaults to no-op
  */
-func rule(debugName string, left any, right any, context []contextPredicate, action ruleAction, flags ...ruleFlags) ruleSpec {
+func rule(debugName string, diagnostic *diagnostics.Message, left any, right any, context []contextPredicate, action ruleAction, flags ...ruleFlags) ruleSpec {
+	if diagnostic == nil && action&^ruleActionStopAction != ruleActionNone {
+		panic("Formatting rule " + debugName + " requires a diagnostic")
+	}
 	flag := ruleFlagsNone
 	if len(flags) > 0 {
 		flag = flags[0]
@@ -56,10 +79,11 @@ func rule(debugName string, left any, right any, context []contextPredicate, act
 	leftRange := toTokenRange(left)
 	rightRange := toTokenRange(right)
 	rule := &ruleImpl{
-		debugName: debugName,
-		context:   context,
-		action:    action,
-		flags:     flag,
+		debugName:  debugName,
+		context:    context,
+		action:     action,
+		flags:      flag,
+		diagnostic: diagnostic,
 	}
 	return ruleSpec{
 		leftTokenRange:  leftRange,

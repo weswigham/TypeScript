@@ -24,6 +24,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
+	"github.com/microsoft/TypeScript/tsc/internal/execute/tsc"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/outputpaths"
 	"github.com/microsoft/TypeScript/tsc/internal/parser"
@@ -213,6 +214,9 @@ func CompileFilesEx(
 	config.ParsedConfig.ContentMappers = contentMappers
 	config.ConfigFile = configFile
 	config.Errors = errors
+	if tsconfig != nil {
+		config.ParsedConfig.FormattingOptions = tsconfig.FormattingOptions()
+	}
 	var contentMapperProject contentmapper.Project
 	if contentMapperHost != nil {
 		contentMapperProject = contentMapperHost.Project(contentmapper.ProjectSpec{
@@ -222,10 +226,27 @@ func CompileFilesEx(
 		})
 		defer contentMapperProject.Close()
 	}
-	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperProject)
-	result := compileFilesWithHost(host, config, harnessOptions)
+	formatHost := compiler.NewCompilerHost(fs.(*OutputRecorderFS).FS, bundled.LibPath(), nil, nil, contentMapperProject)
+	formatted := tsc.FormatInputFiles(context.Background(), formatHost, config)
+	cachedHost := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperProject)
+	host := tsc.WithFormattingSourceFiles(cachedHost, formatted.SourceFiles)
+	var result *CompilationResult
+	if compilerOptions.FormatOnly.IsTrue() {
+		program := createProgram(host, config)
+		result = newCompilationResult(host, currentDirectory, compilerOptions, program, &compiler.EmitResult{EmitSkipped: true}, formatted.Diagnostics, harnessOptions)
+	} else {
+		result = compileFilesWithHost(host, config, harnessOptions)
+		result.Diagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.Diagnostics, formatted.Diagnostics))
+	}
+	if tsc.FormattingEnabled(compilerOptions) {
+		for _, name := range formatted.InputFiles {
+			if text, ok := fs.ReadFile(name); ok {
+				result.Formatted = append(result.Formatted, &TestFile{UnitName: name.AsString(), Content: text})
+			}
+		}
+	}
 	result.Symlinks = symlinks
-	result.Trace = host.tracer.String()
+	result.Trace = cachedHost.tracer.String()
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := compilerOptions.Clone()
@@ -696,6 +717,7 @@ func compileFilesWithHost(
 }
 
 type CompilationResult struct {
+	Formatted        []*TestFile
 	Diagnostics      []*ast.Diagnostic
 	Result           *compiler.EmitResult
 	Program          compiler.ProgramLike

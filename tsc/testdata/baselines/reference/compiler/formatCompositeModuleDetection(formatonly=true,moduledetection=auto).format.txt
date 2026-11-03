@@ -1,0 +1,3 @@
+//// [input.ts]
+await
+    Promise.resolve({ value: 1 });

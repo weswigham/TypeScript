@@ -108,8 +108,9 @@ type CompileTimes struct {
 	ChangesComputeTime time.Duration
 }
 type CompileAndEmitResult struct {
-	Diagnostics []*ast.Diagnostic
-	EmitResult  *compiler.EmitResult
-	Status      ExitStatus
-	times       *CompileTimes
+	Diagnostics            []*ast.Diagnostic
+	CompilationDiagnostics []*ast.Diagnostic
+	EmitResult             *compiler.EmitResult
+	Status                 ExitStatus
+	times                  *CompileTimes
 }

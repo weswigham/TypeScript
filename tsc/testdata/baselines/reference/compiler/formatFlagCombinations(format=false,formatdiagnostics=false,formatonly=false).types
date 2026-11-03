@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/formatFlagCombinations.ts] ////
+
+=== formatFlagCombinations.ts ===
+export const value:string=1;
+>value : string
+>1 : 1
+

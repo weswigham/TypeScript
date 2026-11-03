@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"slices"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/astnav"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/debug"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsutil"
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 	"github.com/microsoft/TypeScript/tsc/internal/stringutil"
@@ -182,7 +184,9 @@ type formatSpanWorker struct {
 	visitingNodeStartLine            int
 	visitingUndecoratedNodeStartLine int
 
-	currentRules []*ruleImpl
+	currentRules        []*ruleImpl
+	diagnosticCollector *formattingDiagnosticCollector
+	currentDiagnostic   formattingDiagnostic
 }
 
 func newFormatSpanWorker(
@@ -196,15 +200,16 @@ func newFormatSpanWorker(
 	sourceFile *ast.SourceFile,
 ) *formatSpanWorker {
 	return &formatSpanWorker{
-		ctx:                ctx,
-		originalRange:      originalRange,
-		enclosingNode:      enclosingNode,
-		initialIndentation: initialIndentation,
-		delta:              delta,
-		requestKind:        requestKind,
-		rangeContainsError: rangeContainsError,
-		sourceFile:         sourceFile,
-		currentRules:       make([]*ruleImpl, 0, 32), // increaseInsertionIndex should assert there are no more than 32 rules in a given bucket
+		ctx:                 ctx,
+		originalRange:       originalRange,
+		enclosingNode:       enclosingNode,
+		initialIndentation:  initialIndentation,
+		delta:               delta,
+		requestKind:         requestKind,
+		rangeContainsError:  rangeContainsError,
+		sourceFile:          sourceFile,
+		currentRules:        make([]*ruleImpl, 0, 32), // increaseInsertionIndex should assert there are no more than 32 rules in a given bucket
+		diagnosticCollector: getFormattingDiagnosticCollector(ctx),
 	}
 }
 
@@ -698,6 +703,14 @@ func (w *formatSpanWorker) processPair(currentItem TextRangeWithKind, currentSta
 }
 
 func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange TextRangeWithKind, previousStartLine int, currentRange TextRangeWithKind, currentStartLine int) LineAction {
+	if w.diagnosticCollector != nil {
+		previous := w.currentDiagnostic
+		w.currentDiagnostic = formattingDiagnostic{message: rule.Diagnostic(w.formattingContext), args: []any{
+			w.sourceFile.Text()[previousRange.Loc.Pos():previousRange.Loc.End()],
+			w.sourceFile.Text()[currentRange.Loc.Pos():currentRange.Loc.End()],
+		}}
+		defer func() { w.currentDiagnostic = previous }()
+	}
 	onLaterLine := currentStartLine != previousStartLine
 	switch rule.Action() {
 	case ruleActionStopProcessingSpaceActions:
@@ -822,6 +835,9 @@ func (w *formatSpanWorker) trimTrailingWitespacesForPositions(startPos int, endP
 }
 
 func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int, r TextRangeWithKind) {
+	previous := w.currentDiagnostic
+	w.currentDiagnostic = formattingDiagnostic{message: diagnostics.Trailing_whitespace_is_not_allowed}
+	defer func() { w.currentDiagnostic = previous }()
 	lineStarts := scanner.GetECMALineStarts(w.sourceFile)
 	for line := line1; line < line2; line++ {
 		lineStartPosition := int(lineStarts[line])
@@ -1023,20 +1039,40 @@ func createTextChangeFromStartLength(start int, length int, newText string) core
 
 func (w *formatSpanWorker) recordDelete(start int, length int) {
 	if length != 0 {
-		w.edits = append(w.edits, createTextChangeFromStartLength(start, length, ""))
+		w.recordEdit(createTextChangeFromStartLength(start, length, ""))
 	}
 }
 
 func (w *formatSpanWorker) recordReplace(start int, length int, newText string) {
-	if length != 0 || newText != "" {
-		w.edits = append(w.edits, createTextChangeFromStartLength(start, length, newText))
+	if w.sourceFile.Text()[start:start+length] != newText {
+		w.recordEdit(createTextChangeFromStartLength(start, length, newText))
 	}
 }
 
 func (w *formatSpanWorker) recordInsert(start int, text string) {
 	if text != "" {
-		w.edits = append(w.edits, createTextChangeFromStartLength(start, 0, text))
+		w.recordEdit(createTextChangeFromStartLength(start, 0, text))
 	}
+}
+
+func (w *formatSpanWorker) recordEdit(edit core.TextChange) {
+	w.edits = append(w.edits, edit)
+	if w.diagnosticCollector == nil {
+		return
+	}
+	reason := w.currentDiagnostic
+	if reason.message == nil {
+		columns := 0
+		for _, character := range edit.NewText {
+			if character == '\t' && w.formattingContext.Options.TabSize > 0 {
+				columns += w.formattingContext.Options.TabSize - columns%w.formattingContext.Options.TabSize
+			} else {
+				columns++
+			}
+		}
+		reason = formattingDiagnostic{message: diagnostics.Expected_indentation_of_0_columns, args: []any{strconv.Itoa(columns)}}
+	}
+	w.diagnosticCollector.reasons[edit] = reason
 }
 
 func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenInfo, parent *ast.Node, dynamicIndenation *dynamicIndenter, container *ast.Node, isListEndToken bool) {

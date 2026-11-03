@@ -69,7 +69,7 @@ export interface StoredDeclaration extends Declaration {
 
 export interface RootDeclaration extends Declaration {
     variable?: string;
-    elementOptions?: "compilerOptions" | "typeAcquisition" | "extends";
+    elementOptions?: "compilerOptions" | "typeAcquisition" | "formattingOptions" | "extends";
 }
 
 export type DeclarationGroup = "commonOptionsWithBuild" | "optionsForCompiler";

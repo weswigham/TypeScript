@@ -55,6 +55,36 @@ func TestFormatNoTrailingSpace(t *testing.T) {
 	}
 }
 
+func TestFormatProducesNoNoOpEdits(t *testing.T) {
+	t.Parallel()
+	for _, text := range []string{
+		"/** description\n * second line\n */\nexport const value = 1;\n",
+		"function value() {\n    /* first line\n     * second line\n     */\n    return 1;\n}\n",
+		"/** \u03bb \U0001f600\r\n * second line\r\n */\r\nexport const value = 1;\r\n",
+	} {
+		t.Run(text, func(t *testing.T) {
+			t.Parallel()
+			newLine := "\n"
+			if strings.Contains(text, "\r\n") {
+				newLine = "\r\n"
+			}
+			options := lsutil.GetDefaultFormatCodeSettings()
+			options.NewLineCharacter = newLine
+			ctx := format.WithFormatCodeSettings(t.Context(), options, newLine)
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: "/input.ts", PathKey: "/input.ts"}, text, core.ScriptKindTS)
+			for _, edits := range [][]core.TextChange{
+				format.FormatDocument(ctx, file),
+				format.FormatSelection(ctx, file, 0, len(text)),
+			} {
+				for _, edit := range edits {
+					assert.Assert(t, text[edit.Pos():edit.End()] != edit.NewText)
+				}
+				assert.Equal(t, len(edits), 0)
+			}
+		})
+	}
+}
+
 func TestFormatBulkTrivia(t *testing.T) {
 	t.Parallel()
 	for _, test := range []struct {

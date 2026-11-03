@@ -1,0 +1,33 @@
+tsconfig.json(3,9): error TS6266: Option 'format' can only be specified on command line.
+tsconfig.json(4,9): error TS6266: Option 'formatOnly' can only be specified on command line.
+tsconfig.json(5,9): error TS6266: Option 'formatDiagnostics' can only be specified on command line.
+tsconfig.json(8,23): error TS5024: Compiler option 'indentSize' requires a value of type number.
+tsconfig.json(9,9): error TS5023: Unknown compiler option 'unknownFormattingOption'.
+
+
+==== tsconfig.json (5 errors) ====
+    {
+        "compilerOptions": {
+            "format": true,
+            ~~~~~~~~
+!!! error TS6266: Option 'format' can only be specified on command line.
+            "formatOnly": true,
+            ~~~~~~~~~~~~
+!!! error TS6266: Option 'formatOnly' can only be specified on command line.
+            "formatDiagnostics": true
+            ~~~~~~~~~~~~~~~~~~~
+!!! error TS6266: Option 'formatDiagnostics' can only be specified on command line.
+        },
+        "formattingOptions": {
+            "indentSize": "two",
+                          ~~~~~
+!!! error TS5024: Compiler option 'indentSize' requires a value of type number.
+            "unknownFormattingOption": true
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5023: Unknown compiler option 'unknownFormattingOption'.
+        },
+        "files": ["input.ts"]
+    }
+==== input.ts (0 errors) ====
+    const value=1;
+    

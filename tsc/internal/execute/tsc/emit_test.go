@@ -9,8 +9,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/microsoft/TypeScript/tsc/internal/ast"
+	"github.com/microsoft/TypeScript/tsc/internal/bundled"
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
@@ -18,6 +21,79 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
+
+func TestFormattingDiagnosticsDoNotBlockEmit(t *testing.T) {
+	t.Parallel()
+	for _, incrementalMode := range []bool{false, true} {
+		name := "regular"
+		if incrementalMode {
+			name = "incremental"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			for _, test := range []struct {
+				name        string
+				text        string
+				emitSkipped bool
+			}{
+				{"formatting only", "export const value=1;\n", false},
+				{"semantic error still blocks emit", "export const value:string=1;\n", true},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					t.Parallel()
+					fs := bundled.WrapFS(vfstest.FromMap(map[string]any{"/project/input.ts": test.text}, tspath.CaseSensitive))
+					sys := &timingTestSystem{fs: fs, clock: &controlledClock{now: time.Unix(0, 0)}}
+					options := &core.CompilerOptions{
+						Format:            core.TSTrue,
+						FormatDiagnostics: core.TSTrue,
+						NoEmitOnError:     core.TSTrue,
+						Declaration:       core.TSTrue,
+						Incremental:       core.BoolToTristate(incrementalMode),
+					}
+					if incrementalMode {
+						options.TsBuildInfoFile = "/project/cache.tsbuildinfo"
+					}
+					config := tsoptions.NewParsedCommandLine(options, []tspath.RootedFilePath{"/project/input.ts"}, nil, "/project", tspath.CaseSensitive)
+					host := compiler.NewCompilerHost(fs, bundled.LibPath(), nil, nil, nil)
+					formatted := FormatInputFiles(t.Context(), host, config)
+					assert.Assert(t, len(formatted.Diagnostics) > 0)
+					program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: WithFormattingSourceFiles(host, formatted.SourceFiles)})
+					var programLike compiler.ProgramLike = program
+					if incrementalMode {
+						programLike = incremental.NewProgram(program, nil, incremental.CreateHost(host), sys.Now, false)
+					}
+					result, _ := EmitAndReportStatistics(EmitInput{
+						Sys:                   sys,
+						Program:               program,
+						ProgramLike:           programLike,
+						Config:                config,
+						FormattingDiagnostics: formatted.Diagnostics,
+						ReportDiagnostic:      QuietDiagnosticReporter,
+						ReportErrorSummary:    QuietDiagnosticsReporter,
+						Writer:                io.Discard,
+						CompileTimes:          &CompileTimes{},
+					})
+					assert.Equal(t, result.EmitResult.EmitSkipped, test.emitSkipped)
+					assert.Equal(t, len(result.CompilationDiagnostics) > 0, test.emitSkipped)
+					expectedStatus := ExitStatusDiagnosticsPresent_OutputsGenerated
+					if test.emitSkipped {
+						expectedStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
+					}
+					assert.Equal(t, result.Status, expectedStatus)
+					assert.Equal(t, fs.FileExists("/project/input.js"), !test.emitSkipped)
+					assert.Equal(t, fs.FileExists("/project/input.d.ts"), !test.emitSkipped)
+					assert.Assert(t, core.Some(result.Diagnostics, func(d *ast.Diagnostic) bool {
+						return d.Code() == diagnostics.Expected_a_space_before_the_binary_operator_1.Code()
+					}))
+					assert.Equal(t, core.Some(result.Diagnostics, func(d *ast.Diagnostic) bool { return d.Code() == 2322 }), test.emitSkipped)
+					text, ok := fs.ReadFile("/project/input.ts")
+					assert.Assert(t, ok)
+					assert.Equal(t, text, test.text)
+				})
+			}
+		})
+	}
+}
 
 type contentMapperLoggingTestSystem struct {
 	*timingTestSystem

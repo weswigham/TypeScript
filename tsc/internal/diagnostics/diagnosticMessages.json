@@ -8952,6 +8952,170 @@
         "category": "Error",
         "code": 18122
     },
+    "Format input files before compiling.": {
+        "category": "Message",
+        "code": 18125
+    },
+    "Format input files without checking or emitting JavaScript or declarations.": {
+        "category": "Message",
+        "code": 18126
+    },
+    "Report formatting changes as diagnostics instead of writing input files.": {
+        "category": "Message",
+        "code": 18127
+    },
+    "Formatting change required: replace {0} with {1}.": {
+        "category": "Error",
+        "code": 18128
+    },
+    "Invalid formatting line range '{0}'. Expected positive, inclusive line ranges such as '120-500,1001-2100'.": {
+        "category": "Error",
+        "code": 18129
+    },
+    "Formatting line range '{0}' is outside file '{1}'.": {
+        "category": "Error",
+        "code": 18130
+    },
+    "File line ranges require '--formatOnly'.": {
+        "category": "Error",
+        "code": 18131
+    },
+    "Formatting line ranges cannot be combined with '--watch'.": {
+        "category": "Error",
+        "code": 18132
+    },
+    "Expected a space before the binary operator '{1}'.": {
+        "category": "Error",
+        "code": 18133
+    },
+    "Expected a space after the binary operator '{0}'.": {
+        "category": "Error",
+        "code": 18134
+    },
+    "Expected indentation of {0} columns.": {
+        "category": "Error",
+        "code": 18135
+    },
+    "Trailing whitespace is not allowed.": {
+        "category": "Error",
+        "code": 18136
+    },
+    "Expected a space between '{0}' and '{1}'.": {
+        "category": "Error",
+        "code": 18137
+    },
+    "Unexpected whitespace between '{0}' and '{1}'.": {
+        "category": "Error",
+        "code": 18138
+    },
+    "Expected a line break between '{0}' and '{1}'.": {
+        "category": "Error",
+        "code": 18139
+    },
+    "Expected a space before '{1}'.": {
+        "category": "Error",
+        "code": 18140
+    },
+    "Expected a space after '{0}'.": {
+        "category": "Error",
+        "code": 18141
+    },
+    "Unexpected whitespace before '{1}'.": {
+        "category": "Error",
+        "code": 18142
+    },
+    "Unexpected whitespace after '{0}'.": {
+        "category": "Error",
+        "code": 18143
+    },
+    "Expected a space before the function parameter list.": {
+        "category": "Error",
+        "code": 18144
+    },
+    "Unexpected whitespace before the function parameter list.": {
+        "category": "Error",
+        "code": 18145
+    },
+    "Unexpected whitespace before the argument list.": {
+        "category": "Error",
+        "code": 18146
+    },
+    "Expected the opening brace of the function body on a new line.": {
+        "category": "Error",
+        "code": 18147
+    },
+    "Expected a space before the function body.": {
+        "category": "Error",
+        "code": 18148
+    },
+    "Expected the opening brace of the control flow block on a new line.": {
+        "category": "Error",
+        "code": 18149
+    },
+    "Expected a space before the control flow block.": {
+        "category": "Error",
+        "code": 18150
+    },
+    "Expected the opening brace of the declaration body on a new line.": {
+        "category": "Error",
+        "code": 18151
+    },
+    "Expected a space before the declaration body.": {
+        "category": "Error",
+        "code": 18152
+    },
+    "Expected a space before the type annotation.": {
+        "category": "Error",
+        "code": 18153
+    },
+    "Unexpected whitespace before the type annotation.": {
+        "category": "Error",
+        "code": 18154
+    },
+    "Expected a semicolon at the end of the statement.": {
+        "category": "Error",
+        "code": 18155
+    },
+    "Unnecessary semicolon.": {
+        "category": "Error",
+        "code": 18156
+    },
+    "Unexpected whitespace before the binary operator '{1}'.": {
+        "category": "Error",
+        "code": 18157
+    },
+    "Unexpected whitespace after the binary operator '{0}'.": {
+        "category": "Error",
+        "code": 18158
+    },
+    "Expected a space before the JSX attribute.": {
+        "category": "Error",
+        "code": 18159
+    },
+    "Expected a space before the self-closing JSX tag terminator.": {
+        "category": "Error",
+        "code": 18160
+    },
+    "Unexpected whitespace inside the JSX tag terminator.": {
+        "category": "Error",
+        "code": 18161
+    },
+    "Expected a space after the decorator.": {
+        "category": "Error",
+        "code": 18162
+    },
+    "Unexpected whitespace before the non-null assertion operator.": {
+        "category": "Error",
+        "code": 18163
+    },
+    "Expected a line break before the closing brace.": {
+        "category": "Error",
+        "code": 18164
+    },
+    "Expected a line break after the opening brace.": {
+        "category": "Error",
+        "code": 18165
+    },
     "Content mapper extension '{0}' must not contain path separators.": {
         "category": "Error",
         "code": 18123

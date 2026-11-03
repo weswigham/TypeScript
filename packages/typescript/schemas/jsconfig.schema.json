@@ -19,6 +19,15 @@
             "description": "Options for the TypeScript compiler.",
             "markdownDescription": "Options for the TypeScript compiler.\n\nSee the [TSConfig reference](https://www.typescriptlang.org/tsconfig/)."
         },
+        "formattingOptions": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/formattingOptions"
+                }
+            ],
+            "description": "Formatting preferences, inherited per property and overriding editor formatting preferences.",
+            "markdownDescription": "Formatting preferences, inherited per property and overriding editor formatting preferences."
+        },
         "typeAcquisition": {
             "allOf": [
                 {
@@ -2202,6 +2211,318 @@
                 }
             },
             "additionalProperties": true
+        },
+        "formattingOptions": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "properties": {
+                "baseIndentSize": {
+                    "anyOf": [
+                        {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "convertTabsToSpaces": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "indentSize": {
+                    "anyOf": [
+                        {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "indentStyle": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "anyOf": [
+                                {
+                                    "enum": [
+                                        "none",
+                                        "block",
+                                        "smart"
+                                    ]
+                                },
+                                {
+                                    "pattern": "^([Nn][Oo][Nn][Ee]|[Bb][Ll][Oo][Cc][Kk]|[Ss][Mm][Aa][Rr][Tt])$"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "newLineCharacter": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "",
+                                "\n",
+                                "\r\n",
+                                "\r"
+                            ]
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "tabSize": {
+                    "anyOf": [
+                        {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "trimTrailingWhitespace": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "indentMultiLineObjectLiteralBeginningOnBlankLine": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "indentSwitchCase": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterCommaDelimiter": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterConstructor": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterFunctionKeywordForAnonymousFunctions": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterKeywordsInControlFlowStatements": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterSemicolonInForStatements": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceAfterTypeAssertion": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceBeforeAndAfterBinaryOperators": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceBeforeFunctionParenthesis": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "insertSpaceBeforeTypeAnnotation": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "placeOpenBraceOnNewLineForControlBlocks": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "placeOpenBraceOnNewLineForFunctions": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "semicolons": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "anyOf": [
+                                {
+                                    "enum": [
+                                        "ignore",
+                                        "insert",
+                                        "remove"
+                                    ]
+                                },
+                                {
+                                    "pattern": "^([Ii][Gg][Nn][Oo][Rr][Ee]|[Ii][Nn][Ss][Ee][Rr][Tt]|[Rr][Ee][Mm][Oo][Vv][Ee])$"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            },
+            "additionalProperties": false
         }
     }
 }

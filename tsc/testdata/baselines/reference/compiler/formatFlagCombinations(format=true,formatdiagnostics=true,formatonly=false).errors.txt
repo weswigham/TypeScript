@@ -1,0 +1,16 @@
+formatFlagCombinations.ts(1,14): error TS2322: Type 'number' is not assignable to type 'string'.
+formatFlagCombinations.ts(1,20): error TS18141: Expected a space after ':'.
+formatFlagCombinations.ts(1,26): error TS18133: Expected a space before the binary operator '='.
+formatFlagCombinations.ts(1,27): error TS18134: Expected a space after the binary operator '='.
+
+
+==== formatFlagCombinations.ts (4 errors) ====
+    export const value:string=1;
+                 ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+                       
+!!! error TS18141: Expected a space after ':'.
+                             
+!!! error TS18133: Expected a space before the binary operator '='.
+                              
+!!! error TS18134: Expected a space after the binary operator '='.

@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/formatNoEmitWhitespace.ts] ////
+
+=== input.ts ===
+export function value(input: number) {
+>value : (input: number) => { value: number; }
+>input : number
+
+	const result = { value: input + 1 }
+>result : { value: number; }
+>{ value: input + 1 } : { value: number; }
+>value : number
+>input + 1 : number
+>input : number
+>1 : 1
+
+	return result
+>result : { value: number; }
+}

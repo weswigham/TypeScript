@@ -305,7 +305,7 @@ function accepts(schema: JSONSchema, value: unknown, root: JSONSchema): boolean 
     if (schema.type) {
         const types = Array.isArray(schema.type) ? schema.type : [schema.type];
         const type = value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
-        if (!types.includes(type)) return false;
+        if (!types.includes(type) && !(type === "number" && types.includes("integer") && Number.isInteger(value))) return false;
     }
     if (schema.enum && !schema.enum.some(item => item === value)) return false;
     if (typeof value === "string") {
@@ -327,6 +327,19 @@ function accepts(schema: JSONSchema, value: unknown, root: JSONSchema): boolean 
     }
     return true;
 }
+
+test("formatting schemas validate inherited editor settings without admitting CLI flags", () => {
+    for (const kind of ["tsconfig", "jsconfig"] as const) {
+        const schema = generateConfigSchema(kind);
+        assert(accepts(schema, { formattingOptions: { indentSize: 2, tabSize: 0, insertSpaceAfterCommaDelimiter: false, indentStyle: "SMART", semicolons: null } }, schema));
+        for (const formattingOptions of [{ indentSize: -1 }, { indentSize: 1.5 }, { unknown: true }, { newLineCharacter: "text" }, { semicolons: "never" }]) {
+            assert(!accepts(schema, { formattingOptions }, schema), JSON.stringify(formattingOptions));
+        }
+        for (const name of ["format", "formatOnly", "formatDiagnostics"]) {
+            assert.equal(schema.definitions.compilerOptions.properties?.[name], undefined);
+        }
+    }
+});
 
 test("root option documentation is outside draft-07 references", () => {
     for (const kind of ["tsconfig", "jsconfig"] as const) {
@@ -406,7 +419,7 @@ test("schemas preserve SchemaStore's extensible and partial option objects", () 
 test("every enum value accepts mixed casing without broadening the accepted names", () => {
     const schema = generateConfigSchema("tsconfig");
     for (const [name, map] of Object.entries(options.enumMaps)) {
-        const option = schema.definitions.compilerOptions.properties[name];
+        const option = schema.definitions.compilerOptions.properties[name] ?? schema.definitions.formattingOptions.properties[name];
         assert(option, name);
         const list = options.compilerOptions.some(option => option.name === name && optionKind(option) === "List");
         for (const entry of map.values) {

@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/json"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
+	"github.com/microsoft/TypeScript/tsc/internal/vfs"
 )
 
 type (
@@ -471,7 +472,8 @@ func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 }
 
 type BuildInfo struct {
-	Version string `json:"version,omitzero"`
+	Formatting *FormattingBuildInfo `json:"formatting,omitzero"`
+	Version    string               `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors                  bool             `json:"errors,omitzero"`
@@ -497,6 +499,81 @@ type BuildInfo struct {
 
 	// NonIncrementalProgram info
 	SemanticErrors bool `json:"semanticErrors,omitzero"`
+}
+
+type FormattingBuildInfo struct {
+	Options string                                  `json:"options"`
+	Files   *collections.OrderedMap[string, string] `json:"files"`
+	// Formatting updates the build-info timestamp without rebuilding outputs.
+	// Normal builds must not mistake that timestamp for a completed compilation.
+	CompilationPending bool `json:"compilationPending,omitzero"`
+}
+
+type FormattingState struct {
+	fs           vfs.FS
+	fileName     tspath.RootedFilePath
+	buildInfo    BuildInfo
+	previousText string
+}
+
+func readFormattingBuildInfo(fs vfs.FS, fileName tspath.RootedFilePath) (BuildInfo, string) {
+	var info BuildInfo
+	var text string
+	if fileName != "" {
+		text, _ = fs.ReadFile(fileName)
+	}
+	if json.Unmarshal([]byte(text), &info) != nil || !info.IsValidVersion() {
+		info = BuildInfo{Version: core.Version()}
+	}
+	return info, text
+}
+
+func ReadFormattingState(fs vfs.FS, fileName tspath.RootedFilePath, optionsHash string) *FormattingState {
+	info, text := readFormattingBuildInfo(fs, fileName)
+	formatting := &FormattingBuildInfo{Options: optionsHash, Files: &collections.OrderedMap[string, string]{}}
+	if previous := info.Formatting; previous != nil && previous.Options == optionsHash {
+		if previous.Files != nil {
+			formatting.Files = previous.Files.Clone()
+		}
+		formatting.CompilationPending = previous.CompilationPending
+	}
+	info.Formatting = formatting
+	return &FormattingState{fs: fs, fileName: fileName, buildInfo: info, previousText: text}
+}
+
+func (s *FormattingState) FileVersions() *collections.OrderedMap[string, string] {
+	return s.buildInfo.Formatting.Files
+}
+
+func (s *FormattingState) Save() error {
+	if s.fileName == "" {
+		return nil
+	}
+	text, err := json.Marshal(&s.buildInfo)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to marshal formatting build info: %v", err))
+	}
+	if string(text) == s.previousText {
+		return nil
+	}
+	s.buildInfo.Formatting.CompilationPending = true
+	text, err = json.Marshal(&s.buildInfo)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to marshal formatting build info: %v", err))
+	}
+	if err := s.fs.WriteFile(s.fileName, string(text)); err != nil {
+		return err
+	}
+	s.previousText = string(text)
+	return nil
+}
+
+func (b *BuildInfo) inheritFormatting(previous *FormattingBuildInfo) {
+	if previous != nil {
+		formatting := *previous
+		formatting.CompilationPending = false
+		b.Formatting = &formatting
+	}
 }
 
 func (b *BuildInfo) IsValidVersion() bool {

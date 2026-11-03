@@ -25,9 +25,10 @@ func TestParsedOptionsEquality(t *testing.T) {
 	check(t, &ParsedOptions{}, &ParsedOptions{})
 	makeOptions := func() *ParsedOptions {
 		result := &ParsedOptions{
-			CompilerOptions: &core.CompilerOptions{Strict: core.TSTrue},
-			TypeAcquisition: &core.TypeAcquisition{Enable: core.TSTrue, Include: []string{"a"}, Exclude: []string{"b"}},
-			FileNames:       []tspath.RootedFilePath{"/a.ts", "/b.ts"},
+			FormattingOptions: &core.FormattingOptions{IndentSize: new(2)},
+			CompilerOptions:   &core.CompilerOptions{Strict: core.TSTrue},
+			TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue, Include: []string{"a"}, Exclude: []string{"b"}},
+			FileNames:         []tspath.RootedFilePath{"/a.ts", "/b.ts"},
 			ProjectReferences: []*core.ProjectReference{
 				{Path: "/project", OriginalPath: "../project", Circular: true}, nil,
 			},
@@ -72,6 +73,7 @@ func TestParsedOptionsEquality(t *testing.T) {
 		change func(*ParsedOptions)
 	}{
 		{"compiler options", func(p *ParsedOptions) { p.CompilerOptions.Strict = core.TSFalse }},
+		{"formatting options", func(p *ParsedOptions) { p.FormattingOptions.IndentSize = new(4) }},
 		{"nil compiler options", func(p *ParsedOptions) { p.CompilerOptions = nil }},
 		{"nil type acquisition", func(p *ParsedOptions) { p.TypeAcquisition = nil }},
 		{"type acquisition enable", func(p *ParsedOptions) { p.TypeAcquisition.Enable = core.TSFalse }},

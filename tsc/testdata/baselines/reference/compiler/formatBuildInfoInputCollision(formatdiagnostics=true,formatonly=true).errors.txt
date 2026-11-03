@@ -1,0 +1,6 @@
+error TS5055: Cannot write file '/app/input.ts' because it would overwrite input file.
+
+
+!!! error TS5055: Cannot write file '/app/input.ts' because it would overwrite input file.
+==== /app/input.ts (0 errors) ====
+    export const value=1;

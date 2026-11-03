@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"runtime"
+	"slices"
 	"time"
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
@@ -29,18 +30,19 @@ func GetTraceWithWriterFromSys(w io.Writer, locale locale.Locale, testing Comman
 }
 
 type EmitInput struct {
-	Sys                System
-	ProgramLike        compiler.ProgramLike
-	Program            *compiler.Program
-	Config             *tsoptions.ParsedCommandLine
-	ReportDiagnostic   DiagnosticReporter
-	ReportErrorSummary DiagnosticsReporter
-	Writer             io.Writer
-	WriteFile          compiler.WriteFile
-	CompileTimes       *CompileTimes
-	Testing            CommandLineTesting
-	TestingMTimesCache *collections.SyncMap[tspath.PathKey, time.Time]
-	Tracing            *tracing.Tracing
+	FormattingDiagnostics []*ast.Diagnostic
+	Sys                   System
+	ProgramLike           compiler.ProgramLike
+	Program               *compiler.Program
+	Config                *tsoptions.ParsedCommandLine
+	ReportDiagnostic      DiagnosticReporter
+	ReportErrorSummary    DiagnosticsReporter
+	Writer                io.Writer
+	WriteFile             compiler.WriteFile
+	CompileTimes          *CompileTimes
+	Testing               CommandLineTesting
+	TestingMTimesCache    *collections.SyncMap[tspath.PathKey, time.Time]
+	Tracing               *tracing.Tracing
 }
 
 func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
@@ -111,7 +113,6 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			return diags
 		},
 	)
-
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !input.ProgramLike.Options().ListFilesOnly.IsTrue() {
 		emitStart := input.Sys.Now()
@@ -127,7 +128,8 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 		input.Testing.OnEmittedFiles(emitResult, input.TestingMTimesCache)
 	}
 
-	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	result.CompilationDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.CompilationDiagnostics, input.FormattingDiagnostics))
 	for _, diagnostic := range allDiagnostics {
 		input.ReportDiagnostic(diagnostic)
 	}

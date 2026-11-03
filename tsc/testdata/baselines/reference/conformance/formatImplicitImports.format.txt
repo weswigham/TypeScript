@@ -1,0 +1,12 @@
+//// [main.ts]
+import { value } from "./hidden/helper";
+import type { Local } from "./types";
+import type { Dependency } from "dep";
+export const result: Local = { value };
+//// [hidden/helper.ts]
+export function calculate() {
+  return 1 + 2;
+}
+export const value = calculate();
+//// [types.d.ts]
+export interface Local { value: number; }

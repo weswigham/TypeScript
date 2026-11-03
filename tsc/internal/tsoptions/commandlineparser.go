@@ -51,12 +51,15 @@ func ParseCommandLine(
 	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, fs, currentDirectory)
 	options := convertToOptionsWithAbsolutePaths(parser.options.Clone(), CommandLineCompilerOptionsMap, currentDirectory)
 	compilerOptions := convertMapToOptions(options, &compilerOptionsParser{CompilerOptions: &core.CompilerOptions{}}).CompilerOptions
+	ranges := parser.parseFormattingRanges(compilerOptions)
+	parser.errors = append(parser.errors, validateFormattingOptions(compilerOptions)...)
 	caseSensitivity := fs.CaseSensitivity()
 	result := NewParsedCommandLine(compilerOptions, core.Map(parser.fileNames, func(fileName string) tspath.RootedFilePath {
 		return tspath.ToRootedFilePath(fileName, currentDirectory)
 	}), nil, currentDirectory, caseSensitivity)
 	result.rootFileNamesForDiagnostics = parser.fileNames
 	result.Errors = parser.errors
+	result.FormattingRanges = ranges
 	result.Raw = parser.options
 	return result
 }
@@ -104,6 +107,21 @@ func ParseBuildCommandLine(
 	}
 	if result.CompilerOptions.Watch.IsTrue() && result.BuildOptions.Dry.IsTrue() {
 		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "dry"))
+	}
+	result.Errors = append(result.Errors, validateFormattingOptions(result.CompilerOptions)...)
+	if result.BuildOptions.Clean.IsTrue() {
+		for _, option := range []struct {
+			name    string
+			enabled bool
+		}{
+			{"format", compilerOptions.Format.IsTrue()},
+			{"formatOnly", compilerOptions.FormatOnly.IsTrue()},
+			{"formatDiagnostics", compilerOptions.FormatDiagnostics.IsTrue()},
+		} {
+			if option.enabled {
+				result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", option.name))
+			}
+		}
 	}
 
 	return result

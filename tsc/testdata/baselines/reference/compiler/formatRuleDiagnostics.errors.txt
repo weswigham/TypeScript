@@ -1,0 +1,50 @@
+input.tsx(1,22): error TS18141: Expected a space after ':'.
+input.tsx(1,29): error TS18141: Expected a space after ','.
+input.tsx(1,35): error TS18141: Expected a space after ':'.
+input.tsx(1,42): error TS18147: Expected the opening brace of the function body on a new line.
+input.tsx(2,1): error TS18135: Expected indentation of 2 columns.
+input.tsx(2,13): error TS18133: Expected a space before the binary operator '+'.
+input.tsx(2,14): error TS18134: Expected a space after the binary operator '+'.
+input.tsx(2,19): error TS18155: Expected a semicolon at the end of the statement.
+input.tsx(4,14): error TS18133: Expected a space before the binary operator '='.
+input.tsx(4,15): error TS18140: Expected a space before '<'.
+input.tsx(4,35): error TS18160: Expected a space before the self-closing JSX tag terminator.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "formattingOptions": {
+            "indentSize": 2,
+            "semicolons": "insert",
+            "placeOpenBraceOnNewLineForFunctions": true
+        },
+        "files": ["input.tsx"]
+    }
+    
+==== input.tsx (11 errors) ====
+    function value(input:number,other:number){
+                         
+!!! error TS18141: Expected a space after ':'.
+                                
+!!! error TS18141: Expected a space after ','.
+                                      
+!!! error TS18141: Expected a space after ':'.
+                                             
+!!! error TS18147: Expected the opening brace of the function body on a new line.
+    return input+other
+    
+!!! error TS18135: Expected indentation of 2 columns.
+                
+!!! error TS18133: Expected a space before the binary operator '+'.
+                 
+!!! error TS18134: Expected a space after the binary operator '+'.
+                      
+!!! error TS18155: Expected a semicolon at the end of the statement.
+    }
+    const element=<Item enabled={true}/>;
+                 
+!!! error TS18133: Expected a space before the binary operator '='.
+                  
+!!! error TS18140: Expected a space before '<'.
+                                      
+!!! error TS18160: Expected a space before the self-closing JSX tag terminator.

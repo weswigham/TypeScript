@@ -2251,6 +2251,18 @@ func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.PathKey())
 }
 
+// IsFormattingInput excludes dependencies and limits composite projects to their root file set.
+func (p *Program) IsFormattingInput(file *ast.SourceFile) bool {
+	if file.IsContentMapperSupplemental() {
+		return false
+	}
+	if p.Options().Composite.IsTrue() {
+		return p.CommandLine().FilePaths().Has(file.PathKey())
+	}
+	return !p.IsSourceFileDefaultLibrary(file.PathKey()) && !p.IsSourceFileFromExternalLibrary(file) &&
+		!file.FileName().ContainsLowercaseDirectorySequence("/node_modules/")
+}
+
 func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.PathKey) (moduleReference string, specifier *ast.Node) {
 	if result := p.jsxRuntimeImportSpecifiers[path]; result != nil {
 		return result.moduleReference, result.specifier

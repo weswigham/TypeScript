@@ -1,0 +1,5 @@
+//// [input.tsx]
+function value(input:number,other:number){
+return input+other
+}
+const element=<Item enabled={true}/>;

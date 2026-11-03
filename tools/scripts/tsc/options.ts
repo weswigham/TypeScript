@@ -1,8 +1,35 @@
+import preferenceSchema from "../../userPreferences.schema.json" with { type: "json" };
 import {
     type CompilerOptionType,
+    type Declaration,
     diagnostic,
     type OptionsModel,
 } from "./options-model.ts";
+
+export const formattingProperties = {
+    ...preferenceSchema.$defs.EditorSettings.properties,
+    ...preferenceSchema.$defs.FormatCodeSettings.properties,
+};
+
+export const formattingDeclarations: Declaration[] = Object.entries(formattingProperties).map(([name, property]) => ({
+    name,
+    kind: "enum" in property ? "Enum" : property.type === "boolean" ? "Boolean" : property.type === "integer" ? "Number" : "String",
+    ...(property.type === "integer" ? { minValue: 0 } : {}),
+}));
+
+export const formattingFields = Object.entries(formattingProperties).map(([name, property]) => {
+    const field = name[0].toUpperCase() + name.slice(1);
+    const enumName = "Formatting" + ("x-go-type" in property ? property["x-go-type"] : field);
+    const enumType = "x-go-underlying" in property ? property["x-go-underlying"] : "string";
+    return {
+        name,
+        field,
+        type: property.type === "boolean" ? "Tristate" : "enum" in property ? `*${enumName}` : property.type === "integer" ? "*int" : "*string",
+        enumName,
+        enumType,
+        values: "enum" in property ? property.enum : undefined,
+    };
+});
 
 export const pluginImportFields: { name: string; type: CompilerOptionType; }[] = [
     { name: "name", type: "string" },
@@ -1568,6 +1595,24 @@ export const options: OptionsModel = {
                 defaultValueDescription: false,
             },
         },
+        ...([
+            ["format", "Format", "Format input files before compiling."],
+            ["formatOnly", "FormatOnly", "Format input files without checking or emitting JavaScript or declarations."],
+            ["formatDiagnostics", "FormatDiagnostics", "Report formatting changes as diagnostics instead of writing input files."],
+        ] as const).map(([name, goName, description]) => ({
+            name,
+            goName,
+            type: "Tristate" as const,
+            internal: true,
+            declaration: {
+                group: "commonOptionsWithBuild" as const,
+                isCommandLineOnly: true,
+                showInSimplifiedHelpView: true,
+                category: diagnostic("Command-line Options"),
+                description: diagnostic(description),
+                defaultValueDescription: false,
+            },
+        })),
         {
             name: "runExternalCode",
             type: "Tristate",
@@ -1630,6 +1675,9 @@ export const options: OptionsModel = {
     // Preserve help and config output order independently of compiler fields.
     declarationOrder: {
         commonOptionsWithBuild: [
+            "format",
+            "formatOnly",
+            "formatDiagnostics",
             "help",
             "watch",
             "preserveWatchOutput",
@@ -1866,6 +1914,7 @@ export const options: OptionsModel = {
     buildOptionFieldOrder: ["dry", "force", "verbose", "builders", "stopBuildOnErrors", "clean"],
     rootOptions: [
         { name: "compilerOptions", kind: "Object", variable: "compilerOptionsDeclaration", elementOptions: "compilerOptions", documentationAnchor: "" },
+        { name: "formattingOptions", kind: "Object", variable: "formattingOptionsDeclaration", elementOptions: "formattingOptions", documentationAnchor: false },
         { name: "typeAcquisition", kind: "Object", variable: "typeAcquisitionDeclaration", elementOptions: "typeAcquisition" },
         { name: "extends", kind: "ListOrElement", variable: "extendsOptionDeclaration", category: diagnostic("File Management"), elementOptions: "extends" },
         { name: "references", kind: "List" },
@@ -1943,6 +1992,14 @@ export const options: OptionsModel = {
         },
     },
     enumMaps: {
+        indentStyle: {
+            goName: "indentStyleFormattingOptionMap",
+            values: ["none", "block", "smart"].map((name, value) => ({ name, value })),
+        },
+        semicolons: {
+            goName: "semicolonsFormattingOptionMap",
+            values: ["ignore", "insert", "remove"].map(name => ({ name, value: name })),
+        },
         lib: {
             goName: "LibMap",
             schemaOnlyValues: ["es2022.sharedmemory"],

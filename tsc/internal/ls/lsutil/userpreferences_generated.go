@@ -176,6 +176,94 @@ type UserPreferences struct {
 	WorkspaceSymbolsScope               WorkspaceSymbolsScope    `json:"workspaceSymbolsScope,omitempty"`
 }
 
+func (p FormatCodeSettings) WithOptions(options *core.FormattingOptions) FormatCodeSettings {
+	if options == nil {
+		return p
+	}
+	if options.BaseIndentSize != nil {
+		p.EditorSettings.BaseIndentSize = *options.BaseIndentSize
+	}
+	if !options.ConvertTabsToSpaces.IsUnknown() {
+		p.EditorSettings.ConvertTabsToSpaces = options.ConvertTabsToSpaces
+	}
+	if options.IndentSize != nil {
+		p.EditorSettings.IndentSize = *options.IndentSize
+	}
+	if options.IndentStyle != nil {
+		p.EditorSettings.IndentStyle = IndentStyle(*options.IndentStyle)
+	}
+	if options.NewLineCharacter != nil {
+		p.EditorSettings.NewLineCharacter = *options.NewLineCharacter
+	}
+	if options.TabSize != nil {
+		p.EditorSettings.TabSize = *options.TabSize
+	}
+	if !options.TrimTrailingWhitespace.IsUnknown() {
+		p.EditorSettings.TrimTrailingWhitespace = options.TrimTrailingWhitespace
+	}
+	if !options.IndentMultiLineObjectLiteralBeginningOnBlankLine.IsUnknown() {
+		p.IndentMultiLineObjectLiteralBeginningOnBlankLine = options.IndentMultiLineObjectLiteralBeginningOnBlankLine
+	}
+	if !options.IndentSwitchCase.IsUnknown() {
+		p.IndentSwitchCase = options.IndentSwitchCase
+	}
+	if !options.InsertSpaceAfterCommaDelimiter.IsUnknown() {
+		p.InsertSpaceAfterCommaDelimiter = options.InsertSpaceAfterCommaDelimiter
+	}
+	if !options.InsertSpaceAfterConstructor.IsUnknown() {
+		p.InsertSpaceAfterConstructor = options.InsertSpaceAfterConstructor
+	}
+	if !options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions.IsUnknown() {
+		p.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions
+	}
+	if !options.InsertSpaceAfterKeywordsInControlFlowStatements.IsUnknown() {
+		p.InsertSpaceAfterKeywordsInControlFlowStatements = options.InsertSpaceAfterKeywordsInControlFlowStatements
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces = options.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis
+	}
+	if !options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces.IsUnknown() {
+		p.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces
+	}
+	if !options.InsertSpaceAfterSemicolonInForStatements.IsUnknown() {
+		p.InsertSpaceAfterSemicolonInForStatements = options.InsertSpaceAfterSemicolonInForStatements
+	}
+	if !options.InsertSpaceAfterTypeAssertion.IsUnknown() {
+		p.InsertSpaceAfterTypeAssertion = options.InsertSpaceAfterTypeAssertion
+	}
+	if !options.InsertSpaceBeforeAndAfterBinaryOperators.IsUnknown() {
+		p.InsertSpaceBeforeAndAfterBinaryOperators = options.InsertSpaceBeforeAndAfterBinaryOperators
+	}
+	if !options.InsertSpaceBeforeFunctionParenthesis.IsUnknown() {
+		p.InsertSpaceBeforeFunctionParenthesis = options.InsertSpaceBeforeFunctionParenthesis
+	}
+	if !options.InsertSpaceBeforeTypeAnnotation.IsUnknown() {
+		p.InsertSpaceBeforeTypeAnnotation = options.InsertSpaceBeforeTypeAnnotation
+	}
+	if !options.PlaceOpenBraceOnNewLineForControlBlocks.IsUnknown() {
+		p.PlaceOpenBraceOnNewLineForControlBlocks = options.PlaceOpenBraceOnNewLineForControlBlocks
+	}
+	if !options.PlaceOpenBraceOnNewLineForFunctions.IsUnknown() {
+		p.PlaceOpenBraceOnNewLineForFunctions = options.PlaceOpenBraceOnNewLineForFunctions
+	}
+	if options.Semicolons != nil {
+		p.Semicolons = SemicolonPreference(*options.Semicolons)
+	}
+	return p
+}
+
 func parsePreferenceIncludeInlayParameterNameHints(value any) IncludeInlayParameterNameHints {
 	if value, ok := value.(string); ok {
 		switch strings.ToLower(value) {

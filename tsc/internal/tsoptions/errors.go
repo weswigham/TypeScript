@@ -102,7 +102,7 @@ func CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile *ast.Sou
 
 func extraKeyDiagnostics(s string) *diagnostics.Message {
 	switch s {
-	case "compilerOptions":
+	case "compilerOptions", "formattingOptions":
 		return diagnostics.Unknown_compiler_option_0
 	case "typeAcquisition":
 		return diagnostics.Unknown_type_acquisition_option_0
@@ -115,7 +115,7 @@ func extraKeyDiagnostics(s string) *diagnostics.Message {
 
 func extraKeyDidYouMeanDiagnostics(s string) *diagnostics.Message {
 	switch s {
-	case "compilerOptions":
+	case "compilerOptions", "formattingOptions":
 		return diagnostics.Unknown_compiler_option_0_Did_you_mean_1
 	case "typeAcquisition":
 		return diagnostics.Unknown_type_acquisition_option_0_Did_you_mean_1

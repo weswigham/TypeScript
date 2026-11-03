@@ -16,10 +16,20 @@ import (
 )
 
 type tscEdit struct {
-	caption         string
-	commandLineArgs []string
-	edit            func(*TestSys)
-	expectedDiff    string
+	caption           string
+	commandLineArgs   []string
+	edit              func(*TestSys)
+	expectedDiff      string
+	expectedDiffFiles []string
+}
+
+func (edit *tscEdit) acceptsDiff(differences []incrementalDiff) bool {
+	if edit.expectedDiff == "" {
+		return false
+	}
+	return edit.expectedDiffFiles == nil || !slices.ContainsFunc(differences, func(diff incrementalDiff) bool {
+		return !slices.Contains(edit.expectedDiffFiles, diff.fileName)
+	})
 }
 
 var noChange = &tscEdit{
@@ -127,11 +137,16 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			})
 			wg.RunAndWait()
 
-			diff := getDiffForIncremental(sys, nonIncrementalSys)
+			differences := getDiffForIncremental(sys, nonIncrementalSys)
+			var diffText strings.Builder
+			for _, difference := range differences {
+				diffText.WriteString(difference.text)
+			}
+			diff := diffText.String()
 			if diff != "" {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
 				baselineBuilder.WriteString(diff)
-				if do.expectedDiff == "" {
+				if !do.acceptsDiff(differences) {
 					unexpectedDiff.WriteString(fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff))
 				}
 			} else if do.expectedDiff != "" {
@@ -146,8 +161,13 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 	})
 }
 
-func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) string {
-	var diffBuilder strings.Builder
+type incrementalDiff struct {
+	fileName string
+	text     string
+}
+
+func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) []incrementalDiff {
+	var differences []incrementalDiff
 
 	nonIncrementalOutputs := nonIncrementalSys.fs.writtenFiles.ToSlice()
 	slices.Sort(nonIncrementalOutputs)
@@ -157,8 +177,7 @@ func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) 
 			strings.HasSuffix(nonIncrementalOutputText, ".readable.baseline.txt") {
 			// Just check existence
 			if !incrementalSys.fsFromFileMap().FileExists(nonIncrementalOutput) {
-				diffBuilder.WriteString(baseline.DiffText("nonIncremental "+nonIncrementalOutputText, "incremental "+nonIncrementalOutputText, "Exists", ""))
-				diffBuilder.WriteString("\n")
+				differences = append(differences, incrementalDiff{nonIncrementalOutputText, baseline.DiffText("nonIncremental "+nonIncrementalOutputText, "incremental "+nonIncrementalOutputText, "Exists", "") + "\n"})
 			}
 		} else {
 			nonIncrementalText, ok := nonIncrementalSys.fsFromFileMap().ReadFile(nonIncrementalOutput)
@@ -167,8 +186,7 @@ func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) 
 			}
 			incrementalText, ok := incrementalSys.fsFromFileMap().ReadFile(nonIncrementalOutput)
 			if !ok || incrementalText != nonIncrementalText {
-				diffBuilder.WriteString(baseline.DiffText("nonIncremental "+nonIncrementalOutputText, "incremental "+nonIncrementalOutputText, nonIncrementalText, incrementalText))
-				diffBuilder.WriteString("\n")
+				differences = append(differences, incrementalDiff{nonIncrementalOutputText, baseline.DiffText("nonIncremental "+nonIncrementalOutputText, "incremental "+nonIncrementalOutputText, nonIncrementalText, incrementalText) + "\n"})
 			}
 		}
 	}
@@ -176,9 +194,9 @@ func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) 
 	incrementalOutput := incrementalSys.getOutput(true)
 	nonIncrementalOutput := nonIncrementalSys.getOutput(true)
 	if incrementalOutput != nonIncrementalOutput {
-		diffBuilder.WriteString(baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalOutput, incrementalOutput))
+		differences = append(differences, incrementalDiff{"output.txt", baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalOutput, incrementalOutput)})
 	}
-	return diffBuilder.String()
+	return differences
 }
 
 func (test *tscInput) getBaselineSubFolder() string {

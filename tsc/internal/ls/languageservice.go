@@ -43,11 +43,13 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 }
 
 func (l *LanguageService) UserPreferences() lsutil.UserPreferences {
-	return l.activeConfig
+	preferences := l.activeConfig
+	preferences.FormatCodeSettings = l.FormatOptions()
+	return preferences
 }
 
 func (l *LanguageService) FormatOptions() lsutil.FormatCodeSettings {
-	return l.activeConfig.FormatCodeSettings
+	return l.activeConfig.FormatCodeSettings.WithOptions(l.program.CommandLine().FormattingOptions())
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName tspath.RootedFilePath) (*compiler.Program, *ast.SourceFile) {

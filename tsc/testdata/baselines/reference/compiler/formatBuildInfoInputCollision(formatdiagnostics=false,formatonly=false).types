@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/formatBuildInfoInputCollision.ts] ////
+
+=== /app/input.ts ===
+export const value=1;
+>value : 1
+>1 : 1
+

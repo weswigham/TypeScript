@@ -47,12 +47,13 @@ var impliedOptions = []impliedOption{
 
 // TSConfig represents the output structure for --showConfig
 type TSConfig struct {
-	CompilerOptions *collections.OrderedMap[string, any] `json:"compilerOptions"`
-	References      []any                                `json:"references,omitzero"`
-	Files           []string                             `json:"files,omitzero"`
-	Include         []string                             `json:"include,omitzero"`
-	Exclude         []string                             `json:"exclude,omitzero"`
-	CompileOnSave   *bool                                `json:"compileOnSave,omitzero"`
+	FormattingOptions *core.FormattingOptions              `json:"formattingOptions,omitzero"`
+	CompilerOptions   *collections.OrderedMap[string, any] `json:"compilerOptions"`
+	References        []any                                `json:"references,omitzero"`
+	Files             []string                             `json:"files,omitzero"`
+	Include           []string                             `json:"include,omitzero"`
+	Exclude           []string                             `json:"exclude,omitzero"`
+	CompileOnSave     *bool                                `json:"compileOnSave,omitzero"`
 }
 
 // ConvertToTSConfig generates a complete tsconfig representation for --showConfig output,
@@ -89,7 +90,8 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName tspa
 	addImpliedOptions(optionMap, configParseResult.CompilerOptions())
 
 	config := &TSConfig{
-		CompilerOptions: optionMap,
+		CompilerOptions:   optionMap,
+		FormattingOptions: configParseResult.FormattingOptions(),
 	}
 
 	// Add references

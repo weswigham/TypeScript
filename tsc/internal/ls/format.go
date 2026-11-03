@@ -40,7 +40,7 @@ func (l *LanguageService) ProvideFormatDocument(
 		return lsproto.TextEditsOrNull{}, nil
 	}
 	_, file := l.getProgramAndFile(documentURI)
-	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
+	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options).WithOptions(l.program.CommandLine().FormattingOptions())
 	var edits []*lsproto.TextEdit
 	if file.ContentMapper() == "" {
 		edits = l.toLSProtoTextEdits(file, l.getFormattingEditsForDocument(ctx, file, formatOpts))
@@ -158,7 +158,7 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 		return lsproto.TextEditsOrNull{}, nil
 	}
 	_, file := l.getProgramAndFile(documentURI)
-	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
+	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options).WithOptions(l.program.CommandLine().FormattingOptions())
 	if file.ContentMapper() != "" {
 		edits := l.getFormattingEditsForMappedRange(ctx, file, formatOpts, l.converters.FromLSPRangeToOriginal(file, r))
 		return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
@@ -188,7 +188,7 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 		return lsproto.TextEditsOrNull{}, nil
 	}
 	_, file := l.getProgramAndFile(documentURI)
-	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
+	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options).WithOptions(l.program.CommandLine().FormattingOptions())
 	positions := l.converters.FromLSPPositionForSourceFile(file, position, spanmap.FeatureFormatting)
 	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.TextEditsOrNull{}, nil

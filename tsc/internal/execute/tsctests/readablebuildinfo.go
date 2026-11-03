@@ -13,8 +13,9 @@ import (
 )
 
 type readableBuildInfo struct {
-	buildInfo *incremental.BuildInfo
-	Version   string `json:"version,omitzero"`
+	Formatting *incremental.FormattingBuildInfo `json:"formatting,omitzero"`
+	buildInfo  *incremental.BuildInfo
+	Version    string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors              bool                     `json:"errors,omitzero"`
@@ -217,6 +218,7 @@ func (b *readableBuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 
 func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string) string {
 	readable := readableBuildInfo{
+		Formatting:           buildInfo.Formatting,
 		buildInfo:            buildInfo,
 		Version:              buildInfo.Version,
 		Errors:               buildInfo.Errors,

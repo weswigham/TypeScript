@@ -598,6 +598,17 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[tspath.RootedP
 		}
 
 		if !rootChanged {
+			for _, file := range task.formatInputFiles {
+				fp := o.caseSensitivity.PathKey(file.AsPath())
+				if _, changed := normalizedPaths[fp]; changed {
+					task.resetStatus()
+					needsUpdate.Store(true)
+					rootChanged = true
+					break
+				}
+			}
+		}
+		if !rootChanged {
 			task.buildInfoEntryMu.Lock()
 			bi := task.buildInfoEntry
 			task.buildInfoEntryMu.Unlock()
@@ -719,6 +730,10 @@ func (o *Orchestrator) computeDesiredWatches() map[tspath.RootedDirectoryPath]bo
 					desiredDirs.Set(dir, false)
 				}
 			}
+		}
+		for _, fileName := range task.formatInputFiles {
+			realPath := o.host.FS().Realpath(fileName.AsPath())
+			o.addProgramFileWatchDir(desiredDirs, realPath.Directory())
 		}
 		if task.contentMapperProject != nil {
 			watchedFiles, err := task.contentMapperProject.WatchedFiles()

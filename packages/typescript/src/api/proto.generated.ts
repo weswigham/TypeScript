@@ -186,6 +186,7 @@ export interface APIMethodInfo {
     getCompletionsAtPosition: APIMethod<GetCompletionsAtPositionParams, CompletionInfoResponse | null>;
     formatNodeForInsertion: APIMethod<FormatNodeForInsertionParams, string>;
     getSyntacticDiagnostics: APIMethod<GetDiagnosticsParams, DiagnosticResponse[] | null>;
+    getFormattingDiagnostics: APIMethod<GetFormattingDiagnosticsParams, DiagnosticResponse[] | null>;
     getBindDiagnostics: APIMethod<GetDiagnosticsParams, DiagnosticResponse[] | null>;
     getSemanticDiagnostics: APIMethod<GetDiagnosticsParams, DiagnosticResponse[] | null>;
     getSuggestionDiagnostics: APIMethod<GetDiagnosticsParams, DiagnosticResponse[] | null>;
@@ -1053,6 +1054,14 @@ export interface DiagnosticResponse {
     relatedInformation?: DiagnosticResponse[] | undefined;
 }
 
+export interface GetFormattingDiagnosticsParams {
+    snapshot: number;
+    project: number;
+    files?: readonly DocumentIdentifier[] | undefined;
+    /** Spans are applied to each requested file. Omitted spans format whole files; an empty list formats nothing. */
+    spans?: readonly FormattingSpan[] | undefined;
+}
+
 /** PrintNodeParams are the parameters for the printNode method. */
 export interface PrintNodeParams {
     /** base64-encoded binary AST data */
@@ -1207,6 +1216,7 @@ export interface BatchRequest {
         | "getExportsOfSymbol"
         | "getExtendsTypeOfType"
         | "getFalseTypeOfConditionalType"
+        | "getFormattingDiagnostics"
         | "getFreshTypeOfType"
         | "getFullyQualifiedName"
         | "getGlobalDiagnostics"
@@ -1389,6 +1399,7 @@ export interface BatchResponse {
         | "getExportsOfSymbol"
         | "getExtendsTypeOfType"
         | "getFalseTypeOfConditionalType"
+        | "getFormattingDiagnostics"
         | "getFreshTypeOfType"
         | "getFullyQualifiedName"
         | "getGlobalDiagnostics"
@@ -1704,6 +1715,12 @@ export interface DiagnosticSourceLineResponse {
     text: string;
 }
 
+/** FormattingSpan is a half-open range of UTF-16 code unit offsets within a source file. */
+export interface FormattingSpan {
+    pos: number;
+    end: number;
+}
+
 export interface EmitOutputFile {
     fileName: RootedFilePath;
     text: string;
@@ -1930,6 +1947,9 @@ export interface RawCompilerOptions {
     build?: boolean | undefined;
     help?: boolean | undefined;
     all?: boolean | undefined;
+    format?: boolean | undefined;
+    formatOnly?: boolean | undefined;
+    formatDiagnostics?: boolean | undefined;
     runExternalCode?: boolean | undefined;
     pprofDir?: string | undefined;
     singleThreaded?: boolean | undefined;

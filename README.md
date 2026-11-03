@@ -25,6 +25,61 @@ For our nightly builds:
 npm install -D typescript@next
 ```
 
+## Formatting
+
+Run `tsc --format` to format project input files in place before checking and emitting them.
+Use `tsc --formatOnly` to format without type checking or emitting JavaScript or declarations.
+Both flags also work with `tsc -b`.
+
+To check formatting without changing source files, add `--formatDiagnostics` to either mode:
+
+```sh
+tsc --formatOnly --formatDiagnostics
+```
+
+With `--format`, formatting diagnostics are included in the reported errors but do not
+block checking or JavaScript/declaration emit, even with `--noEmitOnError`. Ordinary
+compiler errors still follow the usual emit rules.
+
+Set project formatting preferences in the top-level `formattingOptions` member of your config:
+
+```json
+{
+    "formattingOptions": {
+        "indentSize": 4,
+        "tabSize": 4,
+        "convertTabsToSpaces": true,
+        "insertSpaceAfterCommaDelimiter": true
+    }
+}
+```
+
+These settings inherit per property through `extends` and take priority over editor formatting
+preferences. Incremental projects keep formatting state separately from compilation state in
+their `.tsbuildinfo`, so formatting-only runs do not mark compilation outputs as current.
+Changing formatting preferences causes all project input files to be formatted again.
+
+Parsing and formatting run in parallel unless `--singleThreaded` is set. Composite projects
+use their complete config-generated root file set directly. Non-composite projects discover
+additional input files through imports and references; default libraries and dependencies in
+`node_modules` (including linked packages) are not formatted.
+
+With `--formatOnly`, append inclusive, one-based line ranges to individual input file names.
+Files without ranges are formatted in full:
+
+```sh
+tsc --formatOnly ./src/compiler/checker.ts:120-500,1001-2100 ./src/compiler/core.ts
+```
+
+Explicit formatting-only input files also use formatting preferences from a discovered config,
+or from a config selected with `--project`.
+
+The JavaScript API exposes the same formatting checks through
+`program.getFormattingDiagnostics(file?, spans?)`. It reads `formattingOptions` without
+writing source files or incremental state. Pass a source file, a file name/URI, or a list of
+files; omit the first argument to check all project formatting inputs. Optional spans use
+half-open `{ pos, end }` UTF-16 offsets, and an empty span list checks nothing.
+
 ## Contribute
 
 There are many ways to [contribute](CONTRIBUTING.md) to TypeScript.
