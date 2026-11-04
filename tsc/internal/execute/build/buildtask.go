@@ -376,16 +376,31 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 		TestingMTimesCache:    orchestrator.host.mTimes,
 		FormattingDiagnostics: t.formatDiagnostics,
 	})
+	if updated, ok := result.Program.(*incremental.Program); ok {
+		t.result.program = updated
+	}
+	for _, file := range result.FixedFiles {
+		orchestrator.host.mTimes.Delete(orchestrator.caseSensitivity.PathKey(file.AsPath()))
+		orchestrator.host.sourceFiles.entries.Range(func(options ast.SourceFileParseOptions, _ *parseCacheEntry[*ast.SourceFile]) bool {
+			if options.FileName == file {
+				orchestrator.host.sourceFiles.entries.Delete(options)
+			}
+			return true
+		})
+	}
+	if len(result.FixedFiles) > 0 {
+		orchestrator.host.FS().(*cachedvfs.FS).ClearCache()
+	}
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
-	if (!program.Options().NoEmitOnError.IsTrue() || len(result.CompilationDiagnostics) == 0) &&
+	if !program.Options().LintOnly.IsTrue() && (!program.Options().NoEmitOnError.IsTrue() || len(result.CompilationDiagnostics) == 0) &&
 		(len(result.EmitResult.EmittedFiles) > 0 || t.status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 		// Update time stamps for rest of the outputs
 		t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 	}
 	t.result.buildKind = buildKindProgram
-	if len(result.CompilationDiagnostics) > 0 {
+	if tsc.CountErrors(result.CompilationDiagnostics) > 0 || tsc.CountErrors(result.LintDiagnostics) > 0 {
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 	} else {
 		var oldestOutputFileName tspath.RootedFilePath
@@ -469,7 +484,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 	}
 
-	if orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
+	if orchestrator.opts.Command.BuildOptions.Force.IsTrue() || t.resolved.CompilerOptions().Lint.IsTrue() || t.resolved.CompilerOptions().LintOnly.IsTrue() {
 		return &upToDateStatus{kind: upToDateStatusTypeForceBuild}
 	}
 

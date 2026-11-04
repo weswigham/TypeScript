@@ -1,0 +1,32 @@
+input.ts(1,1): error TS18175: Unexpected 'debugger' statement.
+input.ts(2,1): error TS18175: Unexpected 'debugger' statement.
+input.ts(4,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(8,5): error TS18175: Unexpected 'debugger' statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-debugger": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    debugger;
+    ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    debugger
+    ~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    {
+        debugger;
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    
+    function inspect() {
+        debugger;
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+        return 1;
+    }

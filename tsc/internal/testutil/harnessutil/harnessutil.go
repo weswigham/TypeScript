@@ -26,6 +26,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/tsc"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/outputpaths"
 	"github.com/microsoft/TypeScript/tsc/internal/parser"
@@ -226,6 +227,7 @@ func CompileFilesEx(
 	if tsconfig != nil {
 		config.ParsedConfig.FormattingOptions = tsconfig.FormattingOptions()
 		config.ParsedConfig.Generate = tsconfig.ParsedConfig.Generate
+		config.ParsedConfig.Lint = tsconfig.ParsedConfig.Lint
 	}
 	var contentMapperProject contentmapper.Project
 	if contentMapperHost != nil {
@@ -257,6 +259,18 @@ func CompileFilesEx(
 		result.Diagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.Diagnostics, preBuild.Diagnostics))
 	}
 	result.PreBuildStopped = preBuild.Status != tsc.PreBuildContinue
+	if compilerOptions.Fix.IsTrue() && !result.PreBuildStopped {
+		_, errors := tsc.ApplyLintFixes(system.FS(), result.Program.Program(), result.Diagnostics)
+		result.Diagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.Diagnostics, errors))
+		for _, file := range result.Program.GetSourceFiles() {
+			if !file.IsDeclarationFile && result.Program.Program().IsFormattingInput(file) {
+				if text, ok := system.FS().ReadFile(file.OriginalFileName()); ok {
+					result.Fixed = append(result.Fixed, &TestFile{UnitName: file.OriginalFileName().AsString(), Content: text})
+				}
+			}
+		}
+		slices.SortFunc(result.Fixed, compareTestFiles)
+	}
 	result.GenerationConfigured = len(config.ParsedConfig.Generate) > 0
 	result.GenerationCommands = preBuild.Generation.Executed
 	system.generated.Range(func(name tspath.RootedFilePath, _ bool) bool {
@@ -729,6 +743,7 @@ func compileFilesWithHost(
 		config.CaseSensitivity(),
 	)
 	preConfig.ParsedConfig.ContentMappers = config.ContentMappers()
+	preConfig.ParsedConfig.Lint = config.ParsedConfig.Lint
 	preConfig.ConfigFile = config.ConfigFile
 	preConfig.Errors = config.Errors
 	preProgram := createProgram(host, preConfig)
@@ -737,6 +752,7 @@ func compileFilesWithHost(
 	preErrors = append(preErrors, preProgram.GetSyntacticDiagnostics(ctx, nil)...)
 	preErrors = append(preErrors, preProgram.GetSemanticDiagnostics(ctx, nil)...)
 	preErrors = append(preErrors, preProgram.GetGlobalDiagnostics(ctx)...)
+	preErrors = append(preErrors, lint.GetDiagnostics(ctx, preProgram.Program())...)
 	if harnessOptions.CaptureSuggestions {
 		preErrors = append(preErrors, preProgram.GetSuggestionDiagnostics(ctx, nil)...)
 	}
@@ -746,13 +762,17 @@ func compileFilesWithHost(
 	preErrors = compiler.SortAndDeduplicateDiagnostics(preErrors)
 
 	postProgram := createProgram(host, config)
-	emitResult := postProgram.Emit(ctx, compiler.EmitOptions{})
+	emitResult := &compiler.EmitResult{EmitSkipped: true}
+	if !config.CompilerOptions().LintOnly.IsTrue() {
+		emitResult = postProgram.Emit(ctx, compiler.EmitOptions{})
+	}
 	var postErrors []*ast.Diagnostic
 	postErrors = append(postErrors, postProgram.GetConfigFileParsingDiagnostics()...)
 	postErrors = append(postErrors, postProgram.GetProgramDiagnostics()...)
 	postErrors = append(postErrors, postProgram.GetSyntacticDiagnostics(ctx, nil)...)
 	postErrors = append(postErrors, postProgram.GetSemanticDiagnostics(ctx, nil)...)
 	postErrors = append(postErrors, postProgram.GetGlobalDiagnostics(ctx)...)
+	postErrors = append(postErrors, lint.GetDiagnostics(ctx, postProgram.Program())...)
 	if postProgram.Options().GetEmitDeclarations() {
 		postErrors = append(postErrors, postProgram.GetDeclarationDiagnostics(ctx, nil)...)
 	}
@@ -798,6 +818,7 @@ type CompilationResult struct {
 	GenerationCommands   int
 	PreBuildStopped      bool
 	Formatted            []*TestFile
+	Fixed                []*TestFile
 	Diagnostics          []*ast.Diagnostic
 	Result               *compiler.EmitResult
 	Program              compiler.ProgramLike

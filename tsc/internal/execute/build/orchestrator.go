@@ -42,7 +42,8 @@ func (b *OrchestratorResult) report(o *Orchestrator) {
 
 func (b *OrchestratorResult) reportWithFilesToDelete(o *Orchestrator, reportFilesToDelete bool) {
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		o.watchStatusReporter(ast.NewCompilerDiagnostic(core.IfElse(len(b.Errors) == 1, diagnostics.Found_1_error_Watching_for_file_changes, diagnostics.Found_0_errors_Watching_for_file_changes), len(b.Errors)))
+		errorCount := tsc.CountErrors(b.Errors)
+		o.watchStatusReporter(ast.NewCompilerDiagnostic(core.IfElse(errorCount == 1, diagnostics.Found_1_error_Watching_for_file_changes, diagnostics.Found_0_errors_Watching_for_file_changes), errorCount))
 	} else {
 		o.errorSummaryReporter(b.Errors)
 	}

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
+	"github.com/microsoft/TypeScript/tsc/internal/codefix"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
@@ -80,6 +81,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
 
 	var actions []lsproto.CommandOrCodeAction
+	actions = append(actions, l.lintCodeActions(ctx, program, file, params)...)
 
 	if params.Context != nil && params.Context.Only != nil {
 		for _, kind := range *params.Context.Only {
@@ -269,6 +271,9 @@ func (l *LanguageService) createFixAllAction(
 ) (*lsproto.CommandOrCodeAction, error) {
 	kind := lsproto.CodeActionKindSourceFixAllTs
 	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	for uri, edits := range l.codeFixWorkspaceChanges(program, codefix.CombineCodeFixes(lintCodeFixes(ctx, program, file)).Changes) {
+		lspChanges[uri] = append(lspChanges[uri], edits...)
+	}
 
 	for _, provider := range codeFixProviders {
 		if provider.GetAllCodeActions == nil {
@@ -290,6 +295,7 @@ func (l *LanguageService) createFixAllAction(
 		}
 	}
 
+	lspChanges = normalizeWorkspaceChanges(lspChanges)
 	if len(lspChanges) == 0 {
 		return nil, nil
 	}

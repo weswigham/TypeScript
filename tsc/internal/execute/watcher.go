@@ -493,7 +493,7 @@ func (w *Watcher) doBuild(ctx context.Context) error {
 			}
 			w.configModified = false
 
-			errorCount := len(result.Diagnostics)
+			errorCount := tsc.CountErrors(result.Diagnostics)
 			if errorCount == 1 {
 				w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
 			} else {
@@ -574,7 +574,7 @@ func (w *Watcher) doBuild(ctx context.Context) error {
 		return true
 	})
 
-	errorCount := len(result.Diagnostics)
+	errorCount := tsc.CountErrors(result.Diagnostics)
 	if errorCount == 1 {
 		w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
 	} else {
@@ -672,7 +672,7 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 		}
 		return tsc.CompileAndEmitResult{Status: status, Diagnostics: w.preBuild.Diagnostics, EmitResult: &compiler.EmitResult{EmitSkipped: true}}
 	}
-	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+	result := tsc.EmitFilesAndReportErrors(tsc.EmitInput{
 		FormattingDiagnostics: w.formatDiagnostics,
 		Sys:                   w.sys,
 		ProgramLike:           w.program,
@@ -684,6 +684,13 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 		CompileTimes:          &tsc.CompileTimes{GenerationTimes: w.preBuild.Generation.Timings},
 		Testing:               w.testing,
 	})
+	if updated, ok := result.Program.(*incremental.Program); ok {
+		w.program = updated
+	}
+	for _, file := range result.FixedFiles {
+		w.sourceFileCache.Delete(w.caseSensitivity().PathKey(file.AsPath()))
+	}
+	return result
 }
 
 func (w *Watcher) contentMapperManifestChanged(changedPaths map[tspath.RootedPath]fswatch.EventKind) bool {

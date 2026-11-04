@@ -49,6 +49,7 @@ var impliedOptions = []impliedOption{
 type TSConfig struct {
 	Generate          []TSConfigGenerateCommand            `json:"generate,omitzero"`
 	FormattingOptions *core.FormattingOptions              `json:"formattingOptions,omitzero"`
+	Lint              *LintOptions                         `json:"lint,omitzero"`
 	CompilerOptions   *collections.OrderedMap[string, any] `json:"compilerOptions"`
 	References        []any                                `json:"references,omitzero"`
 	Files             []string                             `json:"files,omitzero"`
@@ -98,6 +99,7 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName tspa
 	config := &TSConfig{
 		CompilerOptions:   optionMap,
 		FormattingOptions: configParseResult.FormattingOptions(),
+		Lint:              configParseResult.ParsedConfig.Lint,
 	}
 	for _, command := range configParseResult.ParsedConfig.Generate {
 		serialized := TSConfigGenerateCommand{GenerateCommand: command}

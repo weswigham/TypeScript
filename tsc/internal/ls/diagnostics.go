@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp/lsproto"
 	"github.com/microsoft/TypeScript/tsc/internal/spanmap"
@@ -25,6 +26,7 @@ func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast
 		if program.Options().GetEmitDeclarations() {
 			diags = append(diags, program.GetDeclarationDiagnostics(ctx, sourceFile)...)
 		}
+		diags = append(diags, lint.GetDiagnosticsForFile(ctx, program, sourceFile)...)
 	}
 	return diags
 }

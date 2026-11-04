@@ -28,6 +28,7 @@ import (
 type extendsResult struct {
 	options             *parsedCompilerOptions
 	formattingOptions   *parsedFormattingOptions
+	lint                *LintOptions
 	generate            []GenerateCommand
 	generateRaw         any
 	generatePresent     bool
@@ -94,6 +95,7 @@ type parsedTsconfig struct {
 	options             *parsedCompilerOptions
 	typeAcquisition     *core.TypeAcquisition
 	formattingOptions   *parsedFormattingOptions
+	lint                *LintOptions
 	generate            []GenerateCommand
 	extendedConfigPaths []tspath.RootedFilePath
 }
@@ -205,10 +207,14 @@ func parseOwnConfigOfJsonSourceFile(
 	)
 	errors = append(errors, err...)
 	var generate []GenerateCommand
+	var lint *LintOptions
 	if jsonObject, ok := json.(*collections.OrderedMap[string, any]); ok {
 		var generateErrors []*ast.Diagnostic
 		generate, generateErrors = parseGenerateCommands(jsonObject.GetOrZero("generate"), basePath)
 		errors = append(errors, generateErrors...)
+		var lintErrors []*ast.Diagnostic
+		lint, lintErrors = parseLintOptions(jsonObject.GetOrZero("lint"))
+		errors = append(errors, lintErrors...)
 	}
 	if jsonObject, ok := json.(*collections.OrderedMap[string, any]); len(rootCompilerOptions) != 0 && ok && !jsonObject.Has("compilerOptions") {
 		errors = append(errors, CreateDiagnosticForNodeInSourceFile(
@@ -223,6 +229,7 @@ func parseOwnConfigOfJsonSourceFile(
 		options:             compilerOptions,
 		typeAcquisition:     typeAcquisition,
 		formattingOptions:   formattingOptions,
+		lint:                lint,
 		generate:            generate,
 		extendedConfigPaths: extendedConfigPaths,
 	}, errors
@@ -940,6 +947,8 @@ func parseOwnConfigOfJson(
 	errors = append(append(errors, err...), err2...)
 	formattingOptions, formatErrors := parseFormattingOptions(json.GetOrZero("formattingOptions"), basePath)
 	errors = append(errors, formatErrors...)
+	lint, lintErrors := parseLintOptions(json.GetOrZero("lint"))
+	errors = append(errors, lintErrors...)
 	generate, generateErrors := parseGenerateCommands(json.GetOrZero("generate"), basePath)
 	errors = append(errors, generateErrors...)
 	if compileOnSave, ok := json.Get("compileOnSave"); ok {
@@ -957,6 +966,7 @@ func parseOwnConfigOfJson(
 		options:             options,
 		typeAcquisition:     typeAcquisition,
 		formattingOptions:   formattingOptions,
+		lint:                lint,
 		generate:            generate,
 		extendedConfigPaths: extendedConfigPaths,
 	}
@@ -1149,6 +1159,7 @@ func parseConfig(
 			}
 			mergeParsedCompilerOptions(result.options, extendedConfig.options, extendsRaw)
 			result.formattingOptions = mergeFormattingOptions(result.formattingOptions, extendedConfig.formattingOptions)
+			result.lint = mergeLintOptions(result.lint, extendedConfig.lint)
 			if extendedRawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && extendedRawMap.Has("generate") {
 				result.generate = extendedConfig.generate
 				result.generateRaw = extendedRawMap.GetOrZero("generate")
@@ -1193,6 +1204,7 @@ func parseConfig(
 		}
 		ownConfig.options = mergeParsedCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
 		ownConfig.formattingOptions = mergeFormattingOptions(result.formattingOptions, ownConfig.formattingOptions)
+		ownConfig.lint = mergeLintOptions(result.lint, ownConfig.lint)
 		if result.generatePresent && !ownConfig.raw.(*collections.OrderedMap[string, any]).Has("generate") {
 			ownConfig.raw.(*collections.OrderedMap[string, any]).Set("generate", result.generateRaw)
 			ownConfig.generate = result.generate
@@ -1565,6 +1577,7 @@ func parseJsonConfigFileContentWorker(
 			CompilerOptions:   parsedConfig.options.CompilerOptions,
 			TypeAcquisition:   parsedConfig.typeAcquisition,
 			FormattingOptions: getFormattingOptions(parsedConfig.formattingOptions),
+			Lint:              parsedConfig.lint,
 			Generate:          parsedConfig.generate,
 			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),

@@ -53,6 +53,18 @@ func TestExclusiveBuildStageOptions(t *testing.T) {
 		{"same generation phase", []string{"--generateOnly", "--generate"}, 0},
 		{"generation disabled", []string{"--formatOnly", "--generate", "false"}, 0},
 		{"formatting disabled", []string{"--generateOnly", "--format", "false"}, 0},
+		{"lint only", []string{"--lintOnly"}, 0},
+		{"same lint phase", []string{"--lintOnly", "--lint"}, 0},
+		{"lint and generation", []string{"--lint", "--generate"}, 0},
+		{"lint and formatting", []string{"--lint", "--format"}, 0},
+		{"lint only with generation", []string{"--lintOnly", "--generate"}, 1},
+		{"lint only with formatting", []string{"--lintOnly", "--format"}, 1},
+		{"generation only with lint", []string{"--generateOnly", "--lint"}, 1},
+		{"formatting only with lint", []string{"--formatOnly", "--lint"}, 1},
+		{"exclusive generation and lint", []string{"--generateOnly", "--lintOnly"}, 1},
+		{"exclusive formatting and lint", []string{"--formatOnly", "--lintOnly"}, 1},
+		{"lint disabled", []string{"--generateOnly", "--lint", "false"}, 0},
+		{"lint only disabled", []string{"--formatOnly", "--lintOnly", "false"}, 0},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
@@ -65,6 +77,31 @@ func TestExclusiveBuildStageOptions(t *testing.T) {
 				assert.Equal(t, build.Errors[0].Code(), diagnostics.Options_0_and_1_cannot_be_combined.Code())
 			}
 		})
+	}
+}
+
+func TestAllBuildStageCombinations(t *testing.T) {
+	t.Parallel()
+	fs := tsoptionstest.NewVFSWithSymlinks(nil, nil, "/project", tspath.CaseSensitive)
+	flags := []string{"format", "formatOnly", "generate", "generateOnly", "lint", "lintOnly"}
+	for mask := range 1 << len(flags) {
+		var args []string
+		conflict := false
+		for index, flag := range flags {
+			if mask&(1<<index) == 0 {
+				continue
+			}
+			args = append(args, "--"+flag)
+			if index%2 == 1 {
+				for other := range flags {
+					conflict = conflict || other/2 != index/2 && mask&(1<<other) != 0
+				}
+			}
+		}
+		command := tsoptions.ParseCommandLine(args, fs, "/project")
+		assert.Equal(t, len(command.Errors) > 0, conflict, "flags: %v", args)
+		build := tsoptions.ParseBuildCommandLine(append([]string{"-b"}, args...), fs, "/project")
+		assert.Equal(t, len(build.Errors) > 0, conflict, "build flags: %v", args)
 	}
 }
 

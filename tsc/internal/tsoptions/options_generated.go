@@ -288,6 +288,12 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.FormatOnly = ParseTristate(value)
 	case "formatDiagnostics":
 		allOptions.FormatDiagnostics = ParseTristate(value)
+	case "lint":
+		allOptions.Lint = ParseTristate(value)
+	case "lintOnly":
+		allOptions.LintOnly = ParseTristate(value)
+	case "fix":
+		allOptions.Fix = ParseTristate(value)
 	case "runExternalCode":
 		allOptions.RunExternalCode = ParseTristate(value)
 	case "pprofDir":
@@ -1550,6 +1556,21 @@ func mergeCompilerOptionFields(targetOptions, sourceOptions *core.CompilerOption
 		targetOptions.FormatDiagnostics = core.TSUnknown
 	} else if sourceOptions.FormatDiagnostics != core.TSUnknown {
 		targetOptions.FormatDiagnostics = sourceOptions.FormatDiagnostics
+	}
+	if explicitNullFields.Has("lint") {
+		targetOptions.Lint = core.TSUnknown
+	} else if sourceOptions.Lint != core.TSUnknown {
+		targetOptions.Lint = sourceOptions.Lint
+	}
+	if explicitNullFields.Has("lintOnly") {
+		targetOptions.LintOnly = core.TSUnknown
+	} else if sourceOptions.LintOnly != core.TSUnknown {
+		targetOptions.LintOnly = sourceOptions.LintOnly
+	}
+	if explicitNullFields.Has("fix") {
+		targetOptions.Fix = core.TSUnknown
+	} else if sourceOptions.Fix != core.TSUnknown {
+		targetOptions.Fix = sourceOptions.Fix
 	}
 	if explicitNullFields.Has("runExternalCode") {
 		targetOptions.RunExternalCode = core.TSUnknown

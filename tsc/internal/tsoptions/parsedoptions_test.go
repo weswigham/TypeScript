@@ -29,6 +29,7 @@ func TestParsedOptionsEquality(t *testing.T) {
 			CompilerOptions:   &core.CompilerOptions{Strict: core.TSTrue},
 			TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue, Include: []string{"a"}, Exclude: []string{"b"}},
 			Generate:          []GenerateCommand{{Inputs: []string{"input.json"}, Outputs: []string{"output.ts"}, Command: []string{"node", "generate.js"}, Directory: "/project"}},
+			Lint:              &LintOptions{Rules: map[string]string{"no-debugger": "error"}},
 			FileNames:         []tspath.RootedFilePath{"/a.ts", "/b.ts"},
 			ProjectReferences: []*core.ProjectReference{
 				{Path: "/project", OriginalPath: "../project", Circular: true}, nil,
@@ -79,6 +80,7 @@ func TestParsedOptionsEquality(t *testing.T) {
 		{"generation output", func(p *ParsedOptions) { p.Generate[0].Outputs[0] = "other.ts" }},
 		{"generation command", func(p *ParsedOptions) { p.Generate[0].Command[1] = "other.js" }},
 		{"generation directory", func(p *ParsedOptions) { p.Generate[0].Directory = "/other" }},
+		{"lint severity", func(p *ParsedOptions) { p.Lint.Rules["no-debugger"] = "off" }},
 		{"nil compiler options", func(p *ParsedOptions) { p.CompilerOptions = nil }},
 		{"nil type acquisition", func(p *ParsedOptions) { p.TypeAcquisition = nil }},
 		{"type acquisition enable", func(p *ParsedOptions) { p.TypeAcquisition.Enable = core.TSFalse }},

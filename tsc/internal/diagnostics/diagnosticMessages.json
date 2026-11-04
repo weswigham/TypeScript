@@ -9147,5 +9147,33 @@
     "Code generation commands must be independent. Output '{0}' is an input of another command.": {
         "category": "Error",
         "code": 18172
+    },
+    "Lint input files after checking.": {
+        "category": "Message",
+        "code": 18173
+    },
+    "Lint input files without emitting JavaScript or declarations.": {
+        "category": "Message",
+        "code": 18174
+    },
+    "Unexpected 'debugger' statement.": {
+        "category": "Error",
+        "code": 18175
+    },
+    "Unknown lint rule '{0}'.": {
+        "category": "Error",
+        "code": 18176
+    },
+    "Apply available lint fixes to input files.": {
+        "category": "Message",
+        "code": 18177
+    },
+    "Remove 'debugger' statement": {
+        "category": "Message",
+        "code": 18178
+    },
+    "Remove all 'debugger' statements": {
+        "category": "Message",
+        "code": 18179
     }
 }

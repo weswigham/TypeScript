@@ -1952,6 +1952,9 @@ export interface RawCompilerOptions {
     format?: boolean | undefined;
     formatOnly?: boolean | undefined;
     formatDiagnostics?: boolean | undefined;
+    lint?: boolean | undefined;
+    lintOnly?: boolean | undefined;
+    fix?: boolean | undefined;
     runExternalCode?: boolean | undefined;
     pprofDir?: string | undefined;
     singleThreaded?: boolean | undefined;

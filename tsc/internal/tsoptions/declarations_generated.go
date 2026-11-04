@@ -61,6 +61,33 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		DefaultValueDescription:  false,
 	},
 	{
+		Name:                     "lint",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Lint_input_files_after_checking,
+		DefaultValueDescription:  false,
+	},
+	{
+		Name:                     "lintOnly",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Lint_input_files_without_emitting_JavaScript_or_declarations,
+		DefaultValueDescription:  false,
+	},
+	{
+		Name:                     "fix",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Apply_available_lint_fixes_to_input_files,
+		DefaultValueDescription:  false,
+	},
+	{
 		Name:                     "help",
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShortName:                "h",
@@ -1320,6 +1347,10 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 		{
 			Name: "generate",
 			Kind: CommandLineOptionTypeList,
+		},
+		{
+			Name: "lint",
+			Kind: CommandLineOptionTypeObject,
 		},
 		{
 			Name: "contentMappers",

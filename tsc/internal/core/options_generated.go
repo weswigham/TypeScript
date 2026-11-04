@@ -161,6 +161,9 @@ type CompilerOptions struct {
 	Format              Tristate                   `json:"format,omitzero"`
 	FormatOnly          Tristate                   `json:"formatOnly,omitzero"`
 	FormatDiagnostics   Tristate                   `json:"formatDiagnostics,omitzero"`
+	Lint                Tristate                   `json:"lint,omitzero"`
+	LintOnly            Tristate                   `json:"lintOnly,omitzero"`
+	Fix                 Tristate                   `json:"fix,omitzero"`
 	RunExternalCode     Tristate                   `json:"runExternalCode,omitzero"`
 	PprofDir            tspath.RootedDirectoryPath `json:"pprofDir,omitzero"`
 	SingleThreaded      Tristate                   `json:"singleThreaded,omitzero"`
@@ -303,6 +306,9 @@ func (options *CompilerOptions) Clone() *CompilerOptions {
 		Format:                                  options.Format,
 		FormatOnly:                              options.FormatOnly,
 		FormatDiagnostics:                       options.FormatDiagnostics,
+		Lint:                                    options.Lint,
+		LintOnly:                                options.LintOnly,
+		Fix:                                     options.Fix,
 		RunExternalCode:                         options.RunExternalCode,
 		PprofDir:                                options.PprofDir,
 		SingleThreaded:                          options.SingleThreaded,
@@ -716,6 +722,15 @@ func (options *CompilerOptions) Equals(other *CompilerOptions) bool {
 		return false
 	}
 	if options.FormatDiagnostics != other.FormatDiagnostics {
+		return false
+	}
+	if options.Lint != other.Lint {
+		return false
+	}
+	if options.LintOnly != other.LintOnly {
+		return false
+	}
+	if options.Fix != other.Fix {
 		return false
 	}
 	if options.RunExternalCode != other.RunExternalCode {

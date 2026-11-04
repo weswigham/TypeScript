@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnosticwriter"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 )
@@ -21,6 +22,16 @@ func getFormatOptsOfSys(sys System, locale locale.Locale) *diagnosticwriter.Form
 }
 
 type DiagnosticReporter = func(*ast.Diagnostic)
+
+func CountErrors(items []*ast.Diagnostic) int {
+	count := 0
+	for _, item := range items {
+		if item.Category() == diagnostics.CategoryError {
+			count++
+		}
+	}
+	return count
+}
 
 func QuietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
 

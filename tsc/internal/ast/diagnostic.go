@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/TypeScript/tsc/internal/codefix"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
@@ -53,6 +54,7 @@ type Diagnostic struct {
 	reportsDeprecated  bool
 	skippedOnNoEmit    bool
 	repopulateInfo     *RepopulateDiagnosticInfo
+	codeFixes          []*codefix.CodeFixAction
 }
 
 func (d *Diagnostic) File() *SourceFile                         { return d.file }
@@ -72,6 +74,13 @@ func (d *Diagnostic) ReportsUnnecessary() bool                  { return d.repor
 func (d *Diagnostic) ReportsDeprecated() bool                   { return d.reportsDeprecated }
 func (d *Diagnostic) SkippedOnNoEmit() bool                     { return d.skippedOnNoEmit }
 func (d *Diagnostic) RepopulateInfo() *RepopulateDiagnosticInfo { return d.repopulateInfo }
+
+func (d *Diagnostic) CodeFixes() []*codefix.CodeFixAction { return d.codeFixes }
+
+func (d *Diagnostic) SetCodeFixes(fixes ...*codefix.CodeFixAction) *Diagnostic {
+	d.codeFixes = fixes
+	return d
+}
 
 func (d *Diagnostic) SetFile(file *SourceFile)                         { d.file = file }
 func (d *Diagnostic) SetLocation(loc core.TextRange)                   { d.loc = loc }

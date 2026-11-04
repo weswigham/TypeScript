@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/internal/testutil/harnessutil"
 	"gotest.tools/v3/assert"
 )
 
@@ -54,5 +56,33 @@ func TestFormattingDirectivesPreserveSourceAnnotations(t *testing.T) {
 	for _, annotation := range []string{"ts-ignore", "ts-expect-error", "box-extension"} {
 		_, ok := settings[annotation]
 		assert.Assert(t, !ok)
+	}
+}
+
+func TestLintOnlyCompilerHarness(t *testing.T) {
+	t.Parallel()
+	for _, fix := range []string{"false", "true"} {
+		t.Run(fix, func(t *testing.T) {
+			t.Parallel()
+			const code = `// @filename: tsconfig.json
+{"lint":{"rules":{"no-debugger":"error"}},"files":["input.ts"]}
+// @filename: input.ts
+debugger;`
+			payload := makeUnitsFromTest(code, "noDebuggerHarness.ts")
+			config := &harnessutil.NamedTestConfiguration{Config: harnessutil.TestConfiguration{"lintonly": "true", "fix": fix}}
+			result := newCompilerTest(t, "noDebuggerHarness.ts", "noDebuggerHarness.ts", &payload, config)
+			assert.Assert(t, result.result.Result.EmitSkipped)
+			assert.Equal(t, result.result.JS.Size(), 0)
+			assert.Equal(t, result.result.DTS.Size(), 0)
+			assert.Equal(t, len(result.result.Diagnostics), 1)
+			assert.Equal(t, result.result.Diagnostics[0].Code(), diagnostics.Unexpected_debugger_statement.Code())
+			assert.Equal(t, result.toBeCompiled[0].Content, "debugger;")
+			if fix == "true" {
+				assert.Equal(t, len(result.result.Fixed), 1)
+				assert.Equal(t, result.result.Fixed[0].Content, ";")
+			} else {
+				assert.Equal(t, len(result.result.Fixed), 0)
+			}
+		})
 	}
 }

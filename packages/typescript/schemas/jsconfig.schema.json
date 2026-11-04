@@ -128,6 +128,31 @@
             "description": "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
             "markdownDescription": "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode."
         },
+        "lint": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "properties": {
+                "rules": {
+                    "type": [
+                        "object",
+                        "null"
+                    ],
+                    "additionalProperties": {
+                        "enum": [
+                            "off",
+                            "warning",
+                            "error",
+                            null
+                        ]
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "description": "Lint rules, inherited per rule. Execution requires --lint or --lintOnly.",
+            "markdownDescription": "Lint rules, inherited per rule. Execution requires --lint or --lintOnly."
+        },
         "contentMappers": {
             "anyOf": [
                 {

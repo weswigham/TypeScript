@@ -1,0 +1,57 @@
+input.ts(3,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(6,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(9,44): error TS18175: Unexpected 'debugger' statement.
+input.ts(12,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(15,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(18,5): error TS18175: Unexpected 'debugger' statement.
+input.ts(21,1): error TS18175: Unexpected 'debugger' statement.
+input.ts(23,41): error TS18175: Unexpected 'debugger' statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-debugger": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (8 errors) ====
+    {
+        // Keep this leading comment.
+        debugger;
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    {
+        debugger; // Keep this trailing comment.
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    {
+        /* Keep this leading block comment. */ debugger;
+                                               ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    {
+        debugger /* Keep this internal comment. */;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    {
+        debugger; /* Keep this trailing block comment. */
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    {
+        debugger // Keep this internal line comment.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ;
+    ~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    debugger; // Keep this top-level comment.
+    ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    
+    if (true) /* Keep this body comment. */ debugger;
+                                            ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.

@@ -16,12 +16,62 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
+
+type lintReadOnlyFS struct {
+	vfs.FS
+}
+
+func (fs lintReadOnlyFS) WriteFile(name tspath.RootedFilePath, text string) error {
+	return errors.New("read-only filesystem")
+}
+
+func TestLintFixWriteFailure(t *testing.T) {
+	t.Parallel()
+	fs := lintReadOnlyFS{bundled.WrapFS(vfstest.FromMap(map[string]any{"/project/input.ts": "debugger;"}, tspath.CaseSensitive))}
+	config := tsoptions.NewParsedCommandLine(&core.CompilerOptions{LintOnly: core.TSTrue, Fix: core.TSTrue}, []tspath.RootedFilePath{"/project/input.ts"}, nil, "/project", tspath.CaseSensitive)
+	config.ParsedConfig.Lint = &tsoptions.LintOptions{Rules: map[string]string{"no-debugger": "error"}}
+	program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: compiler.NewCompilerHost(fs, bundled.LibPath(), nil, nil, nil)})
+	sys := &timingTestSystem{fs: fs, clock: &controlledClock{now: time.Unix(0, 0)}}
+	result, _ := EmitAndReportStatistics(EmitInput{
+		Sys: sys, Program: program, ProgramLike: program, Config: config,
+		ReportDiagnostic: QuietDiagnosticReporter, ReportErrorSummary: QuietDiagnosticsReporter,
+		Writer: io.Discard, CompileTimes: &CompileTimes{},
+	})
+	assert.Equal(t, result.Status, ExitStatusDiagnosticsPresent_OutputsSkipped)
+	assert.Assert(t, core.Some(result.Diagnostics, func(item *ast.Diagnostic) bool {
+		return item.Code() == diagnostics.Unexpected_debugger_statement.Code()
+	}))
+	assert.Assert(t, core.Some(result.Diagnostics, func(item *ast.Diagnostic) bool {
+		return item.Code() == diagnostics.Could_not_write_file_0_Colon_1.Code()
+	}))
+	text, ok := fs.ReadFile("/project/input.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, text, "debugger;")
+}
+
+func TestLintFixStaleSource(t *testing.T) {
+	t.Parallel()
+	fs := vfstest.FromMap(map[string]any{"/project/input.ts": "debugger;"}, tspath.CaseSensitive)
+	config := tsoptions.NewParsedCommandLine(&core.CompilerOptions{LintOnly: core.TSTrue, NoLib: core.TSTrue}, []tspath.RootedFilePath{"/project/input.ts"}, nil, "/project", tspath.CaseSensitive)
+	config.ParsedConfig.Lint = &tsoptions.LintOptions{Rules: map[string]string{"no-debugger": "error"}}
+	program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: compiler.NewCompilerHost(fs, "/lib", nil, nil, nil)})
+	items := lint.GetDiagnostics(t.Context(), program)
+	assert.Equal(t, len(items), 1)
+	assert.NilError(t, fs.WriteFile("/project/input.ts", "export {};"))
+	changed, errors := ApplyLintFixes(fs, program, items)
+	assert.Equal(t, len(changed), 0)
+	assert.Equal(t, len(errors), 1)
+	text, ok := fs.ReadFile("/project/input.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, text, "export {};")
+}
 
 func TestFormattingDiagnosticsDoNotBlockEmit(t *testing.T) {
 	t.Parallel()

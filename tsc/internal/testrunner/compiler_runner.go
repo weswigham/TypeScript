@@ -529,7 +529,7 @@ func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string) {
 
 func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string) {
 	noTypesAndSymbols := c.harnessOptions.NoTypesAndSymbols
-	if noTypesAndSymbols {
+	if noTypesAndSymbols || c.options.LintOnly.IsTrue() {
 		return
 	}
 	program := c.result.Program

@@ -183,7 +183,7 @@ func deleteVariableDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]boo
 func deleteNode(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node, leadingTrivia LeadingTriviaOption, trailingTrivia TrailingTriviaOption) {
 	startPosition := t.getAdjustedStartPosition(sourceFile, node, leadingTrivia, false)
 	endPosition := t.getAdjustedEndPosition(sourceFile, node, trailingTrivia)
-	t.ReplaceTextRangeWithText(sourceFile, core.NewTextRange(startPosition, endPosition), "")
+	t.changes.Add(sourceFile, &trackerEdit{kind: trackerEditKindRemove, TextRange: core.NewTextRange(startPosition, endPosition), original: node})
 }
 
 func deleteNodeInList(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourceFile *ast.SourceFile, node *ast.Node) {

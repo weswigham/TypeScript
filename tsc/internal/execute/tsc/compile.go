@@ -110,8 +110,11 @@ type CompileTimes struct {
 	ChangesComputeTime time.Duration
 }
 type CompileAndEmitResult struct {
+	Program                compiler.ProgramLike
+	FixedFiles             []tspath.RootedFilePath
 	Diagnostics            []*ast.Diagnostic
 	CompilationDiagnostics []*ast.Diagnostic
+	LintDiagnostics        []*ast.Diagnostic
 	EmitResult             *compiler.EmitResult
 	Status                 ExitStatus
 	times                  *CompileTimes

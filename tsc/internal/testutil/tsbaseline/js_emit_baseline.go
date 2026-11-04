@@ -29,7 +29,7 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
+	if !options.NoEmit.IsTrue() && !options.LintOnly.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
 		t.Fatal("Expected at least one js file to be emitted or at least one error to be created.")
 	}
 
@@ -51,6 +51,12 @@ func DoJSEmitBaseline(
 	}
 
 	var jsCode strings.Builder
+	for _, file := range result.Fixed {
+		jsCode.WriteString(fileOutput(file, harnessSettings))
+		if !strings.HasSuffix(file.Content, "\n") {
+			jsCode.WriteString("\r\n")
+		}
+	}
 	for file := range result.JS.Values() {
 		if jsCode.Len() > 0 && !strings.HasSuffix(jsCode.String(), "\n") {
 			jsCode.WriteString("\r\n")
@@ -98,7 +104,7 @@ func DoJSEmitBaseline(
 		))
 	}
 
-	if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() {
+	if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() && !options.LintOnly.IsTrue() {
 		testConfig := make(map[string]string)
 		testConfig["noCheck"] = "true"
 		withoutChecking := result.Repeat(testConfig)

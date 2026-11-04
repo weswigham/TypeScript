@@ -210,12 +210,22 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         compileOnSave: "Compile this project when a file is saved in a supporting editor.",
         contentMappers: "External content mapper packages and the file extensions they handle. Execution must be enabled separately with --runExternalCode.",
         generate: "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
+        lint: "Lint rules, inherited per rule. Execution requires --lint or --lintOnly.",
     };
     const properties: Record<string, JSONSchema> = {
         $schema: { type: "string", description: "The JSON schema used to validate this configuration." },
     };
     for (const option of options.rootOptions) {
-        const schema = option.elementOptions && option.elementOptions !== "extends"
+        const schema = option.name === "lint" ? {
+            type: ["object", "null"],
+            properties: {
+                rules: {
+                    type: ["object", "null"],
+                    additionalProperties: { enum: ["off", "warning", "error", null] },
+                },
+            },
+            additionalProperties: false,
+        } : option.elementOptions && option.elementOptions !== "extends"
             ? { allOf: [{ $ref: `#/definitions/${option.elementOptions}` }] }
             : option.name === "extends" ? valueSchema(option) : optionSchema(option);
         properties[option.name] = withDescription(schema, option.schemaDescription ?? descriptions[option.name], option.documentationAnchor ?? option.name);

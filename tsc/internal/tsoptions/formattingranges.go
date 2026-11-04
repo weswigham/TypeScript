@@ -52,14 +52,31 @@ func cloneFormattingRanges(ranges map[tspath.PathKey][]FormattingLineRange) map[
 }
 
 func ValidateBuildStageOptions(options *core.CompilerOptions) []*ast.Diagnostic {
-	if options.FormatOnly.IsTrue() && options.GenerateOnly.IsTrue() {
-		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "formatOnly", "generateOnly")}
+	if options.Fix.IsTrue() && !options.Lint.IsTrue() && !options.LintOnly.IsTrue() {
+		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "fix", "lint", "lintOnly")}
 	}
-	if options.GenerateOnly.IsTrue() && options.Format.IsTrue() {
-		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "generateOnly", "format")}
+	phases := []struct {
+		name    string
+		enabled bool
+		only    bool
+	}{
+		{"format", options.Format.IsTrue(), options.FormatOnly.IsTrue()},
+		{"generate", options.Generate.IsTrue(), options.GenerateOnly.IsTrue()},
+		{"lint", options.Lint.IsTrue(), options.LintOnly.IsTrue()},
 	}
-	if options.FormatOnly.IsTrue() && options.Generate.IsTrue() {
-		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "formatOnly", "generate")}
+	for index, phase := range phases {
+		if !phase.only {
+			continue
+		}
+		for otherIndex, other := range phases {
+			if index != otherIndex && (other.enabled || other.only) {
+				name := other.name
+				if other.only {
+					name += "Only"
+				}
+				return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, phase.name+"Only", name)}
+			}
+		}
 	}
 	return nil
 }

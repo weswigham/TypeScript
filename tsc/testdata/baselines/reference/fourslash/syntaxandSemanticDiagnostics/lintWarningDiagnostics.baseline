@@ -1,0 +1,8 @@
+// === Syntax and Semantic Diagnostics ===
+/input.ts(1,1): warning TS18175: Unexpected 'debugger' statement.
+
+
+==== /input.ts (1 errors) ====
+    debugger;
+    ~~~~~~~~~
+!!! warning TS18175: Unexpected 'debugger' statement.

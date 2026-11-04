@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/astnav"
+	"github.com/microsoft/TypeScript/tsc/internal/codefix"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/format"
@@ -74,6 +75,7 @@ type trackerEdit struct {
 	*ast.Node             // single
 	nodes     []*ast.Node // multiple
 	options   NodeOptions
+	original  *ast.Node
 }
 
 type nodesInsertedAtStartState struct {
@@ -126,6 +128,32 @@ func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, form
 	}
 }
 
+// GetTextChanges returns edits in source-file coordinates rather than original-document LSP coordinates.
+func (t *Tracker) GetTextChanges() []codefix.FileTextChanges {
+	t.finishDeleteDeclarations()
+	t.finishNodesWithInsertionsAtStart()
+	t.finishStatementBoundaries()
+	var result []codefix.FileTextChanges
+	for file, edits := range t.changes.M {
+		changes := codefix.FileTextChanges{FileName: file.FileName()}
+		slices.SortFunc(edits, func(left, right *trackerEdit) int {
+			if left.TextRange.Pos() != right.TextRange.Pos() {
+				return left.TextRange.Pos() - right.TextRange.Pos()
+			}
+			return left.TextRange.End() - right.TextRange.End()
+		})
+		for _, edit := range edits {
+			changes.TextChanges = append(changes.TextChanges, core.TextChange{
+				TextRange: edit.TextRange,
+				NewText:   t.computeNewTextAtPosition(edit, file, file, edit.TextRange.Pos()),
+			})
+		}
+		result = append(result, changes)
+	}
+	slices.SortFunc(result, func(left, right codefix.FileTextChanges) int { return left.FileName.Compare(right.FileName) })
+	return result
+}
+
 // GetChanges returns the accumulated text edits grouped by file name. Any file whose edits could not be
 // faithfully mapped back onto content-mapped original text is omitted from the returned map, and its name
 // is included in the returned slice. Dropping the whole file (rather than the individual edit) keeps a
@@ -135,6 +163,7 @@ func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, form
 func (t *Tracker) GetChanges() (map[tspath.RootedFilePath][]*lsproto.TextEdit, []tspath.RootedFilePath) {
 	t.finishDeleteDeclarations()
 	t.finishNodesWithInsertionsAtStart()
+	t.finishStatementBoundaries()
 	changes := t.getTextChangesFromChanges()
 	// !!! changes for new files
 	if t.unmappableFiles.Len() == 0 {
@@ -181,6 +210,44 @@ func (t *Tracker) toLSPEditRange(sourceFile *ast.SourceFile, textRange core.Text
 	return r
 }
 
+func (t *Tracker) nodeComments(sourceFile *ast.SourceFile, node *ast.Node) []ast.CommentRange {
+	lexer := scanner.NewScanner()
+	lexer.SetText(sourceFile.Text()[node.Pos():node.End()])
+	lexer.SetSkipTrivia(false)
+	var comments []ast.CommentRange
+	for kind := lexer.Scan(); kind != ast.KindEndOfFile; kind = lexer.Scan() {
+		if kind == ast.KindSingleLineCommentTrivia || kind == ast.KindMultiLineCommentTrivia {
+			comments = append(comments, t.NewCommentRange(kind, node.Pos()+lexer.TokenStart(), node.Pos()+lexer.TokenEnd(), kind == ast.KindSingleLineCommentTrivia))
+		}
+	}
+	return comments
+}
+
+func (t *Tracker) NodeHasComments(sourceFile *ast.SourceFile, node *ast.Node) bool {
+	if len(t.nodeComments(sourceFile, node)) > 0 {
+		return true
+	}
+	for range scanner.GetTrailingCommentRanges(t.NodeFactory, sourceFile.Text(), node.End()) {
+		return true
+	}
+	return false
+}
+
+func (t *Tracker) ReplaceNodePreservingComments(sourceFile *ast.SourceFile, oldNode, newNode *ast.Node) {
+	start := astnav.GetStartOfNode(oldNode, sourceFile, false)
+	for _, comment := range t.nodeComments(sourceFile, oldNode) {
+		if comment.Pos() < start {
+			continue
+		}
+		end := comment.End()
+		if comment.Kind == ast.KindMultiLineCommentTrivia {
+			end -= 2
+		}
+		t.AddSyntheticTrailingComment(newNode, comment.Kind, sourceFile.Text()[comment.Pos()+2:end], comment.HasTrailingNewLine)
+	}
+	t.ReplaceNode(sourceFile, oldNode, newNode, nil)
+}
+
 func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, newNode *ast.Node, options *NodeOptions) {
 	if options == nil {
 		// defaults to `useNonAdjustedPositions`
@@ -189,7 +256,11 @@ func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, new
 			TrailingTriviaOption: TrailingTriviaOptionExclude,
 		}
 	}
-	t.ReplaceRange(sourceFile, t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNode, *options)
+	t.changes.Add(sourceFile, &trackerEdit{
+		kind: trackerEditKindReplaceWithSingleNode, original: oldNode,
+		TextRange: t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption),
+		Node:      newNode, options: *options,
+	})
 }
 
 func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.Node, newNodes []*ast.Node, options *NodeOptions) {
@@ -199,7 +270,15 @@ func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.
 			TrailingTriviaOption: TrailingTriviaOptionExclude,
 		}
 	}
-	t.ReplaceRangeWithNodes(sourceFile, t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNodes, *options)
+	if len(newNodes) == 1 {
+		t.ReplaceNode(sourceFile, oldNode, newNodes[0], options)
+		return
+	}
+	t.changes.Add(sourceFile, &trackerEdit{
+		kind: trackerEditKindReplaceWithMultipleNodes, original: oldNode,
+		TextRange: t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption),
+		nodes:     newNodes, options: *options,
+	})
 }
 
 // ReplaceRange replaces textRange in sourceFile with newNode.

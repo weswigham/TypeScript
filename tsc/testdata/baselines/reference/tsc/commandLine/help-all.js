@@ -20,6 +20,9 @@ Build one or more projects and their dependencies, if out of date
 [94m--checkers[39m
 Set the number of checkers per project.
 
+[94m--fix[39m
+Apply available lint fixes to input files.
+
 [94m--format[39m
 Format input files before compiling.
 
@@ -46,6 +49,12 @@ Ignore the tsconfig found and build with commandline options and files.
 
 [94m--init[39m
 Initializes a TypeScript project and creates a tsconfig.json file.
+
+[94m--lint[39m
+Lint input files after checking.
+
+[94m--lintOnly[39m
+Lint input files without emitting JavaScript or declarations.
 
 [94m--listFilesOnly[39m
 Print names of files that are part of the compilation and then stop processing.

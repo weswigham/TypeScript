@@ -4018,6 +4018,20 @@ var Code_generation_outputs_0_and_1_overlap = &Message{code: 18171, category: Ca
 
 var Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command = &Message{code: 18172, category: CategoryError, key: "Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command_18172", text: "Code generation commands must be independent. Output '{0}' is an input of another command."}
 
+var Lint_input_files_after_checking = &Message{code: 18173, category: CategoryMessage, key: "Lint_input_files_after_checking_18173", text: "Lint input files after checking."}
+
+var Lint_input_files_without_emitting_JavaScript_or_declarations = &Message{code: 18174, category: CategoryMessage, key: "Lint_input_files_without_emitting_JavaScript_or_declarations_18174", text: "Lint input files without emitting JavaScript or declarations."}
+
+var Unexpected_debugger_statement = &Message{code: 18175, category: CategoryError, key: "Unexpected_debugger_statement_18175", text: "Unexpected 'debugger' statement."}
+
+var Unknown_lint_rule_0 = &Message{code: 18176, category: CategoryError, key: "Unknown_lint_rule_0_18176", text: "Unknown lint rule '{0}'."}
+
+var Apply_available_lint_fixes_to_input_files = &Message{code: 18177, category: CategoryMessage, key: "Apply_available_lint_fixes_to_input_files_18177", text: "Apply available lint fixes to input files."}
+
+var Remove_debugger_statement = &Message{code: 18178, category: CategoryMessage, key: "Remove_debugger_statement_18178", text: "Remove 'debugger' statement"}
+
+var Remove_all_debugger_statements = &Message{code: 18179, category: CategoryMessage, key: "Remove_all_debugger_statements_18179", text: "Remove all 'debugger' statements"}
+
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
 var File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module = &Message{code: 80001, category: CategorySuggestion, key: "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001", text: "File is a CommonJS module; it may be converted to an ES module."}
@@ -6567,6 +6581,13 @@ var allMessages = [...]**Message{
 	&Code_generation_command_0_failed_Colon_1,
 	&Code_generation_outputs_0_and_1_overlap,
 	&Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command,
+	&Lint_input_files_after_checking,
+	&Lint_input_files_without_emitting_JavaScript_or_declarations,
+	&Unexpected_debugger_statement,
+	&Unknown_lint_rule_0,
+	&Apply_available_lint_fixes_to_input_files,
+	&Remove_debugger_statement,
+	&Remove_all_debugger_statements,
 	&X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	&File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module,
 	&This_constructor_function_may_be_converted_to_a_class_declaration,

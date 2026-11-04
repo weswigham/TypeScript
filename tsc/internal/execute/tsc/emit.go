@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/tracing"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
@@ -43,6 +44,8 @@ type EmitInput struct {
 	Testing               CommandLineTesting
 	TestingMTimesCache    *collections.SyncMap[tspath.PathKey, time.Time]
 	Tracing               *tracing.Tracing
+	fixPass               int
+	fixDiagnostics        []*ast.Diagnostic
 }
 
 func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
@@ -53,6 +56,8 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 		return result, nil
 	}
 	result.times.totalTime = input.Sys.SinceStart()
+	input.ProgramLike = result.Program
+	input.Program = result.Program.Program()
 
 	if input.Config.CompilerOptions().Diagnostics.IsTrue() || input.Config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
 		var memStats runtime.MemStats
@@ -65,9 +70,9 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 		statistics.Report(input.Writer, input.Testing)
 	}
 
-	if result.EmitResult.EmitSkipped && len(result.Diagnostics) > 0 {
+	if result.EmitResult.EmitSkipped && CountErrors(result.Diagnostics) > 0 {
 		result.Status = ExitStatusDiagnosticsPresent_OutputsSkipped
-	} else if len(result.Diagnostics) > 0 {
+	} else if CountErrors(result.Diagnostics) > 0 {
 		result.Status = ExitStatusDiagnosticsPresent_OutputsGenerated
 	}
 	return result, statistics
@@ -75,6 +80,7 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 
 func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
+	result.Program = input.ProgramLike
 	ctx := context.Background()
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
@@ -114,7 +120,26 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 		},
 	)
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
-	if !input.ProgramLike.Options().ListFilesOnly.IsTrue() {
+	lintDiagnostics := lint.GetDiagnostics(ctx, input.Program)
+	if input.Config.CompilerOptions().Fix.IsTrue() && input.fixPass < 10 {
+		changed, errors := ApplyLintFixes(input.Sys.FS(), input.Program, lintDiagnostics)
+		input.fixDiagnostics = append(input.fixDiagnostics, errors...)
+		if len(changed) > 0 {
+			host := input.Program.Host()
+			freshHost := compiler.NewCompilerHost(input.Sys.FS(), host.DefaultLibraryPath(), nil, host.Trace, host.ContentMapperProject())
+			input.Program = compiler.NewProgram(compiler.ProgramOptions{Config: input.Config, Host: freshHost, Tracing: input.Tracing})
+			if previous, ok := input.ProgramLike.(*incremental.Program); ok {
+				input.ProgramLike = incremental.NewProgram(input.Program, previous, incremental.CreateHost(freshHost), input.Sys.Now, input.Testing != nil)
+			} else {
+				input.ProgramLike = input.Program
+			}
+			input.fixPass++
+			result = EmitFilesAndReportErrors(input)
+			result.FixedFiles = append(changed, result.FixedFiles...)
+			return result
+		}
+	}
+	if !input.ProgramLike.Options().ListFilesOnly.IsTrue() && !input.ProgramLike.Options().LintOnly.IsTrue() {
 		emitStart := input.Sys.Now()
 		emitResult = input.ProgramLike.Emit(ctx, compiler.EmitOptions{
 			WriteFile: input.WriteFile,
@@ -129,7 +154,8 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 	}
 
 	result.CompilationDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
-	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.CompilationDiagnostics, input.FormattingDiagnostics))
+	result.LintDiagnostics = slices.Concat(lintDiagnostics, input.fixDiagnostics)
+	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.CompilationDiagnostics, input.FormattingDiagnostics, result.LintDiagnostics))
 	for _, diagnostic := range allDiagnostics {
 		input.ReportDiagnostic(diagnostic)
 	}

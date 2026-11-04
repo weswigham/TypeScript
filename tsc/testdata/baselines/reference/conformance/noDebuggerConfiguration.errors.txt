@@ -1,0 +1,19 @@
+input.ts(1,1): warning TS18175: Unexpected 'debugger' statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "extends": "./base.json",
+        "lint": { "rules": { "no-debugger": "warning" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    debugger;
+    ~~~~~~~~~
+!!! warning TS18175: Unexpected 'debugger' statement.
+==== base.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-debugger": "error" } }
+    }
+    

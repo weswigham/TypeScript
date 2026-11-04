@@ -70,7 +70,7 @@ Directory watches::
 Diff:: incremental reports config read error while clean build without tsconfig prints usage help
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,159 +1,1 @@
+@@ -1,168 +1,1 @@
 -Version FakeTSVersion
 -tsc: The TypeScript Compiler - Version FakeTSVersion
 -
@@ -114,6 +114,15 @@ Diff:: incremental reports config read error while clean build without tsconfig 
 -
 -[94m--formatDiagnostics[39m
 -Report formatting changes as diagnostics instead of writing input files.
+-
+-[94m--lint[39m
+-Lint input files after checking.
+-
+-[94m--lintOnly[39m
+-Lint input files without emitting JavaScript or declarations.
+-
+-[94m--fix[39m
+-Apply available lint fixes to input files.
 -
 -[94m--help, -h[39m
 -Print this message.

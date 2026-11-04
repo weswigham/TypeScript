@@ -100,6 +100,17 @@ func dedupeIdenticalEdits(edits []*lsproto.TextEdit) []*lsproto.TextEdit {
 	return deduped
 }
 
+func NormalizeTextEdits(edits []*lsproto.TextEdit) ([]*lsproto.TextEdit, bool) {
+	slices.SortStableFunc(edits, func(left, right *lsproto.TextEdit) int { return lsproto.CompareRanges(left.Range, right.Range) })
+	edits = dedupeIdenticalEdits(edits)
+	for index := range len(edits) - 1 {
+		if textEditsConflict(edits[index], edits[index+1], true) {
+			return nil, false
+		}
+	}
+	return edits, true
+}
+
 func textEditsConflict(a, b *lsproto.TextEdit, multipleProjections bool) bool {
 	if lsproto.ComparePositions(a.Range.End, b.Range.Start) > 0 {
 		return true
@@ -109,6 +120,112 @@ func textEditsConflict(a, b *lsproto.TextEdit, multipleProjections bool) bool {
 		a.Range.Start == a.Range.End &&
 		a.Range == b.Range &&
 		a.NewText != b.NewText
+}
+
+func (t *Tracker) finishStatementBoundaries() {
+	for file, edits := range t.changes.M {
+		parents := make(map[*ast.Node]map[*ast.Node]*trackerEdit)
+		for _, edit := range edits {
+			for node := edit.original; node != nil && node.Parent != nil; node = node.Parent {
+				parent := node.Parent
+				if parent.Kind != ast.KindSourceFile && parent.Kind != ast.KindBlock && parent.Kind != ast.KindModuleBlock && parent.Kind != ast.KindCaseClause && parent.Kind != ast.KindDefaultClause {
+					continue
+				}
+				if !slices.Contains(parent.Statements(), node) {
+					continue
+				}
+				if parents[parent] == nil {
+					parents[parent] = make(map[*ast.Node]*trackerEdit)
+				}
+				parents[parent][node] = edit
+				break
+			}
+		}
+		if len(parents) == 0 {
+			continue
+		}
+		slices.SortStableFunc(edits, func(left, right *trackerEdit) int {
+			if left.TextRange.Pos() != right.TextRange.Pos() {
+				return left.TextRange.Pos() - right.TextRange.Pos()
+			}
+			return left.TextRange.End() - right.TextRange.End()
+		})
+		var rendered []core.TextChange
+		for _, edit := range edits {
+			rendered = append(rendered, core.TextChange{TextRange: edit.TextRange, NewText: t.computeNewTextAtPosition(edit, file, file, edit.TextRange.Pos())})
+		}
+		fixed := core.ApplyBulkEdits(file.Text(), rendered)
+		mapPosition := func(position int, end bool) int {
+			delta := 0
+			for _, edit := range rendered {
+				if position < edit.Pos() {
+					break
+				}
+				if position >= edit.End() && edit.Pos() != edit.End() {
+					delta += len(edit.NewText) - edit.Len()
+					continue
+				}
+				if position <= edit.End() {
+					if end {
+						return edit.Pos() + delta + len(edit.NewText)
+					}
+					return edit.Pos() + delta
+				}
+				delta += len(edit.NewText) - edit.Len()
+			}
+			return position + delta
+		}
+		for parent, changed := range parents {
+			var previous *ast.Node
+			var previousNode *ast.Node
+			var previousLast ast.Kind
+			var removed *trackerEdit
+			for _, statement := range parent.Statements() {
+				start := mapPosition(astnav.GetStartOfNode(statement, file, false), false)
+				end := mapPosition(statement.End(), true)
+				lexer := scanner.NewScanner()
+				lexer.SetText(fixed[start:end])
+				lexer.SetSkipTrivia(true)
+				first, last := ast.KindEndOfFile, ast.KindEndOfFile
+				for token := lexer.Scan(); token != ast.KindEndOfFile; token = lexer.Scan() {
+					if first == ast.KindEndOfFile {
+						first = token
+					}
+					last = token
+				}
+				if first == ast.KindEndOfFile {
+					if edit := changed[statement]; edit != nil {
+						removed = edit
+					}
+					continue
+				}
+				continuation := false
+				switch first {
+				case ast.KindOpenParenToken, ast.KindOpenBracketToken, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead, ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindPlusToken, ast.KindMinusToken, ast.KindLessThanToken:
+					continuation = true
+				}
+				if removed != nil && (ast.IsPrologueDirective(statement) || continuation && previousLast == ast.KindSemicolonToken) && !ast.IsPrologueDirective(removed.original) {
+					removed.kind = trackerEditKindReplaceWithSingleNode
+					removed.Node = t.NewEmptyStatement()
+					removed.options.Suffix = t.newLine
+				}
+				effective := statement
+				if edit := changed[statement]; edit != nil && edit.original == statement {
+					if edit.kind == trackerEditKindReplaceWithSingleNode {
+						effective = edit.Node
+					} else if edit.kind == trackerEditKindReplaceWithMultipleNodes && len(edit.nodes) > 0 {
+						effective = edit.nodes[len(edit.nodes)-1]
+					}
+				}
+				if continuation && previous != nil && previousLast != ast.KindSemicolonToken && (changed[previous] != nil || changed[statement] != nil || removed != nil) &&
+					(ast.IsStatementButNotDeclaration(previousNode) || previousNode.Kind == ast.KindVariableStatement) && previousNode.Kind != ast.KindBlock && previousNode.Kind != ast.KindEmptyStatement {
+					t.changes.Add(file, &trackerEdit{kind: trackerEditKindText, TextRange: core.NewTextRange(previous.End(), previous.End()), NewText: ";"})
+				}
+				previous, previousNode, previousLast = statement, effective, last
+				removed = nil
+			}
+		}
+	}
 }
 
 func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile) string {
@@ -132,31 +249,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		if !mapped.Fidelity.IsExact() {
 			continue
 		}
-		projection := mapped.Script
-		pos := int(mapped.Position)
-		formatNode := func(n *ast.Node) string {
-			return t.getFormattedTextOfNode(n, targetSourceFile, projection, pos, change.options)
-		}
-
-		var text string
-		switch change.kind {
-		case trackerEditKindReplaceWithMultipleNodes:
-			joiner := change.options.joiner
-			if joiner == "" {
-				joiner = t.newLine
-			}
-			text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(formatNode(n), t.newLine) }), joiner)
-		case trackerEditKindReplaceWithSingleNode:
-			text = formatNode(change.Node)
-		default:
-			panic(fmt.Sprintf("change kind %d should have been handled earlier", change.kind))
-		}
-		// Strip initial indentation if text will be inserted in the middle of the line.
-		noIndent := text
-		if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, projection) == pos) {
-			noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
-		}
-		candidate := change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
+		candidate := t.computeNewTextAtPosition(change, targetSourceFile, mapped.Script, int(mapped.Position))
 		if found && candidate != result {
 			t.unmappableFiles.Add(sourceFile.OriginalFileName())
 			return ""
@@ -168,6 +261,35 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		t.unmappableFiles.Add(sourceFile.OriginalFileName())
 	}
 	return t.reindentInsertedLines(sourceFile, change, result)
+}
+
+func (t *Tracker) computeNewTextAtPosition(change *trackerEdit, targetSourceFile, sourceFile *ast.SourceFile, pos int) string {
+	switch change.kind {
+	case trackerEditKindRemove:
+		return ""
+	case trackerEditKindText:
+		return change.NewText
+	}
+	formatNode := func(node *ast.Node) string {
+		return t.getFormattedTextOfNode(node, targetSourceFile, sourceFile, pos, change.options)
+	}
+	var text string
+	switch change.kind {
+	case trackerEditKindReplaceWithMultipleNodes:
+		joiner := change.options.joiner
+		if joiner == "" {
+			joiner = t.newLine
+		}
+		text = strings.Join(core.Map(change.nodes, func(node *ast.Node) string { return strings.TrimSuffix(formatNode(node), t.newLine) }), joiner)
+	case trackerEditKindReplaceWithSingleNode:
+		text = formatNode(change.Node)
+	default:
+		panic(fmt.Sprintf("unexpected change kind %d", change.kind))
+	}
+	if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, sourceFile) == pos) {
+		text = strings.TrimLeftFunc(text, unicode.IsSpace)
+	}
+	return change.options.Prefix + text + core.IfElse(strings.HasSuffix(text, change.options.Suffix), "", change.options.Suffix)
 }
 
 // reindentInsertedLines fixes the indentation of a line an insertion introduces into the document the

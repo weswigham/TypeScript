@@ -51,7 +51,7 @@ func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, 
 		switch strings.ToLower(commandLineArgs[i]) {
 		case "-b", "--b", "-build", "--build":
 			return tscBuildCompilation(ctx, sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys.FS(), sys.GetCurrentDirectory()), testing)
-		case "--generate", "-generate", "--generateonly", "-generateonly", "--format", "-format", "--formatonly", "-formatonly", "--formatdiagnostics", "-formatdiagnostics":
+		case "--generate", "-generate", "--generateonly", "-generateonly", "--format", "-format", "--formatonly", "-formatonly", "--formatdiagnostics", "-formatdiagnostics", "--lint", "-lint", "--lintonly", "-lintonly", "--fix", "-fix":
 			if i+1 < len(commandLineArgs) && (commandLineArgs[i+1] == "true" || commandLineArgs[i+1] == "false") {
 				i++
 			}
@@ -364,7 +364,8 @@ func performIncrementalCompilation(
 	stopTracing(sys, tr)
 
 	if testing != nil {
-		testing.OnProgram(incrementalProgram)
+		updated, _ := result.Program.(*incremental.Program)
+		testing.OnProgram(updated)
 	}
 	return tsc.CommandLineResult{
 		Status: result.Status,

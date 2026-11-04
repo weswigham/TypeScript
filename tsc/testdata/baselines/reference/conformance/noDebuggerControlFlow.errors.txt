@@ -1,0 +1,52 @@
+input.ts(1,11): error TS18175: Unexpected 'debugger' statement.
+input.ts(2,11): error TS18175: Unexpected 'debugger' statement.
+input.ts(3,15): error TS18175: Unexpected 'debugger' statement.
+input.ts(4,4): error TS18175: Unexpected 'debugger' statement.
+input.ts(5,16): error TS18175: Unexpected 'debugger' statement.
+input.ts(6,8): error TS18175: Unexpected 'debugger' statement.
+input.ts(9,9): error TS18175: Unexpected 'debugger' statement.
+input.ts(12,9): error TS18175: Unexpected 'debugger' statement.
+input.ts(15,5): error TS18175: Unexpected 'debugger' statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-debugger": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (9 errors) ====
+    if (true) debugger
+              ~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    if (true) debugger; else void 0;
+              ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    while (false) debugger;
+                  ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    do debugger; while (false);
+       ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    for (; false;) debugger;
+                   ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    label: debugger;
+           ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    switch (1) {
+        case 1:
+            debugger;
+            ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+            break;
+        default:
+            debugger;
+            ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }
+    if (true) {
+        debugger;
+        ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    }

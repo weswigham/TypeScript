@@ -119,6 +119,9 @@ func ParseBuildCommandLine(
 			{"format", compilerOptions.Format.IsTrue()},
 			{"formatOnly", compilerOptions.FormatOnly.IsTrue()},
 			{"formatDiagnostics", compilerOptions.FormatDiagnostics.IsTrue()},
+			{"lint", compilerOptions.Lint.IsTrue()},
+			{"lintOnly", compilerOptions.LintOnly.IsTrue()},
+			{"fix", compilerOptions.Fix.IsTrue()},
 		} {
 			if option.enabled {
 				result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", option.name))
