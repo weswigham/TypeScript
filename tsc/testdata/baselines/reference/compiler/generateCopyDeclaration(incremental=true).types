@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/generateCopyDeclaration.ts] ////
+
+=== /project/main.ts ===
+import type { Value } from "./generated/value";
+>Value : Value
+
+export const result: Value = { value: 42, label: "generated" };
+>result : Value
+>{ value: 42, label: "generated" } : { value: number; label: string; }
+>value : number
+>42 : 42
+>label : string
+>"generated" : "generated"
+
+=== /project/generated/value.d.ts ===
+export interface Value { value: number; label: string; }
+>value : number
+>label : string
+

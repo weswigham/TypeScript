@@ -47,6 +47,7 @@ var impliedOptions = []impliedOption{
 
 // TSConfig represents the output structure for --showConfig
 type TSConfig struct {
+	Generate          []TSConfigGenerateCommand            `json:"generate,omitzero"`
 	FormattingOptions *core.FormattingOptions              `json:"formattingOptions,omitzero"`
 	CompilerOptions   *collections.OrderedMap[string, any] `json:"compilerOptions"`
 	References        []any                                `json:"references,omitzero"`
@@ -54,6 +55,11 @@ type TSConfig struct {
 	Include           []string                             `json:"include,omitzero"`
 	Exclude           []string                             `json:"exclude,omitzero"`
 	CompileOnSave     *bool                                `json:"compileOnSave,omitzero"`
+}
+
+type TSConfigGenerateCommand struct {
+	GenerateCommand
+	Cwd string `json:"cwd,omitzero"`
 }
 
 // ConvertToTSConfig generates a complete tsconfig representation for --showConfig output,
@@ -92,6 +98,13 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName tspa
 	config := &TSConfig{
 		CompilerOptions:   optionMap,
 		FormattingOptions: configParseResult.FormattingOptions(),
+	}
+	for _, command := range configParseResult.ParsedConfig.Generate {
+		serialized := TSConfigGenerateCommand{GenerateCommand: command}
+		if command.Directory != "" && caseSensitivity.PathKey(command.Directory.AsPath()) != caseSensitivity.PathKey(configFileName.Directory().AsPath()) {
+			serialized.Cwd = serializeCompilerOptionPath(command.Directory.AsPath(), configFileName, caseSensitivity)
+		}
+		config.Generate = append(config.Generate, serialized)
 	}
 
 	// Add references

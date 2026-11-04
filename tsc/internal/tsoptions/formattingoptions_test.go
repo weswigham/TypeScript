@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions/tsoptionstest"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
@@ -30,6 +31,41 @@ func TestFormattingSelection(t *testing.T) {
 	assert.Assert(t, config.FormattingRanges == nil)
 	project := tsoptions.ParseCommandLine([]string{"--formatOnly", "-p", "."}, fs, "/project")
 	assert.DeepEqual(t, project.FormattingSelection().Apply(config).FileNames(), config.FileNames())
+}
+
+func TestExclusiveBuildStageOptions(t *testing.T) {
+	t.Parallel()
+	fs := tsoptionstest.NewVFSWithSymlinks(nil, nil, "/project", tspath.CaseSensitive)
+	for _, test := range []struct {
+		name   string
+		args   []string
+		errors int
+	}{
+		{"both", []string{"--formatOnly", "--generateOnly"}, 1},
+		{"reversed", []string{"--generateOnly", "--formatOnly"}, 1},
+		{"format only disabled", []string{"--formatOnly", "false", "--generateOnly"}, 0},
+		{"generate only disabled", []string{"--generateOnly", "false", "--formatOnly"}, 0},
+		{"generate then format only", []string{"--generate", "--formatOnly"}, 1},
+		{"format only then generate", []string{"--formatOnly", "--generate"}, 1},
+		{"generate only with format", []string{"--generateOnly", "--format"}, 1},
+		{"format then generate only", []string{"--format", "--generateOnly"}, 1},
+		{"same formatting phase", []string{"--formatOnly", "--format"}, 0},
+		{"same generation phase", []string{"--generateOnly", "--generate"}, 0},
+		{"generation disabled", []string{"--formatOnly", "--generate", "false"}, 0},
+		{"formatting disabled", []string{"--generateOnly", "--format", "false"}, 0},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			command := tsoptions.ParseCommandLine(test.args, fs, "/project")
+			assert.Equal(t, len(command.Errors), test.errors)
+			build := tsoptions.ParseBuildCommandLine(append([]string{"-b"}, test.args...), fs, "/project")
+			assert.Equal(t, len(build.Errors), test.errors)
+			if test.errors > 0 {
+				assert.Equal(t, command.Errors[0].Code(), diagnostics.Options_0_and_1_cannot_be_combined.Code())
+				assert.Equal(t, build.Errors[0].Code(), diagnostics.Options_0_and_1_cannot_be_combined.Code())
+			}
+		})
+	}
 }
 
 func TestFormattingOptionsInheritance(t *testing.T) {

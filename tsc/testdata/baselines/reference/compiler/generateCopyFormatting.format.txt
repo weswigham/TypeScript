@@ -1,0 +1,6 @@
+//// [main.ts]
+import { value } from "./generated/value";
+export const result = value();
+//// [generated/value.ts]
+export function value() { return 42; }
+

@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/generateCopyDiagnostics.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : Symbol(value, Decl(main.ts, 0, 8))
+
+export const result = value;
+>result : Symbol(result, Decl(main.ts, 1, 12))
+>value : Symbol(value, Decl(main.ts, 0, 8))
+
+=== /project/generated/value.ts ===
+export const value: number = "generated type error";
+>value : Symbol(value, Decl(value.ts, 0, 12))
+

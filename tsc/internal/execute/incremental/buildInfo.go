@@ -472,6 +472,7 @@ func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 }
 
 type BuildInfo struct {
+	Generation *GenerationBuildInfo `json:"generation,omitzero"`
 	Formatting *FormattingBuildInfo `json:"formatting,omitzero"`
 	Version    string               `json:"version,omitzero"`
 
@@ -509,6 +510,41 @@ type FormattingBuildInfo struct {
 	CompilationPending bool `json:"compilationPending,omitzero"`
 }
 
+type GenerationBuildInfo struct {
+	Commands           *collections.OrderedMap[string, string] `json:"commands"`
+	CompilationPending bool                                    `json:"compilationPending,omitzero"`
+}
+
+func ReadGenerationVersions(fs vfs.FS, fileName tspath.RootedFilePath) *collections.OrderedMap[string, string] {
+	info, _ := readBuildInfo(fs, fileName)
+	if info.Generation != nil && info.Generation.Commands != nil {
+		return info.Generation.Commands
+	}
+	return &collections.OrderedMap[string, string]{}
+}
+
+func SaveGenerationVersions(fs vfs.FS, fileName tspath.RootedFilePath, versions *collections.OrderedMap[string, string]) error {
+	if fileName == "" {
+		return nil
+	}
+	info, previous := readBuildInfo(fs, fileName)
+	pending := info.Generation != nil && info.Generation.CompilationPending
+	info.Generation = &GenerationBuildInfo{Commands: versions, CompilationPending: pending}
+	text, err := json.Marshal(&info)
+	if err != nil {
+		return err
+	}
+	if string(text) == previous {
+		return nil
+	}
+	info.Generation.CompilationPending = true
+	text, err = json.Marshal(&info)
+	if err != nil {
+		return err
+	}
+	return fs.WriteFile(fileName, string(text))
+}
+
 type FormattingState struct {
 	fs           vfs.FS
 	fileName     tspath.RootedFilePath
@@ -516,7 +552,7 @@ type FormattingState struct {
 	previousText string
 }
 
-func readFormattingBuildInfo(fs vfs.FS, fileName tspath.RootedFilePath) (BuildInfo, string) {
+func readBuildInfo(fs vfs.FS, fileName tspath.RootedFilePath) (BuildInfo, string) {
 	var info BuildInfo
 	var text string
 	if fileName != "" {
@@ -529,7 +565,7 @@ func readFormattingBuildInfo(fs vfs.FS, fileName tspath.RootedFilePath) (BuildIn
 }
 
 func ReadFormattingState(fs vfs.FS, fileName tspath.RootedFilePath, optionsHash string) *FormattingState {
-	info, text := readFormattingBuildInfo(fs, fileName)
+	info, text := readBuildInfo(fs, fileName)
 	formatting := &FormattingBuildInfo{Options: optionsHash, Files: &collections.OrderedMap[string, string]{}}
 	if previous := info.Formatting; previous != nil && previous.Options == optionsHash {
 		if previous.Files != nil {

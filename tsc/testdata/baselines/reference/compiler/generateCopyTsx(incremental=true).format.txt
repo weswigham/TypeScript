@@ -1,0 +1,12 @@
+//// [main.ts]
+import { render } from "./generated/component";
+export const view = render(42);
+//// [jsx.d.ts]
+declare namespace JSX {
+    interface Element { }
+    interface IntrinsicElements { div: { children?: number }; }
+}
+
+//// [generated/component.tsx]
+export function render(value: number) { return <div>{value}</div>; }
+

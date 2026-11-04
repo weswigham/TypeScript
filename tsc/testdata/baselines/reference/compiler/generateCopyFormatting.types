@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/generateCopyFormatting.ts] ////
+
+=== /workspace[demo]/project/main.ts ===
+import { value } from "./generated/value";
+>value : () => number
+
+export const result = value();
+>result : number
+>value() : number
+>value : () => number
+
+=== /workspace[demo]/project/generated/value.ts ===
+export function value() { return 42; }
+>value : () => number
+>42 : 42
+

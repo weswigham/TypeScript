@@ -1,0 +1,7 @@
+//// [main.ts]
+import data from "./generated/value.json";
+export const value: number = data.value;
+export const label: string = data.label;
+//// [generated/value.json]
+{ "value": 42, "label": "generated" }
+

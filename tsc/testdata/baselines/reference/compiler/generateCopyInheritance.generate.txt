@@ -1,0 +1,6 @@
+Commands executed: 1
+Emit skipped: false
+
+//// [base/generated/value.ts]
+export const value = 42;
+

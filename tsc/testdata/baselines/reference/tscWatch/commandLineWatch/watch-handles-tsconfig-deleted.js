@@ -70,7 +70,7 @@ Directory watches::
 Diff:: incremental reports config read error while clean build without tsconfig prints usage help
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,153 +1,1 @@
+@@ -1,159 +1,1 @@
 -Version FakeTSVersion
 -tsc: The TypeScript Compiler - Version FakeTSVersion
 -
@@ -99,6 +99,12 @@ Diff:: incremental reports config read error while clean build without tsconfig 
 -  Compiles the current project, with additional settings.
 -
 -[1mCOMMAND LINE FLAGS[22m
+-
+-[94m--generate[39m
+-Run configured code generation commands before compiling.
+-
+-[94m--generateOnly[39m
+-Run configured code generation commands without compiling.
 -
 -[94m--format[39m
 -Format input files before compiling.

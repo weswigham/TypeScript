@@ -1,0 +1,6 @@
+//// [main.ts]
+import type { Value } from "./generated/value";
+export const result: Value = { value: 42, label: "generated" };
+//// [generated/value.d.ts]
+export interface Value { value: number; label: string; }
+

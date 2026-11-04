@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/generateCopyInheritanceOverride.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : 42
+
+export const result = value;
+>result : 42
+>value : 42
+
+=== /project/generated/value.ts ===
+export const value = 42;
+>value : 42
+>42 : 42
+

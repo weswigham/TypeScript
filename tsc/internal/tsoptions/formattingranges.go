@@ -51,11 +51,25 @@ func cloneFormattingRanges(ranges map[tspath.PathKey][]FormattingLineRange) map[
 	return result
 }
 
-func validateFormattingOptions(options *core.CompilerOptions) []*ast.Diagnostic {
-	if options.FormatDiagnostics.IsTrue() && !options.Format.IsTrue() && !options.FormatOnly.IsTrue() {
-		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "formatDiagnostics", "format", "formatOnly")}
+func ValidateBuildStageOptions(options *core.CompilerOptions) []*ast.Diagnostic {
+	if options.FormatOnly.IsTrue() && options.GenerateOnly.IsTrue() {
+		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "formatOnly", "generateOnly")}
+	}
+	if options.GenerateOnly.IsTrue() && options.Format.IsTrue() {
+		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "generateOnly", "format")}
+	}
+	if options.FormatOnly.IsTrue() && options.Generate.IsTrue() {
+		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "formatOnly", "generate")}
 	}
 	return nil
+}
+
+func validateFormattingOptions(options *core.CompilerOptions) []*ast.Diagnostic {
+	errors := ValidateBuildStageOptions(options)
+	if options.FormatDiagnostics.IsTrue() && !options.Format.IsTrue() && !options.FormatOnly.IsTrue() {
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "formatDiagnostics", "format", "formatOnly"))
+	}
+	return errors
 }
 
 func (p *commandLineParser) parseFormattingRanges(options *core.CompilerOptions) map[tspath.PathKey][]FormattingLineRange {

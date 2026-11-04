@@ -59,7 +59,7 @@ func TestWatcherConcurrentDoCycle(t *testing.T) {
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*10+j),
 				)
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		}(i)
 	}
@@ -86,7 +86,7 @@ func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*15+j),
 				)
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		}(i)
 	}
@@ -95,10 +95,10 @@ func TestWatcherDoCycleWithConcurrentStateReads(t *testing.T) {
 	for range 8 {
 		wg.Go(func() {
 			for range 50 {
-				w.DoCycle()
-				w.DoCycle()
-				w.DoCycle()
-				w.DoCycle()
+				w.DoCycle(t.Context())
+				w.DoCycle(t.Context())
+				w.DoCycle(t.Context())
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -140,7 +140,7 @@ func TestWatcherConcurrentFileChangesAndDoCycle(t *testing.T) {
 	for range 4 {
 		wg.Go(func() {
 			for range 10 {
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -175,7 +175,7 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 					"/home/src/workspaces/project/tsconfig.json",
 					configs[(i+j)%len(configs)],
 				)
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		}(i)
 	}
@@ -190,7 +190,7 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 					"/home/src/workspaces/project/a.ts",
 					fmt.Sprintf("const a: number = %d;", i*15+j),
 				)
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		}(i)
 	}
@@ -199,8 +199,8 @@ func TestWatcherRapidConfigChanges(t *testing.T) {
 	for range 4 {
 		wg.Go(func() {
 			for range 30 {
-				w.DoCycle()
-				w.DoCycle()
+				w.DoCycle(t.Context())
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -220,7 +220,7 @@ func TestWatcherConcurrentDoCycleNoChanges(t *testing.T) {
 	for range 16 {
 		wg.Go(func() {
 			for range 50 {
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -251,7 +251,7 @@ func TestWatcherAlternatingModifyAndDoCycle(t *testing.T) {
 	for range 4 {
 		wg.Go(func() {
 			for range 25 {
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -260,7 +260,7 @@ func TestWatcherAlternatingModifyAndDoCycle(t *testing.T) {
 	for range 4 {
 		wg.Go(func() {
 			for range 100 {
-				w.DoCycle()
+				w.DoCycle(t.Context())
 			}
 		})
 	}
@@ -345,7 +345,7 @@ export const x = <div />;`)
 	sys.mockWatchBackend.SendEvents([]fswatch.Event{
 		{Kind: fswatch.EventUpdate, Path: "/home/src/workspaces/project/index.tsx"},
 	})
-	w.DoCycle()
+	w.DoCycle(t.Context())
 
 	out := sys.currentWrite.String()
 	assert.Assert(t, strings.Contains(out, "bar/jsx-runtime"), "expected updated JSX runtime diagnostic, got: %s", out)
@@ -384,7 +384,7 @@ func TestWatcherUpdateProgramFastPath(t *testing.T) {
 		sys.mockWatchBackend.SendEvents([]fswatch.Event{
 			{Kind: fswatch.EventUpdate, Path: path},
 		})
-		w.DoCycle()
+		w.DoCycle(t.Context())
 		return sys.currentWrite.String()
 	}
 
@@ -462,7 +462,7 @@ func TestWatcherOverflowForcesFullRebuild(t *testing.T) {
 	_ = fs.WriteFile("/home/src/workspaces/project/dep.ts", `export const dep: number = 1;`)
 	full := w.FullBuilds()
 	sys.mockWatchBackend.SendOverflow()
-	w.DoCycle()
+	w.DoCycle(t.Context())
 
 	assert.Equal(t, w.FullBuilds(), full+1, "overflow must force a full rebuild, not the single-file fast path")
 	assert.Assert(t, fs.FileExists("/home/src/workspaces/project/out/dep.js"),
@@ -512,7 +512,7 @@ func TestWatcherNonSourceDependencyForcesFullRebuild(t *testing.T) {
 		{Kind: fswatch.EventUpdate, Path: "/home/src/workspaces/project/index.ts"},
 		{Kind: fswatch.EventUpdate, Path: "/home/src/workspaces/project/dep.ts"},
 	})
-	w.DoCycle()
+	w.DoCycle(t.Context())
 
 	assert.Equal(t, w.FullBuilds(), full+1,
 		"a changed non-source dependency must force a full rebuild, not the fast path")

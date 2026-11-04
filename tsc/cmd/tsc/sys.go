@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/microsoft/TypeScript/tsc/internal/bundled"
@@ -69,6 +71,19 @@ func (s *osSys) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWr
 	return spawnProcess(command, dir, stderr)
 }
 
+func (s *osSys) Run(ctx context.Context, command []string, dir string, stdout, stderr io.Writer) error {
+	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
+	cmd.Dir = dir
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	cmd.WaitDelay = time.Second
+	err := cmd.Run()
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	return err
+}
+
 // spawnProcess launches a process and adapts its stdio to an io.ReadWriteCloser (Read is its stdout,
 // Write is its stdin).
 func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
@@ -93,13 +108,22 @@ func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteC
 // childProcess adapts a spawned process's stdout (read) and stdin (write) into one io.ReadWriteCloser.
 // Close kills and reaps the process.
 type childProcess struct {
-	cmd    *exec.Cmd
-	stdin  io.WriteCloser
-	stdout io.Reader
+	cmd       *exec.Cmd
+	stdin     io.WriteCloser
+	stdout    io.Reader
+	waitOnce  sync.Once
+	waitError error
 }
 
 func (p *childProcess) Read(b []byte) (int, error)  { return p.stdout.Read(b) }
 func (p *childProcess) Write(b []byte) (int, error) { return p.stdin.Write(b) }
+
+func (p *childProcess) CloseInput() error { return p.stdin.Close() }
+
+func (p *childProcess) Wait() error {
+	p.waitOnce.Do(func() { p.waitError = p.cmd.Wait() })
+	return p.waitError
+}
 
 func (p *childProcess) ExitCode() (int, bool) {
 	if p.cmd.ProcessState == nil {
@@ -111,7 +135,7 @@ func (p *childProcess) ExitCode() (int, bool) {
 func (p *childProcess) Close() error {
 	_ = p.stdin.Close()
 	_ = p.cmd.Process.Kill()
-	err := p.cmd.Wait()
+	err := p.Wait()
 	if _, ok := errors.AsType[*exec.ExitError](err); ok {
 		return nil
 	}

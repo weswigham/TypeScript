@@ -16,6 +16,24 @@ var BuildOpts = slices.Concat(commonOptionsWithBuild, OptionsForBuild)
 
 var commonOptionsWithBuild = []*CommandLineOption{
 	{
+		Name:                     "generate",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Run_configured_code_generation_commands_before_compiling,
+		DefaultValueDescription:  false,
+	},
+	{
+		Name:                     "generateOnly",
+		Kind:                     CommandLineOptionTypeBoolean,
+		IsCommandLineOnly:        true,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		Description:              diagnostics.Run_configured_code_generation_commands_without_compiling,
+		DefaultValueDescription:  false,
+	},
+	{
 		Name:                     "format",
 		Kind:                     CommandLineOptionTypeBoolean,
 		IsCommandLineOnly:        true,
@@ -266,7 +284,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Command_line_Options,
 		IsCommandLineOnly:       true,
-		Description:             diagnostics.Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation,
+		Description:             diagnostics.Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation,
 		DefaultValueDescription: false,
 	},
 }
@@ -1046,6 +1064,10 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Name: "references",
 		Kind: CommandLineOptionTypeObject,
 	},
+	"generate": {
+		Name: "generate",
+		Kind: CommandLineOptionTypeObject,
+	},
 	"contentMappers": {
 		Name: "contentMappers",
 		Kind: CommandLineOptionTypeObject,
@@ -1293,6 +1315,10 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 		extendsOptionDeclaration,
 		{
 			Name: "references",
+			Kind: CommandLineOptionTypeList,
+		},
+		{
+			Name: "generate",
 			Kind: CommandLineOptionTypeList,
 		},
 		{

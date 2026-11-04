@@ -1,0 +1,24 @@
+error TS18172: Code generation commands must be independent. Output '/project/intermediate/value.ts' is an input of another command.
+
+
+!!! error TS18172: Code generation commands must be independent. Output '/project/intermediate/value.ts' is an input of another command.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["intermediate/value.ts"],
+            "command": ["copy", "${inputs}", "intermediate/value.ts"]
+        }, {
+            "inputs": ["intermediate/value.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main = 1;
+==== /project/template.ts (0 errors) ====
+    export const value = 42;
+    

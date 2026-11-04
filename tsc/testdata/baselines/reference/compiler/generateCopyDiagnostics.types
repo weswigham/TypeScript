@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/generateCopyDiagnostics.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : number
+
+export const result = value;
+>result : number
+>value : number
+
+=== /project/generated/value.ts ===
+export const value: number = "generated type error";
+>value : number
+>"generated type error" : "generated type error"
+

@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/generateCopy.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : Symbol(value, Decl(main.ts, 0, 8))
+
+export const result = value.toFixed();
+>result : Symbol(result, Decl(main.ts, 1, 12))
+>value.toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
+>value : Symbol(value, Decl(main.ts, 0, 8))
+>toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
+
+=== /project/generated/value.ts ===
+export const value = 42;
+>value : Symbol(value, Decl(value.ts, 0, 12))
+

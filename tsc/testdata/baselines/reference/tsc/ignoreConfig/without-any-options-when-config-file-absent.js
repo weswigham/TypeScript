@@ -40,6 +40,12 @@ tsc: The TypeScript Compiler - Version FakeTSVersion
 
 [1mCOMMAND LINE FLAGS[22m
 
+[94m--generate[39m
+Run configured code generation commands before compiling.
+
+[94m--generateOnly[39m
+Run configured code generation commands without compiling.
+
 [94m--format[39m
 Format input files before compiling.
 

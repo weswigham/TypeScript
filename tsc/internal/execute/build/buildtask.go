@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/execute/tsc"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
+	"github.com/microsoft/TypeScript/tsc/internal/vfs/cachedvfs"
 )
 
 type buildKind uint
@@ -54,6 +55,8 @@ type taskResult struct {
 }
 
 type BuildTask struct {
+	generationTimings tsc.GenerationTimings
+	generationFailed  bool
 	formatInputFiles  []tspath.RootedFilePath
 	formatSourceFiles []*ast.SourceFile
 	formatDiagnostics []*ast.Diagnostic
@@ -147,29 +150,65 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.PathKey
 	t.result = nil
 }
 
-func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.PathKey) {
+func (t *BuildTask) invalidateGeneratedFiles(orchestrator *Orchestrator) {
+	orchestrator.host.FS().(*cachedvfs.FS).ClearCache()
+	orchestrator.host.sourceFiles.entries.Range(func(options ast.SourceFileParseOptions, _ *parseCacheEntry[*ast.SourceFile]) bool {
+		if tsc.GenerationMatchesPath(orchestrator.opts.Sys.FS(), t.resolved, options.FileName.AsPath()) {
+			orchestrator.host.sourceFiles.entries.Delete(options)
+		}
+		return true
+	})
+	directories := tsc.GenerationWatchDirectories(orchestrator.opts.Sys.FS(), t.resolved)
+	orchestrator.host.mTimes.Range(func(path tspath.PathKey, _ time.Time) bool {
+		for _, directory := range directories {
+			if orchestrator.caseSensitivity.PathKey(directory.AsPath()).ContainsPath(path) {
+				orchestrator.host.mTimes.Delete(path)
+				break
+			}
+		}
+		return true
+	})
+}
+
+func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.PathKey) {
 	// Wait on upstream tasks to complete
 	t.waitOnUpstream()
 	if t.pending.Load() {
-		if t.resolved != nil && tsc.FormattingEnabled(t.resolved.CompilerOptions()) && !orchestrator.opts.Command.BuildOptions.Dry.IsTrue() {
-			project, err := t.getContentMapperProject(orchestrator)
-			if err != nil {
-				t.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
-				t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+		t.generationFailed = false
+		for _, upstream := range t.upStream {
+			if upstream.task.generationFailed {
+				t.generationFailed = true
+				t.status = &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{t.resolved.ProjectReferences()[upstream.refIndex].Path, true}}
 				t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+				t.reportUpToDateStatus(orchestrator)
 				t.unblockDownstream()
 				return
 			}
-			formatHost := &compilerHost{
-				host:                 orchestrator.host,
-				trace:                tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
-				contentMapperProject: project,
+		}
+		t.generationTimings = tsc.GenerationTimings{}
+		if t.resolved != nil && !orchestrator.opts.Command.BuildOptions.Dry.IsTrue() &&
+			(tsc.GenerationEnabled(t.resolved.CompilerOptions()) || tsc.FormattingEnabled(t.resolved.CompilerOptions())) {
+			preBuild := tsc.RunPreBuildStages(ctx, tsc.PreBuildInput{
+				Sys: orchestrator.opts.Sys, Config: t.resolved, Writer: &t.result.builder,
+				OnGenerated: func() { t.invalidateGeneratedFiles(orchestrator) },
+				Format: func(ctx context.Context, config *tsoptions.ParsedCommandLine) (tsc.FormatResult, *ast.Diagnostic) {
+					project, err := t.getContentMapperProject(orchestrator)
+					if err != nil {
+						return tsc.FormatResult{}, compiler.ContentMapperProjectDiagnostic(err)
+					}
+					host := &compilerHost{host: orchestrator.host, trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing), contentMapperProject: project}
+					return tsc.FormatInputFiles(ctx, host, config), nil
+				},
+			})
+			t.resolved = preBuild.Config
+			t.generationTimings = preBuild.Generation.Timings
+			t.formatDiagnostics = preBuild.Formatting.Diagnostics
+			t.formatSourceFiles = preBuild.Formatting.SourceFiles
+			t.formatInputFiles = preBuild.Formatting.InputFiles
+			if preBuild.Generation.Executed > 0 {
+				orchestrator.host.resolvedReferences.store(path, t.resolved)
 			}
-			formatted := tsc.FormatInputFiles(context.Background(), formatHost, t.resolved)
-			t.formatDiagnostics = formatted.Diagnostics
-			t.formatSourceFiles = formatted.SourceFiles
-			t.formatInputFiles = formatted.InputFiles
-			for _, file := range formatted.ChangedFiles {
+			for _, file := range preBuild.Formatting.ChangedFiles {
 				orchestrator.host.mTimes.Delete(orchestrator.caseSensitivity.PathKey(file.AsPath()))
 				orchestrator.host.sourceFiles.entries.Range(func(options ast.SourceFileParseOptions, _ *parseCacheEntry[*ast.SourceFile]) bool {
 					if options.FileName == file {
@@ -178,15 +217,25 @@ func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.PathKey
 					return true
 				})
 			}
-			t.buildInfoEntryMu.Lock()
-			t.buildInfoEntry = nil
-			t.buildInfoEntryMu.Unlock()
-			t.status = nil
-			if t.resolved.CompilerOptions().FormatOnly.IsTrue() {
-				for _, diagnostic := range formatted.Diagnostics {
+			if preBuild.Generation.Executed > 0 || len(preBuild.Formatting.ChangedFiles) > 0 {
+				orchestrator.host.FS().(*cachedvfs.FS).ClearCache()
+			}
+			if preBuild.Generation.Executed > 0 || tsc.FormattingEnabled(t.resolved.CompilerOptions()) {
+				t.buildInfoEntryMu.Lock()
+				t.buildInfoEntry = nil
+				t.buildInfoEntryMu.Unlock()
+				t.status = nil
+			}
+			if preBuild.Status != tsc.PreBuildContinue {
+				if t.resolved.CompilerOptions().ExtendedDiagnostics.IsTrue() {
+					tsc.ReportGenerationStatistics(&t.result.builder, preBuild.Generation.Timings, orchestrator.opts.Testing)
+					t.result.statistics = tsc.NewGenerationStatistics(preBuild.Generation.Timings)
+				}
+				for _, diagnostic := range preBuild.Diagnostics {
 					t.reportDiagnostic(diagnostic)
 				}
-				if len(t.errors) > 0 {
+				t.generationFailed = len(preBuild.Generation.Diagnostics) > 0
+				if preBuild.Status == tsc.PreBuildFailed {
 					t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 					t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 				} else {
@@ -279,6 +328,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 
 	// Real build
 	var compileTimes tsc.CompileTimes
+	compileTimes.GenerationTimes = t.generationTimings
 	configTime, _ := orchestrator.host.configTimes.Load(path)
 	compileTimes.ConfigTime = configTime
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
@@ -432,7 +482,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	if buildInfo == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: buildInfoPath}
 	}
-	if len(t.formatDiagnostics) > 0 || buildInfo.Formatting != nil && buildInfo.Formatting.CompilationPending {
+	if len(t.formatDiagnostics) > 0 || buildInfo.Formatting != nil && buildInfo.Formatting.CompilationPending || buildInfo.Generation != nil && buildInfo.Generation.CompilationPending {
 		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 	}
 
@@ -855,21 +905,12 @@ func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.PathKey
 		return
 	}
 
-	inputs := collections.NewSetFromItems(core.Map(t.resolved.FileNames(), func(fileName tspath.RootedFilePath) tspath.PathKey {
-		return orchestrator.caseSensitivity.PathKey(fileName.AsPath())
-	})...)
-	for outputFile := range t.resolved.GetOutputFileNames() {
-		t.cleanProjectOutput(orchestrator, outputFile, inputs)
+	for _, outputFile := range t.resolved.CleanOutputFiles(orchestrator.host.FS()) {
+		t.cleanProjectOutput(orchestrator, outputFile)
 	}
-	t.cleanProjectOutput(orchestrator, t.resolved.GetBuildInfoFileName(), inputs)
 }
 
-func (t *BuildTask) cleanProjectOutput(orchestrator *Orchestrator, outputFile tspath.RootedFilePath, inputs *collections.Set[tspath.PathKey]) {
-	outputPath := orchestrator.caseSensitivity.PathKey(tspath.RootedPath(outputFile))
-	// If output name is same as input file name, do not delete and ignore the error
-	if inputs.Has(outputPath) {
-		return
-	}
+func (t *BuildTask) cleanProjectOutput(orchestrator *Orchestrator, outputFile tspath.RootedFilePath) {
 	if orchestrator.host.FS().FileExists(outputFile) {
 		if !orchestrator.opts.Command.BuildOptions.Dry.IsTrue() {
 			err := orchestrator.host.FS().Remove(outputFile.AsPath())

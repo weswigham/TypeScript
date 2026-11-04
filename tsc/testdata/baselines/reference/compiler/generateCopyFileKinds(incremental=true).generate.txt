@@ -1,0 +1,22 @@
+Commands executed: 5
+Emit skipped: false
+
+//// [generated/output.d.ts]
+export interface Value { value: number; }
+
+
+//// [generated/output.json]
+{ "value": 42 }
+
+
+//// [generated/output.sql]
+SELECT 42 AS value;
+
+
+//// [generated/output.tsx]
+export const value = <div>42</div>;
+
+
+//// [generated/output.yaml]
+value: 42
+

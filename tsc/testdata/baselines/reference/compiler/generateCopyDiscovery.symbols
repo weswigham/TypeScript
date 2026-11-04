@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/generateCopyDiscovery.ts] ////
+
+=== /project/generated/nested/value.ts ===
+export const value = 42;
+>value : Symbol(value, Decl(value.ts, 0, 12))
+

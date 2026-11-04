@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/generateCopyJsonModule.ts] ////
+
+=== /project/main.ts ===
+import data from "./generated/value.json";
+>data : { value: number; label: string; }
+
+export const value: number = data.value;
+>value : number
+>data.value : number
+>data : { value: number; label: string; }
+>value : number
+
+export const label: string = data.label;
+>label : string
+>data.label : string
+>data : { value: number; label: string; }
+>label : string
+
+=== /project/generated/value.json ===
+{ "value": 42, "label": "generated" }
+>{ "value": 42, "label": "generated" } : { value: number; label: string; }
+>"value" : number
+>42 : 42
+>"label" : string
+>"generated" : "generated"
+

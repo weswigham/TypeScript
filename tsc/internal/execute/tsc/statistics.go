@@ -69,6 +69,51 @@ type Statistics struct {
 	compileTimes     *CompileTimes
 }
 
+type GenerationTimings struct {
+	Commands  int
+	ByCommand map[string]time.Duration
+}
+
+func (timings *GenerationTimings) Add(other GenerationTimings) {
+	timings.Commands += other.Commands
+	if len(other.ByCommand) == 0 {
+		return
+	}
+	if timings.ByCommand == nil {
+		timings.ByCommand = make(map[string]time.Duration)
+	}
+	for command, duration := range other.ByCommand {
+		timings.ByCommand[command] += duration
+	}
+}
+
+func addGenerationStatistics(table *table, prefix string, timings GenerationTimings) {
+	if timings.Commands == 0 {
+		return
+	}
+	table.add(prefix+"Generate commands", timings.Commands)
+	for _, command := range slices.Sorted(maps.Keys(timings.ByCommand)) {
+		table.add(prefix+"Generate "+command+" time", timings.ByCommand[command])
+	}
+}
+
+func ReportGenerationStatistics(writer io.Writer, timings GenerationTimings, testing CommandLineTesting) {
+	if timings.Commands == 0 {
+		return
+	}
+	if testing != nil {
+		testing.OnStatisticsStart(writer)
+		defer testing.OnStatisticsEnd(writer)
+	}
+	var statistics table
+	addGenerationStatistics(&statistics, "", timings)
+	statistics.print(writer)
+}
+
+func NewGenerationStatistics(timings GenerationTimings) *Statistics {
+	return &Statistics{compileTimes: &CompileTimes{GenerationTimes: timings}}
+}
+
 func statisticsFromProgram(input EmitInput, memStats *runtime.MemStats) *Statistics {
 	return &Statistics{
 		files:          len(input.Program.SourceFiles()),
@@ -125,6 +170,7 @@ func (s *Statistics) Report(w io.Writer, testing CommandLineTesting) {
 		table.add(prefix+"Changes compute time", s.compileTimes.ChangesComputeTime)
 	}
 	s.addContentMapperStatistics(&table, prefix)
+	addGenerationStatistics(&table, prefix, s.compileTimes.GenerationTimes)
 	table.add(prefix+"Total time", s.compileTimes.totalTime)
 	table.print(w)
 }
@@ -173,6 +219,7 @@ func (s *Statistics) Aggregate(stat *Statistics) {
 	s.compileTimes.checkTime += stat.compileTimes.checkTime
 	s.compileTimes.emitTime += stat.compileTimes.emitTime
 	s.compileTimes.ChangesComputeTime += stat.compileTimes.ChangesComputeTime
+	s.compileTimes.GenerationTimes.Add(stat.compileTimes.GenerationTimes)
 }
 
 func (s *Statistics) SetTotalTime(totalTime time.Duration) {

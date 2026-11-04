@@ -1,0 +1,20 @@
+error TS18169: Code generation requires the '--runExternalCode' command line flag to be enabled.
+
+
+!!! error TS18169: Code generation requires the '--runExternalCode' command line flag to be enabled.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main = 1;
+==== /project/template.ts (0 errors) ====
+    export const value = 42;
+    

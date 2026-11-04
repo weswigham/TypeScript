@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/generateCopyInheritanceEmpty.ts] ////
+
+=== /project/main.ts ===
+export const value = 42;
+>value : 42
+>42 : 42
+

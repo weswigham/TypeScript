@@ -15,6 +15,7 @@ import (
 	"sync"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/bundled"
@@ -178,6 +179,9 @@ func CompileFilesEx(
 			Data: []byte(file.Content),
 		}
 	}
+	if tsconfig != nil && tsconfig.ConfigFile != nil {
+		testfs[tsconfig.ConfigFileName().AsString()] = tsconfig.ConfigFile.SourceFile.Text()
+	}
 	for src, target := range symlinks {
 		srcFileName := tspath.GetNormalizedAbsolutePath(src, currentDirectory)
 		targetFileName := tspath.GetNormalizedAbsolutePath(target, currentDirectory)
@@ -211,11 +215,17 @@ func CompileFilesEx(
 		baseDirectory = tsconfig.BaseDirectory()
 	}
 	config := tsoptions.NewParsedCommandLine(compilerOptions, programFileNames, nil, baseDirectory, harnessOptions.CaseSensitivity)
+	if tsconfig != nil && tsconfig.ConfigFile != nil && tsconfig.BaseDirectory() != "" &&
+		tsc.GenerationEnabled(compilerOptions) && len(tsconfig.ParsedConfig.Generate) > 0 {
+		config = tsconfig.WithFileNames(programFileNames)
+		config.ParsedConfig.CompilerOptions = compilerOptions
+	}
 	config.ParsedConfig.ContentMappers = contentMappers
 	config.ConfigFile = configFile
 	config.Errors = errors
 	if tsconfig != nil {
 		config.ParsedConfig.FormattingOptions = tsconfig.FormattingOptions()
+		config.ParsedConfig.Generate = tsconfig.ParsedConfig.Generate
 	}
 	var contentMapperProject contentmapper.Project
 	if contentMapperHost != nil {
@@ -226,18 +236,36 @@ func CompileFilesEx(
 		})
 		defer contentMapperProject.Close()
 	}
-	formatHost := compiler.NewCompilerHost(fs.(*OutputRecorderFS).FS, bundled.LibPath(), nil, nil, contentMapperProject)
-	formatted := tsc.FormatInputFiles(context.Background(), formatHost, config)
+	system := &compilerTestSystem{fs: fs.(*OutputRecorderFS).FS, directory: currentDirectory, start: time.Now()}
+	preBuild := tsc.RunPreBuildStages(t.Context(), tsc.PreBuildInput{
+		Sys: system, Config: config, Writer: io.Discard,
+		Format: func(ctx context.Context, config *tsoptions.ParsedCommandLine) (tsc.FormatResult, *ast.Diagnostic) {
+			formatHost := compiler.NewCompilerHost(system.FS(), bundled.LibPath(), nil, nil, contentMapperProject)
+			return tsc.FormatInputFiles(ctx, formatHost, config), nil
+		},
+	})
+	config = preBuild.Config
+	formatted := preBuild.Formatting
 	cachedHost := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperProject)
 	host := tsc.WithFormattingSourceFiles(cachedHost, formatted.SourceFiles)
 	var result *CompilationResult
-	if compilerOptions.FormatOnly.IsTrue() {
+	if preBuild.Status != tsc.PreBuildContinue {
 		program := createProgram(host, config)
-		result = newCompilationResult(host, currentDirectory, compilerOptions, program, &compiler.EmitResult{EmitSkipped: true}, formatted.Diagnostics, harnessOptions)
+		result = newCompilationResult(host, currentDirectory, compilerOptions, program, &compiler.EmitResult{EmitSkipped: true}, preBuild.Diagnostics, harnessOptions)
 	} else {
 		result = compileFilesWithHost(host, config, harnessOptions)
-		result.Diagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.Diagnostics, formatted.Diagnostics))
+		result.Diagnostics = compiler.SortAndDeduplicateDiagnostics(slices.Concat(result.Diagnostics, preBuild.Diagnostics))
 	}
+	result.PreBuildStopped = preBuild.Status != tsc.PreBuildContinue
+	result.GenerationConfigured = len(config.ParsedConfig.Generate) > 0
+	result.GenerationCommands = preBuild.Generation.Executed
+	system.generated.Range(func(name tspath.RootedFilePath, _ bool) bool {
+		if text, ok := system.FS().ReadFile(name); ok {
+			result.Generated = append(result.Generated, &TestFile{UnitName: name.AsString(), Content: text})
+		}
+		return true
+	})
+	slices.SortFunc(result.Generated, compareTestFiles)
 	if tsc.FormattingEnabled(compilerOptions) {
 		for _, name := range formatted.InputFiles {
 			if text, ok := fs.ReadFile(name); ok {
@@ -254,6 +282,54 @@ func CompileFilesEx(
 		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
+}
+
+type compilerTestSystem struct {
+	fs        vfs.FS
+	directory tspath.RootedDirectoryPath
+	start     time.Time
+	generated collections.SyncMap[tspath.RootedFilePath, bool]
+}
+
+func (sys *compilerTestSystem) Writer() io.Writer      { return io.Discard }
+func (sys *compilerTestSystem) ErrorWriter() io.Writer { return io.Discard }
+func (sys *compilerTestSystem) FS() vfs.FS             { return sys.fs }
+func (sys *compilerTestSystem) DefaultLibraryPath() tspath.RootedDirectoryPath {
+	return bundled.LibPath()
+}
+
+func (sys *compilerTestSystem) GetCurrentDirectory() tspath.RootedDirectoryPath   { return sys.directory }
+func (sys *compilerTestSystem) WriteOutputIsTTY() bool                            { return false }
+func (sys *compilerTestSystem) GetWidthOfTerminal() int                           { return 0 }
+func (sys *compilerTestSystem) GetEnvironmentVariable(name string) (string, bool) { return "", false }
+
+func (sys *compilerTestSystem) Now() time.Time { return time.Now() }
+
+func (sys *compilerTestSystem) SinceStart() time.Duration { return time.Since(sys.start) }
+
+func (sys *compilerTestSystem) Spawn(command []string, directory string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	return nil, fmt.Errorf("compiler tests cannot spawn external processes: %v", command)
+}
+
+func (sys *compilerTestSystem) Run(ctx context.Context, command []string, directory string, stdout, stderr io.Writer) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if len(command) != 3 || command[0] != "copy" {
+		return fmt.Errorf("unsupported compiler-test command: %v; expected 'copy source destination'", command)
+	}
+	root := tspath.RootedDirectoryPathFromAbsolute(directory)
+	source := root.ResolveFile(command[1])
+	text, ok := sys.fs.ReadFile(source)
+	if !ok {
+		return fmt.Errorf("copy: source file '%s' not found", source)
+	}
+	destination := root.ResolveFile(command[2])
+	if err := sys.fs.WriteFile(destination, text); err != nil {
+		return err
+	}
+	sys.generated.Store(destination, true)
+	return nil
 }
 
 var testLibFolderMap = sync.OnceValue(func() map[string]any {
@@ -717,23 +793,27 @@ func compileFilesWithHost(
 }
 
 type CompilationResult struct {
-	Formatted        []*TestFile
-	Diagnostics      []*ast.Diagnostic
-	Result           *compiler.EmitResult
-	Program          compiler.ProgramLike
-	Options          *core.CompilerOptions
-	HarnessOptions   *HarnessOptions
-	JS               collections.OrderedMap[tspath.RootedFilePath, *TestFile]
-	DTS              collections.OrderedMap[tspath.RootedFilePath, *TestFile]
-	Maps             collections.OrderedMap[tspath.RootedFilePath, *TestFile]
-	Symlinks         map[string]string
-	Repeat           func(TestConfiguration) *CompilationResult
-	outputs          []*TestFile
-	inputs           []*TestFile
-	inputsAndOutputs collections.OrderedMap[tspath.RootedFilePath, *CompilationOutput]
-	Trace            string
-	Host             compiler.CompilerHost
-	currentDirectory tspath.RootedDirectoryPath
+	Generated            []*TestFile
+	GenerationConfigured bool
+	GenerationCommands   int
+	PreBuildStopped      bool
+	Formatted            []*TestFile
+	Diagnostics          []*ast.Diagnostic
+	Result               *compiler.EmitResult
+	Program              compiler.ProgramLike
+	Options              *core.CompilerOptions
+	HarnessOptions       *HarnessOptions
+	JS                   collections.OrderedMap[tspath.RootedFilePath, *TestFile]
+	DTS                  collections.OrderedMap[tspath.RootedFilePath, *TestFile]
+	Maps                 collections.OrderedMap[tspath.RootedFilePath, *TestFile]
+	Symlinks             map[string]string
+	Repeat               func(TestConfiguration) *CompilationResult
+	outputs              []*TestFile
+	inputs               []*TestFile
+	inputsAndOutputs     collections.OrderedMap[tspath.RootedFilePath, *CompilationOutput]
+	Trace                string
+	Host                 compiler.CompilerHost
+	currentDirectory     tspath.RootedDirectoryPath
 }
 
 type CompilationOutput struct {

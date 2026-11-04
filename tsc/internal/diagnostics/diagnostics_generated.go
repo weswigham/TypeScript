@@ -4004,6 +4004,20 @@ var Expected_a_line_break_before_the_closing_brace = &Message{code: 18164, categ
 
 var Expected_a_line_break_after_the_opening_brace = &Message{code: 18165, category: CategoryError, key: "Expected_a_line_break_after_the_opening_brace_18165", text: "Expected a line break after the opening brace."}
 
+var Run_configured_code_generation_commands_before_compiling = &Message{code: 18166, category: CategoryMessage, key: "Run_configured_code_generation_commands_before_compiling_18166", text: "Run configured code generation commands before compiling."}
+
+var Run_configured_code_generation_commands_without_compiling = &Message{code: 18167, category: CategoryMessage, key: "Run_configured_code_generation_commands_without_compiling_18167", text: "Run configured code generation commands without compiling."}
+
+var Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation = &Message{code: 18168, category: CategoryMessage, key: "Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilatio_18168", text: "Allow external content mapper plugins and code generation commands to execute code during compilation."}
+
+var Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled = &Message{code: 18169, category: CategoryError, key: "Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled_18169", text: "Code generation requires the '--runExternalCode' command line flag to be enabled."}
+
+var Code_generation_command_0_failed_Colon_1 = &Message{code: 18170, category: CategoryError, key: "Code_generation_command_0_failed_Colon_1_18170", text: "Code generation command '{0}' failed: {1}"}
+
+var Code_generation_outputs_0_and_1_overlap = &Message{code: 18171, category: CategoryError, key: "Code_generation_outputs_0_and_1_overlap_18171", text: "Code generation outputs '{0}' and '{1}' overlap."}
+
+var Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command = &Message{code: 18172, category: CategoryError, key: "Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command_18172", text: "Code generation commands must be independent. Output '{0}' is an input of another command."}
+
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
 var File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module = &Message{code: 80001, category: CategorySuggestion, key: "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001", text: "File is a CommonJS module; it may be converted to an ES module."}
@@ -6546,6 +6560,13 @@ var allMessages = [...]**Message{
 	&Unexpected_whitespace_before_the_non_null_assertion_operator,
 	&Expected_a_line_break_before_the_closing_brace,
 	&Expected_a_line_break_after_the_opening_brace,
+	&Run_configured_code_generation_commands_before_compiling,
+	&Run_configured_code_generation_commands_without_compiling,
+	&Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation,
+	&Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled,
+	&Code_generation_command_0_failed_Colon_1,
+	&Code_generation_outputs_0_and_1_overlap,
+	&Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command,
 	&X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	&File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module,
 	&This_constructor_function_may_be_converted_to_a_class_declaration,

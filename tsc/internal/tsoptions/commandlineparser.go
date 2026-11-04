@@ -114,6 +114,8 @@ func ParseBuildCommandLine(
 			name    string
 			enabled bool
 		}{
+			{"generate", compilerOptions.Generate.IsTrue()},
+			{"generateOnly", compilerOptions.GenerateOnly.IsTrue()},
 			{"format", compilerOptions.Format.IsTrue()},
 			{"formatOnly", compilerOptions.FormatOnly.IsTrue()},
 			{"formatDiagnostics", compilerOptions.FormatDiagnostics.IsTrue()},

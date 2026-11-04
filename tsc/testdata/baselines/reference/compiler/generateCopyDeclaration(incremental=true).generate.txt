@@ -1,0 +1,6 @@
+Commands executed: 1
+Emit skipped: false
+
+//// [generated/value.d.ts]
+export interface Value { value: number; label: string; }
+

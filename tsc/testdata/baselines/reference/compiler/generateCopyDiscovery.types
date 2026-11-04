@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/generateCopyDiscovery.ts] ////
+
+=== /project/generated/nested/value.ts ===
+export const value = 42;
+>value : 42
+>42 : 42
+

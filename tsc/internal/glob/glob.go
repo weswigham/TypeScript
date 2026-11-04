@@ -7,20 +7,14 @@ package glob
 import (
 	"errors"
 	"fmt"
+	"regexp/syntax"
 	"strings"
+	"sync"
 	"unicode/utf8"
 )
 
 // A Glob is an LSP-compliant glob pattern, as defined by the spec:
 // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#documentFilter
-//
-// NOTE: this implementation is currently only intended for testing. In order
-// to make it production ready, we'd need to:
-//   - verify it against the VS Code implementation
-//   - add more tests
-//   - microbenchmark, likely avoiding the element interface
-//   - resolve the question of what is meant by "character". If it's a UTF-16
-//     code (as we suspect) it'll be a bit more work.
 //
 // Quoting from the spec:
 // Glob patterns can have the following syntax:
@@ -39,7 +33,9 @@ import (
 //   - '/' matches one or more literal slashes.
 //   - any other character matches itself literally.
 type Glob struct {
-	elems []element // pattern elements
+	elems       []element // pattern elements
+	programOnce sync.Once
+	program     *syntax.Prog
 }
 
 // Parse builds a Glob for the given pattern, returning an error if the pattern
@@ -47,6 +43,10 @@ type Glob struct {
 func Parse(pattern string) (*Glob, error) {
 	g, _, err := parse(pattern, false)
 	return g, err
+}
+
+func (g *Glob) WithLiteralPrefix(prefix string) *Glob {
+	return &Glob{elems: append([]element{literal(prefix)}, g.elems...)}
 }
 
 func parse(pattern string, nested bool) (*Glob, string, error) {
@@ -225,7 +225,7 @@ func match(elems []element, input string) (ok bool) {
 			if len(input) == 0 || input[0] != '/' {
 				return false
 			}
-			for input[0] == '/' {
+			for len(input) > 0 && input[0] == '/' {
 				input = input[1:]
 			}
 
@@ -283,13 +283,13 @@ func match(elems []element, input string) (ok bool) {
 			// Backtracking: advance characters until remaining subpattern elements
 			// match.
 			matched := false
-			for i := range len(segInput) {
+			for i := range segInput {
 				if match(segElems, segInput[i:]) {
 					matched = true
 					break
 				}
 			}
-			if !matched {
+			if !matched && !match(segElems, "") {
 				return false
 			}
 
@@ -297,7 +297,8 @@ func match(elems []element, input string) (ok bool) {
 			if len(input) == 0 || input[0] == '/' {
 				return false
 			}
-			input = input[1:]
+			_, size := utf8.DecodeRuneInString(input)
+			input = input[size:]
 
 		case group:
 			// Append remaining pattern elements to each group member looking for a
@@ -318,7 +319,7 @@ func match(elems []element, input string) (ok bool) {
 				return false
 			}
 			c, sz := utf8.DecodeRuneInString(input)
-			if c < elem.low || c > elem.high {
+			if (c >= elem.low && c <= elem.high) == elem.negate {
 				return false
 			}
 			input = input[sz:]

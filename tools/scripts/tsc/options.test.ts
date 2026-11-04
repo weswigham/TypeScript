@@ -335,9 +335,14 @@ test("formatting schemas validate inherited editor settings without admitting CL
         for (const formattingOptions of [{ indentSize: -1 }, { indentSize: 1.5 }, { unknown: true }, { newLineCharacter: "text" }, { semicolons: "never" }]) {
             assert(!accepts(schema, { formattingOptions }, schema), JSON.stringify(formattingOptions));
         }
-        for (const name of ["format", "formatOnly", "formatDiagnostics"]) {
+        for (const name of ["generate", "generateOnly", "format", "formatOnly", "formatDiagnostics"]) {
             assert.equal(schema.definitions.compilerOptions.properties?.[name], undefined);
         }
+        assert(accepts(schema, { generate: [{ inputs: ["src/**/*.ts"], outputs: ["generated/**/*.ts"], command: ["node", "generate.js", "${inputs}"] }] }, schema));
+        assert(accepts(schema, { generate: [{ cwd: "./base", inputs: ["input.json"], outputs: ["generated.ts"], command: ["node", "./generate.js"] }] }, schema));
+        assert(!accepts(schema, { generate: [{ cwd: 1, inputs: ["input.json"], outputs: ["generated.ts"], command: ["node"] }] }, schema));
+        assert(!accepts(schema, { generate: [{ inputs: [1], outputs: ["generated.ts"], command: ["node"] }] }, schema));
+        assert(!accepts(schema, { generate: [{ inputs: ["input.ts"], outputs: ["generated.ts"] }] }, schema));
     }
 });
 

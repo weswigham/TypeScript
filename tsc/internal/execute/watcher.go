@@ -56,6 +56,8 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 }
 
 type Watcher struct {
+	generationCache                tsc.GenerationCache
+	preBuild                       tsc.PreBuildResult
 	formatDiagnostics              []*ast.Diagnostic
 	formattingSelection            tsoptions.FormattingSelection
 	sys                            tsc.System
@@ -166,14 +168,14 @@ func (w *Watcher) start(ctx context.Context) {
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	w.watchSetDirty = true
-	if err := w.doBuild(); err != nil {
+	if err := w.doBuild(ctx); err != nil {
 		w.wm.ForceOverflow()
 	}
 	w.wm.Unlock()
 
 	if w.testing == nil {
 		// The content mapper host closes itself when ctx is cancelled (see contentmapper.New).
-		w.wm.RunLoop(ctx, w.DoCycle)
+		w.wm.RunLoop(ctx, func() { w.DoCycle(ctx) })
 	}
 }
 
@@ -221,6 +223,10 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []tspath.RootedPath) map[t
 			realDir := tspath.RootedDirectoryPathFromPath(w.sys.FS().Realpath(dir.AsPath()))
 			desiredDirs[realDir] = recursive
 		}
+	}
+	for _, directory := range tsc.GenerationWatchDirectories(w.sys.FS(), w.config) {
+		realDirectory := tspath.RootedDirectoryPathFromPath(w.sys.FS().Realpath(directory.AsPath()))
+		desiredDirs[realDirectory] = true
 	}
 
 	// For no-config CLI mode, ensure CWD is watched
@@ -290,7 +296,7 @@ func (w *Watcher) caseSensitivity() tspath.CaseSensitivity {
 	return w.sys.FS().CaseSensitivity()
 }
 
-func (w *Watcher) DoCycle() {
+func (w *Watcher) DoCycle(ctx context.Context) {
 	w.wm.Lock()
 	defer w.wm.Unlock()
 
@@ -383,7 +389,7 @@ func (w *Watcher) DoCycle() {
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
-	if err := w.doBuild(); err != nil {
+	if err := w.doBuild(ctx); err != nil {
 		// Mid-cycle watch failure; force a full rebuild on the next event
 		w.wm.ForceOverflow()
 	}
@@ -397,6 +403,9 @@ func (w *Watcher) isRelevantChange(changedPaths map[tspath.RootedPath]fswatch.Ev
 	})...)
 	for eventPath := range changedPaths {
 		p := opts.PathKey(eventPath)
+		if tsc.GenerationMatchesPath(w.sys.FS(), w.config, eventPath) {
+			return true
+		}
 		if contentMapperWatchedFiles.Has(p) {
 			return true
 		}
@@ -418,7 +427,7 @@ func (w *Watcher) isRelevantChange(changedPaths map[tspath.RootedPath]fswatch.Ev
 	return false
 }
 
-func (w *Watcher) doBuild() error {
+func (w *Watcher) doBuild(ctx context.Context) error {
 	if w.configModified {
 		w.sourceFileCache = &collections.SyncMap[tspath.PathKey, *cachedSourceFile]{}
 		w.watchSetDirty = true
@@ -440,8 +449,20 @@ func (w *Watcher) doBuild() error {
 		}
 	}
 
-	formatHost := compiler.NewCompilerHost(w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperProject)
-	formatted := tsc.FormatInputFiles(context.Background(), formatHost, w.config)
+	w.preBuild = tsc.RunPreBuildStages(ctx, tsc.PreBuildInput{
+		Sys: w.sys, Config: w.config, Writer: w.sys.Writer(), GenerationCache: &w.generationCache, SelectFiles: w.formattingSelection.Apply,
+		OnGenerated: func() {
+			w.sourceFileCache = &collections.SyncMap[tspath.PathKey, *cachedSourceFile]{}
+			w.forceFullRebuild = true
+			reloadedFileNames = w.config.ConfigFile != nil
+		},
+		Format: func(ctx context.Context, config *tsoptions.ParsedCommandLine) (tsc.FormatResult, *ast.Diagnostic) {
+			formatHost := compiler.NewCompilerHost(w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, config.Locale(), w.testing), w.contentMapperProject)
+			return tsc.FormatInputFiles(ctx, formatHost, config), nil
+		},
+	})
+	w.config = w.preBuild.Config
+	formatted := w.preBuild.Formatting
 	w.formatDiagnostics = formatted.Diagnostics
 	for _, file := range formatted.ChangedFiles {
 		w.sourceFileCache.Delete(w.sys.FS().CaseSensitivity().PathKey(file.AsPath()))
@@ -637,16 +658,19 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[tspath.RootedPath]fsw
 }
 
 func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
-	if w.config.CompilerOptions().FormatOnly.IsTrue() {
-		for _, diagnostic := range compiler.SortAndDeduplicateDiagnostics(w.formatDiagnostics) {
+	if w.config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
+		tsc.ReportGenerationStatistics(w.sys.Writer(), w.preBuild.Generation.Timings, w.testing)
+	}
+	if w.preBuild.Status != tsc.PreBuildContinue {
+		for _, diagnostic := range compiler.SortAndDeduplicateDiagnostics(w.preBuild.Diagnostics) {
 			w.reportDiagnostic(diagnostic)
 		}
-		w.reportErrorSummary(w.formatDiagnostics)
+		w.reportErrorSummary(w.preBuild.Diagnostics)
 		status := tsc.ExitStatusSuccess
-		if len(w.formatDiagnostics) > 0 {
+		if w.preBuild.Status == tsc.PreBuildFailed {
 			status = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
-		return tsc.CompileAndEmitResult{Status: status, Diagnostics: w.formatDiagnostics, EmitResult: &compiler.EmitResult{EmitSkipped: true}}
+		return tsc.CompileAndEmitResult{Status: status, Diagnostics: w.preBuild.Diagnostics, EmitResult: &compiler.EmitResult{EmitSkipped: true}}
 	}
 	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
 		FormattingDiagnostics: w.formatDiagnostics,
@@ -657,7 +681,7 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 		ReportDiagnostic:      w.reportDiagnostic,
 		ReportErrorSummary:    w.reportErrorSummary,
 		Writer:                w.sys.Writer(),
-		CompileTimes:          &tsc.CompileTimes{},
+		CompileTimes:          &tsc.CompileTimes{GenerationTimes: w.preBuild.Generation.Timings},
 		Testing:               w.testing,
 	})
 }

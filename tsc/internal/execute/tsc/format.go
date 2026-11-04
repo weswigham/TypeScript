@@ -24,9 +24,16 @@ import (
 type FormatResult struct {
 	Diagnostics  []*ast.Diagnostic
 	ChangedFiles []tspath.RootedFilePath
+	Changes      []FormattingChange
 	InputFiles   []tspath.RootedFilePath
 	// SourceFiles contains parsed files whose on-disk text is unchanged and can be reused by compilation.
 	SourceFiles []*ast.SourceFile
+}
+
+type FormattingChange struct {
+	FileName   tspath.RootedFilePath
+	BeforeHash string
+	AfterHash  string
 }
 
 type formattingInput struct {
@@ -91,7 +98,7 @@ func FormatInputFiles(ctx context.Context, host compiler.CompilerHost, config *t
 	if len(inputs) == 0 {
 		return result
 	}
-	if diagnostic := validateFormattingWriteTarget(host, config, parsed); diagnostic != nil {
+	if diagnostic := validateBuildInfoWriteTarget(host, config, parsed); diagnostic != nil {
 		result.Diagnostics = []*ast.Diagnostic{diagnostic}
 		return result
 	}
@@ -113,16 +120,19 @@ func FormatInputFiles(ctx context.Context, host compiler.CompilerHost, config *t
 	return result
 }
 
-func validateFormattingWriteTarget(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine, parsed []*ast.SourceFile) *ast.Diagnostic {
+func validateBuildInfoWriteTarget(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine, parsed []*ast.SourceFile) *ast.Diagnostic {
 	name := config.GetBuildInfoFileName()
 	if name == "" {
 		return nil
 	}
 	path := host.FS().CaseSensitivity().PathKey(name.AsPath())
-	isInput := slices.ContainsFunc(config.FileNames(), func(file tspath.RootedFilePath) bool {
-		return host.FS().CaseSensitivity().PathKey(file.AsPath()) == path
-	}) || slices.ContainsFunc(parsed, func(file *ast.SourceFile) bool { return file.PathKey() == path })
-	if !isInput && config.CompilerOptions().Composite.IsTrue() && core.GetScriptKindFromFileName(name) != core.ScriptKindUnknown {
+	matches := func(file tspath.RootedFilePath) bool {
+		return file != "" && host.FS().CaseSensitivity().PathKey(file.AsPath()) == path
+	}
+	isInput := matches(config.ConfigFileName()) || slices.ContainsFunc(config.FileNames(), matches) ||
+		slices.ContainsFunc(config.ExtendedSourceFiles(), matches) ||
+		slices.ContainsFunc(parsed, func(file *ast.SourceFile) bool { return file.PathKey() == path })
+	if !isInput && parsed == nil && core.GetScriptKindFromFileName(name) != core.ScriptKindUnknown {
 		program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: host})
 		isInput = program.GetSourceFile(name) != nil
 	}
@@ -168,6 +178,11 @@ func applyFormattingInputs(fs vfs.FS, inputs []formattingInput, parsed []*ast.So
 				continue
 			}
 			result.ChangedFiles = append(result.ChangedFiles, inputs[i].name)
+			result.Changes = append(result.Changes, FormattingChange{
+				FileName:   inputs[i].name,
+				BeforeHash: incremental.ComputeHash(output.text, false),
+				AfterHash:  incremental.ComputeHash(output.formatted, false),
+			})
 		}
 		if output.version != "" {
 			versions.Set(output.key, output.version)

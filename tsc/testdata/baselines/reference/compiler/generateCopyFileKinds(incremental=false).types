@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/generateCopyFileKinds.ts] ////
+
+=== /project/main.ts ===
+export const main = 1;
+>main : 1
+>1 : 1
+

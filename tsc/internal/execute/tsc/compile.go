@@ -29,6 +29,7 @@ type System interface {
 	GetWidthOfTerminal() int
 	GetEnvironmentVariable(name string) (string, bool)
 	Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
+	Run(ctx context.Context, command []string, dir string, stdout, stderr io.Writer) error
 
 	Now() time.Time
 	SinceStart() time.Duration
@@ -59,7 +60,7 @@ const (
 )
 
 type Watcher interface {
-	DoCycle()
+	DoCycle(ctx context.Context)
 }
 
 type CommandLineResult struct {
@@ -97,6 +98,7 @@ func NewContentMapperHost(ctx context.Context, sys System, options *core.Compile
 }
 
 type CompileTimes struct {
+	GenerationTimes    GenerationTimings
 	ConfigTime         time.Duration
 	ParseTime          time.Duration
 	ContentMapperTimes contentmapper.Timings

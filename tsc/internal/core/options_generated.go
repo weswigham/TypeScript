@@ -156,6 +156,8 @@ type CompilerOptions struct {
 	Build               Tristate                   `json:"build,omitzero"`
 	Help                Tristate                   `json:"help,omitzero"`
 	All                 Tristate                   `json:"all,omitzero"`
+	Generate            Tristate                   `json:"generate,omitzero"`
+	GenerateOnly        Tristate                   `json:"generateOnly,omitzero"`
 	Format              Tristate                   `json:"format,omitzero"`
 	FormatOnly          Tristate                   `json:"formatOnly,omitzero"`
 	FormatDiagnostics   Tristate                   `json:"formatDiagnostics,omitzero"`
@@ -296,6 +298,8 @@ func (options *CompilerOptions) Clone() *CompilerOptions {
 		Build:                                   options.Build,
 		Help:                                    options.Help,
 		All:                                     options.All,
+		Generate:                                options.Generate,
+		GenerateOnly:                            options.GenerateOnly,
 		Format:                                  options.Format,
 		FormatOnly:                              options.FormatOnly,
 		FormatDiagnostics:                       options.FormatDiagnostics,
@@ -697,6 +701,12 @@ func (options *CompilerOptions) Equals(other *CompilerOptions) bool {
 		return false
 	}
 	if options.All != other.All {
+		return false
+	}
+	if options.Generate != other.Generate {
+		return false
+	}
+	if options.GenerateOnly != other.GenerateOnly {
 		return false
 	}
 	if options.Format != other.Format {

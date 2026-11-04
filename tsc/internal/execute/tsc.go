@@ -51,7 +51,7 @@ func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, 
 		switch strings.ToLower(commandLineArgs[i]) {
 		case "-b", "--b", "-build", "--build":
 			return tscBuildCompilation(ctx, sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys.FS(), sys.GetCurrentDirectory()), testing)
-		case "--format", "-format", "--formatonly", "-formatonly", "--formatdiagnostics", "-formatdiagnostics":
+		case "--generate", "-generate", "--generateonly", "-generateonly", "--format", "-format", "--formatonly", "-formatonly", "--formatdiagnostics", "-formatdiagnostics":
 			if i+1 < len(commandLineArgs) && (commandLineArgs[i+1] == "true" || commandLineArgs[i+1] == "false") {
 				i++
 			}
@@ -224,14 +224,25 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		watcher.start(ctx)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	}
-	formatResult := formatInputFiles(ctx, sys, configForCompilation, extendedConfigCache, testing)
-	if configForCompilation.CompilerOptions().FormatOnly.IsTrue() {
-		for _, diagnostic := range compiler.SortAndDeduplicateDiagnostics(formatResult.Diagnostics) {
+	preBuild := tsc.RunPreBuildStages(ctx, tsc.PreBuildInput{
+		Sys: sys, Config: configForCompilation, Writer: sys.Writer(), SelectFiles: formattingSelection.Apply,
+		Format: func(ctx context.Context, config *tsoptions.ParsedCommandLine) (tsc.FormatResult, *ast.Diagnostic) {
+			return formatInputFiles(ctx, sys, config, extendedConfigCache, testing), nil
+		},
+	})
+	configForCompilation = preBuild.Config
+	compileTimes.GenerationTimes = preBuild.Generation.Timings
+	formatResult := preBuild.Formatting
+	if preBuild.Status != tsc.PreBuildContinue {
+		if configForCompilation.CompilerOptions().ExtendedDiagnostics.IsTrue() {
+			tsc.ReportGenerationStatistics(sys.Writer(), preBuild.Generation.Timings, testing)
+		}
+		for _, diagnostic := range compiler.SortAndDeduplicateDiagnostics(preBuild.Diagnostics) {
 			reportDiagnostic(diagnostic)
 		}
-		reportErrorSummary(formatResult.Diagnostics)
+		reportErrorSummary(preBuild.Diagnostics)
 		status := tsc.ExitStatusSuccess
-		if len(formatResult.Diagnostics) > 0 {
+		if preBuild.Status == tsc.PreBuildFailed {
 			status = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 		return tsc.CommandLineResult{Status: status}

@@ -2,6 +2,7 @@ package tsc
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io"
 	"strings"
@@ -197,6 +198,10 @@ func (s *timingTestSystem) SinceStart() time.Duration { return s.clock.SinceStar
 
 func (s *timingTestSystem) Spawn([]string, string, io.Writer) (io.ReadWriteCloser, error) {
 	return nil, errors.New("spawn not implemented in timingTestSystem")
+}
+
+func (s *timingTestSystem) Run(context.Context, []string, string, io.Writer, io.Writer) error {
+	return errors.New("run not implemented in timingTestSystem")
 }
 
 func TestIncrementalDeclarationEmitTimeIsExcludedFromCheckTime(t *testing.T) {

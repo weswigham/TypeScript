@@ -555,7 +555,9 @@ func NewHostWithOptions(ctx context.Context, spawner Spawner, diagnosticLocale l
 func newWithDial(ctx context.Context, diagnosticLocale locale.Locale, timing *timingCollector, dial dialFunc) *host {
 	hostCtx, cancel := context.WithCancel(ctx)
 	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, timing: timing, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn), projects: make(map[string]*projectEntry), projectLeases: make(map[string]*projectLease)}
+	h.lifecycleMu.Lock()
 	h.stop = context.AfterFunc(ctx, func() { _ = h.Close() })
+	h.lifecycleMu.Unlock()
 	return h
 }
 

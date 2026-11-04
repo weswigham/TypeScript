@@ -28,6 +28,7 @@ func TestParsedOptionsEquality(t *testing.T) {
 			FormattingOptions: &core.FormattingOptions{IndentSize: new(2)},
 			CompilerOptions:   &core.CompilerOptions{Strict: core.TSTrue},
 			TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue, Include: []string{"a"}, Exclude: []string{"b"}},
+			Generate:          []GenerateCommand{{Inputs: []string{"input.json"}, Outputs: []string{"output.ts"}, Command: []string{"node", "generate.js"}, Directory: "/project"}},
 			FileNames:         []tspath.RootedFilePath{"/a.ts", "/b.ts"},
 			ProjectReferences: []*core.ProjectReference{
 				{Path: "/project", OriginalPath: "../project", Circular: true}, nil,
@@ -74,6 +75,10 @@ func TestParsedOptionsEquality(t *testing.T) {
 	}{
 		{"compiler options", func(p *ParsedOptions) { p.CompilerOptions.Strict = core.TSFalse }},
 		{"formatting options", func(p *ParsedOptions) { p.FormattingOptions.IndentSize = new(4) }},
+		{"generation input", func(p *ParsedOptions) { p.Generate[0].Inputs[0] = "other.json" }},
+		{"generation output", func(p *ParsedOptions) { p.Generate[0].Outputs[0] = "other.ts" }},
+		{"generation command", func(p *ParsedOptions) { p.Generate[0].Command[1] = "other.js" }},
+		{"generation directory", func(p *ParsedOptions) { p.Generate[0].Directory = "/other" }},
 		{"nil compiler options", func(p *ParsedOptions) { p.CompilerOptions = nil }},
 		{"nil type acquisition", func(p *ParsedOptions) { p.TypeAcquisition = nil }},
 		{"type acquisition enable", func(p *ParsedOptions) { p.TypeAcquisition.Enable = core.TSFalse }},

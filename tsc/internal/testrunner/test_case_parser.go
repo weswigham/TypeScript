@@ -73,8 +73,17 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	// opts in with a top-level `// @runExternalCode: true`, which we surface to the config
 	// parse as an existing option so the gate passes and the mappers register.
 	var existingOptions *core.CompilerOptions
-	if globalOptions["runexternalcode"] == "true" {
-		existingOptions = &core.CompilerOptions{RunExternalCode: core.TSTrue}
+	if globalOptions["runexternalcode"] == "true" || globalOptions["generate"] == "true" || globalOptions["generateonly"] == "true" {
+		existingOptions = &core.CompilerOptions{}
+		if globalOptions["runexternalcode"] == "true" {
+			existingOptions.RunExternalCode = core.TSTrue
+		}
+		if globalOptions["generate"] == "true" {
+			existingOptions.Generate = core.TSTrue
+		}
+		if globalOptions["generateonly"] == "true" {
+			existingOptions.GenerateOnly = core.TSTrue
+		}
 	}
 
 	// check if project has tsconfig.json in the list of files

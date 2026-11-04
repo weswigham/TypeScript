@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/generateCopyParallel.ts] ////
+
+=== /project/main.ts ===
+import { first } from "./generated/first";
+>first : Symbol(first, Decl(main.ts, 0, 8))
+
+import { second } from "./generated/second";
+>second : Symbol(second, Decl(main.ts, 1, 8))
+
+export const result = first + second;
+>result : Symbol(result, Decl(main.ts, 2, 12))
+>first : Symbol(first, Decl(main.ts, 0, 8))
+>second : Symbol(second, Decl(main.ts, 1, 8))
+
+=== /project/generated/first.ts ===
+export const first = 1;
+>first : Symbol(first, Decl(first.ts, 0, 12))
+
+=== /project/generated/second.ts ===
+export const second = 2;
+>second : Symbol(second, Decl(second.ts, 0, 12))
+

@@ -79,6 +79,55 @@
             "description": "Referenced projects. Each path identifies a configuration file or a directory containing one.",
             "markdownDescription": "Referenced projects. Each path identifies a configuration file or a directory containing one.\n\nSee the [TSConfig reference](https://www.typescriptlang.org/tsconfig/#references)."
         },
+        "generate": {
+            "anyOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "cwd": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "Working directory for the command and its input/output patterns, relative to this configuration file."
+                            },
+                            "inputs": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "outputs": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "command": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            }
+                        },
+                        "required": [
+                            "inputs",
+                            "outputs",
+                            "command"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "description": "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
+            "markdownDescription": "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode."
+        },
         "contentMappers": {
             "anyOf": [
                 {

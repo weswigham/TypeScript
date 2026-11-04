@@ -12,6 +12,7 @@ type ParsedOptions struct {
 	CompilerOptions   *core.CompilerOptions   `json:"compilerOptions"`
 	TypeAcquisition   *core.TypeAcquisition   `json:"typeAcquisition"`
 	FormattingOptions *core.FormattingOptions `json:"formattingOptions,omitzero"`
+	Generate          []GenerateCommand       `json:"generate,omitzero"`
 
 	FileNames         []tspath.RootedFilePath  `json:"fileNames"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences"`
@@ -32,6 +33,8 @@ func (p *ParsedOptions) Equals(other *ParsedOptions) bool {
 		return false
 	}
 	return (p.FileNames == nil) == (other.FileNames == nil) &&
+		(p.Generate == nil) == (other.Generate == nil) &&
+		slices.EqualFunc(p.Generate, other.Generate, GenerateCommand.Equals) &&
 		slices.Equal(p.FileNames, other.FileNames) &&
 		(p.ProjectReferences == nil) == (other.ProjectReferences == nil) &&
 		slices.EqualFunc(p.ProjectReferences, other.ProjectReferences, func(a, b *core.ProjectReference) bool {

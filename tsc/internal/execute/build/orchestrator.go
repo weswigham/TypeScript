@@ -272,6 +272,15 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.PathKe
 		o.setupBuildTask(project, nil, false, &completed, &analyzing, circularityStack)
 	}
 	o.scheduleOrder = o.computeScheduleOrder(o.order)
+	if tsc.GenerationEnabled(o.opts.Command.CompilerOptions) {
+		var commands []tsoptions.GenerateCommand
+		for _, task := range o.order {
+			if task.resolved != nil {
+				commands = append(commands, task.resolved.ParsedConfig.Generate...)
+			}
+		}
+		o.errors = append(o.errors, tsc.ValidateGenerationOutputs(o.opts.Sys.FS(), commands)...)
+	}
 	if oldTasks != nil {
 		oldTasks.Range(func(path tspath.PathKey, oldTask *BuildTask) bool {
 			if task, ok := o.tasks.Load(path); ok && task == oldTask {
@@ -326,7 +335,7 @@ func (o *Orchestrator) start(ctx context.Context, project string, onlyReferences
 		}
 		order = order[:len(order)-1]
 	}
-	result := o.buildOrCleanOrder(order)
+	result := o.buildOrCleanOrder(ctx, order)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.Watch(ctx)
 		result.Result.Watcher = o
@@ -393,15 +402,10 @@ func (o *Orchestrator) clean(project string, onlyReferences bool) *OrchestratorR
 			continue
 		}
 
-		inputs := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), func(fileName tspath.RootedFilePath) tspath.PathKey {
-			return o.caseSensitivity.PathKey(fileName.AsPath())
-		})...)
-		projectOutputs := task.resolved.GetOutputFileNames()
 		deleted := false
-		for outputFile := range projectOutputs {
-			deleted = o.cleanProjectOutput(outputFile, inputs, dry, &result.FilesToDelete, reportDiagnostic) || deleted
+		for _, outputFile := range task.resolved.CleanOutputFiles(o.host.FS()) {
+			deleted = o.cleanProjectOutput(outputFile, dry, &result.FilesToDelete, reportDiagnostic) || deleted
 		}
-		deleted = o.cleanProjectOutput(task.resolved.GetBuildInfoFileName(), inputs, dry, &result.FilesToDelete, reportDiagnostic) || deleted
 		if deleted {
 			task.resetStatus()
 			task.buildInfoEntryMu.Lock()
@@ -451,12 +455,11 @@ func (o *Orchestrator) getBuildOrderFor(project string) ([]*BuildTask, bool) {
 
 func (o *Orchestrator) cleanProjectOutput(
 	outputFile tspath.RootedFilePath,
-	inputs *collections.Set[tspath.PathKey],
 	dry bool,
 	filesToDelete *[]tspath.RootedFilePath,
 	reportDiagnostic tsc.DiagnosticReporter,
 ) bool {
-	if outputFile == "" || inputs.Has(o.caseSensitivity.PathKey(outputFile.AsPath())) || !o.host.FS().FileExists(outputFile) {
+	if !o.host.FS().FileExists(outputFile) {
 		return false
 	}
 	*filesToDelete = append(*filesToDelete, outputFile)
@@ -491,7 +494,7 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 	o.wm.Unlock()
 
 	if o.opts.Testing == nil {
-		o.wm.RunLoop(ctx, o.DoCycle)
+		o.wm.RunLoop(ctx, func() { o.DoCycle(ctx) })
 	}
 }
 
@@ -565,6 +568,14 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[tspath.RootedP
 		}
 
 		rootChanged := false
+		for eventPath := range changedPaths {
+			if tsc.GenerationMatchesPath(o.opts.Sys.FS(), task.resolved, eventPath) {
+				task.resetStatus()
+				needsUpdate.Store(true)
+				rootChanged = true
+				break
+			}
+		}
 		if task.contentMapperProject != nil {
 			watchedFiles, err := task.contentMapperProject.WatchedFiles()
 			if err != nil {
@@ -719,6 +730,9 @@ func (o *Orchestrator) computeDesiredWatches() map[tspath.RootedDirectoryPath]bo
 		}
 
 		// Input file directories not already covered
+		for _, directory := range tsc.GenerationWatchDirectories(o.opts.Sys.FS(), task.resolved) {
+			desiredDirs.Set(directory, true)
+		}
 		for _, fileName := range task.resolved.FileNames() {
 			o.addProgramFileWatchDir(desiredDirs, fileName.Directory())
 			for _, mapper := range task.resolved.ContentMappers() {
@@ -824,7 +838,7 @@ func (o *Orchestrator) addPackageJsonWatchDirs(desiredDirs *watchmanager.DirWatc
 	}
 }
 
-func (o *Orchestrator) DoCycle() {
+func (o *Orchestrator) DoCycle(ctx context.Context) {
 	o.wm.Lock()
 	defer o.wm.Unlock()
 
@@ -866,7 +880,7 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 
-	o.buildOrClean()
+	o.buildOrClean(ctx)
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
@@ -877,11 +891,11 @@ func (o *Orchestrator) DoCycle() {
 	o.resetCaches()
 }
 
-func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
-	return o.buildOrCleanOrder(o.order).Result
+func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
+	return o.buildOrCleanOrder(ctx, o.order).Result
 }
 
-func (o *Orchestrator) buildOrCleanOrder(order []*BuildTask) *OrchestratorResult {
+func (o *Orchestrator) buildOrCleanOrder(ctx context.Context, order []*BuildTask) *OrchestratorResult {
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() && o.opts.Command.BuildOptions.Verbose.IsTrue() {
 		o.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
@@ -913,7 +927,7 @@ func (o *Orchestrator) buildOrCleanOrder(order []*BuildTask) *OrchestratorResult
 			}
 		}()
 		o.rangeTasks(scheduleOrder, func(path tspath.PathKey, task *BuildTask) {
-			o.buildOrCleanProject(task, path)
+			o.buildOrCleanProject(ctx, task, path)
 		})
 		<-reported
 	} else {
@@ -967,12 +981,12 @@ func (o *Orchestrator) rangeTasks(order []*BuildTask, f func(path tspath.PathKey
 	}
 }
 
-func (o *Orchestrator) buildOrCleanProject(task *BuildTask, path tspath.PathKey) {
+func (o *Orchestrator) buildOrCleanProject(ctx context.Context, task *BuildTask, path tspath.PathKey) {
 	task.result = &taskResult{}
 	task.result.reportStatus = o.createBuilderStatusReporter(task)
 	task.result.diagnosticReporter = o.createDiagnosticReporter(task)
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() {
-		task.buildProject(o, path)
+		task.buildProject(ctx, o, path)
 	} else {
 		task.cleanProject(o, path)
 	}

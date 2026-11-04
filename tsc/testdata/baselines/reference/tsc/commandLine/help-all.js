@@ -29,6 +29,12 @@ Report formatting changes as diagnostics instead of writing input files.
 [94m--formatOnly[39m
 Format input files without checking or emitting JavaScript or declarations.
 
+[94m--generate[39m
+Run configured code generation commands before compiling.
+
+[94m--generateOnly[39m
+Run configured code generation commands without compiling.
+
 [94m--help, -?[39m
 
 
@@ -57,7 +63,7 @@ Compile the project given the path to its configuration file, or to a folder wit
 Do not print diagnostics.
 
 [94m--runExternalCode[39m
-Allow loading external content mapper plugins that execute code during compilation.
+Allow external content mapper plugins and code generation commands to execute code during compilation.
 
 [94m--showConfig[39m
 Print the final configuration instead of building.

@@ -1,0 +1,30 @@
+error TS18171: Code generation outputs '/project/real/generated/*.ts' and '/project/alias/generated/value.ts' overlap.
+
+
+!!! error TS18171: Code generation outputs '/project/real/generated/*.ts' and '/project/alias/generated/value.ts' overlap.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["first.ts"],
+            "outputs": ["real/generated/*.ts"],
+            "command": ["copy", "${inputs}", "real/generated/value.ts"]
+        }, {
+            "inputs": ["second.ts"],
+            "outputs": ["alias/generated/value.ts"],
+            "command": ["copy", "${inputs}", "alias/generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main = 1;
+==== /project/real/keep.txt (0 errors) ====
+    This file establishes the symlink target before generation.
+    
+==== /project/first.ts (0 errors) ====
+    export const value = 1;
+    
+==== /project/second.ts (0 errors) ====
+    export const value = 2;
+    

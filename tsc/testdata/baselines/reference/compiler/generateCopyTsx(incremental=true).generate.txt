@@ -1,0 +1,6 @@
+Commands executed: 1
+Emit skipped: false
+
+//// [generated/component.tsx]
+export function render(value: number) { return <div>{value}</div>; }
+

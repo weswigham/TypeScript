@@ -1,0 +1,27 @@
+error TS18172: Code generation commands must be independent. Output '/project/real/generated/value.ts' is an input of another command.
+
+
+!!! error TS18172: Code generation commands must be independent. Output '/project/real/generated/value.ts' is an input of another command.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["real/generated/value.ts"],
+            "command": ["copy", "${inputs}", "real/generated/value.ts"]
+        }, {
+            "inputs": ["alias/generated/value.ts"],
+            "outputs": ["final.ts"],
+            "command": ["copy", "${inputs}", "final.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main = 1;
+==== /project/real/keep.txt (0 errors) ====
+    This file establishes the symlink target before generation.
+    
+==== /project/template.ts (0 errors) ====
+    export const value = 42;
+    

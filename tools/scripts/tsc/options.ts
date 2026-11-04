@@ -1596,6 +1596,8 @@ export const options: OptionsModel = {
             },
         },
         ...([
+            ["generate", "Generate", "Run configured code generation commands before compiling."],
+            ["generateOnly", "GenerateOnly", "Run configured code generation commands without compiling."],
             ["format", "Format", "Format input files before compiling."],
             ["formatOnly", "FormatOnly", "Format input files without checking or emitting JavaScript or declarations."],
             ["formatDiagnostics", "FormatDiagnostics", "Report formatting changes as diagnostics instead of writing input files."],
@@ -1621,7 +1623,7 @@ export const options: OptionsModel = {
                 group: "commonOptionsWithBuild",
                 category: diagnostic("Command-line Options"),
                 isCommandLineOnly: true,
-                description: diagnostic("Allow loading external content mapper plugins that execute code during compilation."),
+                description: diagnostic("Allow external content mapper plugins and code generation commands to execute code during compilation."),
                 defaultValueDescription: false,
             },
         },
@@ -1675,6 +1677,8 @@ export const options: OptionsModel = {
     // Preserve help and config output order independently of compiler fields.
     declarationOrder: {
         commonOptionsWithBuild: [
+            "generate",
+            "generateOnly",
             "format",
             "formatOnly",
             "formatDiagnostics",
@@ -1918,6 +1922,7 @@ export const options: OptionsModel = {
         { name: "typeAcquisition", kind: "Object", variable: "typeAcquisitionDeclaration", elementOptions: "typeAcquisition" },
         { name: "extends", kind: "ListOrElement", variable: "extendsOptionDeclaration", category: diagnostic("File Management"), elementOptions: "extends" },
         { name: "references", kind: "List" },
+        { name: "generate", kind: "List", documentationAnchor: false },
         { name: "contentMappers", kind: "List", documentationAnchor: false },
         { name: "files", kind: "List" },
         { name: "include", kind: "List" },
@@ -1960,6 +1965,10 @@ export const options: OptionsModel = {
         },
         references: {
             name: "references",
+            kind: "Object",
+        },
+        generate: {
+            name: "generate",
             kind: "Object",
         },
         contentMappers: {

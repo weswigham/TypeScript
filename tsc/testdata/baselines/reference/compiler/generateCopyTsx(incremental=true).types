@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/generateCopyTsx.tsx] ////
+
+=== /project/jsx.d.ts ===
+declare namespace JSX {
+    interface Element { }
+    interface IntrinsicElements { div: { children?: number }; }
+>div : { children?: number; }
+>children : number | undefined
+}
+
+=== /project/main.ts ===
+import { render } from "./generated/component";
+>render : (value: number) => JSX.Element
+
+export const view = render(42);
+>view : JSX.Element
+>render(42) : JSX.Element
+>render : (value: number) => JSX.Element
+>42 : 42
+
+=== /project/generated/component.tsx ===
+export function render(value: number) { return <div>{value}</div>; }
+>render : (value: number) => JSX.Element
+>value : number
+><div>{value}</div> : JSX.Element
+>div : any
+>value : number
+>div : any
+

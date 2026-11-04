@@ -278,6 +278,10 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Help = ParseTristate(value)
 	case "all":
 		allOptions.All = ParseTristate(value)
+	case "generate":
+		allOptions.Generate = ParseTristate(value)
+	case "generateOnly":
+		allOptions.GenerateOnly = ParseTristate(value)
 	case "format":
 		allOptions.Format = ParseTristate(value)
 	case "formatOnly":
@@ -1521,6 +1525,16 @@ func mergeCompilerOptionFields(targetOptions, sourceOptions *core.CompilerOption
 		targetOptions.All = core.TSUnknown
 	} else if sourceOptions.All != core.TSUnknown {
 		targetOptions.All = sourceOptions.All
+	}
+	if explicitNullFields.Has("generate") {
+		targetOptions.Generate = core.TSUnknown
+	} else if sourceOptions.Generate != core.TSUnknown {
+		targetOptions.Generate = sourceOptions.Generate
+	}
+	if explicitNullFields.Has("generateOnly") {
+		targetOptions.GenerateOnly = core.TSUnknown
+	} else if sourceOptions.GenerateOnly != core.TSUnknown {
+		targetOptions.GenerateOnly = sourceOptions.GenerateOnly
 	}
 	if explicitNullFields.Has("format") {
 		targetOptions.Format = core.TSUnknown

@@ -2012,6 +2012,10 @@ func (s *apiBuildSystem) GetEnvironmentVariable(name string) (string, bool) {
 func (s *apiBuildSystem) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	return nil, errors.New("spawning processes is not supported by the API build orchestrator")
 }
+
+func (s *apiBuildSystem) Run(ctx context.Context, command []string, dir string, stdout, stderr io.Writer) error {
+	return errors.New("running commands is not supported by the API build orchestrator")
+}
 func (s *apiBuildSystem) Now() time.Time            { return time.Now() }
 func (s *apiBuildSystem) SinceStart() time.Duration { return time.Since(s.start) }
 

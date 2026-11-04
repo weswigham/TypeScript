@@ -1,0 +1,6 @@
+Commands executed: 1
+Emit skipped: false
+
+//// [generated/value.json]
+{ "value": 42, "label": "generated" }
+

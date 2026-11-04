@@ -1,0 +1,17 @@
+error TS18170: Code generation command 'copy missing.ts generated/value.ts' failed: copy: source file '/project/missing.ts' not found
+
+
+!!! error TS18170: Code generation command 'copy missing.ts generated/value.ts' failed: copy: source file '/project/missing.ts' not found
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["missing.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main=1;

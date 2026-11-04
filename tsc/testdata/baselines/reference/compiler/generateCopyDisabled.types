@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/generateCopyDisabled.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : 0
+
+export const result = value;
+>result : 0
+>value : 0
+
+=== /project/generated/value.ts ===
+export const value = 0;
+>value : 0
+>0 : 0
+

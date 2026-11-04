@@ -1,0 +1,4 @@
+//// [component.jsx.map]
+{"version":3,"file":"component.jsx","sources":["../../generated/component.tsx"],"names":[],"mappings":"AAAA,MAAM,UAAU,MAAM,CAAC,KAAa,IAAI,OAAO,CAAC,GAAG,CAAC,CAAC,KAAK,CAAC,EAAE,GAAG,CAAC,CAAC,CAAC,CAAC"}
+//// [main.js.map]
+{"version":3,"file":"main.js","sources":["../main.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,uBAAuB,CAAC;AAC/C,MAAM,CAAC,MAAM,IAAI,GAAG,MAAM,CAAC,EAAE,CAAC,CAAC"}

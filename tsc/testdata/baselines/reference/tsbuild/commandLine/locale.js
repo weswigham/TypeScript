@@ -12,6 +12,12 @@ tsc: The TypeScript Compiler - Version FakeTSVersion
 
 Using --build, -b will make tsc behave more like a build orchestrator than a compiler. This is used to trigger building composite projects which you can learn more about at https://aka.ms/tsc-composite-builds
 
+[94m--generate[39m
+Run configured code generation commands before compiling.
+
+[94m--generateOnly[39m
+Run configured code generation commands without compiling.
+
 [94m--format[39m
 Format input files before compiling.
 
@@ -144,7 +150,7 @@ Generate pprof CPU/memory profiles to the given directory.
 Set the number of checkers per project.
 
 [94m--runExternalCode[39m
-Allow loading external content mapper plugins that execute code during compilation.
+Allow external content mapper plugins and code generation commands to execute code during compilation.
 
 [94m--verbose, -v[39m
 Enable verbose logging.

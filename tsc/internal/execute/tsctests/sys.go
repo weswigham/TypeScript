@@ -260,6 +260,10 @@ func (s *TestSys) Spawn(command []string, dir string, stderr io.Writer) (io.Read
 	return contentmappertest.NewSpawner().Spawn(command, dir, stderr)
 }
 
+func (s *TestSys) Run(ctx context.Context, command []string, dir string, stdout, stderr io.Writer) error {
+	return fmt.Errorf("unexpected external command: %v", command)
+}
+
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.PathKey, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {

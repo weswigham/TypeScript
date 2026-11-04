@@ -1,0 +1,5 @@
+Commands executed: 1
+Emit skipped: false
+
+//// [generated/nested/value.ts]
+export const value = 42;

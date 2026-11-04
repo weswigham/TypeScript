@@ -9119,5 +9119,33 @@
     "Content mapper extension '{0}' must not contain path separators.": {
         "category": "Error",
         "code": 18123
+    },
+    "Run configured code generation commands before compiling.": {
+        "category": "Message",
+        "code": 18166
+    },
+    "Run configured code generation commands without compiling.": {
+        "category": "Message",
+        "code": 18167
+    },
+    "Allow external content mapper plugins and code generation commands to execute code during compilation.": {
+        "category": "Message",
+        "code": 18168
+    },
+    "Code generation requires the '--runExternalCode' command line flag to be enabled.": {
+        "category": "Error",
+        "code": 18169
+    },
+    "Code generation command '{0}' failed: {1}": {
+        "category": "Error",
+        "code": 18170
+    },
+    "Code generation outputs '{0}' and '{1}' overlap.": {
+        "category": "Error",
+        "code": 18171
+    },
+    "Code generation commands must be independent. Output '{0}' is an input of another command.": {
+        "category": "Error",
+        "code": 18172
     }
 }

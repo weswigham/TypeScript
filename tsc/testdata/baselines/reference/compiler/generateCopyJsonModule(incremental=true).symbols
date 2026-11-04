@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/generateCopyJsonModule.ts] ////
+
+=== /project/main.ts ===
+import data from "./generated/value.json";
+>data : Symbol(data, Decl(main.ts, 0, 6))
+
+export const value: number = data.value;
+>value : Symbol(value, Decl(main.ts, 1, 12))
+>data.value : Symbol("value", Decl(value.json, 0, 1))
+>data : Symbol(data, Decl(main.ts, 0, 6))
+>value : Symbol("value", Decl(value.json, 0, 1))
+
+export const label: string = data.label;
+>label : Symbol(label, Decl(main.ts, 2, 12))
+>data.label : Symbol("label", Decl(value.json, 0, 14))
+>data : Symbol(data, Decl(main.ts, 0, 6))
+>label : Symbol("label", Decl(value.json, 0, 14))
+
+=== /project/generated/value.json ===
+{ "value": 42, "label": "generated" }
+>"value" : Symbol("value", Decl(value.json, 0, 1))
+>"label" : Symbol("label", Decl(value.json, 0, 14))
+

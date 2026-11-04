@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/generateCopyFileKinds.ts] ////
+
+=== /project/main.ts ===
+export const main = 1;
+>main : Symbol(main, Decl(main.ts, 0, 12))
+

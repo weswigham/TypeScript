@@ -1,0 +1,10 @@
+Commands executed: 2
+Emit skipped: false
+
+//// [generated/first.ts]
+export const first = 1;
+
+
+//// [generated/second.ts]
+export const second = 2;
+

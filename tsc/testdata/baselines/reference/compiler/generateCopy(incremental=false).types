@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/generateCopy.ts] ////
+
+=== /project/main.ts ===
+import { value } from "./generated/value";
+>value : 42
+
+export const result = value.toFixed();
+>result : string
+>value.toFixed() : string
+>value.toFixed : (fractionDigits?: number) => string
+>value : 42
+>toFixed : (fractionDigits?: number) => string
+
+=== /project/generated/value.ts ===
+export const value = 42;
+>value : 42
+>42 : 42
+

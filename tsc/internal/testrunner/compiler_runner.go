@@ -176,8 +176,9 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerTest.options)
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName)
+	compilerTest.verifyGeneration(t, r.testSuitName)
 	compilerTest.verifyFormatting(t, r.testSuitName)
-	if compilerTest.options.FormatOnly.IsTrue() {
+	if compilerTest.result.PreBuildStopped {
 		return
 	}
 	compilerTest.verifyContentMapper(t, r.testSuitName)
@@ -316,6 +317,19 @@ func newCompilerTest(
 		currentDirectory,
 		testCaseContentWithConfig.symlinks,
 	)
+	for _, generated := range result.Generated {
+		found := false
+		for _, file := range core.Concatenate(toBeCompiled, otherFiles) {
+			if file.UnitName == generated.UnitName {
+				file.Content = generated.Content
+				found = true
+				break
+			}
+		}
+		if !found {
+			otherFiles = append(otherFiles, generated)
+		}
+	}
 
 	// Content-mapped files are transformed during program construction; the transformed text is what the
 	// compiler actually parses and reports positions against. Baseline that text (rather than the original
@@ -341,6 +355,20 @@ func newCompilerTest(
 		otherFiles:       otherFiles,
 		hasNonDtsFiles:   hasNonDtsFiles,
 	}
+}
+
+func (c *compilerTest) verifyGeneration(t *testing.T, suiteName string) {
+	if !c.result.GenerationConfigured && !c.options.Generate.IsTrue() && !c.options.GenerateOnly.IsTrue() {
+		return
+	}
+	t.Run("generate", func(t *testing.T) {
+		var output strings.Builder
+		fmt.Fprintf(&output, "Commands executed: %d\nEmit skipped: %v\n", c.result.GenerationCommands, c.result.Result.EmitSkipped)
+		for _, file := range c.result.Generated {
+			fmt.Fprintf(&output, "\n//// [%s]\n%s\n", tspath.ConvertToRelativePath(file.UnitName, c.currentDirectory, tspath.CaseSensitive), file.Content)
+		}
+		baseline.Run(t, strings.TrimSuffix(c.configuredName, tspath.GetAnyExtensionFromPath(c.configuredName, nil, tspath.CaseSensitive))+".generate.txt", output.String(), baseline.Options{Subfolder: suiteName})
+	})
 }
 
 func (c *compilerTest) verifyFormatting(t *testing.T, suiteName string) {

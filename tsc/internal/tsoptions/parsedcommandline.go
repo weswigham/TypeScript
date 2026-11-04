@@ -58,6 +58,8 @@ type ParsedCommandLine struct {
 	wildcardDirectories     map[tspath.RootedDirectoryPath]bool
 	includeGlobsOnce        sync.Once
 	includeGlobs            []*glob.Glob
+	generationPlanOnce      sync.Once
+	generationPlan          *GenerationPlan
 
 	sourceAndOutputMapsOnce     sync.Once
 	sourceToProjectReference    map[tspath.PathKey]*SourceOutputAndProjectReference
@@ -114,6 +116,7 @@ func (p *ParsedCommandLine) WithFileNames(fileNames []tspath.RootedFilePath) *Pa
 		caseSensitivity:             p.caseSensitivity,
 		wildcardDirectories:         p.wildcardDirectories,
 		includeGlobs:                p.includeGlobs,
+		generationPlan:              p.GenerationPlan(),
 		literalFileNamesLen:         p.literalFileNamesLen,
 		rootFileNamesForDiagnostics: p.rootFileNamesForDiagnostics,
 	}
@@ -574,6 +577,7 @@ func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *Parse
 		caseSensitivity:             p.caseSensitivity,
 		wildcardDirectories:         p.wildcardDirectories,
 		includeGlobs:                p.includeGlobs,
+		generationPlan:              p.GenerationPlan(),
 		literalFileNamesLen:         literalFileNamesLen,
 		rootFileNamesForDiagnostics: p.rootFileNamesForDiagnostics,
 	}

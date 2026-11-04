@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/generateCopyInheritanceEmpty.ts] ////
+
+=== /project/main.ts ===
+export const value = 42;
+>value : Symbol(value, Decl(main.ts, 0, 12))
+

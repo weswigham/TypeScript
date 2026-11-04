@@ -1,0 +1,30 @@
+/project/generated/value.ts(1,14): error TS2322: Type 'string' is not assignable to type 'number'.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "target": "esnext",
+            "module": "esnext",
+            "moduleResolution": "bundler",
+            "noEmitOnError": true
+        },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    import { value } from "./generated/value";
+    export const result = value;
+==== /project/template.ts (0 errors) ====
+    export const value: number = "generated type error";
+    
+==== /project/generated/value.ts (1 errors) ====
+    export const value: number = "generated type error";
+                 ~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+    

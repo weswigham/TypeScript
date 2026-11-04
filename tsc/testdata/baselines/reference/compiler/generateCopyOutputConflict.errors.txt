@@ -1,0 +1,24 @@
+error TS18171: Code generation outputs '/project/generated/*.ts' and '/project/generated/value.ts' overlap.
+
+
+!!! error TS18171: Code generation outputs '/project/generated/*.ts' and '/project/generated/value.ts' overlap.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "esnext" },
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["generated/*.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }, {
+            "inputs": ["template.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const main = 1;
+==== /project/template.ts (0 errors) ====
+    export const value = 42;
+    

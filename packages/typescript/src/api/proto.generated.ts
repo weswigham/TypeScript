@@ -1947,6 +1947,8 @@ export interface RawCompilerOptions {
     build?: boolean | undefined;
     help?: boolean | undefined;
     all?: boolean | undefined;
+    generate?: boolean | undefined;
+    generateOnly?: boolean | undefined;
     format?: boolean | undefined;
     formatOnly?: boolean | undefined;
     formatDiagnostics?: boolean | undefined;

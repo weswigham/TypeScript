@@ -1,0 +1,19 @@
+error TS6370: Options 'generateOnly' and 'format' cannot be combined.
+
+
+!!! error TS6370: Options 'generateOnly' and 'format' cannot be combined.
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "files": ["main.ts"],
+        "generate": [{
+            "inputs": ["template.ts"],
+            "outputs": ["generated/value.ts"],
+            "command": ["copy", "${inputs}", "generated/value.ts"]
+        }]
+    }
+    
+==== /project/main.ts (0 errors) ====
+    export const value:number="not checked or formatted";
+==== /project/template.ts (0 errors) ====
+    export const generated = 42;
+    

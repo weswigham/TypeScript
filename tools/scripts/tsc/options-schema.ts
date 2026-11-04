@@ -108,6 +108,20 @@ function valueSchema(declaration: Declaration): JSONSchema {
                     required: ["path"],
                 };
             }
+            if (declaration.name === "generate") {
+                return {
+                    type: "object",
+                    properties: {
+                        cwd: { type: "string", minLength: 1, description: "Working directory for the command and its input/output patterns, relative to this configuration file." },
+                        ...Object.fromEntries(["inputs", "outputs", "command"].map(name => [name, {
+                            type: "array",
+                            items: { type: "string", minLength: 1 },
+                        }])),
+                    },
+                    required: ["inputs", "outputs", "command"],
+                    additionalProperties: false,
+                };
+            }
             if (declaration.name === "contentMappers") {
                 return {
                     type: "object",
@@ -195,6 +209,7 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         references: "Referenced projects. Each path identifies a configuration file or a directory containing one.",
         compileOnSave: "Compile this project when a file is saved in a supporting editor.",
         contentMappers: "External content mapper packages and the file extensions they handle. Execution must be enabled separately with --runExternalCode.",
+        generate: "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
     };
     const properties: Record<string, JSONSchema> = {
         $schema: { type: "string", description: "The JSON schema used to validate this configuration." },

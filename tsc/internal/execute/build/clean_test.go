@@ -1,6 +1,7 @@
 package build_test
 
 import (
+	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -65,6 +66,54 @@ func TestClean(t *testing.T) {
 		assert.Assert(t, sys.FS().FileExists("/project/cycle1/dist/index.js"))
 		assert.Assert(t, sys.FS().FileExists("/project/cycle2/dist/index.js"))
 	})
+}
+
+func TestCleanGenerationOutputs(t *testing.T) {
+	t.Parallel()
+	for _, dry := range []bool{false, true} {
+		for _, referencesOnly := range []bool{false, true} {
+			t.Run(fmt.Sprintf("dry=%v/referencesOnly=%v", dry, referencesOnly), func(t *testing.T) {
+				t.Parallel()
+				sys := newCleanTestSystem()
+				for name, text := range map[tspath.RootedFilePath]string{
+					"/project/a/tsconfig.json": `{"compilerOptions":{"composite":true,"noLib":true,"outDir":"dist"},"files":["index.ts","generated/output.ts"],"references":[{"path":"../b"}],"generate":[{"inputs":["input.json"],"outputs":["generated/*.ts","metadata/*.json","dist/index.js"],"command":["must-not-run"]}]}`,
+					"/project/b/tsconfig.json": `{"compilerOptions":{"composite":true,"noLib":true,"outDir":"dist"},"files":["index.ts","generated/output.ts"],"generate":[{"inputs":["input.json"],"outputs":["generated/*.ts","metadata/*.json","dist/index.js"],"command":["must-not-run"]}]}`,
+				} {
+					assert.NilError(t, sys.FS().WriteFile(name, text))
+				}
+				for _, root := range []tspath.RootedDirectoryPath{"/project/a", "/project/b"} {
+					assert.NilError(t, sys.FS().WriteFile(root.ResolveFile("generated/output.ts"), "export const value = 1;"))
+					assert.NilError(t, sys.FS().WriteFile(root.ResolveFile("metadata/output.json"), "{}"))
+				}
+				args := []string{"a", "c"}
+				if dry {
+					args = append(args, "--dry")
+				}
+				orchestrator := newCleanTestOrchestrator(sys, args...)
+				var result *build.OrchestratorResult
+				if referencesOnly {
+					result = orchestrator.CleanReferences("a")
+				} else {
+					result = orchestrator.Clean("a")
+				}
+				assert.Equal(t, result.Result.Status, tsc.ExitStatusSuccess)
+				assert.Equal(t, len(result.Errors), 0)
+				seen := make(map[tspath.RootedFilePath]bool)
+				for _, name := range result.FilesToDelete {
+					assert.Assert(t, !seen[name], name.AsString())
+					seen[name] = true
+				}
+				for _, root := range []tspath.RootedDirectoryPath{"/project/a", "/project/b"} {
+					preserved := dry || referencesOnly && root == "/project/a"
+					for _, name := range []string{"generated/output.ts", "metadata/output.json", "dist/index.js"} {
+						assert.Equal(t, sys.FS().FileExists(root.ResolveFile(name)), preserved, root.ResolveFile(name).AsString())
+					}
+					assert.Assert(t, sys.FS().FileExists(root.ResolveFile("index.ts")))
+				}
+				assert.Assert(t, sys.FS().FileExists("/project/c/dist/index.js"))
+			})
+		}
+	}
 }
 
 type cleanTestSystem struct {
