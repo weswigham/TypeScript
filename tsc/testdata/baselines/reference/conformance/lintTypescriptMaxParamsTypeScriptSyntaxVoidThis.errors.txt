@@ -1,0 +1,28 @@
+/input.ts(1,26): error TS7006: Parameter 'first' implicitly has an 'any' type.
+/input.ts(1,33): error TS7006: Parameter 'second' implicitly has an 'any' type.
+/input.ts(1,41): error TS7006: Parameter 'third' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/max-params": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function run(this: void, first, second, third) {}
+                             ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                    ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+                                            ~~~~~
+!!! error TS7006: Parameter 'third' implicitly has an 'any' type.

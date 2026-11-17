@@ -1,0 +1,35 @@
+/input.ts(1,17): error TS2339: Property 'foo' does not exist on type 'unknown'.
+/input.ts(1,25): error TS2700: Rest types may only be created from object types.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "ignoreRestSiblings": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    try {} catch ({ foo, ...bar }) { console.log(bar); }
+                    ~~~
+!!! error TS2339: Property 'foo' does not exist on type 'unknown'.
+                            ~~~
+!!! error TS2700: Rest types may only be created from object types.

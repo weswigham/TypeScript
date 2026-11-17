@@ -1,0 +1,35 @@
+/input.ts(1,20): error TS7006: Parameter 'object' implicitly has an 'any' type.
+/input.ts(1,69): error TS2304: Cannot find name 'amount'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": [
+                    "error",
+                    {
+                        "allowProperties": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    async function run(object) { if (object.value) object.value = await amount; }
+                       ~~~~~~
+!!! error TS7006: Parameter 'object' implicitly has an 'any' type.
+                                                                        ~~~~~~
+!!! error TS2304: Cannot find name 'amount'.

@@ -1,0 +1,28 @@
+/input.ts(1,4): error TS2872: This kind of expression is always truthy.
+/input.ts(1,4): error TS24224: Unexpected constant condition.
+/input.ts(1,9): error TS1313: The body of an 'if' statement cannot be the empty statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if(0b0n);
+       ~~~~
+!!! error TS2872: This kind of expression is always truthy.
+       ~~~~
+!!! error TS24224: Unexpected constant condition.
+            ~
+!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

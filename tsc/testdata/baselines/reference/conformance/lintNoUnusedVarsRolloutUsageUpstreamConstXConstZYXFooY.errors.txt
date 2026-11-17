@@ -1,0 +1,33 @@
+/input.ts(1,7): error TS7034: Variable 'x' implicitly has type 'any[]' in some locations where its type cannot be determined.
+/input.ts(1,31): error TS7005: Variable 'x' implicitly has an 'any[]' type.
+/input.ts(1,40): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    const x = []; const {z: [y] = x} = {}; foo(y);
+          ~
+!!! error TS7034: Variable 'x' implicitly has type 'any[]' in some locations where its type cannot be determined.
+                                  ~
+!!! error TS7005: Variable 'x' implicitly has an 'any[]' type.
+                                           ~~~
+!!! error TS2304: Cannot find name 'foo'.

@@ -1,0 +1,22 @@
+/input.ts(1,16): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-this-before-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function a() { this.b = 0; }
+                   ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.

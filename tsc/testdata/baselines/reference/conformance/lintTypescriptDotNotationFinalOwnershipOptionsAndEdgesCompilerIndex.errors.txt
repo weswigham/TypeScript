@@ -1,0 +1,24 @@
+/input.ts(1,104): error TS22050: ["fixed"] is better written in dot notation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "noPropertyAccessFromIndexSignature": true,
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/dot-notation": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const object: { fixed: number; [key: `extra${string}`]: number }; object['extraValue']; object['fixed'];
+                                                                                                           ~~~~~~~
+!!! error TS22050: ["fixed"] is better written in dot notation.

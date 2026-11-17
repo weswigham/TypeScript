@@ -1,0 +1,32 @@
+/input.ts(1,20): error TS2304: Cannot find name 'Foo'.
+/input.ts(1,78): error TS2304: Cannot find name 'Foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": [
+                    "error",
+                    "type-annotation"
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (2 errors) ====
+    const f = (a = new Foo<string>()) => a; class C { constructor(public a = new Foo<string>()) {} }
+                       ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                                                                                 ~~~
+!!! error TS2304: Cannot find name 'Foo'.

@@ -1,0 +1,39 @@
+/input.ts(1,8): error TS2304: Cannot find name 'foo'.
+/input.ts(1,25): error TS2304: Cannot find name 'a'.
+/input.ts(4,1): error TS24230: Expected a 'break' statement before 'default'.
+/input.ts(4,10): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-fallthrough": [
+                    "error",
+                    {
+                        "commentPattern": "no break"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    switch(foo) { case 0: { a();
+           ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                            ~
+!!! error TS2304: Cannot find name 'a'.
+    /* no break */
+    /* todo: fix readability */ }
+    default: b() }
+    ~~~~~~~~~~~~
+!!! error TS24230: Expected a 'break' statement before 'default'.
+             ~
+!!! error TS2304: Cannot find name 'b'.

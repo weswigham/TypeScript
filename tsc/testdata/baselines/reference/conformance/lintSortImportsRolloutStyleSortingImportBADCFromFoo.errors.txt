@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24343: Member 'a' of the import declaration should be sorted alphabetically.
+/input.ts(1,26): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    import {b, a, d, c} from 'foo';
+               ~
+!!! error TS24343: Member 'a' of the import declaration should be sorted alphabetically.
+                             ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

@@ -1,0 +1,76 @@
+input.ts(1,22): error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+input.ts(1,28): error TS7006: Parameter 'val' implicitly has an 'any' type.
+input.ts(1,35): error TS2408: Setters cannot return a value.
+input.ts(1,35): error TS19518: Setter cannot return a value.
+input.ts(1,47): error TS2408: Setters cannot return a value.
+input.ts(1,47): error TS19518: Setter cannot return a value.
+input.ts(2,21): error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+input.ts(2,27): error TS7006: Parameter 'val' implicitly has an 'any' type.
+input.ts(2,45): error TS2408: Setters cannot return a value.
+input.ts(2,45): error TS19518: Setter cannot return a value.
+input.ts(3,51): error TS19518: Setter cannot return a value.
+input.ts(4,53): error TS19518: Setter cannot return a value.
+input.ts(5,57): error TS19518: Setter cannot return a value.
+input.ts(6,51): error TS19518: Setter cannot return a value.
+input.ts(7,53): error TS19518: Setter cannot return a value.
+input.ts(8,19): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+input.ts(8,72): error TS7006: Parameter 'val' implicitly has an 'any' type.
+input.ts(9,23): error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+input.ts(9,29): error TS7006: Parameter 'val' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-setter-return": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (19 errors) ====
+    const object = { set value(val) { return val; return undefined; } };
+                         ~~~~~
+!!! error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                               ~~~
+!!! error TS7006: Parameter 'val' implicitly has an 'any' type.
+                                      ~~~~~~
+!!! error TS2408: Setters cannot return a value.
+                                      ~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+                                                  ~~~~~~
+!!! error TS2408: Setters cannot return a value.
+                                                  ~~~~~~~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+    class Example { set value(val) { if (val) { return 1; } return; } }
+                        ~~~~~
+!!! error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                              ~~~
+!!! error TS7006: Parameter 'val' implicitly has an 'any' type.
+                                                ~~~~~~
+!!! error TS2408: Setters cannot return a value.
+                                                ~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+    Object.defineProperty(object, 'foo', { set(val) { return val; } });
+                                                      ~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+    Reflect.defineProperty(object, 'foo', { set: val => val });
+                                                        ~~~
+!!! error TS19518: Setter cannot return a value.
+    Object.defineProperties(object, { foo: { ['set'](val) { return null; } } });
+                                                            ~~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+    Object.create(null, { foo: { set: function(val) { return undefined; } } });
+                                                      ~~~~~~~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+    Object?.defineProperty(object, 'foo', { set: val => val });
+                                                        ~~~
+!!! error TS19518: Setter cannot return a value.
+    function shadowed(Object) { Object.defineProperty(object, 'foo', { set(val) { return 1; } }); }
+                      ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
+                                                                           ~~~
+!!! error TS7006: Parameter 'val' implicitly has an 'any' type.
+    const allowed = { set value(val) { function nested() { return 1; } return; } };
+                          ~~~~~
+!!! error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                                ~~~
+!!! error TS7006: Parameter 'val' implicitly has an 'any' type.

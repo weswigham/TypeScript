@@ -1,0 +1,36 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,7): error TS2304: Cannot find name '__proto__'.
+/input.ts(1,19): error TS2304: Cannot find name 'value'.
+/input.ts(1,44): error TS2304: Cannot find name 'value'.
+/input.ts(1,100): error TS7008: Member '#__proto__' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-proto": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    value[__proto__]; value['__' + 'proto__']; value[`__proto__${''}`]; ({__proto__: null}); class C { #__proto__; method() { this.#__proto__; } }
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+          ~~~~~~~~~
+!!! error TS2304: Cannot find name '__proto__'.
+                      ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                               ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                                                       ~~~~~~~~~~
+!!! error TS7008: Member '#__proto__' implicitly has an 'any' type.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

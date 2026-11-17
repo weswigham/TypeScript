@@ -1,0 +1,38 @@
+/input.tsx(1,10): error TS24268: 'DisallowedObject' import from 'foo' is restricted. Please import 'DisallowedObject' from /bar/ instead.
+/input.tsx(1,53): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "DisallowedObject"
+                                ],
+                                "message": "Please import 'DisallowedObject' from /bar/ instead.",
+                                "name": "foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { 'DisallowedObject' as AllowedObject } from "foo";
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24268: 'DisallowedObject' import from 'foo' is restricted. Please import 'DisallowedObject' from /bar/ instead.
+                                                        ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

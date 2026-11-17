@@ -1,0 +1,64 @@
+input.ts(1,4): error TS19667: Unnecessarily computed property ["x"] found.
+input.ts(2,4): error TS19667: Unnecessarily computed property ["x"] found.
+input.ts(4,4): error TS19667: Unnecessarily computed property ["__proto__"] found.
+input.ts(4,19): error TS2304: Cannot find name 'value'.
+input.ts(4,29): error TS2304: Cannot find name 'source'.
+input.ts(5,9): error TS19667: Unnecessarily computed property ["key"] found.
+input.ts(5,30): error TS2304: Cannot find name 'source'.
+input.ts(6,4): error TS19667: Unnecessarily computed property [2] found.
+input.ts(6,7): error TS2378: A 'get' accessor must return a value.
+input.ts(8,5): error TS19667: Unnecessarily computed property ["x"] found.
+input.ts(10,12): error TS2300: Duplicate identifier '["prototype"]'.
+input.ts(10,12): error TS2699: Static property 'prototype' conflicts with built-in property 'Function.prototype' of constructor function 'Example'.
+input.ts(11,5): error TS19667: Unnecessarily computed property [0] found.
+input.ts(11,11): error TS7008: Member '[0]' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-computed-key": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (14 errors) ====
+    ({ [("x")]: 0 });
+       ~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["x"] found.
+    ({ [/* keep */ "x"]: 0 });
+       ~~~~~~~~~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["x"] found.
+    ({ ["__proto__"]: 0 });
+    ({ ["__proto__"]: value } = source);
+       ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["__proto__"] found.
+                      ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    const { ["key"]: renamed } = source;
+            ~~~~~~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["key"] found.
+                                 ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    ({ get[2]() {} });
+       ~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property [2] found.
+          ~~~
+!!! error TS2378: A 'get' accessor must return a value.
+    class Example {
+        ["x"]() {}
+        ~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["x"] found.
+        ["constructor"]() {}
+        static ["prototype"]() {}
+               ~~~~~~~~~~~~~
+!!! error TS2300: Duplicate identifier '["prototype"]'.
+               ~~~~~~~~~~~~~
+!!! error TS2699: Static property 'prototype' conflicts with built-in property 'Function.prototype' of constructor function 'Example'.
+        static[0];
+        ~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property [0] found.
+              ~~~
+!!! error TS7008: Member '[0]' implicitly has an 'any' type.
+    }

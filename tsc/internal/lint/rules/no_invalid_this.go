@@ -1,0 +1,41 @@
+package rules
+
+import (
+	"github.com/microsoft/TypeScript/tsc/internal/ast"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
+)
+
+type noInvalidThisRule struct {
+	helpers.LexicalScopeAnalysis
+}
+
+func newNoInvalidThisRule(context Context) Rule {
+	return &noInvalidThisRule{LexicalScopeAnalysis: helpers.NewLexicalScopeAnalysis(context)}
+}
+
+func (rule *noInvalidThisRule) OnEnterNode(node *ast.Node) bool {
+	rule.Model.Enter(rule.Context, node)
+	return true
+}
+
+func (rule *noInvalidThisRule) OnExitNode(node *ast.Node) {
+	rule.Model.Exit(node)
+	if node.Kind != ast.KindSourceFile {
+		return
+	}
+	rule.Model.Resolve(rule.Context)
+	for _, expression := range rule.Model.ThisNodes {
+		if rule.invalidThis(expression) {
+			rule.Context.Report(rule.Context.Range(expression), diagnostics.Unexpected_this)
+		}
+	}
+}
+
+func (rule *noInvalidThisRule) invalidThis(node *ast.Node) bool {
+	owner := helpers.LexicalScopeThisOwner(node)
+	if owner == nil || owner.Kind == ast.KindSourceFile {
+		return ast.IsExternalModule(rule.Context.File)
+	}
+	return rule.Strict(owner) && rule.DefaultThis(owner, rule.Boolean("capIsConstructor", true))
+}

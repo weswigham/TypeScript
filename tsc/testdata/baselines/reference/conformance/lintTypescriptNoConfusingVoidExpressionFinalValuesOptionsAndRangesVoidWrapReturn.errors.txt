@@ -1,0 +1,29 @@
+/input.ts(1,24): error TS24028: Void expressions returned from a function must be marked explicitly with the `void` operator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-confusing-void-expression": [
+                    "error",
+                    {
+                        "ignoreVoidOperator": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function fn() { return console.log(); }
+                           ~~~~~~~~~~~~~
+!!! error TS24028: Void expressions returned from a function must be marked explicitly with the `void` operator.

@@ -1,0 +1,30 @@
+input.ts(1,1): error TS19326: Function 'tooMany' has too many parameters (3). Maximum allowed is 2.
+input.ts(4,1): error TS19326: Function 'tooManyDeclared' has too many parameters (3). Maximum allowed is 2.
+input.ts(5,22): error TS19326: Arrow function has too many parameters (3). Maximum allowed is 2.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/max-params": ["error", { "max": 2 }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    function tooMany(first: number, second: number, third: number): number {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        return first + second + third;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS19326: Function 'tooMany' has too many parameters (3). Maximum allowed is 2.
+    declare function tooManyDeclared(first: number, second: number, third: number): void;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function 'tooManyDeclared' has too many parameters (3). Maximum allowed is 2.
+    const tooManyArrow = (first: number, second: number, third: number) => first + second + third;
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Arrow function has too many parameters (3). Maximum allowed is 2.
+    function validPair(first: number, second: number): number { return first + second; }
+    function validVoidThis(this: void, first: number, second: number): number { return first + second; }
+    function validRest(first: number, ...rest: number[]): number { return first + rest.length; }
+    export {};

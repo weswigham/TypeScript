@@ -1,0 +1,24 @@
+input.ts(2,1): error TS19351: Unexpected use of '|='.
+input.ts(3,1): error TS19351: Unexpected use of '~'.
+input.ts(4,1): error TS19351: Unexpected use of '<<'.
+input.ts(5,1): error TS19351: Unexpected use of '>>>='.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-bitwise":"error"}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    let value = 1;
+    value |= 2;
+    ~~~~~~~~~~
+!!! error TS19351: Unexpected use of '|='.
+    ~value;
+    ~~~~~~
+!!! error TS19351: Unexpected use of '~'.
+    value << 1;
+    ~~~~~~~~~~
+!!! error TS19351: Unexpected use of '<<'.
+    value >>>= 1;
+    ~~~~~~~~~~~~
+!!! error TS19351: Unexpected use of '>>>='.
+    value ||= 1;
+    value && 2;

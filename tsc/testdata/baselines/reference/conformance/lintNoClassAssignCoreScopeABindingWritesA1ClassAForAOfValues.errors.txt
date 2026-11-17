@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS2449: Class 'A' used before its declaration.
+/input.ts(1,1): error TS2629: Cannot assign to 'A' because it is a class.
+/input.ts(1,1): error TS19851: 'A' is a class.
+/input.ts(1,24): error TS2629: Cannot assign to 'A' because it is a class.
+/input.ts(1,24): error TS19851: 'A' is a class.
+/input.ts(1,29): error TS2304: Cannot find name 'values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-class-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    A = 1; class A {} for (A of values) {}
+    ~
+!!! error TS2449: Class 'A' used before its declaration.
+!!! related TS2728 /input.ts:1:14: 'A' is declared here.
+    ~
+!!! error TS2629: Cannot assign to 'A' because it is a class.
+    ~
+!!! error TS19851: 'A' is a class.
+                           ~
+!!! error TS2629: Cannot assign to 'A' because it is a class.
+                           ~
+!!! error TS19851: 'A' is a class.
+                                ~~~~~~
+!!! error TS2304: Cannot find name 'values'.

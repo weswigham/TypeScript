@@ -1,0 +1,23 @@
+/input.ts(1,58): error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-for-in-array": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const obj: { [key: number]: number; length: 1 }; for (const key in obj) {}
+                                                             ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.

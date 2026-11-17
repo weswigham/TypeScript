@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS7006: Parameter 'console' implicitly has an 'any' type.
+/input.ts(1,40): error TS2304: Cannot find name 'value'.
+/input.ts(1,50): error TS19854: Unexpected console statement.
+/input.ts(1,62): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function nested(console) { console.log(value); } console.log(value);
+                    ~~~~~~~
+!!! error TS7006: Parameter 'console' implicitly has an 'any' type.
+                                           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                     ~~~~~~~~~~~
+!!! error TS19854: Unexpected console statement.
+                                                                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.

@@ -1,0 +1,52 @@
+input.ts(1,5): error TS2304: Cannot find name 'first'.
+input.ts(1,22): error TS19369: Unexpected if as the only statement in an else block.
+input.ts(1,26): error TS2304: Cannot find name 'second'.
+input.ts(2,5): error TS2304: Cannot find name 'first'.
+input.ts(2,33): error TS19369: Unexpected if as the only statement in an else block.
+input.ts(2,37): error TS2304: Cannot find name 'second'.
+input.ts(3,5): error TS2304: Cannot find name 'first'.
+input.ts(3,22): error TS19369: Unexpected if as the only statement in an else block.
+input.ts(3,26): error TS2304: Cannot find name 'second'.
+input.ts(3,34): error TS2304: Cannot find name 'work'.
+input.ts(4,13): error TS2304: Cannot find name 'work'.
+input.ts(5,5): error TS2304: Cannot find name 'first'.
+input.ts(5,16): error TS2304: Cannot find name 'second'.
+input.ts(5,38): error TS2304: Cannot find name 'third'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"lint":{"rules":{"no-lonely-if":"error"}},"files":["input.ts"]}
+==== input.ts (14 errors) ====
+    if (first) {} else { if (second) {} }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                         ~~~~~~~~~~~~~~
+!!! error TS19369: Unexpected if as the only statement in an else block.
+                             ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    if (first) {} else { /* keep */ if (second) {} }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                    ~~~~~~~~~~~~~~
+!!! error TS19369: Unexpected if as the only statement in an else block.
+                                        ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    if (first) {} else { if (second) work() }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                         ~~~~~~~~~~~~~~~~~~
+!!! error TS19369: Unexpected if as the only statement in an else block.
+                             ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                     ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    [1].forEach(work);
+                ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    if (first) if (second) {} else { if (third) {} } else {}
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                   ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                         ~~~~~
+!!! error TS2304: Cannot find name 'third'.

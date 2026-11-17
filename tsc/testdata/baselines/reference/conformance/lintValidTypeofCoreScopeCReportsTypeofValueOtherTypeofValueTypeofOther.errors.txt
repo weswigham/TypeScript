@@ -1,0 +1,39 @@
+/input.ts(1,8): error TS2304: Cannot find name 'value'.
+/input.ts(1,18): error TS2304: Cannot find name 'other'.
+/input.ts(1,18): error TS20297: Typeof comparisons should be to string literals.
+/input.ts(1,32): error TS2304: Cannot find name 'value'.
+/input.ts(1,49): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "valid-typeof": [
+                    "error",
+                    {
+                        "requireStringLiterals": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    typeof value === other; typeof value === typeof other;
+           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                     ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                     ~~~~~
+!!! error TS20297: Typeof comparisons should be to string literals.
+                                   ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                    ~~~~~
+!!! error TS2304: Cannot find name 'other'.

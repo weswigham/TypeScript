@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2507: Type '100' is not a constructor function type.
+/input.ts(1,39): error TS24208: Unexpected 'super()' because 'super' is not a constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends 100 { constructor() { super(); } }
+                    ~~~
+!!! error TS2507: Type '100' is not a constructor function type.
+                                          ~~~~~~~
+!!! error TS24208: Unexpected 'super()' because 'super' is not a constructor.

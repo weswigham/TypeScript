@@ -1,0 +1,39 @@
+input.ts(2,5): error TS19853: Do not assign to the exception parameter.
+input.ts(3,6): error TS19853: Do not assign to the exception parameter.
+input.ts(3,15): error TS2304: Cannot find name 'values'.
+input.ts(4,5): error TS18046: 'error' is of type 'unknown'.
+input.ts(7,17): error TS2339: Property 'message' does not exist on type 'unknown'.
+input.ts(8,13): error TS19853: Do not assign to the exception parameter.
+input.ts(8,29): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-ex-assign": "error" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (7 errors) ====
+    try {} catch (error) {
+        error = 1;
+        ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+        [error] = values;
+         ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+                  ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+        error.message = "allowed";
+        ~~~~~
+!!! error TS18046: 'error' is of type 'unknown'.
+        function shadow(error: number) { error = 1; }
+    }
+    try {} catch ({ message }) {
+                    ~~~~~~~
+!!! error TS2339: Property 'message' does not exist on type 'unknown'.
+        ({ key: message = 0 } = value);
+                ~~~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+                                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    }

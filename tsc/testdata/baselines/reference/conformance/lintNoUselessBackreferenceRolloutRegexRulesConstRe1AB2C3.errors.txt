@@ -1,0 +1,28 @@
+/input.ts(1,12): error TS24294: Backreference '\2' will be ignored. It references group '(b\2)' from within that group.
+/input.ts(1,12): error TS24295: Backreference '\1' will be ignored. It references group '(a)' which appears later in the pattern.
+/input.ts(1,12): error TS24298: Backreference '\3' will be ignored. It references group '(c)' which is in a negative lookaround.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-backreference": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const re = /\1(a)|(b\2)|(?!(c))\3/;
+               ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24294: Backreference '\2' will be ignored. It references group '(b\2)' from within that group.
+               ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24295: Backreference '\1' will be ignored. It references group '(a)' which appears later in the pattern.
+               ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24298: Backreference '\3' will be ignored. It references group '(c)' which is in a negative lookaround.

@@ -1,0 +1,36 @@
+/project/src/input.ts(1,59): error TS24146: Parameter should be a read only type.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-readonly-parameter-types": [
+                    "error",
+                    {
+                        "allow": [
+                            {
+                                "from": "file",
+                                "name": "Allowed"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "src/input.ts"
+        ]
+    }
+==== /project/src/input.ts (1 errors) ====
+    import { Allowed } from '../../outside/types'; function f(value: Allowed) {}
+                                                              ~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    export {};
+==== /outside/types.ts (0 errors) ====
+    export interface Allowed { value: number; }

@@ -1,0 +1,36 @@
+input.ts(1,1): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(2,1): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(3,1): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(6,5): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(7,12): error TS20258: Expected the Promise rejection reason to be an Error.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "prefer-promise-reject-errors": "error" } }
+    }
+==== input.ts (5 errors) ====
+    Promise.reject();
+    ~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    Promise.reject("reason");
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    Promise.reject(undefined);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    Promise.reject(new Error("reason"));
+    new Promise((resolve, reject) => {
+        reject(0);
+        ~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+        (() => reject(false))();
+               ~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+        function shadowed(reject: (value: string) => void) {
+            reject("not a Promise rejection");
+        }
+    });
+    function shadowed(Promise: any) {
+        Promise.reject("not a Promise rejection");
+    }

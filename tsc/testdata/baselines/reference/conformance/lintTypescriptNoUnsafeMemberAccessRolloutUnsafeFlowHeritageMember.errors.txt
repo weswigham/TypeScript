@@ -1,0 +1,23 @@
+/input.ts(1,25): error TS2503: Cannot find namespace 'Missing'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-member-access": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Value extends Missing.Name {}
+                            ~~~~~~~
+!!! error TS2503: Cannot find namespace 'Missing'.

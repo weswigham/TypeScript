@@ -21,10 +21,12 @@ export interface JSONSchema {
     definitions?: Record<string, JSONSchema>;
     additionalProperties?: boolean | JSONSchema;
     required?: string[];
-    items?: JSONSchema;
+    items?: JSONSchema | JSONSchema[];
+    additionalItems?: boolean;
+    minItems?: number;
     anyOf?: JSONSchema[];
     allOf?: JSONSchema[];
-    enum?: string[];
+    enum?: (string | number | null)[];
     enumDescriptions?: string[];
     pattern?: string;
     default?: string | boolean | number;
@@ -210,8 +212,9 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         compileOnSave: "Compile this project when a file is saved in a supporting editor.",
         contentMappers: "External content mapper packages and the file extensions they handle. Execution must be enabled separately with --runExternalCode.",
         generate: "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
-        lint: "Lint rules, inherited per rule. Execution requires --lint or --lintOnly.",
+        lint: "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly.",
     };
+    const lintSeverity: JSONSchema = { enum: ["off", "warn", "warning", "error", 0, 1, 2] };
     const properties: Record<string, JSONSchema> = {
         $schema: { type: "string", description: "The JSON schema used to validate this configuration." },
     };
@@ -221,7 +224,13 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
             properties: {
                 rules: {
                     type: ["object", "null"],
-                    additionalProperties: { enum: ["off", "warning", "error", null] },
+                    additionalProperties: {
+                        anyOf: [
+                            lintSeverity,
+                            { type: "null" },
+                            { type: "array", minItems: 1, items: [lintSeverity], additionalItems: true },
+                        ],
+                    },
                 },
             },
             additionalProperties: false,

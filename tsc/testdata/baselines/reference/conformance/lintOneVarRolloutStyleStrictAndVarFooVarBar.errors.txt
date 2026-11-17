@@ -1,0 +1,19 @@
+/input.ts(1,10): error TS24318: Combine this with the previous 'var' statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    var foo; var bar;
+             ~~~~~~~~
+!!! error TS24318: Combine this with the previous 'var' statement.

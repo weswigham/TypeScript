@@ -1,0 +1,38 @@
+/input.ts(1,16): error TS7031: Binding element 'value' implicitly has an 'any' type.
+/input.ts(1,25): error TS7031: Binding element 'other' implicitly has an 'any' type.
+/input.ts(1,42): error TS24249: Assignment to function parameter 'value'.
+/input.ts(1,55): error TS2304: Cannot find name 'source'.
+/input.ts(1,69): error TS24249: Assignment to function parameter 'other'.
+/input.ts(1,78): error TS2552: Cannot find name 'values'. Did you mean 'value'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-param-reassign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    function task({value}, [other]) { ({key: value = 0} = source); for (other of values) {} }
+                   ~~~~~
+!!! error TS7031: Binding element 'value' implicitly has an 'any' type.
+                            ~~~~~
+!!! error TS7031: Binding element 'other' implicitly has an 'any' type.
+                                             ~~~~~
+!!! error TS24249: Assignment to function parameter 'value'.
+                                                          ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                                                        ~~~~~
+!!! error TS24249: Assignment to function parameter 'other'.
+                                                                                 ~~~~~~
+!!! error TS2552: Cannot find name 'values'. Did you mean 'value'?
+!!! related TS2728 /input.ts:1:16: 'value' is declared here.

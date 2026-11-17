@@ -1,0 +1,26 @@
+input.ts(2,25): error TS22048: Use 'as number' instead of '<number>'.
+input.ts(3,24): error TS22048: Use 'as string | number' instead of '<string | number>'.
+input.ts(6,29): error TS22048: Use 'as const' instead of '<const>'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-type-assertions": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    declare const source: unknown;
+    const numberViolation = <number>source;
+                            ~~~~~~~~~~~~~~
+!!! error TS22048: Use 'as number' instead of '<number>'.
+    const unionViolation = <string | number>source;
+                           ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22048: Use 'as string | number' instead of '<string | number>'.
+    const validAssertion = source as number;
+    const validConst = 1 as const;
+    const angleConstViolation = <const>"literal";
+                                ~~~~~~~~~~~~~~~~
+!!! error TS22048: Use 'as const' instead of '<const>'.
+    export {};

@@ -1,0 +1,45 @@
+/input.ts(2,9): error TS2304: Cannot find name 'foo'.
+/input.ts(4,9): error TS2304: Cannot find name 'a'.
+/input.ts(6,9): error TS24228: Found a comment that would permit fallthrough, but case cannot fall through.
+/input.ts(9,9): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-fallthrough": [
+                    "error",
+                    {
+                        "reportUnusedFallthroughComment": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+    switch (foo) {
+            ~~~
+!!! error TS2304: Cannot find name 'foo'.
+        case 0: {
+            a();
+            ~
+!!! error TS2304: Cannot find name 'a'.
+            break;
+            // falls through
+            ~~~~~~~~~~~~~~~~
+!!! error TS24228: Found a comment that would permit fallthrough, but case cannot fall through.
+        }
+        case 1:
+            b();
+            ~
+!!! error TS2304: Cannot find name 'b'.
+    }

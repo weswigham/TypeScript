@@ -1,0 +1,43 @@
+input.ts(2,20): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+input.ts(4,21): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+input.ts(5,6): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+input.ts(11,8): error TS2304: Cannot find name 'ready'.
+input.ts(12,5): error TS7034: Variable 'mutable' implicitly has type 'any' in some locations where its type cannot be determined.
+input.ts(14,8): error TS2304: Cannot find name 'ready'.
+input.ts(14,17): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'mutable'.
+input.ts(14,23): error TS7005: Variable 'mutable' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-loop-func":"error"}},"files":["input.ts"]}
+==== input.ts (8 errors) ====
+    for (var index = 0; index < 3; index++) {
+        const unsafe = () => index;
+                       ~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+        (() => index)();
+        (() => { return () => index; })();
+                        ~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+        (async () => index)();
+         ~~~~~~~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+    }
+    for (let index = 0; index < 3; index++) {
+        const safe = () => index;
+    }
+    const stable = 0;
+    while (ready) { () => stable; }
+           ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+    let mutable;
+        ~~~~~~~
+!!! error TS7034: Variable 'mutable' implicitly has type 'any' in some locations where its type cannot be determined.
+    function update() { mutable = 1; }
+    while (ready) { () => mutable; }
+           ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                    ~~~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'mutable'.
+                          ~~~~~~~
+!!! error TS7005: Variable 'mutable' implicitly has an 'any' type.

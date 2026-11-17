@@ -1,0 +1,41 @@
+/input.ts(2,9): error TS7032: Property '#x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(2,12): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(3,9): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    class C {
+        set #x(value) {
+            ~~
+!!! error TS7032: Property '#x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+               ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+            doSomething(value);
+            ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.
+        }
+    
+        foo() {
+            this.#x = 1;
+        }
+    }

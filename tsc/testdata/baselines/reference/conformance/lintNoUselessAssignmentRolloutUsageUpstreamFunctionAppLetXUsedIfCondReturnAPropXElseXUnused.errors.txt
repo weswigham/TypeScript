@@ -1,0 +1,40 @@
+/input.tsx(3,17): error TS2304: Cannot find name 'cond'.
+/input.tsx(4,23): error TS2304: Cannot find name 'A'.
+/input.tsx(6,15): error TS24293: The value assigned to 'x' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (3 errors) ====
+    function App() {
+                let x = "used";
+                if (cond) {
+                    ~~~~
+!!! error TS2304: Cannot find name 'cond'.
+                  return <A prop={x} />;
+                          ~
+!!! error TS2304: Cannot find name 'A'.
+                } else {
+                  x = "unused";
+                  ~
+!!! error TS24293: The value assigned to 'x' is not used in subsequent statements.
+                }
+                }

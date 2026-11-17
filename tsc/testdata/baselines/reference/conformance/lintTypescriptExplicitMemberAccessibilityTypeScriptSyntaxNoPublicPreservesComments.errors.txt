@@ -1,0 +1,27 @@
+/input.ts(1,14): error TS22028: Public accessibility modifier on class property value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-member-accessibility": [
+                    "error",
+                    {
+                        "accessibility": "no-public"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { public /* keep */ value = 1; }
+                 ~~~~~~
+!!! error TS22028: Public accessibility modifier on class property value.

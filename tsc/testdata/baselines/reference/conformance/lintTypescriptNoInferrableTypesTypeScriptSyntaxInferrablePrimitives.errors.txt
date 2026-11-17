@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+/input.ts(1,25): error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+/input.ts(1,46): error TS19107: Type string trivially inferred from a string literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    let a: number = -1; let b: boolean = !a; let c: string = `text`;
+        ~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+                            ~~~~~~~~~~~~~~~
+!!! error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+                                                 ~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type string trivially inferred from a string literal, remove type annotation.

@@ -1,0 +1,19 @@
+/input.ts(1,13): error TS2304: Cannot find name 'x'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    ({ b: 1, ...x, a: 2 });
+                ~
+!!! error TS2304: Cannot find name 'x'.

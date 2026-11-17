@@ -1,0 +1,22 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestCoreScopeCReports/prefer-object-has-own/(Object?.prototype.hasOwnProperty).call(obj,_key);_(Object.prototype.hasOwnProperty?.call)(obj,_key); (invocation 2).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "prefer-object-has-own": "error"
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+(Object?.prototype.hasOwnProperty).call(obj, key); (Object.prototype.hasOwnProperty?.call)(obj, key);

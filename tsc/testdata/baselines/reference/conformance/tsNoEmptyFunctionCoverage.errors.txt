@@ -1,0 +1,47 @@
+input.ts(1,26): error TS19358: Unexpected empty function 'emptyFunction'.
+input.ts(2,26): error TS19358: Unexpected empty arrow function.
+input.ts(4,11): error TS19358: Unexpected empty method 'run'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-function": ["error", {
+                    "allow": ["private-constructors", "protected-constructors"]
+                }]
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    function emptyFunction() {}
+                             ~~
+!!! error TS19358: Unexpected empty function 'emptyFunction'.
+    const emptyArrow = () => {};
+                             ~~
+!!! error TS19358: Unexpected empty arrow function.
+    class EmptyMethod {
+        run() {}
+              ~~
+!!! error TS19358: Unexpected empty method 'run'.
+    }
+    
+    class PrivateConstructor {
+        private constructor() {}
+    }
+    class ProtectedConstructor {
+        protected constructor() {}
+    }
+    class ParameterProperty {
+        constructor(public value: number) {}
+    }
+    function identity(value: number) {
+        return value;
+    }

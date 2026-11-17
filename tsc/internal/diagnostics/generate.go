@@ -120,8 +120,23 @@ func generateDiagnostics(diagnosticMessages []*diagnosticMessage) *bytes.Buffer 
 	buf.WriteString("\n")
 	buf.WriteString("package diagnostics\n")
 
+	reservedNames := make(map[string]bool, len(diagnosticMessages))
+	for _, m := range diagnosticMessages {
+		varName, _ := convertPropertyName(m.key, m.Code)
+		reservedNames[varName] = true
+	}
+	usedNames := make(map[string]bool, len(diagnosticMessages))
+	varNames := make(map[*diagnosticMessage]string, len(diagnosticMessages))
 	for _, m := range diagnosticMessages {
 		varName, key := convertPropertyName(m.key, m.Code)
+		if usedNames[varName] {
+			varName += "_" + strconv.Itoa(m.Code)
+			for reservedNames[varName] || usedNames[varName] {
+				varName += "_"
+			}
+		}
+		usedNames[varName] = true
+		varNames[m] = varName
 
 		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", varName, m.Code, m.Category, key, m.key)
 
@@ -142,7 +157,7 @@ func generateDiagnostics(diagnosticMessages []*diagnosticMessage) *bytes.Buffer 
 	// Copying the pointer variables or using a large map literal generates substantial initialization code.
 	buf.WriteString("var allMessages = [...]**Message{\n")
 	for _, m := range diagnosticMessages {
-		varName, _ := convertPropertyName(m.key, m.Code)
+		varName := varNames[m]
 		fmt.Fprintf(&buf, "\t&%s,\n", varName)
 	}
 	buf.WriteString("}\n")

@@ -1,0 +1,42 @@
+/input.ts(2,29): error TS7006: Parameter 'foo' implicitly has an 'any' type.
+/input.ts(3,21): error TS2304: Cannot find name 'baz'.
+/input.ts(4,27): error TS2304: Cannot find name 'something'.
+/input.ts(5,21): error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    
+                    function* g(foo) {
+                                ~~~
+!!! error TS7006: Parameter 'foo' implicitly has an 'any' type.
+                        baz = foo.bar;
+                        ~~~
+!!! error TS2304: Cannot find name 'baz'.
+                        yield something;
+                              ~~~~~~~~~
+!!! error TS2304: Cannot find name 'something'.
+                        foo.bar = 1;
+                        ~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
+                    }
+                

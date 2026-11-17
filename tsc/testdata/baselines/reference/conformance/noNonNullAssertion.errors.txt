@@ -1,0 +1,100 @@
+input.ts(2,1): error TS19108: Forbidden non-null assertion.
+input.ts(3,1): error TS19108: Forbidden non-null assertion.
+input.ts(4,1): error TS19108: Forbidden non-null assertion.
+input.ts(5,1): error TS19108: Forbidden non-null assertion.
+input.ts(6,1): error TS19108: Forbidden non-null assertion.
+input.ts(7,1): error TS19108: Forbidden non-null assertion.
+input.ts(8,1): error TS19108: Forbidden non-null assertion.
+input.ts(9,1): error TS19108: Forbidden non-null assertion.
+input.ts(9,1): error TS19108: Forbidden non-null assertion.
+input.ts(9,1): error TS19108: Forbidden non-null assertion.
+input.ts(10,1): error TS19108: Forbidden non-null assertion.
+input.ts(10,1): error TS19108: Forbidden non-null assertion.
+input.ts(11,2): error TS19108: Forbidden non-null assertion.
+input.ts(12,2): error TS19108: Forbidden non-null assertion.
+input.ts(13,2): error TS19108: Forbidden non-null assertion.
+input.ts(14,1): error TS19108: Forbidden non-null assertion.
+input.ts(15,1): error TS19108: Forbidden non-null assertion.
+input.ts(16,8): error TS19108: Forbidden non-null assertion.
+input.ts(17,14): error TS19108: Forbidden non-null assertion.
+input.ts(18,2): error TS19108: Forbidden non-null assertion.
+input.ts(19,2): error TS19108: Forbidden non-null assertion.
+input.ts(20,1): error TS19108: Forbidden non-null assertion.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "@typescript-eslint/no-non-null-assertion": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (22 errors) ====
+    declare const value: any;
+    value!;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!.property;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!["property"];
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!();
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!?.property;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!?.["property"];
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!?.();
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!!!;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    ~~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    ~~~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!!.property;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    ~~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    (value!).property;
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    (value!)["property"];
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    (value!)();
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!.property = 1;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!.property++;
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    delete value!.property;
+           ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    ({ property: value!.property } = value);
+                 ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    [value!.property] = value;
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    (value!.property as number)++;
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+    value!
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+        // comment between the assertion and property access
+        .property;
+    !value;
+    class Definite { property!: number }

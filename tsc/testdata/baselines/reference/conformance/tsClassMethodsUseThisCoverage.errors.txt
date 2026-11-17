@@ -1,0 +1,26 @@
+input.ts(3,5): error TS19218: Expected 'this' to be used by class method 'unusedInstance'.
+input.ts(4,22): error TS19218: Expected 'this' to be used by class method 'unusedArrow'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/class-methods-use-this": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    class InstanceMethods {
+        value = 1;
+        unusedInstance() { return 2; }
+        ~~~~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'unusedInstance'.
+        unusedArrow = () => 3;
+                         ~~
+!!! error TS19218: Expected 'this' to be used by class method 'unusedArrow'.
+        usedInstance() { return this.value; }
+        lexicalInstance() { return () => this.value; }
+        usedArrow = () => this.value;
+        static validStatic() { return 4; }
+    }
+    export {};

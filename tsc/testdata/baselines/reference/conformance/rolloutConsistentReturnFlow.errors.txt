@@ -1,0 +1,24 @@
+input.ts(2,10): warning TS24006: Expected to return a value at the end of function 'missing'.
+input.ts(3,45): warning TS24007: Function 'mixed' expected a return value.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "consistent-return": ["warn", { "treatUndefinedAsUnspecified": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (2 errors) ====
+    declare const ready: boolean, value: number;
+    function missing() { if (ready) return value; }
+             ~~~~~~~
+!!! warning TS24006: Expected to return a value at the end of function 'missing'.
+    function mixed() { if (ready) return value; return; }
+                                                ~~~~~~~
+!!! warning TS24007: Function 'mixed' expected a return value.
+    function unspecified() { if (ready) return undefined; return void 0; }
+    function complete() { switch (value) { case 0: return 1; default: throw Error(); } }
+    function finalizer() { try { if (ready) return value; } finally { return value; } }
+    function infinite() { outer: for (;;) { if (ready) return value; continue outer; } }
+    function nested() { function inner() { return value; } }
+    function Constructor() { if (ready) return {}; }

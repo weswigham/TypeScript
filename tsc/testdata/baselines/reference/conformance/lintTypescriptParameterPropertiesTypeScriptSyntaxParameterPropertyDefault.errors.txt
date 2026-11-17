@@ -1,0 +1,22 @@
+/input.ts(1,23): error TS20486: Property value should be declared as a class property.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/parameter-properties": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { constructor(public value: string) {} }
+                          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20486: Property value should be declared as a class property.

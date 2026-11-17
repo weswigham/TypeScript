@@ -1,0 +1,39 @@
+input.ts(1,3): error TS2304: Cannot find name 'value'.
+input.ts(2,2): error TS2304: Cannot find name 'value'.
+input.ts(3,6): error TS2304: Cannot find name 'value'.
+input.ts(4,1): error TS20013: Unexpected implicit coercion encountered. Use `String(value)` instead.
+input.ts(4,4): error TS2304: Cannot find name 'value'.
+input.ts(5,1): error TS2304: Cannot find name 'tag'.
+input.ts(5,7): error TS2304: Cannot find name 'value'.
+input.ts(6,11): error TS2304: Cannot find name 'value'.
+input.ts(7,4): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-implicit-coercion":["error",{"boolean":false,"number":false,"allow":["+"],"disallowTemplateShorthand":true}]}},"files":["input.ts"]}
+==== input.ts (9 errors) ====
+    !!value;
+      ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    +value;
+     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    "" + value;
+         ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    `${value}`;
+    ~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `String(value)` instead.
+       ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    tag`${value}`;
+    ~~~
+!!! error TS2304: Cannot find name 'tag'.
+          ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    `${String(value)}`;
+              ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    `${value}suffix`;
+       ~~~~~
+!!! error TS2304: Cannot find name 'value'.

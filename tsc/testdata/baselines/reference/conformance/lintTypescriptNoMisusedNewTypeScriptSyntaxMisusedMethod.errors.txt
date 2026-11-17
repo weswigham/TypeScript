@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS2391: Function implementation is missing or not immediately following the declaration.
+/input.ts(1,15): error TS20463: Class cannot have method named `new`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-new": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Value { new(): Value; }
+                  ~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                  ~~~~~~~~~~~~~
+!!! error TS20463: Class cannot have method named `new`.

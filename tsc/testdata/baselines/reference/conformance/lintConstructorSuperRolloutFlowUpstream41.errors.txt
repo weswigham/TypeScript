@@ -1,0 +1,37 @@
+/input.ts(2,29): error TS2304: Cannot find name 'Base'.
+/input.ts(3,29): error TS7006: Parameter 'list' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+                class A extends Base {
+                                ~~~~
+!!! error TS2304: Cannot find name 'Base'.
+                    constructor(list) {
+                                ~~~~
+!!! error TS7006: Parameter 'list' implicitly has an 'any' type.
+                        for (const a of list) {
+                            if (a.foo) {
+                                super(a);
+                                return;
+                            }
+                        }
+                        super();
+                    }
+                }
+            

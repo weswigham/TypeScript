@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,46): error TS24207: Unexpected duplicate 'super()'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends B { constructor() { super(); super(); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                                                 ~~~~~~~
+!!! error TS24207: Unexpected duplicate 'super()'.

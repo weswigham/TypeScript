@@ -1,0 +1,31 @@
+/input.ts(1,31): error TS2304: Cannot find name 'use'.
+/input.ts(1,35): error TS19860: Unexpected unnamed generator function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-names": [
+                    "error",
+                    "always",
+                    {
+                        "generators": "as-needed"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const value = function*() {}; use(function*() {});
+                                  ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                      ~~~~~~~~~
+!!! error TS19860: Unexpected unnamed generator function.

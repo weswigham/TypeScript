@@ -1,0 +1,40 @@
+/input.ts(1,16): error TS2304: Cannot find name 'ready'.
+/input.ts(1,25): error TS20010: Move function declaration to program root.
+/input.ts(1,46): error TS20010: Move variable declaration to program root.
+/input.ts(1,97): error TS2304: Cannot find name 'ready'.
+/input.ts(1,106): error TS20010: Move variable declaration to class static block body root.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-inner-declarations": [
+                    "error",
+                    "both",
+                    {
+                        "blockScopedFunctions": "disallow"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    export {}; if (ready) { function nested() {} var item; let lexical; } class Item { static { if (ready) { var nested; } } }
+                   ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20010: Move function declaration to program root.
+                                                 ~~~~~~~~~
+!!! error TS20010: Move variable declaration to program root.
+                                                                                                    ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                                                                                             ~~~~~~~~~~~
+!!! error TS20010: Move variable declaration to class static block body root.

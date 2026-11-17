@@ -1,0 +1,31 @@
+input.ts(1,1): error TS2304: Cannot find name 'value'.
+input.ts(1,1): error TS19361: Use '===' to compare with null.
+input.ts(2,1): error TS19361: Use '===' to compare with null.
+input.ts(2,9): error TS2304: Cannot find name 'value'.
+input.ts(3,1): error TS2304: Cannot find name 'value'.
+input.ts(4,1): error TS2304: Cannot find name 'value'.
+input.ts(5,1): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"lint":{"rules":{"no-eq-null":"error"}},"files":["input.ts"]}
+==== input.ts (7 errors) ====
+    value == null;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~
+!!! error TS19361: Use '===' to compare with null.
+    null != value;
+    ~~~~~~~~~~~~~
+!!! error TS19361: Use '===' to compare with null.
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value === null;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value !== null;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value == undefined;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.

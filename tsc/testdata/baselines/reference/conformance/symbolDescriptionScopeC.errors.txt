@@ -1,0 +1,24 @@
+input.ts(1,1): error TS20290: Expected Symbol to have a description.
+input.ts(2,1): error TS20290: Expected Symbol to have a description.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "symbol-description": "error" } }
+    }
+==== input.ts (2 errors) ====
+    Symbol();
+    ~~~~~~~~
+!!! error TS20290: Expected Symbol to have a description.
+    Symbol?.();
+    ~~~~~~~~~~
+!!! error TS20290: Expected Symbol to have a description.
+    Symbol("description");
+    Symbol(undefined);
+    function shadowed(Symbol: (...args: unknown[]) => symbol) {
+        Symbol();
+    }
+    {
+        const Symbol = () => 0;
+        Symbol();
+    }

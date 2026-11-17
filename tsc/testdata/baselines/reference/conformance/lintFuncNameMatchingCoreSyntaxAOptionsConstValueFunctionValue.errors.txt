@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS19260: Function name `value` should not match variable name `value`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-name-matching": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const value = function value() {};
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19260: Function name `value` should not match variable name `value`.

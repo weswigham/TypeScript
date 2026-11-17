@@ -1,0 +1,30 @@
+/input.ts(1,85): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'string | number' is not assignable to parameter of type 'string'.
+      Type 'number' is not assignable to type 'string'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function f(value: number): void; declare function f(value: string): void; f(1 as number | string);
+                                                                                        ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2769: No overload matches this call.
+!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:     Argument of type 'string | number' is not assignable to parameter of type 'string'.
+!!! error TS2769:       Type 'number' is not assignable to type 'string'.
+!!! related TS2771 /input.ts:1:59: The last overload is declared here.

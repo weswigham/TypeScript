@@ -1,0 +1,27 @@
+/input.ts(3,10): error TS24068: string is overridden by the "a" | "b" in this intersection type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    type T = 'a' | 'b';
+    type U = T & string;
+             ~
+!!! error TS24068: string is overridden by the "a" | "b" in this intersection type.
+          

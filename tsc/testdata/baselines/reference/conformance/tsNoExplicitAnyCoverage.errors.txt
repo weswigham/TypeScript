@@ -1,0 +1,39 @@
+input.ts(1,12): error TS20326: Unexpected any. Specify a different type.
+input.ts(2,13): error TS20326: Unexpected any. Specify a different type.
+input.ts(3,18): error TS20326: Unexpected any. Specify a different type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-explicit-any": ["error", {
+                    "fixToUnknown": true,
+                    "ignoreRestArgs": true
+                }]
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    let value: any;
+               ~~~
+!!! error TS20326: Unexpected any. Specify a different type.
+    let values: any[];
+                ~~~
+!!! error TS20326: Unexpected any. Specify a different type.
+    type Key = keyof any;
+                     ~~~
+!!! error TS20326: Unexpected any. Specify a different type.
+    
+    let safeValue: unknown;
+    let safeValues: unknown[];
+    function collect(...args: readonly any[]) {
+        return args.length;
+    }

@@ -1,0 +1,28 @@
+/input.ts(1,11): error TS20314: Use a `type` instead of an `interface`.
+/input.ts(1,24): error TS2503: Cannot find namespace 'NS'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "type"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    interface Item extends NS.Base<string> {}
+              ~~~~
+!!! error TS20314: Use a `type` instead of an `interface`.
+                           ~~
+!!! error TS2503: Cannot find namespace 'NS'.

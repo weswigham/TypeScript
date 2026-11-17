@@ -1,0 +1,33 @@
+input.ts(1,15): error TS2304: Cannot find name 'ready'.
+input.ts(2,9): error TS2304: Cannot find name 'skip'.
+input.ts(2,24): error TS19364: This label 'outer' is unnecessary.
+input.ts(3,13): error TS2304: Cannot find name 'value'.
+input.ts(4,11): error TS19364: This label 'outer' is unnecessary.
+input.ts(6,19): error TS2304: Cannot find name 'ready'.
+input.ts(6,45): error TS19364: This label 'commented' is unnecessary.
+
+
+==== tsconfig.json (0 errors) ====
+    {"lint":{"rules":{"no-extra-label":"error"}},"files":["input.ts"]}
+==== input.ts (7 errors) ====
+    outer: while (ready) {
+                  ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+        if (skip) continue outer;
+            ~~~~
+!!! error TS2304: Cannot find name 'skip'.
+                           ~~~~~
+!!! error TS19364: This label 'outer' is unnecessary.
+        switch (value) { default: continue outer; }
+                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+        break outer;
+              ~~~~~
+!!! error TS19364: This label 'outer' is unnecessary.
+    }
+    commented: while (ready) { break /* keep */ commented; }
+                      ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                                ~~~~~~~~~
+!!! error TS19364: This label 'commented' is unnecessary.
+    required: { break required; }

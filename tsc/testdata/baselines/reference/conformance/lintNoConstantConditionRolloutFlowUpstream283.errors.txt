@@ -1,0 +1,22 @@
+/input.ts(1,32): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function* foo() { for (let x = yield; ; x++) { yield; }}
+                                   ~~~~~
+!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.

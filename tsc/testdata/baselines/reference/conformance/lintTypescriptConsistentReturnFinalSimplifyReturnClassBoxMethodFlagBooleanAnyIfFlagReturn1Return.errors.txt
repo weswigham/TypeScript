@@ -1,0 +1,28 @@
+/input.ts(1,62): error TS24007: Method 'method' expected a return value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-return": [
+                    "error",
+                    {
+                        "treatUndefinedAsUnspecified": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Box { method(flag: boolean): any { if (flag) return 1; return; } }
+                                                                 ~~~~~~~
+!!! error TS24007: Method 'method' expected a return value.

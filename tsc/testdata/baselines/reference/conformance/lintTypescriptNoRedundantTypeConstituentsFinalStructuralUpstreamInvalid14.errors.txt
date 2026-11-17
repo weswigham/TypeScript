@@ -1,0 +1,27 @@
+/input.ts(3,11): error TS24065: 2 | 0 | 1 is overridden by number in this union type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    type B = 0 | 1;
+    type T = (2 | B) | number;
+              ~~~~~
+!!! error TS24065: 2 | 0 | 1 is overridden by number in this union type.
+          

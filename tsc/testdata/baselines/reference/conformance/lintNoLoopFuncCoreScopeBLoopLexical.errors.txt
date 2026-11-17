@@ -1,0 +1,22 @@
+/input.ts(1,100): error TS2304: Cannot find name 'ready'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-loop-func": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    for (let index = 0; index < 3; index++) { const callback = () => index; } const stable = 0; while (ready) { () => stable; }
+                                                                                                       ~~~~~
+!!! error TS2304: Cannot find name 'ready'.

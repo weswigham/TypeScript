@@ -1,0 +1,24 @@
+/input.ts(1,7): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const a: number = +NaN;
+          ~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.

@@ -1,0 +1,38 @@
+input.ts(1,1): error TS19006: Expected 'undefined' and instead saw 'void'.
+input.ts(2,1): error TS19006: Expected 'undefined' and instead saw 'void'.
+input.ts(3,15): error TS19006: Expected 'undefined' and instead saw 'void'.
+input.ts(4,16): error TS19006: Expected 'undefined' and instead saw 'void'.
+input.ts(4,22): error TS19006: Expected 'undefined' and instead saw 'void'.
+input.ts(5,2): error TS19006: Expected 'undefined' and instead saw 'void'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-void": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (6 errors) ====
+    void 0;
+    ~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+    void(0);
+    ~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+    const value = void work();
+                  ~~~~~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+    const nested = void (void 0);
+                   ~~~~~~~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+                         ~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+    (void 0);
+     ~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+    const object = { void() {}, value: 0 };
+    object.void();
+    object.value = 1;
+    type Callback = () => void;
+    function work(): void {}

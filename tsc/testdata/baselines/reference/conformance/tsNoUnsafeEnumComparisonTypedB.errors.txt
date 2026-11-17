@@ -1,0 +1,18 @@
+input.ts(3,1): error TS20910: The two values in this comparison do not have a shared enum type.
+input.ts(5,18): error TS20911: The case statement does not have a shared enum type with the switch predicate.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true},"lint":{"rules":{"@typescript-eslint/no-unsafe-enum-comparison":"error"}}}
+==== input.ts (2 errors) ====
+    enum Fruit { Apple = "apple", Pear = "pear" }
+    declare const fruit: Fruit;
+    fruit === "apple";
+    ~~~~~~~~~~~~~~~~~
+!!! error TS20910: The two values in this comparison do not have a shared enum type.
+    fruit === Fruit.Apple;
+    switch (fruit) { case "apple": break; }
+                     ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20911: The case statement does not have a shared enum type with the switch predicate.
+    declare const mixed: Fruit | "apple";
+    mixed === "apple";

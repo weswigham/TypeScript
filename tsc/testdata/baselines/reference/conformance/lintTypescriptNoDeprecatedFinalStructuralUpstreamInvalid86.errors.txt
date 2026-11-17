@@ -1,0 +1,69 @@
+/input.tsx(3,9): error TS2503: Cannot find namespace 'ts'.
+/input.tsx(4,17): error TS2503: Cannot find namespace 'ts'.
+/input.tsx(8,17): error TS2304: Cannot find name 'getTypeFlags'.
+/input.tsx(10,7): error TS24032: `isReceiver` is deprecated. This param is not used and will be removed in the future.
+/input.tsx(10,29): error TS2304: Cannot find name 'ANY_OR_UNKNOWN'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "jsx": "preserve",
+            "module": "commonjs",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "/jsx.d.ts"
+        ]
+    }
+==== /jsx.d.ts (0 errors) ====
+    declare namespace JSX {
+        interface IntrinsicElements { div: AriaAttributes }
+        interface AriaAttributes {
+            /** @deprecated in ARIA 1.1 */
+            "aria-grabbed"?: boolean | "false" | "true";
+        }
+    }
+==== /input.tsx (5 errors) ====
+    
+    export function isTypeFlagSet(
+      type: ts.Type,
+            ~~
+!!! error TS2503: Cannot find namespace 'ts'.
+      flagsToCheck: ts.TypeFlags,
+                    ~~
+!!! error TS2503: Cannot find namespace 'ts'.
+      /** @deprecated This param is not used and will be removed in the future. */
+      isReceiver?: boolean,
+    ): boolean {
+      const flags = getTypeFlags(type);
+                    ~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'getTypeFlags'.
+    
+      if (isReceiver && flags & ANY_OR_UNKNOWN) {
+          ~~~~~~~~~~
+!!! error TS24032: `isReceiver` is deprecated. This param is not used and will be removed in the future.
+                                ~~~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'ANY_OR_UNKNOWN'.
+        return true;
+      }
+    
+      return (flags & flagsToCheck) !== 0;
+    }
+          
+==== /deprecated.ts (0 errors) ====
+    /** @deprecated */
+    export function deprecatedFunction(): void {}
+    /** @deprecated Reason */
+    export type T = { a: string };
+    export type U = { b: string };
+    /** @deprecated */
+    export default { foo: 1 };

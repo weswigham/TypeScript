@@ -1,0 +1,31 @@
+input.ts(2,1): warning TS24150: Async function 'missing' has no 'await' expression.
+input.ts(3,29): warning TS24150: Async arrow function has no 'await' expression.
+input.ts(6,1): warning TS24150: Async function 'nested' has no 'await' expression.
+input.ts(10,14): warning TS24150: Async method 'method' has no 'await' expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "require-await": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (4 errors) ====
+    declare const values: AsyncIterable<number>, resource: AsyncDisposable;
+    async function missing() { return 1; }
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24150: Async function 'missing' has no 'await' expression.
+    const expression = async () => 1;
+                                ~~
+!!! warning TS24150: Async arrow function has no 'await' expression.
+    async function empty() {}
+    async function* generator() { yield 1; }
+    async function nested() { const inner = async () => { await Promise.resolve(); }; }
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24150: Async function 'nested' has no 'await' expression.
+    async function awaited() { await Promise.resolve(); }
+    async function iteration() { for await (const value of values) { console.log(value); } }
+    async function disposal() { await using value = resource; }
+    class Item { async method() { return 1; } }
+                 ~~~~~~~~~~~~
+!!! warning TS24150: Async method 'method' has no 'await' expression.

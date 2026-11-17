@@ -1,0 +1,29 @@
+input.ts(2,34): error TS24065: "x" is overridden by string in this union type.
+input.ts(3,30): error TS24067: 'any' overrides all other types in this union type.
+input.ts(4,34): error TS24067: 'unknown' overrides all other types in this union type.
+input.ts(5,27): error TS24068: string is overridden by the "x" in this intersection type.
+input.ts(6,32): error TS24066: 'never' is overridden by other types in this union type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-redundant-type-constituents":"error"}},"files":["input.ts"]}
+==== input.ts (5 errors) ====
+    export {};
+    type RedundantLiteral = string | "x";
+                                     ~~~
+!!! error TS24065: "x" is overridden by string in this union type.
+    type AnyOverrides = string | any;
+                                 ~~~
+!!! error TS24067: 'any' overrides all other types in this union type.
+    type UnknownOverrides = number | unknown;
+                                     ~~~~~~~
+!!! error TS24067: 'unknown' overrides all other types in this union type.
+    type RedundantPrimitive = string & "x";
+                              ~~~~~~
+!!! error TS24068: string is overridden by the "x" in this intersection type.
+    type RedundantNever = string | never;
+                                   ~~~~~
+!!! error TS24066: 'never' is overridden by other types in this union type.
+    type DistinctPrimitives = string | number;
+    type DistinctLiterals = "x" | "y";
+    function neverReturn(): string | never { return ""; }

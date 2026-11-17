@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2304: Cannot find name 'values'.
+/input.ts(1,37): error TS24199: Array.fromAsync() expects a return value from async arrow function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "array-callback-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    Array.fromAsync(values, async value => {});
+                    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                                        ~~
+!!! error TS24199: Array.fromAsync() expects a return value from async arrow function.

@@ -1,0 +1,29 @@
+/input.ts(1,45): error TS19218: Expected 'this' to be used by class method 'second'.
+/input.ts(1,83): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+/input.ts(1,105): error TS19218: Expected 'this' to be used by class method 'field'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/class-methods-use-this": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class Item { first() { return () => this; } second() { return function() { return this; }; } field = () => 1; static staticMethod() {} }
+                                                ~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'second'.
+                                                                                      ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+!!! related TS2738 /input.ts:1:63: An outer value of 'this' is shadowed by this container.
+                                                                                                            ~~
+!!! error TS19218: Expected 'this' to be used by class method 'field'.

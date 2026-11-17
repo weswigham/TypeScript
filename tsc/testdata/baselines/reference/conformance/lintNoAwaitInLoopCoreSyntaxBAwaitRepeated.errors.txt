@@ -1,0 +1,40 @@
+/input.ts(1,47): error TS2304: Cannot find name 'start'.
+/input.ts(1,56): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,62): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+/input.ts(1,78): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,84): error TS2304: Cannot find name 'next'.
+/input.ts(1,94): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,100): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-await-in-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    async function run() { for (let index = await start(); await test(); index = await next()) { await work(); } }
+                                                  ~~~~~
+!!! error TS2304: Cannot find name 'start'.
+                                                           ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                 ~~~~
+!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+                                                                                 ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                                       ~~~~
+!!! error TS2304: Cannot find name 'next'.
+                                                                                                 ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                                                       ~~~~
+!!! error TS2304: Cannot find name 'work'.

@@ -1,0 +1,23 @@
+input.ts(1,12): error TS24044: Implied eval. Consider passing a function.
+input.ts(3,13): error TS24044: Implied eval. Consider passing a function.
+input.ts(5,1): error TS24043: Implied eval. Do not use the Function constructor to create functions.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "@typescript-eslint/no-implied-eval": "error" } }
+    }
+==== input.ts (3 errors) ====
+    setTimeout("text", 0);
+               ~~~~~~
+!!! error TS24044: Implied eval. Consider passing a function.
+    declare const handler: any;
+    setInterval(handler, 0);
+                ~~~~~~~
+!!! error TS24044: Implied eval. Consider passing a function.
+    setTimeout(() => {}, 0);
+    new Function("return 1");
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24043: Implied eval. Do not use the Function constructor to create functions.
+    function shadowed(setTimeout: (value: string) => void) { setTimeout("text"); }
+    export {};

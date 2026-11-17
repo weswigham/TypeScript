@@ -1,0 +1,38 @@
+/input.tsx(1,1): error TS24258: 'foo/baz' import is restricted from being used by a pattern. foo is forbidden, use foo/bar instead
+/input.tsx(1,26): error TS2307: Cannot find module 'foo/baz' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "group": [
+                                    "foo/*",
+                                    "!foo/bar"
+                                ],
+                                "message": "foo is forbidden, use foo/bar instead"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import withPatterns from "foo/baz";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24258: 'foo/baz' import is restricted from being used by a pattern. foo is forbidden, use foo/bar instead
+                             ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/baz' or its corresponding type declarations.

@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS20468: Constraining the generic type `T` to `any` does nothing and is unnecessary.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-constraint": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f<T extends any>() {}
+               ~~~~~~~~~~~~~
+!!! error TS20468: Constraining the generic type `T` to `any` does nothing and is unnecessary.

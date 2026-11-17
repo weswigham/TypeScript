@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS1488: Escape sequence '\9' is not allowed.
+/input.ts(1,5): error TS19513: Don't use '\9' escape sequence.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-nonoctal-decimal-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    'foo\9bar'
+        ~~
+!!! error TS1488: Escape sequence '\9' is not allowed.
+        ~~
+!!! error TS19513: Don't use '\9' escape sequence.

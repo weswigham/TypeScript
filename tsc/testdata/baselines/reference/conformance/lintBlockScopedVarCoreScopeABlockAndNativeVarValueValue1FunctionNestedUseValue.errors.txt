@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
+/input.ts(1,45): error TS2304: Cannot find name 'use'.
+/input.ts(1,49): error TS7005: Variable 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "block-scoped-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    var value; { value = 1; function nested() { use(value); } }
+        ~~~~~
+!!! error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
+                                                ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                    ~~~~~
+!!! error TS7005: Variable 'value' implicitly has an 'any' type.

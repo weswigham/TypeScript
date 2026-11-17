@@ -1,0 +1,37 @@
+/input.ts(4,21): error TS2304: Cannot find name 'callA'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    let v = 'init';
+            try {
+                try {
+                    v = callA();
+                        ~~~~~
+!!! error TS2304: Cannot find name 'callA'.
+                } catch (e) {
+                    // ignore
+                }
+            } catch (e) {
+                // ignore
+            }
+            console.log(v)

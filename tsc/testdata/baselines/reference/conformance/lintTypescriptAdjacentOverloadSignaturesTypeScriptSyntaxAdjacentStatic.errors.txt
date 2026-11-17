@@ -1,0 +1,34 @@
+/input.ts(1,18): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+/input.ts(1,32): error TS2387: Function overload must be static.
+/input.ts(1,39): error TS19100: All static f signatures should be adjacent.
+/input.ts(1,46): error TS2391: Function implementation is missing or not immediately following the declaration.
+/input.ts(1,46): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    class C { static f(a: string); f() {} static f(a: number); }
+                     ~
+!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+                                   ~
+!!! error TS2387: Function overload must be static.
+                                          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19100: All static f signatures should be adjacent.
+                                                 ~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                                                 ~
+!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.

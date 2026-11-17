@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS2304: Cannot find name 'run'.
+/input.ts(1,8): error TS19101: tslint comment detected: "// tslint:disable-line"
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/ban-tslint-comment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    run(); // tslint:disable-line
+    ~~~
+!!! error TS2304: Cannot find name 'run'.
+           ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "// tslint:disable-line"

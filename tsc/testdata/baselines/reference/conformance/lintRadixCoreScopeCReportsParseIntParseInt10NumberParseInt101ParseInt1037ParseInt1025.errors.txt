@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS2554: Expected 1-2 arguments, but got 0.
+/input.ts(1,1): error TS20276: Missing parameters.
+/input.ts(1,13): error TS20277: Missing radix parameter.
+/input.ts(1,29): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+/input.ts(1,55): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+/input.ts(1,76): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "radix": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    parseInt(); parseInt('10'); Number.parseInt('10', 1); parseInt('10', +37); parseInt('10', 2.5);
+    ~~~~~~~~
+!!! error TS2554: Expected 1-2 arguments, but got 0.
+!!! related TS6210 lib.es5.d.ts:--:--: An argument for 'string' was not provided.
+    ~~~~~~~~~~
+!!! error TS20276: Missing parameters.
+                ~~~~~~~~~~~~~~
+!!! error TS20277: Missing radix parameter.
+                                ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+                                                          ~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+                                                                               ~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.

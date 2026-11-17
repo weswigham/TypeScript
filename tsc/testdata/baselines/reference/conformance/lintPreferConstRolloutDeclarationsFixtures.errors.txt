@@ -1,0 +1,53 @@
+/input.ts(2,20): error TS24322: 'value' is never reassigned. Use 'const' instead.
+/input.ts(5,7): error TS24322: 'first' is never reassigned. Use 'const' instead.
+/input.ts(5,25): error TS2304: Cannot find name 'source'.
+/input.ts(8,1): error TS24322: 'assignedLater' is never reassigned. Use 'const' instead.
+/input.ts(9,10): error TS24322: 'item' is never reassigned. Use 'const' instead.
+/input.ts(9,18): error TS2552: Cannot find name 'values'. Did you mean 'value'?
+/input.ts(9,26): error TS2304: Cannot find name 'consume'.
+/input.ts(10,41): error TS2304: Cannot find name 'consume'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    export {};
+    let /* preserve */ value = 1;
+                       ~~~~~
+!!! error TS24322: 'value' is never reassigned. Use 'const' instead.
+    let changed = 1;
+    changed++;
+    let { first, second } = source;
+          ~~~~~
+!!! error TS24322: 'first' is never reassigned. Use 'const' instead.
+                            ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    second++;
+    let assignedLater;
+    assignedLater = 1;
+    ~~~~~~~~~~~~~
+!!! error TS24322: 'assignedLater' is never reassigned. Use 'const' instead.
+    for (let item of values) consume(item);
+             ~~~~
+!!! error TS24322: 'item' is never reassigned. Use 'const' instead.
+                     ~~~~~~
+!!! error TS2552: Cannot find name 'values'. Did you mean 'value'?
+!!! related TS2728 /input.ts:2:20: 'value' is declared here.
+                             ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.
+    for (let index = 0; index < 3; index++) consume(index);
+                                            ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.

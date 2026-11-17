@@ -1,0 +1,28 @@
+/input.ts(1,37): error TS2322: Type 'undefined' is not assignable to type 'C'.
+/input.ts(1,37): error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
+/input.ts(1,37): error TS19850: Unexpected return statement in constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constructor-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const C = class { constructor() { { return undefined; } } };
+                                        ~~~~~~
+!!! error TS2322: Type 'undefined' is not assignable to type 'C'.
+                                        ~~~~~~
+!!! error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
+                                        ~~~~~~~~~~~~~~~~~
+!!! error TS19850: Unexpected return statement in constructor.

@@ -1,0 +1,38 @@
+/input.ts(2,8): error TS1540: A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead.
+/input.ts(9,9): error TS24063: Mixing number and string enums can be confusing.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-mixed-enums": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    module Test {
+           ~~~~
+!!! error TS1540: A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead.
+      export enum Bar {
+        A = 1,
+      }
+    }
+    namespace Test {
+      export enum Bar {
+        B = 'B',
+            ~~~
+!!! error TS24063: Mixing number and string enums can be confusing.
+      }
+    }
+          

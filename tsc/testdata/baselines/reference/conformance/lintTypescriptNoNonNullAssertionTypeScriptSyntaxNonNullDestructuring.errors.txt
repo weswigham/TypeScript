@@ -1,0 +1,37 @@
+/input.ts(1,2): error TS2304: Cannot find name 'value'.
+/input.ts(1,2): error TS19108: Forbidden non-null assertion.
+/input.ts(1,21): error TS2304: Cannot find name 'source'.
+/input.ts(1,36): error TS2304: Cannot find name 'value'.
+/input.ts(1,36): error TS19108: Forbidden non-null assertion.
+/input.ts(1,55): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-non-null-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    [value!.property] = source; ({key: value!.property} = source);
+     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+                        ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                       ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                       ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+                                                          ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

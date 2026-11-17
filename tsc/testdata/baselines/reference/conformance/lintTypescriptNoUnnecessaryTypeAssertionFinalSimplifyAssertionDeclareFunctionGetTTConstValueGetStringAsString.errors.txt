@@ -1,0 +1,23 @@
+/input.ts(1,45): error TS24090: This assertion is unnecessary since it does not change the type of the expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function get<T>(): T; const value = get<string>() as string;
+                                                ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24090: This assertion is unnecessary since it does not change the type of the expression.

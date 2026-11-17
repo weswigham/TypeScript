@@ -1,0 +1,49 @@
+input.ts(1,13): error TS22027: Promise executor functions should not be async.
+input.ts(2,13): error TS22027: Promise executor functions should not be async.
+input.ts(3,17): error TS22027: Promise executor functions should not be async.
+input.ts(4,15): error TS22027: Promise executor functions should not be async.
+input.ts(5,26): error TS22027: Promise executor functions should not be async.
+input.ts(7,23): error TS2554: Expected 1 arguments, but got 2.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-async-promise-executor": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (6 errors) ====
+    new Promise(async function executor(resolve, reject) {});
+                ~~~~~
+!!! error TS22027: Promise executor functions should not be async.
+    new Promise(async (resolve, reject) => {});
+                ~~~~~
+!!! error TS22027: Promise executor functions should not be async.
+    new Promise(((((async () => {})))));
+                    ~~~~~
+!!! error TS22027: Promise executor functions should not be async.
+    new (Promise)(async () => {});
+                  ~~~~~
+!!! error TS22027: Promise executor functions should not be async.
+    new Promise(/* before */ async /* after */ () => {});
+                             ~~~~~
+!!! error TS22027: Promise executor functions should not be async.
+    new Promise((resolve, reject) => {});
+    new Promise(() => {}, async function unrelated() {});
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 1 arguments, but got 2.
+    declare const Other: any;
+    new Other(async () => {});
+    new globalThis.Promise(async () => {});
+    const executor = async () => {};
+    new Promise(executor);
+    function shadowed(Promise: any) { new Promise(async () => {}); }
+    function hoisted() {
+        new Promise(async () => {});
+        var Promise: any;
+    }
+    {
+        let Promise: any;
+        new Promise(async () => {});
+    }

@@ -1,0 +1,39 @@
+/globals.d.ts(1,13): error TS2403: Subsequent variable declarations must have the same type.  Variable 'console' must be of type 'Console', but here has type 'any'.
+/input.ts(3,13): error TS2740: Type '{ log(): void; }' is missing the following properties from type 'Console': assert, clear, count, countReset, and 15 more.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (1 errors) ====
+    declare var console: any;
+                ~~~~~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'console' must be of type 'Console', but here has type 'any'.
+!!! related TS6203 lib.dom.d.ts:--:--: 'console' was also declared here.
+    
+==== /input.ts (1 errors) ====
+    
+                const bk = console;
+                console = { log () {} };
+                ~~~~~~~
+!!! error TS2740: Type '{ log(): void; }' is missing the following properties from type 'Console': assert, clear, count, countReset, and 15 more.
+                try {
+                    // process
+                } finally {
+                    console = bk;
+                }

@@ -1,0 +1,40 @@
+/input.ts(1,8): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,15): error TS2304: Cannot find name 'source'.
+/input.ts(1,38): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,46): error TS2588: Cannot assign to 'bad' because it is a constant.
+/input.ts(1,46): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,53): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-denylist": [
+                    "error",
+                    "bad"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    const {bad} = source; const value = {bad}; ({bad} = source);
+           ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+                  ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                         ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+                                                 ~~~
+!!! error TS2588: Cannot assign to 'bad' because it is a constant.
+                                                 ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+                                                        ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

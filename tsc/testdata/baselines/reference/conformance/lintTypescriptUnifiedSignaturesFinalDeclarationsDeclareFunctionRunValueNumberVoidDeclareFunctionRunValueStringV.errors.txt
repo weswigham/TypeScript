@@ -1,0 +1,26 @@
+/input.ts(1,65): error TS24197: These overloads can be combined into one signature taking `number | string`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unified-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    declare function run(value: number): void; declare function run(value: string): void;
+                                                                    ~~~~~~~~~~~~~
+!!! error TS24197: These overloads can be combined into one signature taking `number | string`.

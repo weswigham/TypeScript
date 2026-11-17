@@ -1,0 +1,36 @@
+/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
+/input.ts(1,17): error TS24291: 'message' is marked as ignored but is used. Used caught errors must not match /message/u.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "caughtErrorsIgnorePattern": "message",
+                        "reportUsedIgnorePattern": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    try {} catch ({ message }) { console.error(message); }
+                    ~~~~~~~
+!!! error TS2339: Property 'message' does not exist on type 'unknown'.
+                    ~~~~~~~
+!!! error TS24291: 'message' is marked as ignored but is used. Used caught errors must not match /message/u.

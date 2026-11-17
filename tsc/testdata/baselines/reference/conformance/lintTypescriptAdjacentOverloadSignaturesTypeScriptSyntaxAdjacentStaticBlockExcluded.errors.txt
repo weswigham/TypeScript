@@ -1,0 +1,31 @@
+/input.ts(1,29): error TS2391: Function implementation is missing or not immediately following the declaration.
+/input.ts(1,29): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+/input.ts(1,67): error TS2391: Function implementation is missing or not immediately following the declaration.
+/input.ts(1,67): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class C { static { function f(a: string); const gap = 1; function f(a: number); } }
+                                ~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                                ~
+!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+                                                                      ~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                                                                      ~
+!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.

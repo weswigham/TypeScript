@@ -1,0 +1,66 @@
+/input.ts(2,7): error TS24132: Use object destructuring.
+/input.ts(2,15): error TS2304: Cannot find name 'source'.
+/input.ts(3,7): error TS24132: Use array destructuring.
+/input.ts(3,15): error TS2552: Cannot find name 'values'. Did you mean 'value'?
+/input.ts(4,17): error TS2304: Cannot find name 'source'.
+/input.ts(5,7): error TS24132: Use object destructuring.
+/input.ts(5,34): error TS2304: Cannot find name 'source'.
+/input.ts(6,1): error TS2588: Cannot assign to 'value' because it is a constant.
+/input.ts(6,1): error TS24132: Use object destructuring.
+/input.ts(6,9): error TS2304: Cannot find name 'source'.
+/input.ts(7,18): error TS2304: Cannot find name 'source'.
+/input.ts(9,5): error TS2564: Property '#value' has no initializer and is not definitely assigned in the constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-destructuring": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (12 errors) ====
+    export {};
+    const value = source.value;
+          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use object destructuring.
+                  ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    const first = values[0];
+          ~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use array destructuring.
+                  ~~~~~~
+!!! error TS2552: Cannot find name 'values'. Did you mean 'value'?
+!!! related TS2728 /input.ts:2:7: 'value' is declared here.
+    const renamed = source.other;
+                    ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    const commented /* preserve */ = source.commented;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use object destructuring.
+                                     ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    value = source.value;
+    ~~~~~
+!!! error TS2588: Cannot assign to 'value' because it is a constant.
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use object destructuring.
+            ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    const optional = source?.optional;
+                     ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    class Private {
+        #value: number;
+        ~~~~~~
+!!! error TS2564: Property '#value' has no initializer and is not definitely assigned in the constructor.
+        method() { const value = this.#value; }
+    }

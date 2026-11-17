@@ -1,0 +1,31 @@
+/input.ts(1,11): error TS24312: Unexpected mix of shorthand and non-shorthand properties.
+/input.ts(1,12): error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
+/input.ts(1,18): error TS2304: Cannot find name 'y'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "object-shorthand": [
+                    "error",
+                    "consistent"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const o = {x, y: y};
+              ~~~~~~~~~
+!!! error TS24312: Unexpected mix of shorthand and non-shorthand properties.
+               ~
+!!! error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
+                     ~
+!!! error TS2304: Cannot find name 'y'.

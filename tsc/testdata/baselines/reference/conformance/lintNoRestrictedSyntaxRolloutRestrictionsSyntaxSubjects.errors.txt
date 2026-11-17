@@ -1,0 +1,25 @@
+/input.tsx(1,1): error TS24277: Using '!FunctionDeclaration CallExpression' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "!FunctionDeclaration CallExpression"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    function f() { eval('x'); eval('y'); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using '!FunctionDeclaration CallExpression' is not allowed.

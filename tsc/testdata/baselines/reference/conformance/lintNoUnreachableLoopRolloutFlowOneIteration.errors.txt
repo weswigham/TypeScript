@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,17): error TS2304: Cannot find name 'xs'.
+/input.ts(1,23): error TS1108: A 'return' statement can only be used within a function body.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    for (const x of xs) { return; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                    ~~
+!!! error TS2304: Cannot find name 'xs'.
+                          ~~~~~~
+!!! error TS1108: A 'return' statement can only be used within a function body.

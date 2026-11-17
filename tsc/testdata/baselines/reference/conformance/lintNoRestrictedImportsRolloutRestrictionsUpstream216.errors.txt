@@ -1,0 +1,36 @@
+/input.tsx(1,31): error TS2307: Cannot find module 'import/private/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowImportNamePattern": "^Foo",
+                                "allowTypeImports": true,
+                                "group": [
+                                    "import/private/*"
+                                ],
+                                "message": "Please use 'Baz' from 'import/private/*' as a type only."
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    import { Foo, type Bar } from "import/private/bar";
+                                  ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'import/private/bar' or its corresponding type declarations.

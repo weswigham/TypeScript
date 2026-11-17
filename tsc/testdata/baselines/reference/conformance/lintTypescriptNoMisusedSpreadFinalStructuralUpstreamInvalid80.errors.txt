@@ -1,0 +1,28 @@
+/input.tsx(4,13): error TS24055: Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    class A {}
+    
+    const o = { ...A };
+                ~~~~
+!!! error TS24055: Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype.
+          

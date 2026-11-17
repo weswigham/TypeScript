@@ -1,0 +1,32 @@
+/input.ts(2,15): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import A from 'foo';
+                  ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    export = A;
+    ~~~~~~~~~~~
+!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
+            

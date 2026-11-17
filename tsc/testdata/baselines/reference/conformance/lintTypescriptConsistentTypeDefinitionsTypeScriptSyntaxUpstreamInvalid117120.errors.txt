@@ -1,0 +1,27 @@
+/input.ts(1,6): error TS22049: Use an `interface` instead of a `type`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "interface"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T=                         { x: number; };
+         ~
+!!! error TS22049: Use an `interface` instead of a `type`.

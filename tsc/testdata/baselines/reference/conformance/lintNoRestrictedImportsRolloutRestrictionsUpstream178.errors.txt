@@ -1,0 +1,53 @@
+/input.tsx(1,8): error TS24271: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed.
+/input.tsx(1,8): error TS24272: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed. Good luck!
+/input.tsx(1,28): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowImportNames": [
+                                    "Foo",
+                                    "Bar"
+                                ],
+                                "group": [
+                                    "foo/*"
+                                ]
+                            },
+                            {
+                                "allowImportNames": [
+                                    "Foo",
+                                    "Bar"
+                                ],
+                                "group": [
+                                    "*/bar"
+                                ],
+                                "message": "Good luck!"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    import * as AllFooBar from "foo/bar";
+           ~~~~~~~~~~~~~~
+!!! error TS24271: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed.
+           ~~~~~~~~~~~~~~
+!!! error TS24272: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed. Good luck!
+                               ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

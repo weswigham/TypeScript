@@ -1,0 +1,34 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestRolloutRestrictionsUpstream/no-restricted-imports/242 (invocation 1).
+// Upstream source revisions and MIT notices: ../../UPSTREAM-LICENSE.txt.
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "no-restricted-imports": [
+                "error",
+                {
+                    "paths": [
+                        {
+                            "allowTypeImports": true,
+                            "message": "Please use import-bar instead.",
+                            "name": "import-foo"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "files": [
+        "/input.tsx"
+    ]
+}
+// @filename: /input.tsx
+import foo from 'import-foo';

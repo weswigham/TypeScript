@@ -1,0 +1,27 @@
+input.ts(2,1): error TS20469: Use 'namespace' instead of 'module' to declare custom TypeScript modules.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-namespace-keyword": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    // @ts-ignore: exercise the lint rule for legacy module declarations.
+    declare module Legacy {
+    ~~~~~~~~~~~~~~~~~~~~~~~
+        interface Shape { size: number; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS20469: Use 'namespace' instead of 'module' to declare custom TypeScript modules.
+    
+    declare namespace Modern {
+        interface Shape { size: number; }
+    }
+    
+    declare module "external-package" {
+        export interface Shape { size: number; }
+    }

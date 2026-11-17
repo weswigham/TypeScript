@@ -1,0 +1,27 @@
+/input.tsx(1,86): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(1,110): error TS24031: `old` is deprecated.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    interface Props { /** @deprecated */ old: string } function A(props: Props) { return <div />; } const a = <A old="" />;
+                                                                                         ~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                                                                                                                 ~~~
+!!! error TS24031: `old` is deprecated.

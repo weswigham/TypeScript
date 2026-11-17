@@ -1,0 +1,38 @@
+/input.tsx(3,5): error TS2304: Cannot find name 'foo'.
+/input.tsx(5,13): error TS2304: Cannot find name 'A'.
+/input.tsx(5,20): error TS2304: Cannot find name 'A'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (3 errors) ====
+    function App() {
+    				let x = "init";
+    				foo(x);
+    				~~~
+!!! error TS2304: Cannot find name 'foo'.
+    				x = "used";
+    				return <A>{x}</A>;
+    				        ~
+!!! error TS2304: Cannot find name 'A'.
+    				               ~
+!!! error TS2304: Cannot find name 'A'.
+    			}

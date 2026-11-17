@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,5): error TS24321: Unexpected function expression.
+/input.ts(1,14): error TS2300: Duplicate identifier 'x'.
+/input.ts(1,14): error TS7006: Parameter 'x' implicitly has an 'any' type.
+/input.ts(1,17): error TS2300: Duplicate identifier 'x'.
+/input.ts(1,17): error TS7006: Parameter 'x' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-arrow-callback": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    foo(function(x, x) {});
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+        ~~~~~~~~~~~~~~~~~
+!!! error TS24321: Unexpected function expression.
+                 ~
+!!! error TS2300: Duplicate identifier 'x'.
+                 ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+                    ~
+!!! error TS2300: Duplicate identifier 'x'.
+                    ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.

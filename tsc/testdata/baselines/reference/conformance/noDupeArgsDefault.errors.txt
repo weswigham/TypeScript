@@ -1,0 +1,223 @@
+input.ts(1,18): error TS22013: Duplicate param 'first'.
+input.ts(1,19): error TS2300: Duplicate identifier 'first'.
+input.ts(1,19): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(1,26): error TS2300: Duplicate identifier 'first'.
+input.ts(1,26): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(1,33): error TS2300: Duplicate identifier 'first'.
+input.ts(1,33): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(2,18): error TS22013: Duplicate param 'first'.
+input.ts(2,18): error TS22013: Duplicate param 'second'.
+input.ts(2,19): error TS2300: Duplicate identifier 'first'.
+input.ts(2,19): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(2,26): error TS2300: Duplicate identifier 'second'.
+input.ts(2,26): error TS7006: Parameter 'second' implicitly has an 'any' type.
+input.ts(2,34): error TS2300: Duplicate identifier 'first'.
+input.ts(2,34): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(2,41): error TS2300: Duplicate identifier 'second'.
+input.ts(2,41): error TS7006: Parameter 'second' implicitly has an 'any' type.
+input.ts(3,34): error TS22013: Duplicate param 'first'.
+input.ts(3,35): error TS2300: Duplicate identifier 'first'.
+input.ts(3,35): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(3,42): error TS7006: Parameter 'second' implicitly has an 'any' type.
+input.ts(3,50): error TS2300: Duplicate identifier 'first'.
+input.ts(3,50): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(4,22): error TS22013: Duplicate param 'first'.
+input.ts(4,30): error TS2300: Duplicate identifier 'first'.
+input.ts(4,30): error TS7031: Binding element 'first' implicitly has an 'any' type.
+input.ts(4,40): error TS2300: Duplicate identifier 'first'.
+input.ts(4,40): error TS7031: Binding element 'first' implicitly has an 'any' type.
+input.ts(5,16): error TS22013: Duplicate param 'first'.
+input.ts(5,25): error TS2300: Duplicate identifier 'first'.
+input.ts(5,25): error TS7031: Binding element 'first' implicitly has an 'any' type.
+input.ts(5,41): error TS2300: Duplicate identifier 'first'.
+input.ts(5,41): error TS7031: Binding element 'first' implicitly has an 'any' type.
+input.ts(6,18): error TS22013: Duplicate param 'first'.
+input.ts(6,19): error TS2300: Duplicate identifier 'first'.
+input.ts(6,30): error TS2300: Duplicate identifier 'first'.
+input.ts(7,24): error TS22013: Duplicate param 'first'.
+input.ts(7,25): error TS2300: Duplicate identifier 'first'.
+input.ts(7,25): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(7,32): error TS2300: Duplicate identifier 'first'.
+input.ts(7,32): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(8,23): error TS22013: Duplicate param 'first'.
+input.ts(8,24): error TS2300: Duplicate identifier 'first'.
+input.ts(8,24): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(8,31): error TS2300: Duplicate identifier 'first'.
+input.ts(8,31): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(9,17): error TS22013: Duplicate param 'first'.
+input.ts(9,18): error TS2300: Duplicate identifier 'first'.
+input.ts(9,18): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(9,25): error TS2300: Duplicate identifier '\u0066irst'.
+input.ts(9,25): error TS7006: Parameter '\u0066irst' implicitly has an 'any' type.
+input.ts(10,19): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(10,26): error TS7006: Parameter 'second' implicitly has an 'any' type.
+input.ts(10,34): error TS7006: Parameter 'third' implicitly has an 'any' type.
+input.ts(11,24): error TS7031: Binding element 'value' implicitly has an 'any' type.
+input.ts(11,42): error TS7031: Binding element 'other' implicitly has an 'any' type.
+input.ts(12,19): error TS7031: Binding element 'first' implicitly has an 'any' type.
+input.ts(12,31): error TS7031: Binding element 'second' implicitly has an 'any' type.
+input.ts(13,22): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(13,47): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(14,16): error TS2300: Duplicate identifier 'first'.
+input.ts(14,16): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(14,23): error TS2300: Duplicate identifier 'first'.
+input.ts(14,23): error TS7006: Parameter 'first' implicitly has an 'any' type.
+input.ts(15,27): error TS2300: Duplicate identifier 'first'.
+input.ts(15,39): error TS2300: Duplicate identifier 'first'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-dupe-args": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (66 errors) ====
+    function repeated(first, first, first) {}
+                     ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                      ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                      ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                             ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                             ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                    ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                    ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    function twoNames(first, second, first, second) {}
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'second'.
+                      ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                      ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                             ~~~~~~
+!!! error TS2300: Duplicate identifier 'second'.
+                             ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+                                     ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                     ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                            ~~~~~~
+!!! error TS2300: Duplicate identifier 'second'.
+                                            ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+    const expression = function named(first, second, first) {};
+                                     ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                                      ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                      ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                             ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+                                                     ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                                     ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    function destructured({ key: first }, [first]) {}
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                                 ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                 ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+                                           ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                           ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+    function nested({ key: [first, { other: first }] }) {}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                            ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                            ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+                                            ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                            ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+    function defaults(first = 0, first = 1) {}
+                     ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                      ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                 ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+    const object = { method(first, first) {} };
+                           ~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                            ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                            ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                   ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                   ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    class Example { method(first, first) {} }
+                          ~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                           ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                           ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                  ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                  ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    function escaped(first, \u0066irst) {}
+                    ~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                     ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                     ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                            ~~~~~~~~~~
+!!! error TS2300: Duplicate identifier '\u0066irst'.
+                            ~~~~~~~~~~
+!!! error TS7006: Parameter '\u0066irst' implicitly has an 'any' type.
+    function distinct(first, second, third) {}
+                      ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                             ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+                                     ~~~~~
+!!! error TS7006: Parameter 'third' implicitly has an 'any' type.
+    function keys({ first: value }, { first: other }) {}
+                           ~~~~~
+!!! error TS7031: Binding element 'value' implicitly has an 'any' type.
+                                             ~~~~~
+!!! error TS7031: Binding element 'other' implicitly has an 'any' type.
+    function holes([, first], [,, second]) {}
+                      ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+                                  ~~~~~~
+!!! error TS7031: Binding element 'second' implicitly has an 'any' type.
+    function nestedScope(first, second = function(first) {}) {}
+                         ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                                  ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    const arrow = (first, first) => {};
+                   ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                   ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                          ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                          ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+    declare function overload(first: any, first: any): void;
+                              ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                          ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.

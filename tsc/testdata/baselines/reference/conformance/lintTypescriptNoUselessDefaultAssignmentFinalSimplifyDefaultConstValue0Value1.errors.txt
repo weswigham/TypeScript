@@ -1,0 +1,23 @@
+/input.ts(1,17): error TS24129: Default value is useless because the property is not optional.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-useless-default-assignment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const { value = 0 } = { value: 1 };
+                    ~
+!!! error TS24129: Default value is useless because the property is not optional.

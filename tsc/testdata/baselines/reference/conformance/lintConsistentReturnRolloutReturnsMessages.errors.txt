@@ -1,0 +1,25 @@
+/input.ts(1,10): error TS24006: Expected to return a value at the end of function 'run'.
+/input.ts(1,22): error TS2304: Cannot find name 'ready'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "consistent-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function run() { if (ready) return 1; }
+             ~~~
+!!! error TS24006: Expected to return a value at the end of function 'run'.
+                         ~~~~~
+!!! error TS2304: Cannot find name 'ready'.

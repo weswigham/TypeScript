@@ -1,0 +1,37 @@
+/input.ts(2,23): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(2,29): error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "prefer": "no-type-imports"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import * as Type from 'foo' assert { type: 'json' };
+                          ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+                                ~~~~~~
+!!! error TS2880: Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'.
+    const a: typeof Type = Type;
+              

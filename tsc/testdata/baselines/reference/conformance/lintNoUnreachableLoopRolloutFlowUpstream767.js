@@ -1,0 +1,7 @@
+//// [tests/cases/conformance/lint/rules/no-unreachable-loop/lintNoUnreachableLoopRolloutFlowUpstream767.ts] ////
+
+//// [input.ts]
+function someFunc() { for (; b < foo; c++) { switch (foo) { case 1: return; } } }
+
+//// [input.ts]
+function someFunc() { for (; b < foo; c++) { switch (foo) { case 1: return; } } }

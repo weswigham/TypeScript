@@ -1,0 +1,39 @@
+/input.tsx(1,8): error TS24271: * import is invalid because only 'AllowedObject' from 'foo/bar' is allowed.
+/input.tsx(1,32): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowImportNames": [
+                                    "AllowedObject"
+                                ],
+                                "group": [
+                                    "foo/*"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import * as AllowedObject from "foo/bar";
+           ~~~~~~~~~~~~~~~~~~
+!!! error TS24271: * import is invalid because only 'AllowedObject' from 'foo/bar' is allowed.
+                                   ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

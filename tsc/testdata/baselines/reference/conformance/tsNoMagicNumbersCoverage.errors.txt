@@ -1,0 +1,48 @@
+input.ts(4,17): error TS19371: No magic number: 1.
+input.ts(5,16): error TS19371: No magic number: -2.
+input.ts(8,12): error TS19371: No magic number: 1.
+input.ts(10,9): error TS19371: No magic number: 7.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-magic-numbers": ["error", {
+                    "ignore": [0],
+                    "ignoreNumericLiteralTypes": true
+                }]
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    declare function consume(value: number): void;
+    
+    enum MagicValues {
+        Positive = +1,
+                    ~
+!!! error TS19371: No magic number: 1.
+        Negative = -2,
+                   ~~
+!!! error TS19371: No magic number: -2.
+    }
+    interface LiteralProperty {
+        value: 1;
+               ~
+!!! error TS19371: No magic number: 1.
+    }
+    consume(7);
+            ~
+!!! error TS19371: No magic number: 7.
+    
+    type AllowedLiteralTypes = 1 | -2;
+    const namedValue = 3;
+    consume(namedValue);
+    consume(0);

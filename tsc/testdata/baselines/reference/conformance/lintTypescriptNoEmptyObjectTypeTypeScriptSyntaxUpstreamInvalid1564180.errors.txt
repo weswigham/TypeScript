@@ -1,0 +1,32 @@
+/test.d.ts(3,22): error TS2304: Cannot find name 'base'.
+/test.d.ts(4,20): error TS19105: An interface declaring no members is equivalent to its supertype.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "/test.d.ts"
+        ]
+    }
+==== /test.d.ts (2 errors) ====
+    
+    declare namespace BaseAndDerived {
+      type Base = typeof base;
+                         ~~~~
+!!! error TS2304: Cannot find name 'base'.
+      export interface Derived extends Base {}
+                       ~~~~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+    }
+          

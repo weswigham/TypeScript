@@ -1,0 +1,23 @@
+/input.ts(1,10): error TS21271: A record is preferred over an index signature.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-indexed-object-style": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type A = { [name: string]: number };
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21271: A record is preferred over an index signature.

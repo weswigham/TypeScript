@@ -1,0 +1,26 @@
+/input.ts(1,61): error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.
+/input.ts(1,75): error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/use-unknown-in-catch-callback-variable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    declare const flag: boolean; Promise.resolve().catch(flag ? error => {} : error => {});
+                                                                ~~~~~
+!!! error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.
+                                                                              ~~~~~
+!!! error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.

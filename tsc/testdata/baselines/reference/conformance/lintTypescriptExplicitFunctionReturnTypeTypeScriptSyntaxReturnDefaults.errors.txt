@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS21290: Missing return type on function.
+/input.ts(1,142): error TS21290: Missing return type on function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-function-return-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function run() {} const callback: () => void = () => {}; const literal = () => 1 as const; class Item { constructor() {} set value(input) {} get value() { return 1; } }
+    ~~~~~~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+                                                                                                                                                 ~~~~~~~~~
+!!! error TS21290: Missing return type on function.

@@ -1,0 +1,29 @@
+input.ts(1,1): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(3,1): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(5,5): error TS20258: Expected the Promise rejection reason to be an Error.
+input.ts(9,1): error TS20258: Expected the Promise rejection reason to be an Error.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/prefer-promise-reject-errors": "error" } }
+    }
+==== input.ts (4 errors) ====
+    Promise.reject("text");
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    Promise.reject(new Error("text"));
+    Promise.reject();
+    ~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    new Promise((resolve, reject) => {
+        reject(1);
+        ~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+        function shadowed(reject: (value: number) => void) { reject(1); }
+    });
+    class Derived<T> extends Promise<T> {}
+    Derived.reject(1);
+    ~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+    export {};

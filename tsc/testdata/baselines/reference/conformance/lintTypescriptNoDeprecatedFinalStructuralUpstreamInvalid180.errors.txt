@@ -1,0 +1,54 @@
+/input.tsx(8,19): error TS1355: A 'const' assertion can only be applied to references to enum members, or string, number, boolean, array, or object literals.
+/input.tsx(9,13): error TS24032: `b` is deprecated. reason for deprecation
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "jsx": "preserve",
+            "module": "commonjs",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "/jsx.d.ts"
+        ]
+    }
+==== /jsx.d.ts (0 errors) ====
+    declare namespace JSX {
+        interface IntrinsicElements { div: AriaAttributes }
+        interface AriaAttributes {
+            /** @deprecated in ARIA 1.1 */
+            "aria-grabbed"?: boolean | "false" | "true";
+        }
+    }
+==== /input.tsx (2 errors) ====
+    
+    const a = {
+      /** @deprecated reason for deprecation */
+      b: 'string',
+    };
+    
+    const key = 'b';
+    const stringKey = key as const;
+                      ~~~
+!!! error TS1355: A 'const' assertion can only be applied to references to enum members, or string, number, boolean, array, or object literals.
+    const c = a[stringKey];
+                ~~~~~~~~~
+!!! error TS24032: `b` is deprecated. reason for deprecation
+          
+==== /deprecated.ts (0 errors) ====
+    /** @deprecated */
+    export function deprecatedFunction(): void {}
+    /** @deprecated Reason */
+    export type T = { a: string };
+    export type U = { b: string };
+    /** @deprecated */
+    export default { foo: 1 };

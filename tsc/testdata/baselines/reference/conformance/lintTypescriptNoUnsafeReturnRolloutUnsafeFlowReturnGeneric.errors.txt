@@ -1,0 +1,23 @@
+/input.ts(1,31): error TS24125: Unsafe return of type `Set<any>` from function with return type `Set<string>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function get(): Set<string> { return new Set<any>(); }
+                                  ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24125: Unsafe return of type `Set<any>` from function with return type `Set<string>`.

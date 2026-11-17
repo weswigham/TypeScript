@@ -1,0 +1,25 @@
+/input.ts(1,6): error TS2304: Cannot find name 'foo'.
+/input.ts(1,28): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if ((foo || {}) instanceof obj) {}
+         ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                               ~~~
+!!! error TS2304: Cannot find name 'obj'.

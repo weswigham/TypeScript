@@ -1,0 +1,31 @@
+/input.ts(1,38): error TS2678: Type 'number' is not comparable to type '() => void'.
+/input.ts(1,47): error TS2304: Cannot find name 'e'.
+/input.ts(1,50): error TS2304: Cannot find name 'x'.
+/input.ts(1,50): error TS24283: Unreachable code.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function foo() { switch (foo) { case 1: throw e; x = 1; } }
+                                         ~
+!!! error TS2678: Type 'number' is not comparable to type '() => void'.
+                                                  ~
+!!! error TS2304: Cannot find name 'e'.
+                                                     ~
+!!! error TS2304: Cannot find name 'x'.
+                                                     ~~~~~~
+!!! error TS24283: Unreachable code.

@@ -1,0 +1,22 @@
+/input.ts(1,32): error TS24349: Multiple 'use strict' directives.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": [
+                    "error",
+                    "function"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function foo() { 'use strict'; 'use strict'; return; }
+                                   ~~~~~~~~~~~~~
+!!! error TS24349: Multiple 'use strict' directives.

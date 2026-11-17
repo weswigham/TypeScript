@@ -1,0 +1,48 @@
+input.ts(1,1): error TS20009: Block is redundant.
+input.ts(2,1): error TS20009: Block is redundant.
+input.ts(4,20): error TS2304: Cannot find name 'acquire'.
+input.ts(5,18): error TS22024: Nested block is redundant.
+input.ts(6,9): error TS2304: Cannot find name 'value'.
+input.ts(7,15): error TS2304: Cannot find name 'work'.
+input.ts(8,13): error TS20009: Block is redundant.
+input.ts(8,16): error TS2304: Cannot find name 'work'.
+input.ts(11,14): error TS22024: Nested block is redundant.
+input.ts(12,16): error TS2304: Cannot find name 'work'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-lone-blocks":"error"}},"files":["input.ts"]}
+==== input.ts (10 errors) ====
+    {}
+    ~~
+!!! error TS20009: Block is redundant.
+    { var hoisted; }
+    ~~~~~~~~~~~~~~~~
+!!! error TS20009: Block is redundant.
+    { let scoped; }
+    { using resource = acquire(); }
+                       ~~~~~~~
+!!! error TS2304: Cannot find name 'acquire'.
+    function run() { { const only = 1; } }
+                     ~~~~~~~~~~~~~~~~~~~
+!!! error TS22024: Nested block is redundant.
+    switch (value) {
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+        case 1: { work(); }
+                  ~~~~
+!!! error TS2304: Cannot find name 'work'.
+        case 2: {} work();
+                ~~
+!!! error TS20009: Block is redundant.
+                   ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    }
+    class Item {
+        static { { let only; } }
+                 ~~~~~~~~~~~~~
+!!! error TS22024: Nested block is redundant.
+        method() { work(); { class Local {} } }
+                   ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    }

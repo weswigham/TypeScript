@@ -1,0 +1,26 @@
+/input.ts(1,30): error TS20722: Using the `delete` operator with an array expression is unsafe.
+/input.ts(1,42): error TS2304: Cannot find name 'f'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-array-delete": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    declare const arr: number[]; delete arr[(f(), 1)];
+                                 ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20722: Using the `delete` operator with an array expression is unsafe.
+                                             ~
+!!! error TS2304: Cannot find name 'f'.

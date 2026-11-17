@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS24247: 'Math' is not a function.
+/input.ts(1,12): error TS2349: This expression is not callable.
+  Type 'Math' has no call signatures.
+/input.ts(1,20): error TS2349: This expression is not callable.
+  Type 'JSON' has no call signatures.
+/input.ts(1,20): error TS24247: 'JSON' is not a function.
+/input.ts(1,79): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-obj-calls": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    globalThis.Math(); globalThis['JSON'](); Math.random(); new Intl.Segmenter(); foo.Math();
+    ~~~~~~~~~~~~~~~~~
+!!! error TS24247: 'Math' is not a function.
+               ~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Math' has no call signatures.
+                       ~~~~~~~~~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'JSON' has no call signatures.
+                       ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24247: 'JSON' is not a function.
+                                                                                  ~~~
+!!! error TS2304: Cannot find name 'foo'.

@@ -1,0 +1,54 @@
+/input.tsx(12,13): error TS24032: `1` is deprecated. reason for deprecation
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "jsx": "preserve",
+            "module": "commonjs",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "/jsx.d.ts"
+        ]
+    }
+==== /jsx.d.ts (0 errors) ====
+    declare namespace JSX {
+        interface IntrinsicElements { div: AriaAttributes }
+        interface AriaAttributes {
+            /** @deprecated in ARIA 1.1 */
+            "aria-grabbed"?: boolean | "false" | "true";
+        }
+    }
+==== /input.tsx (1 errors) ====
+    
+    declare const Keys: {
+      a: 1;
+    };
+    
+    const a = {
+      /** @deprecated reason for deprecation */
+      [1]: 'string',
+    };
+    
+    const key = Keys.a;
+    const c = a[key];
+                ~~~
+!!! error TS24032: `1` is deprecated. reason for deprecation
+          
+==== /deprecated.ts (0 errors) ====
+    /** @deprecated */
+    export function deprecatedFunction(): void {}
+    /** @deprecated Reason */
+    export type T = { a: string };
+    export type U = { b: string };
+    /** @deprecated */
+    export default { foo: 1 };

@@ -1,0 +1,94 @@
+input.ts(1,10): error TS19668: Import foo unnecessarily renamed.
+input.ts(1,22): error TS19668: Import bar unnecessarily renamed.
+input.ts(1,36): error TS19668: Import Shape unnecessarily renamed.
+input.ts(1,63): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+input.ts(2,10): error TS19668: Export foo unnecessarily renamed.
+input.ts(2,24): error TS19668: Export bar unnecessarily renamed.
+input.ts(2,36): error TS19668: Export Shape unnecessarily renamed.
+input.ts(3,9): error TS19668: Destructuring assignment value unnecessarily renamed.
+input.ts(3,25): error TS2304: Cannot find name 'other'.
+input.ts(3,33): error TS19668: Destructuring assignment key unnecessarily renamed.
+input.ts(3,40): error TS2451: Cannot redeclare block-scoped variable 'key'.
+input.ts(3,48): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,4): error TS19668: Destructuring assignment value unnecessarily renamed.
+input.ts(4,12): error TS2588: Cannot assign to 'value' because it is a constant.
+input.ts(4,23): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(5,4): error TS19668: Destructuring assignment value unnecessarily renamed.
+input.ts(5,12): error TS2588: Cannot assign to 'value' because it is a constant.
+input.ts(5,21): error TS2304: Cannot find name 'other'.
+input.ts(5,31): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(6,4): error TS19668: Destructuring assignment value unnecessarily renamed.
+input.ts(6,22): error TS2588: Cannot assign to 'value' because it is a constant.
+input.ts(6,32): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(7,16): error TS2451: Cannot redeclare block-scoped variable 'key'.
+input.ts(7,24): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-rename": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (24 errors) ====
+    import { foo as foo, "bar" as bar, type Shape as Shape } from "module";
+             ~~~~~~~~~~
+!!! error TS19668: Import foo unnecessarily renamed.
+                         ~~~~~~~~~~~~
+!!! error TS19668: Import bar unnecessarily renamed.
+                                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS19668: Import Shape unnecessarily renamed.
+                                                                  ~~~~~~~~
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+    export { foo as "foo", bar as bar, type Shape as Shape };
+             ~~~~~~~~~~~~
+!!! error TS19668: Export foo unnecessarily renamed.
+                           ~~~~~~~~~~
+!!! error TS19668: Export bar unnecessarily renamed.
+                                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS19668: Export Shape unnecessarily renamed.
+    const { value: value = (other), "key": key } = object;
+            ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19668: Destructuring assignment value unnecessarily renamed.
+                            ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                    ~~~~~~~~~~
+!!! error TS19668: Destructuring assignment key unnecessarily renamed.
+                                           ~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'key'.
+                                                   ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ({ value: (value) } = object);
+       ~~~~~~~~~~~~~~
+!!! error TS19668: Destructuring assignment value unnecessarily renamed.
+               ~~~~~
+!!! error TS2588: Cannot assign to 'value' because it is a constant.
+                          ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ({ value: (value) = other } = object);
+       ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19668: Destructuring assignment value unnecessarily renamed.
+               ~~~~~
+!!! error TS2588: Cannot assign to 'value' because it is a constant.
+                        ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                  ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ({ value: /* keep */ value } = object);
+       ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19668: Destructuring assignment value unnecessarily renamed.
+                         ~~~~~
+!!! error TS2588: Cannot assign to 'value' because it is a constant.
+                                   ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    const { [key]: key } = object;
+                   ~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'key'.
+                           ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

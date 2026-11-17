@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS22007: Comments should not begin with an uppercase character.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "capitalized-comments": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    // Uppercase
+    ~~~~~~~~~~~~
+!!! error TS22007: Comments should not begin with an uppercase character.

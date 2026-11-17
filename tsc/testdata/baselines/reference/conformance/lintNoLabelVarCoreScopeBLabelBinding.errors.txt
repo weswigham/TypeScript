@@ -1,0 +1,28 @@
+/input.ts(1,25): error TS7006: Parameter 'item' implicitly has an 'any' type.
+/input.ts(1,33): error TS20007: Found identifier with same name as label.
+/input.ts(1,66): error TS20007: Found identifier with same name as label.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-label-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    let outer; function run(item) { outer: while (true) break outer; item: {} unused: {} }
+                            ~~~~
+!!! error TS7006: Parameter 'item' implicitly has an 'any' type.
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20007: Found identifier with same name as label.
+                                                                     ~~~~~~~~
+!!! error TS20007: Found identifier with same name as label.

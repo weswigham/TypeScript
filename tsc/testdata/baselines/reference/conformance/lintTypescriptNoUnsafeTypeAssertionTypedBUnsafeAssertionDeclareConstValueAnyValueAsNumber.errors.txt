@@ -1,0 +1,23 @@
+/input.ts(1,27): error TS20902: Unsafe assertion from `any` detected: consider using type guards or a safer assertion.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-type-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; value as number;
+                              ~~~~~~~~~~~~~~~
+!!! error TS20902: Unsafe assertion from `any` detected: consider using type guards or a safer assertion.

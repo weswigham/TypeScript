@@ -1,0 +1,57 @@
+input.js(1,2): error TS1488: Escape sequence '\8' is not allowed.
+input.js(1,2): error TS19513: Don't use '\8' escape sequence.
+input.js(1,4): error TS1488: Escape sequence '\9' is not allowed.
+input.js(1,4): error TS19513: Don't use '\9' escape sequence.
+input.js(2,4): error TS1488: Escape sequence '\8' is not allowed.
+input.js(2,4): error TS19513: Don't use '\8' escape sequence.
+input.js(3,4): error TS1488: Escape sequence '\9' is not allowed.
+input.js(3,4): error TS19513: Don't use '\9' escape sequence.
+input.js(4,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+input.js(6,4): error TS1488: Escape sequence '\9' is not allowed.
+input.js(6,4): error TS19513: Don't use '\9' escape sequence.
+input.js(8,1): error TS1488: Escape sequence '\8' is not allowed.
+input.js(8,1): error TS19513: Don't use '\8' escape sequence.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "allowJs": true },
+        "lint": { "rules": { "no-nonoctal-decimal-escape": "error" } },
+        "files": ["input.js"]
+    }
+    
+==== input.js (13 errors) ====
+    '\8\9';
+     ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+     ~~
+!!! error TS19513: Don't use '\8' escape sequence.
+       ~~
+!!! error TS1488: Escape sequence '\9' is not allowed.
+       ~~
+!!! error TS19513: Don't use '\9' escape sequence.
+    '\0\8';
+       ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+       ~~
+!!! error TS19513: Don't use '\8' escape sequence.
+    '\0\9';
+       ~~
+!!! error TS1488: Escape sequence '\9' is not allowed.
+       ~~
+!!! error TS19513: Don't use '\9' escape sequence.
+    '\08';
+     ~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+    '\\8';
+    '\\\9';
+       ~~
+!!! error TS1488: Escape sequence '\9' is not allowed.
+       ~~
+!!! error TS19513: Don't use '\9' escape sequence.
+    '\
+    \8';
+    ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+    ~~
+!!! error TS19513: Don't use '\8' escape sequence.

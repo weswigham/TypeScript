@@ -1,0 +1,26 @@
+/input.ts(1,49): error TS2322: Type '1' is not assignable to type 'Fruit'.
+/input.ts(1,57): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-enum-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum Fruit { Apple } class Basket { constructor(private fruit: Fruit = 1) {} }
+                                                    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '1' is not assignable to type 'Fruit'.
+                                                            ~~~~~~~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.

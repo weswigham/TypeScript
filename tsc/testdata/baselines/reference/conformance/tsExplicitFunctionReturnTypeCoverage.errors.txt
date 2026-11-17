@@ -1,0 +1,34 @@
+input.ts(1,1): error TS21290: Missing return type on function.
+input.ts(2,38): error TS21290: Missing return type on function.
+input.ts(4,5): error TS21290: Missing return type on function.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/explicit-function-return-type": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    function missingReturn(value: number) { return value; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+    const missingArrow = (value: number) => value;
+                                         ~~
+!!! error TS21290: Missing return type on function.
+    class MissingGetter {
+        get value() { return 1; }
+        ~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+    }
+    function validReturn(value: number): number { return value; }
+    const validContextual: (value: number) => number = value => value;
+    const validConstArrow = () => "literal" as const;
+    class ValidSetter {
+        private stored = 0;
+        constructor() {}
+        set value(value: number) { this.stored = value; }
+        get value(): number { return this.stored; }
+    }
+    export {};

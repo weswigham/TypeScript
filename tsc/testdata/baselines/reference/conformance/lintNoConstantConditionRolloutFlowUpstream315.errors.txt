@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS24224: Unexpected constant condition.
+/input.ts(1,2): error TS2304: Cannot find name 'q'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    (q = 0) ? 1 : 2;
+    ~~~~~~~
+!!! error TS24224: Unexpected constant condition.
+     ~
+!!! error TS2304: Cannot find name 'q'.

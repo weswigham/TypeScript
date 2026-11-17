@@ -1,0 +1,38 @@
+/input.tsx(1,9): error TS24268: 'foo' import from 'fs' is restricted. Don't import 'foo'.
+/input.tsx(1,24): error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "foo"
+                                ],
+                                "message": "Don't import 'foo'.",
+                                "name": "fs"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    export {foo as b} from "fs";
+            ~~~~~~~~
+!!! error TS24268: 'foo' import from 'fs' is restricted. Don't import 'foo'.
+                           ~~~~
+!!! error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.

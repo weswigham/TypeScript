@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS20900: Argument of unary negation should be assignable to number | bigint but is "1" instead.
+/input.ts(1,7): error TS20900: Argument of unary negation should be assignable to number | bigint but is true instead.
+/input.ts(1,14): error TS20900: Argument of unary negation should be assignable to number | bigint but is null instead.
+/input.ts(1,15): error TS18050: The value 'null' cannot be used here.
+/input.ts(1,21): error TS20900: Argument of unary negation should be assignable to number | bigint but is undefined instead.
+/input.ts(1,22): error TS18050: The value 'undefined' cannot be used here.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-unary-minus": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    -'1'; -true; -null; -undefined;
+    ~~~~
+!!! error TS20900: Argument of unary negation should be assignable to number | bigint but is "1" instead.
+          ~~~~~
+!!! error TS20900: Argument of unary negation should be assignable to number | bigint but is true instead.
+                 ~~~~~
+!!! error TS20900: Argument of unary negation should be assignable to number | bigint but is null instead.
+                  ~~~~
+!!! error TS18050: The value 'null' cannot be used here.
+                        ~~~~~~~~~~
+!!! error TS20900: Argument of unary negation should be assignable to number | bigint but is undefined instead.
+                         ~~~~~~~~~
+!!! error TS18050: The value 'undefined' cannot be used here.

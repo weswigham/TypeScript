@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS19859: The array literal notation [] is preferable.
+/input.ts(1,18): error TS2304: Cannot find name 'first'.
+/input.ts(1,25): error TS2304: Cannot find name 'second'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-array-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    Array(/* keep */ first, second);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19859: The array literal notation [] is preferable.
+                     ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                            ~~~~~~
+!!! error TS2304: Cannot find name 'second'.

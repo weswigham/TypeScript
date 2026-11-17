@@ -1,0 +1,28 @@
+/input.ts(1,4): error TS2304: Cannot find name 'xyz'.
+/input.ts(1,22): error TS2304: Cannot find name 'abc'.
+/input.ts(1,38): error TS2304: Cannot find name 'pqr'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if(xyz === 'str1' || abc==='str2' && pqr === 5){}
+       ~~~
+!!! error TS2304: Cannot find name 'xyz'.
+                         ~~~
+!!! error TS2304: Cannot find name 'abc'.
+                                         ~~~
+!!! error TS2304: Cannot find name 'pqr'.

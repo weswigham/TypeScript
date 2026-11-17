@@ -1,0 +1,41 @@
+/input.ts(2,23): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(4,10): error TS2300: Duplicate identifier 'Type'.
+/input.ts(6,15): error TS2300: Duplicate identifier 'Type'.
+/tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    
+    import type Type from 'foo';
+                          ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    
+    export { Type }; // is a type-only export
+             ~~~~
+!!! error TS2300: Duplicate identifier 'Type'.
+    export default Type; // is a type-only export
+    export type { Type }; // is a type-only export
+                  ~~~~
+!!! error TS2300: Duplicate identifier 'Type'.
+            

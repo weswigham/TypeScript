@@ -1,0 +1,39 @@
+/input.tsx(2,19): error TS2307: Cannot find module 'some-other-jsx-lib' or its corresponding type declarations.
+/input.tsx(5,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(5,22): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "jsxFactory": "h",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    
+    import { h } from 'some-other-jsx-lib';
+                      ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'some-other-jsx-lib' or its corresponding type declarations.
+    
+    export const ComponentFoo: h.FC = () => {
+      return <div>Foo Foo</div>;
+             ~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                         ~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+    };
+              

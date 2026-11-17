@@ -1,0 +1,15 @@
+input.ts(3,24): error TS20008: Return values from promise executor functions cannot be read.
+input.ts(4,26): error TS20008: Return values from promise executor functions cannot be read.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-promise-executor-return":["error",{"allowVoid":true}]}},"files":["input.ts"]}
+==== input.ts (2 errors) ====
+    new Promise(resolve => void resolve(1));
+    new Promise(resolve => { return void resolve(1); });
+    new Promise(resolve => resolve(1));
+                           ~~~~~~~~~~
+!!! error TS20008: Return values from promise executor functions cannot be read.
+    new Promise(resolve => { return resolve(1); });
+                             ~~~~~~~~~~~~~~~~~~
+!!! error TS20008: Return values from promise executor functions cannot be read.

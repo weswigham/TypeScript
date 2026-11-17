@@ -1,0 +1,28 @@
+/input.ts(1,16): error TS19358: Unexpected empty function 'run'.
+/input.ts(1,39): error TS19358: Unexpected empty arrow function.
+/input.ts(1,102): error TS19358: Unexpected empty method 'method'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-function": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function run() {} const arrow = () => {}; class Item { constructor(public value: number) {} method() {} } function valid() { /* intentional */ }
+                   ~~
+!!! error TS19358: Unexpected empty function 'run'.
+                                          ~~
+!!! error TS19358: Unexpected empty arrow function.
+                                                                                                         ~~
+!!! error TS19358: Unexpected empty method 'method'.

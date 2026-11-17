@@ -1,0 +1,28 @@
+/input.ts(1,18): error TS19206: Expected block statement surrounding arrow body.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "arrow-body-style": [
+                    "error",
+                    "as-needed",
+                    {
+                        "requireReturnForObjectLiteral": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn = () => ({ value:1 });
+                     ~~~~~~~~~~~~~
+!!! error TS19206: Expected block statement surrounding arrow body.

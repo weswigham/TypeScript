@@ -1,0 +1,25 @@
+/input.ts(1,14): error TS24211: Expected getter 'value' to always return a value.
+/input.ts(1,32): error TS2304: Cannot find name 'ready'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "getter-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Item { get value() { if (ready) return 1; } }
+                 ~~~~~~~~~
+!!! error TS24211: Expected getter 'value' to always return a value.
+                                   ~~~~~
+!!! error TS2304: Cannot find name 'ready'.

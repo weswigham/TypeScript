@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS2304: Cannot find name 'a'.
+/input.ts(1,8): error TS19507: Unexpected use of comma operator.
+/input.ts(1,10): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-sequences": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if (a(), b) {}
+        ~
+!!! error TS2304: Cannot find name 'a'.
+           ~
+!!! error TS19507: Unexpected use of comma operator.
+             ~
+!!! error TS2304: Cannot find name 'b'.

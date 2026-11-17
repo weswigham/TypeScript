@@ -1,0 +1,32 @@
+/input.ts(5,15): error TS24033: Union type constituent is duplicated with A1.
+/input.ts(5,20): error TS24033: Union type constituent is duplicated with A1.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    type A1 = 'A';
+    type A2 = 'A';
+    type A3 = 'A';
+    type T = A1 | A2 | A3;
+                  ~~
+!!! error TS24033: Union type constituent is duplicated with A1.
+                       ~~
+!!! error TS24033: Union type constituent is duplicated with A1.
+          

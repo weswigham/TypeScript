@@ -1,0 +1,22 @@
+/input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-exponentiation-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const result = Math.pow(2, 3);
+                   ~~~~~~~~~~~~~~
+!!! error TS24323: Use the '**' operator instead of 'Math.pow'.

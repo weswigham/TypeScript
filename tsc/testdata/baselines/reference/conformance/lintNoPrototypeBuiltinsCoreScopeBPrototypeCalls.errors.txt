@@ -1,0 +1,47 @@
+/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,8): error TS20014: Do not access Object.prototype method 'hasOwnProperty' from target object.
+/input.ts(1,31): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,40): error TS20014: Do not access Object.prototype method 'isPrototypeOf' from target object.
+/input.ts(1,57): error TS2304: Cannot find name 'value'.
+/input.ts(1,65): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,72): error TS20014: Do not access Object.prototype method 'propertyIsEnumerable' from target object.
+/input.ts(1,140): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-prototype-builtins": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    object.hasOwnProperty('key'); object?.['isPrototypeOf'](value); object.propertyIsEnumerable?.('key'); Object.prototype.hasOwnProperty.call(object, 'key');
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+           ~~~~~~~~~~~~~~
+!!! error TS20014: Do not access Object.prototype method 'hasOwnProperty' from target object.
+                                  ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                           ~~~~~~~~~~~~~~~
+!!! error TS20014: Do not access Object.prototype method 'isPrototypeOf' from target object.
+                                                            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                                                           ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20014: Do not access Object.prototype method 'propertyIsEnumerable' from target object.
+                                                                                                                                               ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

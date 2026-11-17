@@ -1,0 +1,22 @@
+/input.ts(1,6): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    if ((foo || 233) > 666) {}
+         ~~~
+!!! error TS2304: Cannot find name 'foo'.

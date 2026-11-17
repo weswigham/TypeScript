@@ -1,0 +1,58 @@
+/input.ts(2,5): error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+/input.ts(6,13): error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+/input.ts(20,13): error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+/input.ts(20,13): error TS24288: '#unusedOnlyInSecondNestedClass' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    class C {
+        #unusedOnlyInSecondNestedClass;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+    
+        foo() {
+            return class {
+                #unusedOnlyInSecondNestedClass;
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+    
+                bar() {
+                    return this.#unusedOnlyInSecondNestedClass;
+                }
+            };
+        }
+    
+        baz() {
+            return this.#unusedOnlyInSecondNestedClass;
+        }
+    
+        bar() {
+            return class {
+                #unusedOnlyInSecondNestedClass;
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#unusedOnlyInSecondNestedClass' implicitly has an 'any' type.
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24288: '#unusedOnlyInSecondNestedClass' is defined but never used.
+            }
+        }
+    }

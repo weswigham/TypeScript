@@ -1,0 +1,28 @@
+/input.ts(1,7): error TS20328: Unexpected empty class.
+/input.ts(1,22): error TS20329: Unexpected class with only a constructor.
+/input.ts(1,61): error TS20330: Unexpected class with only static properties.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-extraneous-class": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class Empty {} class Constructor { constructor() {} } class Static { static value = 1; }
+          ~~~~~
+!!! error TS20328: Unexpected empty class.
+                         ~~~~~~~~~~~
+!!! error TS20329: Unexpected class with only a constructor.
+                                                                ~~~~~~
+!!! error TS20330: Unexpected class with only static properties.

@@ -1,0 +1,27 @@
+/input.ts(1,28): error TS19371: No magic number: 5.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-magic-numbers": [
+                    "error",
+                    {
+                        "ignoreClassFieldInitialValues": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { readonly value = 5; }
+                               ~
+!!! error TS19371: No magic number: 5.

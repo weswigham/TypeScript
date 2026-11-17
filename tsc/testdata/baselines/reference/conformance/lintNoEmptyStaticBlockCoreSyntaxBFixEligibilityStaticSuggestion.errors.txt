@@ -1,0 +1,22 @@
+/input.ts(1,21): error TS19359: Unexpected empty static block.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-static-block": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { static {} }
+                        ~~
+!!! error TS19359: Unexpected empty static block.

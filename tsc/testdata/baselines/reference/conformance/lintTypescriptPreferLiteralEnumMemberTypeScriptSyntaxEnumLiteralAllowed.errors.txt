@@ -1,0 +1,25 @@
+/input.ts(1,32): error TS18033: Type 'null' is not assignable to type 'number' as required for computed enum member values.
+/input.ts(1,42): error TS18033: Type 'RegExp' is not assignable to type 'number' as required for computed enum member values.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-literal-enum-member": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum E { A = -42, B = `b`, C = null, D = /x/ }
+                                   ~~~~
+!!! error TS18033: Type 'null' is not assignable to type 'number' as required for computed enum member values.
+                                             ~~~
+!!! error TS18033: Type 'RegExp' is not assignable to type 'number' as required for computed enum member values.

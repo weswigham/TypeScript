@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2304: Cannot find name 'arguments'.
+/input.ts(1,31): error TS2304: Cannot find name 'arguments'.
+/input.ts(1,63): error TS20264: Use the rest parameters instead of 'arguments'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-rest-params": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    arguments[0]; const f = () => arguments[0]; function g() { ({ arguments }); arguments?.length; }
+    ~~~~~~~~~
+!!! error TS2304: Cannot find name 'arguments'.
+                                  ~~~~~~~~~
+!!! error TS2304: Cannot find name 'arguments'.
+                                                                  ~~~~~~~~~
+!!! error TS20264: Use the rest parameters instead of 'arguments'.

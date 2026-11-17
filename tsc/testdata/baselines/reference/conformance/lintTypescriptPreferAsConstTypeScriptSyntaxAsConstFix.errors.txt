@@ -1,0 +1,22 @@
+/input.ts(1,22): error TS20471: Expected a `const` instead of a literal type assertion.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-as-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const value = 'a' as 'a';
+                         ~~~
+!!! error TS20471: Expected a `const` instead of a literal type assertion.

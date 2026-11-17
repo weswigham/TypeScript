@@ -1,0 +1,25 @@
+/input.ts(1,26): error TS19103: Duplicate enum member value 0.
+/input.ts(1,33): error TS19103: Duplicate enum member value 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-enum-values": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum E { A = -0, B = +0, C = 0, D = -0 }
+                             ~~~~~
+!!! error TS19103: Duplicate enum member value 0.
+                                    ~~~~~~
+!!! error TS19103: Duplicate enum member value 0.

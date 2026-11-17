@@ -1,0 +1,43 @@
+/input.ts(1,17): error TS2304: Cannot find name 'A'.
+/input.ts(1,21): error TS7008: Member 'x' implicitly has an 'any' type.
+/input.ts(1,56): error TS2304: Cannot find name 'D'.
+/input.ts(1,60): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+/input.ts(1,60): error TS7008: Member '[super().x]' implicitly has an 'any' type.
+/input.ts(1,60): error TS24283: Unreachable code.
+/input.ts(1,69): error TS2339: Property 'x' does not exist on type 'void'.
+/input.ts(1,73): error TS2377: Constructors for derived classes must contain a 'super' call.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    class B extends A { x; constructor() { class C extends D { [super().x]; constructor() {} } } }
+                    ~
+!!! error TS2304: Cannot find name 'A'.
+                        ~
+!!! error TS7008: Member 'x' implicitly has an 'any' type.
+                                                           ~
+!!! error TS2304: Cannot find name 'D'.
+                                                               ~~~~~~~~~~~
+!!! error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+                                                               ~~~~~~~~~~~
+!!! error TS7008: Member '[super().x]' implicitly has an 'any' type.
+                                                               ~~~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+                                                                        ~
+!!! error TS2339: Property 'x' does not exist on type 'void'.
+                                                                            ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.

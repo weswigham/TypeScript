@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"invalid"' have no overlap.
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,21): error TS20296: Invalid typeof comparison value.
+/input.ts(1,40): error TS2304: Cannot find name 'value'.
+/input.ts(1,59): error TS2304: Cannot find name 'suffix'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "valid-typeof": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    (typeof value) === ('invalid'); typeof value === `number${suffix}`;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"invalid"' have no overlap.
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                        ~~~~~~~~~
+!!! error TS20296: Invalid typeof comparison value.
+                                           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                              ~~~~~~
+!!! error TS2304: Cannot find name 'suffix'.

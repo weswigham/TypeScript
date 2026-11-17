@@ -1,0 +1,46 @@
+/input.ts(1,1): error TS2304: Cannot find name 'x'.
+/input.ts(1,1): error TS19514: Comparing to itself is potentially pointless.
+/input.ts(1,7): error TS2304: Cannot find name 'x'.
+/input.ts(1,10): error TS2304: Cannot find name 'x'.
+/input.ts(1,10): error TS19514: Comparing to itself is potentially pointless.
+/input.ts(1,15): error TS2304: Cannot find name 'x'.
+/input.ts(1,18): error TS2304: Cannot find name 'foo'.
+/input.ts(1,18): error TS19514: Comparing to itself is potentially pointless.
+/input.ts(1,35): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-self-compare": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    x === x; x <= x; foo.bar().baz >= foo.bar ().baz;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+          ~
+!!! error TS2304: Cannot find name 'x'.
+             ~
+!!! error TS2304: Cannot find name 'x'.
+             ~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+                  ~
+!!! error TS2304: Cannot find name 'x'.
+                     ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+                                      ~~~
+!!! error TS2304: Cannot find name 'foo'.

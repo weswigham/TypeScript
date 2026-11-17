@@ -1,0 +1,33 @@
+input.ts(1,1): error TS21290: Missing return type on function.
+input.ts(2,31): error TS21292: Argument 'value' should be typed with a non-any type.
+input.ts(3,51): error TS21290: Missing return type on function.
+input.ts(9,5): error TS21290: Missing return type on function.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/explicit-module-boundary-types": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    export function missingReturn(value: number) { return value; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+    export function looseArgument(value: any): unknown { return value; }
+                                  ~~~~~~~~~~
+!!! error TS21292: Argument 'value' should be typed with a non-any type.
+    export const missingArrowReturn = (value: number) => value;
+                                                      ~~
+!!! error TS21290: Missing return type on function.
+    export function validBoundary(value: number): number { return value; }
+    export function validDefault(value = 1): number { return value; }
+    export const validContextual: (value: number) => number = value => value;
+    function validLocal(value: number) { return value; }
+    export class Boundary {
+        public missingMethodReturn(value: number) { return value; }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+        private validPrivate(value: number) { return value; }
+    }

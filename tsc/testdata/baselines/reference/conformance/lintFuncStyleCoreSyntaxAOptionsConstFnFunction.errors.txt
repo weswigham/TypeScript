@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS19266: Expected a function declaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-style": [
+                    "error",
+                    "declaration"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn = function() {};
+          ~~~~~~~~~~~~~~~~~~
+!!! error TS19266: Expected a function declaration.

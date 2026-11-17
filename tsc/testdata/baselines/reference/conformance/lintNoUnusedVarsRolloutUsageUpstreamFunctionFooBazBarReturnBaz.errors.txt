@@ -1,0 +1,33 @@
+/input.ts(1,21): error TS24290: 'bar' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "args": "after-used",
+                        "vars": "all"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    (function(foo, baz, bar) { return baz; })();
+                        ~~~
+!!! error TS24290: 'bar' is defined but never used.

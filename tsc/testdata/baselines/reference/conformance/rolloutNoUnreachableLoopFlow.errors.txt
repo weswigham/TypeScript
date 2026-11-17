@@ -1,0 +1,28 @@
+input.ts(3,19): error TS24284: Invalid loop. Its body allows only one iteration.
+input.ts(5,28): error TS24284: Invalid loop. Its body allows only one iteration.
+input.ts(5,43): error TS24284: Invalid loop. Its body allows only one iteration.
+input.ts(6,27): error TS24284: Invalid loop. Its body allows only one iteration.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-unreachable-loop": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    declare const items: unknown[], flag: boolean;
+    declare function work(): void;
+    function once() { for (const item of items) { return item; } }
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+    function repeat() { for (const item of items) { if (item) continue; break; } }
+    function nested() { outer: while (flag) { do { break outer; } while (flag); } }
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+    function finallyStops() { while (flag) { try { work(); } finally { break; } } }
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+    function catchRepeats() { while (flag) { try { return work(); } catch {} } }

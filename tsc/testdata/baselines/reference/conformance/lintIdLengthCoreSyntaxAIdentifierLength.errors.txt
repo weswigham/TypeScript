@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS22021: Identifier name 'a' is too short (< 2).
+/input.ts(1,27): error TS7006: Parameter 'b' implicitly has an 'any' type.
+/input.ts(1,27): error TS22021: Identifier name 'b' is too short (< 2).
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-length": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    let a = 1; function valid(b) { return b; }
+        ~
+!!! error TS22021: Identifier name 'a' is too short (< 2).
+                              ~
+!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
+                              ~
+!!! error TS22021: Identifier name 'b' is too short (< 2).

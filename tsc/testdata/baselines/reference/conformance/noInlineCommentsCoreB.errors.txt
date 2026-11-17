@@ -1,0 +1,26 @@
+input.ts(2,38): error TS19365: Unexpected comment inline with code.
+input.ts(3,1): error TS19365: Unexpected comment inline with code.
+input.ts(3,20): error TS2304: Cannot find name 'work'.
+input.ts(4,1): error TS2304: Cannot find name 'work'.
+input.ts(5,1): error TS2304: Cannot find name 'work'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"lint":{"rules":{"no-inline-comments":"error"}},"files":["input.ts"]}
+==== input.ts (5 errors) ====
+    // Standalone comment.
+    const value = '/* not a comment */'; // Inline comment.
+                                         ~~~~~~~~~~~~~~~~~~
+!!! error TS19365: Unexpected comment inline with code.
+    /* Before code. */ work();
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19365: Unexpected comment inline with code.
+                       ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    work(); /* global work */
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    work(); // eslint-disable-line no-alert
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    const pattern = /[/*]/;

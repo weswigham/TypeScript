@@ -1,0 +1,36 @@
+/input.ts(1,1): error TS2304: Cannot find name 'values'.
+/input.ts(1,16): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,22): error TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+/input.ts(1,25): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "array-callback-return": [
+                    "error",
+                    {
+                        "checkForEach": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    values.forEach(value => use(value));
+    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                   ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                         ~~
+!!! error TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+                            ~~~
+!!! error TS2304: Cannot find name 'use'.

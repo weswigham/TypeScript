@@ -1,0 +1,26 @@
+input.ts(2,13): error TS21380: Private class member 'unused' is defined but never used.
+input.ts(3,5): error TS21380: Private class member 'unused' is defined but never used.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-unused-private-class-members": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    export class Box {
+        private unused = 1;
+                ~~~~~~
+!!! error TS21380: Private class member 'unused' is defined but never used.
+        #unused = 2;
+        ~~~~~~~
+!!! error TS21380: Private class member 'unused' is defined but never used.
+        private used = 3;
+        #used = 4;
+    
+        read(): number {
+            return this.used + this.#used;
+        }
+    }

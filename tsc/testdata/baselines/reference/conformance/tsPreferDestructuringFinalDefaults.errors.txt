@@ -1,0 +1,23 @@
+input.ts(4,7): error TS24132: Use object destructuring.
+input.ts(7,7): error TS24132: Use array destructuring.
+input.ts(9,7): error TS24132: Use object destructuring.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/prefer-destructuring":"error"}}}
+==== input.ts (3 errors) ====
+    declare const source: { value: number; other: number };
+    declare const values: number[];
+    declare const indexed: { 0: number };
+    const value = source.value;
+          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use object destructuring.
+    const renamed = source.other;
+    const annotated: number = source.value;
+    const first = values[0];
+          ~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use array destructuring.
+    const indexedFirst = indexed[0];
+    const other /* preserved */ = source.other;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24132: Use object destructuring.

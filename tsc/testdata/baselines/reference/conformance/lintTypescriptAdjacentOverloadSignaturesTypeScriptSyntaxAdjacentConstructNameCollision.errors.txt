@@ -1,0 +1,22 @@
+/input.ts(1,40): error TS19100: All new signatures should be adjacent.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface I { new(): I; 'new'(): void; new(a: number): I; }
+                                           ~~~~~~~~~~~~~~~~~~
+!!! error TS19100: All new signatures should be adjacent.

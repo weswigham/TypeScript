@@ -1,0 +1,40 @@
+/input.ts(1,1): error TS19512: Don't use octal: '\01'. Use '\u....' instead.
+/input.ts(1,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x01'.
+/input.ts(1,5): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x02'.
+/input.ts(1,17): error TS19512: Don't use octal: '\0'. Use '\u....' instead.
+/input.ts(1,18): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+/input.ts(1,24): error TS19512: Don't use octal: '\40'. Use '\u....' instead.
+/input.ts(1,25): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x20'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-octal-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    '\01\02'; '\0'; '\08'; '\400'; '\\1';
+    ~~~~~~~~
+!!! error TS19512: Don't use octal: '\01'. Use '\u....' instead.
+     ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x01'.
+        ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x02'.
+                    ~~~~~
+!!! error TS19512: Don't use octal: '\0'. Use '\u....' instead.
+                     ~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+                           ~~~~~~
+!!! error TS19512: Don't use octal: '\40'. Use '\u....' instead.
+                            ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x20'.

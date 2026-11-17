@@ -1,0 +1,25 @@
+/input.ts(1,24): error TS18046: 'error' is of type 'unknown'.
+/input.ts(1,60): error TS7006: Parameter 'error' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-ex-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try {} catch (error) { error.message = ''; function nested(error) { error = 0; } }
+                           ~~~~~
+!!! error TS18046: 'error' is of type 'unknown'.
+                                                               ~~~~~
+!!! error TS7006: Parameter 'error' implicitly has an 'any' type.

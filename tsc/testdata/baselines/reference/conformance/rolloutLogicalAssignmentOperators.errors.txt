@@ -1,0 +1,60 @@
+input.ts(2,1): warning TS24216: Assignment (=) can be replaced with operator assignment (||=).
+input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(3,1): warning TS24216: Assignment (=) can be replaced with operator assignment (??=).
+input.ts(3,16): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,1): warning TS24218: Logical expression can be replaced with an assignment (||=).
+input.ts(4,18): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(5,1): warning TS24220: 'if' statement can be replaced with a logical operator assignment with operator ??=.
+input.ts(8,1): warning TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
+input.ts(8,5): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(8,24): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(9,1): warning TS24216: Assignment (=) can be replaced with operator assignment (||=).
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "logical-assignment-operators": ["warn", "always", { "enforceForIfStatements": true }] } }
+    }
+==== input.ts (12 errors) ====
+    let value, fallback;
+    value = value || fallback;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (||=).
+    object.value = object.value ?? fallback;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (??=).
+                   ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    object.value || (object.value = fallback);
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24218: Logical expression can be replaced with an assignment (||=).
+                     ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    if (value == null) {
+    ~~~~~~~~~~~~~~~~~~~~
+        value = fallback;
+    ~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! warning TS24220: 'if' statement can be replaced with a logical operator assignment with operator ??=.
+    if (object.deep.value) object.deep.value = fallback;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
+        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                           ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    value = value || /* keep */ fallback;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (||=).

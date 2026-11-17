@@ -1,0 +1,28 @@
+input.ts(1,18): error TS24252: Spaces are hard to count. Use {3}.
+input.ts(2,20): error TS24252: Spaces are hard to count. Use {2}.
+input.ts(5,1): error TS24252: Spaces are hard to count. Use {2}.
+input.ts(6,1): error TS24252: Spaces are hard to count. Use {2}.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-regex-spaces": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    const repeated = /a   b/;
+                     ~~~~~~~
+!!! error TS24252: Spaces are hard to count. Use {3}.
+    const quantified = /a   +/;
+                       ~~~~~~~
+!!! error TS24252: Spaces are hard to count. Use {2}.
+    const safe = /[  ]/;
+    const sets = /[[  ]--[a]]/v;
+    new RegExp("c  d");
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS24252: Spaces are hard to count. Use {2}.
+    RegExp("\\d  x");
+    ~~~~~~~~~~~~~~~~
+!!! error TS24252: Spaces are hard to count. Use {2}.

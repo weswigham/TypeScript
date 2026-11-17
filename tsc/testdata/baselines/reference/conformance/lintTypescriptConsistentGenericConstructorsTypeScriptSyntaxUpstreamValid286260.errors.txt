@@ -1,0 +1,34 @@
+/input.ts(2,12): error TS2304: Cannot find name 'Foo'.
+/input.ts(2,30): error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+/tsconfig.json(3,9): error TS5069: Option 'isolatedDeclarations' cannot be specified without specifying option 'declaration' or option 'composite'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "isolatedDeclarations": true,
+            ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5069: Option 'isolatedDeclarations' cannot be specified without specifying option 'declaration' or option 'composite'.
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    const foo: Foo<string> = new Foo();
+               ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                                 ~~~
+!!! error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+!!! related TS2728 /input.ts:2:7: 'foo' is declared here.
+          

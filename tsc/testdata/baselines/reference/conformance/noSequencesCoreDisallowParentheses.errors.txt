@@ -1,0 +1,47 @@
+input.ts(1,16): error TS2695: Left side of comma operator is unused and has no side effects.
+input.ts(1,17): error TS19507: Unexpected use of comma operator.
+input.ts(2,3): error TS19507: Unexpected use of comma operator.
+input.ts(3,6): error TS2304: Cannot find name 'doSomething'.
+input.ts(3,19): error TS19507: Unexpected use of comma operator.
+input.ts(3,21): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+input.ts(4,7): error TS2304: Cannot find name 'i'.
+input.ts(4,14): error TS2304: Cannot find name 'j'.
+input.ts(4,22): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+input.ts(4,29): error TS2304: Cannot find name 'i'.
+input.ts(4,34): error TS2304: Cannot find name 'j'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-sequences": ["error", { "allowInParentheses": false }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (11 errors) ====
+    const value = (1, 2);
+                   ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                    ~
+!!! error TS19507: Unexpected use of comma operator.
+    (0, eval)("foo()");
+      ~
+!!! error TS19507: Unexpected use of comma operator.
+    if ((doSomething(), test)) {}
+         ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.
+                      ~
+!!! error TS19507: Unexpected use of comma operator.
+                        ~~~~
+!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+    for ((i = 0, j = 0); test; (i++, j++)) {}
+          ~
+!!! error TS2304: Cannot find name 'i'.
+                 ~
+!!! error TS2304: Cannot find name 'j'.
+                         ~~~~
+!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+                                ~
+!!! error TS2304: Cannot find name 'i'.
+                                     ~
+!!! error TS2304: Cannot find name 'j'.

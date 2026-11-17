@@ -1,0 +1,29 @@
+/input.tsx(1,1): error TS24277: last
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "CallExpression",
+                    {
+                        "message": "last",
+                        "selector": "CallExpression"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    eval('x')
+    ~~~~~~~~~
+!!! error TS24277: last

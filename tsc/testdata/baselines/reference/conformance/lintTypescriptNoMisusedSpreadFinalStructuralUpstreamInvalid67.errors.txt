@@ -1,0 +1,28 @@
+/input.tsx(4,13): error TS24058: Using the spread operator on an Iterable in an object can cause unexpected behavior.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    declare function getIterable(): Iterable<string>;
+    
+    const o = { ...getIterable() };
+                ~~~~~~~~~~~~~~~~
+!!! error TS24058: Using the spread operator on an Iterable in an object can cause unexpected behavior.
+          

@@ -1,0 +1,46 @@
+/input.ts(1,1): error TS2304: Cannot find name 'a'.
+/input.ts(1,10): error TS2304: Cannot find name 'a'.
+/input.ts(1,10): error TS19515: 'a['16']' is assigned to itself.
+/input.ts(1,19): error TS2304: Cannot find name 'a'.
+/input.ts(1,28): error TS2304: Cannot find name 'a'.
+/input.ts(1,28): error TS19515: 'a['100']' is assigned to itself.
+/input.ts(1,38): error TS2304: Cannot find name 'a'.
+/input.ts(1,48): error TS2304: Cannot find name 'a'.
+/input.ts(1,48): error TS19515: 'a['null']' is assigned to itself.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-self-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    a[16n] = a['16']; a[1e2] = a['100']; a[null] = a['null'];
+    ~
+!!! error TS2304: Cannot find name 'a'.
+             ~
+!!! error TS2304: Cannot find name 'a'.
+             ~~~~~~~
+!!! error TS19515: 'a['16']' is assigned to itself.
+                      ~
+!!! error TS2304: Cannot find name 'a'.
+                               ~
+!!! error TS2304: Cannot find name 'a'.
+                               ~~~~~~~~
+!!! error TS19515: 'a['100']' is assigned to itself.
+                                         ~
+!!! error TS2304: Cannot find name 'a'.
+                                                   ~
+!!! error TS2304: Cannot find name 'a'.
+                                                   ~~~~~~~~~
+!!! error TS19515: 'a['null']' is assigned to itself.

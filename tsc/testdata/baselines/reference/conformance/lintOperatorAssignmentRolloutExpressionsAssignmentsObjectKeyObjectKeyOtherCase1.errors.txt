@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,14): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,30): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "operator-assignment": [
+                    "error",
+                    "always"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    object.key = object['key'] + other;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                 ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                 ~~~~~
+!!! error TS2304: Cannot find name 'other'.

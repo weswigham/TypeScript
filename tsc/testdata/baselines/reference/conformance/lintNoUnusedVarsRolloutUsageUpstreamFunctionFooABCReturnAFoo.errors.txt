@@ -1,0 +1,46 @@
+/input.ts(1,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,17): error TS7006: Parameter '_b' implicitly has an 'any' type.
+/input.ts(1,21): error TS7006: Parameter 'c' implicitly has an 'any' type.
+/input.ts(1,21): error TS24290: 'c' is defined but never used. Allowed unused args must match /^_/u.
+/input.ts(1,38): error TS2554: Expected 3 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "args": "after-used",
+                        "argsIgnorePattern": "^_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (5 errors) ====
+    function foo(a, _b, c) { return a; } foo();
+                 ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                    ~~
+!!! error TS7006: Parameter '_b' implicitly has an 'any' type.
+                        ~
+!!! error TS7006: Parameter 'c' implicitly has an 'any' type.
+                        ~
+!!! error TS24290: 'c' is defined but never used. Allowed unused args must match /^_/u.
+                                         ~~~
+!!! error TS2554: Expected 3 arguments, but got 0.
+!!! related TS6210 /input.ts:1:14: An argument for 'a' was not provided.

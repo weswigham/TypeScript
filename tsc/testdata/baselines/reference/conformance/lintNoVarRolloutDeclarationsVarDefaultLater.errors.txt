@@ -1,0 +1,25 @@
+/input.ts(1,16): error TS24305: Unexpected var, use let or const instead.
+/input.ts(1,28): error TS2339: Property 'y' does not exist on type '{}'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f() { var {x = y, y} = {}; }
+                   ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.
+                               ~
+!!! error TS2339: Property 'y' does not exist on type '{}'.

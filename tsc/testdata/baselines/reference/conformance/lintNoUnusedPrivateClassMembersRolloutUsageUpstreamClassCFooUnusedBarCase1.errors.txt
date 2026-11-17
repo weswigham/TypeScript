@@ -1,0 +1,43 @@
+/input.ts(2,5): error TS7008: Member 'foo' implicitly has an 'any' type.
+/input.ts(3,5): error TS7008: Member '#unused' implicitly has an 'any' type.
+/input.ts(3,5): error TS24288: '#unused' is defined but never used.
+/input.ts(4,5): error TS7008: Member '[bar]' implicitly has an 'any' type.
+/input.ts(4,6): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (5 errors) ====
+    class C {
+        foo
+        ~~~
+!!! error TS7008: Member 'foo' implicitly has an 'any' type.
+        #unused
+        ~~~~~~~
+!!! error TS7008: Member '#unused' implicitly has an 'any' type.
+        ~~~~~~~
+!!! error TS24288: '#unused' is defined but never used.
+        [bar]
+        ~~~~~
+!!! error TS7008: Member '[bar]' implicitly has an 'any' type.
+         ~~~
+!!! error TS2304: Cannot find name 'bar'.
+    }

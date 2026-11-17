@@ -1,0 +1,28 @@
+/input.ts(1,37): error TS22019: Expected getter 'value' to be before setter 'value'.
+/input.ts(1,41): error TS2378: A 'get' accessor must return a value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "grouped-accessor-pairs": [
+                    "error",
+                    "getBeforeSet"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Example { set value(value) {} get value() {} }
+                                        ~~~~~~~~~~~~~~
+!!! error TS22019: Expected getter 'value' to be before setter 'value'.
+                                            ~~~~~
+!!! error TS2378: A 'get' accessor must return a value.

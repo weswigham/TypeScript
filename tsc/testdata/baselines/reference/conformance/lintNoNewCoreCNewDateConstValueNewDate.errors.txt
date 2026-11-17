@@ -1,0 +1,22 @@
+/input.ts(1,1): error TS19502: Do not use 'new' for side effects.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    (new Date()); const value = new Date();
+    ~~~~~~~~~~~~~
+!!! error TS19502: Do not use 'new' for side effects.

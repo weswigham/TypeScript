@@ -1,0 +1,25 @@
+/input.ts(1,6): error TS24322: 'x' is never reassigned. Use 'const' instead.
+/input.ts(1,18): error TS2304: Cannot find name 'values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let [x = 0, y] = values; y++;
+         ~
+!!! error TS24322: 'x' is never reassigned. Use 'const' instead.
+                     ~~~~~~
+!!! error TS2304: Cannot find name 'values'.

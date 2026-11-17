@@ -1,0 +1,22 @@
+/input.ts(1,1): error TS19509: Unexpected template string expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-template-curly-in-string": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    'Hello, ${name}'; '${}'; `${name}`
+    ~~~~~~~~~~~~~~~~
+!!! error TS19509: Unexpected template string expression.

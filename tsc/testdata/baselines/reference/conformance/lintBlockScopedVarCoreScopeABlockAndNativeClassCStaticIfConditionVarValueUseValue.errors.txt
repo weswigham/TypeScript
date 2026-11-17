@@ -1,0 +1,28 @@
+/input.ts(1,24): error TS2304: Cannot find name 'condition'.
+/input.ts(1,50): error TS2304: Cannot find name 'use'.
+/input.ts(1,54): error TS19862: 'value' declared on line 1 column 41 is used outside of binding context.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "block-scoped-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class C { static { if (condition) { var value; } use(value); } }
+                           ~~~~~~~~~
+!!! error TS2304: Cannot find name 'condition'.
+                                                     ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                         ~~~~~
+!!! error TS19862: 'value' declared on line 1 column 41 is used outside of binding context.

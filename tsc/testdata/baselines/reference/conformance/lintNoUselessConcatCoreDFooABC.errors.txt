@@ -1,0 +1,28 @@
+/input.ts(1,2): error TS2304: Cannot find name 'foo'.
+/input.ts(1,13): error TS19651: Unexpected string concatenation of literals.
+/input.ts(1,20): error TS19651: Unexpected string concatenation of literals.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-concat": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    (foo + 'a') + ('b' + 'c');
+     ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                ~
+!!! error TS19651: Unexpected string concatenation of literals.
+                       ~
+!!! error TS19651: Unexpected string concatenation of literals.

@@ -1,0 +1,29 @@
+/input.ts(1,15): error TS24029: Void expressions used inside another expression must be moved to its own statement or marked explicitly with the `void` operator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-confusing-void-expression": [
+                    "error",
+                    {
+                        "ignoreVoidOperator": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const value = console.log();
+                  ~~~~~~~~~~~~~
+!!! error TS24029: Void expressions used inside another expression must be moved to its own statement or marked explicitly with the `void` operator.

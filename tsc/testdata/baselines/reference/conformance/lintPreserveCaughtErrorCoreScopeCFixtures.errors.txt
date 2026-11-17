@@ -1,0 +1,71 @@
+/input.ts(2,5): error TS20270: There is no `cause` attached to the symptom error being thrown.
+/input.ts(8,41): error TS2304: Cannot find name 'other'.
+/input.ts(8,41): error TS20271: The symptom error is being thrown with an incorrect `cause`.
+/input.ts(12,23): error TS2304: Cannot find name 'other'.
+/input.ts(13,9): error TS20274: The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration.
+/input.ts(17,5): error TS20273: The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter.
+/input.ts(20,15): error TS2304: Cannot find name 'CustomError'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": [
+                    "error",
+                    {
+                        "errorClassNames": [
+                            {
+                                "argumentPosition": 3,
+                                "name": "CustomError"
+                            }
+                        ],
+                        "requireCatchParameter": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    try {} catch (error) {
+        throw new Error("symptom");
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20270: There is no `cause` attached to the symptom error being thrown.
+    }
+    try {} catch (error) {
+        throw new Error("symptom", { cause: error });
+    }
+    try {} catch (error) {
+        throw new Error("symptom", { cause: other });
+                                            ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                            ~~~~~
+!!! error TS20271: The symptom error is being thrown with an incorrect `cause`.
+    }
+    try {} catch (error) {
+        {
+            const error = other;
+                          ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+            throw new Error("symptom", { cause: error });
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20274: The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration.
+        }
+    }
+    try {} catch {
+        throw new TypeError("symptom");
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20273: The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter.
+    }
+    try {} catch (error) {
+        throw new CustomError("code", "symptom", { cause: error });
+                  ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'CustomError'.
+    }

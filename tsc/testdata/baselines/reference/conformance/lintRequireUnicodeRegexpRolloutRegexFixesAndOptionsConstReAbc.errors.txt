@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24340: Use the 'u' flag.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-unicode-regexp": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /abc/;
+               ~~~~~
+!!! error TS24340: Use the 'u' flag.

@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS24003: Unexpected `for await...of` of a value that is not async iterable.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/await-thenable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    for await (const value of [1]) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24003: Unexpected `for await...of` of a value that is not async iterable.
+    export {};

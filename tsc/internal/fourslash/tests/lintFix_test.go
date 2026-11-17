@@ -82,3 +82,21 @@ func TestLintWarningDiagnostics(t *testing.T) {
 	f.VerifyBaselineNonSuggestionDiagnostics(t)
 	f.VerifyCodeFixAvailable(t, []string{"Remove 'debugger' statement"})
 }
+
+func TestLintSuggestionCodeAction(t *testing.T) {
+	t.Parallel()
+	const content = `// @Filename: /tsconfig.json
+{"compilerOptions":{"strict":true},"lint":{"rules":{"@typescript-eslint/no-non-null-assertion":"error"}},"files":["input.ts"]}
+// @Filename: /input.ts
+declare const value: { method(): void } | undefined;
+value/*suggestion*/!.method();`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "suggestion")
+	f.VerifyCodeFix(t, fourslash.VerifyCodeFixOptions{
+		Description:    "Consider using the optional chain operator `?.` instead. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator.",
+		NewFileContent: "declare const value: { method(): void } | undefined;\nvalue?.method();",
+		ApplyChanges:   true,
+	})
+	f.VerifyNoErrors(t)
+}

@@ -1,0 +1,25 @@
+input.ts(1,9): error TS2304: Cannot find name 'value'.
+input.ts(2,13): error TS19352: Unexpected lexical declaration in case block.
+input.ts(2,24): error TS19352: Unexpected lexical declaration in case block.
+input.ts(2,41): error TS19352: Unexpected lexical declaration in case block.
+input.ts(2,62): error TS19352: Unexpected lexical declaration in case block.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-case-declarations":"error"}},"files":["input.ts"]}
+==== input.ts (5 errors) ====
+    switch (value) {
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+        case 0: let local; const fixed = 1; function nested() {} class Item {} break;
+                ~~~~~~~~~~
+!!! error TS19352: Unexpected lexical declaration in case block.
+                           ~~~~~~~~~~~~~~~~
+!!! error TS19352: Unexpected lexical declaration in case block.
+                                            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19352: Unexpected lexical declaration in case block.
+                                                                 ~~~~~~~~~~~~~
+!!! error TS19352: Unexpected lexical declaration in case block.
+        case 1: var hoisted; break;
+        default: { let valid; }
+    }

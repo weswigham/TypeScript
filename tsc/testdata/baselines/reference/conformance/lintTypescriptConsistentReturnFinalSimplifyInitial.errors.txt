@@ -1,0 +1,23 @@
+/input.ts(1,10): error TS24006: Expected to return a value at the end of function 'choose'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function choose(flag: boolean) { if (flag) return 1; }
+             ~~~~~~
+!!! error TS24006: Expected to return a value at the end of function 'choose'.

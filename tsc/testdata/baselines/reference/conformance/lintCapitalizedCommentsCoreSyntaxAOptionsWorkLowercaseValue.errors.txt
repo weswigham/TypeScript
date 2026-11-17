@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS2304: Cannot find name 'work'.
+/input.ts(1,22): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "capitalized-comments": [
+                    "error",
+                    "always",
+                    {
+                        "ignoreInlineComments": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    work(/* lowercase */ value);
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                         ~~~~~
+!!! error TS2304: Cannot find name 'value'.

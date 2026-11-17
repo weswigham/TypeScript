@@ -1,0 +1,38 @@
+/input.tsx(1,21): error TS24269: 'BadThing' import from 'foo' is restricted because only 'GoodThing' and 'AlsoGood' are allowed.
+/input.tsx(1,37): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "allowImportNames": [
+                                    "GoodThing",
+                                    "AlsoGood"
+                                ],
+                                "name": "foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { GoodThing, BadThing } from "foo";
+                        ~~~~~~~~
+!!! error TS24269: 'BadThing' import from 'foo' is restricted because only 'GoodThing' and 'AlsoGood' are allowed.
+                                        ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

@@ -1,0 +1,40 @@
+/input.ts(1,80): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,89): error TS2304: Cannot find name 'value'.
+/input.ts(1,114): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
+/input.ts(1,124): error TS18004: No value exists in scope for the shorthand property 'value'. Either declare one or provide an initializer.
+/input.ts(1,150): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-names": [
+                    "error",
+                    "as-needed"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    function test(value = function() {}) {} const { key: local = function() {} } = object; [value = function() {}] = array; ({ value = function() {} } = object);
+                                                                                   ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                                                                            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                                                                     ~~~~~
+!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.
+                                                                                                                               ~~~~~
+!!! error TS18004: No value exists in scope for the shorthand property 'value'. Either declare one or provide an initializer.
+                                                                                                                                                         ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

@@ -1,0 +1,33 @@
+/input.ts(1,49): error TS24203: Identifier 'alias_name' is not in camel case.
+/input.ts(1,66): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+/input.ts(1,87): error TS24203: Identifier 'snake_case' is not in camel case.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": [
+                    "error",
+                    {
+                        "ignoreImports": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    import {snake_case as snake_case, other_name as alias_name} from 'mod'; const value = snake_case;
+                                                    ~~~~~~~~~~
+!!! error TS24203: Identifier 'alias_name' is not in camel case.
+                                                                     ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+                                                                                          ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.

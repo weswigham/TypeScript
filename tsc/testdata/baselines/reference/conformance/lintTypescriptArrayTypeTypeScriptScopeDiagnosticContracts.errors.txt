@@ -1,0 +1,23 @@
+/input.ts(1,10): error TS22005: Array type using 'Array<string>' is forbidden. Use 'string[]' instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/array-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type A = Array<string>;
+             ~~~~~~~~~~~~~
+!!! error TS22005: Array type using 'Array<string>' is forbidden. Use 'string[]' instead.

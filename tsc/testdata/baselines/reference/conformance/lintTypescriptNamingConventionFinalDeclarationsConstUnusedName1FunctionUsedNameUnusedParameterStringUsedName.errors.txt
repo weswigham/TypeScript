@@ -1,0 +1,40 @@
+/input.ts(1,7): error TS24015: Variable name `UnusedName` must match one of the following formats: snake_case
+/input.ts(1,41): error TS24015: Parameter name `UnusedParameter` must match one of the following formats: snake_case
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/naming-convention": [
+                    "error",
+                    {
+                        "format": [
+                            "snake_case"
+                        ],
+                        "modifiers": [
+                            "unused"
+                        ],
+                        "selector": "default"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (2 errors) ====
+    const UnusedName = 1; function UsedName(UnusedParameter: string) {} UsedName('');
+          ~~~~~~~~~~
+!!! error TS24015: Variable name `UnusedName` must match one of the following formats: snake_case
+                                            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24015: Parameter name `UnusedParameter` must match one of the following formats: snake_case

@@ -1,0 +1,25 @@
+/input.ts(1,10): error TS19862: 'index' declared on line 1 column 35 is used outside of binding context.
+/input.ts(1,35): error TS19862: 'index' declared on line 1 column 10 is used outside of binding context.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "block-scoped-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    for (var index = 0;;) {} for (var index = 0;;) {}
+             ~~~~~
+!!! error TS19862: 'index' declared on line 1 column 35 is used outside of binding context.
+                                      ~~~~~
+!!! error TS19862: 'index' declared on line 1 column 10 is used outside of binding context.

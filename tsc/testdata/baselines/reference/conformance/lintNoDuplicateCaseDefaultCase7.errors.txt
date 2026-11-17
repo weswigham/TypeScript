@@ -1,0 +1,25 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,36): error TS22012: Duplicate case label.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-duplicate-case": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    switch (value) { case name: break; case n\u0061me: break; }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                       ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.

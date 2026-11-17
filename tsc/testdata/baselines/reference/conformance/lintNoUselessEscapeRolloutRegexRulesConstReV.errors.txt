@@ -1,0 +1,22 @@
+/input.ts(1,14): error TS24300: Unnecessary escape character: \&.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /[\&\&]/v;
+                 ~
+!!! error TS24300: Unnecessary escape character: \&.

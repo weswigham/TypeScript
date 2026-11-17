@@ -1,0 +1,33 @@
+/input.ts(1,9): error TS2304: Cannot find name 'i'.
+/input.ts(1,13): error TS2304: Cannot find name 'j'.
+/input.ts(1,13): error TS19504: Unary operator '++' used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-plusplus": [
+                    "error",
+                    {
+                        "allowForLoopAfterthoughts": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    for (;; i = j++) {}
+            ~
+!!! error TS2304: Cannot find name 'i'.
+                ~
+!!! error TS2304: Cannot find name 'j'.
+                ~~~
+!!! error TS19504: Unary operator '++' used.

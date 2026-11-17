@@ -1,0 +1,22 @@
+/input.ts(1,10): error TS24345: Expected object keys to be in descending order. 'b' should be before 'a'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": [
+                    "error",
+                    "desc"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    ({ a: 1, b: 0 });
+             ~
+!!! error TS24345: Expected object keys to be in descending order. 'b' should be before 'a'.

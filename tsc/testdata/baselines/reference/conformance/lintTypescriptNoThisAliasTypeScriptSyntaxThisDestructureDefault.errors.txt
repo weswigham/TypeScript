@@ -1,0 +1,22 @@
+/input.ts(1,9): error TS2339: Property 'value' does not exist on type 'typeof globalThis'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-this-alias": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const { value } = this;
+            ~~~~~
+!!! error TS2339: Property 'value' does not exist on type 'typeof globalThis'.

@@ -1,0 +1,36 @@
+/input.ts(1,53): error TS24045: Expected non-Promise value in a boolean conditional.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": [
+                    "error",
+                    {
+                        "checksConditionals": {
+                            "flagUnions": "all"
+                        }
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: Promise<number> | boolean; if (value) {}
+                                                        ~~~~~
+!!! error TS24045: Expected non-Promise value in a boolean conditional.
+    export {};

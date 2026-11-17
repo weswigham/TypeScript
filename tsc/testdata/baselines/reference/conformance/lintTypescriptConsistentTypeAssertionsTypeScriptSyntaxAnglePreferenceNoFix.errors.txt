@@ -1,0 +1,31 @@
+/input.ts(1,15): error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+/input.ts(1,15): error TS22047: Use '<number>' instead of 'as number'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": [
+                    "error",
+                    {
+                        "assertionStyle": "angle-bracket"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const value = input as number;
+                  ~~~~~
+!!! error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'oninput' is declared here.
+                  ~~~~~~~~~~~~~~~
+!!! error TS22047: Use '<number>' instead of 'as number'.

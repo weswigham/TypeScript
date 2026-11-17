@@ -4,46 +4,24 @@ import (
 	"cmp"
 	"slices"
 
+	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 )
 
-type TextChange = core.TextChange
+type (
+	TextChange          = core.TextChange
+	FileTextChanges     = core.FileTextChanges
+	CodeActionCommand   = core.CodeActionCommand
+	CodeAction          = ast.CodeAction
+	CodeFixAction       = ast.CodeFixAction
+	CombinedCodeActions = core.CombinedCodeActions
+)
 
-type FileTextChanges struct {
-	FileName    tspath.RootedFilePath
-	TextChanges []TextChange
-	IsNewFile   bool
-}
-
-type CodeActionCommand struct {
-	Type        string
-	File        tspath.RootedFilePath
-	PackageName string
-}
-
-type CodeAction struct {
-	Description string
-	Changes     []FileTextChanges
-	Commands    []CodeActionCommand
-}
-
-type CodeFixAction struct {
-	CodeAction
-	FixName           string
-	FixID             string
-	FixAllDescription string
-}
-
-type CombinedCodeActions struct {
-	Changes  []FileTextChanges
-	Commands []CodeActionCommand
-}
-
-func CreateCodeFixAction(fixName string, changes []FileTextChanges, description, fixID, fixAllDescription string) *CodeFixAction {
-	action := CodeAction{Description: description, Changes: changes}
+func CreateCodeFixAction(fixName string, changes []FileTextChanges, description *ast.Diagnostic, fixID string, fixAllDescription *ast.Diagnostic) *CodeFixAction {
 	return &CodeFixAction{
-		CodeAction:        action,
+		Description:       description,
+		Changes:           changes,
 		FixName:           fixName,
 		FixID:             fixID,
 		FixAllDescription: fixAllDescription,

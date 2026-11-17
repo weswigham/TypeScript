@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS2304: Cannot find name 'foo'.
+/input.ts(1,19): error TS24318: Combine this with the previous 'var' statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var a; if (foo) { var b; }
+               ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                      ~~~~~~
+!!! error TS24318: Combine this with the previous 'var' statement.

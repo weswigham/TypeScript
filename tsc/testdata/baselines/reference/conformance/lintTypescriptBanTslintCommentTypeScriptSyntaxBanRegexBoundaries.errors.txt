@@ -1,0 +1,33 @@
+/input.ts(1,17): error TS19101: tslint comment detected: "/* tslint:disable */"
+/input.ts(1,60): error TS19101: tslint comment detected: "// tslint:enable"
+/input.ts(2,40): error TS19101: tslint comment detected: "/* tslint:disable-line */"
+/input.ts(3,19): error TS19101: tslint comment detected: "/* tslint:enable-line */"
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/ban-tslint-comment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    const pattern = /* tslint:disable */ /[/*]tslint:disable/; // tslint:enable
+                    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "/* tslint:disable */"
+                                                               ~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "// tslint:enable"
+    const escaped = /\/\/ tslint:disable/; /* tslint:disable-line */
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "/* tslint:disable-line */"
+    const ratio = 4 / /* tslint:enable-line */ 2;
+                      ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "/* tslint:enable-line */"

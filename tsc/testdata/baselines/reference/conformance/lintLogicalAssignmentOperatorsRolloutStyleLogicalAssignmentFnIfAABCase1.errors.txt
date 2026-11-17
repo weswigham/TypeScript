@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS2304: Cannot find name 'fn'.
+/input.ts(2,1): error TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
+/input.ts(2,5): error TS2304: Cannot find name 'a'.
+/input.ts(2,9): error TS2304: Cannot find name 'a'.
+/input.ts(2,14): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "logical-assignment-operators": [
+                    "error",
+                    "always",
+                    {
+                        "enforceForIfStatements": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    fn()
+    ~~
+!!! error TS2304: Cannot find name 'fn'.
+    if (a) (a) = b
+    ~~~~~~~~~~~~~~
+!!! error TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+            ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS2304: Cannot find name 'b'.

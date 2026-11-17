@@ -1,0 +1,22 @@
+/input.ts(1,37): error TS19661: All 'var' declarations must be at the top of the function scope.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "vars-on-top": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { static { 'not directive'; var first; } }
+                                        ~~~~~~~~~~
+!!! error TS19661: All 'var' declarations must be at the top of the function scope.

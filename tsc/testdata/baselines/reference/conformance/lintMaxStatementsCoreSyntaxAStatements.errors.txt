@@ -1,0 +1,55 @@
+/input.ts(1,1): error TS19332: Function 'long' has too many statements (11). Maximum allowed is 10.
+/input.ts(1,18): error TS2304: Cannot find name 'work'.
+/input.ts(1,25): error TS2304: Cannot find name 'work'.
+/input.ts(1,32): error TS2304: Cannot find name 'work'.
+/input.ts(1,39): error TS2304: Cannot find name 'work'.
+/input.ts(1,46): error TS2304: Cannot find name 'work'.
+/input.ts(1,53): error TS2304: Cannot find name 'work'.
+/input.ts(1,60): error TS2304: Cannot find name 'work'.
+/input.ts(1,67): error TS2304: Cannot find name 'work'.
+/input.ts(1,74): error TS2304: Cannot find name 'work'.
+/input.ts(1,81): error TS2304: Cannot find name 'work'.
+/input.ts(1,88): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-statements": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (12 errors) ====
+    function long() {work();work();work();work();work();work();work();work();work();work();work();}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19332: Function 'long' has too many statements (11). Maximum allowed is 10.
+                     ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                            ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                   ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                          ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                 ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                        ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                               ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                      ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                             ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                                    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                                           ~~~~
+!!! error TS2304: Cannot find name 'work'.

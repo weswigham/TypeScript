@@ -1,0 +1,44 @@
+/input.ts(1,14): error TS2304: Cannot find name 'value'.
+/input.ts(1,22): error TS19855: Unexpected console statement. Only these console methods are allowed: warn.
+/input.ts(1,37): error TS2304: Cannot find name 'value'.
+/input.ts(1,64): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
+/input.ts(1,64): error TS19855: Unexpected console statement. Only these console methods are allowed: warn.
+/input.ts(1,72): error TS2304: Cannot find name 'key'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": [
+                    "error",
+                    {
+                        "allow": [
+                            "warn"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    console.warn(value); console['log'](value); console[`warn`](); console[key]();
+                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                         ~~~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn.
+                                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                   ~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
+                                                                   ~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn.
+                                                                           ~~~
+!!! error TS2304: Cannot find name 'key'.

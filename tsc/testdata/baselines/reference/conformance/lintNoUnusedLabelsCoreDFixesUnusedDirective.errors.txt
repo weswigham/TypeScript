@@ -1,0 +1,23 @@
+/input.tsx(1,1): error TS19666: 'unused:' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-labels": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    unused: ('directive');
+    ~~~~~~
+!!! error TS19666: 'unused:' is defined but never used.

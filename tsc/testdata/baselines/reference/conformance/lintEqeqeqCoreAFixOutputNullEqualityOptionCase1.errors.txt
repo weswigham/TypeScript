@@ -1,0 +1,31 @@
+/input.ts(1,8): error TS2304: Cannot find name 'left'.
+/input.ts(1,24): error TS19254: Expected '==' and instead saw '==='.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": [
+                    "error",
+                    "always",
+                    {
+                        "null": "never"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    typeof left /* Left */ === /* Right */ null;
+           ~~~~
+!!! error TS2304: Cannot find name 'left'.
+                           ~~~
+!!! error TS19254: Expected '==' and instead saw '==='.

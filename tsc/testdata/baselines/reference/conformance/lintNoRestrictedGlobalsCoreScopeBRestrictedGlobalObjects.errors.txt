@@ -1,0 +1,36 @@
+/input.ts(1,8): error TS19351: Unexpected use of 'event'.
+/input.ts(1,37): error TS19351: Unexpected use of 'event'.
+/input.ts(1,60): error TS7006: Parameter 'window' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-globals": [
+                    "error",
+                    {
+                        "checkGlobalObject": true,
+                        "globals": [
+                            "event"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    window.event; globalThis.globalThis['event']; function run(window) { window.event; }
+           ~~~~~
+!!! error TS19351: Unexpected use of 'event'.
+                                        ~~~~~~~
+!!! error TS19351: Unexpected use of 'event'.
+                                                               ~~~~~~
+!!! error TS7006: Parameter 'window' implicitly has an 'any' type.

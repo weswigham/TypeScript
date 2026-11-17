@@ -1,0 +1,191 @@
+input.ts(1,1): error TS2304: Cannot find name 'a'.
+input.ts(1,5): error TS2304: Cannot find name 'a'.
+input.ts(1,5): error TS19515: 'a' is assigned to itself.
+input.ts(2,1): error TS2304: Cannot find name 'a'.
+input.ts(2,7): error TS2304: Cannot find name 'a'.
+input.ts(2,7): error TS19515: 'a' is assigned to itself.
+input.ts(3,1): error TS2304: Cannot find name 'a'.
+input.ts(3,7): error TS2304: Cannot find name 'a'.
+input.ts(3,7): error TS19515: 'a' is assigned to itself.
+input.ts(4,1): error TS2304: Cannot find name 'a'.
+input.ts(4,7): error TS2304: Cannot find name 'a'.
+input.ts(4,7): error TS19515: 'a' is assigned to itself.
+input.ts(5,1): error TS2304: Cannot find name 'a'.
+input.ts(5,6): error TS2304: Cannot find name 'a'.
+input.ts(6,2): error TS2304: Cannot find name 'a'.
+input.ts(6,8): error TS2304: Cannot find name 'b'.
+input.ts(6,14): error TS2304: Cannot find name 'a'.
+input.ts(6,14): error TS19515: 'a' is assigned to itself.
+input.ts(6,20): error TS2304: Cannot find name 'b'.
+input.ts(6,20): error TS19515: 'b' is assigned to itself.
+input.ts(7,5): error TS2304: Cannot find name 'a'.
+input.ts(7,14): error TS2304: Cannot find name 'a'.
+input.ts(8,2): error TS2304: Cannot find name 'x'.
+input.ts(8,5): error TS2304: Cannot find name 'a'.
+input.ts(8,14): error TS2304: Cannot find name 'x'.
+input.ts(8,17): error TS2304: Cannot find name 'a'.
+input.ts(9,3): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+input.ts(9,6): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+input.ts(9,12): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+input.ts(9,18): error TS2304: Cannot find name 'x'.
+input.ts(9,21): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+input.ts(9,21): error TS19515: 'b' is assigned to itself.
+input.ts(10,7): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+input.ts(10,15): error TS2304: Cannot find name 'd'.
+input.ts(10,26): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+input.ts(10,26): error TS19515: 'b' is assigned to itself.
+input.ts(10,34): error TS2304: Cannot find name 'd'.
+input.ts(10,34): error TS19515: 'd' is assigned to itself.
+input.ts(11,10): error TS2304: Cannot find name 'b'.
+input.ts(11,19): error TS2304: Cannot find name 'b'.
+input.ts(11,19): error TS19515: 'b' is assigned to itself.
+input.ts(12,3): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+input.ts(12,13): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+input.ts(13,1): error TS2304: Cannot find name 'a'.
+input.ts(13,7): error TS2304: Cannot find name 'a'.
+input.ts(13,7): error TS19515: 'a['b']' is assigned to itself.
+input.ts(14,1): error TS2304: Cannot find name 'a'.
+input.ts(14,7): error TS2304: Cannot find name 'a'.
+input.ts(14,7): error TS19515: 'a?.b' is assigned to itself.
+input.ts(15,1): error TS2304: Cannot find name 'a'.
+input.ts(15,3): error TS2304: Cannot find name 'b'.
+input.ts(15,12): error TS2304: Cannot find name 'a'.
+input.ts(15,14): error TS2304: Cannot find name 'b'.
+input.ts(16,17): error TS7008: Member '#field' implicitly has an 'any' type.
+input.ts(16,50): error TS19515: 'this.#field' is assigned to itself.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-self-assign": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (55 errors) ====
+    a = a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+        ~
+!!! error TS19515: 'a' is assigned to itself.
+    a &&= a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS19515: 'a' is assigned to itself.
+    a ||= a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS19515: 'a' is assigned to itself.
+    a ??= a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS19515: 'a' is assigned to itself.
+    a += a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+         ~
+!!! error TS2304: Cannot find name 'a'.
+    [a, ...b] = [a, ...b];
+     ~
+!!! error TS2304: Cannot find name 'a'.
+           ~
+!!! error TS2304: Cannot find name 'b'.
+                 ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS19515: 'a' is assigned to itself.
+                       ~
+!!! error TS2304: Cannot find name 'b'.
+                       ~
+!!! error TS19515: 'b' is assigned to itself.
+    [...a] = [...a, 1];
+        ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS2304: Cannot find name 'a'.
+    [x, a] = [...x, a];
+     ~
+!!! error TS2304: Cannot find name 'x'.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS2304: Cannot find name 'x'.
+                    ~
+!!! error TS2304: Cannot find name 'a'.
+    ({a, b} = {a, ...x, b});
+      ~
+!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+         ~
+!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+               ~
+!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+                     ~
+!!! error TS2304: Cannot find name 'x'.
+                        ~
+!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+                        ~
+!!! error TS19515: 'b' is assigned to itself.
+    ({a: {b}, c: [d]} = {a: {b}, c: [d]});
+          ~
+!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+                  ~
+!!! error TS2304: Cannot find name 'd'.
+                             ~
+!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+                             ~
+!!! error TS19515: 'b' is assigned to itself.
+                                     ~
+!!! error TS2304: Cannot find name 'd'.
+                                     ~
+!!! error TS19515: 'd' is assigned to itself.
+    ({['a']: b} = {a: b});
+             ~
+!!! error TS2304: Cannot find name 'b'.
+                      ~
+!!! error TS2304: Cannot find name 'b'.
+                      ~
+!!! error TS19515: 'b' is assigned to itself.
+    ({a = 1} = {a});
+      ~
+!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+                ~
+!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+    a.b = a['b'];
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~~~~~~
+!!! error TS19515: 'a['b']' is assigned to itself.
+    a.b = a?.b;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~~~~
+!!! error TS19515: 'a?.b' is assigned to itself.
+    a[b + 1] = a[b + 1];
+    ~
+!!! error TS2304: Cannot find name 'a'.
+      ~
+!!! error TS2304: Cannot find name 'b'.
+               ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS2304: Cannot find name 'b'.
+    class Example { #field; method() { this.#field = this.#field; } }
+                    ~~~~~~
+!!! error TS7008: Member '#field' implicitly has an 'any' type.
+                                                     ~~~~~~~~~~~
+!!! error TS19515: 'this.#field' is assigned to itself.

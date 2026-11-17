@@ -1,0 +1,29 @@
+/input.tsx(1,11): error TS19667: Unnecessarily computed property ['x'] found.
+/input.tsx(1,50): error TS2300: Duplicate identifier '['prototype']'.
+/input.tsx(1,50): error TS2699: Static property 'prototype' conflicts with built-in property 'Function.prototype' of constructor function 'C'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-computed-key": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    class C { ['x']() {} ['constructor']() {} static ['prototype']() {} }
+              ~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ['x'] found.
+                                                     ~~~~~~~~~~~~~
+!!! error TS2300: Duplicate identifier '['prototype']'.
+                                                     ~~~~~~~~~~~~~
+!!! error TS2699: Static property 'prototype' conflicts with built-in property 'Function.prototype' of constructor function 'C'.

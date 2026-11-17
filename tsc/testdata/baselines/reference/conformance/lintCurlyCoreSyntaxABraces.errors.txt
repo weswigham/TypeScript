@@ -1,0 +1,43 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,12): error TS2304: Cannot find name 'work'.
+/input.ts(1,12): error TS19224: Expected { after 'if' condition.
+/input.ts(1,25): error TS2304: Cannot find name 'other'.
+/input.ts(1,25): error TS22018: Expected { after 'else'.
+/input.ts(1,41): error TS2304: Cannot find name 'value'.
+/input.ts(1,48): error TS2304: Cannot find name 'work'.
+/input.ts(1,48): error TS19224: Expected { after 'while' condition.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "curly": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    if (value) work(); else other(); while (value) work();
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+               ~~~~
+!!! error TS2304: Cannot find name 'work'.
+               ~~~~~~~
+!!! error TS19224: Expected { after 'if' condition.
+                            ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                            ~~~~~~~~
+!!! error TS22018: Expected { after 'else'.
+                                            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                   ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                   ~~~~~~~
+!!! error TS19224: Expected { after 'while' condition.

@@ -1,0 +1,28 @@
+/input.ts(1,51): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+/input.ts(1,52): error TS1263: Declarations with initializers cannot also have definite assignment assertions.
+/input.ts(1,67): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class C { readonly a: number = 1; b?: number = 1; c!: number = 1; accessor d: number = 1; }
+                                                      ~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+                                                       ~
+!!! error TS1263: Declarations with initializers cannot also have definite assignment assertions.
+                                                                      ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.

@@ -1,0 +1,32 @@
+/input.ts(1,29): error TS24155: Returning an awaited value that is not a promise is not allowed.
+/input.ts(1,74): error TS24156: Returning an awaited promise is required in this context.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/return-await": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    async function f() { return await 1; } async function g() { try { return Promise.resolve(1); } catch {} }
+                                ~~~~~~~
+!!! error TS24155: Returning an awaited value that is not a promise is not allowed.
+                                                                             ~~~~~~~~~~~~~~~~~~
+!!! error TS24156: Returning an awaited promise is required in this context.
+    export {};

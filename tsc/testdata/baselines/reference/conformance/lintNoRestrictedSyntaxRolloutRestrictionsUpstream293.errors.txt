@@ -1,0 +1,28 @@
+/input.tsx(1,3): error TS24277: Using 'VariableDeclaration[kind='using']' is not allowed.
+/input.tsx(1,13): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "VariableDeclaration[kind='using']"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    { using x = foo(); }
+      ~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'VariableDeclaration[kind='using']' is not allowed.
+                ~~~
+!!! error TS2304: Cannot find name 'foo'.

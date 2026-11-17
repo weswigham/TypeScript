@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19503: Ternary operator used.
+/input.ts(1,7): error TS2304: Cannot find name 'bar'.
+/input.ts(1,13): error TS2304: Cannot find name 'baz'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-ternary": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    foo ? bar : baz
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~
+!!! error TS19503: Ternary operator used.
+          ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                ~~~
+!!! error TS2304: Cannot find name 'baz'.

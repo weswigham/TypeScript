@@ -1,0 +1,33 @@
+/input.tsx(1,9): error TS19668: Destructuring assignment foo unnecessarily renamed.
+/input.tsx(1,21): error TS2304: Cannot find name 'a'.
+/input.tsx(1,25): error TS19668: Destructuring assignment bar unnecessarily renamed.
+/input.tsx(1,40): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-rename": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (4 errors) ====
+    const { foo: foo = (a), 'bar': bar } = object;
+            ~~~~~~~~~~~~~~
+!!! error TS19668: Destructuring assignment foo unnecessarily renamed.
+                        ~
+!!! error TS2304: Cannot find name 'a'.
+                            ~~~~~~~~~~
+!!! error TS19668: Destructuring assignment bar unnecessarily renamed.
+                                           ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

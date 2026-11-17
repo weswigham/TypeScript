@@ -1,0 +1,28 @@
+/input.ts(1,4): error TS2304: Cannot find name 'a'.
+/input.ts(1,9): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+/input.ts(1,14): error TS1313: The body of an 'if' statement cannot be the empty statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if(a &= true);
+       ~
+!!! error TS2304: Cannot find name 'a'.
+            ~~~~
+!!! error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+                 ~
+!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

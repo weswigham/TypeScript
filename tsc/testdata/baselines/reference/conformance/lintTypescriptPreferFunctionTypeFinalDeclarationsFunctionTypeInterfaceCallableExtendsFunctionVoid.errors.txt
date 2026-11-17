@@ -1,0 +1,26 @@
+/input.ts(1,39): error TS24135: Interface only has a call signature, you should use a function type instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-function-type": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    interface Callable extends Function { (): void; }
+                                          ~~~~~~~~~
+!!! error TS24135: Interface only has a call signature, you should use a function type instead.

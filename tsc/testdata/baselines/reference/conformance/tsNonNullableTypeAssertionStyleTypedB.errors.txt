@@ -1,0 +1,13 @@
+input.ts(2,1): error TS20908: Use a ! assertion to more succinctly remove null and undefined from the type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true},"lint":{"rules":{"@typescript-eslint/non-nullable-type-assertion-style":"error"}}}
+==== input.ts (1 errors) ====
+    declare const nullable: string | null | undefined;
+    nullable as string;
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS20908: Use a ! assertion to more succinctly remove null and undefined from the type.
+    nullable as string | null;
+    nullable as any;
+    "literal" as const;

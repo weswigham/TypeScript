@@ -1,0 +1,40 @@
+input.ts(1,1): error TS20331: TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-import-type-side-effects": "error"
+            }
+        },
+        "files": ["input.ts", "dependency.d.ts"]
+    }
+    
+==== dependency.d.ts (0 errors) ====
+    declare module "coverage-types" {
+        export interface First {
+            first: number;
+        }
+        export interface Second {
+            second: string;
+        }
+        export const runtime: number;
+    }
+    
+==== input.ts (1 errors) ====
+    import { type First, type Second as Alias } from "coverage-types";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20331: TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import.
+    
+    import type { First as TopLevel } from "coverage-types";
+    import { type Second, runtime } from "coverage-types";
+    import "coverage-types";
+    
+    type Combined = First & Alias & TopLevel & Second;
+    runtime;

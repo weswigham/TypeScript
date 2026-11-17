@@ -1,0 +1,37 @@
+/input.tsx(1,10): error TS24267: '' import from 'foo' is restricted.
+/input.tsx(1,27): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    ""
+                                ],
+                                "name": "foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { '' as bar } from "foo";
+             ~~~~~~~~~
+!!! error TS24267: '' import from 'foo' is restricted.
+                              ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

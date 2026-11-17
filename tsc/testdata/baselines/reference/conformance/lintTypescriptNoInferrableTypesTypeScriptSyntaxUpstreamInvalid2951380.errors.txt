@@ -1,0 +1,27 @@
+/input.ts(1,7): error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+/input.ts(1,27): error TS2304: Cannot find name 'someValue'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const a: undefined = void someValue;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+                              ~~~~~~~~~
+!!! error TS2304: Cannot find name 'someValue'.

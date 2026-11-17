@@ -1,0 +1,25 @@
+/input.ts(1,40): error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
+/input.ts(1,40): error TS24208: Unexpected 'super()' because 'super' is not a constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends null { constructor() { super(); } }
+                                           ~~~~~~~
+!!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
+                                           ~~~~~~~
+!!! error TS24208: Unexpected 'super()' because 'super' is not a constructor.

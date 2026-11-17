@@ -1,0 +1,24 @@
+/input.ts(1,8): error TS19517: Do not throw undefined.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/only-throw-error": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    throw (undefined);
+           ~~~~~~~~~
+!!! error TS19517: Do not throw undefined.

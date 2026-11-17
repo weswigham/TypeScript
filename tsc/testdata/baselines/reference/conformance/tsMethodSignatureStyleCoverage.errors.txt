@@ -1,0 +1,36 @@
+input.ts(2,5): error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+input.ts(5,5): error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+input.ts(8,5): error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/method-signature-style": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    interface InvalidMethod {
+        run(value: number): void;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+    }
+    type InvalidTypeMethod = {
+        map<Value>(value: Value): Value;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+    };
+    interface PolymorphicThis {
+        chain(): this;
+        ~~~~~~~~~~~~~~
+!!! error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+    }
+    interface ValidProperty {
+        run: (value: number) => void;
+        readonly read: () => number;
+    }
+    class ValidClassMethod {
+        run(value: number): number { return value; }
+    }
+    export {};

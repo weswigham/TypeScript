@@ -1,0 +1,27 @@
+/input.ts(1,1): error TS19000: Unexpected alert.
+/input.ts(1,23): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-alert": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    alert(); { let alert; alert(); }
+    ~~~~~~~
+!!! error TS19000: Unexpected alert.
+                          ~~~~~
+!!! error TS2722: Cannot invoke an object which is possibly 'undefined'.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

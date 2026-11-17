@@ -1,0 +1,29 @@
+input.ts(2,5): error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+input.ts(6,5): error TS24003: Unexpected `for await...of` of a value that is not async iterable.
+input.ts(7,28): error TS24001: Unexpected `await using` of a value that is not async disposable.
+input.ts(9,14): error TS24004: Unexpected iterable of non-Promise (non-"Thenable") values passed to promise aggregator.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/await-thenable": "error" } }
+    }
+==== input.ts (4 errors) ====
+    async function check<T>(value: T) {
+        await 1;
+        ~~~~~~~
+!!! error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+        await value;
+        await Promise.resolve(1);
+        await { then(resolve: (value: number) => void) { resolve(1); } };
+        for await (const item of [1, 2]) {}
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24003: Unexpected `for await...of` of a value that is not async iterable.
+        await using resource = { [Symbol.dispose]() {} };
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24001: Unexpected `await using` of a value that is not async disposable.
+    }
+    Promise.all([1, Promise.resolve(2)]);
+                 ~
+!!! error TS24004: Unexpected iterable of non-Promise (non-"Thenable") values passed to promise aggregator.
+    export {};

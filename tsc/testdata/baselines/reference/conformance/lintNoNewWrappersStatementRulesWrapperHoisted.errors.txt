@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS2304: Cannot find name 'foo'.
+/input.ts(1,40): error TS2403: Subsequent variable declarations must have the same type.  Variable 'Boolean' must be of type 'BooleanConstructor', but here has type 'any'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new-wrappers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (foo) { new Boolean(); } else { var Boolean; }
+        ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                           ~~~~~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'Boolean' must be of type 'BooleanConstructor', but here has type 'any'.
+!!! related TS6203 lib.es5.d.ts:--:--: 'Boolean' was also declared here.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

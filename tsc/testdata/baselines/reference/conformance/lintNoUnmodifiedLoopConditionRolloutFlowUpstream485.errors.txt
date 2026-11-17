@@ -1,0 +1,43 @@
+/input.ts(1,21): error TS18048: 'a' is possibly 'undefined'.
+/input.ts(1,25): error TS18048: 'c' is possibly 'undefined'.
+/input.ts(1,30): error TS18048: 'b' is possibly 'undefined'.
+/input.ts(1,30): error TS24280: 'b' is not modified in this loop.
+/input.ts(1,34): error TS18048: 'c' is possibly 'undefined'.
+/input.ts(1,34): error TS24280: 'c' is not modified in this loop.
+/input.ts(1,41): error TS18048: 'a' is possibly 'undefined'.
+/input.ts(1,46): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    var a, b, c; while (a < c && b < c) { ++a; } foo = 1;
+                        ~
+!!! error TS18048: 'a' is possibly 'undefined'.
+                            ~
+!!! error TS18048: 'c' is possibly 'undefined'.
+                                 ~
+!!! error TS18048: 'b' is possibly 'undefined'.
+                                 ~
+!!! error TS24280: 'b' is not modified in this loop.
+                                     ~
+!!! error TS18048: 'c' is possibly 'undefined'.
+                                     ~
+!!! error TS24280: 'c' is not modified in this loop.
+                                            ~
+!!! error TS18048: 'a' is possibly 'undefined'.
+                                                 ~~~
+!!! error TS2304: Cannot find name 'foo'.

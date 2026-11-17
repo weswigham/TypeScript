@@ -1,0 +1,71 @@
+input.ts(1,1): error TS24277: Keep signatures small. {{selector}}
+input.ts(1,18): error TS7006: Parameter 'a' implicitly has an 'any' type.
+input.ts(1,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
+input.ts(1,24): error TS7006: Parameter 'c' implicitly has an 'any' type.
+input.ts(1,29): error TS24277: Using 'CallExpression[callee.name='eval']' is not allowed.
+input.ts(2,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+input.ts(2,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+input.ts(2,24): error TS2304: Cannot find name 'safe'.
+input.ts(3,26): error TS24277: Using 'Property > Literal.key' is not allowed.
+input.ts(4,19): error TS24277: Using 'BreakStatement[label]' is not allowed.
+input.ts(6,15): error TS24277: Using 'Literal[regex.flags=/i/]' is not allowed.
+input.ts(8,1): error TS24277: Using '[optional=true]' is not allowed.
+input.ts(8,1): error TS24277: Using '[optional=true]' is not allowed.
+input.ts(8,9): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+input.ts(9,3): error TS24277: Using 'VariableDeclaration[kind='using']' is not allowed.
+input.ts(9,20): error TS2304: Cannot find name 'acquire'.
+input.ts(10,25): error TS24277: Using 'VariableDeclaration[kind='await using']' is not allowed.
+input.ts(10,48): error TS2304: Cannot find name 'acquire'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-syntax":["error","CallExpression[callee.name='eval']",{"selector":"FunctionDeclaration[params.length>2]","message":"Keep signatures small. {{selector}}"},"Property > Literal.key","BreakStatement[label]","Literal[regex.flags=/i/]","[optional=true]","VariableDeclaration[kind='using']","VariableDeclaration[kind='await using']"]}},"files":["input.ts"]}
+==== input.ts (18 errors) ====
+    function tooMany(a, b, c) { eval(a); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Keep signatures small. {{selector}}
+                     ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                        ~
+!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
+                           ~
+!!! error TS7006: Parameter 'c' implicitly has an 'any' type.
+                                ~~~~~~~
+!!! error TS24277: Using 'CallExpression[callee.name='eval']' is not allowed.
+    function small(a, b) { safe(a); }
+                   ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                      ~
+!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
+                           ~~~~
+!!! error TS2304: Cannot find name 'safe'.
+    const object = { foo: 1, "bar": 2 };
+                             ~~~~~
+!!! error TS24277: Using 'Property > Literal.key' is not allowed.
+    outer: for (;;) { break outer; }
+                      ~~~~~~~~~~~~
+!!! error TS24277: Using 'BreakStatement[label]' is not allowed.
+    for (;;) { break; }
+    const regex = /value/i;
+                  ~~~~~~~~
+!!! error TS24277: Using 'Literal[regex.flags=/i/]' is not allowed.
+    const plain = /value/;
+    object?.foo?.();
+    ~~~~~~~~~~~
+!!! error TS24277: Using '[optional=true]' is not allowed.
+    ~~~~~~~~~~~~~~~
+!!! error TS24277: Using '[optional=true]' is not allowed.
+            ~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Number' has no call signatures.
+    { using resource = acquire(); }
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'VariableDeclaration[kind='using']' is not allowed.
+                       ~~~~~~~
+!!! error TS2304: Cannot find name 'acquire'.
+    async function task() { await using resource = acquire(); }
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'VariableDeclaration[kind='await using']' is not allowed.
+                                                   ~~~~~~~
+!!! error TS2304: Cannot find name 'acquire'.

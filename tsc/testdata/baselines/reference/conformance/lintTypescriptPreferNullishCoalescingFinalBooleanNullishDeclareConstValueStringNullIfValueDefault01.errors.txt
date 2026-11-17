@@ -1,0 +1,28 @@
+/input.ts(1,47): error TS24140: Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-nullish-coalescing": [
+                    "error",
+                    {
+                        "ignoreConditionalTests": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: string | null; if (value || 'default') {}
+                                                  ~~
+!!! error TS24140: Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.

@@ -1,0 +1,34 @@
+/input.tsx(3,3): error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    const o = {
+      ...new Map([
+      ~~~~~~~~~~~~
+        ['test-1', 1],
+    ~~~~~~~~~~~~~~~~~~
+        ['test-2', 2],
+    ~~~~~~~~~~~~~~~~~~
+      ]),
+    ~~~~
+!!! error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
+    };
+          

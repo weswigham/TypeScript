@@ -1,0 +1,28 @@
+/input.ts(1,23): error TS2304: Cannot find name 'ok'.
+/input.ts(1,29): error TS24305: Unexpected var, use let or const instead.
+/input.ts(1,36): error TS2304: Cannot find name 'consume'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function f() { while (ok) { var x; consume(x); } }
+                          ~~
+!!! error TS2304: Cannot find name 'ok'.
+                                ~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.
+                                       ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.

@@ -1,0 +1,28 @@
+/input.ts(1,26): error TS2304: Cannot find name 'value'.
+/input.ts(1,43): error TS24304: Unnecessary return statement.
+/input.ts(1,67): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function run() { switch (value) { case 1: return; break; default: work(); } }
+                             ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                              ~~~~~~~
+!!! error TS24304: Unnecessary return statement.
+                                                                      ~~~~
+!!! error TS2304: Cannot find name 'work'.

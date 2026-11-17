@@ -1,0 +1,43 @@
+/input.ts(2,27): error TS24345: Expected object keys to be in natural insensitive ascending order. 'alpha' should be before 'beta'.
+/input.ts(2,40): error TS2304: Cannot find name 'source'.
+/input.ts(2,60): error TS24345: Expected object keys to be in natural insensitive ascending order. 'item2' should be before 'item10'.
+/input.ts(3,24): error TS24345: Expected object keys to be in natural insensitive ascending order. 'a' should be before 'Z'.
+/input.ts(4,27): error TS2304: Cannot find name 'key'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": [
+                    "error",
+                    "asc",
+                    {
+                        "allowLineSeparatedGroups": true,
+                        "caseSensitive": false,
+                        "ignoreComputedKeys": true,
+                        "natural": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    
+    const object = { beta: 1, alpha: 2, ...source, item10: 10, item2: 2 };
+                              ~~~~~
+!!! error TS24345: Expected object keys to be in natural insensitive ascending order. 'alpha' should be before 'beta'.
+                                           ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                                               ~~~~~
+!!! error TS24345: Expected object keys to be in natural insensitive ascending order. 'item2' should be before 'item10'.
+    const nested = { Z: 1, a: 2 };
+                           ~
+!!! error TS24345: Expected object keys to be in natural insensitive ascending order. 'a' should be before 'Z'.
+    const computed = { c: 1, [key]: 2, b: 3 };
+                              ~~~
+!!! error TS2304: Cannot find name 'key'.

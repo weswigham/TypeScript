@@ -1,0 +1,25 @@
+/input.ts(1,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
+/input.ts(1,17): error TS24305: Unexpected var, use let or const instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f(x) { var x; }
+               ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+                    ~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.

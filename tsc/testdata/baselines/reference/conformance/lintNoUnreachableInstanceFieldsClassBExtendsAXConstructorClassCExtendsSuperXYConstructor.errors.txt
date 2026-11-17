@@ -1,0 +1,37 @@
+/input.ts(1,17): error TS2304: Cannot find name 'A'.
+/input.ts(1,21): error TS7008: Member 'x' implicitly has an 'any' type.
+/input.ts(1,64): error TS2339: Property 'x' does not exist on type 'void'.
+/input.ts(1,68): error TS7008: Member 'y' implicitly has an 'any' type.
+/input.ts(1,68): error TS24283: Unreachable code.
+/input.ts(1,71): error TS2377: Constructors for derived classes must contain a 'super' call.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    class B extends A { x; constructor() { class C extends super().x { y; constructor() {} } } }
+                    ~
+!!! error TS2304: Cannot find name 'A'.
+                        ~
+!!! error TS7008: Member 'x' implicitly has an 'any' type.
+                                                                   ~
+!!! error TS2339: Property 'x' does not exist on type 'void'.
+                                                                       ~
+!!! error TS7008: Member 'y' implicitly has an 'any' type.
+                                                                       ~~
+!!! error TS24283: Unreachable code.
+                                                                          ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.

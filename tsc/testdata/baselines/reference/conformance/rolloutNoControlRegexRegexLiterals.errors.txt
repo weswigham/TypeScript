@@ -1,0 +1,24 @@
+input.ts(1,17): error TS24225: Unexpected control character(s) in regular expression: \x00, \x1f.
+input.ts(3,21): error TS24225: Unexpected control character(s) in regular expression: \x01.
+input.ts(4,8): error TS24225: Unexpected control character(s) in regular expression: \x02.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-control-regex": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    const escaped = /\x00\u001f/;
+                    ~~~~~~~~~~~~
+!!! error TS24225: Unexpected control character(s) in regular expression: \x00, \x1f.
+    const conventional = /\n\t\cA/;
+    const unicodeSets = /[\q{\x01|ab}]/v;
+                        ~~~~~~~~~~~~~~~~
+!!! error TS24225: Unexpected control character(s) in regular expression: \x01.
+    RegExp("\\x02");
+           ~~~~~~~
+!!! error TS24225: Unexpected control character(s) in regular expression: \x02.
+    function shadowed(RegExp: Function) { RegExp("\\x03"); }

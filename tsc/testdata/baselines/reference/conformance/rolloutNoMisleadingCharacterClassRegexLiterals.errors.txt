@@ -1,0 +1,31 @@
+input.ts(1,18): error TS24240: Unexpected surrogate pair in character class. Use 'u' flag.
+input.ts(2,20): error TS24242: Unexpected combined character in character class.
+input.ts(3,20): error TS24243: Unexpected modified Emoji in character class.
+input.ts(4,16): error TS24244: Unexpected national flag in character class.
+input.ts(5,18): error TS24245: Unexpected joined character sequence in character class.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-misleading-character-class": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (5 errors) ====
+    const legacy = /[\uD83D\uDE00]/;
+                     ~~~~~~~~~~~~
+!!! error TS24240: Unexpected surrogate pair in character class. Use 'u' flag.
+    const combined = /[a\u0301]/u;
+                       ~~~~~~~
+!!! error TS24242: Unexpected combined character in character class.
+    const modifier = /[\u{1f44d}\u{1f3fb}]/u;
+                       ~~~~~~~~~~~~~~~~~~
+!!! error TS24243: Unexpected modified Emoji in character class.
+    const flag = /[\u{1f1fa}\u{1f1f8}]/v;
+                   ~~~~~~~~~~~~~~~~~~
+!!! error TS24244: Unexpected national flag in character class.
+    const joined = /[a\u200db]/u;
+                     ~~~~~~~~
+!!! error TS24245: Unexpected joined character sequence in character class.
+    const safe = /[\uD83D\uDE00]/u;

@@ -1,0 +1,36 @@
+/input.ts(1,5): error TS7034: Variable 'foo' implicitly has type 'any' in some locations where its type cannot be determined.
+/input.ts(1,37): error TS2304: Cannot find name 'bar'.
+/input.ts(1,47): error TS2304: Cannot find name 'something'.
+/input.ts(1,58): error TS7005: Variable 'foo' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    let foo; async function x() { foo = bar(await something, foo) }
+        ~~~
+!!! error TS7034: Variable 'foo' implicitly has type 'any' in some locations where its type cannot be determined.
+                                        ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                                                  ~~~~~~~~~
+!!! error TS2304: Cannot find name 'something'.
+                                                             ~~~
+!!! error TS7005: Variable 'foo' implicitly has an 'any' type.

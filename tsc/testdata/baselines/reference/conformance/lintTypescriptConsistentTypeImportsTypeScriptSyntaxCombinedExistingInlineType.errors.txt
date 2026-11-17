@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
+/input.ts(1,35): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (2 errors) ====
+    import A, { type B, C as D } from 'x'; let a: A; let d: D;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
+                                      ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.

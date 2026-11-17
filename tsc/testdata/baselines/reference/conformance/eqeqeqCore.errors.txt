@@ -1,0 +1,61 @@
+input.ts(1,1): error TS2304: Cannot find name 'left'.
+input.ts(1,6): error TS19254: Expected '===' and instead saw '=='.
+input.ts(1,9): error TS2304: Cannot find name 'right'.
+input.ts(2,1): error TS2304: Cannot find name 'left'.
+input.ts(2,6): error TS19254: Expected '!==' and instead saw '!='.
+input.ts(3,8): error TS2304: Cannot find name 'left'.
+input.ts(3,13): error TS19254: Expected '===' and instead saw '=='.
+input.ts(4,1): error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
+input.ts(4,3): error TS19254: Expected '!==' and instead saw '!='.
+input.ts(5,1): error TS2367: This comparison appears to be unintentional because the types '"first"' and '"second"' have no overlap.
+input.ts(5,9): error TS19254: Expected '===' and instead saw '=='.
+input.ts(6,1): error TS2304: Cannot find name 'left'.
+input.ts(6,10): error TS2304: Cannot find name 'right'.
+input.ts(7,8): error TS2304: Cannot find name 'left'.
+input.ts(7,24): error TS19254: Expected '===' and instead saw '=='.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "eqeqeq": "error" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (15 errors) ====
+    left == right;
+    ~~~~
+!!! error TS2304: Cannot find name 'left'.
+         ~~
+!!! error TS19254: Expected '===' and instead saw '=='.
+            ~~~~~
+!!! error TS2304: Cannot find name 'right'.
+    left != null;
+    ~~~~
+!!! error TS2304: Cannot find name 'left'.
+         ~~
+!!! error TS19254: Expected '!==' and instead saw '!='.
+    typeof left == "string";
+           ~~~~
+!!! error TS2304: Cannot find name 'left'.
+                ~~
+!!! error TS19254: Expected '===' and instead saw '=='.
+    1 != 2;
+    ~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
+      ~~
+!!! error TS19254: Expected '!==' and instead saw '!='.
+    "first" == `second`;
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '"first"' and '"second"' have no overlap.
+            ~~
+!!! error TS19254: Expected '===' and instead saw '=='.
+    left === right;
+    ~~~~
+!!! error TS2304: Cannot find name 'left'.
+             ~~~~~
+!!! error TS2304: Cannot find name 'right'.
+    typeof left /* Keep */ == "string";
+           ~~~~
+!!! error TS2304: Cannot find name 'left'.
+                           ~~
+!!! error TS19254: Expected '===' and instead saw '=='.

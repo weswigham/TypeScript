@@ -1,0 +1,31 @@
+/input.ts(1,11): error TS2304: Cannot find name 'Type'.
+/input.ts(1,26): error TS2304: Cannot find name 'Type'.
+/input.ts(1,32): error TS2304: Cannot find name 'first'.
+/input.ts(1,39): error TS2304: Cannot find name 'second'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-array-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    new Array<Type>(); Array<Type>(first, second);
+              ~~~~
+!!! error TS2304: Cannot find name 'Type'.
+                             ~~~~
+!!! error TS2304: Cannot find name 'Type'.
+                                   ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                          ~~~~~~
+!!! error TS2304: Cannot find name 'second'.

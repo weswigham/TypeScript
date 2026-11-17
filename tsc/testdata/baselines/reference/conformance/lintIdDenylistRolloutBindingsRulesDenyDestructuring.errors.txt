@@ -1,0 +1,28 @@
+/input.ts(1,26): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,54): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-denylist": [
+                    "error",
+                    "bad"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const {bad: good, other: bad, nested: {bad: fine}} = source;
+                             ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+                                                         ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

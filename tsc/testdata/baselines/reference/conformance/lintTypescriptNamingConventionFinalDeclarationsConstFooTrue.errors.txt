@@ -1,0 +1,36 @@
+/module.ts(1,68): error TS24019: Variable name `value` must match the RegExp: /(?<=f)oo$/u
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/naming-convention": [
+                    "error",
+                    {
+                        "custom": {
+                            "match": true,
+                            "regex": "(?<=f)oo$"
+                        },
+                        "format": null,
+                        "selector": "variable"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (1 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+                                                                       ~~~~~
+!!! error TS24019: Variable name `value` must match the RegExp: /(?<=f)oo$/u
+==== /input.ts (0 errors) ====
+    const foo = true;

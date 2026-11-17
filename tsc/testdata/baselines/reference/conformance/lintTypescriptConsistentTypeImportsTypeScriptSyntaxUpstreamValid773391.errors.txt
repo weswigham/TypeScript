@@ -1,0 +1,42 @@
+/input.tsx(2,26): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+/input.tsx(5,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+/tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+/tsconfig.json(6,9): error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+
+
+==== /tsconfig.json (2 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "jsxFragmentFactory": "Fragment",
+            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    
+    import { Fragment } from 'react';
+                             ~~~~~~~
+!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
+    
+    export const ComponentFoo: Fragment = () => {
+      return <>Foo Foo</>;
+             ~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+    };
+              

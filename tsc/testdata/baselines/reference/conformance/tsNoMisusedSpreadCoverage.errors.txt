@@ -1,0 +1,71 @@
+input.ts(1,23): error TS24061: Using the spread operator on a string can mishandle special characters, as can `.split("")`.
+- `...` produces Unicode code points, which will decompose complex emojis into individual emojis
+- .split("") produces UTF-16 code units, which breaks rich characters in many languages
+Consider using `Intl.Segmenter` for locale-aware string decomposition.
+Otherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option.
+input.ts(2,23): error TS24054: Using the spread operator on an array in an object will result in a list of indices.
+input.ts(3,21): error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
+input.ts(4,21): error TS24058: Using the spread operator on an Iterable in an object can cause unexpected behavior.
+input.ts(5,26): error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
+input.ts(9,26): error TS24056: Using the spread operator on class instances will lose their class prototype.
+input.ts(10,23): error TS24055: Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype.
+input.ts(12,14): error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (8 errors) ====
+    const spreadString = [..."abc"];
+                          ~~~~~~~~
+!!! error TS24061: Using the spread operator on a string can mishandle special characters, as can `.split("")`.
+!!! error TS24061: - `...` produces Unicode code points, which will decompose complex emojis into individual emojis
+!!! error TS24061: - .split("") produces UTF-16 code units, which breaks rich characters in many languages
+!!! error TS24061: Consider using `Intl.Segmenter` for locale-aware string decomposition.
+!!! error TS24061: Otherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option.
+    const spreadArray = { ...[1, 2] };
+                          ~~~~~~~~~
+!!! error TS24054: Using the spread operator on an array in an object will result in a list of indices.
+    const spreadMap = { ...new Map<string, number>() };
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
+    const spreadSet = { ...new Set<number>() };
+                        ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24058: Using the spread operator on an Iterable in an object can cause unexpected behavior.
+    const spreadFunction = { ...(() => 1) };
+                             ~~~~~~~~~~~~
+!!! error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
+    class Shape {
+        value = 1;
+    }
+    const spreadInstance = { ...new Shape() };
+                             ~~~~~~~~~~~~~~
+!!! error TS24056: Using the spread operator on class instances will lose their class prototype.
+    const spreadClass = { ...Shape };
+                          ~~~~~~~~
+!!! error TS24055: Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype.
+    async function spreadPromise() {
+        return { ...Promise.resolve(1) };
+                 ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+    }
+    
+    const copyArray = [...[1, 2]];
+    const copyObject = { ...{ value: 1 } };
+    declare const thenable: PromiseLike<number>;
+    const copyThenable = { ...thenable };
+    function assignedFunction() {}
+    assignedFunction.value = 1;
+    const copyFunctionProperties = { ...assignedFunction };

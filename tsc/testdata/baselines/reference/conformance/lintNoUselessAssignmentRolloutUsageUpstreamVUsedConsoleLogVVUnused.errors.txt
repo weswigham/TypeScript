@@ -1,0 +1,35 @@
+/input.ts(1,1): error TS2304: Cannot find name 'v'.
+/input.ts(2,21): error TS2304: Cannot find name 'v'.
+/input.ts(3,9): error TS2304: Cannot find name 'v'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    v = 'used';
+    ~
+!!! error TS2304: Cannot find name 'v'.
+            console.log(v);
+                        ~
+!!! error TS2304: Cannot find name 'v'.
+            v = 'unused'
+            ~
+!!! error TS2304: Cannot find name 'v'.

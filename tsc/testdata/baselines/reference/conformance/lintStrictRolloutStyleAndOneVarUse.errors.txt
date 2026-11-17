@@ -1,0 +1,22 @@
+/input.ts(1,1): error TS24350: Strict mode is not permitted.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    'use strict';
+    ~~~~~~~~~~~~~
+!!! error TS24350: Strict mode is not permitted.

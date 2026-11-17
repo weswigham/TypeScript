@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS24010: Type export Shape is not a value and should be exported using `export type`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-exports": [
+                    "error",
+                    {
+                        "fixMixedExportsWithInlineTypeSpecifier": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    export { Shape, value } from './module';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24010: Type export Shape is not a value and should be exported using `export type`.

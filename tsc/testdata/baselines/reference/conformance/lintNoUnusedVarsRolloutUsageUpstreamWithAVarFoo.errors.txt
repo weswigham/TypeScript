@@ -1,0 +1,36 @@
+/input.ts(1,1): error TS1101: 'with' statements are not allowed in strict mode.
+/input.ts(1,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
+/input.ts(1,7): error TS2304: Cannot find name 'a'.
+/input.ts(1,14): error TS24290: 'foo' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    with (a) var foo;
+    ~~~~
+!!! error TS1101: 'with' statements are not allowed in strict mode.
+    ~~~~~~~~
+!!! error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~~~
+!!! error TS24290: 'foo' is defined but never used.

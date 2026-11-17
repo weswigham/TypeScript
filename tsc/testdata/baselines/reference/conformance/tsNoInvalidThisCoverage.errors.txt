@@ -1,0 +1,42 @@
+input.ts(4,12): error TS21310: Unexpected 'this'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "noImplicitThis": false,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-invalid-this": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    export {};
+    
+    function invalidThis() {
+        return this;
+               ~~~~
+!!! error TS21310: Unexpected 'this'.
+    }
+    
+    function explicitThis(this: object) {
+        return this;
+    }
+    const receiver = {
+        method() {
+            return this;
+        },
+    };
+    class Instance {
+        self = this;
+        method() {
+            return this;
+        }
+    }

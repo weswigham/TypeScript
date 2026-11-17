@@ -1,0 +1,24 @@
+/project/src/input.ts(1,86): error TS24153: Returning an awaited promise is not allowed in this context.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/return-await": "error"
+            }
+        },
+        "files": [
+            "src/input.ts"
+        ]
+    }
+==== /project/src/input.ts (1 errors) ====
+    async function f(k: number) { switch(k) { case 0: { using r = null; } case 1: return await Promise.resolve(1); } }
+                                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24153: Returning an awaited promise is not allowed in this context.
+    export {};

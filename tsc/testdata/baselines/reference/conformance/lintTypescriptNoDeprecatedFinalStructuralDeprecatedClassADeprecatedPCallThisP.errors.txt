@@ -1,0 +1,24 @@
+/input.ts(1,59): error TS24031: `#p` is deprecated.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class A { /** @deprecated */ #p = () => {}; call() { this.#p(); } }
+                                                              ~~
+!!! error TS24031: `#p` is deprecated.

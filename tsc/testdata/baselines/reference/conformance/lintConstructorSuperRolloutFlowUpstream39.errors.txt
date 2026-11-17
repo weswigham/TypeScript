@@ -1,0 +1,44 @@
+/input.ts(2,29): error TS2304: Cannot find name 'B'.
+/input.ts(3,29): error TS7006: Parameter 'props' implicitly has an 'any' type.
+/input.ts(7,29): error TS7034: Variable 'arr' implicitly has type 'any[]' in some locations where its type cannot be determined.
+/input.ts(8,39): error TS7005: Variable 'arr' implicitly has an 'any[]' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+                class A extends B {
+                                ~
+!!! error TS2304: Cannot find name 'B'.
+                    constructor(props) {
+                                ~~~~~
+!!! error TS7006: Parameter 'props' implicitly has an 'any' type.
+                        super(props);
+    
+                        try {
+                            let arr = [];
+                                ~~~
+!!! error TS7034: Variable 'arr' implicitly has type 'any[]' in some locations where its type cannot be determined.
+                            for (let a of arr) {
+                                          ~~~
+!!! error TS7005: Variable 'arr' implicitly has an 'any[]' type.
+                            }
+                        } catch (err) {
+                        }
+                    }
+                }
+            

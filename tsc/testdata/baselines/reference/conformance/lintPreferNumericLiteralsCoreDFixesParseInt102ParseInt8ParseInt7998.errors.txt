@@ -1,0 +1,29 @@
+/input.tsx(1,1): error TS19672: Use binary literals instead of parseInt().
+/input.tsx(1,21): error TS19672: Use octal literals instead of parseInt().
+/input.tsx(1,38): error TS19672: Use octal literals instead of parseInt().
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-numeric-literals": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    parseInt('1_0', 2); parseInt('', 8); parseInt('799', 8);
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of parseInt().
+                        ~~~~~~~~~~~~~~~
+!!! error TS19672: Use octal literals instead of parseInt().
+                                         ~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use octal literals instead of parseInt().

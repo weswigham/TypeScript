@@ -1,0 +1,23 @@
+input.ts(1,1): error TS19212: Comments should not begin with a lowercase character.
+input.ts(2,15): error TS19212: Comments should not begin with a lowercase character.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "capitalized-comments": ["error", "always", { "ignorePattern": "todo" }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (2 errors) ====
+    // lowercase
+    ~~~~~~~~~~~~
+!!! error TS19212: Comments should not begin with a lowercase character.
+    const value = /* lowercase */ 1;
+                  ~~~~~~~~~~~~~~~
+!!! error TS19212: Comments should not begin with a lowercase character.
+    /* Uppercase */
+    // todo: ignored
+    // eslint-disable-next-line
+    // https://example.com
+    /** @param value The value. */
+    function inspect(value: number) { return value; }

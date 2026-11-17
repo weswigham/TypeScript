@@ -1,0 +1,33 @@
+/input.ts(1,13): error TS2304: Cannot find name 'second'.
+/input.ts(1,13): error TS19372: Unexpected chained assignment.
+/input.ts(1,33): error TS2304: Cannot find name 'second'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-multi-assign": [
+                    "error",
+                    {
+                        "ignoreNonDeclaration": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    let first = second = 1; first = second = 1;
+                ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                ~~~~~~~~~~
+!!! error TS19372: Unexpected chained assignment.
+                                    ~~~~~~
+!!! error TS2304: Cannot find name 'second'.

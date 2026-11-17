@@ -1,0 +1,30 @@
+input.ts(2,5): error TS24135: Interface only has a call signature, you should use a function type instead.
+input.ts(4,27): error TS24135: Type literal only has a call signature, you should use a function type instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-function-type": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    interface Callable {
+        (value: string): number;
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24135: Interface only has a call signature, you should use a function type instead.
+    }
+    type OptionalCallable = { (value: string): number } | undefined;
+                              ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24135: Type literal only has a call signature, you should use a function type instead.
+    
+    type FunctionType = (value: string) => number;
+    interface Overloaded {
+        (): void;
+        (value: string): void;
+    }
+    interface WithProperty {
+        (value: string): number;
+        label: string;
+    }

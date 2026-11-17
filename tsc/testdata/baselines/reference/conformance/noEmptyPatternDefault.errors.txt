@@ -1,0 +1,84 @@
+input.ts(2,5): error TS22041: Unexpected empty object pattern.
+input.ts(3,5): error TS22041: Unexpected empty array pattern.
+input.ts(4,17): error TS22041: Unexpected empty object pattern.
+input.ts(5,17): error TS22041: Unexpected empty array pattern.
+input.ts(6,20): error TS22041: Unexpected empty object pattern.
+input.ts(7,27): error TS22041: Unexpected empty object pattern.
+input.ts(8,16): error TS22041: Unexpected empty array pattern.
+input.ts(9,2): error TS22041: Unexpected empty object pattern.
+input.ts(10,2): error TS22041: Unexpected empty array pattern.
+input.ts(11,14): error TS22041: Unexpected empty object pattern.
+input.ts(12,14): error TS22041: Unexpected empty array pattern.
+input.ts(13,2): error TS22041: Unexpected empty object pattern.
+input.ts(14,6): error TS22041: Unexpected empty object pattern.
+input.ts(15,6): error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
+input.ts(15,6): error TS22041: Unexpected empty array pattern.
+input.ts(16,15): error TS2571: Object is of type 'unknown'.
+input.ts(16,15): error TS22041: Unexpected empty object pattern.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-empty-pattern": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (17 errors) ====
+    declare const source: any;
+    let {} = source;
+        ~~
+!!! error TS22041: Unexpected empty object pattern.
+    let [] = source;
+        ~~
+!!! error TS22041: Unexpected empty array pattern.
+    let { property: {} } = source;
+                    ~~
+!!! error TS22041: Unexpected empty object pattern.
+    let { property: [] } = source;
+                    ~~
+!!! error TS22041: Unexpected empty array pattern.
+    function parameter({}) {}
+                       ~~
+!!! error TS22041: Unexpected empty object pattern.
+    function defaultParameter({} = {}) {}
+                              ~~
+!!! error TS22041: Unexpected empty object pattern.
+    const arrow = ([]) => {};
+                   ~~
+!!! error TS22041: Unexpected empty array pattern.
+    ({} = source);
+     ~~
+!!! error TS22041: Unexpected empty object pattern.
+    ([] = source);
+     ~~
+!!! error TS22041: Unexpected empty array pattern.
+    ({ property: {} } = source);
+                 ~~
+!!! error TS22041: Unexpected empty object pattern.
+    ({ property: [] = [] } = source);
+                 ~~
+!!! error TS22041: Unexpected empty array pattern.
+    [{}] = source;
+     ~~
+!!! error TS22041: Unexpected empty object pattern.
+    for ({} of source) {}
+         ~~
+!!! error TS22041: Unexpected empty object pattern.
+    for ([] in source) {}
+         ~~
+!!! error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
+         ~~
+!!! error TS22041: Unexpected empty array pattern.
+    try {} catch ({}) {}
+                  ~~
+!!! error TS2571: Object is of type 'unknown'.
+                  ~~
+!!! error TS22041: Unexpected empty object pattern.
+    let { value = {} } = source;
+    let { other = [] } = source;
+    let [,] = source;
+    let [,,] = source;
+    const object = {};
+    const array = [];
+    function valid({ value = {} }, [other = []]) {}

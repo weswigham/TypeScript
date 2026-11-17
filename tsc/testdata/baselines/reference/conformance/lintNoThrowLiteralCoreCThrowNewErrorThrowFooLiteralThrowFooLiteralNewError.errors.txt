@@ -1,0 +1,25 @@
+/input.ts(1,26): error TS2304: Cannot find name 'foo'.
+/input.ts(1,51): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-throw-literal": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    throw new Error(); throw foo ||= 'literal'; throw foo ? 'literal' : new Error();
+                             ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                      ~~~
+!!! error TS2304: Cannot find name 'foo'.

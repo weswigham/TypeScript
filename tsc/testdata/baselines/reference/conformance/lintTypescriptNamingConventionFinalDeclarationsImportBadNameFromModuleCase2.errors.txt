@@ -1,0 +1,29 @@
+/input.ts(1,8): error TS1192: Module '"/module"' has no default export.
+/input.ts(1,8): error TS24015: Import name `bad_name` must match one of the following formats: camelCase, PascalCase
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/naming-convention": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (2 errors) ====
+    import bad_name from './module';
+           ~~~~~~~~
+!!! error TS1192: Module '"/module"' has no default export.
+           ~~~~~~~~
+!!! error TS24015: Import name `bad_name` must match one of the following formats: camelCase, PascalCase

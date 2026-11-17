@@ -1,0 +1,40 @@
+/input.ts(1,4): error TS2630: Cannot assign to 'foo' because it is a function.
+/input.ts(1,12): error TS2304: Cannot find name 'obj'.
+/input.ts(1,12): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+/input.ts(1,32): error TS2304: Cannot find name 'obj'.
+/input.ts(1,32): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+/input.ts(1,69): error TS2304: Cannot find name 'obj'.
+/input.ts(1,69): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unsafe-optional-chaining": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    [{ foo } = obj?.bar] = []; [...obj?.list]; function* foo() { yield* obj?.value; }
+       ~~~
+!!! error TS2630: Cannot assign to 'foo' because it is a function.
+               ~~~
+!!! error TS2304: Cannot find name 'obj'.
+               ~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+                                   ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                   ~~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+                                                                        ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                                        ~~~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.

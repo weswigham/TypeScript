@@ -1,0 +1,42 @@
+/input.tsx(1,1): error TS24277: Using 'TryStatement' is not allowed.
+/input.tsx(1,7): error TS2304: Cannot find name 'voila'.
+/input.tsx(1,7): error TS24277: Using 'CallExpression' is not allowed.
+/input.tsx(1,18): error TS24277: Using 'CatchClause' is not allowed.
+/input.tsx(1,30): error TS2304: Cannot find name 'oops'.
+/input.tsx(1,30): error TS24277: Using 'CallExpression' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "TryStatement",
+                    "CallExpression",
+                    "CatchClause"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (6 errors) ====
+    try { voila(); } catch (e) { oops(); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'TryStatement' is not allowed.
+          ~~~~~
+!!! error TS2304: Cannot find name 'voila'.
+          ~~~~~~~
+!!! error TS24277: Using 'CallExpression' is not allowed.
+                     ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'CatchClause' is not allowed.
+                                 ~~~~
+!!! error TS2304: Cannot find name 'oops'.
+                                 ~~~~~~
+!!! error TS24277: Using 'CallExpression' is not allowed.

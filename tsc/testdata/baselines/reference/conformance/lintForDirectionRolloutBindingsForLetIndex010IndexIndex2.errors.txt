@@ -1,0 +1,22 @@
+/input.ts(1,1): error TS24209: The update clause in this loop moves the variable in the wrong direction.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "for-direction": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    for (let index = 0; 10 > index; index -= 2) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24209: The update clause in this loop moves the variable in the wrong direction.

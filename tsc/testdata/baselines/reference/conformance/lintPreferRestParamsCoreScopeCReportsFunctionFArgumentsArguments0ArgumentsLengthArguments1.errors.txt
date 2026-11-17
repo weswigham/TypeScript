@@ -1,0 +1,28 @@
+/input.ts(1,16): error TS20264: Use the rest parameters instead of 'arguments'.
+/input.ts(1,27): error TS20264: Use the rest parameters instead of 'arguments'.
+/input.ts(1,66): error TS20264: Use the rest parameters instead of 'arguments'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-rest-params": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function f() { arguments; arguments[0]; arguments.length; (() => arguments[1])(); }
+                   ~~~~~~~~~
+!!! error TS20264: Use the rest parameters instead of 'arguments'.
+                              ~~~~~~~~~
+!!! error TS20264: Use the rest parameters instead of 'arguments'.
+                                                                     ~~~~~~~~~
+!!! error TS20264: Use the rest parameters instead of 'arguments'.

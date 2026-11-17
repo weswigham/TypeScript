@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS21400: 'f' was used before it was defined.
+/input.ts(1,26): error TS7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+/input.ts(1,30): error TS2448: Block-scoped variable 'a' used before its declaration.
+/input.ts(1,30): error TS21400: 'a' was used before it was defined.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-use-before-define": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    f(); function f() {} let a = a; type T = Later; type Later = number;
+    ~
+!!! error TS21400: 'f' was used before it was defined.
+                             ~
+!!! error TS7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                                 ~
+!!! error TS2448: Block-scoped variable 'a' used before its declaration.
+!!! related TS2728 /input.ts:1:26: 'a' is declared here.
+                                 ~
+!!! error TS21400: 'a' was used before it was defined.

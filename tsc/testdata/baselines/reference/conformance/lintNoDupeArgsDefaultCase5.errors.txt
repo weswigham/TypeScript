@@ -1,0 +1,28 @@
+/input.ts(1,11): error TS22013: Duplicate param 'first'.
+/input.ts(1,12): error TS2300: Duplicate identifier 'first'.
+/input.ts(1,23): error TS2300: Duplicate identifier 'first'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-args": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function f(first = 0, first = 1) {}
+              ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+               ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                          ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.

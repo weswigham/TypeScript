@@ -1,0 +1,25 @@
+/input.ts(1,23): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,45): error TS19850: Unexpected return statement in constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constructor-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { constructor(value) { if (value) { return value; } return; } }
+                          ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                                                ~~~~~~~~~~~~~
+!!! error TS19850: Unexpected return statement in constructor.

@@ -1,0 +1,22 @@
+/input.ts(1,7): error TS19260: Function name `bar` should match variable name `foo`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-name-matching": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const foo = function bar() {}; const valid = function valid() {};
+          ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19260: Function name `bar` should match variable name `foo`.

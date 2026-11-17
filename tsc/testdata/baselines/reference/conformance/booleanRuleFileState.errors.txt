@@ -1,0 +1,36 @@
+first.ts(3,24): error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.
+first.ts(4,5): error TS24161: Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly.
+second.ts(3,24): error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.
+second.ts(4,5): error TS24161: Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "module": "esnext", "target": "esnext", "strict": true },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-optional-chain": "error",
+                "@typescript-eslint/strict-boolean-expressions": "error"
+            }
+        },
+        "files": ["first.ts", "second.ts"]
+    }
+==== first.ts (2 errors) ====
+    declare const value: { enabled: boolean } | undefined;
+    declare const count: number | undefined;
+    export const enabled = value && value.enabled;
+                           ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.
+    if (count) {}
+        ~~~~~
+!!! error TS24161: Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly.
+==== second.ts (2 errors) ====
+    declare const value: { enabled: boolean } | undefined;
+    declare const count: number | undefined;
+    export const enabled = value && value.enabled;
+                           ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.
+    if (count) {}
+        ~~~~~
+!!! error TS24161: Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly.
+    

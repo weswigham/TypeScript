@@ -1,0 +1,33 @@
+input.ts(1,25): error TS22051: Getter is not present for setter 'value'.
+input.ts(2,25): error TS22051: Setter is not present for getter 'value'.
+input.ts(4,17): error TS22051: Setter is not present for class getter 'value'.
+input.ts(4,50): error TS22051: Getter is not present for class setter 'value'.
+input.ts(5,22): error TS22051: Getter is not present for type setter 'value'.
+input.ts(6,39): error TS19200: Getter is not present in property descriptor.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "accessor-pairs": ["error", { "getWithoutSet": true, "enforceForTSTypes": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (6 errors) ====
+    const missingGetter = { set value(value: number) {} };
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for setter 'value'.
+    const missingSetter = { get value() { return 1; } };
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Setter is not present for getter 'value'.
+    const valid = { get value() { return 1; }, set value(value: number) {} };
+    class Example { static get value() { return 1; } set value(value: number) {} }
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Setter is not present for class getter 'value'.
+                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for class setter 'value'.
+    interface Contract { set value(value: number); }
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for type setter 'value'.
+    Object.defineProperty(valid, "other", { set(value: number) {} });
+                                          ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19200: Getter is not present in property descriptor.

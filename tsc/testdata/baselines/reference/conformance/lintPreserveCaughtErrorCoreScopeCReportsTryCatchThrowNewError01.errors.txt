@@ -1,0 +1,27 @@
+/input.ts(1,16): error TS20273: The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": [
+                    "error",
+                    {
+                        "requireCatchParameter": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch { throw new Error(); }
+                   ~~~~~~~~~~~~~~~~~~
+!!! error TS20273: The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter.

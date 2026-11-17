@@ -1,0 +1,26 @@
+/input.ts(1,5): error TS2304: Cannot find name 'ready'.
+/input.ts(1,12): error TS19854: Unexpected console statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (ready) console.log('hello');
+        ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+               ~~~~~~~~~~~
+!!! error TS19854: Unexpected console statement.

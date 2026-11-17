@@ -1,0 +1,27 @@
+/input.ts(1,54): error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unbound-method": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { method() {} } declare const key: 'method'; new C()[key];
+                                                         ~~~~~~~~~~~~
+!!! error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24193: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+!!! error TS24193: If a function does not access `this`, it can be annotated with `this: void`.

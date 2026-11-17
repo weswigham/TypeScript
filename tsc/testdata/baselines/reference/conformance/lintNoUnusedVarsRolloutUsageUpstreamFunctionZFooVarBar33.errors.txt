@@ -1,0 +1,36 @@
+/input.ts(1,13): error TS24290: 'foo' is defined but never used.
+/input.ts(1,24): error TS24290: 'bar' is assigned a value but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "args": "all",
+                        "vars": "all"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    (function z(foo) { var bar = 33; })();
+                ~~~
+!!! error TS24290: 'foo' is defined but never used.
+                           ~~~
+!!! error TS24290: 'bar' is assigned a value but never used.

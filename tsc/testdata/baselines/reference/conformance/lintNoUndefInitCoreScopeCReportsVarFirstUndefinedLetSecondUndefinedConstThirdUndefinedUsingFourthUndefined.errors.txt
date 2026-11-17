@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS20150: It's not necessary to initialize 'first' to undefined.
+/input.ts(1,28): error TS20150: It's not necessary to initialize 'second' to undefined.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-undef-init": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var first = undefined; let second = (undefined); const third = undefined; using fourth = undefined;
+        ~~~~~~~~~~~~~~~~~
+!!! error TS20150: It's not necessary to initialize 'first' to undefined.
+                               ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20150: It's not necessary to initialize 'second' to undefined.

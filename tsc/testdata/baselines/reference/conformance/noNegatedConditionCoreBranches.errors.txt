@@ -1,0 +1,87 @@
+input.ts(1,1): error TS19501: Unexpected negated condition.
+input.ts(1,6): error TS2304: Cannot find name 'a'.
+input.ts(2,1): error TS19501: Unexpected negated condition.
+input.ts(2,5): error TS2304: Cannot find name 'a'.
+input.ts(2,10): error TS2304: Cannot find name 'b'.
+input.ts(3,1): error TS19501: Unexpected negated condition.
+input.ts(3,5): error TS2304: Cannot find name 'a'.
+input.ts(3,11): error TS2304: Cannot find name 'b'.
+input.ts(4,6): error TS2304: Cannot find name 'a'.
+input.ts(5,6): error TS2304: Cannot find name 'a'.
+input.ts(5,21): error TS2304: Cannot find name 'b'.
+input.ts(6,1): error TS19501: Unexpected negated condition.
+input.ts(6,2): error TS2304: Cannot find name 'a'.
+input.ts(6,6): error TS2304: Cannot find name 'b'.
+input.ts(6,10): error TS2304: Cannot find name 'c'.
+input.ts(7,1): error TS2304: Cannot find name 'a'.
+input.ts(7,1): error TS19501: Unexpected negated condition.
+input.ts(7,7): error TS2304: Cannot find name 'b'.
+input.ts(7,11): error TS2304: Cannot find name 'c'.
+input.ts(7,15): error TS2304: Cannot find name 'd'.
+input.ts(8,1): error TS2304: Cannot find name 'a'.
+input.ts(8,5): error TS2304: Cannot find name 'b'.
+input.ts(8,9): error TS2304: Cannot find name 'c'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-negated-condition": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (23 errors) ====
+    if (!a) {} else {}
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+         ~
+!!! error TS2304: Cannot find name 'a'.
+    if (a != b) {} else {}
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+             ~
+!!! error TS2304: Cannot find name 'b'.
+    if (a !== b) {} else {}
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+              ~
+!!! error TS2304: Cannot find name 'b'.
+    if (!a) {}
+         ~
+!!! error TS2304: Cannot find name 'a'.
+    if (!a) {} else if (b) {} else {}
+         ~
+!!! error TS2304: Cannot find name 'a'.
+                        ~
+!!! error TS2304: Cannot find name 'b'.
+    !a ? b : c;
+    ~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+     ~
+!!! error TS2304: Cannot find name 'a'.
+         ~
+!!! error TS2304: Cannot find name 'b'.
+             ~
+!!! error TS2304: Cannot find name 'c'.
+    a !== b ? c : d;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+    ~~~~~~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+          ~
+!!! error TS2304: Cannot find name 'b'.
+              ~
+!!! error TS2304: Cannot find name 'c'.
+                  ~
+!!! error TS2304: Cannot find name 'd'.
+    a ? b : c;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+        ~
+!!! error TS2304: Cannot find name 'b'.
+            ~
+!!! error TS2304: Cannot find name 'c'.

@@ -1,0 +1,37 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,18): error TS24203: Identifier 'snake_case' is not in camel case.
+/input.ts(1,43): error TS24203: Identifier 'other_name' is not in camel case.
+/input.ts(1,59): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+/input.ts(1,66): error TS24203: Identifier 'snake_label' is not in camel case.
+/input.ts(1,100): error TS24203: Identifier 'snake_label' is not in camel case.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    export {value as snake_case}; export * as other_name from 'mod'; snake_label: while (true) { break snake_label; }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                     ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.
+                                              ~~~~~~~~~~
+!!! error TS24203: Identifier 'other_name' is not in camel case.
+                                                              ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+                                                                     ~~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_label' is not in camel case.
+                                                                                                       ~~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_label' is not in camel case.

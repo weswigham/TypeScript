@@ -1,0 +1,32 @@
+/input.ts(1,64): error TS24290: 'newArray' is assigned a value but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    const array = ['a', 'b', 'c']; const [a, _b, c] = array; const newArray = [a, c];
+                                                                   ~~~~~~~~
+!!! error TS24290: 'newArray' is assigned a value but never used.

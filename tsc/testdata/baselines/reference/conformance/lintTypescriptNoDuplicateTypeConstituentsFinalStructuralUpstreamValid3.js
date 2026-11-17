@@ -1,0 +1,7 @@
+//// [tests/cases/conformance/lint/rules/no-duplicate-type-constituents/lintTypescriptNoDuplicateTypeConstituentsFinalStructuralUpstreamValid3.ts] ////
+
+//// [input.ts]
+type T = null | undefined;
+
+//// [input.ts]
+type T = null | undefined;

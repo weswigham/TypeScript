@@ -1,0 +1,30 @@
+/input.ts(1,8): error TS24290: 'x' is defined but never used.
+/input.ts(1,15): error TS2307: Cannot find module 'y' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    import x from "y";
+           ~
+!!! error TS24290: 'x' is defined but never used.
+                  ~~~
+!!! error TS2307: Cannot find module 'y' or its corresponding type declarations.

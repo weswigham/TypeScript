@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS19373: Multiline support is limited to browsers supporting ES5 only.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-multi-str": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const first = 'line\
+                  ~~~~~~
+    next'; const second = `line
+    ~~~~~
+!!! error TS19373: Multiline support is limited to browsers supporting ES5 only.
+    next`; const third = 'line\nnext';

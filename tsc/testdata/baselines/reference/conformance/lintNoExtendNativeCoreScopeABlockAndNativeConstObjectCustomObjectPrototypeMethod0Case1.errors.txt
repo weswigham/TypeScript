@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS2304: Cannot find name 'custom'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extend-native": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    { const Object = custom; Object.prototype.method = 0; }
+                     ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.

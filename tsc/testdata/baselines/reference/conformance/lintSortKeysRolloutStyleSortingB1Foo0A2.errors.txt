@@ -1,0 +1,22 @@
+/input.ts(1,11): error TS2304: Cannot find name 'foo'.
+/input.ts(1,22): error TS24345: Expected object keys to be in ascending order. 'a' should be before 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    ({ b: 1, [foo()]: 0, a: 2 });
+              ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                         ~
+!!! error TS24345: Expected object keys to be in ascending order. 'a' should be before 'b'.

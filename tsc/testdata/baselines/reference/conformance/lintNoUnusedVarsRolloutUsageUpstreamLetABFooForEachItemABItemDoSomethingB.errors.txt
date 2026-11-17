@@ -1,0 +1,44 @@
+/input.ts(3,13): error TS2304: Cannot find name 'foo'.
+/input.ts(3,25): error TS7006: Parameter 'item' implicitly has an 'any' type.
+/input.ts(5,17): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    
+                let _a, b;
+                foo.forEach(item => {
+                ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                            ~~~~
+!!! error TS7006: Parameter 'item' implicitly has an 'any' type.
+                    [_a, b] = item;
+                    doSomething(b);
+                    ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.
+                });
+                

@@ -1,0 +1,26 @@
+/input.ts(1,53): error TS2304: Cannot find name 'other'.
+/input.ts(1,53): error TS20271: The symptom error is being thrown with an incorrect `cause`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try {} catch (error) { throw new Error('', {cause: (other)}); }
+                                                        ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                                        ~~~~~
+!!! error TS20271: The symptom error is being thrown with an incorrect `cause`.

@@ -1,0 +1,36 @@
+/input.ts(2,1): error TS21283: Imports "C", "D" are only used as type.
+/input.ts(2,25): error TS2307: Cannot find module 'bar' or its corresponding type declarations.
+/input.ts(3,31): error TS2307: Cannot find module 'bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    
+    import { C, D, E } from 'bar';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21283: Imports "C", "D" are only used as type.
+                            ~~~~~
+!!! error TS2307: Cannot find module 'bar' or its corresponding type declarations.
+    import type { Already2 } from 'bar';
+                                  ~~~~~
+!!! error TS2307: Cannot find module 'bar' or its corresponding type declarations.
+    type T = { c: C; d: D };
+              

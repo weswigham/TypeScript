@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(1,59): error TS7005: Variable 'second' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "vars-on-top": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    import foo from 'foo'; 'directive'; var first; export var second; var third;
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+                                                              ~~~~~~
+!!! error TS7005: Variable 'second' implicitly has an 'any' type.

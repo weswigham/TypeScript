@@ -1,0 +1,23 @@
+input.ts(2,22): error TS20468: Constraining the generic type `T` to `any` does nothing and is unnecessary.
+input.ts(3,19): error TS20468: Constraining the generic type `T` to `unknown` does nothing and is unnecessary.
+input.ts(4,27): error TS20468: Constraining the generic type `T` to `unknown` does nothing and is unnecessary.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-type-constraint":"error"}},"files":["input.ts"]}
+==== input.ts (3 errors) ====
+    export {};
+    function unnecessary<T extends any>() {}
+                         ~~~~~~~~~~~~~
+!!! error TS20468: Constraining the generic type `T` to `any` does nothing and is unnecessary.
+    class Unnecessary<T extends unknown> {}
+                      ~~~~~~~~~~~~~~~~~
+!!! error TS20468: Constraining the generic type `T` to `unknown` does nothing and is unnecessary.
+    const unnecessaryArrow = <T extends unknown>() => {};
+                              ~~~~~~~~~~~~~~~~~
+!!! error TS20468: Constraining the generic type `T` to `unknown` does nothing and is unnecessary.
+    function unconstrained<T>() {}
+    function numberConstraint<T extends number>() {}
+    function unionConstraint<T extends any | number>() {}
+    type Alias = any;
+    function aliasConstraint<T extends Alias>() {}

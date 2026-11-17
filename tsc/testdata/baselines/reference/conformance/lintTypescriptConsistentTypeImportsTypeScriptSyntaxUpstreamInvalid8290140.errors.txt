@@ -1,0 +1,33 @@
+/input.ts(2,1): error TS21283: Imports "A", "C", "D" are only used as type.
+/input.ts(2,28): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import A, { B, C, D } from 'foo';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21283: Imports "A", "C", "D" are only used as type.
+                               ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    B();
+    type T = { foo: A; bar: C; baz: D };
+              

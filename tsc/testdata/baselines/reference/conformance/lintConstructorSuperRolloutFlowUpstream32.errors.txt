@@ -1,0 +1,34 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,33): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,52): error TS2304: Cannot find name 'b'.
+/input.ts(1,62): error TS2304: Cannot find name 'foo'.
+/input.ts(1,66): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    class A extends B { constructor(a) { super(); for (b in a) ( foo(b) ); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                                    ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                                                       ~
+!!! error TS2304: Cannot find name 'b'.
+                                                                 ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                                     ~
+!!! error TS2304: Cannot find name 'b'.

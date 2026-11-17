@@ -1,0 +1,46 @@
+/input.ts(1,1): error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+/input.ts(1,1): error TS24231: Read-only global 'Array' should not be modified.
+/input.ts(1,12): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+/input.ts(1,12): error TS24231: Read-only global 'String' should not be modified.
+/input.ts(1,24): error TS2322: Type 'number' is not assignable to type 'ObjectConstructor'.
+/input.ts(1,24): error TS24231: Read-only global 'Object' should not be modified.
+/input.ts(1,38): error TS2304: Cannot find name 'source'.
+/input.ts(1,52): error TS24231: Read-only global 'Math' should not be modified.
+/input.ts(1,60): error TS2304: Cannot find name 'values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-global-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    Array = 1; String++; ({Object = 0} = source); for (Math of values) {}
+    ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+    ~~~~~
+!!! error TS24231: Read-only global 'Array' should not be modified.
+               ~~~~~~
+!!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+               ~~~~~~
+!!! error TS24231: Read-only global 'String' should not be modified.
+                           ~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'ObjectConstructor'.
+                           ~~~~~~
+!!! error TS24231: Read-only global 'Object' should not be modified.
+                                         ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                                       ~~~~
+!!! error TS24231: Read-only global 'Math' should not be modified.
+                                                               ~~~~~~
+!!! error TS2304: Cannot find name 'values'.

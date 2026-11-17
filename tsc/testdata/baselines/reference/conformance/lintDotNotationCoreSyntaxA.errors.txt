@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,8): error TS22050: ["name"] is better written in dot notation.
+/input.ts(1,17): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,24): error TS22050: [`other`] is better written in dot notation.
+/input.ts(1,34): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "dot-notation": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    object['name']; object[`other`]; object['with space'];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+           ~~~~~~
+!!! error TS22050: ["name"] is better written in dot notation.
+                    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                           ~~~~~~~
+!!! error TS22050: [`other`] is better written in dot notation.
+                                     ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

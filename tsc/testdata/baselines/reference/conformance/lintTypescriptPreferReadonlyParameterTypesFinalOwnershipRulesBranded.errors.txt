@@ -1,0 +1,23 @@
+/input.ts(1,22): error TS1330: A property of an interface or type literal whose type is a 'unique symbol' type must be 'readonly'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-readonly-parameter-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type ID = string & { tag: unique symbol }; function f(value: ID) {}
+                         ~~~
+!!! error TS1330: A property of an interface or type literal whose type is a 'unique symbol' type must be 'readonly'.

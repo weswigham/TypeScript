@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS2377: Constructors for derived classes must contain a 'super' call.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends B { constructor() {} }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.

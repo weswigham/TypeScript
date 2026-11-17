@@ -1,0 +1,23 @@
+/input.ts(1,27): error TS24108: Unsafe call of an `any` typed value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-call": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; value();
+                              ~~~~~
+!!! error TS24108: Unsafe call of an `any` typed value.

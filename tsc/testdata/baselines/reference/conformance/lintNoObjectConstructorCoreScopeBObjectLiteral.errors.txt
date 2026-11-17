@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS20006: The object literal notation {} is preferable.
+/input.ts(1,11): error TS20006: The object literal notation {} is preferable.
+/input.ts(1,72): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-object-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    Object(); new Object; Object(1); new globalThis.Object(); function run(Object) { Object(); }
+    ~~~~~~~~
+!!! error TS20006: The object literal notation {} is preferable.
+              ~~~~~~~~~~
+!!! error TS20006: The object literal notation {} is preferable.
+                                                                           ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.

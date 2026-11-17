@@ -1,0 +1,31 @@
+input.ts(2,5): error TS20473: The value of the member 'First' should be explicitly defined.
+input.ts(3,5): error TS20473: The value of the member 'Second' should be explicitly defined.
+input.ts(5,5): error TS20473: The value of the member 'Following' should be explicitly defined.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-enum-initializers": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    enum Implicit {
+        First,
+        ~~~~~
+!!! error TS20473: The value of the member 'First' should be explicitly defined.
+        Second,
+        ~~~~~~
+!!! error TS20473: The value of the member 'Second' should be explicitly defined.
+        Explicit = 5,
+        Following,
+        ~~~~~~~~~
+!!! error TS20473: The value of the member 'Following' should be explicitly defined.
+    }
+    
+    enum Initialized {
+        First = 0,
+        Second = 1,
+        Named = "Named",
+    }

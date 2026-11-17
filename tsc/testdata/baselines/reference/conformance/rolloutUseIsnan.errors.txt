@@ -1,0 +1,42 @@
+input.ts(2,1): error TS2845: This condition will always return 'false'.
+input.ts(2,1): warning TS24359: Use the isNaN function to compare with NaN.
+input.ts(3,1): warning TS24359: Use the isNaN function to compare with NaN.
+input.ts(4,1): warning TS24359: Use the isNaN function to compare with NaN.
+input.ts(5,1): warning TS24360: 'switch(NaN)' can never match a case clause. Use Number.isNaN instead of the switch.
+input.ts(5,16): warning TS24361: 'case NaN' can never match. Use Number.isNaN before the switch.
+input.ts(6,1): warning TS24362: Array prototype method 'indexOf' cannot find NaN.
+input.ts(7,1): warning TS24362: Array prototype method 'lastIndexOf' cannot find NaN.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "use-isnan": ["warn", { "enforceForIndexOf": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (8 errors) ====
+    declare const value: number, values: number[];
+    value === NaN;
+    ~~~~~~~~~~~~~
+!!! error TS2845: This condition will always return 'false'.
+!!! related TS1369 input.ts:2:1: Did you mean 'Number.isNaN(value)'?
+    ~~~~~~~~~~~~~
+!!! warning TS24359: Use the isNaN function to compare with NaN.
+    value != Number.NaN;
+    ~~~~~~~~~~~~~~~~~~~
+!!! warning TS24359: Use the isNaN function to compare with NaN.
+    value < NaN;
+    ~~~~~~~~~~~
+!!! warning TS24359: Use the isNaN function to compare with NaN.
+    switch (NaN) { case NaN: break; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24360: 'switch(NaN)' can never match a case clause. Use Number.isNaN instead of the switch.
+                   ~~~~~~~~~~~~~~~~
+!!! warning TS24361: 'case NaN' can never match. Use Number.isNaN before the switch.
+    values.indexOf(NaN);
+    ~~~~~~~~~~~~~~~~~~~
+!!! warning TS24362: Array prototype method 'indexOf' cannot find NaN.
+    values.lastIndexOf(NaN, 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24362: Array prototype method 'lastIndexOf' cannot find NaN.
+    function shadowed(NaN: number) { return value === NaN; }

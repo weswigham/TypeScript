@@ -1,0 +1,31 @@
+/input.ts(1,9): error TS2304: Cannot find name 'a'.
+/input.ts(2,4): error TS24229: Expected a 'break' statement before 'case'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-fallthrough": [
+                    "error",
+                    {
+                        "allowEmptyCase": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    switch (a) { case 1: 
+            ~
+!!! error TS2304: Cannot find name 'a'.
+     ; case 2:  }
+       ~~~~~~~
+!!! error TS24229: Expected a 'break' statement before 'case'.

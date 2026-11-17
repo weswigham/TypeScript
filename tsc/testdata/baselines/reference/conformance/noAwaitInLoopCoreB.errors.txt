@@ -1,0 +1,43 @@
+main.ts(2,35): error TS19350: Unexpected `await` inside a loop.
+main.ts(2,56): error TS19350: Unexpected `await` inside a loop.
+main.ts(3,9): error TS19350: Unexpected `await` inside a loop.
+main.ts(8,23): error TS19350: Unexpected `await` inside a loop.
+main.ts(10,53): error TS19350: Unexpected `await` inside a loop.
+main.ts(11,10): error TS19350: Unexpected `await` inside a loop.
+main.ts(11,32): error TS19350: Unexpected `await` inside a loop.
+main.ts(12,20): error TS19350: Unexpected `await` inside a loop.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-await-in-loop":"error"}},"files":["main.ts"]}
+==== main.ts (8 errors) ====
+    async function run(values: AsyncIterable<number>, ready: Promise<boolean>) {
+        for (let index = await ready; await ready; index = await ready) {
+                                      ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                           ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+            await ready;
+            ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+            const deferred = async () => await ready;
+        }
+        for await (const value of values) {
+            await ready;
+            while (value) await ready;
+                          ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+        }
+        for (const value of await Promise.resolve([1])) await ready;
+                                                        ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+        do { await ready; } while (await ready);
+             ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                   ~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+        while (true) { await using resource = acquire(); }
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+    }
+    declare function acquire(): AsyncDisposable;

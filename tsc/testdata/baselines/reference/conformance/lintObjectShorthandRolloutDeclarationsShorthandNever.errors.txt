@@ -1,0 +1,28 @@
+/input.ts(1,12): error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
+/input.ts(1,12): error TS24309: Expected longform property syntax.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "object-shorthand": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const o = {x};
+               ~
+!!! error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
+               ~
+!!! error TS24309: Expected longform property syntax.

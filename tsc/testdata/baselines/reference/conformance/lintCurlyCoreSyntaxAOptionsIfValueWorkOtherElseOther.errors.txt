@@ -1,0 +1,38 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,14): error TS2304: Cannot find name 'work'.
+/input.ts(1,22): error TS2304: Cannot find name 'other'.
+/input.ts(1,38): error TS2304: Cannot find name 'other'.
+/input.ts(1,38): error TS22018: Expected { after 'else'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "curly": [
+                    "error",
+                    "multi",
+                    "consistent"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    if (value) { work(); other(); } else other();
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                 ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                         ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                         ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                         ~~~~~~~~
+!!! error TS22018: Expected { after 'else'.

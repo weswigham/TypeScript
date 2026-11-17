@@ -1,0 +1,27 @@
+/input.ts(1,29): error TS24033: Intersection type constituent is duplicated with number.
+/input.ts(1,38): error TS24033: Intersection type constituent is duplicated with string.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    type A = number & string & (number & string);
+                                ~~~~~~
+!!! error TS24033: Intersection type constituent is duplicated with number.
+                                         ~~~~~~
+!!! error TS24033: Intersection type constituent is duplicated with string.

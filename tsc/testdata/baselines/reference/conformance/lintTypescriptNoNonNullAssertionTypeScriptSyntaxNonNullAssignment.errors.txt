@@ -1,0 +1,43 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,1): error TS19108: Forbidden non-null assertion.
+/input.ts(1,22): error TS2304: Cannot find name 'value'.
+/input.ts(1,22): error TS19108: Forbidden non-null assertion.
+/input.ts(1,48): error TS2304: Cannot find name 'value'.
+/input.ts(1,48): error TS19108: Forbidden non-null assertion.
+/input.ts(1,66): error TS2304: Cannot find name 'value'.
+/input.ts(1,66): error TS19108: Forbidden non-null assertion.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-non-null-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    value!.property = 1; value!.property++; delete value!.property; (value!.property as number)++;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+                         ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                         ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+                                                   ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                   ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.
+                                                                     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                     ~~~~~~
+!!! error TS19108: Forbidden non-null assertion.

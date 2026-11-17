@@ -1,0 +1,52 @@
+input.ts(1,1): error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+input.ts(1,13): error TS2304: Cannot find name 'value'.
+input.ts(2,1): error TS2304: Cannot find name 'use'.
+input.ts(2,5): error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+input.ts(3,1): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
+input.ts(3,1): error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+input.ts(3,9): error TS2304: Cannot find name 'key'.
+input.ts(4,1): error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+input.ts(4,14): error TS2304: Cannot find name 'value'.
+input.ts(5,14): error TS2304: Cannot find name 'value'.
+input.ts(6,18): error TS2304: Cannot find name 'value'.
+input.ts(7,45): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-console": ["error", { "allow": ["warn", "error"] }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (12 errors) ====
+    console.log(value);
+    ~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    use(console.info);
+    ~~~
+!!! error TS2304: Cannot find name 'use'.
+        ~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+    console[key]();
+    ~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
+    ~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+            ~~~
+!!! error TS2304: Cannot find name 'key'.
+    console?.log(value);
+    ~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn, error.
+                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    console.warn(value);
+                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    console["error"](value);
+                     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    function shadow(console: any) { console.log(value); }
+                                                ~~~~~
+!!! error TS2304: Cannot find name 'value'.

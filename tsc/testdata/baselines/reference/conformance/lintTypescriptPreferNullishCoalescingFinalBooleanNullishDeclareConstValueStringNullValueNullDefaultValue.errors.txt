@@ -1,0 +1,23 @@
+/input.ts(1,37): error TS24141: Prefer using nullish coalescing operator (`??`) instead of a ternary expression, as it is simpler to read.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-nullish-coalescing": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: string | null; value == null ? 'default' : value;
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24141: Prefer using nullish coalescing operator (`??`) instead of a ternary expression, as it is simpler to read.

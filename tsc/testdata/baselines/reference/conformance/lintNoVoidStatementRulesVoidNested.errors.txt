@@ -1,0 +1,27 @@
+/input.ts(1,1): error TS19006: Expected 'undefined' and instead saw 'void'.
+/input.ts(1,7): error TS19006: Expected 'undefined' and instead saw 'void'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-void": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    void (void 0);
+    ~~~~~~~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+          ~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

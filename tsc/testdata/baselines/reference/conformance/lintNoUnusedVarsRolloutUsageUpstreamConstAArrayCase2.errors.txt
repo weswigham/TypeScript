@@ -1,0 +1,31 @@
+/input.ts(1,13): error TS24290: 'a' is assigned a value but never used.
+/input.ts(1,20): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    const [[...[a]]] = array;
+                ~
+!!! error TS24290: 'a' is assigned a value but never used.
+                       ~~~~~
+!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.

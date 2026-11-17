@@ -1,0 +1,23 @@
+/input.ts(1,14): error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-generated-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type Empty = Record<never, unknown>;
+                 ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.

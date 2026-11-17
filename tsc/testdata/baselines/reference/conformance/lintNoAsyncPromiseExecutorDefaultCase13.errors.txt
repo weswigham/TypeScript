@@ -1,0 +1,27 @@
+/input.ts(1,5): error TS2451: Cannot redeclare block-scoped variable 'Promise'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-async-promise-executor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    let Promise; new Promise(async () => {})
+        ~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'Promise'.
+!!! related TS6203 lib.es5.d.ts:--:--: 'Promise' was also declared here.
+!!! related TS6204 lib.es2015.iterable.d.ts:--:--: and here.
+!!! related TS6204 lib.es2015.promise.d.ts:--:--: and here.
+!!! related TS6204 lib.es2015.symbol.wellknown.d.ts:--:--: and here.
+!!! related TS6204 lib.es2018.promise.d.ts:--:--: and here.

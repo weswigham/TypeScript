@@ -1,0 +1,30 @@
+input.ts(2,26): error TS24140: Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+input.ts(3,21): error TS24141: Prefer using nullish coalescing operator (`??`) instead of a ternary expression, as it is simpler to read.
+input.ts(6,9): error TS24140: Prefer using nullish coalescing operator (`??=`) instead of a logical assignment (`||=`), as it is a safer operator.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-nullish-coalescing": ["error", { "ignoreConditionalTests": true }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    declare const nullable: string | null;
+    const logical = nullable || "default";
+                             ~~
+!!! error TS24140: Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    const conditional = nullable == null ? "default" : nullable;
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24141: Prefer using nullish coalescing operator (`??`) instead of a ternary expression, as it is simpler to read.
+    
+    declare let mutable: string | null;
+    mutable ||= "default";
+            ~~~
+!!! error TS24140: Prefer using nullish coalescing operator (`??=`) instead of a logical assignment (`||=`), as it is a safer operator.
+    
+    const coalesced = nullable ?? "default";
+    declare const text: string;
+    const emptyStringFallback = text || "default";
+    if (nullable || "default") {}

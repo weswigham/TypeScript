@@ -1,0 +1,31 @@
+/input.ts(1,33): error TS24203: Identifier 'alias_name' is not in camel case.
+/input.ts(1,47): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": [
+                    "error",
+                    {
+                        "ignoreDestructuring": true,
+                        "properties": "never"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const {snake_case, source_name: alias_name} = source; const value = {snake_case};
+                                    ~~~~~~~~~~
+!!! error TS24203: Identifier 'alias_name' is not in camel case.
+                                                  ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

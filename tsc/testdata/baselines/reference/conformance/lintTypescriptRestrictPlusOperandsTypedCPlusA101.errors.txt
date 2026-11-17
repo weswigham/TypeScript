@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS21084: Operands of '+' operations must be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `string` + `number`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/restrict-plus-operands": [
+                    "error",
+                    {
+                        "allowNumberAndString": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    'a' + 1;
+    ~~~~~~~
+!!! error TS21084: Operands of '+' operations must be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `string` + `number`.

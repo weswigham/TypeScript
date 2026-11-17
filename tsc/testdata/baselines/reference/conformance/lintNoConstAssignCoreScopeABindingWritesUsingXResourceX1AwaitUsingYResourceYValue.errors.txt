@@ -1,0 +1,43 @@
+/input.ts(1,11): error TS2304: Cannot find name 'resource'.
+/input.ts(1,23): error TS2588: Cannot assign to 'x' because it is a constant.
+/input.ts(1,23): error TS19852: 'x' is constant.
+/input.ts(1,30): error TS2853: 'await using' statements are only allowed at the top level of a file when that file is a module, but this file has no imports or exports. Consider adding an empty 'export {}' to make this file a module.
+/input.ts(1,46): error TS2304: Cannot find name 'resource'.
+/input.ts(1,58): error TS2588: Cannot assign to 'y' because it is a constant.
+/input.ts(1,58): error TS19852: 'y' is constant.
+/input.ts(1,64): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-const-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    using x = resource(); x = 1; await using y = resource(); y ??= value;
+              ~~~~~~~~
+!!! error TS2304: Cannot find name 'resource'.
+                          ~
+!!! error TS2588: Cannot assign to 'x' because it is a constant.
+                          ~
+!!! error TS19852: 'x' is constant.
+                                 ~~~~~
+!!! error TS2853: 'await using' statements are only allowed at the top level of a file when that file is a module, but this file has no imports or exports. Consider adding an empty 'export {}' to make this file a module.
+                                                 ~~~~~~~~
+!!! error TS2304: Cannot find name 'resource'.
+                                                             ~
+!!! error TS2588: Cannot assign to 'y' because it is a constant.
+                                                             ~
+!!! error TS19852: 'y' is constant.
+                                                                   ~~~~~
+!!! error TS2304: Cannot find name 'value'.

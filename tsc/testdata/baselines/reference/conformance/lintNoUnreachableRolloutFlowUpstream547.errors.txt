@@ -1,0 +1,45 @@
+/input.ts(5,21): error TS2304: Cannot find name 'a'.
+/input.ts(5,21): error TS24283: Unreachable code.
+/input.ts(7,21): error TS2304: Cannot find name 'b'.
+/input.ts(9,21): error TS2304: Cannot find name 'c'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+                    function foo() {
+                        return;
+    
+                        a();  // ← ERROR: Unreachable code. (no-unreachable)
+                        ~
+!!! error TS2304: Cannot find name 'a'.
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+                        b()   // ↑ ';' token is included in the unreachable code, so this statement will be merged.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        ~
+!!! error TS2304: Cannot find name 'b'.
+                        // comment
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        c();  // ↑ ')' token is included in the unreachable code, so this statement will be merged.
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+                        ~
+!!! error TS2304: Cannot find name 'c'.
+                    }
+                

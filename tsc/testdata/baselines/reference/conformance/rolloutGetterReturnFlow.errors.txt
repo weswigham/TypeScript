@@ -1,0 +1,42 @@
+input.ts(3,5): warning TS24210: Expected to return a value in getter 'missing'.
+input.ts(3,9): error TS2378: A 'get' accessor must return a value.
+input.ts(4,5): warning TS24211: Expected getter 'partial' to always return a value.
+input.ts(5,22): warning TS24210: Expected to return a value in getter 'implicit'.
+input.ts(9,42): warning TS24210: Expected to return a value in method 'get'.
+input.ts(10,51): warning TS24211: Expected method 'get' to always return a value.
+input.ts(11,32): warning TS24210: Expected to return a value in method 'get'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "getter-return": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (7 errors) ====
+    declare const ready: boolean, object: object;
+    class Item {
+        get missing() {}
+        ~~~~~~~~~~~
+!!! warning TS24210: Expected to return a value in getter 'missing'.
+            ~~~~~~~
+!!! error TS2378: A 'get' accessor must return a value.
+        get partial() { if (ready) return 1; }
+        ~~~~~~~~~~~
+!!! warning TS24211: Expected getter 'partial' to always return a value.
+        get implicit() { return; }
+                         ~~~~~~~
+!!! warning TS24210: Expected to return a value in getter 'implicit'.
+        get complete() { try { return 1; } finally { console.log(ready); } }
+        get thrown() { throw Error(); }
+    }
+    Object.defineProperty(object, "value", { get: function() {} });
+                                             ~~~~~~~~~~~~~
+!!! warning TS24210: Expected to return a value in method 'get'.
+    Reflect.defineProperty(object, "other", { get: () => { if (ready) return 1; } });
+                                                      ~~
+!!! warning TS24211: Expected method 'get' to always return a value.
+    Object.create(null, { value: { get() {} } });
+                                   ~~~
+!!! warning TS24210: Expected to return a value in method 'get'.
+    Object.defineProperties(object, { value: { get() { return 1; } } });

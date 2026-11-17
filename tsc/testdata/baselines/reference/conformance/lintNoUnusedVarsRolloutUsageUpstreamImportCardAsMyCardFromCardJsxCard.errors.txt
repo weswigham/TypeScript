@@ -1,0 +1,33 @@
+/input.tsx(1,18): error TS24290: 'MyCard' is defined but never used.
+/input.tsx(1,32): error TS2307: Cannot find module './card.jsx' or its corresponding type declarations.
+/input.tsx(1,47): error TS2304: Cannot find name 'Card'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (3 errors) ====
+    import { Card as MyCard } from './card.jsx'; <Card />;
+                     ~~~~~~
+!!! error TS24290: 'MyCard' is defined but never used.
+                                   ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module './card.jsx' or its corresponding type declarations.
+                                                  ~~~~
+!!! error TS2304: Cannot find name 'Card'.

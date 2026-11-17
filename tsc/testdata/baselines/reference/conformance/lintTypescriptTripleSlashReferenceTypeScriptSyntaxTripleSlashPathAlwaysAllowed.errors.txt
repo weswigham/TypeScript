@@ -1,0 +1,27 @@
+/input.ts(1,22): error TS6231: Could not resolve the path 'value' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/triple-slash-reference": [
+                    "error",
+                    {
+                        "path": "always"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    /// <reference path="value" />
+                         ~~~~~
+!!! error TS6231: Could not resolve the path 'value' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.

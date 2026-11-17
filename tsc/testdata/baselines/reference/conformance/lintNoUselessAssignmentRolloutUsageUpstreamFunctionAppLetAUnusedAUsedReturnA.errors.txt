@@ -1,0 +1,31 @@
+/input.tsx(2,17): error TS24293: The value assigned to 'A' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (1 errors) ====
+    function App() {
+                let A = "unused";
+                    ~
+!!! error TS24293: The value assigned to 'A' is not used in subsequent statements.
+                A = "used";
+                return <A/>;
+                }

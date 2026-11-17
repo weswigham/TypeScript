@@ -1,0 +1,34 @@
+/input.ts(1,11): error TS22013: Duplicate param 'first'.
+/input.ts(1,12): error TS2300: Duplicate identifier 'first'.
+/input.ts(1,12): error TS7006: Parameter 'first' implicitly has an 'any' type.
+/input.ts(1,19): error TS2300: Duplicate identifier '\u0066irst'.
+/input.ts(1,19): error TS7006: Parameter '\u0066irst' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-args": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    function f(first, \u0066irst) {}
+              ~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+               ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+               ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                      ~~~~~~~~~~
+!!! error TS2300: Duplicate identifier '\u0066irst'.
+                      ~~~~~~~~~~
+!!! error TS7006: Parameter '\u0066irst' implicitly has an 'any' type.

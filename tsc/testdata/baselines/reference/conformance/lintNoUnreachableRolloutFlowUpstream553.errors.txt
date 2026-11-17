@@ -1,0 +1,35 @@
+/input.ts(5,25): error TS24283: Unreachable code.
+/input.ts(6,35): error TS24283: Unreachable code.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+                    function foo() {
+                        try {
+                            return;
+                            let a = 1;
+                            ~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+                        } catch (err) {
+                                      ~
+                            return err;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        }
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+                    }

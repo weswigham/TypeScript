@@ -1,0 +1,61 @@
+/input.ts(1,1): error TS2304: Cannot find name 'a'.
+/input.ts(1,5): error TS2304: Cannot find name 'a'.
+/input.ts(1,5): error TS19515: 'a' is assigned to itself.
+/input.ts(1,8): error TS2304: Cannot find name 'a'.
+/input.ts(1,14): error TS2304: Cannot find name 'a'.
+/input.ts(1,14): error TS19515: 'a' is assigned to itself.
+/input.ts(1,17): error TS2304: Cannot find name 'a'.
+/input.ts(1,23): error TS2304: Cannot find name 'a'.
+/input.ts(1,23): error TS19515: 'a' is assigned to itself.
+/input.ts(1,26): error TS2304: Cannot find name 'a'.
+/input.ts(1,32): error TS2304: Cannot find name 'a'.
+/input.ts(1,32): error TS19515: 'a' is assigned to itself.
+/input.ts(1,35): error TS2304: Cannot find name 'a'.
+/input.ts(1,40): error TS2304: Cannot find name 'a'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-self-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (14 errors) ====
+    a = a; a &&= a; a ||= a; a ??= a; a += a;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+        ~
+!!! error TS2304: Cannot find name 'a'.
+        ~
+!!! error TS19515: 'a' is assigned to itself.
+           ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS2304: Cannot find name 'a'.
+                 ~
+!!! error TS19515: 'a' is assigned to itself.
+                    ~
+!!! error TS2304: Cannot find name 'a'.
+                          ~
+!!! error TS2304: Cannot find name 'a'.
+                          ~
+!!! error TS19515: 'a' is assigned to itself.
+                             ~
+!!! error TS2304: Cannot find name 'a'.
+                                   ~
+!!! error TS2304: Cannot find name 'a'.
+                                   ~
+!!! error TS19515: 'a' is assigned to itself.
+                                      ~
+!!! error TS2304: Cannot find name 'a'.
+                                           ~
+!!! error TS2304: Cannot find name 'a'.

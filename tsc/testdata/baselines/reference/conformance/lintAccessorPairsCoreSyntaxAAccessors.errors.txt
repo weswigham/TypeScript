@@ -1,0 +1,37 @@
+/input.ts(1,18): error TS22051: Getter is not present for setter 'value'.
+/input.ts(1,22): error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(1,28): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,51): error TS22051: Getter is not present for class setter 'field'.
+/input.ts(1,55): error TS7032: Property 'field' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(1,61): error TS7006: Parameter 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "accessor-pairs": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    const object = { set value(value) {} }; class C { set field(value) {} get other() { return 1; } }
+                     ~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for setter 'value'.
+                         ~~~~~
+!!! error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                               ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                                                      ~~~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for class setter 'field'.
+                                                          ~~~~~
+!!! error TS7032: Property 'field' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                                                                ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

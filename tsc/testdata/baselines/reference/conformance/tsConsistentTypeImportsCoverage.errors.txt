@@ -1,0 +1,30 @@
+input.ts(1,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
+input.ts(2,1): error TS21283: Imports "Alias" are only used as type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-type-imports": "error" } },
+        "files": ["input.ts", "provider.ts"]
+    }
+    
+==== provider.ts (0 errors) ====
+    export interface Shape { value: number; }
+    export type Alias = string;
+    export interface UnusedShape { unused: boolean; }
+    export const value = 1;
+    
+==== input.ts (2 errors) ====
+    import { Shape } from "./provider";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
+    import { Alias, value } from "./provider";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21283: Imports "Alias" are only used as type.
+    import type { Shape as ValidShape } from "./provider";
+    import { UnusedShape } from "./provider";
+    const shape: Shape = { value };
+    const alias: Alias = "label";
+    const validShape: ValidShape = shape;
+    export { shape, alias, validShape };

@@ -1,0 +1,27 @@
+/input.tsx(3,13): error TS24054: Using the spread operator on an array in an object will result in a list of indices.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    declare const arr: readonly number[];
+    const o = { ...arr };
+                ~~~~~~
+!!! error TS24054: Using the spread operator on an array in an object will result in a list of indices.
+          

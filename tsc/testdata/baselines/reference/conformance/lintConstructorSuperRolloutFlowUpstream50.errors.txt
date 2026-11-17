@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS2507: Type 'number' is not a constructor function type.
+/input.ts(1,18): error TS2304: Cannot find name 'B'.
+/input.ts(1,23): error TS2304: Cannot find name 'C'.
+/input.ts(1,44): error TS24208: Unexpected 'super()' because 'super' is not a constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class A extends (B -= C) { constructor() { super(); } }
+                    ~~~~~~~~
+!!! error TS2507: Type 'number' is not a constructor function type.
+                     ~
+!!! error TS2304: Cannot find name 'B'.
+                          ~
+!!! error TS2304: Cannot find name 'C'.
+                                               ~~~~~~~
+!!! error TS24208: Unexpected 'super()' because 'super' is not a constructor.

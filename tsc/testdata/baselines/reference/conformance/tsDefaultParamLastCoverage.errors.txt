@@ -1,0 +1,28 @@
+input.ts(1,25): error TS19242: Default parameters should be last.
+input.ts(2,23): error TS19242: Default parameters should be last.
+input.ts(4,17): error TS19242: Default parameters should be last.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/default-param-last": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    function invalidDefault(first = 0, second: number) { return first + second; }
+                            ~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+    const invalidArrow = (first = 0, second: number) => first + second;
+                          ~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+    class InvalidConstructor {
+        constructor(public first = 0, public second: number) {}
+                    ~~~~~~~~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+    }
+    function validDefault(first: number, second = 0) { return first + second; }
+    function validOptional(first: number, second?: number) { return first + (second ?? 0); }
+    function validRest(first = 0, ...rest: number[]) { return first + rest.length; }
+    export {};

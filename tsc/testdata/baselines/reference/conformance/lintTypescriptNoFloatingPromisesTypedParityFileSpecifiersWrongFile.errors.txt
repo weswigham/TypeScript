@@ -1,0 +1,37 @@
+/project/src/input.ts(1,67): error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-floating-promises": [
+                    "error",
+                    {
+                        "allowForKnownSafePromises": [
+                            {
+                                "from": "file",
+                                "name": "Allowed",
+                                "path": "other.ts"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "src/input.ts"
+        ]
+    }
+==== /project/src/input.ts (1 errors) ====
+    import { Allowed } from '../types'; declare const value: Allowed; value;
+                                                                      ~~~~~~
+!!! error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+    export {};
+==== /project/types.ts (0 errors) ====
+    export type Allowed = Promise<void> & { brand: true };

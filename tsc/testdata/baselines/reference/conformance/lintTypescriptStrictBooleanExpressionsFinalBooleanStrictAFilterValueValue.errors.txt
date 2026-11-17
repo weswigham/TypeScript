@@ -1,0 +1,28 @@
+/input.ts(1,18): error TS24168: Unexpected string value in array predicate return type. An explicit empty string check is required.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-boolean-expressions": [
+                    "error",
+                    {
+                        "allowString": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    ['a', ''].filter(value => value);
+                     ~~~~~~~~~~~~~~
+!!! error TS24168: Unexpected string value in array predicate return type. An explicit empty string check is required.

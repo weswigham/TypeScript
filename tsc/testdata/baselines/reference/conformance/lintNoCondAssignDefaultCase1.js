@@ -1,0 +1,7 @@
+//// [tests/cases/conformance/lint/rules/no-cond-assign/lintNoCondAssignDefaultCase1.ts] ////
+
+//// [input.ts]
+if (value = other) {}
+
+//// [input.ts]
+if (value = other) {}

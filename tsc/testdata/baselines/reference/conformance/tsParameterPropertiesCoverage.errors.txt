@@ -1,0 +1,30 @@
+input.ts(2,17): error TS20486: Property value should be declared as a class property.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/parameter-properties": ["error", { "prefer": "class-property", "allow": ["private readonly"] }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    class ParameterProperty {
+        constructor(public value: string) {}
+                    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20486: Property value should be declared as a class property.
+    }
+    
+    class AllowedParameterProperty {
+        constructor(private readonly value: string) {}
+        read(): string {
+            return this.value;
+        }
+    }
+    
+    class ClassProperty {
+        value: string;
+        constructor(value: string) {
+            this.value = value;
+        }
+    }

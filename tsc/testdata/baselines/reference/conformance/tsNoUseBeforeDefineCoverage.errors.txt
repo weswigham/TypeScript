@@ -1,0 +1,34 @@
+input.ts(1,1): error TS21400: 'run' was used before it was defined.
+input.ts(7,12): error TS21400: 'later' was used before it was defined.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-use-before-define": ["error", { "functions": true, "ignoreTypeReferences": true }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    run();
+    ~~~
+!!! error TS21400: 'run' was used before it was defined.
+    function run(): number {
+        return 1;
+    }
+    
+    export function readLater(): number {
+        return later;
+               ~~~~~
+!!! error TS21400: 'later' was used before it was defined.
+    }
+    const later = 2;
+    
+    export type Earlier = Later;
+    type Later = number;
+    
+    const ready = 3;
+    export function readReady(): number {
+        return ready;
+    }
+    run();

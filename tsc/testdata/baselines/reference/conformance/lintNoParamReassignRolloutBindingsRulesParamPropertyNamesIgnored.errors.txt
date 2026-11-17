@@ -1,0 +1,33 @@
+/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,40): error TS24249: Assignment to function parameter 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-param-reassign": [
+                    "error",
+                    {
+                        "ignorePropertyModificationsFor": [
+                            "value"
+                        ],
+                        "props": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function task(value) { value.prop = 1; value = 1; }
+                  ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                                           ~~~~~
+!!! error TS24249: Assignment to function parameter 'value'.

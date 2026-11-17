@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS2304: Cannot find name 'values'.
+/input.ts(1,27): error TS2304: Cannot find name 'use'.
+/input.ts(1,53): error TS2304: Cannot find name 'value'.
+/input.ts(1,62): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-const-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    for (const x of values) { use(x); } for (const x in value) { use(x); }
+                    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                              ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                 ~~~
+!!! error TS2304: Cannot find name 'use'.

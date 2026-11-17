@@ -1,0 +1,31 @@
+/input.ts(1,37): error TS2678: Type 'number' is not comparable to type '() => void'.
+/input.ts(1,40): error TS2304: Cannot find name 'a'.
+/input.ts(1,58): error TS2678: Type 'number' is not comparable to type '() => void'.
+/input.ts(1,61): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-fallthrough": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function foo() { switch(foo) { case 0: a(); return; case 1: b(); }; }
+                                        ~
+!!! error TS2678: Type 'number' is not comparable to type '() => void'.
+                                           ~
+!!! error TS2304: Cannot find name 'a'.
+                                                             ~
+!!! error TS2678: Type 'number' is not comparable to type '() => void'.
+                                                                ~
+!!! error TS2304: Cannot find name 'b'.

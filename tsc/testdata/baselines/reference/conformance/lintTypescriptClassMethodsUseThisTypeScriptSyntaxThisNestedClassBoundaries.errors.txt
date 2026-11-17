@@ -1,0 +1,22 @@
+/input.ts(1,14): error TS19218: Expected 'this' to be used by class method 'run'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/class-methods-use-this": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { run() { class Nested { field = this; } } }
+                 ~~~
+!!! error TS19218: Expected 'this' to be used by class method 'run'.

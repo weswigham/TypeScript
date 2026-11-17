@@ -1,0 +1,22 @@
+/input.ts(1,30): error TS21290: Missing return type on function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-function-return-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function outer() { return () => 1; }
+                                 ~~
+!!! error TS21290: Missing return type on function.

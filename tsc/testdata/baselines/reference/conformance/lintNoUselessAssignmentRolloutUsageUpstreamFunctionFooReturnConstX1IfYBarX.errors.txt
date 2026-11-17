@@ -1,0 +1,37 @@
+/input.ts(5,17): error TS2304: Cannot find name 'y'.
+/input.ts(6,17): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    function foo() {
+                return;
+    
+                const x = 1;
+                if (y) {
+                    ~
+!!! error TS2304: Cannot find name 'y'.
+                    bar(x);
+                    ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                }
+            }

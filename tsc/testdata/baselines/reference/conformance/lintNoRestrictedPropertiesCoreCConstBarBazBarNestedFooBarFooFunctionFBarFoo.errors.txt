@@ -1,0 +1,46 @@
+/input.ts(1,7): error TS19519: 'foo.bar' is restricted from being used.
+/input.ts(1,35): error TS2304: Cannot find name 'foo'.
+/input.ts(1,41): error TS19519: 'foo.bar' is restricted from being used.
+/input.ts(1,42): error TS2588: Cannot assign to 'bar' because it is a constant.
+/input.ts(1,49): error TS2304: Cannot find name 'foo'.
+/input.ts(1,66): error TS19519: 'foo.bar' is restricted from being used.
+/input.ts(1,74): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-properties": [
+                    "error",
+                    {
+                        "object": "foo",
+                        "property": "bar"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    const {bar, baz: {bar: nested}} = foo; ({bar} = foo); function f({bar} = foo) {}
+          ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19519: 'foo.bar' is restricted from being used.
+                                      ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                            ~~~~~
+!!! error TS19519: 'foo.bar' is restricted from being used.
+                                             ~~~
+!!! error TS2588: Cannot assign to 'bar' because it is a constant.
+                                                    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                                     ~~~~~
+!!! error TS19519: 'foo.bar' is restricted from being used.
+                                                                             ~~~
+!!! error TS2304: Cannot find name 'foo'.

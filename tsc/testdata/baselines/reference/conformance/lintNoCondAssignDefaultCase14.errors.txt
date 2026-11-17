@@ -1,0 +1,28 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,23): error TS2304: Cannot find name 'value'.
+/input.ts(1,31): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-cond-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    switch (value) { case value = other: break; }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                          ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                  ~~~~~
+!!! error TS2304: Cannot find name 'other'.

@@ -1,0 +1,25 @@
+/input.ts(1,40): error TS2304: Cannot find name 'custom'.
+/input.ts(1,40): error TS24231: Read-only global 'custom' should not be modified.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-global-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    /* globals custom */ function task() { custom++; }
+                                           ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.
+                                           ~~~~~~
+!!! error TS24231: Read-only global 'custom' should not be modified.

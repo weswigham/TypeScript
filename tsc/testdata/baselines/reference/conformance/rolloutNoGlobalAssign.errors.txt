@@ -1,0 +1,56 @@
+input.ts(2,1): error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+input.ts(2,1): error TS24231: Read-only global 'Array' should not be modified.
+input.ts(3,1): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+input.ts(3,1): error TS24231: Read-only global 'String' should not be modified.
+input.ts(4,4): error TS2322: Type 'number' is not assignable to type 'Math'.
+input.ts(4,4): error TS24231: Read-only global 'Math' should not be modified.
+input.ts(4,17): error TS2304: Cannot find name 'source'.
+input.ts(5,6): error TS24231: Read-only global 'JSON' should not be modified.
+input.ts(5,14): error TS2304: Cannot find name 'values'.
+input.ts(6,1): error TS2304: Cannot find name 'custom'.
+input.ts(6,1): error TS24231: Read-only global 'custom' should not be modified.
+input.ts(7,1): error TS2304: Cannot find name 'writable'.
+input.ts(8,1): error TS2322: Type 'number' is not assignable to type 'ObjectConstructor'.
+input.ts(9,17): error TS7006: Parameter 'Array' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-global-assign":["error",{"exceptions":["Object"]}]}},"files":["input.ts"]}
+==== input.ts (14 errors) ====
+    /* global custom:readonly, writable:true */
+    Array = 1;
+    ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+    ~~~~~
+!!! error TS24231: Read-only global 'Array' should not be modified.
+    String++;
+    ~~~~~~
+!!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+    ~~~~~~
+!!! error TS24231: Read-only global 'String' should not be modified.
+    ({ Math = 0 } = source);
+       ~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'Math'.
+       ~~~~
+!!! error TS24231: Read-only global 'Math' should not be modified.
+                    ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+    for (JSON of values) {}
+         ~~~~
+!!! error TS24231: Read-only global 'JSON' should not be modified.
+                 ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+    custom = 1;
+    ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.
+    ~~~~~~
+!!! error TS24231: Read-only global 'custom' should not be modified.
+    writable = 1;
+    ~~~~~~~~
+!!! error TS2304: Cannot find name 'writable'.
+    Object = 1;
+    ~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'ObjectConstructor'.
+    function shadow(Array) { Array = 1; }
+                    ~~~~~
+!!! error TS7006: Parameter 'Array' implicitly has an 'any' type.

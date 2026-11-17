@@ -1,0 +1,23 @@
+/input.ts(1,49): error TS24191: Switch is not exhaustive. Cases not matched: E.B
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/switch-exhaustiveness-check": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    enum E { A, B } declare const value: E; switch (value) { case E.A: break; }
+                                                    ~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: E.B

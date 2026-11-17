@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS20326: Unexpected any. Specify a different type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type Key = keyof any;
+                     ~~~
+!!! error TS20326: Unexpected any. Specify a different type.

@@ -1,0 +1,22 @@
+/input.ts(1,25): error TS2339: Property 'ok' does not exist on type 'number'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    var foo = 0; while (foo.ok) { }
+                            ~~
+!!! error TS2339: Property 'ok' does not exist on type 'number'.

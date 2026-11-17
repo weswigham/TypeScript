@@ -1,0 +1,34 @@
+/input.ts(1,5): error TS20012: 'read' is always 'undefined' because it's never assigned.
+/input.ts(1,11): error TS2304: Cannot find name 'use'.
+/input.ts(1,60): error TS2304: Cannot find name 'use'.
+/input.ts(1,86): error TS7005: Variable 'ambient' implicitly has an 'any' type.
+/input.ts(1,95): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unassigned-vars": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    let read; use(read); let unused; let written; written = 1; use(written); declare let ambient; use(ambient);
+        ~~~~
+!!! error TS20012: 'read' is always 'undefined' because it's never assigned.
+              ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                               ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                                                         ~~~~~~~
+!!! error TS7005: Variable 'ambient' implicitly has an 'any' type.
+                                                                                                  ~~~
+!!! error TS2304: Cannot find name 'use'.

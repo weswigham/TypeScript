@@ -1,0 +1,81 @@
+/project/src/input.ts(12,1): error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+/project/src/input.ts(15,31): error TS19516: Expected an error object to be thrown.
+/project/src/input.ts(17,54): error TS24146: Parameter should be a read only type.
+/project/src/input.ts(22,22): error TS24061: Using the spread operator on a string can mishandle special characters, as can `.split("")`.
+- `...` produces Unicode code points, which will decompose complex emojis into individual emojis
+- .split("") produces UTF-16 code units, which breaks rich characters in many languages
+Consider using `Intl.Segmenter` for locale-aware string decomposition.
+Otherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "module": "esnext", "target": "esnext", "strict": true },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-floating-promises": [
+                    "error",
+                    { "allowForKnownSafePromises": [{ "from": "file", "name": "SafePromise", "path": "types.ts" }] }
+                ],
+                "@typescript-eslint/only-throw-error": [
+                    "error",
+                    { "allow": [{ "from": "file", "name": "AllowedError", "path": "types.ts" }] }
+                ],
+                "@typescript-eslint/prefer-readonly-parameter-types": [
+                    "error",
+                    { "allow": [{ "from": "file", "name": "AllowedParameter", "path": "types.ts" }] }
+                ],
+                "@typescript-eslint/no-misused-spread": [
+                    "error",
+                    { "allow": [{ "from": "file", "name": "AllowedString", "path": "types.ts" }] }
+                ]
+            }
+        },
+        "files": ["src/input.ts"]
+    }
+==== /project/src/input.ts (4 errors) ====
+    import { SafePromise, AllowedError, AllowedParameter, AllowedString } from "../types";
+    import {
+        SafePromise as OtherPromise,
+        AllowedError as OtherError,
+        AllowedParameter as OtherParameter,
+        AllowedString as OtherString,
+    } from "../../outside/types";
+    
+    declare const safePromise: SafePromise;
+    declare const otherPromise: OtherPromise;
+    safePromise;
+    otherPromise;
+    ~~~~~~~~~~~~~
+!!! error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+    
+    function throwAllowed() { throw new AllowedError(); }
+    function throwOther() { throw new OtherError(); }
+                                  ~~~~~~~~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+    
+    function acceptParameters(allowed: AllowedParameter, other: OtherParameter) {}
+                                                         ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    
+    declare const allowedString: AllowedString;
+    declare const otherString: OtherString;
+    const allowedSpread = [...allowedString];
+    const otherSpread = [...otherString];
+                         ~~~~~~~~~~~~~~
+!!! error TS24061: Using the spread operator on a string can mishandle special characters, as can `.split("")`.
+!!! error TS24061: - `...` produces Unicode code points, which will decompose complex emojis into individual emojis
+!!! error TS24061: - .split("") produces UTF-16 code units, which breaks rich characters in many languages
+!!! error TS24061: Consider using `Intl.Segmenter` for locale-aware string decomposition.
+!!! error TS24061: Otherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option.
+    
+==== /project/types.ts (0 errors) ====
+    export type SafePromise = Promise<void> & { brand: true };
+    export class AllowedError { value = 0; }
+    export interface AllowedParameter { value: number; }
+    export type AllowedString = string & { brand: true };
+==== /outside/types.ts (0 errors) ====
+    export type SafePromise = Promise<void> & { brand: true };
+    export class AllowedError { value = 0; }
+    export interface AllowedParameter { value: number; }
+    export type AllowedString = string & { brand: true };

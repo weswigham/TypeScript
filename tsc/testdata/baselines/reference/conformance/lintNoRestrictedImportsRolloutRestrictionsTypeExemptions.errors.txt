@@ -1,0 +1,43 @@
+/input.tsx(1,14): error TS2300: Duplicate identifier 'bad'.
+/input.tsx(1,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+/input.tsx(1,44): error TS2300: Duplicate identifier 'bad'.
+/input.tsx(1,49): error TS24267: 'bad' import from 'pkg' is restricted.
+/input.tsx(1,68): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "allowTypeImports": true,
+                        "importNames": [
+                            "bad"
+                        ],
+                        "name": "pkg"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (5 errors) ====
+    import type {bad} from 'pkg'; import {type bad, bad as other} from 'pkg';
+                 ~~~
+!!! error TS2300: Duplicate identifier 'bad'.
+                           ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+                                               ~~~
+!!! error TS2300: Duplicate identifier 'bad'.
+                                                    ~~~~~~~~~~~~
+!!! error TS24267: 'bad' import from 'pkg' is restricted.
+                                                                       ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

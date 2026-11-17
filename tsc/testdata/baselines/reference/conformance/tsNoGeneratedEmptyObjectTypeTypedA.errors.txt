@@ -1,0 +1,26 @@
+input.ts(1,14): error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+input.ts(2,20): error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+input.ts(3,26): error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+input.ts(7,23): error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "@typescript-eslint/no-generated-empty-object-type": "error" } }
+    }
+==== input.ts (4 errors) ====
+    type Empty = Pick<{ value: string }, never>;
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+    type EmptyRecord = Record<never, unknown>;
+                       ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+    type EmptyIntersection = {} & {};
+                             ~~~~~~~
+!!! error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.
+    type Explicit = {};
+    type Generic<T extends string> = Record<T, unknown>;
+    interface EmptyInterface<T> {}
+    type InterfaceAlias = EmptyInterface<string>;
+                          ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20721: This type resolves to `{}`, the empty object type. This was likely not intentional.

@@ -1,0 +1,27 @@
+input.ts(2,18): error TS24092: Type parameter T is used only once in the function signature.
+input.ts(3,24): error TS24092: Type parameter T is used only once in the function signature.
+input.ts(4,11): error TS24092: Type parameter T is used only once in the class signature.
+input.ts(5,33): error TS24092: Type parameter T is used only once in the function signature.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-type-parameters":"error"}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    export {};
+    function consume<T>(value: T): void {}
+                     ~
+!!! error TS24092: Type parameter T is used only once in the function signature.
+    declare function input<T>(value: T[]): void;
+                           ~
+!!! error TS24092: Type parameter T is used only once in the function signature.
+    class Box<T> { value!: T; }
+              ~
+!!! error TS24092: Type parameter T is used only once in the class signature.
+    declare function readonlyOutput<T>(): readonly T[];
+                                    ~
+!!! error TS24092: Type parameter T is used only once in the function signature.
+    function identity<T>(value: T) { return value; }
+    function box<T>(value: T) { return { value }; }
+    class Many<T> { values!: T[]; }
+    declare function output<T>(): Promise<T>;
+    type Predicate = <T>(value: T) => value is T;

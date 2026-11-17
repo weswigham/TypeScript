@@ -1,0 +1,35 @@
+/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,8): error TS19248: .default is a syntax error.
+/input.ts(1,17): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "dot-notation": [
+                    "error",
+                    {
+                        "allowKeywords": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    object.default; object['default'];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+           ~~~~~~~
+!!! error TS19248: .default is a syntax error.
+                    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

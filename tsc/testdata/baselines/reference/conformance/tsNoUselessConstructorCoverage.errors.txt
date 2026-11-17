@@ -1,0 +1,44 @@
+input.ts(2,5): error TS20485: Useless constructor.
+input.ts(6,12): error TS20485: Useless constructor.
+input.ts(15,5): error TS20485: Useless constructor.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-useless-constructor": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    class Empty {
+        constructor() {}
+        ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.
+    }
+    
+    class PublicEmpty {
+        public constructor() {}
+               ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.
+    }
+    
+    class Base {
+        constructor(value: number) {
+            void value;
+        }
+    }
+    class Forwarding extends Base {
+        constructor(value: number) {
+        ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.
+            super(value);
+        }
+    }
+    
+    class Restricted {
+        private constructor() {}
+    }
+    class WithProperty {
+        constructor(public value: number) {}
+    }

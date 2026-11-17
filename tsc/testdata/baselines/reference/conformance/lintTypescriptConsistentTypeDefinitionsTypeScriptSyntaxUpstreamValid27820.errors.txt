@@ -1,0 +1,31 @@
+/input.ts(2,21): error TS2304: Cannot find name 'B'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "interface"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    interface A extends B {
+                        ~
+!!! error TS2304: Cannot find name 'B'.
+      x: number;
+    }
+          

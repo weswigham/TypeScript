@@ -1,0 +1,31 @@
+/input.ts(1,96): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": [
+                    "error",
+                    {
+                        "ignoreProperties": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    class C { x: number = 1; accessor y: string = ''; static z: boolean = true; constructor(public p: number = 1) {} }
+                                                                                                   ~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.

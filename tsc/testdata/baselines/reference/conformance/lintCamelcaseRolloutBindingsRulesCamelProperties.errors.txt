@@ -1,0 +1,40 @@
+/input.ts(1,1): error TS2304: Cannot find name 'obj'.
+/input.ts(1,5): error TS24203: Identifier 'snake_case' is not in camel case.
+/input.ts(1,21): error TS2304: Cannot find name 'obj'.
+/input.ts(1,54): error TS24203: Identifier 'snake_case' is not in camel case.
+/input.ts(1,80): error TS7008: Member '#snake_case' implicitly has an 'any' type.
+/input.ts(1,80): error TS24204: #snake_case is not in camel case.
+/input.ts(1,93): error TS24203: Identifier 'snake_method' is not in camel case.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    obj.snake_case = 1; obj.snake_case++; const value = {snake_case: 1}; class C { #snake_case; snake_method() {} }
+    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+        ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.
+                        ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                         ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.
+                                                                                   ~~~~~~~~~~~
+!!! error TS7008: Member '#snake_case' implicitly has an 'any' type.
+                                                                                   ~~~~~~~~~~~
+!!! error TS24204: #snake_case is not in camel case.
+                                                                                                ~~~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_method' is not in camel case.

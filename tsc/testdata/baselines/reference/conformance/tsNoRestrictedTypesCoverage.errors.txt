@@ -1,0 +1,31 @@
+input.ts(8,15): error TS20482: Don't use `Bad` as a type. Use Good.
+input.ts(9,17): error TS20482: Don't use `Forbidden` as a type.
+input.ts(10,21): error TS20482: Don't use `Legacy` as a type.
+input.ts(11,26): error TS20482: Don't use `Banned<string>` as a type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-restricted-types":["error",{"types":{"Bad":{"message":"Use Good.","fixWith":"Good"},"Forbidden":true,"Legacy":{"suggest":["Good","Other"]},"Banned< string >":true}}]}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    export {};
+    type Bad = string;
+    type Forbidden = number;
+    type Legacy = string;
+    type Banned<T> = T[];
+    type Good = string;
+    type Other = number;
+    let needsFix: Bad;
+                  ~~~
+!!! error TS20482: Don't use `Bad` as a type. Use Good.
+    let reportOnly: Forbidden;
+                    ~~~~~~~~~
+!!! error TS20482: Don't use `Forbidden` as a type.
+    let suggestionOnly: Legacy;
+                        ~~~~~~
+!!! error TS20482: Don't use `Legacy` as a type.
+    type RestrictedGeneric = Banned<string>;
+                             ~~~~~~~~~~~~~~
+!!! error TS20482: Don't use `Banned<string>` as a type.
+    let allowed: Good;
+    let primitive: string;
+    let unrestrictedGeneric: Banned<number>;

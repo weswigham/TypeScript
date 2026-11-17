@@ -1,0 +1,42 @@
+/input.ts(1,15): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+/input.ts(1,16): error TS24291: '_a' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+/input.ts(1,20): error TS24291: '_b' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+/input.ts(1,27): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_",
+                        "reportUsedIgnorePattern": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    try {} catch ([_a, _b]) { doSomething(_a, _b); }
+                  ~~~~~~~~
+!!! error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+                   ~~
+!!! error TS24291: '_a' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+                       ~~
+!!! error TS24291: '_b' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+                              ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.

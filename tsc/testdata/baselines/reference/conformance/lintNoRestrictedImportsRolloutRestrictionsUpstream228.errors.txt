@@ -1,0 +1,32 @@
+/input.tsx(1,1): error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+/input.tsx(1,1): error TS24255: 'import1' import is restricted from being used.
+/input.tsx(1,22): error TS2307: Cannot find module 'import1' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    "import1",
+                    "import2"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    import foo = require('import1');
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'import1' import is restricted from being used.
+                         ~~~~~~~~~
+!!! error TS2307: Cannot find module 'import1' or its corresponding type declarations.

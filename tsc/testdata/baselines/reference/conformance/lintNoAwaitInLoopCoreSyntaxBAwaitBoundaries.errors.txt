@@ -1,0 +1,35 @@
+/input.ts(1,49): error TS2552: Cannot find name 'items'. Did you mean 'item'?
+/input.ts(1,64): error TS2304: Cannot find name 'work'.
+/input.ts(1,85): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,91): error TS2304: Cannot find name 'work'.
+/input.ts(1,151): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-await-in-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    async function run() { for await (const item of items) { await work(); while (item) await work(); } while (true) { const callback = async () => await work(); } }
+                                                    ~~~~~
+!!! error TS2552: Cannot find name 'items'. Did you mean 'item'?
+!!! related TS2728 /input.ts:1:41: 'item' is declared here.
+                                                                   ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                                        ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                                              ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                                                                                                          ~~~~
+!!! error TS2304: Cannot find name 'work'.

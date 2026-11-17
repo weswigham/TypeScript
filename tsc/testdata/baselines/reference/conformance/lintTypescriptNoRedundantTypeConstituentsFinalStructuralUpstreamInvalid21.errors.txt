@@ -1,0 +1,24 @@
+/input.ts(1,10): error TS24065: template literal type is overridden by string in this union type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = `a${number}c` | string;
+             ~~~~~~~~~~~~~
+!!! error TS24065: template literal type is overridden by string in this union type.

@@ -1,0 +1,21 @@
+input.ts(1,4): error TS19667: Unnecessarily computed property ["key"] found.
+input.ts(1,13): error TS2304: Cannot find name 'value'.
+input.ts(2,30): error TS7008: Member '["field"]' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-computed-key": ["error", { "enforceForClassMembers": false }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    ({ ["key"]: value });
+       ~~~~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ["key"] found.
+                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    class Example { ["key"]() {} ["field"]; }
+                                 ~~~~~~~~~
+!!! error TS7008: Member '["field"]' implicitly has an 'any' type.

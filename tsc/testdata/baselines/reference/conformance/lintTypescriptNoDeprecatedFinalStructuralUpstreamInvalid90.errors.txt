@@ -1,0 +1,49 @@
+/input.tsx(7,12): error TS24031: `A` is deprecated.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "jsx": "preserve",
+            "module": "commonjs",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "/jsx.d.ts"
+        ]
+    }
+==== /jsx.d.ts (0 errors) ====
+    declare namespace JSX {
+        interface IntrinsicElements { div: AriaAttributes }
+        interface AriaAttributes {
+            /** @deprecated in ARIA 1.1 */
+            "aria-grabbed"?: boolean | "false" | "true";
+        }
+    }
+==== /input.tsx (1 errors) ====
+    
+    /** @deprecated */
+    function A() {
+      return <div />;
+    }
+    
+    const a = <A />;
+               ~
+!!! error TS24031: `A` is deprecated.
+          
+==== /deprecated.ts (0 errors) ====
+    /** @deprecated */
+    export function deprecatedFunction(): void {}
+    /** @deprecated Reason */
+    export type T = { a: string };
+    export type U = { b: string };
+    /** @deprecated */
+    export default { foo: 1 };

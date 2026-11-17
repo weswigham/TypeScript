@@ -1,0 +1,35 @@
+input.ts(2,43): warning TS24304: Unnecessary return statement.
+input.ts(3,34): warning TS24304: Unnecessary return statement.
+input.ts(6,30): warning TS24304: Unnecessary return statement.
+input.ts(8,51): warning TS24304: Unnecessary return statement.
+input.ts(10,22): warning TS24304: Unnecessary return statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-return": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (5 errors) ====
+    declare const ready: boolean, value: number;
+    function trailing() { console.log(ready); return; }
+                                              ~~~~~~~
+!!! warning TS24304: Unnecessary return statement.
+    function branch() { if (ready) { return; } }
+                                     ~~~~~~~
+!!! warning TS24304: Unnecessary return statement.
+    function important() { if (ready) return; console.log(ready); }
+    function loop() { while (ready) { return; } }
+    function finalizer() { try { return; } finally { console.log(ready); } }
+                                 ~~~~~~~
+!!! warning TS24304: Unnecessary return statement.
+    function finalizerReturn() { try { console.log(ready); } finally { return; } }
+    function switchBreak() { switch (value) { case 0: return; break; default: console.log(value); } }
+                                                      ~~~~~~~
+!!! warning TS24304: Unnecessary return statement.
+    function switchFallthrough() { switch (value) { case 0: return; default: console.log(value); } }
+    function comment() { return /* keep */; }
+                         ~~~~~~~~~~~~~~~~~~
+!!! warning TS24304: Unnecessary return statement.
+    function unreachable() { throw Error(); return; }

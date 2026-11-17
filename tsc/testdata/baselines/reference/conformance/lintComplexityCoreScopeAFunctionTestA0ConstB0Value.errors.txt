@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
+/input.ts(1,49): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "complexity": [
+                    "error",
+                    3
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function test(a = 0) { const [{ b = 0 } = {}] = value; }
+    ~~~~~~~~~~~~~
+!!! error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
+                                                    ~~~~~
+!!! error TS2304: Cannot find name 'value'.

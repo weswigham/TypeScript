@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS2304: Cannot find name 'B'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class A extends (B ||= 5) { constructor() { super(); } }
+                     ~
+!!! error TS2304: Cannot find name 'B'.

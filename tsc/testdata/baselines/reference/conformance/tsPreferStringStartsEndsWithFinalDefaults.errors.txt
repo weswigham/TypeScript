@@ -1,0 +1,52 @@
+input.ts(2,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(3,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(4,1): error TS24148: Use the 'String#endsWith' method instead.
+input.ts(5,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(6,1): error TS24148: Use the 'String#endsWith' method instead.
+input.ts(7,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(8,1): error TS24148: Use the 'String#endsWith' method instead.
+input.ts(9,1): error TS24148: Use the 'String#endsWith' method instead.
+input.ts(10,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(11,1): error TS24149: Use 'String#startsWith' method instead.
+input.ts(12,1): error TS24148: Use the 'String#endsWith' method instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/prefer-string-starts-ends-with":"error"}}}
+==== input.ts (11 errors) ====
+    declare const text: string;
+    text[0] === "a";
+    ~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    text[0] === "ab";
+    ~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    text[text.length - 1] !== "b";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24148: Use the 'String#endsWith' method instead.
+    text.indexOf("ab") === 0;
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    text.lastIndexOf("ab") === text.length - 2;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24148: Use the 'String#endsWith' method instead.
+    text.slice(0, 2) === "ab";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    text.slice(-2) !== "ab";
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24148: Use the 'String#endsWith' method instead.
+    text.substring(-2) === "ab";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24148: Use the 'String#endsWith' method instead.
+    text.match(/^ab/) === null;
+    ~~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    /^a\x62/.test(text);
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.
+    /ab$/.test(text);
+    ~~~~~~~~~~~~~~~~
+!!! error TS24148: Use the 'String#endsWith' method instead.
+    /^ab$/.test(text);
+    /^ab/m.test(text);

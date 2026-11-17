@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS20258: Expected the Promise rejection reason to be an Error.
+/input.ts(1,19): error TS20258: Expected the Promise rejection reason to be an Error.
+/input.ts(1,38): error TS20258: Expected the Promise rejection reason to be an Error.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-promise-reject-errors": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    Promise.reject(); Promise.reject(0); Promise['reject'](undefined); Promise.reject(new Error());
+    ~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+                      ~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.

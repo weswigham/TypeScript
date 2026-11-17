@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS7006: Parameter 'RegExp' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-regex-literals": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f(RegExp) { return new RegExp("abc"); }
+               ~~~~~~
+!!! error TS7006: Parameter 'RegExp' implicitly has an 'any' type.

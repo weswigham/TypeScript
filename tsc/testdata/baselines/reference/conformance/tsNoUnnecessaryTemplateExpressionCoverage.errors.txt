@@ -1,0 +1,30 @@
+input.ts(3,4): error TS24087: Template literal expression is unnecessary and can be simplified.
+input.ts(4,4): error TS24087: Template literal expression is unnecessary and can be simplified.
+input.ts(5,7): error TS24087: Template literal expression is unnecessary and can be simplified.
+input.ts(6,25): error TS24087: Template literal expression is unnecessary and can be simplified.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-template-expression":"error"}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    export {};
+    declare const text: string;
+    `${text}`;
+       ~~~~
+!!! error TS24087: Template literal expression is unnecessary and can be simplified.
+    `${1}`;
+       ~
+!!! error TS24087: Template literal expression is unnecessary and can be simplified.
+    `use${"less"}`;
+          ~~~~~~
+!!! error TS24087: Template literal expression is unnecessary and can be simplified.
+    type Simplified = `foo${"bar"}baz`;
+                            ~~~~~
+!!! error TS24087: Template literal expression is unnecessary and can be simplified.
+    declare const number: 1;
+    `${number}`;
+    declare const union: string | number;
+    `${union}`;
+    declare function tag(strings: TemplateStringsArray, ...values: unknown[]): string;
+    tag`${"a"}${"b"}`;
+    function generic<T>(value: T) { return `${value}`; }

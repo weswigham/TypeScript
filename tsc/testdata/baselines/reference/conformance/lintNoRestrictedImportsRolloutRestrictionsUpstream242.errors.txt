@@ -1,0 +1,36 @@
+/input.tsx(1,1): error TS24256: 'import-foo' import is restricted from being used. Please use import-bar instead.
+/input.tsx(1,17): error TS2307: Cannot find module 'import-foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "allowTypeImports": true,
+                                "message": "Please use import-bar instead.",
+                                "name": "import-foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import foo from 'import-foo';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24256: 'import-foo' import is restricted from being used. Please use import-bar instead.
+                    ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'import-foo' or its corresponding type declarations.

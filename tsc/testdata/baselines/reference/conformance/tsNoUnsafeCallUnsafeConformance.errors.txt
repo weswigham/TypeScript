@@ -1,0 +1,57 @@
+input.ts(8,1): error TS24108: Unsafe call of an `any` typed value.
+input.ts(9,1): error TS24108: Unsafe call of an `any` typed value.
+input.ts(10,1): error TS24110: Unsafe construction of an `any` typed value.
+input.ts(11,1): error TS24111: Unsafe use of an `any` typed template tag.
+input.ts(12,1): error TS24108: Unsafe call of a `Function` typed value.
+input.ts(13,1): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+input.ts(13,1): error TS24110: Unsafe construction of a `Function` typed value.
+input.ts(14,1): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+input.ts(16,1): error TS2304: Cannot find name 'missing'.
+input.ts(16,1): error TS24104: Unsafe call of a type that could not be resolved.
+input.ts(17,45): error TS2349: This expression is not callable.
+  Type 'unknown' has no call signatures.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/no-unsafe-call":"error"}}}
+==== input.ts (11 errors) ====
+    declare const unsafe: any;
+    declare const broad: Function;
+    declare const safe: () => void;
+    interface Callable extends Function { (): string; }
+    interface VoidCallable extends Function { (): void; }
+    declare const callable: Callable;
+    declare const voidCallable: VoidCallable;
+    unsafe();
+    ~~~~~~
+!!! error TS24108: Unsafe call of an `any` typed value.
+    unsafe?.();
+    ~~~~~~
+!!! error TS24108: Unsafe call of an `any` typed value.
+    new unsafe();
+    ~~~~~~~~~~~~
+!!! error TS24110: Unsafe construction of an `any` typed value.
+    unsafe`text`;
+    ~~~~~~
+!!! error TS24111: Unsafe use of an `any` typed template tag.
+    broad();
+    ~~~~~
+!!! error TS24108: Unsafe call of a `Function` typed value.
+    new voidCallable();
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS24110: Unsafe construction of a `Function` typed value.
+    new callable();
+    ~~~~~~~~~~~~~~
+!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+    safe();
+    missing();
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'missing'.
+    ~~~~~~~
+!!! error TS24104: Unsafe call of a type that could not be resolved.
+    function generic<T extends any>(value: T) { value(); }
+                                                ~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'unknown' has no call signatures.

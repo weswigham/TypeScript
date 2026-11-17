@@ -1,0 +1,7 @@
+//// [tests/cases/conformance/lint/rules/no-restricted-imports/lintNoRestrictedImportsRolloutRestrictionsUpstream71.ts] ////
+
+//// [input.tsx]
+import os from "os ";
+
+//// [input.tsx]
+import os from "os ";

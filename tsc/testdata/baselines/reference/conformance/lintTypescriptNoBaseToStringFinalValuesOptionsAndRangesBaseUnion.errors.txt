@@ -1,0 +1,24 @@
+/input.ts(1,42): error TS24022: 'value' may use Object's default stringification format ('[object Object]') when stringified.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-base-to-string": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: string | {}; String(value);
+                                             ~~~~~
+!!! error TS24022: 'value' may use Object's default stringification format ('[object Object]') when stringified.

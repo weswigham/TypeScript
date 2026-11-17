@@ -1,0 +1,22 @@
+/input.ts(1,37): error TS20274: The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch (error) { { let error; throw new Error('', { cause: error }); } }
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20274: The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration.

@@ -1,0 +1,24 @@
+/input.ts(1,40): error TS24191: Switch is not exhaustive. Cases not matched: undefined
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "noUncheckedIndexedAccess": true,
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/switch-exhaustiveness-check": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f(values: string[]) { switch (values[0]) { case 'a': break; } }
+                                           ~~~~~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: undefined

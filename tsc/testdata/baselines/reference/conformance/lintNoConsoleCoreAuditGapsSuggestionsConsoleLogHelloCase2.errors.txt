@@ -1,0 +1,23 @@
+/input.ts(1,1): error TS19854: Unexpected console statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    console['log']('hello');
+    ~~~~~~~~~~~~~~
+!!! error TS19854: Unexpected console statement.

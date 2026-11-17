@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS21283: Imports "A" are only used as type.
+/input.ts(1,22): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.ts(1,41): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    import { A, B } from 'x'; let value: A; use(B);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21283: Imports "A" are only used as type.
+                         ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                            ~~~
+!!! error TS2304: Cannot find name 'use'.

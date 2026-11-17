@@ -1,0 +1,46 @@
+/input.ts(2,8): error TS24290: 'a' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+/input.ts(2,15): error TS24290: 'c' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+/input.ts(3,7): error TS24290: 'fooArray' is assigned a value but never used. Allowed unused vars must match /ignore/u.
+/input.ts(4,7): error TS24290: 'barArray' is assigned a value but never used. Allowed unused vars must match /ignore/u.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_",
+                        "varsIgnorePattern": "ignore"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    const array = ['a', 'b', 'c'];
+    const [a, _b, c] = array;
+           ~
+!!! error TS24290: 'a' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+                  ~
+!!! error TS24290: 'c' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+    const fooArray = ['foo'];
+          ~~~~~~~~
+!!! error TS24290: 'fooArray' is assigned a value but never used. Allowed unused vars must match /ignore/u.
+    const barArray = ['bar'];
+          ~~~~~~~~
+!!! error TS24290: 'barArray' is assigned a value but never used. Allowed unused vars must match /ignore/u.
+    const ignoreArray = ['ignore'];

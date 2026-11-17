@@ -1,0 +1,44 @@
+input.ts(2,35): error TS24186: Value returned in a context where a void return is expected.
+input.ts(3,38): error TS24186: Value returned in a context where a void return is expected.
+input.ts(4,43): error TS24184: Async function used in a context where a void function is expected.
+input.ts(5,35): error TS24186: Value returned in a context where a void return is expected.
+input.ts(11,19): error TS24186: Value returned in a context where a void return is expected.
+input.ts(14,16): error TS24186: Value returned in a context where a void return is expected.
+input.ts(16,39): error TS24186: Value returned in a context where a void return is expected.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/strict-void-return": "error" } }
+    }
+==== input.ts (7 errors) ====
+    export {};
+    const literal: () => void = () => 1;
+                                      ~
+!!! error TS24186: Value returned in a context where a void return is expected.
+    const sideEffect: () => void = () => Math.random();
+                                         ~~~~~~~~~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.
+    const asynchronous: () => void = async () => { await Promise.resolve(); };
+                                              ~~
+!!! error TS24184: Async function used in a context where a void function is expected.
+    const block: () => void = () => { return 1; };
+                                      ~~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.
+    const permitted: () => void = () => undefined;
+    declare function overloaded(callback: () => void): void;
+    declare function overloaded(callback: () => boolean): void;
+    overloaded(() => false);
+    declare function constrained<T extends () => void>(callback: T): void;
+    constrained(() => 1);
+                      ~
+!!! error TS24186: Value returned in a context where a void return is expected.
+    interface Base { method(): void; }
+    class Derived implements Base {
+        method() { return 1; }
+                   ~~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.
+    }
+    const contextual: Base = { method() { return 1; } };
+                                          ~~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.

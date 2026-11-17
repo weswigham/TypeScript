@@ -1,0 +1,28 @@
+input.ts(1,1): error TS19652: This generator function does not have 'yield'.
+input.ts(3,1): error TS19652: This generator function does not have 'yield'.
+input.ts(5,18): error TS19652: This generator function does not have 'yield'.
+input.ts(6,17): error TS19652: This generator function does not have 'yield'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "require-yield": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    function* missing() { return 0; }
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19652: This generator function does not have 'yield'.
+    function* empty() {}
+    function* outer() { function* inner() { yield 1; } }
+    ~~~~~~~~~~~~~~~
+!!! error TS19652: This generator function does not have 'yield'.
+    function* yielding() { yield 1; }
+    const object = { *missing() { return 0; } };
+                     ~~~~~~~~
+!!! error TS19652: This generator function does not have 'yield'.
+    class Example { *missing() { return 0; } }
+                    ~~~~~~~~
+!!! error TS19652: This generator function does not have 'yield'.

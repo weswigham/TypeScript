@@ -1,0 +1,55 @@
+input.js(1,1): error TS19512: Don't use octal: '\01'. Use '\u....' instead.
+input.js(1,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x01'.
+input.js(1,5): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x02'.
+input.js(2,1): error TS19512: Don't use octal: '\377'. Use '\u....' instead.
+input.js(2,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\xff'.
+input.js(3,1): error TS19512: Don't use octal: '\37'. Use '\u....' instead.
+input.js(3,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1f'.
+input.js(4,1): error TS19512: Don't use octal: '\40'. Use '\u....' instead.
+input.js(4,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x20'.
+input.js(5,1): error TS19512: Don't use octal: '\0'. Use '\u....' instead.
+input.js(5,2): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+input.js(7,2): error TS1488: Escape sequence '\8' is not allowed.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "allowJs": true },
+        "lint": { "rules": { "no-octal-escape": "error" } },
+        "files": ["input.js"]
+    }
+    
+==== input.js (12 errors) ====
+    '\01\02';
+    ~~~~~~~~
+!!! error TS19512: Don't use octal: '\01'. Use '\u....' instead.
+     ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x01'.
+        ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x02'.
+    '\377';
+    ~~~~~~
+!!! error TS19512: Don't use octal: '\377'. Use '\u....' instead.
+     ~~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\xff'.
+    '\378';
+    ~~~~~~
+!!! error TS19512: Don't use octal: '\37'. Use '\u....' instead.
+     ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1f'.
+    '\400';
+    ~~~~~~
+!!! error TS19512: Don't use octal: '\40'. Use '\u....' instead.
+     ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x20'.
+    '\08';
+    ~~~~~
+!!! error TS19512: Don't use octal: '\0'. Use '\u....' instead.
+     ~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+    '\0';
+    '\8';
+     ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+    '\\01';
+    /([abc]) \1/g;

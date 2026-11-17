@@ -1,0 +1,27 @@
+input.ts(1,13): error TS20162: Unexpected use of undefined.
+input.ts(2,19): error TS20162: Unexpected use of undefined.
+input.ts(3,12): error TS20162: Unexpected use of undefined.
+input.ts(7,21): error TS20162: Unexpected use of undefined.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-undefined": "error" } }
+    }
+==== input.ts (4 errors) ====
+    let value = undefined;
+                ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+    function shadowed(undefined: number) {
+                      ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+        return undefined;
+               ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+    }
+    const object = { undefined: 0 };
+    object.undefined;
+    const shorthand = { undefined };
+                        ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+    type Optional = number | undefined;

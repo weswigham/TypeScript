@@ -1,0 +1,49 @@
+/input.ts(1,5): error TS20168: Unexpected dangling '_' in '_first'.
+/input.ts(1,19): error TS20168: Unexpected dangling '_' in 'second_'.
+/input.ts(1,32): error TS20168: Unexpected dangling '_' in '_third'.
+/input.ts(1,53): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,53): error TS20168: Unexpected dangling '_' in '_fourth'.
+/input.ts(1,69): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,69): error TS20168: Unexpected dangling '_' in '_fifth'.
+/input.ts(1,76): error TS2304: Cannot find name '_fifth'.
+/input.ts(1,85): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-underscore-dangle": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    var _first; const second_ = 0; function _third() {} object._fourth; object[_fifth]; object['_sixth'];
+        ~~~~~~
+!!! error TS20168: Unexpected dangling '_' in '_first'.
+                      ~~~~~~~~~~~
+!!! error TS20168: Unexpected dangling '_' in 'second_'.
+                                   ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20168: Unexpected dangling '_' in '_third'.
+                                                        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                                        ~~~~~~~~~~~~~~
+!!! error TS20168: Unexpected dangling '_' in '_fourth'.
+                                                                        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                                                        ~~~~~~~~~~~~~~
+!!! error TS20168: Unexpected dangling '_' in '_fifth'.
+                                                                               ~~~~~~
+!!! error TS2304: Cannot find name '_fifth'.
+                                                                                        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

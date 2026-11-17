@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS19003: The Function constructor is eval.
+/input.ts(1,17): error TS19003: The Function constructor is eval.
+/input.ts(1,29): error TS19003: The Function constructor is eval.
+/input.ts(1,43): error TS19003: The Function constructor is eval.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new-func": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    new Function(); Function(); (Function)(); Function?.();
+    ~~~~~~~~~~~~~~
+!!! error TS19003: The Function constructor is eval.
+                    ~~~~~~~~~~
+!!! error TS19003: The Function constructor is eval.
+                                ~~~~~~~~~~~~
+!!! error TS19003: The Function constructor is eval.
+                                              ~~~~~~~~~~~~
+!!! error TS19003: The Function constructor is eval.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

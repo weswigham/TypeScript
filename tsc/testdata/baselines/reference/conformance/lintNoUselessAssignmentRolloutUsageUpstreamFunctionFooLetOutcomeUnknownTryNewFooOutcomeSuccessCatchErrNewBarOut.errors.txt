@@ -1,0 +1,43 @@
+/input.ts(5,9): error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+/input.ts(8,9): error TS2304: Cannot find name 'Bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    function foo() {
+    			let outcome = 'unknown';
+    
+    			try {
+    				new Foo();
+    				    ~~~
+!!! error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+!!! related TS2728 /input.ts:1:10: 'foo' is declared here.
+    				outcome = 'success';
+    			} catch (err) {
+    				new Bar();
+    				    ~~~
+!!! error TS2304: Cannot find name 'Bar'.
+    				outcome = 'exception'; 
+    			} finally {
+    				console.log(outcome);
+    			}
+    		}

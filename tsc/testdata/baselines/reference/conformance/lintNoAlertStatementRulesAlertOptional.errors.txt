@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS19000: Unexpected alert.
+/input.ts(1,12): error TS19000: Unexpected alert.
+/input.ts(1,29): error TS19000: Unexpected alert.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-alert": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    alert?.(); window?.alert(); (window?.alert)();
+    ~~~~~~~~~
+!!! error TS19000: Unexpected alert.
+               ~~~~~~~~~~~~~~~
+!!! error TS19000: Unexpected alert.
+                                ~~~~~~~~~~~~~~~~~
+!!! error TS19000: Unexpected alert.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

@@ -1,0 +1,28 @@
+/input.ts(1,4): error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"str"' have no overlap.
+/input.ts(1,4): error TS24224: Unexpected constant condition.
+/input.ts(1,11): error TS2304: Cannot find name 'abc'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if(typeof abc==='str' || true){}
+       ~~~~~~~~~~~~~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"str"' have no overlap.
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24224: Unexpected constant condition.
+              ~~~
+!!! error TS2304: Cannot find name 'abc'.

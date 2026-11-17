@@ -1,0 +1,40 @@
+/input.ts(1,2): error TS1488: Escape sequence '\8' is not allowed.
+/input.ts(1,2): error TS19513: Don't use '\8' escape sequence.
+/input.ts(1,4): error TS1488: Escape sequence '\9' is not allowed.
+/input.ts(1,4): error TS19513: Don't use '\9' escape sequence.
+/input.ts(1,12): error TS1488: Escape sequence '\8' is not allowed.
+/input.ts(1,12): error TS19513: Don't use '\8' escape sequence.
+/input.ts(1,25): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-nonoctal-decimal-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    '\8\9'; '\0\8'; '\\8'; '\08';
+     ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+     ~~
+!!! error TS19513: Don't use '\8' escape sequence.
+       ~~
+!!! error TS1488: Escape sequence '\9' is not allowed.
+       ~~
+!!! error TS19513: Don't use '\9' escape sequence.
+               ~~
+!!! error TS1488: Escape sequence '\8' is not allowed.
+               ~~
+!!! error TS19513: Don't use '\8' escape sequence.
+                            ~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x00'.

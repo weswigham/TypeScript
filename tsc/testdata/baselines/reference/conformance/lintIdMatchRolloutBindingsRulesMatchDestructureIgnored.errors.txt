@@ -1,0 +1,37 @@
+/input.ts(1,19): error TS2304: Cannot find name 'other_name'.
+/input.ts(1,40): error TS24214: Identifier 'bad_alias' does not match the pattern '^[a-z]+$'.
+/input.ts(1,54): error TS24214: Identifier 'rest_name' does not match the pattern '^[a-z]+$'.
+/input.ts(1,67): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-match": [
+                    "error",
+                    "^[a-z]+$",
+                    {
+                        "ignoreDestructuring": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    const {bad_name = other_name, bad_key: bad_alias, ...rest_name} = source;
+                      ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'other_name'.
+                                           ~~~~~~~~~
+!!! error TS24214: Identifier 'bad_alias' does not match the pattern '^[a-z]+$'.
+                                                         ~~~~~~~~~
+!!! error TS24214: Identifier 'rest_name' does not match the pattern '^[a-z]+$'.
+                                                                      ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

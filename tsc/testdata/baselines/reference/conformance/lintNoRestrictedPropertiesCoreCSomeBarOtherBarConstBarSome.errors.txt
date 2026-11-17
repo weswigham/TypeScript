@@ -1,0 +1,39 @@
+/input.ts(1,1): error TS2304: Cannot find name 'some'.
+/input.ts(1,11): error TS2304: Cannot find name 'other'.
+/input.ts(1,11): error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: some.
+/input.ts(1,36): error TS2304: Cannot find name 'some'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-properties": [
+                    "error",
+                    {
+                        "allowObjects": [
+                            "some"
+                        ],
+                        "property": "bar"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    some.bar; other.bar; const {bar} = some;
+    ~~~~
+!!! error TS2304: Cannot find name 'some'.
+              ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+              ~~~~~~~~~
+!!! error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: some.
+                                       ~~~~
+!!! error TS2304: Cannot find name 'some'.

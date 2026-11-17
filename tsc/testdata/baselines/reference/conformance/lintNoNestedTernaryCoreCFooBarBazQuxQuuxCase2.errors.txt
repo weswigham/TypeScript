@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19500: Do not nest ternary expressions.
+/input.ts(1,7): error TS2304: Cannot find name 'bar'.
+/input.ts(1,13): error TS2304: Cannot find name 'baz'.
+/input.ts(1,19): error TS2304: Cannot find name 'qux'.
+/input.ts(1,25): error TS2304: Cannot find name 'quux'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-nested-ternary": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    foo ? bar : baz ? qux : quux
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19500: Do not nest ternary expressions.
+          ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                ~~~
+!!! error TS2304: Cannot find name 'baz'.
+                      ~~~
+!!! error TS2304: Cannot find name 'qux'.
+                            ~~~~
+!!! error TS2304: Cannot find name 'quux'.

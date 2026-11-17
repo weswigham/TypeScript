@@ -1,0 +1,27 @@
+/input.ts(1,22): error TS2695: Left side of comma operator is unused and has no side effects.
+/input.ts(1,25): error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-confusing-void-expression": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const value = () => (1, console.log());
+                         ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                            ~~~~~~~~~~~~~
+!!! error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.

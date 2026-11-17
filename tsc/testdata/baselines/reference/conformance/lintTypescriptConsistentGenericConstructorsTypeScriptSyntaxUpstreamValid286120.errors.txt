@@ -1,0 +1,28 @@
+/input.ts(3,24): error TS2558: Expected 0 type arguments, but got 1.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    class Foo {
+      accessor a = new Foo<string>();
+                           ~~~~~~
+!!! error TS2558: Expected 0 type arguments, but got 1.
+    }
+          

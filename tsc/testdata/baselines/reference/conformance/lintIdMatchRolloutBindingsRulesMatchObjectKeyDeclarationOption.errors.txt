@@ -1,0 +1,32 @@
+/input.ts(1,16): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
+/input.ts(1,26): error TS2304: Cannot find name 'good_name'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-match": [
+                    "error",
+                    "^[a-z]+$",
+                    {
+                        "onlyDeclarations": true,
+                        "properties": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const value = {bad_name: good_name};
+                   ~~~~~~~~
+!!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
+                             ~~~~~~~~~
+!!! error TS2304: Cannot find name 'good_name'.

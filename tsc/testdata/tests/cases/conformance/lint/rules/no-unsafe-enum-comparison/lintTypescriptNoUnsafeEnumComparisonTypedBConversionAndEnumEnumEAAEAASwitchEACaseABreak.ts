@@ -1,0 +1,23 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestTypedBConversionAndEnum/no-unsafe-enum-comparison/enum_E_{_A_=_'a'_}_E.A_===_'a';_switch_(E.A)_{_case_'a':_break;_} (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "strict": true,
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "@typescript-eslint/no-unsafe-enum-comparison": "error"
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+enum E { A = 'a' } E.A === 'a'; switch (E.A) { case 'a': break; }

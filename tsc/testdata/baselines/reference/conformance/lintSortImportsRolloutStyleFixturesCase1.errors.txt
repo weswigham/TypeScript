@@ -1,0 +1,41 @@
+/input.ts(2,16): error TS24343: Member 'alpha' of the import declaration should be sorted alphabetically.
+/input.ts(2,44): error TS2307: Cannot find module 'one' or its corresponding type declarations.
+/input.ts(3,19): error TS2307: Cannot find module 'two' or its corresponding type declarations.
+/input.ts(4,1): error TS24344: Expected 'all' syntax before 'single' syntax.
+/input.ts(4,28): error TS2307: Cannot find module 'three' or its corresponding type declarations.
+/input.ts(5,1): error TS24344: Expected 'none' syntax before 'all' syntax.
+/input.ts(5,8): error TS2882: Cannot find module or type declarations for side-effect import of 'four'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (7 errors) ====
+    
+    import { zeta, beta as alpha, gamma } from "one";
+                   ~~~~~~~~~~~~~
+!!! error TS24343: Member 'alpha' of the import declaration should be sorted alphabetically.
+                                               ~~~~~
+!!! error TS2307: Cannot find module 'one' or its corresponding type declarations.
+    import named from "two";
+                      ~~~~~
+!!! error TS2307: Cannot find module 'two' or its corresponding type declarations.
+    import * as namespace from "three";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24344: Expected 'all' syntax before 'single' syntax.
+                               ~~~~~~~
+!!! error TS2307: Cannot find module 'three' or its corresponding type declarations.
+    import "four";
+    ~~~~~~~~~~~~~~
+!!! error TS24344: Expected 'none' syntax before 'all' syntax.
+           ~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'four'.

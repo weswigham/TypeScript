@@ -1,0 +1,34 @@
+/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(4,8): error TS2304: Cannot find name 'deco'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import Foo from 'foo';
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    class A {
+      foo(@deco foo: Foo) {}
+           ~~~~
+!!! error TS2304: Cannot find name 'deco'.
+    }
+          

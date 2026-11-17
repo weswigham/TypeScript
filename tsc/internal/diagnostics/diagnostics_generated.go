@@ -4032,6 +4032,1510 @@ var Remove_debugger_statement = &Message{code: 18178, category: CategoryMessage,
 
 var Remove_all_debugger_statements = &Message{code: 18179, category: CategoryMessage, key: "Remove_all_debugger_statements_18179", text: "Remove all 'debugger' statements"}
 
+var Unexpected_0 = &Message{code: 19000, category: CategoryError, key: "Unexpected_0_19000", text: "Unexpected {0}."}
+
+var Avoid_arguments_0 = &Message{code: 19001, category: CategoryError, key: "Avoid_arguments_0_19001", text: "Avoid arguments.{0}."}
+
+var Variables_should_not_be_deleted = &Message{code: 19002, category: CategoryError, key: "Variables_should_not_be_deleted_19002", text: "Variables should not be deleted."}
+
+var The_Function_constructor_is_eval = &Message{code: 19003, category: CategoryError, key: "The_Function_constructor_is_eval_19003", text: "The Function constructor is eval."}
+
+var Do_not_use_0_as_a_constructor = &Message{code: 19004, category: CategoryError, key: "Do_not_use_0_as_a_constructor_19004", text: "Do not use {0} as a constructor."}
+
+var The_proto_property_is_deprecated = &Message{code: 19005, category: CategoryError, key: "The_proto_property_is_deprecated_19005", text: "The '__proto__' property is deprecated."}
+
+var Expected_undefined_and_instead_saw_void = &Message{code: 19006, category: CategoryError, key: "Expected_undefined_and_instead_saw_void_19006", text: "Expected 'undefined' and instead saw 'void'."}
+
+var All_0_signatures_should_be_adjacent = &Message{code: 19100, category: CategoryError, key: "All_0_signatures_should_be_adjacent_19100", text: "All {0} signatures should be adjacent."}
+
+var X_tslint_comment_detected_Colon_0 = &Message{code: 19101, category: CategoryError, key: "tslint_comment_detected_Colon_0_19101", text: "tslint comment detected: \"{0}\""}
+
+var The_generic_type_arguments_should_be_specified_as_part_of_the_constructor_type_arguments = &Message{code: 19102, category: CategoryError, key: "The_generic_type_arguments_should_be_specified_as_part_of_the_constructor_type_arguments_19102", text: "The generic type arguments should be specified as part of the constructor type arguments."}
+
+var Duplicate_enum_member_value_0 = &Message{code: 19103, category: CategoryError, key: "Duplicate_enum_member_value_0_19103", text: "Duplicate enum member value {0}."}
+
+var An_empty_interface_declaration_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead = &Message{code: 19104, category: CategoryError, key: "An_empty_interface_declaration_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s__19104", text: "An empty interface declaration allows any non-nullish value, including literals like `0` and `\"\"`.\n- If that's what you want, disable this lint rule with an inline comment or configure the '{0}' rule option.\n- If you want a type meaning \"any object\", you probably want `object` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead."}
+
+var An_interface_declaring_no_members_is_equivalent_to_its_supertype = &Message{code: 19105, category: CategoryError, key: "An_interface_declaring_no_members_is_equivalent_to_its_supertype_19105", text: "An interface declaring no members is equivalent to its supertype."}
+
+var The_empty_object_type_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead = &Message{code: 19106, category: CategoryError, key: "The_empty_object_type_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you__19106", text: "The `{}` (\"empty object\") type allows any non-nullish value, including literals like `0` and `\"\"`.\n- If that's what you want, disable this lint rule with an inline comment or configure the '{0}' rule option.\n- If you want a type meaning \"any object\", you probably want `object` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead."}
+
+var Type_0_trivially_inferred_from_a_0_literal_remove_type_annotation = &Message{code: 19107, category: CategoryError, key: "Type_0_trivially_inferred_from_a_0_literal_remove_type_annotation_19107", text: "Type {0} trivially inferred from a {0} literal, remove type annotation."}
+
+var Forbidden_non_null_assertion = &Message{code: 19108, category: CategoryError, key: "Forbidden_non_null_assertion_19108", text: "Forbidden non-null assertion."}
+
+var Getter_is_not_present_in_property_descriptor = &Message{code: 19200, category: CategoryError, key: "Getter_is_not_present_in_property_descriptor_19200", text: "Getter is not present in property descriptor."}
+
+var Expected_block_statement_surrounding_arrow_body = &Message{code: 19206, category: CategoryError, key: "Expected_block_statement_surrounding_arrow_body_19206", text: "Expected block statement surrounding arrow body."}
+
+var Comments_should_not_begin_with_a_lowercase_character = &Message{code: 19212, category: CategoryError, key: "Comments_should_not_begin_with_a_lowercase_character_19212", text: "Comments should not begin with a lowercase character."}
+
+var Expected_this_to_be_used_by_class_0 = &Message{code: 19218, category: CategoryError, key: "Expected_this_to_be_used_by_class_0_19218", text: "Expected 'this' to be used by class {0}."}
+
+var Expected_after_0_condition = &Message{code: 19224, category: CategoryError, key: "Expected_after_0_condition_19224", text: "Expected { after '{0}' condition."}
+
+var Default_clause_should_be_the_last_clause = &Message{code: 19230, category: CategoryError, key: "Default_clause_should_be_the_last_clause_19230", text: "Default clause should be the last clause."}
+
+var Expected_a_default_case = &Message{code: 19236, category: CategoryError, key: "Expected_a_default_case_19236", text: "Expected a default case."}
+
+var Default_parameters_should_be_last = &Message{code: 19242, category: CategoryError, key: "Default_parameters_should_be_last_19242", text: "Default parameters should be last."}
+
+var X_0_is_a_syntax_error = &Message{code: 19248, category: CategoryError, key: "_0_is_a_syntax_error_19248", text: ".{0} is a syntax error."}
+
+var Expected_0_and_instead_saw_1 = &Message{code: 19254, category: CategoryError, key: "Expected_0_and_instead_saw_1_19254", text: "Expected '{0}' and instead saw '{1}'."}
+
+var Function_name_0_should_1_2_name_3 = &Message{code: 19260, category: CategoryError, key: "Function_name_0_should_1_2_name_3_19260", text: "Function name `{0}` should {1} {2} name `{3}`."}
+
+var Expected_a_function_declaration = &Message{code: 19266, category: CategoryError, key: "Expected_a_function_declaration_19266", text: "Expected a function declaration."}
+
+var Accessor_pair_0_and_1_should_be_grouped = &Message{code: 19272, category: CategoryError, key: "Accessor_pair_0_and_1_should_be_grouped_19272", text: "Accessor pair {0} and {1} should be grouped."}
+
+var The_body_of_a_for_in_should_be_wrapped_in_an_if_statement_to_filter_unwanted_properties_from_the_prototype = &Message{code: 19278, category: CategoryError, key: "The_body_of_a_for_in_should_be_wrapped_in_an_if_statement_to_filter_unwanted_properties_from_the_pro_19278", text: "The body of a for-in should be wrapped in an if statement to filter unwanted properties from the prototype."}
+
+var Identifier_name_0_is_too_long_1 = &Message{code: 19284, category: CategoryError, key: "Identifier_name_0_is_too_long_1_19284", text: "Identifier name '{0}' is too long (> {1})."}
+
+var Variable_0_should_be_initialized_on_declaration = &Message{code: 19290, category: CategoryError, key: "Variable_0_should_be_initialized_on_declaration_19290", text: "Variable '{0}' should be initialized on declaration."}
+
+var File_has_too_many_classes_0_Maximum_allowed_is_1 = &Message{code: 19296, category: CategoryError, key: "File_has_too_many_classes_0_Maximum_allowed_is_1_19296", text: "File has too many classes ({0}). Maximum allowed is {1}."}
+
+var Blocks_are_nested_too_deeply_0_Maximum_allowed_is_1 = &Message{code: 19302, category: CategoryError, key: "Blocks_are_nested_too_deeply_0_Maximum_allowed_is_1_19302", text: "Blocks are nested too deeply ({0}). Maximum allowed is {1}."}
+
+var X_0_has_too_many_lines_1_Maximum_allowed_is_2 = &Message{code: 19308, category: CategoryError, key: "_0_has_too_many_lines_1_Maximum_allowed_is_2_19308", text: "{0} has too many lines ({1}). Maximum allowed is {2}."}
+
+var File_has_too_many_lines_0_Maximum_allowed_is_1 = &Message{code: 19314, category: CategoryError, key: "File_has_too_many_lines_0_Maximum_allowed_is_1_19314", text: "File has too many lines ({0}). Maximum allowed is {1}."}
+
+var Too_many_nested_callbacks_0_Maximum_allowed_is_1 = &Message{code: 19320, category: CategoryError, key: "Too_many_nested_callbacks_0_Maximum_allowed_is_1_19320", text: "Too many nested callbacks ({0}). Maximum allowed is {1}."}
+
+var X_0_has_too_many_parameters_1_Maximum_allowed_is_2 = &Message{code: 19326, category: CategoryError, key: "_0_has_too_many_parameters_1_Maximum_allowed_is_2_19326", text: "{0} has too many parameters ({1}). Maximum allowed is {2}."}
+
+var X_0_has_too_many_statements_1_Maximum_allowed_is_2 = &Message{code: 19332, category: CategoryError, key: "_0_has_too_many_statements_1_Maximum_allowed_is_2_19332", text: "{0} has too many statements ({1}). Maximum allowed is {2}."}
+
+var A_constructor_name_should_not_start_with_a_lowercase_letter = &Message{code: 19338, category: CategoryError, key: "A_constructor_name_should_not_start_with_a_lowercase_letter_19338", text: "A constructor name should not start with a lowercase letter."}
+
+var Unexpected_await_inside_a_loop = &Message{code: 19350, category: CategoryError, key: "Unexpected_await_inside_a_loop_19350", text: "Unexpected `await` inside a loop."}
+
+var Unexpected_use_of_0 = &Message{code: 19351, category: CategoryError, key: "Unexpected_use_of_0_19351", text: "Unexpected use of '{0}'."}
+
+var Unexpected_lexical_declaration_in_case_block = &Message{code: 19352, category: CategoryError, key: "Unexpected_lexical_declaration_in_case_block_19352", text: "Unexpected lexical declaration in case block."}
+
+var Unexpected_use_of_continue_statement = &Message{code: 19353, category: CategoryError, key: "Unexpected_use_of_continue_statement_19353", text: "Unexpected use of continue statement."}
+
+var Duplicate_name_0 = &Message{code: 19354, category: CategoryError, key: "Duplicate_name_0_19354", text: "Duplicate name '{0}'."}
+
+var This_branch_can_never_execute_Its_condition_is_a_duplicate_or_covered_by_previous_conditions_in_the_if_else_if_chain = &Message{code: 19355, category: CategoryError, key: "This_branch_can_never_execute_Its_condition_is_a_duplicate_or_covered_by_previous_conditions_in_the__19355", text: "This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain."}
+
+var Duplicate_key_0 = &Message{code: 19356, category: CategoryError, key: "Duplicate_key_0_19356", text: "Duplicate key '{0}'."}
+
+var X_0_export_is_duplicated_as_import = &Message{code: 19357, category: CategoryError, key: "_0_export_is_duplicated_as_import_19357", text: "'{0}' export is duplicated as import."}
+
+var Unexpected_empty_0 = &Message{code: 19358, category: CategoryError, key: "Unexpected_empty_0_19358", text: "Unexpected empty {0}."}
+
+var Unexpected_empty_static_block = &Message{code: 19359, category: CategoryError, key: "Unexpected_empty_static_block_19359", text: "Unexpected empty static block."}
+
+var Empty_block_statement = &Message{code: 19360, category: CategoryError, key: "Empty_block_statement_19360", text: "Empty block statement."}
+
+var Use_to_compare_with_null = &Message{code: 19361, category: CategoryError, key: "Use_to_compare_with_null_19361", text: "Use '===' to compare with null."}
+
+var The_function_binding_is_unnecessary = &Message{code: 19362, category: CategoryError, key: "The_function_binding_is_unnecessary_19362", text: "The function binding is unnecessary."}
+
+var Redundant_Boolean_call = &Message{code: 19363, category: CategoryError, key: "Redundant_Boolean_call_19363", text: "Redundant Boolean call."}
+
+var This_label_0_is_unnecessary = &Message{code: 19364, category: CategoryError, key: "This_label_0_is_unnecessary_19364", text: "This label '{0}' is unnecessary."}
+
+var Unexpected_comment_inline_with_code = &Message{code: 19365, category: CategoryError, key: "Unexpected_comment_inline_with_code_19365", text: "Unexpected comment inline with code."}
+
+var Irregular_whitespace_not_allowed = &Message{code: 19366, category: CategoryError, key: "Irregular_whitespace_not_allowed_19366", text: "Irregular whitespace not allowed."}
+
+var Reserved_name_iterator = &Message{code: 19367, category: CategoryError, key: "Reserved_name_iterator_19367", text: "Reserved name '__iterator__'."}
+
+var Unexpected_label_in_break_statement = &Message{code: 19368, category: CategoryError, key: "Unexpected_label_in_break_statement_19368", text: "Unexpected label in break statement."}
+
+var Unexpected_if_as_the_only_statement_in_an_else_block = &Message{code: 19369, category: CategoryError, key: "Unexpected_if_as_the_only_statement_in_an_else_block_19369", text: "Unexpected if as the only statement in an else block."}
+
+var This_number_literal_will_lose_precision_at_runtime = &Message{code: 19370, category: CategoryError, key: "This_number_literal_will_lose_precision_at_runtime_19370", text: "This number literal will lose precision at runtime."}
+
+var No_magic_number_Colon_0 = &Message{code: 19371, category: CategoryError, key: "No_magic_number_Colon_0_19371", text: "No magic number: {0}."}
+
+var Unexpected_chained_assignment = &Message{code: 19372, category: CategoryError, key: "Unexpected_chained_assignment_19372", text: "Unexpected chained assignment."}
+
+var Multiline_support_is_limited_to_browsers_supporting_ES5_only = &Message{code: 19373, category: CategoryError, key: "Multiline_support_is_limited_to_browsers_supporting_ES5_only_19373", text: "Multiline support is limited to browsers supporting ES5 only."}
+
+var Do_not_nest_ternary_expressions = &Message{code: 19500, category: CategoryError, key: "Do_not_nest_ternary_expressions_19500", text: "Do not nest ternary expressions."}
+
+var Unexpected_negated_condition = &Message{code: 19501, category: CategoryError, key: "Unexpected_negated_condition_19501", text: "Unexpected negated condition."}
+
+var Do_not_use_new_for_side_effects = &Message{code: 19502, category: CategoryError, key: "Do_not_use_new_for_side_effects_19502", text: "Do not use 'new' for side effects."}
+
+var Ternary_operator_used = &Message{code: 19503, category: CategoryError, key: "Ternary_operator_used_19503", text: "Ternary operator used."}
+
+var Unary_operator_0_used = &Message{code: 19504, category: CategoryError, key: "Unary_operator_0_used_19504", text: "Unary operator '{0}' used."}
+
+var Return_statement_should_not_contain_assignment = &Message{code: 19505, category: CategoryError, key: "Return_statement_should_not_contain_assignment_19505", text: "Return statement should not contain assignment."}
+
+var Arrow_function_should_not_return_assignment = &Message{code: 19506, category: CategoryError, key: "Arrow_function_should_not_return_assignment_19506", text: "Arrow function should not return assignment."}
+
+var Unexpected_use_of_comma_operator = &Message{code: 19507, category: CategoryError, key: "Unexpected_use_of_comma_operator_19507", text: "Unexpected use of comma operator."}
+
+var Unexpected_comma_in_middle_of_array = &Message{code: 19508, category: CategoryError, key: "Unexpected_comma_in_middle_of_array_19508", text: "Unexpected comma in middle of array."}
+
+var Unexpected_template_string_expression = &Message{code: 19509, category: CategoryError, key: "Unexpected_template_string_expression_19509", text: "Unexpected template string expression."}
+
+var Script_URL_is_a_form_of_eval = &Message{code: 19510, category: CategoryError, key: "Script_URL_is_a_form_of_eval_19510", text: "Script URL is a form of eval."}
+
+var Octal_literals_should_not_be_used = &Message{code: 19511, category: CategoryError, key: "Octal_literals_should_not_be_used_19511", text: "Octal literals should not be used."}
+
+var Don_t_use_octal_Colon_0_Use_u_instead = &Message{code: 19512, category: CategoryError, key: "Don_t_use_octal_Colon_0_Use_u_instead_19512", text: "Don't use octal: '\\{0}'. Use '\\u....' instead."}
+
+var Don_t_use_0_escape_sequence = &Message{code: 19513, category: CategoryError, key: "Don_t_use_0_escape_sequence_19513", text: "Don't use '{0}' escape sequence."}
+
+var Comparing_to_itself_is_potentially_pointless = &Message{code: 19514, category: CategoryError, key: "Comparing_to_itself_is_potentially_pointless_19514", text: "Comparing to itself is potentially pointless."}
+
+var X_0_is_assigned_to_itself = &Message{code: 19515, category: CategoryError, key: "_0_is_assigned_to_itself_19515", text: "'{0}' is assigned to itself."}
+
+var Expected_an_error_object_to_be_thrown = &Message{code: 19516, category: CategoryError, key: "Expected_an_error_object_to_be_thrown_19516", text: "Expected an error object to be thrown."}
+
+var Do_not_throw_undefined = &Message{code: 19517, category: CategoryError, key: "Do_not_throw_undefined_19517", text: "Do not throw undefined."}
+
+var Setter_cannot_return_a_value = &Message{code: 19518, category: CategoryError, key: "Setter_cannot_return_a_value_19518", text: "Setter cannot return a value."}
+
+var X_0_1_is_restricted_from_being_used_2 = &Message{code: 19519, category: CategoryError, key: "_0_1_is_restricted_from_being_used_2_19519", text: "'{0}.{1}' is restricted from being used.{2}"}
+
+var X_0_is_restricted_from_being_used_1 = &Message{code: 19520, category: CategoryError, key: "_0_is_restricted_from_being_used_1_19520", text: "'{0}' is restricted from being used.{1}"}
+
+var Unexpected_use_of_with_statement = &Message{code: 19650, category: CategoryError, key: "Unexpected_use_of_with_statement_19650", text: "Unexpected use of 'with' statement."}
+
+var Unexpected_string_concatenation_of_literals = &Message{code: 19651, category: CategoryError, key: "Unexpected_string_concatenation_of_literals_19651", text: "Unexpected string concatenation of literals."}
+
+var This_generator_function_does_not_have_yield = &Message{code: 19652, category: CategoryError, key: "This_generator_function_does_not_have_yield_19652", text: "This generator function does not have 'yield'."}
+
+var Unsafe_usage_of_0 = &Message{code: 19653, category: CategoryError, key: "Unsafe_usage_of_0_19653", text: "Unsafe usage of {0}."}
+
+var Unnecessary_0 = &Message{code: 19654, category: CategoryError, key: "Unnecessary_0_19654", text: "Unnecessary '.{0}()'."}
+
+var Use_the_spread_operator_instead_of_apply = &Message{code: 19655, category: CategoryError, key: "Use_the_spread_operator_instead_of_apply_19655", text: "Use the spread operator instead of '.apply()'."}
+
+var Expected_an_assignment_or_function_call_and_instead_saw_an_expression = &Message{code: 19656, category: CategoryError, key: "Expected_an_assignment_or_function_call_and_instead_saw_an_expression_19656", text: "Expected an assignment or function call and instead saw an expression."}
+
+var Unsafe_usage_of_optional_chaining_If_it_short_circuits_with_undefined_the_evaluation_will_throw_TypeError = &Message{code: 19657, category: CategoryError, key: "Unsafe_usage_of_optional_chaining_If_it_short_circuits_with_undefined_the_evaluation_will_throw_Type_19657", text: "Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError."}
+
+var Unsafe_arithmetic_operation_on_optional_chaining_It_can_result_in_NaN = &Message{code: 19658, category: CategoryError, key: "Unsafe_arithmetic_operation_on_optional_chaining_It_can_result_in_NaN_19658", text: "Unsafe arithmetic operation on optional chaining. It can result in NaN."}
+
+var Unnecessary_catch_clause = &Message{code: 19659, category: CategoryError, key: "Unnecessary_catch_clause_19659", text: "Unnecessary catch clause."}
+
+var Unnecessary_try_Slashcatch_wrapper = &Message{code: 19660, category: CategoryError, key: "Unnecessary_try_Slashcatch_wrapper_19660", text: "Unnecessary try/catch wrapper."}
+
+var All_var_declarations_must_be_at_the_top_of_the_function_scope = &Message{code: 19661, category: CategoryError, key: "All_var_declarations_must_be_at_the_top_of_the_function_scope_19661", text: "All 'var' declarations must be at the top of the function scope."}
+
+var Unexpected_newline_between_function_and_of_function_call = &Message{code: 19662, category: CategoryError, key: "Unexpected_newline_between_function_and_of_function_call_19662", text: "Unexpected newline between function and ( of function call."}
+
+var Unexpected_newline_between_object_and_of_property_access = &Message{code: 19663, category: CategoryError, key: "Unexpected_newline_between_object_and_of_property_access_19663", text: "Unexpected newline between object and [ of property access."}
+
+var Unexpected_newline_between_template_tag_and_template_literal = &Message{code: 19664, category: CategoryError, key: "Unexpected_newline_between_template_tag_and_template_literal_19664", text: "Unexpected newline between template tag and template literal."}
+
+var Unexpected_newline_between_numerator_and_division_operator = &Message{code: 19665, category: CategoryError, key: "Unexpected_newline_between_numerator_and_division_operator_19665", text: "Unexpected newline between numerator and division operator."}
+
+var X_0_Colon_is_defined_but_never_used = &Message{code: 19666, category: CategoryError, key: "_0_Colon_is_defined_but_never_used_19666", text: "'{0}:' is defined but never used."}
+
+var Unnecessarily_computed_property_0_found = &Message{code: 19667, category: CategoryError, key: "Unnecessarily_computed_property_0_found_19667", text: "Unnecessarily computed property [{0}] found."}
+
+var X_0_1_unnecessarily_renamed = &Message{code: 19668, category: CategoryError, key: "_0_1_unnecessarily_renamed_19668", text: "{0} {1} unnecessarily renamed."}
+
+var Unexpected_0_comment_Colon_1 = &Message{code: 19669, category: CategoryError, key: "Unexpected_0_comment_Colon_1_19669", text: "Unexpected '{0}' comment: '{1}'."}
+
+var Use_0_literals_instead_of_1 = &Message{code: 19672, category: CategoryError, key: "Use_0_literals_instead_of_1_19672", text: "Use {0} literals instead of {1}()."}
+
+var Unexpected_return_statement_in_constructor = &Message{code: 19850, category: CategoryError, key: "Unexpected_return_statement_in_constructor_19850", text: "Unexpected return statement in constructor."}
+
+var X_0_is_a_class = &Message{code: 19851, category: CategoryError, key: "_0_is_a_class_19851", text: "'{0}' is a class."}
+
+var X_0_is_constant = &Message{code: 19852, category: CategoryError, key: "_0_is_constant_19852", text: "'{0}' is constant."}
+
+var Do_not_assign_to_the_exception_parameter = &Message{code: 19853, category: CategoryError, key: "Do_not_assign_to_the_exception_parameter_19853", text: "Do not assign to the exception parameter."}
+
+var Unexpected_console_statement = &Message{code: 19854, category: CategoryError, key: "Unexpected_console_statement_19854", text: "Unexpected console statement."}
+
+var Unexpected_console_statement_Only_these_console_methods_are_allowed_Colon_0 = &Message{code: 19855, category: CategoryError, key: "Unexpected_console_statement_Only_these_console_methods_are_allowed_Colon_0_19855", text: "Unexpected console statement. Only these console methods are allowed: {0}."}
+
+var X_0_has_a_complexity_of_1_Maximum_allowed_is_2 = &Message{code: 19856, category: CategoryError, key: "_0_has_a_complexity_of_1_Maximum_allowed_is_2_19856", text: "{0} has a complexity of {1}. Maximum allowed is {2}."}
+
+var Designated_alias_0_is_not_assigned_to_this = &Message{code: 19857, category: CategoryError, key: "Designated_alias_0_is_not_assigned_to_this_19857", text: "Designated alias '{0}' is not assigned to 'this'."}
+
+var Unexpected_alias_0_for_this = &Message{code: 19858, category: CategoryError, key: "Unexpected_alias_0_for_this_19858", text: "Unexpected alias '{0}' for 'this'."}
+
+var The_array_literal_notation_is_preferable = &Message{code: 19859, category: CategoryError, key: "The_array_literal_notation_is_preferable_19859", text: "The array literal notation [] is preferable."}
+
+var Unexpected_unnamed_0 = &Message{code: 19860, category: CategoryError, key: "Unexpected_unnamed_0_19860", text: "Unexpected unnamed {0}."}
+
+var Unexpected_named_0 = &Message{code: 19861, category: CategoryError, key: "Unexpected_named_0_19861", text: "Unexpected named {0}."}
+
+var X_0_declared_on_line_1_column_2_is_used_outside_of_binding_context = &Message{code: 19862, category: CategoryError, key: "_0_declared_on_line_1_column_2_is_used_outside_of_binding_context_19862", text: "'{0}' declared on line {1} column {2} is used outside of binding context."}
+
+var X_0_prototype_is_read_only_properties_should_not_be_added = &Message{code: 19863, category: CategoryError, key: "_0_prototype_is_read_only_properties_should_not_be_added_19863", text: "{0} prototype is read only, properties should not be added."}
+
+var X_0_is_a_function = &Message{code: 20000, category: CategoryError, key: "_0_is_a_function_20000", text: "'{0}' is a function."}
+
+var X_0_is_read_only = &Message{code: 20001, category: CategoryError, key: "_0_is_read_only_20001", text: "'{0}' is read-only."}
+
+var The_members_of_0_are_read_only = &Message{code: 20002, category: CategoryError, key: "The_members_of_0_are_read_only_20002", text: "The members of '{0}' are read-only."}
+
+var X_0_cannot_be_called_as_a_constructor = &Message{code: 20005, category: CategoryError, key: "_0_cannot_be_called_as_a_constructor_20005", text: "`{0}` cannot be called as a constructor."}
+
+var The_object_literal_notation_is_preferable = &Message{code: 20006, category: CategoryError, key: "The_object_literal_notation_is_preferable_20006", text: "The object literal notation {} is preferable."}
+
+var Found_identifier_with_same_name_as_label = &Message{code: 20007, category: CategoryError, key: "Found_identifier_with_same_name_as_label_20007", text: "Found identifier with same name as label."}
+
+var Return_values_from_promise_executor_functions_cannot_be_read = &Message{code: 20008, category: CategoryError, key: "Return_values_from_promise_executor_functions_cannot_be_read_20008", text: "Return values from promise executor functions cannot be read."}
+
+var Block_is_redundant = &Message{code: 20009, category: CategoryError, key: "Block_is_redundant_20009", text: "Block is redundant."}
+
+var Move_0_declaration_to_1_root = &Message{code: 20010, category: CategoryError, key: "Move_0_declaration_to_1_root_20010", text: "Move {0} declaration to {1} root."}
+
+var Shadowing_of_global_property_0 = &Message{code: 20011, category: CategoryError, key: "Shadowing_of_global_property_0_20011", text: "Shadowing of global property '{0}'."}
+
+var X_0_is_always_undefined_because_it_s_never_assigned = &Message{code: 20012, category: CategoryError, key: "_0_is_always_undefined_because_it_s_never_assigned_20012", text: "'{0}' is always 'undefined' because it's never assigned."}
+
+var Unexpected_implicit_coercion_encountered_Use_0_instead = &Message{code: 20013, category: CategoryError, key: "Unexpected_implicit_coercion_encountered_Use_0_instead_20013", text: "Unexpected implicit coercion encountered. Use `{0}` instead."}
+
+var Do_not_access_Object_prototype_method_0_from_target_object = &Message{code: 20014, category: CategoryError, key: "Do_not_access_Object_prototype_method_0_from_target_object_20014", text: "Do not access Object.prototype method '{0}' from target object."}
+
+var Unexpected_use_of_0_1 = &Message{code: 20015, category: CategoryError, key: "Unexpected_use_of_0_1_20015", text: "Unexpected use of '{0}'. {1}"}
+
+var Function_declared_in_a_loop_contains_unsafe_references_to_variable_s_0 = &Message{code: 20016, category: CategoryError, key: "Function_declared_in_a_loop_contains_unsafe_references_to_variable_s_0_20016", text: "Function declared in a loop contains unsafe references to variable(s) {0}."}
+
+var It_s_not_necessary_to_initialize_0_to_undefined = &Message{code: 20150, category: CategoryError, key: "It_s_not_necessary_to_initialize_0_to_undefined_20150", text: "It's not necessary to initialize '{0}' to undefined."}
+
+var Unexpected_use_of_undefined = &Message{code: 20162, category: CategoryError, key: "Unexpected_use_of_undefined_20162", text: "Unexpected use of undefined."}
+
+var Unexpected_dangling_in_0 = &Message{code: 20168, category: CategoryError, key: "Unexpected_dangling_in_0_20168", text: "Unexpected dangling '_' in '{0}'."}
+
+var Use_Object_hasOwn_instead_of_Object_prototype_hasOwnProperty_call = &Message{code: 20246, category: CategoryError, key: "Use_Object_hasOwn_instead_of_Object_prototype_hasOwnProperty_call_20246", text: "Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'."}
+
+var Expected_the_Promise_rejection_reason_to_be_an_Error = &Message{code: 20258, category: CategoryError, key: "Expected_the_Promise_rejection_reason_to_be_an_Error_20258", text: "Expected the Promise rejection reason to be an Error."}
+
+var Use_the_rest_parameters_instead_of_arguments = &Message{code: 20264, category: CategoryError, key: "Use_the_rest_parameters_instead_of_arguments_20264", text: "Use the rest parameters instead of 'arguments'."}
+
+var There_is_no_cause_attached_to_the_symptom_error_being_thrown = &Message{code: 20270, category: CategoryError, key: "There_is_no_cause_attached_to_the_symptom_error_being_thrown_20270", text: "There is no `cause` attached to the symptom error being thrown."}
+
+var The_symptom_error_is_being_thrown_with_an_incorrect_cause = &Message{code: 20271, category: CategoryError, key: "The_symptom_error_is_being_thrown_with_an_incorrect_cause_20271", text: "The symptom error is being thrown with an incorrect `cause`."}
+
+var Re_throws_cannot_preserve_the_caught_error_as_a_part_of_it_is_being_lost_due_to_destructuring = &Message{code: 20272, category: CategoryError, key: "Re_throws_cannot_preserve_the_caught_error_as_a_part_of_it_is_being_lost_due_to_destructuring_20272", text: "Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring."}
+
+var The_caught_error_is_not_accessible_because_the_catch_clause_lacks_the_error_parameter_Start_referencing_the_caught_error_using_the_catch_parameter = &Message{code: 20273, category: CategoryError, key: "The_caught_error_is_not_accessible_because_the_catch_clause_lacks_the_error_parameter_Start_referenc_20273", text: "The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter."}
+
+var The_caught_error_is_being_attached_as_cause_but_is_shadowed_by_a_closer_scoped_redeclaration = &Message{code: 20274, category: CategoryError, key: "The_caught_error_is_being_attached_as_cause_but_is_shadowed_by_a_closer_scoped_redeclaration_20274", text: "The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration."}
+
+var Missing_parameters = &Message{code: 20276, category: CategoryError, key: "Missing_parameters_20276", text: "Missing parameters."}
+
+var Missing_radix_parameter = &Message{code: 20277, category: CategoryError, key: "Missing_radix_parameter_20277", text: "Missing radix parameter."}
+
+var Invalid_radix_parameter_must_be_an_integer_between_2_and_36 = &Message{code: 20278, category: CategoryError, key: "Invalid_radix_parameter_must_be_an_integer_between_2_and_36_20278", text: "Invalid radix parameter, must be an integer between 2 and 36."}
+
+var Expected_Symbol_to_have_a_description = &Message{code: 20290, category: CategoryError, key: "Expected_Symbol_to_have_a_description_20290", text: "Expected Symbol to have a description."}
+
+var Invalid_typeof_comparison_value = &Message{code: 20296, category: CategoryError, key: "Invalid_typeof_comparison_value_20296", text: "Invalid typeof comparison value."}
+
+var Typeof_comparisons_should_be_to_string_literals = &Message{code: 20297, category: CategoryError, key: "Typeof_comparisons_should_be_to_string_literals_20297", text: "Typeof comparisons should be to string literals."}
+
+var Do_not_use_ts_0_because_it_alters_compilation_errors = &Message{code: 20310, category: CategoryError, key: "Do_not_use_ts_0_because_it_alters_compilation_errors_20310", text: "Do not use \"@ts-{0}\" because it alters compilation errors."}
+
+var Literals_should_be_exposed_using_getters = &Message{code: 20311, category: CategoryError, key: "Literals_should_be_exposed_using_getters_20311", text: "Literals should be exposed using getters."}
+
+var Always_prefer_const_x_Colon_T = &Message{code: 20313, category: CategoryError, key: "Always_prefer_const_x_Colon_T_20313", text: "Always prefer const x: T = { ... }."}
+
+var Use_a_type_instead_of_an_interface = &Message{code: 20314, category: CategoryError, key: "Use_a_type_instead_of_an_interface_20314", text: "Use a `type` instead of an `interface`."}
+
+var Missing_accessibility_modifier_on_0_1 = &Message{code: 20317, category: CategoryError, key: "Missing_accessibility_modifier_on_0_1_20317", text: "Missing accessibility modifier on {0} {1}."}
+
+var Variable_0_should_not_be_initialized_on_declaration = &Message{code: 20318, category: CategoryError, key: "Variable_0_should_not_be_initialized_on_declaration_20318", text: "Variable '{0}' should not be initialized on declaration."}
+
+var Function_property_signature_is_forbidden_Use_a_method_shorthand_instead = &Message{code: 20321, category: CategoryError, key: "Function_property_signature_is_forbidden_Use_a_method_shorthand_instead_20321", text: "Function property signature is forbidden. Use a method shorthand instead."}
+
+var Confusing_combination_of_non_null_assertion_and_0_operator_like_a_0_b_which_might_be_misinterpreted_as_a_0_b = &Message{code: 20322, category: CategoryError, key: "Confusing_combination_of_non_null_assertion_and_0_operator_like_a_0_b_which_might_be_misinterpreted__20322", text: "Confusing combination of non-null assertion and `{0}` operator like `a! {0} b`, which might be misinterpreted as `!(a {0} b)`."}
+
+var Do_not_delete_dynamically_computed_property_keys = &Message{code: 20324, category: CategoryError, key: "Do_not_delete_dynamically_computed_property_keys_20324", text: "Do not delete dynamically computed property keys."}
+
+var Unexpected_any_Specify_a_different_type = &Message{code: 20326, category: CategoryError, key: "Unexpected_any_Specify_a_different_type_20326", text: "Unexpected any. Specify a different type."}
+
+var Forbidden_extra_non_null_assertion = &Message{code: 20327, category: CategoryError, key: "Forbidden_extra_non_null_assertion_20327", text: "Forbidden extra non-null assertion."}
+
+var Unexpected_empty_class = &Message{code: 20328, category: CategoryError, key: "Unexpected_empty_class_20328", text: "Unexpected empty class."}
+
+var Unexpected_class_with_only_a_constructor = &Message{code: 20329, category: CategoryError, key: "Unexpected_class_with_only_a_constructor_20329", text: "Unexpected class with only a constructor."}
+
+var Unexpected_class_with_only_static_properties = &Message{code: 20330, category: CategoryError, key: "Unexpected_class_with_only_static_properties_20330", text: "Unexpected class with only static properties."}
+
+var TypeScript_will_only_remove_the_inline_type_specifiers_which_will_leave_behind_a_side_effect_import_at_runtime_Convert_this_to_a_top_level_type_qualifier_to_properly_remove_the_entire_import = &Message{code: 20331, category: CategoryError, key: "TypeScript_will_only_remove_the_inline_type_specifiers_which_will_leave_behind_a_side_effect_import__20331", text: "TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import."}
+
+var Prefer_using_the_primitive_0_as_a_type_name_rather_than_the_upper_cased_1 = &Message{code: 20460, category: CategoryError, key: "Prefer_using_the_primitive_0_as_a_type_name_rather_than_the_upper_cased_1_20460", text: "Prefer using the primitive `{0}` as a type name, rather than the upper-cased `{1}`."}
+
+var The_Function_type_accepts_any_function_like_value_Prefer_explicitly_defining_any_function_parameters_and_return_type = &Message{code: 20461, category: CategoryError, key: "The_Function_type_accepts_any_function_like_value_Prefer_explicitly_defining_any_function_parameters_20461", text: "The `Function` type accepts any function-like value.\nPrefer explicitly defining any function parameters and return type."}
+
+var Interfaces_cannot_be_constructed_only_classes = &Message{code: 20462, category: CategoryError, key: "Interfaces_cannot_be_constructed_only_classes_20462", text: "Interfaces cannot be constructed, only classes."}
+
+var Class_cannot_have_method_named_new = &Message{code: 20463, category: CategoryError, key: "Class_cannot_have_method_named_new_20463", text: "Class cannot have method named `new`."}
+
+var ES2015_module_syntax_is_preferred_over_namespaces = &Message{code: 20464, category: CategoryError, key: "ES2015_module_syntax_is_preferred_over_namespaces_20464", text: "ES2015 module syntax is preferred over namespaces."}
+
+var Unexpected_aliasing_of_this_to_local_variable = &Message{code: 20465, category: CategoryError, key: "Unexpected_aliasing_of_this_to_local_variable_20465", text: "Unexpected aliasing of 'this' to local variable."}
+
+var Unexpected_aliasing_of_members_of_this_to_local_variables = &Message{code: 20466, category: CategoryError, key: "Unexpected_aliasing_of_members_of_this_to_local_variables_20466", text: "Unexpected aliasing of members of 'this' to local variables."}
+
+var Optional_chain_expressions_can_return_undefined_by_design_using_a_non_null_assertion_is_unsafe_and_wrong = &Message{code: 20467, category: CategoryError, key: "Optional_chain_expressions_can_return_undefined_by_design_using_a_non_null_assertion_is_unsafe_and_w_20467", text: "Optional chain expressions can return undefined by design - using a non-null assertion is unsafe and wrong."}
+
+var Constraining_the_generic_type_0_to_1_does_nothing_and_is_unnecessary = &Message{code: 20468, category: CategoryError, key: "Constraining_the_generic_type_0_to_1_does_nothing_and_is_unnecessary_20468", text: "Constraining the generic type `{0}` to `{1}` does nothing and is unnecessary."}
+
+var Use_namespace_instead_of_module_to_declare_custom_TypeScript_modules = &Message{code: 20469, category: CategoryError, key: "Use_namespace_instead_of_module_to_declare_custom_TypeScript_modules_20469", text: "Use 'namespace' instead of 'module' to declare custom TypeScript modules."}
+
+var Empty_export_does_nothing_and_can_be_removed = &Message{code: 20470, category: CategoryError, key: "Empty_export_does_nothing_and_can_be_removed_20470", text: "Empty export does nothing and can be removed."}
+
+var Expected_a_const_instead_of_a_literal_type_assertion = &Message{code: 20471, category: CategoryError, key: "Expected_a_const_instead_of_a_literal_type_assertion_20471", text: "Expected a `const` instead of a literal type assertion."}
+
+var Expected_a_const_assertion_instead_of_a_literal_type_annotation = &Message{code: 20472, category: CategoryError, key: "Expected_a_const_assertion_instead_of_a_literal_type_annotation_20472", text: "Expected a `const` assertion instead of a literal type annotation."}
+
+var The_value_of_the_member_0_should_be_explicitly_defined = &Message{code: 20473, category: CategoryError, key: "The_value_of_the_member_0_should_be_explicitly_defined_20473", text: "The value of the member '{0}' should be explicitly defined."}
+
+var Explicit_enum_value_must_only_be_a_literal_value_string_or_number = &Message{code: 20474, category: CategoryError, key: "Explicit_enum_value_must_only_be_a_literal_value_string_or_number_20474", text: "Explicit enum value must only be a literal value (string or number)."}
+
+var Explicit_enum_value_must_only_be_a_literal_value_string_or_number_or_a_bitwise_expression = &Message{code: 20475, category: CategoryError, key: "Explicit_enum_value_must_only_be_a_literal_value_string_or_number_or_a_bitwise_expression_20475", text: "Explicit enum value must only be a literal value (string or number) or a bitwise expression."}
+
+var X_void_is_only_valid_as_a_return_type = &Message{code: 20476, category: CategoryError, key: "void_is_only_valid_as_a_return_type_20476", text: "void is only valid as a return type."}
+
+var X_void_is_only_valid_as_a_return_type_or_generic_type_argument = &Message{code: 20477, category: CategoryError, key: "void_is_only_valid_as_a_return_type_or_generic_type_argument_20477", text: "void is only valid as a return type or generic type argument."}
+
+var X_void_is_only_valid_as_return_type_or_type_of_this_parameter = &Message{code: 20478, category: CategoryError, key: "void_is_only_valid_as_return_type_or_type_of_this_parameter_20478", text: "void is only valid as return type or type of `this` parameter."}
+
+var X_void_is_only_valid_as_a_return_type_or_generic_type_argument_or_the_type_of_a_this_parameter = &Message{code: 20479, category: CategoryError, key: "void_is_only_valid_as_a_return_type_or_generic_type_argument_or_the_type_of_a_this_parameter_20479", text: "void is only valid as a return type or generic type argument or the type of a `this` parameter."}
+
+var X_0_may_not_have_void_as_a_type_argument = &Message{code: 20480, category: CategoryError, key: "_0_may_not_have_void_as_a_type_argument_20480", text: "{0} may not have void as a type argument."}
+
+var X_void_is_not_valid_as_a_constituent_in_a_union_type = &Message{code: 20481, category: CategoryError, key: "void_is_not_valid_as_a_constituent_in_a_union_type_20481", text: "void is not valid as a constituent in a union type"}
+
+var Don_t_use_0_as_a_type_1 = &Message{code: 20482, category: CategoryError, key: "Don_t_use_0_as_a_type_1_20482", text: "Don't use `{0}` as a type.{1}"}
+
+var Number_constants_declarations_must_use_const = &Message{code: 20483, category: CategoryError, key: "Number_constants_declarations_must_use_const_20483", text: "Number constants declarations must use 'const'."}
+
+var Useless_constructor = &Message{code: 20485, category: CategoryError, key: "Useless_constructor_20485", text: "Useless constructor."}
+
+var Property_0_should_be_declared_as_a_class_property = &Message{code: 20486, category: CategoryError, key: "Property_0_should_be_declared_as_a_class_property_20486", text: "Property {0} should be declared as a class property."}
+
+var Property_0_should_be_declared_as_a_parameter_property = &Message{code: 20487, category: CategoryError, key: "Property_0_should_be_declared_as_a_parameter_property_20487", text: "Property {0} should be declared as a parameter property."}
+
+var Do_not_use_a_triple_slash_reference_for_0_use_import_style_instead = &Message{code: 20490, category: CategoryError, key: "Do_not_use_a_triple_slash_reference_for_0_use_import_style_instead_20490", text: "Do not use a triple slash reference for {0}, use `import` style instead."}
+
+var A_regular_expression_literal_can_be_confused_with_Slash = &Message{code: 20620, category: CategoryError, key: "A_regular_expression_literal_can_be_confused_with_Slash_20620", text: "A regular expression literal can be confused with '/='."}
+
+var Empty_class = &Message{code: 20621, category: CategoryError, key: "Empty_class_20621", text: "Empty class."}
+
+var For_in_loops_over_arrays_skips_holes_returns_indices_as_strings_and_may_visit_the_prototype_chain_or_other_enumerable_properties_Use_a_more_robust_iteration_method_such_as_for_of_or_array_forEach_instead = &Message{code: 20720, category: CategoryError, key: "For_in_loops_over_arrays_skips_holes_returns_indices_as_strings_and_may_visit_the_prototype_chain_or_20720", text: "For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead."}
+
+var This_type_resolves_to_the_empty_object_type_This_was_likely_not_intentional = &Message{code: 20721, category: CategoryError, key: "This_type_resolves_to_the_empty_object_type_This_was_likely_not_intentional_20721", text: "This type resolves to `{}`, the empty object type. This was likely not intentional."}
+
+var Using_the_delete_operator_with_an_array_expression_is_unsafe = &Message{code: 20722, category: CategoryError, key: "Using_the_delete_operator_with_an_array_expression_is_unsafe_20722", text: "Using the `delete` operator with an array expression is unsafe."}
+
+var X_void_operator_is_useless_here_it_should_only_discard_a_call_s_return_value = &Message{code: 20723, category: CategoryError, key: "void_operator_is_useless_here_it_should_only_discard_a_call_s_return_value_20723", text: "void operator is useless here; it should only discard a call's return value"}
+
+var X_void_operator_shouldn_t_be_used_on_0_it_should_convey_that_a_return_value_is_being_ignored = &Message{code: 20724, category: CategoryError, key: "void_operator_shouldn_t_be_used_on_0_it_should_convey_that_a_return_value_is_being_ignored_20724", text: "void operator shouldn't be used on {0}; it should convey that a return value is being ignored"}
+
+var Argument_of_unary_negation_should_be_assignable_to_number_bigint_but_is_0_instead = &Message{code: 20900, category: CategoryError, key: "Argument_of_unary_negation_should_be_assignable_to_number_bigint_but_is_0_instead_20900", text: "Argument of unary negation should be assignable to number | bigint but is {0} instead."}
+
+var Unsafe_assertion_to_0_detected_Colon_consider_using_a_more_specific_type_to_ensure_safety = &Message{code: 20901, category: CategoryError, key: "Unsafe_assertion_to_0_detected_Colon_consider_using_a_more_specific_type_to_ensure_safety_20901", text: "Unsafe assertion to {0} detected: consider using a more specific type to ensure safety."}
+
+var Unsafe_assertion_from_0_detected_Colon_consider_using_type_guards_or_a_safer_assertion = &Message{code: 20902, category: CategoryError, key: "Unsafe_assertion_from_0_detected_Colon_consider_using_type_guards_or_a_safer_assertion_20902", text: "Unsafe assertion from {0} detected: consider using type guards or a safer assertion."}
+
+var Unsafe_type_assertion_Colon_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_the_original_type = &Message{code: 20903, category: CategoryError, key: "Unsafe_type_assertion_Colon_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated__20903", text: "Unsafe type assertion: '{0}' could be instantiated with an arbitrary type which could be unrelated to the original type."}
+
+var Unsafe_type_assertion_Colon_the_original_type_is_assignable_to_the_constraint_of_type_0_but_0_could_be_instantiated_with_a_different_subtype_of_its_constraint = &Message{code: 20904, category: CategoryError, key: "Unsafe_type_assertion_Colon_the_original_type_is_assignable_to_the_constraint_of_type_0_but_0_could__20904", text: "Unsafe type assertion: the original type is assignable to the constraint of type '{0}', but '{0}' could be instantiated with a different subtype of its constraint."}
+
+var Unsafe_type_assertion_Colon_type_0_is_more_narrow_than_the_original_type = &Message{code: 20905, category: CategoryError, key: "Unsafe_type_assertion_Colon_type_0_is_more_narrow_than_the_original_type_20905", text: "Unsafe type assertion: type '{0}' is more narrow than the original type."}
+
+var Qualifier_is_unnecessary_since_0_is_in_scope = &Message{code: 20906, category: CategoryError, key: "Qualifier_is_unnecessary_since_0_is_in_scope_20906", text: "Qualifier is unnecessary since '{0}' is in scope."}
+
+var This_is_the_default_value_for_this_type_parameter_so_it_can_be_omitted = &Message{code: 20907, category: CategoryError, key: "This_is_the_default_value_for_this_type_parameter_so_it_can_be_omitted_20907", text: "This is the default value for this type parameter, so it can be omitted."}
+
+var Use_a_assertion_to_more_succinctly_remove_null_and_undefined_from_the_type = &Message{code: 20908, category: CategoryError, key: "Use_a_assertion_to_more_succinctly_remove_null_and_undefined_from_the_type_20908", text: "Use a ! assertion to more succinctly remove null and undefined from the type."}
+
+var X_0_does_not_change_the_type_or_value_of_the_1 = &Message{code: 20909, category: CategoryError, key: "_0_does_not_change_the_type_or_value_of_the_1_20909", text: "{0} does not change the type or value of the {1}."}
+
+var The_two_values_in_this_comparison_do_not_have_a_shared_enum_type = &Message{code: 20910, category: CategoryError, key: "The_two_values_in_this_comparison_do_not_have_a_shared_enum_type_20910", text: "The two values in this comparison do not have a shared enum type."}
+
+var The_case_statement_does_not_have_a_shared_enum_type_with_the_switch_predicate = &Message{code: 20911, category: CategoryError, key: "The_case_statement_does_not_have_a_shared_enum_type_with_the_switch_predicate_20911", text: "The case statement does not have a shared enum type with the switch predicate."}
+
+var Require_compare_argument = &Message{code: 21080, category: CategoryError, key: "Require_compare_argument_21080", text: "Require 'compare' argument."}
+
+var X_get_type_should_be_assignable_to_its_equivalent_set_type = &Message{code: 21081, category: CategoryError, key: "get_type_should_be_assignable_to_its_equivalent_set_type_21081", text: "`get()` type should be assignable to its equivalent `set()` type."}
+
+var Unnecessary_assertion_Colon_Array_reduce_accepts_a_type_parameter_for_the_default_value = &Message{code: 21082, category: CategoryError, key: "Unnecessary_assertion_Colon_Array_reduce_accepts_a_type_parameter_for_the_default_value_21082", text: "Unnecessary assertion: Array#reduce accepts a type parameter for the default value."}
+
+var Invalid_operand_for_a_operation_Operands_must_each_be_a_number_or_0_Got_1 = &Message{code: 21083, category: CategoryError, key: "Invalid_operand_for_a_operation_Operands_must_each_be_a_number_or_0_Got_1_21083", text: "Invalid operand for a '+' operation. Operands must each be a number or {0}. Got `{1}`."}
+
+var Operands_of_operations_must_be_a_number_or_0_Got_1_2 = &Message{code: 21084, category: CategoryError, key: "Operands_of_operations_must_be_a_number_or_0_Got_1_2_21084", text: "Operands of '+' operations must be a number or {0}. Got `{1}` + `{2}`."}
+
+var Numeric_operations_must_either_be_both_bigints_or_both_numbers_Got_0_1 = &Message{code: 21085, category: CategoryError, key: "Numeric_operations_must_either_be_both_bigints_or_both_numbers_Got_0_1_21085", text: "Numeric '+' operations must either be both bigints or both numbers. Got `{0}` + `{1}`."}
+
+var Use_this_type_instead = &Message{code: 21086, category: CategoryError, key: "Use_this_type_instead_21086", text: "Use `this` type instead."}
+
+var Functions_that_return_promises_must_be_async = &Message{code: 21087, category: CategoryError, key: "Functions_that_return_promises_must_be_async_21087", text: "Functions that return promises must be async."}
+
+var Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable = &Message{code: 21088, category: CategoryError, key: "Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_21088", text: "Prefer the safe `: unknown` for a `{0}`{1} callback variable."}
+
+var Array_type_using_0_1_is_forbidden_for_non_simple_types_Use_2_1_instead = &Message{code: 21260, category: CategoryError, key: "Array_type_using_0_1_is_forbidden_for_non_simple_types_Use_2_1_instead_21260", text: "Array type using '{0}{1}[]' is forbidden for non-simple types. Use '{2}<{1}>' instead."}
+
+var Array_type_using_0_1_is_forbidden_for_simple_types_Use_2_instead = &Message{code: 21261, category: CategoryError, key: "Array_type_using_0_1_is_forbidden_for_simple_types_Use_2_instead_21261", text: "Array type using '{0}<{1}>' is forbidden for simple types. Use '{2}' instead."}
+
+var An_index_signature_is_preferred_over_a_record = &Message{code: 21270, category: CategoryError, key: "An_index_signature_is_preferred_over_a_record_21270", text: "An index signature is preferred over a record."}
+
+var A_record_is_preferred_over_an_index_signature = &Message{code: 21271, category: CategoryError, key: "A_record_is_preferred_over_an_index_signature_21271", text: "A record is preferred over an index signature."}
+
+var X_import_type_annotations_are_forbidden = &Message{code: 21280, category: CategoryError, key: "import_type_annotations_are_forbidden_21280", text: "`import()` type annotations are forbidden."}
+
+var Use_an_import_instead_of_an_import_type = &Message{code: 21281, category: CategoryError, key: "Use_an_import_instead_of_an_import_type_21281", text: "Use an `import` instead of an `import type`."}
+
+var All_imports_in_the_declaration_are_only_used_as_types_Use_import_type = &Message{code: 21282, category: CategoryError, key: "All_imports_in_the_declaration_are_only_used_as_types_Use_import_type_21282", text: "All imports in the declaration are only used as types. Use `import type`."}
+
+var Imports_0_are_only_used_as_type = &Message{code: 21283, category: CategoryError, key: "Imports_0_are_only_used_as_type_21283", text: "Imports {0} are only used as type."}
+
+var Missing_return_type_on_function = &Message{code: 21290, category: CategoryError, key: "Missing_return_type_on_function_21290", text: "Missing return type on function."}
+
+var Argument_0_should_be_typed = &Message{code: 21291, category: CategoryError, key: "Argument_0_should_be_typed_21291", text: "Argument '{0}' should be typed."}
+
+var Argument_0_should_be_typed_with_a_non_any_type = &Message{code: 21292, category: CategoryError, key: "Argument_0_should_be_typed_with_a_non_any_type_21292", text: "Argument '{0}' should be typed with a non-any type."}
+
+var X_0_argument_should_be_typed = &Message{code: 21293, category: CategoryError, key: "_0_argument_should_be_typed_21293", text: "{0} argument should be typed."}
+
+var X_0_argument_should_be_typed_with_a_non_any_type = &Message{code: 21294, category: CategoryError, key: "_0_argument_should_be_typed_with_a_non_any_type_21294", text: "{0} argument should be typed with a non-any type."}
+
+var Unexpected_this = &Message{code: 21310, category: CategoryError, key: "Unexpected_this_21310", text: "Unexpected 'this'."}
+
+var The_nullish_coalescing_operator_is_designed_to_handle_undefined_and_null_using_a_non_null_assertion_is_not_needed = &Message{code: 21320, category: CategoryError, key: "The_nullish_coalescing_operator_is_designed_to_handle_undefined_and_null_using_a_non_null_assertion__21320", text: "The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed."}
+
+var X_0_is_already_defined_as_a_built_in_global_variable = &Message{code: 21330, category: CategoryError, key: "_0_is_already_defined_as_a_built_in_global_variable_21330", text: "'{0}' is already defined as a built-in global variable."}
+
+var X_0_is_already_defined = &Message{code: 21331, category: CategoryError, key: "_0_is_already_defined_21331", text: "'{0}' is already defined."}
+
+var A_require_style_import_is_forbidden = &Message{code: 21340, category: CategoryError, key: "A_require_style_import_is_forbidden_21340", text: "A `require()` style import is forbidden."}
+
+var X_0_is_already_a_global_variable = &Message{code: 21350, category: CategoryError, key: "_0_is_already_a_global_variable_21350", text: "'{0}' is already a global variable."}
+
+var X_0_is_already_declared_in_the_upper_scope_on_line_1_column_2 = &Message{code: 21351, category: CategoryError, key: "_0_is_already_declared_in_the_upper_scope_on_line_1_column_2_21351", text: "'{0}' is already declared in the upper scope on line {1} column {2}."}
+
+var This_assignment_is_unnecessary_since_it_is_already_assigned_by_a_parameter_property = &Message{code: 21360, category: CategoryError, key: "This_assignment_is_unnecessary_since_it_is_already_assigned_by_a_parameter_property_21360", text: "This assignment is unnecessary since it is already assigned by a parameter property."}
+
+var Unsafe_declaration_merging_between_classes_and_interfaces = &Message{code: 21370, category: CategoryError, key: "Unsafe_declaration_merging_between_classes_and_interfaces_21370", text: "Unsafe declaration merging between classes and interfaces."}
+
+var Private_class_member_0_is_defined_but_never_used = &Message{code: 21380, category: CategoryError, key: "Private_class_member_0_is_defined_but_never_used_21380", text: "Private class member '{0}' is defined but never used."}
+
+var X_0_is_1_but_2_3 = &Message{code: 21390, category: CategoryError, key: "_0_is_1_but_2_3_21390", text: "'{0}' is {1} but {2}{3}."}
+
+var X_0_is_marked_as_ignored_but_is_used_Used_1_must_not_match_Slash_2_Slashu = &Message{code: 21391, category: CategoryError, key: "_0_is_marked_as_ignored_but_is_used_Used_1_must_not_match_Slash_2_Slashu_21391", text: "'{0}' is marked as ignored but is used. Used {1} must not match /{2}/u."}
+
+var X_0_was_used_before_it_was_defined = &Message{code: 21400, category: CategoryError, key: "_0_was_used_before_it_was_defined_21400", text: "'{0}' was used before it was defined."}
+
+var Expected_a_for_of_loop_instead_of_a_for_loop_with_this_simple_iteration = &Message{code: 21410, category: CategoryError, key: "Expected_a_for_of_loop_instead_of_a_for_loop_with_this_simple_iteration_21410", text: "Expected a `for-of` loop instead of a `for` loop with this simple iteration."}
+
+var X_0_export_is_duplicated = &Message{code: 22000, category: CategoryError, key: "_0_export_is_duplicated_22000", text: "'{0}' export is duplicated."}
+
+var X_0_import_is_duplicated_as_export = &Message{code: 22001, category: CategoryError, key: "_0_import_is_duplicated_as_export_22001", text: "'{0}' import is duplicated as export."}
+
+var X_0_import_is_duplicated = &Message{code: 22002, category: CategoryError, key: "_0_import_is_duplicated_22002", text: "'{0}' import is duplicated."}
+
+var A_function_with_a_name_starting_with_an_uppercase_letter_should_only_be_used_as_a_constructor = &Message{code: 22003, category: CategoryError, key: "A_function_with_a_name_starting_with_an_uppercase_letter_should_only_be_used_as_a_constructor_22003", text: "A function with a name starting with an uppercase letter should only be used as a constructor."}
+
+var Always_prefer_const_x_Colon_T_22004 = &Message{code: 22004, category: CategoryError, key: "Always_prefer_const_x_Colon_T_22004", text: "Always prefer const x: T[] = [ ... ]."}
+
+var Array_type_using_0_1_is_forbidden_Use_2_instead = &Message{code: 22005, category: CategoryError, key: "Array_type_using_0_1_is_forbidden_Use_2_instead_22005", text: "Array type using '{0}<{1}>' is forbidden. Use '{2}' instead."}
+
+var Array_type_using_0_1_is_forbidden_Use_2_1_instead = &Message{code: 22006, category: CategoryError, key: "Array_type_using_0_1_is_forbidden_Use_2_1_instead_22006", text: "Array type using '{0}{1}[]' is forbidden. Use '{2}<{1}>' instead."}
+
+var Comments_should_not_begin_with_an_uppercase_character = &Message{code: 22007, category: CategoryError, key: "Comments_should_not_begin_with_an_uppercase_character_22007", text: "Comments should not begin with an uppercase character."}
+
+var Confusing_combination_of_non_null_assertion_and_assignment_like_a_b_which_looks_very_similar_to_a_b = &Message{code: 22008, category: CategoryError, key: "Confusing_combination_of_non_null_assertion_and_assignment_like_a_b_which_looks_very_similar_to_a_b_22008", text: "Confusing combination of non-null assertion and assignment like `a! = b`, which looks very similar to `a != b`."}
+
+var Confusing_combination_of_non_null_assertion_and_equality_test_like_a_b_which_looks_very_similar_to_a_b = &Message{code: 22009, category: CategoryError, key: "Confusing_combination_of_non_null_assertion_and_equality_test_like_a_b_which_looks_very_similar_to_a_22009", text: "Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`."}
+
+var Do_not_use_any_type_assertions = &Message{code: 22010, category: CategoryError, key: "Do_not_use_any_type_assertions_22010", text: "Do not use any type assertions."}
+
+var Do_not_use_the_0_operator_to_compare_against_0 = &Message{code: 22011, category: CategoryError, key: "Do_not_use_the_0_operator_to_compare_against_0_22011", text: "Do not use the '{0}' operator to compare against -0."}
+
+var Duplicate_case_label = &Message{code: 22012, category: CategoryError, key: "Duplicate_case_label_22012", text: "Duplicate case label."}
+
+var Duplicate_param_0 = &Message{code: 22013, category: CategoryError, key: "Duplicate_param_0_22013", text: "Duplicate param '{0}'."}
+
+var Empty_switch_statement = &Message{code: 22014, category: CategoryError, key: "Empty_switch_statement_22014", text: "Empty switch statement."}
+
+var Enum_members_are_added_to_the_enum_scope_so_references_to_0_in_enum_member_initializers_resolve_to_this_member_instead_of_the_declaration_in_the_upper_scope_on_line_1_column_2 = &Message{code: 22015, category: CategoryError, key: "Enum_members_are_added_to_the_enum_scope_so_references_to_0_in_enum_member_initializers_resolve_to_t_22015", text: "Enum members are added to the enum scope, so references to '{0}' in enum member initializers resolve to this member instead of the declaration in the upper scope on line {1} column {2}."}
+
+var Expected_a_conditional_expression_and_instead_saw_an_assignment = &Message{code: 22016, category: CategoryError, key: "Expected_a_conditional_expression_and_instead_saw_an_assignment_22016", text: "Expected a conditional expression and instead saw an assignment."}
+
+var Expected_a_function_expression = &Message{code: 22017, category: CategoryError, key: "Expected_a_function_expression_22017", text: "Expected a function expression."}
+
+var Expected_after_0 = &Message{code: 22018, category: CategoryError, key: "Expected_after_0_22018", text: "Expected { after '{0}'."}
+
+var Expected_0_to_be_before_1 = &Message{code: 22019, category: CategoryError, key: "Expected_0_to_be_before_1_22019", text: "Expected {0} to be before {1}."}
+
+var Functions_that_return_promises_must_be_async_Consider_adding_an_explicit_return_type_annotation_if_the_function_is_intended_to_return_a_union_of_promise_and_non_promise_types = &Message{code: 22020, category: CategoryError, key: "Functions_that_return_promises_must_be_async_Consider_adding_an_explicit_return_type_annotation_if_t_22020", text: "Functions that return promises must be async. Consider adding an explicit return type annotation if the function is intended to return a union of promise and non-promise types."}
+
+var Identifier_name_0_is_too_short_1 = &Message{code: 22021, category: CategoryError, key: "Identifier_name_0_is_too_short_1_22021", text: "Identifier name '{0}' is too short (< {1})."}
+
+var Include_a_description_after_the_ts_0_directive_to_explain_why_the_ts_0_is_necessary_The_description_must_be_1_characters_or_longer = &Message{code: 22022, category: CategoryError, key: "Include_a_description_after_the_ts_0_directive_to_explain_why_the_ts_0_is_necessary_The_description__22022", text: "Include a description after the \"@ts-{0}\" directive to explain why the @ts-{0} is necessary. The description must be {1} characters or longer."}
+
+var Literals_should_be_exposed_using_readonly_fields = &Message{code: 22023, category: CategoryError, key: "Literals_should_be_exposed_using_readonly_fields_22023", text: "Literals should be exposed using readonly fields."}
+
+var Nested_block_is_redundant = &Message{code: 22024, category: CategoryError, key: "Nested_block_is_redundant_22024", text: "Nested block is redundant."}
+
+var Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_be_nullable_or_may_not_have_the_expected_shape = &Message{code: 22025, category: CategoryError, key: "Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_be_nullable_or_may_no_22025", text: "Prefer the safe `: unknown` for a `{0}`{1} callback variable. The thrown error may be nullable, or may not have the expected shape."}
+
+var Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_not_be_iterable = &Message{code: 22026, category: CategoryError, key: "Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_not_be_iterable_22026", text: "Prefer the safe `: unknown` for a `{0}`{1} callback variable. The thrown error may not be iterable."}
+
+var Promise_executor_functions_should_not_be_async = &Message{code: 22027, category: CategoryError, key: "Promise_executor_functions_should_not_be_async_22027", text: "Promise executor functions should not be async."}
+
+var Public_accessibility_modifier_on_0_1 = &Message{code: 22028, category: CategoryError, key: "Public_accessibility_modifier_on_0_1_22028", text: "Public accessibility modifier on {0} {1}."}
+
+var Redundant_double_negation = &Message{code: 22029, category: CategoryError, key: "Redundant_double_negation_22029", text: "Redundant double negation."}
+
+var Setter_is_not_present_in_property_descriptor = &Message{code: 22030, category: CategoryError, key: "Setter_is_not_present_in_property_descriptor_22030", text: "Setter is not present in property descriptor."}
+
+var Shorthand_method_signature_is_forbidden_Use_a_function_property_instead = &Message{code: 22031, category: CategoryError, key: "Shorthand_method_signature_is_forbidden_Use_a_function_property_instead_22031", text: "Shorthand method signature is forbidden. Use a function property instead."}
+
+var The_description_for_the_ts_0_directive_must_match_the_1_format = &Message{code: 22032, category: CategoryError, key: "The_description_for_the_ts_0_directive_must_match_the_1_format_22032", text: "The description for the \"@ts-{0}\" directive must match the {1} format."}
+
+var Unexpected_block_statement_surrounding_arrow_body = &Message{code: 22033, category: CategoryError, key: "Unexpected_block_statement_surrounding_arrow_body_22033", text: "Unexpected block statement surrounding arrow body."}
+
+var Unexpected_block_statement_surrounding_arrow_body_move_the_returned_value_immediately_after_the = &Message{code: 22034, category: CategoryError, key: "Unexpected_block_statement_surrounding_arrow_body_move_the_returned_value_immediately_after_the_22034", text: "Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`."}
+
+var Unexpected_block_statement_surrounding_arrow_body_parenthesize_the_returned_value_and_move_it_immediately_after_the = &Message{code: 22035, category: CategoryError, key: "Unexpected_block_statement_surrounding_arrow_body_parenthesize_the_returned_value_and_move_it_immedi_22035", text: "Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`."}
+
+var Unexpected_block_statement_surrounding_arrow_body_put_a_value_of_undefined_immediately_after_the = &Message{code: 22036, category: CategoryError, key: "Unexpected_block_statement_surrounding_arrow_body_put_a_value_of_undefined_immediately_after_the_22036", text: "Unexpected block statement surrounding arrow body; put a value of `undefined` immediately after the `=>`."}
+
+var Unexpected_comparison_of_two_newly_constructed_objects_These_two_values_can_never_be_equal = &Message{code: 22037, category: CategoryError, key: "Unexpected_comparison_of_two_newly_constructed_objects_These_two_values_can_never_be_equal_22037", text: "Unexpected comparison of two newly constructed objects. These two values can never be equal."}
+
+var Unexpected_comparison_to_newly_constructed_object_These_two_values_can_never_be_equal = &Message{code: 22038, category: CategoryError, key: "Unexpected_comparison_to_newly_constructed_object_These_two_values_can_never_be_equal_22038", text: "Unexpected comparison to newly constructed object. These two values can never be equal."}
+
+var Unexpected_constant_binary_expression_Compares_constantly_with_the_0_hand_side_of_the_1 = &Message{code: 22039, category: CategoryError, key: "Unexpected_constant_binary_expression_Compares_constantly_with_the_0_hand_side_of_the_1_22039", text: "Unexpected constant binary expression. Compares constantly with the {0}-hand side of the `{1}`."}
+
+var Unexpected_constant_0_on_the_left_hand_side_of_a_1_expression = &Message{code: 22040, category: CategoryError, key: "Unexpected_constant_0_on_the_left_hand_side_of_a_1_expression_22040", text: "Unexpected constant {0} on the left-hand side of a `{1}` expression."}
+
+var Unexpected_empty_0_pattern = &Message{code: 22041, category: CategoryError, key: "Unexpected_empty_0_pattern_22041", text: "Unexpected empty {0} pattern."}
+
+var Unexpected_label_in_continue_statement = &Message{code: 22042, category: CategoryError, key: "Unexpected_label_in_continue_statement_22042", text: "Unexpected label in continue statement."}
+
+var Unexpected_labeled_statement = &Message{code: 22043, category: CategoryError, key: "Unexpected_labeled_statement_22043", text: "Unexpected labeled statement."}
+
+var Unnecessary_after_0_condition = &Message{code: 22044, category: CategoryError, key: "Unnecessary_after_0_condition_22044", text: "Unnecessary { after '{0}' condition."}
+
+var Unnecessary_after_0 = &Message{code: 22045, category: CategoryError, key: "Unnecessary_after_0_22045", text: "Unnecessary { after '{0}'."}
+
+var Use_ts_expect_error_instead_of_ts_ignore_as_ts_ignore_will_do_nothing_if_the_following_line_is_error_free = &Message{code: 22046, category: CategoryError, key: "Use_ts_expect_error_instead_of_ts_ignore_as_ts_ignore_will_do_nothing_if_the_following_line_is_error_22046", text: "Use \"@ts-expect-error\" instead of \"@ts-ignore\", as \"@ts-ignore\" will do nothing if the following line is error-free."}
+
+var Use_0_instead_of_as_0 = &Message{code: 22047, category: CategoryError, key: "Use_0_instead_of_as_0_22047", text: "Use '<{0}>' instead of 'as {0}'."}
+
+var Use_as_0_instead_of_0 = &Message{code: 22048, category: CategoryError, key: "Use_as_0_instead_of_0_22048", text: "Use 'as {0}' instead of '<{0}>'."}
+
+var Use_an_interface_instead_of_a_type = &Message{code: 22049, category: CategoryError, key: "Use_an_interface_instead_of_a_type_22049", text: "Use an `interface` instead of a `type`."}
+
+var X_0_is_better_written_in_dot_notation = &Message{code: 22050, category: CategoryError, key: "_0_is_better_written_in_dot_notation_22050", text: "[{0}] is better written in dot notation."}
+
+var X_0_is_not_present_for_1_2 = &Message{code: 22051, category: CategoryError, key: "_0_is_not_present_for_1_2_22051", text: "{0} is not present for {1}{2}."}
+
+var Unexpected_await_of_a_non_Promise_non_Thenable_value = &Message{code: 24000, category: CategoryError, key: "Unexpected_await_of_a_non_Promise_non_Thenable_value_24000", text: "Unexpected `await` of a non-Promise (non-\"Thenable\") value."}
+
+var Unexpected_await_using_of_a_value_that_is_not_async_disposable = &Message{code: 24001, category: CategoryError, key: "Unexpected_await_using_of_a_value_that_is_not_async_disposable_24001", text: "Unexpected `await using` of a value that is not async disposable."}
+
+var Convert_to_an_ordinary_for_of_loop = &Message{code: 24002, category: CategoryMessage, key: "Convert_to_an_ordinary_for_of_loop_24002", text: "Convert to an ordinary `for...of` loop."}
+
+var Unexpected_for_await_of_of_a_value_that_is_not_async_iterable = &Message{code: 24003, category: CategoryError, key: "Unexpected_for_await_of_of_a_value_that_is_not_async_iterable_24003", text: "Unexpected `for await...of` of a value that is not async iterable."}
+
+var Unexpected_iterable_of_non_Promise_non_Thenable_values_passed_to_promise_aggregator = &Message{code: 24004, category: CategoryError, key: "Unexpected_iterable_of_non_Promise_non_Thenable_values_passed_to_promise_aggregator_24004", text: "Unexpected iterable of non-Promise (non-\"Thenable\") values passed to promise aggregator."}
+
+var Remove_unnecessary_await = &Message{code: 24005, category: CategoryMessage, key: "Remove_unnecessary_await_24005", text: "Remove unnecessary `await`."}
+
+var Expected_to_return_a_value_at_the_end_of_0 = &Message{code: 24006, category: CategoryError, key: "Expected_to_return_a_value_at_the_end_of_0_24006", text: "Expected to return a value at the end of {0}."}
+
+var X_0_expected_a_return_value = &Message{code: 24007, category: CategoryError, key: "_0_expected_a_return_value_24007", text: "{0} expected a return value."}
+
+var X_0_expected_no_return_value = &Message{code: 24008, category: CategoryError, key: "_0_expected_no_return_value_24008", text: "{0} expected no return value."}
+
+var Type_exports_0_are_not_values_and_should_be_exported_using_export_type = &Message{code: 24009, category: CategoryError, key: "Type_exports_0_are_not_values_and_should_be_exported_using_export_type_24009", text: "Type exports {0} are not values and should be exported using `export type`."}
+
+var Type_export_0_is_not_a_value_and_should_be_exported_using_export_type = &Message{code: 24010, category: CategoryError, key: "Type_export_0_is_not_a_value_and_should_be_exported_using_export_type_24010", text: "Type export {0} is not a value and should be exported using `export type`."}
+
+var All_exports_in_the_declaration_are_only_used_as_types_Use_export_type = &Message{code: 24011, category: CategoryError, key: "All_exports_in_the_declaration_are_only_used_as_types_Use_export_type_24011", text: "All exports in the declaration are only used as types. Use `export type`."}
+
+var Member_0_should_be_declared_before_all_1_definitions = &Message{code: 24012, category: CategoryError, key: "Member_0_should_be_declared_before_all_1_definitions_24012", text: "Member {0} should be declared before all {1} definitions."}
+
+var Member_0_should_be_declared_before_member_1 = &Message{code: 24013, category: CategoryError, key: "Member_0_should_be_declared_before_member_1_24013", text: "Member {0} should be declared before member {1}."}
+
+var Member_0_should_be_declared_after_all_1_members = &Message{code: 24014, category: CategoryError, key: "Member_0_should_be_declared_after_all_1_members_24014", text: "Member {0} should be declared after all {1} members."}
+
+var X_0_name_1_must_match_one_of_the_following_formats_Colon_2 = &Message{code: 24015, category: CategoryError, key: "_0_name_1_must_match_one_of_the_following_formats_Colon_2_24015", text: "{0} name `{1}` must match one of the following formats: {2}"}
+
+var X_0_name_1_trimmed_as_2_must_match_one_of_the_following_formats_Colon_3 = &Message{code: 24016, category: CategoryError, key: "_0_name_1_trimmed_as_2_must_match_one_of_the_following_formats_Colon_3_24016", text: "{0} name `{1}` trimmed as `{2}` must match one of the following formats: {3}"}
+
+var X_0_name_1_must_have_one_of_the_following_2_es_Colon_3 = &Message{code: 24017, category: CategoryError, key: "_0_name_1_must_have_one_of_the_following_2_es_Colon_3_24017", text: "{0} name `{1}` must have one of the following {2}es: {3}"}
+
+var X_0_name_1_must_have_2_3_underscore_s = &Message{code: 24018, category: CategoryError, key: "_0_name_1_must_have_2_3_underscore_s_24018", text: "{0} name `{1}` must have {2} {3} underscore(s)."}
+
+var X_0_name_1_must_2_the_RegExp_Colon_3 = &Message{code: 24019, category: CategoryError, key: "_0_name_1_must_2_the_RegExp_Colon_3_24019", text: "{0} name `{1}` must {2} the RegExp: {3}"}
+
+var X_0_name_1_must_not_have_a_2_underscore = &Message{code: 24020, category: CategoryError, key: "_0_name_1_must_not_have_a_2_underscore_24020", text: "{0} name `{1}` must not have a {2} underscore."}
+
+var Using_join_for_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified = &Message{code: 24021, category: CategoryError, key: "Using_join_for_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified_24021", text: "Using `join()` for {0} {1} use Object's default stringification format ('[object Object]') when stringified."}
+
+var X_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified = &Message{code: 24022, category: CategoryError, key: "_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified_24022", text: "'{0}' {1} use Object's default stringification format ('[object Object]') when stringified."}
+
+var Placing_a_void_expression_inside_another_expression_is_forbidden_Move_it_to_its_own_statement_instead = &Message{code: 24023, category: CategoryError, key: "Placing_a_void_expression_inside_another_expression_is_forbidden_Move_it_to_its_own_statement_instea_24023", text: "Placing a void expression inside another expression is forbidden. Move it to its own statement instead."}
+
+var Returning_a_void_expression_from_an_arrow_function_shorthand_is_forbidden_Please_add_braces_to_the_arrow_function = &Message{code: 24024, category: CategoryError, key: "Returning_a_void_expression_from_an_arrow_function_shorthand_is_forbidden_Please_add_braces_to_the_a_24024", text: "Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function."}
+
+var Void_expressions_returned_from_an_arrow_function_shorthand_must_be_marked_explicitly_with_the_void_operator = &Message{code: 24025, category: CategoryError, key: "Void_expressions_returned_from_an_arrow_function_shorthand_must_be_marked_explicitly_with_the_void_o_24025", text: "Void expressions returned from an arrow function shorthand must be marked explicitly with the `void` operator."}
+
+var Returning_a_void_expression_from_a_function_is_forbidden_Please_move_it_before_the_return_statement = &Message{code: 24026, category: CategoryError, key: "Returning_a_void_expression_from_a_function_is_forbidden_Please_move_it_before_the_return_statement_24026", text: "Returning a void expression from a function is forbidden. Please move it before the `return` statement."}
+
+var Returning_a_void_expression_from_a_function_is_forbidden_Please_remove_the_return_statement = &Message{code: 24027, category: CategoryError, key: "Returning_a_void_expression_from_a_function_is_forbidden_Please_remove_the_return_statement_24027", text: "Returning a void expression from a function is forbidden. Please remove the `return` statement."}
+
+var Void_expressions_returned_from_a_function_must_be_marked_explicitly_with_the_void_operator = &Message{code: 24028, category: CategoryError, key: "Void_expressions_returned_from_a_function_must_be_marked_explicitly_with_the_void_operator_24028", text: "Void expressions returned from a function must be marked explicitly with the `void` operator."}
+
+var Void_expressions_used_inside_another_expression_must_be_moved_to_its_own_statement_or_marked_explicitly_with_the_void_operator = &Message{code: 24029, category: CategoryError, key: "Void_expressions_used_inside_another_expression_must_be_moved_to_its_own_statement_or_marked_explici_24029", text: "Void expressions used inside another expression must be moved to its own statement or marked explicitly with the `void` operator."}
+
+var Mark_with_an_explicit_void_operator = &Message{code: 24030, category: CategoryMessage, key: "Mark_with_an_explicit_void_operator_24030", text: "Mark with an explicit `void` operator."}
+
+var X_0_is_deprecated_24031 = &Message{code: 24031, category: CategoryError, key: "_0_is_deprecated_24031", text: "`{0}` is deprecated."}
+
+var X_0_is_deprecated_1 = &Message{code: 24032, category: CategoryError, key: "_0_is_deprecated_1_24032", text: "`{0}` is deprecated. {1}"}
+
+var X_0_type_constituent_is_duplicated_with_1 = &Message{code: 24033, category: CategoryError, key: "_0_type_constituent_is_duplicated_with_1_24033", text: "{0} type constituent is duplicated with {1}."}
+
+var Explicit_undefined_is_unnecessary_on_an_optional_parameter = &Message{code: 24034, category: CategoryError, key: "Explicit_undefined_is_unnecessary_on_an_optional_parameter_24034", text: "Explicit undefined is unnecessary on an optional parameter."}
+
+var Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handler = &Message{code: 24035, category: CategoryError, key: "Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handle_24035", text: "Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler."}
+
+var Add_await_operator = &Message{code: 24036, category: CategoryMessage, key: "Add_await_operator_24036", text: "Add await operator."}
+
+var Add_void_operator_to_ignore = &Message{code: 24037, category: CategoryMessage, key: "Add_void_operator_to_ignore_24037", text: "Add void operator to ignore."}
+
+var An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_with_Promise_all_or_similar = &Message{code: 24038, category: CategoryError, key: "An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_wi_24038", text: "An array of Promises may be unintentional. Consider handling the promises' fulfillment or rejection with Promise.all or similar."}
+
+var An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_with_Promise_all_or_similar_or_explicitly_marking_the_expression_as_ignored_with_the_void_operator = &Message{code: 24039, category: CategoryError, key: "An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_wi_24039", text: "An array of Promises may be unintentional. Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the `void` operator."}
+
+var Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handler_A_rejection_handler_that_is_not_a_function_will_be_ignored = &Message{code: 24040, category: CategoryError, key: "Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handle_24040", text: "Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler. A rejection handler that is not a function will be ignored."}
+
+var Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_or_be_explicitly_marked_as_ignored_with_the_void_operator_A_rejection_handler_that_is_not_a_function_will_be_ignored = &Message{code: 24041, category: CategoryError, key: "Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_o_24041", text: "Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator. A rejection handler that is not a function will be ignored."}
+
+var Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_or_be_explicitly_marked_as_ignored_with_the_void_operator = &Message{code: 24042, category: CategoryError, key: "Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_o_24042", text: "Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator."}
+
+var Implied_eval_Do_not_use_the_Function_constructor_to_create_functions = &Message{code: 24043, category: CategoryError, key: "Implied_eval_Do_not_use_the_Function_constructor_to_create_functions_24043", text: "Implied eval. Do not use the Function constructor to create functions."}
+
+var Implied_eval_Consider_passing_a_function = &Message{code: 24044, category: CategoryError, key: "Implied_eval_Consider_passing_a_function_24044", text: "Implied eval. Consider passing a function."}
+
+var Expected_non_Promise_value_in_a_boolean_conditional = &Message{code: 24045, category: CategoryError, key: "Expected_non_Promise_value_in_a_boolean_conditional_24045", text: "Expected non-Promise value in a boolean conditional."}
+
+var Expected_a_non_Promise_value_to_be_returned = &Message{code: 24046, category: CategoryError, key: "Expected_a_non_Promise_value_to_be_returned_24046", text: "Expected a non-Promise value to be returned."}
+
+var Expected_a_non_Promise_value_to_be_spread_in_an_object = &Message{code: 24047, category: CategoryError, key: "Expected_a_non_Promise_value_to_be_spread_in_an_object_24047", text: "Expected a non-Promise value to be spread in an object."}
+
+var Promise_returned_in_function_argument_where_a_void_return_was_expected = &Message{code: 24048, category: CategoryError, key: "Promise_returned_in_function_argument_where_a_void_return_was_expected_24048", text: "Promise returned in function argument where a void return was expected."}
+
+var Promise_returning_function_provided_to_attribute_where_a_void_return_was_expected = &Message{code: 24049, category: CategoryError, key: "Promise_returning_function_provided_to_attribute_where_a_void_return_was_expected_24049", text: "Promise-returning function provided to attribute where a void return was expected."}
+
+var Promise_returning_method_provided_where_a_void_return_was_expected_by_extended_Slashimplemented_type_0 = &Message{code: 24050, category: CategoryError, key: "Promise_returning_method_provided_where_a_void_return_was_expected_by_extended_Slashimplemented_type_24050", text: "Promise-returning method provided where a void return was expected by extended/implemented type '{0}'."}
+
+var Promise_returning_function_provided_to_property_where_a_void_return_was_expected = &Message{code: 24051, category: CategoryError, key: "Promise_returning_function_provided_to_property_where_a_void_return_was_expected_24051", text: "Promise-returning function provided to property where a void return was expected."}
+
+var Promise_returning_function_provided_to_return_value_where_a_void_return_was_expected = &Message{code: 24052, category: CategoryError, key: "Promise_returning_function_provided_to_return_value_where_a_void_return_was_expected_24052", text: "Promise-returning function provided to return value where a void return was expected."}
+
+var Promise_returning_function_provided_to_variable_where_a_void_return_was_expected = &Message{code: 24053, category: CategoryError, key: "Promise_returning_function_provided_to_variable_where_a_void_return_was_expected_24053", text: "Promise-returning function provided to variable where a void return was expected."}
+
+var Using_the_spread_operator_on_an_array_in_an_object_will_result_in_a_list_of_indices = &Message{code: 24054, category: CategoryError, key: "Using_the_spread_operator_on_an_array_in_an_object_will_result_in_a_list_of_indices_24054", text: "Using the spread operator on an array in an object will result in a list of indices."}
+
+var Using_the_spread_operator_on_class_declarations_will_spread_only_their_static_properties_and_will_lose_their_class_prototype = &Message{code: 24055, category: CategoryError, key: "Using_the_spread_operator_on_class_declarations_will_spread_only_their_static_properties_and_will_lo_24055", text: "Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype."}
+
+var Using_the_spread_operator_on_class_instances_will_lose_their_class_prototype = &Message{code: 24056, category: CategoryError, key: "Using_the_spread_operator_on_class_instances_will_lose_their_class_prototype_24056", text: "Using the spread operator on class instances will lose their class prototype."}
+
+var Using_the_spread_operator_on_a_function_without_additional_properties_can_cause_unexpected_behavior_Did_you_forget_to_call_the_function = &Message{code: 24057, category: CategoryError, key: "Using_the_spread_operator_on_a_function_without_additional_properties_can_cause_unexpected_behavior__24057", text: "Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?"}
+
+var Using_the_spread_operator_on_an_Iterable_in_an_object_can_cause_unexpected_behavior = &Message{code: 24058, category: CategoryError, key: "Using_the_spread_operator_on_an_Iterable_in_an_object_can_cause_unexpected_behavior_24058", text: "Using the spread operator on an Iterable in an object can cause unexpected behavior."}
+
+var Using_the_spread_operator_on_a_Map_in_an_object_will_result_in_an_empty_object_Did_you_mean_to_use_Object_fromEntries_map_instead = &Message{code: 24059, category: CategoryError, key: "Using_the_spread_operator_on_a_Map_in_an_object_will_result_in_an_empty_object_Did_you_mean_to_use_O_24059", text: "Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?"}
+
+var Using_the_spread_operator_on_Promise_in_an_object_can_cause_unexpected_behavior_Did_you_forget_to_await_the_promise = &Message{code: 24060, category: CategoryError, key: "Using_the_spread_operator_on_Promise_in_an_object_can_cause_unexpected_behavior_Did_you_forget_to_aw_24060", text: "Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?"}
+
+var Using_the_spread_operator_on_a_string_can_mishandle_special_characters_as_can_split_produces_Unicode_code_points_which_will_decompose_complex_emojis_into_individual_emojis_split_produces_UTF_16_code_units_which_breaks_rich_characters_in_many_languages_Consider_using_Intl_Segmenter_for_locale_aware_string_decomposition_Otherwise_if_you_don_t_need_to_preserve_emojis_or_other_non_Ascii_characters_disable_this_lint_rule_on_this_line_or_configure_the_allow_rule_option = &Message{code: 24061, category: CategoryError, key: "Using_the_spread_operator_on_a_string_can_mishandle_special_characters_as_can_split_produces_Unicode_24061", text: "Using the spread operator on a string can mishandle special characters, as can `.split(\"\")`.\n- `...` produces Unicode code points, which will decompose complex emojis into individual emojis\n- .split(\"\") produces UTF-16 code units, which breaks rich characters in many languages\nConsider using `Intl.Segmenter` for locale-aware string decomposition.\nOtherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option."}
+
+var Replace_map_spread_in_object_with_Object_fromEntries = &Message{code: 24062, category: CategoryMessage, key: "Replace_map_spread_in_object_with_Object_fromEntries_24062", text: "Replace map spread in object with `Object.fromEntries()`"}
+
+var Mixing_number_and_string_enums_can_be_confusing = &Message{code: 24063, category: CategoryError, key: "Mixing_number_and_string_enums_can_be_confusing_24063", text: "Mixing number and string enums can be confusing."}
+
+var X_0_is_an_error_type_that_acts_as_any_and_overrides_all_other_types_in_this_1_type = &Message{code: 24064, category: CategoryError, key: "_0_is_an_error_type_that_acts_as_any_and_overrides_all_other_types_in_this_1_type_24064", text: "'{0}' is an 'error' type that acts as 'any' and overrides all other types in this {1} type."}
+
+var X_0_is_overridden_by_1_in_this_union_type = &Message{code: 24065, category: CategoryError, key: "_0_is_overridden_by_1_in_this_union_type_24065", text: "{0} is overridden by {1} in this union type."}
+
+var X_0_is_overridden_by_other_types_in_this_1_type = &Message{code: 24066, category: CategoryError, key: "_0_is_overridden_by_other_types_in_this_1_type_24066", text: "'{0}' is overridden by other types in this {1} type."}
+
+var X_0_overrides_all_other_types_in_this_1_type = &Message{code: 24067, category: CategoryError, key: "_0_overrides_all_other_types_in_this_1_type_24067", text: "'{0}' overrides all other types in this {1} type."}
+
+var X_0_is_overridden_by_the_1_in_this_intersection_type = &Message{code: 24068, category: CategoryError, key: "_0_is_overridden_by_the_1_in_this_intersection_type_24068", text: "{0} is overridden by the {1} in this intersection type."}
+
+var This_expression_unnecessarily_compares_a_nullable_boolean_value_to_false_instead_of_using_the_operator_to_provide_a_default = &Message{code: 24069, category: CategoryError, key: "This_expression_unnecessarily_compares_a_nullable_boolean_value_to_false_instead_of_using_the_operat_24069", text: "This expression unnecessarily compares a nullable boolean value to false instead of using the ?? operator to provide a default."}
+
+var This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_using_it_directly = &Message{code: 24070, category: CategoryError, key: "This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_using_it_directly_24070", text: "This expression unnecessarily compares a nullable boolean value to true instead of using it directly."}
+
+var This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_negating_it = &Message{code: 24071, category: CategoryError, key: "This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_negating_it_24071", text: "This expression unnecessarily compares a nullable boolean value to true instead of negating it."}
+
+var This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_using_it_directly = &Message{code: 24072, category: CategoryError, key: "This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_using_it_directly_24072", text: "This expression unnecessarily compares a boolean value to a boolean instead of using it directly."}
+
+var This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_negating_it = &Message{code: 24073, category: CategoryError, key: "This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_negating_it_24073", text: "This expression unnecessarily compares a boolean value to a boolean instead of negating it."}
+
+var This_rule_requires_the_strictNullChecks_compiler_option_to_be_turned_on_to_function_correctly = &Message{code: 24074, category: CategoryError, key: "This_rule_requires_the_strictNullChecks_compiler_option_to_be_turned_on_to_function_correctly_24074", text: "This rule requires the `strictNullChecks` compiler option to be turned on to function correctly."}
+
+var Unnecessary_conditional_value_is_always_falsy = &Message{code: 24075, category: CategoryError, key: "Unnecessary_conditional_value_is_always_falsy_24075", text: "Unnecessary conditional, value is always falsy."}
+
+var This_callback_should_return_a_conditional_but_return_is_always_falsy = &Message{code: 24076, category: CategoryError, key: "This_callback_should_return_a_conditional_but_return_is_always_falsy_24076", text: "This callback should return a conditional, but return is always falsy."}
+
+var Unnecessary_conditional_left_hand_side_of_operator_is_always_null_or_undefined = &Message{code: 24077, category: CategoryError, key: "Unnecessary_conditional_left_hand_side_of_operator_is_always_null_or_undefined_24077", text: "Unnecessary conditional, left-hand side of `??` operator is always `null` or `undefined`."}
+
+var Unnecessary_conditional_value_is_always_truthy = &Message{code: 24078, category: CategoryError, key: "Unnecessary_conditional_value_is_always_truthy_24078", text: "Unnecessary conditional, value is always truthy."}
+
+var This_callback_should_return_a_conditional_but_return_is_always_truthy = &Message{code: 24079, category: CategoryError, key: "This_callback_should_return_a_conditional_but_return_is_always_truthy_24079", text: "This callback should return a conditional, but return is always truthy."}
+
+var Unnecessary_conditional_comparison_is_always_0_since_1_2_3_is_0 = &Message{code: 24080, category: CategoryError, key: "Unnecessary_conditional_comparison_is_always_0_since_1_2_3_is_0_24080", text: "Unnecessary conditional, comparison is always {0}, since `{1} {2} {3}` is {0}."}
+
+var Unnecessary_conditional_value_is_never = &Message{code: 24081, category: CategoryError, key: "Unnecessary_conditional_value_is_never_24081", text: "Unnecessary conditional, value is `never`."}
+
+var Unnecessary_conditional_expected_left_hand_side_of_operator_to_be_possibly_null_or_undefined = &Message{code: 24082, category: CategoryError, key: "Unnecessary_conditional_expected_left_hand_side_of_operator_to_be_possibly_null_or_undefined_24082", text: "Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined."}
+
+var Unnecessary_optional_chain_on_a_non_nullish_value = &Message{code: 24083, category: CategoryError, key: "Unnecessary_optional_chain_on_a_non_nullish_value_24083", text: "Unnecessary optional chain on a non-nullish value."}
+
+var Unnecessary_conditional_the_types_have_no_overlap = &Message{code: 24084, category: CategoryError, key: "Unnecessary_conditional_the_types_have_no_overlap_24084", text: "Unnecessary conditional, the types have no overlap."}
+
+var Remove_unnecessary_optional_chain = &Message{code: 24085, category: CategoryMessage, key: "Remove_unnecessary_optional_chain_24085", text: "Remove unnecessary optional chain"}
+
+var Unnecessary_conditional_expression_already_has_the_type_being_checked_by_the_0 = &Message{code: 24086, category: CategoryError, key: "Unnecessary_conditional_expression_already_has_the_type_being_checked_by_the_0_24086", text: "Unnecessary conditional, expression already has the type being checked by the {0}."}
+
+var Template_literal_expression_is_unnecessary_and_can_be_simplified = &Message{code: 24087, category: CategoryError, key: "Template_literal_expression_is_unnecessary_and_can_be_simplified_24087", text: "Template literal expression is unnecessary and can be simplified."}
+
+var The_type_arguments_for_this_generic_call_may_be_inferred_from_the_assertion_Specify_them_explicitly_instead = &Message{code: 24088, category: CategoryError, key: "The_type_arguments_for_this_generic_call_may_be_inferred_from_the_assertion_Specify_them_explicitly__24088", text: "The type arguments for this generic call may be inferred from the assertion. Specify them explicitly instead."}
+
+var This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression = &Message{code: 24089, category: CategoryError, key: "This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression_24089", text: "This assertion is unnecessary since the receiver accepts the original type of the expression."}
+
+var This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression = &Message{code: 24090, category: CategoryError, key: "This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression_24090", text: "This assertion is unnecessary since it does not change the type of the expression."}
+
+var Replace_all_usages_of_type_parameter_with_its_constraint = &Message{code: 24091, category: CategoryMessage, key: "Replace_all_usages_of_type_parameter_with_its_constraint_24091", text: "Replace all usages of type parameter with its constraint."}
+
+var Type_parameter_0_is_1_in_the_2_signature = &Message{code: 24092, category: CategoryError, key: "Type_parameter_0_is_1_in_the_2_signature_24092", text: "Type parameter {0} is {1} in the {2} signature."}
+
+var Unsafe_argument_of_type_0_assigned_to_a_parameter_of_type_1 = &Message{code: 24093, category: CategoryError, key: "Unsafe_argument_of_type_0_assigned_to_a_parameter_of_type_1_24093", text: "Unsafe argument of type {0} assigned to a parameter of type {1}."}
+
+var Unsafe_spread_of_an_0_array_type = &Message{code: 24094, category: CategoryError, key: "Unsafe_spread_of_an_0_array_type_24094", text: "Unsafe spread of an {0} array type."}
+
+var Unsafe_spread_of_an_0_type = &Message{code: 24095, category: CategoryError, key: "Unsafe_spread_of_an_0_type_24095", text: "Unsafe spread of an {0} type."}
+
+var Unsafe_spread_of_a_tuple_type_The_argument_is_0_and_is_assigned_to_a_parameter_of_type_1 = &Message{code: 24096, category: CategoryError, key: "Unsafe_spread_of_a_tuple_type_The_argument_is_0_and_is_assigned_to_a_parameter_of_type_1_24096", text: "Unsafe spread of a tuple type. The argument is {0} and is assigned to a parameter of type {1}."}
+
+var Unsafe_assignment_of_an_0_value = &Message{code: 24097, category: CategoryError, key: "Unsafe_assignment_of_an_0_value_24097", text: "Unsafe assignment of an {0} value."}
+
+var Unsafe_assignment_of_an_0_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function = &Message{code: 24098, category: CategoryError, key: "Unsafe_assignment_of_an_0_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImp_24098", text: "Unsafe assignment of an {0} value. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function."}
+
+var Unsafe_array_destructuring_of_an_0_array_value = &Message{code: 24099, category: CategoryError, key: "Unsafe_array_destructuring_of_an_0_array_value_24099", text: "Unsafe array destructuring of an {0} array value."}
+
+var Unsafe_array_destructuring_of_a_tuple_element_with_an_0_value = &Message{code: 24100, category: CategoryError, key: "Unsafe_array_destructuring_of_a_tuple_element_with_an_0_value_24100", text: "Unsafe array destructuring of a tuple element with an {0} value."}
+
+var Unsafe_spread_of_an_0_value_in_an_array = &Message{code: 24101, category: CategoryError, key: "Unsafe_spread_of_an_0_value_in_an_array_24101", text: "Unsafe spread of an {0} value in an array."}
+
+var Unsafe_assignment_of_type_0_to_a_variable_of_type_1 = &Message{code: 24102, category: CategoryError, key: "Unsafe_assignment_of_type_0_to_a_variable_of_type_1_24102", text: "Unsafe assignment of type {0} to a variable of type {1}."}
+
+var Unsafe_object_destructuring_of_a_property_with_an_0_value = &Message{code: 24103, category: CategoryError, key: "Unsafe_object_destructuring_of_a_property_with_an_0_value_24103", text: "Unsafe object destructuring of a property with an {0} value."}
+
+var Unsafe_call_of_a_type_that_could_not_be_resolved = &Message{code: 24104, category: CategoryError, key: "Unsafe_call_of_a_type_that_could_not_be_resolved_24104", text: "Unsafe call of a type that could not be resolved."}
+
+var Unsafe_call_of_a_this_type_that_could_not_be_resolved = &Message{code: 24105, category: CategoryError, key: "Unsafe_call_of_a_this_type_that_could_not_be_resolved_24105", text: "Unsafe call of a `this` type that could not be resolved."}
+
+var Unsafe_construction_of_a_type_that_could_not_be_resolved = &Message{code: 24106, category: CategoryError, key: "Unsafe_construction_of_a_type_that_could_not_be_resolved_24106", text: "Unsafe construction of a type that could not be resolved."}
+
+var Unsafe_use_of_a_template_tag_whose_type_could_not_be_resolved = &Message{code: 24107, category: CategoryError, key: "Unsafe_use_of_a_template_tag_whose_type_could_not_be_resolved_24107", text: "Unsafe use of a template tag whose type could not be resolved."}
+
+var Unsafe_call_of_0_typed_value = &Message{code: 24108, category: CategoryError, key: "Unsafe_call_of_0_typed_value_24108", text: "Unsafe call of {0} typed value."}
+
+var Unsafe_call_of_0_typed_value_this_is_typed_as_0_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function = &Message{code: 24109, category: CategoryError, key: "Unsafe_call_of_0_typed_value_this_is_typed_as_0_You_can_try_to_fix_this_by_turning_on_the_noImplicit_24109", text: "Unsafe call of {0} typed value. `this` is typed as {0}.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function."}
+
+var Unsafe_construction_of_0_typed_value = &Message{code: 24110, category: CategoryError, key: "Unsafe_construction_of_0_typed_value_24110", text: "Unsafe construction of {0} typed value."}
+
+var Unsafe_use_of_0_typed_template_tag = &Message{code: 24111, category: CategoryError, key: "Unsafe_use_of_0_typed_template_tag_24111", text: "Unsafe use of {0} typed template tag."}
+
+var The_computed_key_used_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0 = &Message{code: 24112, category: CategoryError, key: "The_computed_key_used_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0_24112", text: "The computed key used here does not have a shared enum type with the expected enum {0}."}
+
+var The_argument_passed_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0 = &Message{code: 24113, category: CategoryError, key: "The_argument_passed_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0_24113", text: "The argument passed here does not have a shared enum type with the expected enum {0}."}
+
+var The_value_asserted_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0 = &Message{code: 24114, category: CategoryError, key: "The_value_asserted_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0_24114", text: "The value asserted here does not have a shared enum type with the expected enum {0}."}
+
+var The_value_assigned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0 = &Message{code: 24115, category: CategoryError, key: "The_value_assigned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0_24115", text: "The value assigned here does not have a shared enum type with the expected enum {0}."}
+
+var This_mutation_can_produce_a_value_outside_of_the_expected_enum_0 = &Message{code: 24116, category: CategoryError, key: "This_mutation_can_produce_a_value_outside_of_the_expected_enum_0_24116", text: "This mutation can produce a value outside of the expected enum {0}."}
+
+var The_value_returned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0 = &Message{code: 24117, category: CategoryError, key: "The_value_returned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0_24117", text: "The value returned here does not have a shared enum type with the expected enum {0}."}
+
+var The_type_of_computed_name_0_cannot_be_resolved = &Message{code: 24118, category: CategoryError, key: "The_type_of_computed_name_0_cannot_be_resolved_24118", text: "The type of computed name {0} cannot be resolved."}
+
+var Unsafe_member_access_0_on_a_type_that_cannot_be_resolved = &Message{code: 24119, category: CategoryError, key: "Unsafe_member_access_0_on_a_type_that_cannot_be_resolved_24119", text: "Unsafe member access {0} on a type that cannot be resolved."}
+
+var Unsafe_member_access_0_The_type_of_this_cannot_be_resolved_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function = &Message{code: 24120, category: CategoryError, key: "Unsafe_member_access_0_The_type_of_this_cannot_be_resolved_You_can_try_to_fix_this_by_turning_on_the_24120", text: "Unsafe member access {0}. The type of `this` cannot be resolved.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function."}
+
+var Computed_name_0_resolves_to_an_any_value = &Message{code: 24121, category: CategoryError, key: "Computed_name_0_resolves_to_an_any_value_24121", text: "Computed name {0} resolves to an `any` value."}
+
+var Unsafe_member_access_0_on_an_any_value = &Message{code: 24122, category: CategoryError, key: "Unsafe_member_access_0_on_an_any_value_24122", text: "Unsafe member access {0} on an `any` value."}
+
+var Unsafe_member_access_0_on_an_any_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function = &Message{code: 24123, category: CategoryError, key: "Unsafe_member_access_0_on_an_any_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_th_24123", text: "Unsafe member access {0} on an `any` value. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function."}
+
+var Unsafe_return_of_a_value_of_type_0 = &Message{code: 24124, category: CategoryError, key: "Unsafe_return_of_a_value_of_type_0_24124", text: "Unsafe return of a value of type {0}."}
+
+var Unsafe_return_of_type_0_from_function_with_return_type_1 = &Message{code: 24125, category: CategoryError, key: "Unsafe_return_of_type_0_from_function_with_return_type_1_24125", text: "Unsafe return of type `{0}` from function with return type `{1}`."}
+
+var Unsafe_return_of_a_value_of_type_0_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function = &Message{code: 24126, category: CategoryError, key: "Unsafe_return_of_a_value_of_type_0_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_no_24126", text: "Unsafe return of a value of type `{0}`. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function."}
+
+var Using_undefined_to_make_a_parameter_optional_adds_unnecessary_runtime_logic = &Message{code: 24127, category: CategoryError, key: "Using_undefined_to_make_a_parameter_optional_adds_unnecessary_runtime_logic_24127", text: "Using `= undefined` to make a parameter optional adds unnecessary runtime logic."}
+
+var Remove_the_default_value = &Message{code: 24128, category: CategoryMessage, key: "Remove_the_default_value_24128", text: "Remove the default value."}
+
+var Default_value_is_useless_because_the_0_is_not_optional = &Message{code: 24129, category: CategoryError, key: "Default_value_is_useless_because_the_0_is_not_optional_24129", text: "Default value is useless because the {0} is not optional."}
+
+var Default_value_is_useless_because_it_is_undefined_Optional_0_s_are_already_undefined_by_default = &Message{code: 24130, category: CategoryError, key: "Default_value_is_useless_because_it_is_undefined_Optional_0_s_are_already_undefined_by_default_24130", text: "Default value is useless because it is undefined. Optional {0}s are already undefined by default."}
+
+var Use_the_optional_syntax_instead = &Message{code: 24131, category: CategoryMessage, key: "Use_the_optional_syntax_instead_24131", text: "Use the `?` optional syntax instead."}
+
+var Use_0_destructuring = &Message{code: 24132, category: CategoryError, key: "Use_0_destructuring_24132", text: "Use {0} destructuring."}
+
+var Prefer_find_instead_of_filter_0 = &Message{code: 24133, category: CategoryError, key: "Prefer_find_instead_of_filter_0_24133", text: "Prefer .find(...) instead of .filter(...)[0]."}
+
+var Use_find_instead_of_filter_0 = &Message{code: 24134, category: CategoryMessage, key: "Use_find_instead_of_filter_0_24134", text: "Use .find(...) instead of .filter(...)[0]."}
+
+var X_0_only_has_a_call_signature_you_should_use_a_function_type_instead = &Message{code: 24135, category: CategoryError, key: "_0_only_has_a_call_signature_you_should_use_a_function_type_instead_24135", text: "{0} only has a call signature, you should use a function type instead."}
+
+var X_this_refers_to_the_function_type_0_did_you_intend_to_use_a_generic_this_parameter_like_Self_this_Colon_Self_Self_instead = &Message{code: 24136, category: CategoryError, key: "this_refers_to_the_function_type_0_did_you_intend_to_use_a_generic_this_parameter_like_Self_this_Col_24136", text: "`this` refers to the function type '{0}', did you intend to use a generic `this` parameter like `<Self>(this: Self, ...) => Self` instead?"}
+
+var Use_includes_method_instead = &Message{code: 24137, category: CategoryError, key: "Use_includes_method_instead_24137", text: "Use 'includes()' method instead."}
+
+var Use_String_includes_method_with_a_string_instead = &Message{code: 24138, category: CategoryError, key: "Use_String_includes_method_with_a_string_instead_24138", text: "Use `String#includes()` method with a string instead."}
+
+var Prefer_using_nullish_coalescing_operator_0_instead_of_an_assignment_expression_as_it_is_simpler_to_read = &Message{code: 24139, category: CategoryError, key: "Prefer_using_nullish_coalescing_operator_0_instead_of_an_assignment_expression_as_it_is_simpler_to_r_24139", text: "Prefer using nullish coalescing operator (`??{0}`) instead of an assignment expression, as it is simpler to read."}
+
+var Prefer_using_nullish_coalescing_operator_0_instead_of_a_logical_1_0_as_it_is_a_safer_operator = &Message{code: 24140, category: CategoryError, key: "Prefer_using_nullish_coalescing_operator_0_instead_of_a_logical_1_0_as_it_is_a_safer_operator_24140", text: "Prefer using nullish coalescing operator (`??{0}`) instead of a logical {1} (`||{0}`), as it is a safer operator."}
+
+var Prefer_using_nullish_coalescing_operator_0_instead_of_a_ternary_expression_as_it_is_simpler_to_read = &Message{code: 24141, category: CategoryError, key: "Prefer_using_nullish_coalescing_operator_0_instead_of_a_ternary_expression_as_it_is_simpler_to_read_24141", text: "Prefer using nullish coalescing operator (`??{0}`) instead of a ternary expression, as it is simpler to read."}
+
+var Fix_to_nullish_coalescing_operator_0 = &Message{code: 24142, category: CategoryMessage, key: "Fix_to_nullish_coalescing_operator_0_24142", text: "Fix to nullish coalescing operator (`??{0}`)."}
+
+var Change_to_an_optional_chain = &Message{code: 24143, category: CategoryMessage, key: "Change_to_an_optional_chain_24143", text: "Change to an optional chain."}
+
+var Prefer_using_an_optional_chain_expression_instead_as_it_s_more_concise_and_easier_to_read = &Message{code: 24144, category: CategoryError, key: "Prefer_using_an_optional_chain_expression_instead_as_it_s_more_concise_and_easier_to_read_24144", text: "Prefer using an optional chain expression instead, as it's more concise and easier to read."}
+
+var Member_0_is_never_reassigned_mark_it_as_readonly = &Message{code: 24145, category: CategoryError, key: "Member_0_is_never_reassigned_mark_it_as_readonly_24145", text: "Member '{0}' is never reassigned; mark it as `readonly`."}
+
+var Parameter_should_be_a_read_only_type = &Message{code: 24146, category: CategoryError, key: "Parameter_should_be_a_read_only_type_24146", text: "Parameter should be a read only type."}
+
+var Use_the_RegExp_exec_method_instead = &Message{code: 24147, category: CategoryError, key: "Use_the_RegExp_exec_method_instead_24147", text: "Use the `RegExp#exec()` method instead."}
+
+var Use_the_String_endsWith_method_instead = &Message{code: 24148, category: CategoryError, key: "Use_the_String_endsWith_method_instead_24148", text: "Use the 'String#endsWith' method instead."}
+
+var Use_String_startsWith_method_instead = &Message{code: 24149, category: CategoryError, key: "Use_String_startsWith_method_instead_24149", text: "Use 'String#startsWith' method instead."}
+
+var X_0_has_no_await_expression = &Message{code: 24150, category: CategoryError, key: "_0_has_no_await_expression_24150", text: "{0} has no 'await' expression."}
+
+var Remove_async = &Message{code: 24151, category: CategoryMessage, key: "Remove_async_24151", text: "Remove 'async'."}
+
+var Invalid_type_0_of_template_literal_expression = &Message{code: 24152, category: CategoryError, key: "Invalid_type_0_of_template_literal_expression_24152", text: "Invalid type \"{0}\" of template literal expression."}
+
+var Returning_an_awaited_promise_is_not_allowed_in_this_context = &Message{code: 24153, category: CategoryError, key: "Returning_an_awaited_promise_is_not_allowed_in_this_context_24153", text: "Returning an awaited promise is not allowed in this context."}
+
+var Remove_await_before_the_expression_Use_caution_as_this_may_impact_control_flow = &Message{code: 24154, category: CategoryMessage, key: "Remove_await_before_the_expression_Use_caution_as_this_may_impact_control_flow_24154", text: "Remove `await` before the expression. Use caution as this may impact control flow."}
+
+var Returning_an_awaited_value_that_is_not_a_promise_is_not_allowed = &Message{code: 24155, category: CategoryError, key: "Returning_an_awaited_value_that_is_not_a_promise_is_not_allowed_24155", text: "Returning an awaited value that is not a promise is not allowed."}
+
+var Returning_an_awaited_promise_is_required_in_this_context = &Message{code: 24156, category: CategoryError, key: "Returning_an_awaited_promise_is_required_in_this_context_24156", text: "Returning an awaited promise is required in this context."}
+
+var Add_await_before_the_expression_Use_caution_as_this_may_impact_control_flow = &Message{code: 24157, category: CategoryMessage, key: "Add_await_before_the_expression_Use_caution_as_this_may_impact_control_flow_24157", text: "Add `await` before the expression. Use caution as this may impact control flow."}
+
+var Unexpected_any_value_in_0_An_explicit_comparison_or_type_conversion_is_required = &Message{code: 24158, category: CategoryError, key: "Unexpected_any_value_in_0_An_explicit_comparison_or_type_conversion_is_required_24158", text: "Unexpected any value in {0}. An explicit comparison or type conversion is required."}
+
+var Unexpected_nullable_boolean_value_in_0_Please_handle_the_nullish_case_explicitly = &Message{code: 24159, category: CategoryError, key: "Unexpected_nullable_boolean_value_in_0_Please_handle_the_nullish_case_explicitly_24159", text: "Unexpected nullable boolean value in {0}. Please handle the nullish case explicitly."}
+
+var Unexpected_nullable_enum_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly = &Message{code: 24160, category: CategoryError, key: "Unexpected_nullable_enum_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly_24160", text: "Unexpected nullable enum value in {0}. Please handle the nullish/zero/NaN cases explicitly."}
+
+var Unexpected_nullable_number_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly = &Message{code: 24161, category: CategoryError, key: "Unexpected_nullable_number_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly_24161", text: "Unexpected nullable number value in {0}. Please handle the nullish/zero/NaN cases explicitly."}
+
+var Unexpected_nullable_object_value_in_0_An_explicit_null_check_is_required = &Message{code: 24162, category: CategoryError, key: "Unexpected_nullable_object_value_in_0_An_explicit_null_check_is_required_24162", text: "Unexpected nullable object value in {0}. An explicit null check is required."}
+
+var Unexpected_nullable_string_value_in_0_Please_handle_the_nullish_Slashempty_cases_explicitly = &Message{code: 24163, category: CategoryError, key: "Unexpected_nullable_string_value_in_0_Please_handle_the_nullish_Slashempty_cases_explicitly_24163", text: "Unexpected nullable string value in {0}. Please handle the nullish/empty cases explicitly."}
+
+var Unexpected_nullish_value_in_conditional_The_condition_is_always_false = &Message{code: 24164, category: CategoryError, key: "Unexpected_nullish_value_in_conditional_The_condition_is_always_false_24164", text: "Unexpected nullish value in conditional. The condition is always false."}
+
+var Unexpected_number_value_in_0_An_explicit_zero_SlashNaN_check_is_required = &Message{code: 24165, category: CategoryError, key: "Unexpected_number_value_in_0_An_explicit_zero_SlashNaN_check_is_required_24165", text: "Unexpected number value in {0}. An explicit zero/NaN check is required."}
+
+var Unexpected_object_value_in_0_The_condition_is_always_true = &Message{code: 24166, category: CategoryError, key: "Unexpected_object_value_in_0_The_condition_is_always_true_24166", text: "Unexpected object value in {0}. The condition is always true."}
+
+var Unexpected_value_in_conditional_A_boolean_expression_is_required = &Message{code: 24167, category: CategoryError, key: "Unexpected_value_in_conditional_A_boolean_expression_is_required_24167", text: "Unexpected value in conditional. A boolean expression is required."}
+
+var Unexpected_string_value_in_0_An_explicit_empty_string_check_is_required = &Message{code: 24168, category: CategoryError, key: "Unexpected_string_value_in_0_An_explicit_empty_string_check_is_required_24168", text: "Unexpected string value in {0}. An explicit empty string check is required."}
+
+var Explicitly_convert_value_to_a_boolean_Boolean_value = &Message{code: 24169, category: CategoryMessage, key: "Explicitly_convert_value_to_a_boolean_Boolean_value_24169", text: "Explicitly convert value to a boolean (`Boolean(value)`)"}
+
+var Change_condition_to_check_array_s_length_value_length_0 = &Message{code: 24170, category: CategoryMessage, key: "Change_condition_to_check_array_s_length_value_length_0_24170", text: "Change condition to check array's length (`value.length > 0`)"}
+
+var Change_condition_to_check_array_s_length_value_length_0_24171 = &Message{code: 24171, category: CategoryMessage, key: "Change_condition_to_check_array_s_length_value_length_0_24171", text: "Change condition to check array's length (`value.length === 0`)"}
+
+var Change_condition_to_check_for_empty_string_value = &Message{code: 24172, category: CategoryMessage, key: "Change_condition_to_check_for_empty_string_value_24172", text: "Change condition to check for empty string (`value !== \"\"`)"}
+
+var Change_condition_to_check_if_false_value_false = &Message{code: 24173, category: CategoryMessage, key: "Change_condition_to_check_if_false_value_false_24173", text: "Change condition to check if false (`value === false`)"}
+
+var Change_condition_to_check_for_NaN_Number_isNaN_value = &Message{code: 24174, category: CategoryMessage, key: "Change_condition_to_check_for_NaN_Number_isNaN_value_24174", text: "Change condition to check for NaN (`!Number.isNaN(value)`)"}
+
+var Change_condition_to_check_for_null_Slashundefined_value_null = &Message{code: 24175, category: CategoryMessage, key: "Change_condition_to_check_for_null_Slashundefined_value_null_24175", text: "Change condition to check for null/undefined (`value != null`)"}
+
+var Change_condition_to_check_string_s_length_value_length_0 = &Message{code: 24176, category: CategoryMessage, key: "Change_condition_to_check_string_s_length_value_length_0_24176", text: "Change condition to check string's length (`value.length !== 0`)"}
+
+var Change_condition_to_check_if_true_value_true = &Message{code: 24177, category: CategoryMessage, key: "Change_condition_to_check_if_true_value_true_24177", text: "Change condition to check if true (`value === true`)"}
+
+var Change_condition_to_check_for_0_value_0 = &Message{code: 24178, category: CategoryMessage, key: "Change_condition_to_check_for_0_value_0_24178", text: "Change condition to check for 0 (`value !== 0`)"}
+
+var Explicitly_treat_nullish_value_the_same_as_an_empty_string_value = &Message{code: 24179, category: CategoryMessage, key: "Explicitly_treat_nullish_value_the_same_as_an_empty_string_value_24179", text: "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"}
+
+var Explicitly_treat_nullish_value_the_same_as_false_value_false = &Message{code: 24180, category: CategoryMessage, key: "Explicitly_treat_nullish_value_the_same_as_false_value_false_24180", text: "Explicitly treat nullish value the same as false (`value ?? false`)"}
+
+var Explicitly_treat_nullish_value_the_same_as_0_value_0 = &Message{code: 24181, category: CategoryMessage, key: "Explicitly_treat_nullish_value_the_same_as_0_value_0_24181", text: "Explicitly treat nullish value the same as 0 (`value ?? 0`)"}
+
+var Add_an_explicit_boolean_return_type_annotation = &Message{code: 24182, category: CategoryMessage, key: "Add_an_explicit_boolean_return_type_annotation_24182", text: "Add an explicit `boolean` return type annotation."}
+
+var Predicate_function_should_not_be_async_expected_a_boolean_return_type = &Message{code: 24183, category: CategoryError, key: "Predicate_function_should_not_be_async_expected_a_boolean_return_type_24183", text: "Predicate function should not be 'async'; expected a boolean return type."}
+
+var Async_function_used_in_a_context_where_a_void_function_is_expected = &Message{code: 24184, category: CategoryError, key: "Async_function_used_in_a_context_where_a_void_function_is_expected_24184", text: "Async function used in a context where a void function is expected."}
+
+var Value_returning_function_used_in_a_context_where_a_void_function_is_expected = &Message{code: 24185, category: CategoryError, key: "Value_returning_function_used_in_a_context_where_a_void_function_is_expected_24185", text: "Value-returning function used in a context where a void function is expected."}
+
+var Value_returned_in_a_context_where_a_void_return_is_expected = &Message{code: 24186, category: CategoryError, key: "Value_returned_in_a_context_where_a_void_return_is_expected_24186", text: "Value returned in a context where a void return is expected."}
+
+var Add_a_void_operator_to_discard_the_return_value = &Message{code: 24187, category: CategoryMessage, key: "Add_a_void_operator_to_discard_the_return_value_24187", text: "Add a void operator to discard the return value."}
+
+var Wrap_the_function_body_in_an_async_IIFE = &Message{code: 24188, category: CategoryMessage, key: "Wrap_the_function_body_in_an_async_IIFE_24188", text: "Wrap the function body in an async IIFE."}
+
+var Add_branches_for_missing_cases = &Message{code: 24189, category: CategoryMessage, key: "Add_branches_for_missing_cases_24189", text: "Add branches for missing cases."}
+
+var The_switch_statement_is_exhaustive_so_the_default_case_is_unnecessary = &Message{code: 24190, category: CategoryError, key: "The_switch_statement_is_exhaustive_so_the_default_case_is_unnecessary_24190", text: "The switch statement is exhaustive, so the default case is unnecessary."}
+
+var Switch_is_not_exhaustive_Cases_not_matched_Colon_0 = &Message{code: 24191, category: CategoryError, key: "Switch_is_not_exhaustive_Cases_not_matched_Colon_0_24191", text: "Switch is not exhaustive. Cases not matched: {0}"}
+
+var A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_separated_from_its_object_Consider_using_an_arrow_function_or_explicitly_bind_ing_the_method_to_avoid_calling_the_method_with_an_unintended_this_value = &Message{code: 24192, category: CategoryError, key: "A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_sepa_24192", text: "A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.\nConsider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. "}
+
+var A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_separated_from_its_object_Consider_using_an_arrow_function_or_explicitly_bind_ing_the_method_to_avoid_calling_the_method_with_an_unintended_this_value_If_a_function_does_not_access_this_it_can_be_annotated_with_this_Colon_void = &Message{code: 24193, category: CategoryError, key: "A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_sepa_24193", text: "A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.\nConsider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. \nIf a function does not access `this`, it can be annotated with `this: void`."}
+
+var X_0_with_identical_parameters = &Message{code: 24194, category: CategoryError, key: "_0_with_identical_parameters_24194", text: "{0} with identical parameters."}
+
+var X_0_with_a_rest_parameter = &Message{code: 24195, category: CategoryError, key: "_0_with_a_rest_parameter_24195", text: "{0} with a rest parameter."}
+
+var X_0_with_an_optional_parameter = &Message{code: 24196, category: CategoryError, key: "_0_with_an_optional_parameter_24196", text: "{0} with an optional parameter."}
+
+var X_0_taking_1 = &Message{code: 24197, category: CategoryError, key: "_0_taking_1_24197", text: "{0} taking `{1}`."}
+
+var X_0_expects_a_value_to_be_returned_at_the_end_of_1 = &Message{code: 24198, category: CategoryError, key: "_0_expects_a_value_to_be_returned_at_the_end_of_1_24198", text: "{0}() expects a value to be returned at the end of {1}."}
+
+var X_0_expects_a_return_value_from_1 = &Message{code: 24199, category: CategoryError, key: "_0_expects_a_return_value_from_1_24199", text: "{0}() expects a return value from {1}."}
+
+var X_0_expects_no_useless_return_value_from_1 = &Message{code: 24200, category: CategoryError, key: "_0_expects_no_useless_return_value_from_1_24200", text: "{0}() expects no useless return value from {1}."}
+
+var Wrap_the_expression_in = &Message{code: 24201, category: CategoryMessage, key: "Wrap_the_expression_in_24201", text: "Wrap the expression in `{}`."}
+
+var Prepend_void_to_the_expression = &Message{code: 24202, category: CategoryMessage, key: "Prepend_void_to_the_expression_24202", text: "Prepend `void` to the expression."}
+
+var Identifier_0_is_not_in_camel_case = &Message{code: 24203, category: CategoryError, key: "Identifier_0_is_not_in_camel_case_24203", text: "Identifier '{0}' is not in camel case."}
+
+var X_0_is_not_in_camel_case = &Message{code: 24204, category: CategoryError, key: "_0_is_not_in_camel_case_24204", text: "#{0} is not in camel case."}
+
+var Lacked_a_call_of_super_in_some_code_paths = &Message{code: 24205, category: CategoryError, key: "Lacked_a_call_of_super_in_some_code_paths_24205", text: "Lacked a call of 'super()' in some code paths."}
+
+var Expected_to_call_super = &Message{code: 24206, category: CategoryError, key: "Expected_to_call_super_24206", text: "Expected to call 'super()'."}
+
+var Unexpected_duplicate_super = &Message{code: 24207, category: CategoryError, key: "Unexpected_duplicate_super_24207", text: "Unexpected duplicate 'super()'."}
+
+var Unexpected_super_because_super_is_not_a_constructor = &Message{code: 24208, category: CategoryError, key: "Unexpected_super_because_super_is_not_a_constructor_24208", text: "Unexpected 'super()' because 'super' is not a constructor."}
+
+var The_update_clause_in_this_loop_moves_the_variable_in_the_wrong_direction = &Message{code: 24209, category: CategoryError, key: "The_update_clause_in_this_loop_moves_the_variable_in_the_wrong_direction_24209", text: "The update clause in this loop moves the variable in the wrong direction."}
+
+var Expected_to_return_a_value_in_0 = &Message{code: 24210, category: CategoryError, key: "Expected_to_return_a_value_in_0_24210", text: "Expected to return a value in {0}."}
+
+var Expected_0_to_always_return_a_value = &Message{code: 24211, category: CategoryError, key: "Expected_0_to_always_return_a_value_24211", text: "Expected {0} to always return a value."}
+
+var Identifier_0_is_restricted = &Message{code: 24212, category: CategoryError, key: "Identifier_0_is_restricted_24212", text: "Identifier '{0}' is restricted."}
+
+var Identifier_0_is_restricted_24213 = &Message{code: 24213, category: CategoryError, key: "Identifier_0_is_restricted_24213", text: "Identifier '#{0}' is restricted."}
+
+var Identifier_0_does_not_match_the_pattern_1 = &Message{code: 24214, category: CategoryError, key: "Identifier_0_does_not_match_the_pattern_1_24214", text: "Identifier '{0}' does not match the pattern '{1}'."}
+
+var Identifier_0_does_not_match_the_pattern_1_24215 = &Message{code: 24215, category: CategoryError, key: "Identifier_0_does_not_match_the_pattern_1_24215", text: "Identifier '#{0}' does not match the pattern '{1}'."}
+
+var Assignment_can_be_replaced_with_operator_assignment_0 = &Message{code: 24216, category: CategoryError, key: "Assignment_can_be_replaced_with_operator_assignment_0_24216", text: "Assignment (=) can be replaced with operator assignment ({0})."}
+
+var Convert_this_assignment_to_use_the_operator_0 = &Message{code: 24217, category: CategoryMessage, key: "Convert_this_assignment_to_use_the_operator_0_24217", text: "Convert this assignment to use the operator {0}."}
+
+var Logical_expression_can_be_replaced_with_an_assignment_0 = &Message{code: 24218, category: CategoryError, key: "Logical_expression_can_be_replaced_with_an_assignment_0_24218", text: "Logical expression can be replaced with an assignment ({0})."}
+
+var Replace_this_logical_expression_with_an_assignment_with_the_operator_0 = &Message{code: 24219, category: CategoryMessage, key: "Replace_this_logical_expression_with_an_assignment_with_the_operator_0_24219", text: "Replace this logical expression with an assignment with the operator {0}."}
+
+var X_if_statement_can_be_replaced_with_a_logical_operator_assignment_with_operator_0 = &Message{code: 24220, category: CategoryError, key: "if_statement_can_be_replaced_with_a_logical_operator_assignment_with_operator_0_24220", text: "'if' statement can be replaced with a logical operator assignment with operator {0}."}
+
+var Replace_this_if_statement_with_a_logical_assignment_with_operator_0 = &Message{code: 24221, category: CategoryMessage, key: "Replace_this_if_statement_with_a_logical_assignment_with_operator_0_24221", text: "Replace this 'if' statement with a logical assignment with operator {0}."}
+
+var Unexpected_logical_operator_assignment_0_shorthand = &Message{code: 24222, category: CategoryError, key: "Unexpected_logical_operator_assignment_0_shorthand_24222", text: "Unexpected logical operator assignment ({0}) shorthand."}
+
+var Separate_the_logical_assignment_into_an_assignment_with_a_logical_operator = &Message{code: 24223, category: CategoryMessage, key: "Separate_the_logical_assignment_into_an_assignment_with_a_logical_operator_24223", text: "Separate the logical assignment into an assignment with a logical operator."}
+
+var Unexpected_constant_condition = &Message{code: 24224, category: CategoryError, key: "Unexpected_constant_condition_24224", text: "Unexpected constant condition."}
+
+var Unexpected_control_character_s_in_regular_expression_Colon_0 = &Message{code: 24225, category: CategoryError, key: "Unexpected_control_character_s_in_regular_expression_Colon_0_24225", text: "Unexpected control character(s) in regular expression: {0}."}
+
+var Unnecessary_else_after_return = &Message{code: 24226, category: CategoryError, key: "Unnecessary_else_after_return_24226", text: "Unnecessary 'else' after 'return'."}
+
+var X_eval_can_be_harmful = &Message{code: 24227, category: CategoryError, key: "eval_can_be_harmful_24227", text: "`eval` can be harmful."}
+
+var Found_a_comment_that_would_permit_fallthrough_but_case_cannot_fall_through = &Message{code: 24228, category: CategoryError, key: "Found_a_comment_that_would_permit_fallthrough_but_case_cannot_fall_through_24228", text: "Found a comment that would permit fallthrough, but case cannot fall through."}
+
+var Expected_a_break_statement_before_case = &Message{code: 24229, category: CategoryError, key: "Expected_a_break_statement_before_case_24229", text: "Expected a 'break' statement before 'case'."}
+
+var Expected_a_break_statement_before_default = &Message{code: 24230, category: CategoryError, key: "Expected_a_break_statement_before_default_24230", text: "Expected a 'break' statement before 'default'."}
+
+var Read_only_global_0_should_not_be_modified = &Message{code: 24231, category: CategoryError, key: "Read_only_global_0_should_not_be_modified_24231", text: "Read-only global '{0}' should not be modified."}
+
+var Unexpected_0_declaration_in_the_global_scope_wrap_in_an_IIFE_for_a_local_variable_assign_as_global_property_for_a_global_variable = &Message{code: 24232, category: CategoryError, key: "Unexpected_0_declaration_in_the_global_scope_wrap_in_an_IIFE_for_a_local_variable_assign_as_global_p_24232", text: "Unexpected {0} declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable."}
+
+var Unexpected_0_declaration_in_the_global_scope_wrap_in_a_block_or_in_an_IIFE = &Message{code: 24233, category: CategoryError, key: "Unexpected_0_declaration_in_the_global_scope_wrap_in_a_block_or_in_an_IIFE_24233", text: "Unexpected {0} declaration in the global scope, wrap in a block or in an IIFE."}
+
+var Global_variable_leak_declare_the_variable_if_it_is_intended_to_be_local = &Message{code: 24234, category: CategoryError, key: "Global_variable_leak_declare_the_variable_if_it_is_intended_to_be_local_24234", text: "Global variable leak, declare the variable if it is intended to be local."}
+
+var Unexpected_assignment_to_read_only_global_variable = &Message{code: 24235, category: CategoryError, key: "Unexpected_assignment_to_read_only_global_variable_24235", text: "Unexpected assignment to read-only global variable."}
+
+var Unexpected_redeclaration_of_read_only_global_variable = &Message{code: 24236, category: CategoryError, key: "Unexpected_redeclaration_of_read_only_global_variable_24236", text: "Unexpected redeclaration of read-only global variable."}
+
+var Implied_eval_Consider_passing_a_function_instead_of_a_string = &Message{code: 24237, category: CategoryError, key: "Implied_eval_Consider_passing_a_function_instead_of_a_string_24237", text: "Implied eval. Consider passing a function instead of a string."}
+
+var Implied_eval_Do_not_use_execScript = &Message{code: 24238, category: CategoryError, key: "Implied_eval_Do_not_use_execScript_24238", text: "Implied eval. Do not use execScript()."}
+
+var X_0 = &Message{code: 24239, category: CategoryError, key: "_0_24239", text: "{0}."}
+
+var Unexpected_surrogate_pair_in_character_class_Use_u_flag = &Message{code: 24240, category: CategoryError, key: "Unexpected_surrogate_pair_in_character_class_Use_u_flag_24240", text: "Unexpected surrogate pair in character class. Use 'u' flag."}
+
+var Unexpected_surrogate_pair_in_character_class = &Message{code: 24241, category: CategoryError, key: "Unexpected_surrogate_pair_in_character_class_24241", text: "Unexpected surrogate pair in character class."}
+
+var Unexpected_combined_character_in_character_class = &Message{code: 24242, category: CategoryError, key: "Unexpected_combined_character_in_character_class_24242", text: "Unexpected combined character in character class."}
+
+var Unexpected_modified_Emoji_in_character_class = &Message{code: 24243, category: CategoryError, key: "Unexpected_modified_Emoji_in_character_class_24243", text: "Unexpected modified Emoji in character class."}
+
+var Unexpected_national_flag_in_character_class = &Message{code: 24244, category: CategoryError, key: "Unexpected_national_flag_in_character_class_24244", text: "Unexpected national flag in character class."}
+
+var Unexpected_joined_character_sequence_in_character_class = &Message{code: 24245, category: CategoryError, key: "Unexpected_joined_character_sequence_in_character_class_24245", text: "Unexpected joined character sequence in character class."}
+
+var Add_unicode_u_flag_to_regex = &Message{code: 24246, category: CategoryMessage, key: "Add_unicode_u_flag_to_regex_24246", text: "Add unicode 'u' flag to regex."}
+
+var X_0_is_not_a_function = &Message{code: 24247, category: CategoryError, key: "_0_is_not_a_function_24247", text: "'{0}' is not a function."}
+
+var X_0_is_reference_to_1_which_is_not_a_function = &Message{code: 24248, category: CategoryError, key: "_0_is_reference_to_1_which_is_not_a_function_24248", text: "'{0}' is reference to '{1}', which is not a function."}
+
+var Assignment_to_function_parameter_0 = &Message{code: 24249, category: CategoryError, key: "Assignment_to_function_parameter_0_24249", text: "Assignment to function parameter '{0}'."}
+
+var Assignment_to_property_of_function_parameter_0 = &Message{code: 24250, category: CategoryError, key: "Assignment_to_property_of_function_parameter_0_24250", text: "Assignment to property of function parameter '{0}'."}
+
+var X_0_is_already_defined_by_a_variable_declaration = &Message{code: 24251, category: CategoryError, key: "_0_is_already_defined_by_a_variable_declaration_24251", text: "'{0}' is already defined by a variable declaration."}
+
+var Spaces_are_hard_to_count_Use_0 = &Message{code: 24252, category: CategoryError, key: "Spaces_are_hard_to_count_Use_0_24252", text: "Spaces are hard to count. Use {{0}}."}
+
+var X_0_is_restricted_from_being_used_as_an_exported_name = &Message{code: 24253, category: CategoryError, key: "_0_is_restricted_from_being_used_as_an_exported_name_24253", text: "'{0}' is restricted from being used as an exported name."}
+
+var Exporting_default_is_restricted = &Message{code: 24254, category: CategoryError, key: "Exporting_default_is_restricted_24254", text: "Exporting 'default' is restricted."}
+
+var X_0_import_is_restricted_from_being_used = &Message{code: 24255, category: CategoryError, key: "_0_import_is_restricted_from_being_used_24255", text: "'{0}' import is restricted from being used."}
+
+var X_0_import_is_restricted_from_being_used_1 = &Message{code: 24256, category: CategoryError, key: "_0_import_is_restricted_from_being_used_1_24256", text: "'{0}' import is restricted from being used. {1}"}
+
+var X_0_import_is_restricted_from_being_used_by_a_pattern = &Message{code: 24257, category: CategoryError, key: "_0_import_is_restricted_from_being_used_by_a_pattern_24257", text: "'{0}' import is restricted from being used by a pattern."}
+
+var X_0_import_is_restricted_from_being_used_by_a_pattern_1 = &Message{code: 24258, category: CategoryError, key: "_0_import_is_restricted_from_being_used_by_a_pattern_1_24258", text: "'{0}' import is restricted from being used by a pattern. {1}"}
+
+var X_0_import_from_1_is_restricted_from_being_used_by_a_pattern = &Message{code: 24259, category: CategoryError, key: "_0_import_from_1_is_restricted_from_being_used_by_a_pattern_24259", text: "'{0}' import from '{1}' is restricted from being used by a pattern."}
+
+var X_0_import_from_1_is_restricted_from_being_used_by_a_pattern_2 = &Message{code: 24260, category: CategoryError, key: "_0_import_from_1_is_restricted_from_being_used_by_a_pattern_2_24260", text: "'{0}' import from '{1}' is restricted from being used by a pattern. {2}"}
+
+var Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern = &Message{code: 24261, category: CategoryError, key: "Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_24261", text: "* import is invalid because {0} from '{1}' {2} restricted from being used by a pattern."}
+
+var Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used = &Message{code: 24262, category: CategoryError, key: "Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_us_24262", text: "* import is invalid because import name matching '{0}' pattern from '{1}' is restricted from being used."}
+
+var Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_3 = &Message{code: 24263, category: CategoryError, key: "Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_3_24263", text: "* import is invalid because {0} from '{1}' {2} restricted from being used by a pattern. {3}"}
+
+var Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used_2 = &Message{code: 24264, category: CategoryError, key: "Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_us_24264", text: "* import is invalid because import name matching '{0}' pattern from '{1}' is restricted from being used. {2}"}
+
+var Asterisk_import_is_invalid_because_0_from_1_2_restricted = &Message{code: 24265, category: CategoryError, key: "Asterisk_import_is_invalid_because_0_from_1_2_restricted_24265", text: "* import is invalid because {0} from '{1}' {2} restricted."}
+
+var Asterisk_import_is_invalid_because_0_from_1_2_restricted_3 = &Message{code: 24266, category: CategoryError, key: "Asterisk_import_is_invalid_because_0_from_1_2_restricted_3_24266", text: "* import is invalid because {0} from '{1}' {2} restricted. {3}"}
+
+var X_0_import_from_1_is_restricted = &Message{code: 24267, category: CategoryError, key: "_0_import_from_1_is_restricted_24267", text: "'{0}' import from '{1}' is restricted."}
+
+var X_0_import_from_1_is_restricted_2 = &Message{code: 24268, category: CategoryError, key: "_0_import_from_1_is_restricted_2_24268", text: "'{0}' import from '{1}' is restricted. {2}"}
+
+var X_0_import_from_1_is_restricted_because_only_2_3_allowed = &Message{code: 24269, category: CategoryError, key: "_0_import_from_1_is_restricted_because_only_2_3_allowed_24269", text: "'{0}' import from '{1}' is restricted because only {2} {3} allowed."}
+
+var X_0_import_from_1_is_restricted_because_only_2_3_allowed_4 = &Message{code: 24270, category: CategoryError, key: "_0_import_from_1_is_restricted_because_only_2_3_allowed_4_24270", text: "'{0}' import from '{1}' is restricted because only {2} {3} allowed. {4}"}
+
+var Asterisk_import_is_invalid_because_only_0_from_1_2_allowed = &Message{code: 24271, category: CategoryError, key: "Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_24271", text: "* import is invalid because only {0} from '{1}' {2} allowed."}
+
+var Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_3 = &Message{code: 24272, category: CategoryError, key: "Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_3_24272", text: "* import is invalid because only {0} from '{1}' {2} allowed. {3}"}
+
+var X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1 = &Message{code: 24273, category: CategoryError, key: "_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_24273", text: "'{0}' import from '{1}' is restricted because only imports that match the pattern '{2}' are allowed from '{1}'."}
+
+var X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_3 = &Message{code: 24274, category: CategoryError, key: "_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_3_24274", text: "'{0}' import from '{1}' is restricted because only imports that match the pattern '{2}' are allowed from '{1}'. {3}"}
+
+var Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed = &Message{code: 24275, category: CategoryError, key: "Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_24275", text: "* import is invalid because only imports that match the pattern '{0}' from '{1}' are allowed."}
+
+var Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_2 = &Message{code: 24276, category: CategoryError, key: "Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_2_24276", text: "* import is invalid because only imports that match the pattern '{0}' from '{1}' are allowed. {2}"}
+
+var X_0_24277 = &Message{code: 24277, category: CategoryError, key: "_0_24277", text: "{0}"}
+
+var X_0_is_not_allowed_before_super = &Message{code: 24278, category: CategoryError, key: "_0_is_not_allowed_before_super_24278", text: "'{0}' is not allowed before 'super()'."}
+
+var X_0_is_not_defined = &Message{code: 24279, category: CategoryError, key: "_0_is_not_defined_24279", text: "'{0}' is not defined."}
+
+var X_0_is_not_modified_in_this_loop = &Message{code: 24280, category: CategoryError, key: "_0_is_not_modified_in_this_loop_24280", text: "'{0}' is not modified in this loop."}
+
+var Unnecessary_use_of_boolean_literals_in_conditional_expression = &Message{code: 24281, category: CategoryError, key: "Unnecessary_use_of_boolean_literals_in_conditional_expression_24281", text: "Unnecessary use of boolean literals in conditional expression."}
+
+var Unnecessary_use_of_conditional_expression_for_default_assignment = &Message{code: 24282, category: CategoryError, key: "Unnecessary_use_of_conditional_expression_for_default_assignment_24282", text: "Unnecessary use of conditional expression for default assignment."}
+
+var Unreachable_code = &Message{code: 24283, category: CategoryError, key: "Unreachable_code_24283", text: "Unreachable code."}
+
+var Invalid_loop_Its_body_allows_only_one_iteration = &Message{code: 24284, category: CategoryError, key: "Invalid_loop_Its_body_allows_only_one_iteration_24284", text: "Invalid loop. Its body allows only one iteration."}
+
+var Unexpected_negating_the_left_operand_of_0_operator = &Message{code: 24285, category: CategoryError, key: "Unexpected_negating_the_left_operand_of_0_operator_24285", text: "Unexpected negating the left operand of '{0}' operator."}
+
+var Negate_0_expression_instead_of_its_left_operand_This_changes_the_current_behavior = &Message{code: 24286, category: CategoryMessage, key: "Negate_0_expression_instead_of_its_left_operand_This_changes_the_current_behavior_24286", text: "Negate '{0}' expression instead of its left operand. This changes the current behavior."}
+
+var Wrap_negation_in_to_make_the_intention_explicit_This_preserves_the_current_behavior = &Message{code: 24287, category: CategoryMessage, key: "Wrap_negation_in_to_make_the_intention_explicit_This_preserves_the_current_behavior_24287", text: "Wrap negation in '()' to make the intention explicit. This preserves the current behavior."}
+
+var X_0_is_defined_but_never_used = &Message{code: 24288, category: CategoryError, key: "_0_is_defined_but_never_used_24288", text: "'{0}' is defined but never used."}
+
+var Remove_unused_private_class_member_0 = &Message{code: 24289, category: CategoryMessage, key: "Remove_unused_private_class_member_0_24289", text: "Remove unused private class member '{0}'."}
+
+var X_0_is_1_but_never_used_2 = &Message{code: 24290, category: CategoryError, key: "_0_is_1_but_never_used_2_24290", text: "'{0}' is {1} but never used{2}."}
+
+var X_0_is_marked_as_ignored_but_is_used_1 = &Message{code: 24291, category: CategoryError, key: "_0_is_marked_as_ignored_but_is_used_1_24291", text: "'{0}' is marked as ignored but is used{1}."}
+
+var Remove_unused_variable_0 = &Message{code: 24292, category: CategoryMessage, key: "Remove_unused_variable_0_24292", text: "Remove unused variable '{0}'."}
+
+var The_value_assigned_to_0_is_not_used_in_subsequent_statements = &Message{code: 24293, category: CategoryError, key: "The_value_assigned_to_0_is_not_used_in_subsequent_statements_24293", text: "The value assigned to '{0}' is not used in subsequent statements."}
+
+var Backreference_0_will_be_ignored_It_references_group_1_2_from_within_that_group = &Message{code: 24294, category: CategoryError, key: "Backreference_0_will_be_ignored_It_references_group_1_2_from_within_that_group_24294", text: "Backreference '{0}' will be ignored. It references group '{1}'{2} from within that group."}
+
+var Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_later_in_the_pattern = &Message{code: 24295, category: CategoryError, key: "Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_later_in_the_pattern_24295", text: "Backreference '{0}' will be ignored. It references group '{1}'{2} which appears later in the pattern."}
+
+var Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_before_in_the_same_lookbehind = &Message{code: 24296, category: CategoryError, key: "Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_before_in_the_same_lookbehind_24296", text: "Backreference '{0}' will be ignored. It references group '{1}'{2} which appears before in the same lookbehind."}
+
+var Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_another_alternative = &Message{code: 24297, category: CategoryError, key: "Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_another_alternative_24297", text: "Backreference '{0}' will be ignored. It references group '{1}'{2} which is in another alternative."}
+
+var Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_a_negative_lookaround = &Message{code: 24298, category: CategoryError, key: "Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_a_negative_lookaround_24298", text: "Backreference '{0}' will be ignored. It references group '{1}'{2} which is in a negative lookaround."}
+
+var Remove_the_constructor = &Message{code: 24299, category: CategoryMessage, key: "Remove_the_constructor_24299", text: "Remove the constructor."}
+
+var Unnecessary_escape_character_Colon_0 = &Message{code: 24300, category: CategoryError, key: "Unnecessary_escape_character_Colon_0_24300", text: "Unnecessary escape character: \\{0}."}
+
+var Remove_the_This_maintains_the_current_functionality = &Message{code: 24301, category: CategoryMessage, key: "Remove_the_This_maintains_the_current_functionality_24301", text: "Remove the `\\`. This maintains the current functionality."}
+
+var Remove_the_if_it_was_inserted_by_mistake = &Message{code: 24302, category: CategoryMessage, key: "Remove_the_if_it_was_inserted_by_mistake_24302", text: "Remove the `\\` if it was inserted by mistake."}
+
+var Replace_the_with_to_include_the_actual_backslash_character = &Message{code: 24303, category: CategoryMessage, key: "Replace_the_with_to_include_the_actual_backslash_character_24303", text: "Replace the `\\` with `\\\\` to include the actual backslash character."}
+
+var Unnecessary_return_statement = &Message{code: 24304, category: CategoryError, key: "Unnecessary_return_statement_24304", text: "Unnecessary return statement."}
+
+var Unexpected_var_use_let_or_const_instead = &Message{code: 24305, category: CategoryError, key: "Unexpected_var_use_let_or_const_instead_24305", text: "Unexpected var, use let or const instead."}
+
+var Expected_shorthand_for_all_properties = &Message{code: 24306, category: CategoryError, key: "Expected_shorthand_for_all_properties_24306", text: "Expected shorthand for all properties."}
+
+var Expected_longform_method_syntax_for_string_literal_keys = &Message{code: 24307, category: CategoryError, key: "Expected_longform_method_syntax_for_string_literal_keys_24307", text: "Expected longform method syntax for string literal keys."}
+
+var Expected_property_shorthand = &Message{code: 24308, category: CategoryError, key: "Expected_property_shorthand_24308", text: "Expected property shorthand."}
+
+var Expected_longform_property_syntax = &Message{code: 24309, category: CategoryError, key: "Expected_longform_property_syntax_24309", text: "Expected longform property syntax."}
+
+var Expected_method_shorthand = &Message{code: 24310, category: CategoryError, key: "Expected_method_shorthand_24310", text: "Expected method shorthand."}
+
+var Expected_longform_method_syntax = &Message{code: 24311, category: CategoryError, key: "Expected_longform_method_syntax_24311", text: "Expected longform method syntax."}
+
+var Unexpected_mix_of_shorthand_and_non_shorthand_properties = &Message{code: 24312, category: CategoryError, key: "Unexpected_mix_of_shorthand_and_non_shorthand_properties_24312", text: "Unexpected mix of shorthand and non-shorthand properties."}
+
+var Combine_this_with_the_previous_0_statement_with_uninitialized_variables = &Message{code: 24313, category: CategoryError, key: "Combine_this_with_the_previous_0_statement_with_uninitialized_variables_24313", text: "Combine this with the previous '{0}' statement with uninitialized variables."}
+
+var Combine_this_with_the_previous_0_statement_with_initialized_variables = &Message{code: 24314, category: CategoryError, key: "Combine_this_with_the_previous_0_statement_with_initialized_variables_24314", text: "Combine this with the previous '{0}' statement with initialized variables."}
+
+var Split_uninitialized_0_declarations_into_multiple_statements = &Message{code: 24315, category: CategoryError, key: "Split_uninitialized_0_declarations_into_multiple_statements_24315", text: "Split uninitialized '{0}' declarations into multiple statements."}
+
+var Split_initialized_0_declarations_into_multiple_statements = &Message{code: 24316, category: CategoryError, key: "Split_initialized_0_declarations_into_multiple_statements_24316", text: "Split initialized '{0}' declarations into multiple statements."}
+
+var Split_requires_to_be_separated_into_a_single_block = &Message{code: 24317, category: CategoryError, key: "Split_requires_to_be_separated_into_a_single_block_24317", text: "Split requires to be separated into a single block."}
+
+var Combine_this_with_the_previous_0_statement = &Message{code: 24318, category: CategoryError, key: "Combine_this_with_the_previous_0_statement_24318", text: "Combine this with the previous '{0}' statement."}
+
+var Split_0_declarations_into_multiple_statements = &Message{code: 24319, category: CategoryError, key: "Split_0_declarations_into_multiple_statements_24319", text: "Split '{0}' declarations into multiple statements."}
+
+var Unexpected_operator_assignment_0_shorthand = &Message{code: 24320, category: CategoryError, key: "Unexpected_operator_assignment_0_shorthand_24320", text: "Unexpected operator assignment ({0}) shorthand."}
+
+var Unexpected_function_expression = &Message{code: 24321, category: CategoryError, key: "Unexpected_function_expression_24321", text: "Unexpected function expression."}
+
+var X_0_is_never_reassigned_Use_const_instead = &Message{code: 24322, category: CategoryError, key: "_0_is_never_reassigned_Use_const_instead_24322", text: "'{0}' is never reassigned. Use 'const' instead."}
+
+var Use_the_Asterisk_Asterisk_operator_instead_of_Math_pow = &Message{code: 24323, category: CategoryError, key: "Use_the_Asterisk_Asterisk_operator_instead_of_Math_pow_24323", text: "Use the '**' operator instead of 'Math.pow'."}
+
+var Add_name_to_capture_group = &Message{code: 24324, category: CategoryMessage, key: "Add_name_to_capture_group_24324", text: "Add name to capture group."}
+
+var Convert_group_to_non_capturing = &Message{code: 24325, category: CategoryMessage, key: "Convert_group_to_non_capturing_24325", text: "Convert group to non-capturing."}
+
+var Capture_group_0_should_be_converted_to_a_named_or_non_capturing_group = &Message{code: 24326, category: CategoryError, key: "Capture_group_0_should_be_converted_to_a_named_or_non_capturing_group_24326", text: "Capture group '{0}' should be converted to a named or non-capturing group."}
+
+var Use_an_object_spread_instead_of_Object_assign_eg_Colon_foo = &Message{code: 24327, category: CategoryError, key: "Use_an_object_spread_instead_of_Object_assign_eg_Colon_foo_24327", text: "Use an object spread instead of `Object.assign` eg: `{ ...foo }`."}
+
+var Use_an_object_literal_instead_of_Object_assign_eg_Colon_foo_Colon_bar = &Message{code: 24328, category: CategoryError, key: "Use_an_object_literal_instead_of_Object_assign_eg_Colon_foo_Colon_bar_24328", text: "Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`."}
+
+var Use_a_regular_expression_literal_instead_of_the_RegExp_constructor = &Message{code: 24329, category: CategoryError, key: "Use_a_regular_expression_literal_instead_of_the_RegExp_constructor_24329", text: "Use a regular expression literal instead of the 'RegExp' constructor."}
+
+var Replace_with_an_equivalent_regular_expression_literal = &Message{code: 24330, category: CategoryMessage, key: "Replace_with_an_equivalent_regular_expression_literal_24330", text: "Replace with an equivalent regular expression literal."}
+
+var Replace_with_an_equivalent_regular_expression_literal_with_flags_0 = &Message{code: 24331, category: CategoryMessage, key: "Replace_with_an_equivalent_regular_expression_literal_with_flags_0_24331", text: "Replace with an equivalent regular expression literal with flags '{0}'."}
+
+var Replace_with_a_regular_expression_literal_with_flags_0 = &Message{code: 24332, category: CategoryMessage, key: "Replace_with_a_regular_expression_literal_with_flags_0_24332", text: "Replace with a regular expression literal with flags '{0}'."}
+
+var Regular_expression_literal_is_unnecessarily_wrapped_within_a_RegExp_constructor = &Message{code: 24333, category: CategoryError, key: "Regular_expression_literal_is_unnecessarily_wrapped_within_a_RegExp_constructor_24333", text: "Regular expression literal is unnecessarily wrapped within a 'RegExp' constructor."}
+
+var Use_regular_expression_literal_with_flags_instead_of_the_RegExp_constructor = &Message{code: 24334, category: CategoryError, key: "Use_regular_expression_literal_with_flags_instead_of_the_RegExp_constructor_24334", text: "Use regular expression literal with flags instead of the 'RegExp' constructor."}
+
+var Unexpected_string_concatenation = &Message{code: 24335, category: CategoryError, key: "Unexpected_string_concatenation_24335", text: "Unexpected string concatenation."}
+
+var Possible_race_condition_Colon_0_might_be_reassigned_based_on_an_outdated_value_of_0 = &Message{code: 24336, category: CategoryError, key: "Possible_race_condition_Colon_0_might_be_reassigned_based_on_an_outdated_value_of_0_24336", text: "Possible race condition: `{0}` might be reassigned based on an outdated value of `{0}`."}
+
+var Possible_race_condition_Colon_0_might_be_assigned_based_on_an_outdated_state_of_1 = &Message{code: 24337, category: CategoryError, key: "Possible_race_condition_Colon_0_might_be_assigned_based_on_an_outdated_state_of_1_24337", text: "Possible race condition: `{0}` might be assigned based on an outdated state of `{1}`."}
+
+var Add_the_u_flag = &Message{code: 24338, category: CategoryMessage, key: "Add_the_u_flag_24338", text: "Add the 'u' flag."}
+
+var Add_the_v_flag = &Message{code: 24339, category: CategoryMessage, key: "Add_the_v_flag_24339", text: "Add the 'v' flag."}
+
+var Use_the_u_flag = &Message{code: 24340, category: CategoryError, key: "Use_the_u_flag_24340", text: "Use the 'u' flag."}
+
+var Use_the_v_flag = &Message{code: 24341, category: CategoryError, key: "Use_the_v_flag_24341", text: "Use the 'v' flag."}
+
+var Imports_should_be_sorted_alphabetically = &Message{code: 24342, category: CategoryError, key: "Imports_should_be_sorted_alphabetically_24342", text: "Imports should be sorted alphabetically."}
+
+var Member_0_of_the_import_declaration_should_be_sorted_alphabetically = &Message{code: 24343, category: CategoryError, key: "Member_0_of_the_import_declaration_should_be_sorted_alphabetically_24343", text: "Member '{0}' of the import declaration should be sorted alphabetically."}
+
+var Expected_0_syntax_before_1_syntax = &Message{code: 24344, category: CategoryError, key: "Expected_0_syntax_before_1_syntax_24344", text: "Expected '{0}' syntax before '{1}' syntax."}
+
+var Expected_object_keys_to_be_in_0_1_2_ending_order_3_should_be_before_4 = &Message{code: 24345, category: CategoryError, key: "Expected_object_keys_to_be_in_0_1_2_ending_order_3_should_be_before_4_24345", text: "Expected object keys to be in {0}{1}{2}ending order. '{3}' should be before '{4}'."}
+
+var Variables_within_the_same_declaration_block_should_be_sorted_alphabetically = &Message{code: 24346, category: CategoryError, key: "Variables_within_the_same_declaration_block_should_be_sorted_alphabetically_24346", text: "Variables within the same declaration block should be sorted alphabetically."}
+
+var Use_the_function_form_of_use_strict = &Message{code: 24347, category: CategoryError, key: "Use_the_function_form_of_use_strict_24347", text: "Use the function form of 'use strict'."}
+
+var Use_the_global_form_of_use_strict = &Message{code: 24348, category: CategoryError, key: "Use_the_global_form_of_use_strict_24348", text: "Use the global form of 'use strict'."}
+
+var Multiple_use_strict_directives = &Message{code: 24349, category: CategoryError, key: "Multiple_use_strict_directives_24349", text: "Multiple 'use strict' directives."}
+
+var Strict_mode_is_not_permitted = &Message{code: 24350, category: CategoryError, key: "Strict_mode_is_not_permitted_24350", text: "Strict mode is not permitted."}
+
+var Unnecessary_use_strict_directive = &Message{code: 24351, category: CategoryError, key: "Unnecessary_use_strict_directive_24351", text: "Unnecessary 'use strict' directive."}
+
+var X_use_strict_is_unnecessary_inside_of_modules = &Message{code: 24352, category: CategoryError, key: "use_strict_is_unnecessary_inside_of_modules_24352", text: "'use strict' is unnecessary inside of modules."}
+
+var X_use_strict_is_unnecessary_when_implied_strict_mode_is_enabled = &Message{code: 24353, category: CategoryError, key: "use_strict_is_unnecessary_when_implied_strict_mode_is_enabled_24353", text: "'use strict' is unnecessary when implied strict mode is enabled."}
+
+var X_use_strict_is_unnecessary_inside_of_classes = &Message{code: 24354, category: CategoryError, key: "use_strict_is_unnecessary_inside_of_classes_24354", text: "'use strict' is unnecessary inside of classes."}
+
+var X_use_strict_directive_inside_a_function_with_non_simple_parameter_list_throws_a_syntax_error_since_ES2016 = &Message{code: 24355, category: CategoryError, key: "use_strict_directive_inside_a_function_with_non_simple_parameter_list_throws_a_syntax_error_since_ES_24355", text: "'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016."}
+
+var Wrap_0_in_a_function_with_use_strict_directive = &Message{code: 24356, category: CategoryError, key: "Wrap_0_in_a_function_with_use_strict_directive_24356", text: "Wrap {0} in a function with 'use strict' directive."}
+
+var Expected_Unicode_BOM_Byte_Order_Mark = &Message{code: 24357, category: CategoryError, key: "Expected_Unicode_BOM_Byte_Order_Mark_24357", text: "Expected Unicode BOM (Byte Order Mark)."}
+
+var Unexpected_Unicode_BOM_Byte_Order_Mark = &Message{code: 24358, category: CategoryError, key: "Unexpected_Unicode_BOM_Byte_Order_Mark_24358", text: "Unexpected Unicode BOM (Byte Order Mark)."}
+
+var Use_the_isNaN_function_to_compare_with_NaN = &Message{code: 24359, category: CategoryError, key: "Use_the_isNaN_function_to_compare_with_NaN_24359", text: "Use the isNaN function to compare with NaN."}
+
+var X_switch_NaN_can_never_match_a_case_clause_Use_Number_isNaN_instead_of_the_switch = &Message{code: 24360, category: CategoryError, key: "switch_NaN_can_never_match_a_case_clause_Use_Number_isNaN_instead_of_the_switch_24360", text: "'switch(NaN)' can never match a case clause. Use Number.isNaN instead of the switch."}
+
+var X_case_NaN_can_never_match_Use_Number_isNaN_before_the_switch = &Message{code: 24361, category: CategoryError, key: "case_NaN_can_never_match_Use_Number_isNaN_before_the_switch_24361", text: "'case NaN' can never match. Use Number.isNaN before the switch."}
+
+var Array_prototype_method_0_cannot_find_NaN = &Message{code: 24362, category: CategoryError, key: "Array_prototype_method_0_cannot_find_NaN_24362", text: "Array prototype method '{0}' cannot find NaN."}
+
+var Replace_with_Number_isNaN = &Message{code: 24363, category: CategoryMessage, key: "Replace_with_Number_isNaN_24363", text: "Replace with Number.isNaN."}
+
+var Replace_with_Number_isNaN_and_cast_to_a_Number = &Message{code: 24364, category: CategoryMessage, key: "Replace_with_Number_isNaN_and_cast_to_a_Number_24364", text: "Replace with Number.isNaN and cast to a Number."}
+
+var Replace_with_Array_prototype_0 = &Message{code: 24365, category: CategoryMessage, key: "Replace_with_Array_prototype_0_24365", text: "Replace with Array.prototype.{0}."}
+
+var Expected_literal_to_be_on_the_0_side_of_1 = &Message{code: 24366, category: CategoryError, key: "Expected_literal_to_be_on_the_0_side_of_1_24366", text: "Expected literal to be on the {0} side of {1}."}
+
+var Include_the_original_caught_error_as_the_cause_of_the_symptom_error = &Message{code: 24367, category: CategoryMessage, key: "Include_the_original_caught_error_as_the_cause_of_the_symptom_error_24367", text: "Include the original caught error as the `cause` of the symptom error."}
+
+var Remove_the_console_0 = &Message{code: 24368, category: CategoryMessage, key: "Remove_the_console_0_24368", text: "Remove the console.{0}()."}
+
+var Remove_the_console_method_call = &Message{code: 24369, category: CategoryMessage, key: "Remove_the_console_method_call_24369", text: "Remove the console method call."}
+
+var Add_comment_inside_empty_0 = &Message{code: 24370, category: CategoryMessage, key: "Add_comment_inside_empty_0_24370", text: "Add comment inside empty {0}."}
+
+var Invalid_lint_rule_options_for_0_Colon_1 = &Message{code: 24371, category: CategoryError, key: "Invalid_lint_rule_options_for_0_Colon_1_24371", text: "Invalid lint rule options for '{0}': {1}"}
+
+var Invalid_lint_directive_Colon_0 = &Message{code: 24372, category: CategoryError, key: "Invalid_lint_directive_Colon_0_24372", text: "Invalid lint directive: {0}"}
+
+var Fix_all_0 = &Message{code: 24373, category: CategoryMessage, key: "Fix_all_0_24373", text: "Fix all {0}"}
+
+var Fix_0 = &Message{code: 24374, category: CategoryMessage, key: "Fix_0_24374", text: "Fix {0}"}
+
+var Use_a_function_type = &Message{code: 24375, category: CategoryMessage, key: "Use_a_function_type_24375", text: "Use a function type."}
+
+var Use_non_null_assertions = &Message{code: 24376, category: CategoryMessage, key: "Use_non_null_assertions_24376", text: "Use non-null assertions."}
+
+var Use_a_non_null_assertion = &Message{code: 24377, category: CategoryMessage, key: "Use_a_non_null_assertion_24377", text: "Use a non-null assertion."}
+
+var Remove_unnecessary_boolean_comparison = &Message{code: 24378, category: CategoryMessage, key: "Remove_unnecessary_boolean_comparison_24378", text: "Remove unnecessary boolean comparison."}
+
+var Remove_void = &Message{code: 24379, category: CategoryMessage, key: "Remove_void_24379", text: "Remove 'void'"}
+
+var Remove_inferrable_type_annotations = &Message{code: 24380, category: CategoryMessage, key: "Remove_inferrable_type_annotations_24380", text: "Remove inferrable type annotations."}
+
+var Remove_type_annotation = &Message{code: 24381, category: CategoryMessage, key: "Remove_type_annotation_24381", text: "Remove type annotation."}
+
+var Convert_to_a_top_level_type_import = &Message{code: 24382, category: CategoryMessage, key: "Convert_to_a_top_level_type_import_24382", text: "Convert to a top-level type import"}
+
+var Remove_extra_non_null_assertion = &Message{code: 24383, category: CategoryMessage, key: "Remove_extra_non_null_assertion_24383", text: "Remove extra non-null assertion"}
+
+var Replace_any_with_a_safer_type = &Message{code: 24384, category: CategoryMessage, key: "Replace_any_with_a_safer_type_24384", text: "Replace any with a safer type"}
+
+var Convert_method_signature_style = &Message{code: 24385, category: CategoryMessage, key: "Convert_method_signature_style_24385", text: "Convert method signature style"}
+
+var Remove_public_accessibility_modifier = &Message{code: 24386, category: CategoryMessage, key: "Remove_public_accessibility_modifier_24386", text: "Remove public accessibility modifier"}
+
+var Use_type_exports = &Message{code: 24387, category: CategoryMessage, key: "Use_type_exports_24387", text: "Use type exports."}
+
+var Convert_interface_to_type_alias = &Message{code: 24388, category: CategoryMessage, key: "Convert_interface_to_type_alias_24388", text: "Convert interface to type alias"}
+
+var Convert_type_alias_to_interface = &Message{code: 24389, category: CategoryMessage, key: "Convert_type_alias_to_interface_24389", text: "Convert type alias to interface"}
+
+var Convert_angle_bracket_assertion_to_as_assertion = &Message{code: 24390, category: CategoryMessage, key: "Convert_angle_bracket_assertion_to_as_assertion_24390", text: "Convert angle-bracket assertion to as assertion"}
+
+var Move_generic_type_arguments_to_type_annotations = &Message{code: 24391, category: CategoryMessage, key: "Move_generic_type_arguments_to_type_annotations_24391", text: "Move generic type arguments to type annotations."}
+
+var Move_generic_type_arguments_to_the_type_annotation = &Message{code: 24392, category: CategoryMessage, key: "Move_generic_type_arguments_to_the_type_annotation_24392", text: "Move generic type arguments to the type annotation."}
+
+var Move_generic_type_arguments_to_constructors = &Message{code: 24393, category: CategoryMessage, key: "Move_generic_type_arguments_to_constructors_24393", text: "Move generic type arguments to constructors."}
+
+var Move_generic_type_arguments_to_the_constructor = &Message{code: 24394, category: CategoryMessage, key: "Move_generic_type_arguments_to_the_constructor_24394", text: "Move generic type arguments to the constructor."}
+
+var Remove_TSLint_comments = &Message{code: 24395, category: CategoryMessage, key: "Remove_TSLint_comments_24395", text: "Remove TSLint comments."}
+
+var Remove_TSLint_comment = &Message{code: 24396, category: CategoryMessage, key: "Remove_TSLint_comment_24396", text: "Remove TSLint comment."}
+
+var Change_existing_type_annotation_to_Colon_0 = &Message{code: 24397, category: CategoryMessage, key: "Change_existing_type_annotation_to_Colon_0_24397", text: "Change existing type annotation to `: {0}`."}
+
+var Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_rest_variable = &Message{code: 24398, category: CategoryMessage, key: "Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_rest_variable_24398", text: "Add an explicit `: [unknown]` type annotation to the rejection callback rest variable."}
+
+var Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_variable = &Message{code: 24399, category: CategoryMessage, key: "Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_variable_24399", text: "Add an explicit `: unknown` type annotation to the rejection callback variable."}
+
+var Mark_the_function_async = &Message{code: 24400, category: CategoryMessage, key: "Mark_the_function_async_24400", text: "Mark the function async."}
+
+var Use_the_this_return_type = &Message{code: 24401, category: CategoryMessage, key: "Use_the_this_return_type_24401", text: "Use the `this` return type."}
+
+var Use_a_type_parameter_instead_of_an_assertion = &Message{code: 24402, category: CategoryMessage, key: "Use_a_type_parameter_instead_of_an_assertion_24402", text: "Use a type parameter instead of an assertion."}
+
+var Can_be_fixed_to_0_1 = &Message{code: 24403, category: CategoryMessage, key: "Can_be_fixed_to_0_1_24403", text: "Can be fixed to {0} = {1}"}
+
+var You_should_use_as_const_instead_of_type_annotation = &Message{code: 24404, category: CategoryMessage, key: "You_should_use_as_const_instead_of_type_annotation_24404", text: "You should use `as const` instead of type annotation."}
+
+var Instead_assert_that_the_value_satisfies_the_0_type = &Message{code: 24405, category: CategoryMessage, key: "Instead_assert_that_the_value_satisfies_the_0_type_24405", text: "Instead, assert that the value satisfies the {0} type."}
+
+var Remove_the_type_conversion = &Message{code: 24406, category: CategoryMessage, key: "Remove_the_type_conversion_24406", text: "Remove the type conversion."}
+
+var Remove_the_unnecessary_0_constraint = &Message{code: 24407, category: CategoryMessage, key: "Remove_the_unnecessary_0_constraint_24407", text: "Remove the unnecessary `{0}` constraint."}
+
+var Replace_0_with_1 = &Message{code: 24408, category: CategoryMessage, key: "Replace_0_with_1_24408", text: "Replace `{0}` with `{1}`."}
+
+var Consider_using_the_optional_chain_operator_instead_This_operator_includes_runtime_checks_so_it_is_safer_than_the_compile_only_non_null_assertion_operator = &Message{code: 24409, category: CategoryMessage, key: "Consider_using_the_optional_chain_operator_instead_This_operator_includes_runtime_checks_so_it_is_sa_24409", text: "Consider using the optional chain operator `?.` instead. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator."}
+
+var You_should_remove_the_non_null_assertion = &Message{code: 24410, category: CategoryMessage, key: "You_should_remove_the_non_null_assertion_24410", text: "You should remove the non-null assertion."}
+
+var Use_never_instead_this_is_useful_when_instantiating_generic_type_parameters_that_you_don_t_need_to_know_the_type_of = &Message{code: 24411, category: CategoryMessage, key: "Use_never_instead_this_is_useful_when_instantiating_generic_type_parameters_that_you_don_t_need_to_k_24411", text: "Use `never` instead, this is useful when instantiating generic type parameters that you don't need to know the type of."}
+
+var Use_unknown_instead_this_will_force_you_to_explicitly_and_safely_assert_the_type_is_correct = &Message{code: 24412, category: CategoryMessage, key: "Use_unknown_instead_this_will_force_you_to_explicitly_and_safely_assert_the_type_is_correct_24412", text: "Use `unknown` instead, this will force you to explicitly, and safely assert the type is correct."}
+
+var Use_PropertyKey_instead_this_is_more_explicit_than_keyof_any = &Message{code: 24413, category: CategoryMessage, key: "Use_PropertyKey_instead_this_is_more_explicit_than_keyof_any_24413", text: "Use `PropertyKey` instead, this is more explicit than `keyof any`."}
+
+var Replace_empty_interface_with_a_type_alias = &Message{code: 24414, category: CategoryMessage, key: "Replace_empty_interface_with_a_type_alias_24414", text: "Replace empty interface with a type alias."}
+
+var Replace_empty_interface_with_0 = &Message{code: 24415, category: CategoryMessage, key: "Replace_empty_interface_with_0_24415", text: "Replace empty interface with `{0}`."}
+
+var Replace_with_0 = &Message{code: 24416, category: CategoryMessage, key: "Replace_with_0_24416", text: "Replace `{}` with `{0}`."}
+
+var Wrap_the_left_hand_side_in_parentheses_to_avoid_confusion_with_0_operator = &Message{code: 24417, category: CategoryMessage, key: "Wrap_the_left_hand_side_in_parentheses_to_avoid_confusion_with_0_operator_24417", text: "Wrap the left-hand side in parentheses to avoid confusion with \"{0}\" operator."}
+
+var Remove_unnecessary_non_null_assertion_in_equality_test = &Message{code: 24418, category: CategoryMessage, key: "Remove_unnecessary_non_null_assertion_in_equality_test_24418", text: "Remove unnecessary non-null assertion (!) in equality test."}
+
+var Remove_unnecessary_non_null_assertion_in_assignment_left_hand_side = &Message{code: 24419, category: CategoryMessage, key: "Remove_unnecessary_non_null_assertion_in_assignment_left_hand_side_24419", text: "Remove unnecessary non-null assertion (!) in assignment left-hand side."}
+
+var Remove_possibly_unnecessary_non_null_assertion_in_the_left_operand_of_the_0_operator = &Message{code: 24420, category: CategoryMessage, key: "Remove_possibly_unnecessary_non_null_assertion_in_the_left_operand_of_the_0_operator_24420", text: "Remove possibly unnecessary non-null assertion (!) in the left operand of the `{0}` operator."}
+
+var Use_array_splice_instead = &Message{code: 24421, category: CategoryMessage, key: "Use_array_splice_instead_24421", text: "Use `array.splice()` instead."}
+
+var Convert_to_a_method_signature_This_removes_the_readonly_modifier_allowing_the_member_to_be_reassigned = &Message{code: 24422, category: CategoryMessage, key: "Convert_to_a_method_signature_This_removes_the_readonly_modifier_allowing_the_member_to_be_reassigne_24422", text: "Convert to a method signature. This removes the `readonly` modifier, allowing the member to be reassigned."}
+
+var Add_0_accessibility_modifier = &Message{code: 24423, category: CategoryMessage, key: "Add_0_accessibility_modifier_24423", text: "Add '{0}' accessibility modifier"}
+
+var Use_const_x_satisfies_0_instead = &Message{code: 24424, category: CategoryMessage, key: "Use_const_x_satisfies_0_instead_24424", text: "Use const x = [ ... ] satisfies {0} instead."}
+
+var Use_const_x_satisfies_0_instead_24425 = &Message{code: 24425, category: CategoryMessage, key: "Use_const_x_satisfies_0_instead_24425", text: "Use const x = { ... } satisfies {0} instead."}
+
+var Use_const_x_Colon_0_instead = &Message{code: 24426, category: CategoryMessage, key: "Use_const_x_Colon_0_instead_24426", text: "Use const x: {0} = [ ... ] instead."}
+
+var Use_const_x_Colon_0_instead_24427 = &Message{code: 24427, category: CategoryMessage, key: "Use_const_x_Colon_0_instead_24427", text: "Use const x: {0} = { ... } instead."}
+
+var Replace_the_literals_with_getters = &Message{code: 24428, category: CategoryMessage, key: "Replace_the_literals_with_getters_24428", text: "Replace the literals with getters."}
+
+var Replace_the_literals_with_readonly_fields = &Message{code: 24429, category: CategoryMessage, key: "Replace_the_literals_with_readonly_fields_24429", text: "Replace the literals with readonly fields."}
+
+var Replace_ts_ignore_with_ts_expect_error = &Message{code: 24430, category: CategoryMessage, key: "Replace_ts_ignore_with_ts_expect_error_24430", text: "Replace \"@ts-ignore\" with \"@ts-expect-error\"."}
+
+var Replace_0_with_1_to_include_the_actual_backslash_character = &Message{code: 24431, category: CategoryMessage, key: "Replace_0_with_1_to_include_the_actual_backslash_character_24431", text: "Replace '{0}' with '{1}' to include the actual backslash character."}
+
+var Replace_0_with_1_This_maintains_the_current_functionality = &Message{code: 24432, category: CategoryMessage, key: "Replace_0_with_1_This_maintains_the_current_functionality_24432", text: "Replace '{0}' with '{1}'. This maintains the current functionality."}
+
+var Remove_unused_variable_0_24433 = &Message{code: 24433, category: CategoryMessage, key: "Remove_unused_variable_0_24433", text: "Remove unused variable \"{0}\"."}
+
+var Remove_the_non_null_assertion = &Message{code: 24434, category: CategoryMessage, key: "Remove_the_non_null_assertion_24434", text: "Remove the non-null assertion."}
+
+var Remove_unnecessary_syntax = &Message{code: 24435, category: CategoryMessage, key: "Remove_unnecessary_syntax_24435", text: "Remove unnecessary syntax."}
+
+var Replace_spaces_with_a_quantifier = &Message{code: 24436, category: CategoryMessage, key: "Replace_spaces_with_a_quantifier_24436", text: "Replace spaces with a quantifier"}
+
+var Use_Object_hasOwn = &Message{code: 24437, category: CategoryMessage, key: "Use_Object_hasOwn_24437", text: "Use Object.hasOwn"}
+
+var Remove_unnecessary_undefined_initializer = &Message{code: 24438, category: CategoryMessage, key: "Remove_unnecessary_undefined_initializer_24438", text: "Remove unnecessary undefined initializer"}
+
+var Replace_else_block_with_else_if = &Message{code: 24439, category: CategoryMessage, key: "Replace_else_block_with_else_if_24439", text: "Replace else block with else if"}
+
+var Use_explicit_Boolean_conversion = &Message{code: 24440, category: CategoryMessage, key: "Use_explicit_Boolean_conversion_24440", text: "Use explicit Boolean conversion"}
+
+var Remove_unnecessary_label = &Message{code: 24441, category: CategoryMessage, key: "Remove_unnecessary_label_24441", text: "Remove unnecessary label"}
+
+var Remove_redundant_boolean_cast = &Message{code: 24442, category: CategoryMessage, key: "Remove_redundant_boolean_cast_24442", text: "Remove redundant boolean cast"}
+
+var Remove_unnecessary_binding = &Message{code: 24443, category: CategoryMessage, key: "Remove_unnecessary_binding_24443", text: "Remove unnecessary binding"}
+
+var Replace_Array_constructors_with_array_literals = &Message{code: 24444, category: CategoryMessage, key: "Replace_Array_constructors_with_array_literals_24444", text: "Replace Array constructors with array literals"}
+
+var Replace_with_an_array_literal = &Message{code: 24445, category: CategoryMessage, key: "Replace_with_an_array_literal_24445", text: "Replace with an array literal"}
+
+var The_generic_type_arguments_should_be_specified_as_part_of_the_type_annotation = &Message{code: 24446, category: CategoryError, key: "The_generic_type_arguments_should_be_specified_as_part_of_the_type_annotation_24446", text: "The generic type arguments should be specified as part of the type annotation."}
+
+var Change_into_an_index_signature_instead_of_a_record = &Message{code: 24447, category: CategoryMessage, key: "Change_into_an_index_signature_instead_of_a_record_24447", text: "Change into an index signature instead of a record."}
+
+var Change_into_a_record_instead_of_an_index_signature = &Message{code: 24448, category: CategoryMessage, key: "Change_into_a_record_instead_of_an_index_signature_24448", text: "Change into a record instead of an index signature."}
+
+var Unexpected_constant_relational_comparison_Both_sides_of_the_0_are_literal_values = &Message{code: 24449, category: CategoryError, key: "Unexpected_constant_relational_comparison_Both_sides_of_the_0_are_literal_values_24449", text: "Unexpected constant relational comparison. Both sides of the `{0}` are literal values."}
+
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
 var File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module = &Message{code: 80001, category: CategorySuggestion, key: "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001", text: "File is a CommonJS module; it may be converted to an ES module."}
@@ -4328,7 +5832,7 @@ var Add_await_to_initializer_for_0 = &Message{code: 95084, category: CategoryMes
 
 var Fix_all_expressions_possibly_missing_await = &Message{code: 95085, category: CategoryMessage, key: "Fix_all_expressions_possibly_missing_await_95085", text: "Fix all expressions possibly missing 'await'"}
 
-var Remove_unnecessary_await = &Message{code: 95086, category: CategoryMessage, key: "Remove_unnecessary_await_95086", text: "Remove unnecessary 'await'"}
+var Remove_unnecessary_await_95086 = &Message{code: 95086, category: CategoryMessage, key: "Remove_unnecessary_await_95086", text: "Remove unnecessary 'await'"}
 
 var Remove_all_unnecessary_uses_of_await = &Message{code: 95087, category: CategoryMessage, key: "Remove_all_unnecessary_uses_of_await_95087", text: "Remove all unnecessary uses of 'await'"}
 
@@ -6588,6 +8092,758 @@ var allMessages = [...]**Message{
 	&Apply_available_lint_fixes_to_input_files,
 	&Remove_debugger_statement,
 	&Remove_all_debugger_statements,
+	&Unexpected_0,
+	&Avoid_arguments_0,
+	&Variables_should_not_be_deleted,
+	&The_Function_constructor_is_eval,
+	&Do_not_use_0_as_a_constructor,
+	&The_proto_property_is_deprecated,
+	&Expected_undefined_and_instead_saw_void,
+	&All_0_signatures_should_be_adjacent,
+	&X_tslint_comment_detected_Colon_0,
+	&The_generic_type_arguments_should_be_specified_as_part_of_the_constructor_type_arguments,
+	&Duplicate_enum_member_value_0,
+	&An_empty_interface_declaration_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead,
+	&An_interface_declaring_no_members_is_equivalent_to_its_supertype,
+	&The_empty_object_type_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead,
+	&Type_0_trivially_inferred_from_a_0_literal_remove_type_annotation,
+	&Forbidden_non_null_assertion,
+	&Getter_is_not_present_in_property_descriptor,
+	&Expected_block_statement_surrounding_arrow_body,
+	&Comments_should_not_begin_with_a_lowercase_character,
+	&Expected_this_to_be_used_by_class_0,
+	&Expected_after_0_condition,
+	&Default_clause_should_be_the_last_clause,
+	&Expected_a_default_case,
+	&Default_parameters_should_be_last,
+	&X_0_is_a_syntax_error,
+	&Expected_0_and_instead_saw_1,
+	&Function_name_0_should_1_2_name_3,
+	&Expected_a_function_declaration,
+	&Accessor_pair_0_and_1_should_be_grouped,
+	&The_body_of_a_for_in_should_be_wrapped_in_an_if_statement_to_filter_unwanted_properties_from_the_prototype,
+	&Identifier_name_0_is_too_long_1,
+	&Variable_0_should_be_initialized_on_declaration,
+	&File_has_too_many_classes_0_Maximum_allowed_is_1,
+	&Blocks_are_nested_too_deeply_0_Maximum_allowed_is_1,
+	&X_0_has_too_many_lines_1_Maximum_allowed_is_2,
+	&File_has_too_many_lines_0_Maximum_allowed_is_1,
+	&Too_many_nested_callbacks_0_Maximum_allowed_is_1,
+	&X_0_has_too_many_parameters_1_Maximum_allowed_is_2,
+	&X_0_has_too_many_statements_1_Maximum_allowed_is_2,
+	&A_constructor_name_should_not_start_with_a_lowercase_letter,
+	&Unexpected_await_inside_a_loop,
+	&Unexpected_use_of_0,
+	&Unexpected_lexical_declaration_in_case_block,
+	&Unexpected_use_of_continue_statement,
+	&Duplicate_name_0,
+	&This_branch_can_never_execute_Its_condition_is_a_duplicate_or_covered_by_previous_conditions_in_the_if_else_if_chain,
+	&Duplicate_key_0,
+	&X_0_export_is_duplicated_as_import,
+	&Unexpected_empty_0,
+	&Unexpected_empty_static_block,
+	&Empty_block_statement,
+	&Use_to_compare_with_null,
+	&The_function_binding_is_unnecessary,
+	&Redundant_Boolean_call,
+	&This_label_0_is_unnecessary,
+	&Unexpected_comment_inline_with_code,
+	&Irregular_whitespace_not_allowed,
+	&Reserved_name_iterator,
+	&Unexpected_label_in_break_statement,
+	&Unexpected_if_as_the_only_statement_in_an_else_block,
+	&This_number_literal_will_lose_precision_at_runtime,
+	&No_magic_number_Colon_0,
+	&Unexpected_chained_assignment,
+	&Multiline_support_is_limited_to_browsers_supporting_ES5_only,
+	&Do_not_nest_ternary_expressions,
+	&Unexpected_negated_condition,
+	&Do_not_use_new_for_side_effects,
+	&Ternary_operator_used,
+	&Unary_operator_0_used,
+	&Return_statement_should_not_contain_assignment,
+	&Arrow_function_should_not_return_assignment,
+	&Unexpected_use_of_comma_operator,
+	&Unexpected_comma_in_middle_of_array,
+	&Unexpected_template_string_expression,
+	&Script_URL_is_a_form_of_eval,
+	&Octal_literals_should_not_be_used,
+	&Don_t_use_octal_Colon_0_Use_u_instead,
+	&Don_t_use_0_escape_sequence,
+	&Comparing_to_itself_is_potentially_pointless,
+	&X_0_is_assigned_to_itself,
+	&Expected_an_error_object_to_be_thrown,
+	&Do_not_throw_undefined,
+	&Setter_cannot_return_a_value,
+	&X_0_1_is_restricted_from_being_used_2,
+	&X_0_is_restricted_from_being_used_1,
+	&Unexpected_use_of_with_statement,
+	&Unexpected_string_concatenation_of_literals,
+	&This_generator_function_does_not_have_yield,
+	&Unsafe_usage_of_0,
+	&Unnecessary_0,
+	&Use_the_spread_operator_instead_of_apply,
+	&Expected_an_assignment_or_function_call_and_instead_saw_an_expression,
+	&Unsafe_usage_of_optional_chaining_If_it_short_circuits_with_undefined_the_evaluation_will_throw_TypeError,
+	&Unsafe_arithmetic_operation_on_optional_chaining_It_can_result_in_NaN,
+	&Unnecessary_catch_clause,
+	&Unnecessary_try_Slashcatch_wrapper,
+	&All_var_declarations_must_be_at_the_top_of_the_function_scope,
+	&Unexpected_newline_between_function_and_of_function_call,
+	&Unexpected_newline_between_object_and_of_property_access,
+	&Unexpected_newline_between_template_tag_and_template_literal,
+	&Unexpected_newline_between_numerator_and_division_operator,
+	&X_0_Colon_is_defined_but_never_used,
+	&Unnecessarily_computed_property_0_found,
+	&X_0_1_unnecessarily_renamed,
+	&Unexpected_0_comment_Colon_1,
+	&Use_0_literals_instead_of_1,
+	&Unexpected_return_statement_in_constructor,
+	&X_0_is_a_class,
+	&X_0_is_constant,
+	&Do_not_assign_to_the_exception_parameter,
+	&Unexpected_console_statement,
+	&Unexpected_console_statement_Only_these_console_methods_are_allowed_Colon_0,
+	&X_0_has_a_complexity_of_1_Maximum_allowed_is_2,
+	&Designated_alias_0_is_not_assigned_to_this,
+	&Unexpected_alias_0_for_this,
+	&The_array_literal_notation_is_preferable,
+	&Unexpected_unnamed_0,
+	&Unexpected_named_0,
+	&X_0_declared_on_line_1_column_2_is_used_outside_of_binding_context,
+	&X_0_prototype_is_read_only_properties_should_not_be_added,
+	&X_0_is_a_function,
+	&X_0_is_read_only,
+	&The_members_of_0_are_read_only,
+	&X_0_cannot_be_called_as_a_constructor,
+	&The_object_literal_notation_is_preferable,
+	&Found_identifier_with_same_name_as_label,
+	&Return_values_from_promise_executor_functions_cannot_be_read,
+	&Block_is_redundant,
+	&Move_0_declaration_to_1_root,
+	&Shadowing_of_global_property_0,
+	&X_0_is_always_undefined_because_it_s_never_assigned,
+	&Unexpected_implicit_coercion_encountered_Use_0_instead,
+	&Do_not_access_Object_prototype_method_0_from_target_object,
+	&Unexpected_use_of_0_1,
+	&Function_declared_in_a_loop_contains_unsafe_references_to_variable_s_0,
+	&It_s_not_necessary_to_initialize_0_to_undefined,
+	&Unexpected_use_of_undefined,
+	&Unexpected_dangling_in_0,
+	&Use_Object_hasOwn_instead_of_Object_prototype_hasOwnProperty_call,
+	&Expected_the_Promise_rejection_reason_to_be_an_Error,
+	&Use_the_rest_parameters_instead_of_arguments,
+	&There_is_no_cause_attached_to_the_symptom_error_being_thrown,
+	&The_symptom_error_is_being_thrown_with_an_incorrect_cause,
+	&Re_throws_cannot_preserve_the_caught_error_as_a_part_of_it_is_being_lost_due_to_destructuring,
+	&The_caught_error_is_not_accessible_because_the_catch_clause_lacks_the_error_parameter_Start_referencing_the_caught_error_using_the_catch_parameter,
+	&The_caught_error_is_being_attached_as_cause_but_is_shadowed_by_a_closer_scoped_redeclaration,
+	&Missing_parameters,
+	&Missing_radix_parameter,
+	&Invalid_radix_parameter_must_be_an_integer_between_2_and_36,
+	&Expected_Symbol_to_have_a_description,
+	&Invalid_typeof_comparison_value,
+	&Typeof_comparisons_should_be_to_string_literals,
+	&Do_not_use_ts_0_because_it_alters_compilation_errors,
+	&Literals_should_be_exposed_using_getters,
+	&Always_prefer_const_x_Colon_T,
+	&Use_a_type_instead_of_an_interface,
+	&Missing_accessibility_modifier_on_0_1,
+	&Variable_0_should_not_be_initialized_on_declaration,
+	&Function_property_signature_is_forbidden_Use_a_method_shorthand_instead,
+	&Confusing_combination_of_non_null_assertion_and_0_operator_like_a_0_b_which_might_be_misinterpreted_as_a_0_b,
+	&Do_not_delete_dynamically_computed_property_keys,
+	&Unexpected_any_Specify_a_different_type,
+	&Forbidden_extra_non_null_assertion,
+	&Unexpected_empty_class,
+	&Unexpected_class_with_only_a_constructor,
+	&Unexpected_class_with_only_static_properties,
+	&TypeScript_will_only_remove_the_inline_type_specifiers_which_will_leave_behind_a_side_effect_import_at_runtime_Convert_this_to_a_top_level_type_qualifier_to_properly_remove_the_entire_import,
+	&Prefer_using_the_primitive_0_as_a_type_name_rather_than_the_upper_cased_1,
+	&The_Function_type_accepts_any_function_like_value_Prefer_explicitly_defining_any_function_parameters_and_return_type,
+	&Interfaces_cannot_be_constructed_only_classes,
+	&Class_cannot_have_method_named_new,
+	&ES2015_module_syntax_is_preferred_over_namespaces,
+	&Unexpected_aliasing_of_this_to_local_variable,
+	&Unexpected_aliasing_of_members_of_this_to_local_variables,
+	&Optional_chain_expressions_can_return_undefined_by_design_using_a_non_null_assertion_is_unsafe_and_wrong,
+	&Constraining_the_generic_type_0_to_1_does_nothing_and_is_unnecessary,
+	&Use_namespace_instead_of_module_to_declare_custom_TypeScript_modules,
+	&Empty_export_does_nothing_and_can_be_removed,
+	&Expected_a_const_instead_of_a_literal_type_assertion,
+	&Expected_a_const_assertion_instead_of_a_literal_type_annotation,
+	&The_value_of_the_member_0_should_be_explicitly_defined,
+	&Explicit_enum_value_must_only_be_a_literal_value_string_or_number,
+	&Explicit_enum_value_must_only_be_a_literal_value_string_or_number_or_a_bitwise_expression,
+	&X_void_is_only_valid_as_a_return_type,
+	&X_void_is_only_valid_as_a_return_type_or_generic_type_argument,
+	&X_void_is_only_valid_as_return_type_or_type_of_this_parameter,
+	&X_void_is_only_valid_as_a_return_type_or_generic_type_argument_or_the_type_of_a_this_parameter,
+	&X_0_may_not_have_void_as_a_type_argument,
+	&X_void_is_not_valid_as_a_constituent_in_a_union_type,
+	&Don_t_use_0_as_a_type_1,
+	&Number_constants_declarations_must_use_const,
+	&Useless_constructor,
+	&Property_0_should_be_declared_as_a_class_property,
+	&Property_0_should_be_declared_as_a_parameter_property,
+	&Do_not_use_a_triple_slash_reference_for_0_use_import_style_instead,
+	&A_regular_expression_literal_can_be_confused_with_Slash,
+	&Empty_class,
+	&For_in_loops_over_arrays_skips_holes_returns_indices_as_strings_and_may_visit_the_prototype_chain_or_other_enumerable_properties_Use_a_more_robust_iteration_method_such_as_for_of_or_array_forEach_instead,
+	&This_type_resolves_to_the_empty_object_type_This_was_likely_not_intentional,
+	&Using_the_delete_operator_with_an_array_expression_is_unsafe,
+	&X_void_operator_is_useless_here_it_should_only_discard_a_call_s_return_value,
+	&X_void_operator_shouldn_t_be_used_on_0_it_should_convey_that_a_return_value_is_being_ignored,
+	&Argument_of_unary_negation_should_be_assignable_to_number_bigint_but_is_0_instead,
+	&Unsafe_assertion_to_0_detected_Colon_consider_using_a_more_specific_type_to_ensure_safety,
+	&Unsafe_assertion_from_0_detected_Colon_consider_using_type_guards_or_a_safer_assertion,
+	&Unsafe_type_assertion_Colon_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_the_original_type,
+	&Unsafe_type_assertion_Colon_the_original_type_is_assignable_to_the_constraint_of_type_0_but_0_could_be_instantiated_with_a_different_subtype_of_its_constraint,
+	&Unsafe_type_assertion_Colon_type_0_is_more_narrow_than_the_original_type,
+	&Qualifier_is_unnecessary_since_0_is_in_scope,
+	&This_is_the_default_value_for_this_type_parameter_so_it_can_be_omitted,
+	&Use_a_assertion_to_more_succinctly_remove_null_and_undefined_from_the_type,
+	&X_0_does_not_change_the_type_or_value_of_the_1,
+	&The_two_values_in_this_comparison_do_not_have_a_shared_enum_type,
+	&The_case_statement_does_not_have_a_shared_enum_type_with_the_switch_predicate,
+	&Require_compare_argument,
+	&X_get_type_should_be_assignable_to_its_equivalent_set_type,
+	&Unnecessary_assertion_Colon_Array_reduce_accepts_a_type_parameter_for_the_default_value,
+	&Invalid_operand_for_a_operation_Operands_must_each_be_a_number_or_0_Got_1,
+	&Operands_of_operations_must_be_a_number_or_0_Got_1_2,
+	&Numeric_operations_must_either_be_both_bigints_or_both_numbers_Got_0_1,
+	&Use_this_type_instead,
+	&Functions_that_return_promises_must_be_async,
+	&Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable,
+	&Array_type_using_0_1_is_forbidden_for_non_simple_types_Use_2_1_instead,
+	&Array_type_using_0_1_is_forbidden_for_simple_types_Use_2_instead,
+	&An_index_signature_is_preferred_over_a_record,
+	&A_record_is_preferred_over_an_index_signature,
+	&X_import_type_annotations_are_forbidden,
+	&Use_an_import_instead_of_an_import_type,
+	&All_imports_in_the_declaration_are_only_used_as_types_Use_import_type,
+	&Imports_0_are_only_used_as_type,
+	&Missing_return_type_on_function,
+	&Argument_0_should_be_typed,
+	&Argument_0_should_be_typed_with_a_non_any_type,
+	&X_0_argument_should_be_typed,
+	&X_0_argument_should_be_typed_with_a_non_any_type,
+	&Unexpected_this,
+	&The_nullish_coalescing_operator_is_designed_to_handle_undefined_and_null_using_a_non_null_assertion_is_not_needed,
+	&X_0_is_already_defined_as_a_built_in_global_variable,
+	&X_0_is_already_defined,
+	&A_require_style_import_is_forbidden,
+	&X_0_is_already_a_global_variable,
+	&X_0_is_already_declared_in_the_upper_scope_on_line_1_column_2,
+	&This_assignment_is_unnecessary_since_it_is_already_assigned_by_a_parameter_property,
+	&Unsafe_declaration_merging_between_classes_and_interfaces,
+	&Private_class_member_0_is_defined_but_never_used,
+	&X_0_is_1_but_2_3,
+	&X_0_is_marked_as_ignored_but_is_used_Used_1_must_not_match_Slash_2_Slashu,
+	&X_0_was_used_before_it_was_defined,
+	&Expected_a_for_of_loop_instead_of_a_for_loop_with_this_simple_iteration,
+	&X_0_export_is_duplicated,
+	&X_0_import_is_duplicated_as_export,
+	&X_0_import_is_duplicated,
+	&A_function_with_a_name_starting_with_an_uppercase_letter_should_only_be_used_as_a_constructor,
+	&Always_prefer_const_x_Colon_T_22004,
+	&Array_type_using_0_1_is_forbidden_Use_2_instead,
+	&Array_type_using_0_1_is_forbidden_Use_2_1_instead,
+	&Comments_should_not_begin_with_an_uppercase_character,
+	&Confusing_combination_of_non_null_assertion_and_assignment_like_a_b_which_looks_very_similar_to_a_b,
+	&Confusing_combination_of_non_null_assertion_and_equality_test_like_a_b_which_looks_very_similar_to_a_b,
+	&Do_not_use_any_type_assertions,
+	&Do_not_use_the_0_operator_to_compare_against_0,
+	&Duplicate_case_label,
+	&Duplicate_param_0,
+	&Empty_switch_statement,
+	&Enum_members_are_added_to_the_enum_scope_so_references_to_0_in_enum_member_initializers_resolve_to_this_member_instead_of_the_declaration_in_the_upper_scope_on_line_1_column_2,
+	&Expected_a_conditional_expression_and_instead_saw_an_assignment,
+	&Expected_a_function_expression,
+	&Expected_after_0,
+	&Expected_0_to_be_before_1,
+	&Functions_that_return_promises_must_be_async_Consider_adding_an_explicit_return_type_annotation_if_the_function_is_intended_to_return_a_union_of_promise_and_non_promise_types,
+	&Identifier_name_0_is_too_short_1,
+	&Include_a_description_after_the_ts_0_directive_to_explain_why_the_ts_0_is_necessary_The_description_must_be_1_characters_or_longer,
+	&Literals_should_be_exposed_using_readonly_fields,
+	&Nested_block_is_redundant,
+	&Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_be_nullable_or_may_not_have_the_expected_shape,
+	&Prefer_the_safe_Colon_unknown_for_a_0_1_callback_variable_The_thrown_error_may_not_be_iterable,
+	&Promise_executor_functions_should_not_be_async,
+	&Public_accessibility_modifier_on_0_1,
+	&Redundant_double_negation,
+	&Setter_is_not_present_in_property_descriptor,
+	&Shorthand_method_signature_is_forbidden_Use_a_function_property_instead,
+	&The_description_for_the_ts_0_directive_must_match_the_1_format,
+	&Unexpected_block_statement_surrounding_arrow_body,
+	&Unexpected_block_statement_surrounding_arrow_body_move_the_returned_value_immediately_after_the,
+	&Unexpected_block_statement_surrounding_arrow_body_parenthesize_the_returned_value_and_move_it_immediately_after_the,
+	&Unexpected_block_statement_surrounding_arrow_body_put_a_value_of_undefined_immediately_after_the,
+	&Unexpected_comparison_of_two_newly_constructed_objects_These_two_values_can_never_be_equal,
+	&Unexpected_comparison_to_newly_constructed_object_These_two_values_can_never_be_equal,
+	&Unexpected_constant_binary_expression_Compares_constantly_with_the_0_hand_side_of_the_1,
+	&Unexpected_constant_0_on_the_left_hand_side_of_a_1_expression,
+	&Unexpected_empty_0_pattern,
+	&Unexpected_label_in_continue_statement,
+	&Unexpected_labeled_statement,
+	&Unnecessary_after_0_condition,
+	&Unnecessary_after_0,
+	&Use_ts_expect_error_instead_of_ts_ignore_as_ts_ignore_will_do_nothing_if_the_following_line_is_error_free,
+	&Use_0_instead_of_as_0,
+	&Use_as_0_instead_of_0,
+	&Use_an_interface_instead_of_a_type,
+	&X_0_is_better_written_in_dot_notation,
+	&X_0_is_not_present_for_1_2,
+	&Unexpected_await_of_a_non_Promise_non_Thenable_value,
+	&Unexpected_await_using_of_a_value_that_is_not_async_disposable,
+	&Convert_to_an_ordinary_for_of_loop,
+	&Unexpected_for_await_of_of_a_value_that_is_not_async_iterable,
+	&Unexpected_iterable_of_non_Promise_non_Thenable_values_passed_to_promise_aggregator,
+	&Remove_unnecessary_await,
+	&Expected_to_return_a_value_at_the_end_of_0,
+	&X_0_expected_a_return_value,
+	&X_0_expected_no_return_value,
+	&Type_exports_0_are_not_values_and_should_be_exported_using_export_type,
+	&Type_export_0_is_not_a_value_and_should_be_exported_using_export_type,
+	&All_exports_in_the_declaration_are_only_used_as_types_Use_export_type,
+	&Member_0_should_be_declared_before_all_1_definitions,
+	&Member_0_should_be_declared_before_member_1,
+	&Member_0_should_be_declared_after_all_1_members,
+	&X_0_name_1_must_match_one_of_the_following_formats_Colon_2,
+	&X_0_name_1_trimmed_as_2_must_match_one_of_the_following_formats_Colon_3,
+	&X_0_name_1_must_have_one_of_the_following_2_es_Colon_3,
+	&X_0_name_1_must_have_2_3_underscore_s,
+	&X_0_name_1_must_2_the_RegExp_Colon_3,
+	&X_0_name_1_must_not_have_a_2_underscore,
+	&Using_join_for_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified,
+	&X_0_1_use_Object_s_default_stringification_format_object_Object_when_stringified,
+	&Placing_a_void_expression_inside_another_expression_is_forbidden_Move_it_to_its_own_statement_instead,
+	&Returning_a_void_expression_from_an_arrow_function_shorthand_is_forbidden_Please_add_braces_to_the_arrow_function,
+	&Void_expressions_returned_from_an_arrow_function_shorthand_must_be_marked_explicitly_with_the_void_operator,
+	&Returning_a_void_expression_from_a_function_is_forbidden_Please_move_it_before_the_return_statement,
+	&Returning_a_void_expression_from_a_function_is_forbidden_Please_remove_the_return_statement,
+	&Void_expressions_returned_from_a_function_must_be_marked_explicitly_with_the_void_operator,
+	&Void_expressions_used_inside_another_expression_must_be_moved_to_its_own_statement_or_marked_explicitly_with_the_void_operator,
+	&Mark_with_an_explicit_void_operator,
+	&X_0_is_deprecated_24031,
+	&X_0_is_deprecated_1,
+	&X_0_type_constituent_is_duplicated_with_1,
+	&Explicit_undefined_is_unnecessary_on_an_optional_parameter,
+	&Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handler,
+	&Add_await_operator,
+	&Add_void_operator_to_ignore,
+	&An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_with_Promise_all_or_similar,
+	&An_array_of_Promises_may_be_unintentional_Consider_handling_the_promises_fulfillment_or_rejection_with_Promise_all_or_similar_or_explicitly_marking_the_expression_as_ignored_with_the_void_operator,
+	&Promises_must_be_awaited_end_with_a_call_to_catch_or_end_with_a_call_to_then_with_a_rejection_handler_A_rejection_handler_that_is_not_a_function_will_be_ignored,
+	&Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_or_be_explicitly_marked_as_ignored_with_the_void_operator_A_rejection_handler_that_is_not_a_function_will_be_ignored,
+	&Promises_must_be_awaited_end_with_a_call_to_catch_end_with_a_call_to_then_with_a_rejection_handler_or_be_explicitly_marked_as_ignored_with_the_void_operator,
+	&Implied_eval_Do_not_use_the_Function_constructor_to_create_functions,
+	&Implied_eval_Consider_passing_a_function,
+	&Expected_non_Promise_value_in_a_boolean_conditional,
+	&Expected_a_non_Promise_value_to_be_returned,
+	&Expected_a_non_Promise_value_to_be_spread_in_an_object,
+	&Promise_returned_in_function_argument_where_a_void_return_was_expected,
+	&Promise_returning_function_provided_to_attribute_where_a_void_return_was_expected,
+	&Promise_returning_method_provided_where_a_void_return_was_expected_by_extended_Slashimplemented_type_0,
+	&Promise_returning_function_provided_to_property_where_a_void_return_was_expected,
+	&Promise_returning_function_provided_to_return_value_where_a_void_return_was_expected,
+	&Promise_returning_function_provided_to_variable_where_a_void_return_was_expected,
+	&Using_the_spread_operator_on_an_array_in_an_object_will_result_in_a_list_of_indices,
+	&Using_the_spread_operator_on_class_declarations_will_spread_only_their_static_properties_and_will_lose_their_class_prototype,
+	&Using_the_spread_operator_on_class_instances_will_lose_their_class_prototype,
+	&Using_the_spread_operator_on_a_function_without_additional_properties_can_cause_unexpected_behavior_Did_you_forget_to_call_the_function,
+	&Using_the_spread_operator_on_an_Iterable_in_an_object_can_cause_unexpected_behavior,
+	&Using_the_spread_operator_on_a_Map_in_an_object_will_result_in_an_empty_object_Did_you_mean_to_use_Object_fromEntries_map_instead,
+	&Using_the_spread_operator_on_Promise_in_an_object_can_cause_unexpected_behavior_Did_you_forget_to_await_the_promise,
+	&Using_the_spread_operator_on_a_string_can_mishandle_special_characters_as_can_split_produces_Unicode_code_points_which_will_decompose_complex_emojis_into_individual_emojis_split_produces_UTF_16_code_units_which_breaks_rich_characters_in_many_languages_Consider_using_Intl_Segmenter_for_locale_aware_string_decomposition_Otherwise_if_you_don_t_need_to_preserve_emojis_or_other_non_Ascii_characters_disable_this_lint_rule_on_this_line_or_configure_the_allow_rule_option,
+	&Replace_map_spread_in_object_with_Object_fromEntries,
+	&Mixing_number_and_string_enums_can_be_confusing,
+	&X_0_is_an_error_type_that_acts_as_any_and_overrides_all_other_types_in_this_1_type,
+	&X_0_is_overridden_by_1_in_this_union_type,
+	&X_0_is_overridden_by_other_types_in_this_1_type,
+	&X_0_overrides_all_other_types_in_this_1_type,
+	&X_0_is_overridden_by_the_1_in_this_intersection_type,
+	&This_expression_unnecessarily_compares_a_nullable_boolean_value_to_false_instead_of_using_the_operator_to_provide_a_default,
+	&This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_using_it_directly,
+	&This_expression_unnecessarily_compares_a_nullable_boolean_value_to_true_instead_of_negating_it,
+	&This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_using_it_directly,
+	&This_expression_unnecessarily_compares_a_boolean_value_to_a_boolean_instead_of_negating_it,
+	&This_rule_requires_the_strictNullChecks_compiler_option_to_be_turned_on_to_function_correctly,
+	&Unnecessary_conditional_value_is_always_falsy,
+	&This_callback_should_return_a_conditional_but_return_is_always_falsy,
+	&Unnecessary_conditional_left_hand_side_of_operator_is_always_null_or_undefined,
+	&Unnecessary_conditional_value_is_always_truthy,
+	&This_callback_should_return_a_conditional_but_return_is_always_truthy,
+	&Unnecessary_conditional_comparison_is_always_0_since_1_2_3_is_0,
+	&Unnecessary_conditional_value_is_never,
+	&Unnecessary_conditional_expected_left_hand_side_of_operator_to_be_possibly_null_or_undefined,
+	&Unnecessary_optional_chain_on_a_non_nullish_value,
+	&Unnecessary_conditional_the_types_have_no_overlap,
+	&Remove_unnecessary_optional_chain,
+	&Unnecessary_conditional_expression_already_has_the_type_being_checked_by_the_0,
+	&Template_literal_expression_is_unnecessary_and_can_be_simplified,
+	&The_type_arguments_for_this_generic_call_may_be_inferred_from_the_assertion_Specify_them_explicitly_instead,
+	&This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression,
+	&This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression,
+	&Replace_all_usages_of_type_parameter_with_its_constraint,
+	&Type_parameter_0_is_1_in_the_2_signature,
+	&Unsafe_argument_of_type_0_assigned_to_a_parameter_of_type_1,
+	&Unsafe_spread_of_an_0_array_type,
+	&Unsafe_spread_of_an_0_type,
+	&Unsafe_spread_of_a_tuple_type_The_argument_is_0_and_is_assigned_to_a_parameter_of_type_1,
+	&Unsafe_assignment_of_an_0_value,
+	&Unsafe_assignment_of_an_0_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function,
+	&Unsafe_array_destructuring_of_an_0_array_value,
+	&Unsafe_array_destructuring_of_a_tuple_element_with_an_0_value,
+	&Unsafe_spread_of_an_0_value_in_an_array,
+	&Unsafe_assignment_of_type_0_to_a_variable_of_type_1,
+	&Unsafe_object_destructuring_of_a_property_with_an_0_value,
+	&Unsafe_call_of_a_type_that_could_not_be_resolved,
+	&Unsafe_call_of_a_this_type_that_could_not_be_resolved,
+	&Unsafe_construction_of_a_type_that_could_not_be_resolved,
+	&Unsafe_use_of_a_template_tag_whose_type_could_not_be_resolved,
+	&Unsafe_call_of_0_typed_value,
+	&Unsafe_call_of_0_typed_value_this_is_typed_as_0_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function,
+	&Unsafe_construction_of_0_typed_value,
+	&Unsafe_use_of_0_typed_template_tag,
+	&The_computed_key_used_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0,
+	&The_argument_passed_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0,
+	&The_value_asserted_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0,
+	&The_value_assigned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0,
+	&This_mutation_can_produce_a_value_outside_of_the_expected_enum_0,
+	&The_value_returned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0,
+	&The_type_of_computed_name_0_cannot_be_resolved,
+	&Unsafe_member_access_0_on_a_type_that_cannot_be_resolved,
+	&Unsafe_member_access_0_The_type_of_this_cannot_be_resolved_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function,
+	&Computed_name_0_resolves_to_an_any_value,
+	&Unsafe_member_access_0_on_an_any_value,
+	&Unsafe_member_access_0_on_an_any_value_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function,
+	&Unsafe_return_of_a_value_of_type_0,
+	&Unsafe_return_of_type_0_from_function_with_return_type_1,
+	&Unsafe_return_of_a_value_of_type_0_this_is_typed_as_any_You_can_try_to_fix_this_by_turning_on_the_noImplicitThis_compiler_option_or_adding_a_this_parameter_to_the_function,
+	&Using_undefined_to_make_a_parameter_optional_adds_unnecessary_runtime_logic,
+	&Remove_the_default_value,
+	&Default_value_is_useless_because_the_0_is_not_optional,
+	&Default_value_is_useless_because_it_is_undefined_Optional_0_s_are_already_undefined_by_default,
+	&Use_the_optional_syntax_instead,
+	&Use_0_destructuring,
+	&Prefer_find_instead_of_filter_0,
+	&Use_find_instead_of_filter_0,
+	&X_0_only_has_a_call_signature_you_should_use_a_function_type_instead,
+	&X_this_refers_to_the_function_type_0_did_you_intend_to_use_a_generic_this_parameter_like_Self_this_Colon_Self_Self_instead,
+	&Use_includes_method_instead,
+	&Use_String_includes_method_with_a_string_instead,
+	&Prefer_using_nullish_coalescing_operator_0_instead_of_an_assignment_expression_as_it_is_simpler_to_read,
+	&Prefer_using_nullish_coalescing_operator_0_instead_of_a_logical_1_0_as_it_is_a_safer_operator,
+	&Prefer_using_nullish_coalescing_operator_0_instead_of_a_ternary_expression_as_it_is_simpler_to_read,
+	&Fix_to_nullish_coalescing_operator_0,
+	&Change_to_an_optional_chain,
+	&Prefer_using_an_optional_chain_expression_instead_as_it_s_more_concise_and_easier_to_read,
+	&Member_0_is_never_reassigned_mark_it_as_readonly,
+	&Parameter_should_be_a_read_only_type,
+	&Use_the_RegExp_exec_method_instead,
+	&Use_the_String_endsWith_method_instead,
+	&Use_String_startsWith_method_instead,
+	&X_0_has_no_await_expression,
+	&Remove_async,
+	&Invalid_type_0_of_template_literal_expression,
+	&Returning_an_awaited_promise_is_not_allowed_in_this_context,
+	&Remove_await_before_the_expression_Use_caution_as_this_may_impact_control_flow,
+	&Returning_an_awaited_value_that_is_not_a_promise_is_not_allowed,
+	&Returning_an_awaited_promise_is_required_in_this_context,
+	&Add_await_before_the_expression_Use_caution_as_this_may_impact_control_flow,
+	&Unexpected_any_value_in_0_An_explicit_comparison_or_type_conversion_is_required,
+	&Unexpected_nullable_boolean_value_in_0_Please_handle_the_nullish_case_explicitly,
+	&Unexpected_nullable_enum_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly,
+	&Unexpected_nullable_number_value_in_0_Please_handle_the_nullish_Slashzero_SlashNaN_cases_explicitly,
+	&Unexpected_nullable_object_value_in_0_An_explicit_null_check_is_required,
+	&Unexpected_nullable_string_value_in_0_Please_handle_the_nullish_Slashempty_cases_explicitly,
+	&Unexpected_nullish_value_in_conditional_The_condition_is_always_false,
+	&Unexpected_number_value_in_0_An_explicit_zero_SlashNaN_check_is_required,
+	&Unexpected_object_value_in_0_The_condition_is_always_true,
+	&Unexpected_value_in_conditional_A_boolean_expression_is_required,
+	&Unexpected_string_value_in_0_An_explicit_empty_string_check_is_required,
+	&Explicitly_convert_value_to_a_boolean_Boolean_value,
+	&Change_condition_to_check_array_s_length_value_length_0,
+	&Change_condition_to_check_array_s_length_value_length_0_24171,
+	&Change_condition_to_check_for_empty_string_value,
+	&Change_condition_to_check_if_false_value_false,
+	&Change_condition_to_check_for_NaN_Number_isNaN_value,
+	&Change_condition_to_check_for_null_Slashundefined_value_null,
+	&Change_condition_to_check_string_s_length_value_length_0,
+	&Change_condition_to_check_if_true_value_true,
+	&Change_condition_to_check_for_0_value_0,
+	&Explicitly_treat_nullish_value_the_same_as_an_empty_string_value,
+	&Explicitly_treat_nullish_value_the_same_as_false_value_false,
+	&Explicitly_treat_nullish_value_the_same_as_0_value_0,
+	&Add_an_explicit_boolean_return_type_annotation,
+	&Predicate_function_should_not_be_async_expected_a_boolean_return_type,
+	&Async_function_used_in_a_context_where_a_void_function_is_expected,
+	&Value_returning_function_used_in_a_context_where_a_void_function_is_expected,
+	&Value_returned_in_a_context_where_a_void_return_is_expected,
+	&Add_a_void_operator_to_discard_the_return_value,
+	&Wrap_the_function_body_in_an_async_IIFE,
+	&Add_branches_for_missing_cases,
+	&The_switch_statement_is_exhaustive_so_the_default_case_is_unnecessary,
+	&Switch_is_not_exhaustive_Cases_not_matched_Colon_0,
+	&A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_separated_from_its_object_Consider_using_an_arrow_function_or_explicitly_bind_ing_the_method_to_avoid_calling_the_method_with_an_unintended_this_value,
+	&A_method_that_is_not_declared_with_this_Colon_void_may_cause_unintentional_scoping_of_this_when_separated_from_its_object_Consider_using_an_arrow_function_or_explicitly_bind_ing_the_method_to_avoid_calling_the_method_with_an_unintended_this_value_If_a_function_does_not_access_this_it_can_be_annotated_with_this_Colon_void,
+	&X_0_with_identical_parameters,
+	&X_0_with_a_rest_parameter,
+	&X_0_with_an_optional_parameter,
+	&X_0_taking_1,
+	&X_0_expects_a_value_to_be_returned_at_the_end_of_1,
+	&X_0_expects_a_return_value_from_1,
+	&X_0_expects_no_useless_return_value_from_1,
+	&Wrap_the_expression_in,
+	&Prepend_void_to_the_expression,
+	&Identifier_0_is_not_in_camel_case,
+	&X_0_is_not_in_camel_case,
+	&Lacked_a_call_of_super_in_some_code_paths,
+	&Expected_to_call_super,
+	&Unexpected_duplicate_super,
+	&Unexpected_super_because_super_is_not_a_constructor,
+	&The_update_clause_in_this_loop_moves_the_variable_in_the_wrong_direction,
+	&Expected_to_return_a_value_in_0,
+	&Expected_0_to_always_return_a_value,
+	&Identifier_0_is_restricted,
+	&Identifier_0_is_restricted_24213,
+	&Identifier_0_does_not_match_the_pattern_1,
+	&Identifier_0_does_not_match_the_pattern_1_24215,
+	&Assignment_can_be_replaced_with_operator_assignment_0,
+	&Convert_this_assignment_to_use_the_operator_0,
+	&Logical_expression_can_be_replaced_with_an_assignment_0,
+	&Replace_this_logical_expression_with_an_assignment_with_the_operator_0,
+	&X_if_statement_can_be_replaced_with_a_logical_operator_assignment_with_operator_0,
+	&Replace_this_if_statement_with_a_logical_assignment_with_operator_0,
+	&Unexpected_logical_operator_assignment_0_shorthand,
+	&Separate_the_logical_assignment_into_an_assignment_with_a_logical_operator,
+	&Unexpected_constant_condition,
+	&Unexpected_control_character_s_in_regular_expression_Colon_0,
+	&Unnecessary_else_after_return,
+	&X_eval_can_be_harmful,
+	&Found_a_comment_that_would_permit_fallthrough_but_case_cannot_fall_through,
+	&Expected_a_break_statement_before_case,
+	&Expected_a_break_statement_before_default,
+	&Read_only_global_0_should_not_be_modified,
+	&Unexpected_0_declaration_in_the_global_scope_wrap_in_an_IIFE_for_a_local_variable_assign_as_global_property_for_a_global_variable,
+	&Unexpected_0_declaration_in_the_global_scope_wrap_in_a_block_or_in_an_IIFE,
+	&Global_variable_leak_declare_the_variable_if_it_is_intended_to_be_local,
+	&Unexpected_assignment_to_read_only_global_variable,
+	&Unexpected_redeclaration_of_read_only_global_variable,
+	&Implied_eval_Consider_passing_a_function_instead_of_a_string,
+	&Implied_eval_Do_not_use_execScript,
+	&X_0,
+	&Unexpected_surrogate_pair_in_character_class_Use_u_flag,
+	&Unexpected_surrogate_pair_in_character_class,
+	&Unexpected_combined_character_in_character_class,
+	&Unexpected_modified_Emoji_in_character_class,
+	&Unexpected_national_flag_in_character_class,
+	&Unexpected_joined_character_sequence_in_character_class,
+	&Add_unicode_u_flag_to_regex,
+	&X_0_is_not_a_function,
+	&X_0_is_reference_to_1_which_is_not_a_function,
+	&Assignment_to_function_parameter_0,
+	&Assignment_to_property_of_function_parameter_0,
+	&X_0_is_already_defined_by_a_variable_declaration,
+	&Spaces_are_hard_to_count_Use_0,
+	&X_0_is_restricted_from_being_used_as_an_exported_name,
+	&Exporting_default_is_restricted,
+	&X_0_import_is_restricted_from_being_used,
+	&X_0_import_is_restricted_from_being_used_1,
+	&X_0_import_is_restricted_from_being_used_by_a_pattern,
+	&X_0_import_is_restricted_from_being_used_by_a_pattern_1,
+	&X_0_import_from_1_is_restricted_from_being_used_by_a_pattern,
+	&X_0_import_from_1_is_restricted_from_being_used_by_a_pattern_2,
+	&Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern,
+	&Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used,
+	&Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_3,
+	&Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used_2,
+	&Asterisk_import_is_invalid_because_0_from_1_2_restricted,
+	&Asterisk_import_is_invalid_because_0_from_1_2_restricted_3,
+	&X_0_import_from_1_is_restricted,
+	&X_0_import_from_1_is_restricted_2,
+	&X_0_import_from_1_is_restricted_because_only_2_3_allowed,
+	&X_0_import_from_1_is_restricted_because_only_2_3_allowed_4,
+	&Asterisk_import_is_invalid_because_only_0_from_1_2_allowed,
+	&Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_3,
+	&X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1,
+	&X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_3,
+	&Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed,
+	&Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_2,
+	&X_0_24277,
+	&X_0_is_not_allowed_before_super,
+	&X_0_is_not_defined,
+	&X_0_is_not_modified_in_this_loop,
+	&Unnecessary_use_of_boolean_literals_in_conditional_expression,
+	&Unnecessary_use_of_conditional_expression_for_default_assignment,
+	&Unreachable_code,
+	&Invalid_loop_Its_body_allows_only_one_iteration,
+	&Unexpected_negating_the_left_operand_of_0_operator,
+	&Negate_0_expression_instead_of_its_left_operand_This_changes_the_current_behavior,
+	&Wrap_negation_in_to_make_the_intention_explicit_This_preserves_the_current_behavior,
+	&X_0_is_defined_but_never_used,
+	&Remove_unused_private_class_member_0,
+	&X_0_is_1_but_never_used_2,
+	&X_0_is_marked_as_ignored_but_is_used_1,
+	&Remove_unused_variable_0,
+	&The_value_assigned_to_0_is_not_used_in_subsequent_statements,
+	&Backreference_0_will_be_ignored_It_references_group_1_2_from_within_that_group,
+	&Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_later_in_the_pattern,
+	&Backreference_0_will_be_ignored_It_references_group_1_2_which_appears_before_in_the_same_lookbehind,
+	&Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_another_alternative,
+	&Backreference_0_will_be_ignored_It_references_group_1_2_which_is_in_a_negative_lookaround,
+	&Remove_the_constructor,
+	&Unnecessary_escape_character_Colon_0,
+	&Remove_the_This_maintains_the_current_functionality,
+	&Remove_the_if_it_was_inserted_by_mistake,
+	&Replace_the_with_to_include_the_actual_backslash_character,
+	&Unnecessary_return_statement,
+	&Unexpected_var_use_let_or_const_instead,
+	&Expected_shorthand_for_all_properties,
+	&Expected_longform_method_syntax_for_string_literal_keys,
+	&Expected_property_shorthand,
+	&Expected_longform_property_syntax,
+	&Expected_method_shorthand,
+	&Expected_longform_method_syntax,
+	&Unexpected_mix_of_shorthand_and_non_shorthand_properties,
+	&Combine_this_with_the_previous_0_statement_with_uninitialized_variables,
+	&Combine_this_with_the_previous_0_statement_with_initialized_variables,
+	&Split_uninitialized_0_declarations_into_multiple_statements,
+	&Split_initialized_0_declarations_into_multiple_statements,
+	&Split_requires_to_be_separated_into_a_single_block,
+	&Combine_this_with_the_previous_0_statement,
+	&Split_0_declarations_into_multiple_statements,
+	&Unexpected_operator_assignment_0_shorthand,
+	&Unexpected_function_expression,
+	&X_0_is_never_reassigned_Use_const_instead,
+	&Use_the_Asterisk_Asterisk_operator_instead_of_Math_pow,
+	&Add_name_to_capture_group,
+	&Convert_group_to_non_capturing,
+	&Capture_group_0_should_be_converted_to_a_named_or_non_capturing_group,
+	&Use_an_object_spread_instead_of_Object_assign_eg_Colon_foo,
+	&Use_an_object_literal_instead_of_Object_assign_eg_Colon_foo_Colon_bar,
+	&Use_a_regular_expression_literal_instead_of_the_RegExp_constructor,
+	&Replace_with_an_equivalent_regular_expression_literal,
+	&Replace_with_an_equivalent_regular_expression_literal_with_flags_0,
+	&Replace_with_a_regular_expression_literal_with_flags_0,
+	&Regular_expression_literal_is_unnecessarily_wrapped_within_a_RegExp_constructor,
+	&Use_regular_expression_literal_with_flags_instead_of_the_RegExp_constructor,
+	&Unexpected_string_concatenation,
+	&Possible_race_condition_Colon_0_might_be_reassigned_based_on_an_outdated_value_of_0,
+	&Possible_race_condition_Colon_0_might_be_assigned_based_on_an_outdated_state_of_1,
+	&Add_the_u_flag,
+	&Add_the_v_flag,
+	&Use_the_u_flag,
+	&Use_the_v_flag,
+	&Imports_should_be_sorted_alphabetically,
+	&Member_0_of_the_import_declaration_should_be_sorted_alphabetically,
+	&Expected_0_syntax_before_1_syntax,
+	&Expected_object_keys_to_be_in_0_1_2_ending_order_3_should_be_before_4,
+	&Variables_within_the_same_declaration_block_should_be_sorted_alphabetically,
+	&Use_the_function_form_of_use_strict,
+	&Use_the_global_form_of_use_strict,
+	&Multiple_use_strict_directives,
+	&Strict_mode_is_not_permitted,
+	&Unnecessary_use_strict_directive,
+	&X_use_strict_is_unnecessary_inside_of_modules,
+	&X_use_strict_is_unnecessary_when_implied_strict_mode_is_enabled,
+	&X_use_strict_is_unnecessary_inside_of_classes,
+	&X_use_strict_directive_inside_a_function_with_non_simple_parameter_list_throws_a_syntax_error_since_ES2016,
+	&Wrap_0_in_a_function_with_use_strict_directive,
+	&Expected_Unicode_BOM_Byte_Order_Mark,
+	&Unexpected_Unicode_BOM_Byte_Order_Mark,
+	&Use_the_isNaN_function_to_compare_with_NaN,
+	&X_switch_NaN_can_never_match_a_case_clause_Use_Number_isNaN_instead_of_the_switch,
+	&X_case_NaN_can_never_match_Use_Number_isNaN_before_the_switch,
+	&Array_prototype_method_0_cannot_find_NaN,
+	&Replace_with_Number_isNaN,
+	&Replace_with_Number_isNaN_and_cast_to_a_Number,
+	&Replace_with_Array_prototype_0,
+	&Expected_literal_to_be_on_the_0_side_of_1,
+	&Include_the_original_caught_error_as_the_cause_of_the_symptom_error,
+	&Remove_the_console_0,
+	&Remove_the_console_method_call,
+	&Add_comment_inside_empty_0,
+	&Invalid_lint_rule_options_for_0_Colon_1,
+	&Invalid_lint_directive_Colon_0,
+	&Fix_all_0,
+	&Fix_0,
+	&Use_a_function_type,
+	&Use_non_null_assertions,
+	&Use_a_non_null_assertion,
+	&Remove_unnecessary_boolean_comparison,
+	&Remove_void,
+	&Remove_inferrable_type_annotations,
+	&Remove_type_annotation,
+	&Convert_to_a_top_level_type_import,
+	&Remove_extra_non_null_assertion,
+	&Replace_any_with_a_safer_type,
+	&Convert_method_signature_style,
+	&Remove_public_accessibility_modifier,
+	&Use_type_exports,
+	&Convert_interface_to_type_alias,
+	&Convert_type_alias_to_interface,
+	&Convert_angle_bracket_assertion_to_as_assertion,
+	&Move_generic_type_arguments_to_type_annotations,
+	&Move_generic_type_arguments_to_the_type_annotation,
+	&Move_generic_type_arguments_to_constructors,
+	&Move_generic_type_arguments_to_the_constructor,
+	&Remove_TSLint_comments,
+	&Remove_TSLint_comment,
+	&Change_existing_type_annotation_to_Colon_0,
+	&Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_rest_variable,
+	&Add_an_explicit_Colon_unknown_type_annotation_to_the_rejection_callback_variable,
+	&Mark_the_function_async,
+	&Use_the_this_return_type,
+	&Use_a_type_parameter_instead_of_an_assertion,
+	&Can_be_fixed_to_0_1,
+	&You_should_use_as_const_instead_of_type_annotation,
+	&Instead_assert_that_the_value_satisfies_the_0_type,
+	&Remove_the_type_conversion,
+	&Remove_the_unnecessary_0_constraint,
+	&Replace_0_with_1,
+	&Consider_using_the_optional_chain_operator_instead_This_operator_includes_runtime_checks_so_it_is_safer_than_the_compile_only_non_null_assertion_operator,
+	&You_should_remove_the_non_null_assertion,
+	&Use_never_instead_this_is_useful_when_instantiating_generic_type_parameters_that_you_don_t_need_to_know_the_type_of,
+	&Use_unknown_instead_this_will_force_you_to_explicitly_and_safely_assert_the_type_is_correct,
+	&Use_PropertyKey_instead_this_is_more_explicit_than_keyof_any,
+	&Replace_empty_interface_with_a_type_alias,
+	&Replace_empty_interface_with_0,
+	&Replace_with_0,
+	&Wrap_the_left_hand_side_in_parentheses_to_avoid_confusion_with_0_operator,
+	&Remove_unnecessary_non_null_assertion_in_equality_test,
+	&Remove_unnecessary_non_null_assertion_in_assignment_left_hand_side,
+	&Remove_possibly_unnecessary_non_null_assertion_in_the_left_operand_of_the_0_operator,
+	&Use_array_splice_instead,
+	&Convert_to_a_method_signature_This_removes_the_readonly_modifier_allowing_the_member_to_be_reassigned,
+	&Add_0_accessibility_modifier,
+	&Use_const_x_satisfies_0_instead,
+	&Use_const_x_satisfies_0_instead_24425,
+	&Use_const_x_Colon_0_instead,
+	&Use_const_x_Colon_0_instead_24427,
+	&Replace_the_literals_with_getters,
+	&Replace_the_literals_with_readonly_fields,
+	&Replace_ts_ignore_with_ts_expect_error,
+	&Replace_0_with_1_to_include_the_actual_backslash_character,
+	&Replace_0_with_1_This_maintains_the_current_functionality,
+	&Remove_unused_variable_0_24433,
+	&Remove_the_non_null_assertion,
+	&Remove_unnecessary_syntax,
+	&Replace_spaces_with_a_quantifier,
+	&Use_Object_hasOwn,
+	&Remove_unnecessary_undefined_initializer,
+	&Replace_else_block_with_else_if,
+	&Use_explicit_Boolean_conversion,
+	&Remove_unnecessary_label,
+	&Remove_redundant_boolean_cast,
+	&Remove_unnecessary_binding,
+	&Replace_Array_constructors_with_array_literals,
+	&Replace_with_an_array_literal,
+	&The_generic_type_arguments_should_be_specified_as_part_of_the_type_annotation,
+	&Change_into_an_index_signature_instead_of_a_record,
+	&Change_into_a_record_instead_of_an_index_signature,
+	&Unexpected_constant_relational_comparison_Both_sides_of_the_0_are_literal_values,
 	&X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	&File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module,
 	&This_constructor_function_may_be_converted_to_a_class_declaration,
@@ -6736,7 +8992,7 @@ var allMessages = [...]**Message{
 	&Add_await,
 	&Add_await_to_initializer_for_0,
 	&Fix_all_expressions_possibly_missing_await,
-	&Remove_unnecessary_await,
+	&Remove_unnecessary_await_95086,
 	&Remove_all_unnecessary_uses_of_await,
 	&Enable_the_jsx_flag_in_your_configuration_file,
 	&Add_await_to_initializers,

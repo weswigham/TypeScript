@@ -1,0 +1,24 @@
+/input.ts(1,6): error TS24152: Invalid type "{}" of template literal expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/restrict-template-expressions": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    `${(({}))}`;
+         ~~
+!!! error TS24152: Invalid type "{}" of template literal expression.

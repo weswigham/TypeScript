@@ -1,0 +1,24 @@
+/input.ts(2,1): error TS19101: tslint comment detected: "// tslint:disable-next-line"
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/ban-tslint-comment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    /** Documentation. */
+    // tslint:disable-next-line
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "// tslint:disable-next-line"
+    const value = 1;

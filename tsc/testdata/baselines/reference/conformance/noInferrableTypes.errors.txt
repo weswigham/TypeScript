@@ -1,0 +1,93 @@
+input.ts(1,7): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(2,5): error TS19107: Type string trivially inferred from a string literal, remove type annotation.
+input.ts(3,7): error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+input.ts(4,7): error TS19107: Type bigint trivially inferred from a bigint literal, remove type annotation.
+input.ts(5,7): error TS19107: Type null trivially inferred from a null literal, remove type annotation.
+input.ts(6,7): error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+input.ts(7,7): error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.
+input.ts(8,7): error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.
+input.ts(9,7): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(10,7): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(11,7): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(14,7): error TS1155: 'const' declarations must be initialized.
+input.ts(15,19): error TS1015: Parameter cannot have question mark and initializer.
+input.ts(15,19): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(15,39): error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+input.ts(16,16): error TS19107: Type string trivially inferred from a string literal, remove type annotation.
+input.ts(20,5): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(20,13): error TS1263: Declarations with initializers cannot also have definite assignment assertions.
+input.ts(21,5): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+input.ts(22,24): error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "@typescript-eslint/no-inferrable-types": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (20 errors) ====
+    const count: number = -1;
+          ~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+    let text: string = `value ${count}`;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type string trivially inferred from a string literal, remove type annotation.
+    const truth: boolean = !count;
+          ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+    const large: bigint = -BigInt(10);
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type bigint trivially inferred from a bigint literal, remove type annotation.
+    const empty: null = null;
+          ~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type null trivially inferred from a null literal, remove type annotation.
+    const missing: undefined = void count;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+    const token: symbol = Symbol?.("token");
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.
+    const pattern: RegExp = new RegExp("pattern");
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.
+    const nan: number = NaN;
+          ~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+    const optionalCall: number = Number?.("1");
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+    const parenthesized: (number) = (1);
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+    const retained: any = 1;
+    const literal: 1 = 1;
+    const noInitializer: number;
+          ~~~~~~~~~~~~~
+!!! error TS1155: 'const' declarations must be initialized.
+    function defaults(value?: number = 1, flag: boolean = false) {}
+                      ~~~~~
+!!! error TS1015: Parameter cannot have question mark and initializer.
+                      ~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+                                          ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+    const arrow = (value: string = "value") => value;
+                   ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type string trivially inferred from a string literal, remove type annotation.
+    class Properties {
+        readonly keep: number = 1;
+        optional?: number = 1;
+        definite!: number = 1;
+        ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+                ~
+!!! error TS1263: Declarations with initializers cannot also have definite assignment assertions.
+        accessor value: number = 1;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.
+        constructor(public parameter: boolean = true) {}
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+    }

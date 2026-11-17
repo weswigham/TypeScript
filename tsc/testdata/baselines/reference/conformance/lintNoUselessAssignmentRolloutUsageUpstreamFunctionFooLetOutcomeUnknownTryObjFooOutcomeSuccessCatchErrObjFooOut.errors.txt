@@ -1,0 +1,42 @@
+/input.ts(5,5): error TS2304: Cannot find name 'obj'.
+/input.ts(8,5): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    function foo() {
+    			let outcome = 'unknown';
+    
+    			try {
+    				obj.foo;
+    				~~~
+!!! error TS2304: Cannot find name 'obj'.
+    				outcome = 'success';
+    			} catch (err) {
+    				obj.foo;
+    				~~~
+!!! error TS2304: Cannot find name 'obj'.
+    				outcome = 'exception';
+    			} finally {
+    				console.log(outcome);
+    			}
+    		}

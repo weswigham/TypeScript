@@ -1,0 +1,43 @@
+/input.ts(1,12): error TS2629: Cannot assign to 'A' because it is a class.
+/input.ts(1,12): error TS19851: 'A' is a class.
+/input.ts(1,22): error TS2629: Cannot assign to 'A' because it is a class.
+/input.ts(1,22): error TS19851: 'A' is a class.
+/input.ts(1,28): error TS2304: Cannot find name 'value'.
+/input.ts(1,44): error TS2629: Cannot assign to 'A' because it is a class.
+/input.ts(1,44): error TS19851: 'A' is a class.
+/input.ts(1,54): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-class-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    class A {} A = 0; ({ A } = value); ({ key: A = 0 } = value);
+               ~
+!!! error TS2629: Cannot assign to 'A' because it is a class.
+               ~
+!!! error TS19851: 'A' is a class.
+                         ~
+!!! error TS2629: Cannot assign to 'A' because it is a class.
+                         ~
+!!! error TS19851: 'A' is a class.
+                               ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                               ~
+!!! error TS2629: Cannot assign to 'A' because it is a class.
+                                               ~
+!!! error TS19851: 'A' is a class.
+                                                         ~~~~~
+!!! error TS2304: Cannot find name 'value'.

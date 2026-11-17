@@ -1,0 +1,37 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,12): error TS19360: Empty block statement.
+/input.ts(1,41): error TS2304: Cannot find name 'value'.
+/input.ts(1,48): error TS22014: Empty switch statement.
+/input.ts(1,55): error TS19360: Empty block statement.
+/input.ts(1,64): error TS19360: Empty block statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    if (value) {} function run() {} switch (value) {} try {} catch {} class Item { static {} }
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+               ~~
+!!! error TS19360: Empty block statement.
+                                            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                   ~~
+!!! error TS22014: Empty switch statement.
+                                                          ~~
+!!! error TS19360: Empty block statement.
+                                                                   ~~
+!!! error TS19360: Empty block statement.

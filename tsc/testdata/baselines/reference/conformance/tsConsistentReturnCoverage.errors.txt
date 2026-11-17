@@ -1,0 +1,41 @@
+input.ts(1,10): error TS24006: Expected to return a value at the end of function 'fallsThrough'.
+input.ts(6,5): error TS24007: Function 'mixedReturns' expected a return value.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-return": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    function fallsThrough(flag: boolean) {
+             ~~~~~~~~~~~~
+!!! error TS24006: Expected to return a value at the end of function 'fallsThrough'.
+        if (flag) return 1;
+    }
+    function mixedReturns(flag: boolean): any {
+        if (flag) return 1;
+        return;
+        ~~~~~~~
+!!! error TS24007: Function 'mixedReturns' expected a return value.
+    }
+    function validReturns(flag: boolean) {
+        if (flag) return 1;
+        return 2;
+    }
+    function validThrow(flag: boolean) {
+        if (flag) return 1;
+        throw new Error("not available");
+    }
+    declare function sideEffect(): void;
+    function validVoid(flag: boolean): void {
+        if (flag) return sideEffect();
+        return;
+    }
+    async function validAsyncVoid(flag: boolean): Promise<void> {
+        if (flag) return Promise.resolve();
+        return;
+    }
+    export {};

@@ -1,0 +1,38 @@
+/input.tsx(1,8): error TS24276: * import is invalid because only imports that match the pattern '/^Allow/u' from 'foo/bar' are allowed. Only import names starting with 'Allow' are allowed to be imported from 'foo'.
+/input.tsx(1,32): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowImportNamePattern": "^Allow",
+                                "group": [
+                                    "foo/*"
+                                ],
+                                "message": "Only import names starting with 'Allow' are allowed to be imported from 'foo'."
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import * as AllowedObject from "foo/bar";
+           ~~~~~~~~~~~~~~~~~~
+!!! error TS24276: * import is invalid because only imports that match the pattern '/^Allow/u' from 'foo/bar' are allowed. Only import names starting with 'Allow' are allowed to be imported from 'foo'.
+                                   ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

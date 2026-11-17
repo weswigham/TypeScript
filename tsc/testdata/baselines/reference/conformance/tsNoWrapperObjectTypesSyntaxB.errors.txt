@@ -1,0 +1,17 @@
+input.ts(1,14): error TS20460: Prefer using the primitive `number` as a type name, rather than the upper-cased `Number`.
+input.ts(3,27): error TS20460: Prefer using the primitive `string` as a type name, rather than the upper-cased `String`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "@typescript-eslint/no-wrapper-object-types": "error" } }
+    }
+==== input.ts (2 errors) ====
+    let wrapped: Number;
+                 ~~~~~~
+!!! error TS20460: Prefer using the primitive `number` as a type name, rather than the upper-cased `Number`.
+    let primitive: number;
+    interface Wrapped extends String {}
+                              ~~~~~~
+!!! error TS20460: Prefer using the primitive `string` as a type name, rather than the upper-cased `String`.
+    const conversion = Number(1);

@@ -1,0 +1,36 @@
+input.ts(1,7): error TS19260: Function name `other` should match variable name `value`.
+input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,1): error TS19260: Function name `different` should match property name `member`.
+input.ts(5,22): error TS19260: Function name `different` should match property name `member`.
+input.ts(6,1): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+input.ts(7,23): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "func-name-matching": ["error", "always", { "considerPropertyDescriptor": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (6 errors) ====
+    const value = function other() {};
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19260: Function name `other` should match variable name `value`.
+    const valid = function valid() {};
+    const anonymous = function() {};
+    object.member = function different() {};
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19260: Function name `different` should match property name `member`.
+    const properties = { member: function different() {} };
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19260: Function name `different` should match property name `member`.
+    module.exports = function exported() {};
+    ~~~~~~
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+    Object.defineProperty(object, "named", { value: function named() {} });
+                          ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

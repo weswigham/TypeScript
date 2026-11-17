@@ -1,0 +1,31 @@
+/input.ts(1,14): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,27): error TS2304: Cannot find name 'ready'.
+/input.ts(1,49): error TS24226: Unnecessary 'else' after 'return'.
+/input.ts(1,66): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-else-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function run(value) { if (ready) return 1; else { let value = 2; use(value); } }
+                 ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                              ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24226: Unnecessary 'else' after 'return'.
+                                                                     ~~~
+!!! error TS2304: Cannot find name 'use'.

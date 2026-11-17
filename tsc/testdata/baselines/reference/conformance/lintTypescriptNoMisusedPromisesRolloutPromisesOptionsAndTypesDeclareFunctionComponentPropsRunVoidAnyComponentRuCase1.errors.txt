@@ -1,0 +1,29 @@
+/input.tsx(1,77): error TS24049: Promise-returning function provided to attribute where a void return was expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    declare function Component(props: { run: () => void }): any; <Component run={async () => {}} />;
+                                                                                ~~~~~~~~~~~~~~~~
+!!! error TS24049: Promise-returning function provided to attribute where a void return was expected.
+    export {};

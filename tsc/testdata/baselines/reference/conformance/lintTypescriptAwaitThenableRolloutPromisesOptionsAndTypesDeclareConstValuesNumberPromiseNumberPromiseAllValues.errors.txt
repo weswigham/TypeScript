@@ -1,0 +1,29 @@
+/input.ts(1,65): error TS24004: Unexpected iterable of non-Promise (non-"Thenable") values passed to promise aggregator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/await-thenable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const values: (number | Promise<number>)[]; Promise.all(values);
+                                                                    ~~~~~~
+!!! error TS24004: Unexpected iterable of non-Promise (non-"Thenable") values passed to promise aggregator.
+    export {};

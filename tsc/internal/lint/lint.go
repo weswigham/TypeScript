@@ -9,11 +9,10 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+	lintconfig "github.com/microsoft/TypeScript/tsc/internal/lint/config"
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules"
-	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/change"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsutil"
-	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
 func Walk(node *ast.Node, visitors []rules.Rule) {
@@ -64,9 +63,14 @@ func getDiagnostics(ctx context.Context, program *compiler.Program, files []*ast
 	var names []string
 	var result []*ast.Diagnostic
 	for name, severity := range config.LintRules() {
+		if severity == "off" {
+			continue
+		}
 		if _, ok := rules.Factories[name]; !ok {
 			result = append(result, ast.NewCompilerDiagnostic(diagnostics.Unknown_lint_rule_0, name))
-		} else if severity != "off" {
+		} else if err := lintconfig.ValidateRuleOptions(name, config.LintRuleOptions(name)); err != nil {
+			result = append(result, ast.NewCompilerDiagnostic(diagnostics.Invalid_lint_rule_options_for_0_Colon_1, name, err.Error()))
+		} else {
 			names = append(names, name)
 		}
 	}
@@ -75,12 +79,16 @@ func getDiagnostics(ctx context.Context, program *compiler.Program, files []*ast
 	}
 	slices.Sort(names)
 	files = core.Filter(files, func(file *ast.SourceFile) bool {
-		return !file.IsDeclarationFile && program.IsFormattingInput(file)
+		return program.IsFormattingInput(file)
 	})
+	program.BindSourceFiles()
 	outputs := make([][]*ast.Diagnostic, len(files))
 	group := core.NewWorkGroup(options.SingleThreaded.IsTrue())
 	for index, file := range files {
 		group.Queue(func() {
+			directives, directiveErrors := parseDirectives(file)
+			outputs[index] = append(outputs[index], directiveErrors...)
+			reportRules := make(map[*ast.Diagnostic]string)
 			var typeChecker *checker.Checker
 			var release func()
 			defer func() {
@@ -97,24 +105,37 @@ func getDiagnostics(ctx context.Context, program *compiler.Program, files []*ast
 			visitors := make([]rules.Rule, 0, len(names))
 			for _, name := range names {
 				visitors = append(visitors, rules.Factories[name](rules.Context{
-					File:       file,
-					Locale:     locale.FromContext(ctx),
-					GetChecker: getChecker,
+					CompilerOptions:  options,
+					CurrentDirectory: program.GetCurrentDirectory(),
+					File:             file,
+					Options:          config.LintRuleOptions(name),
+					GetChecker:       getChecker,
 					NewTracker: func() *change.Tracker {
 						return change.NewTracker(ctx, options, lsutil.GetDefaultFormatCodeSettings().WithOptions(config.FormattingOptions()), nil)
 					},
-					Report: func(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-						start := scanner.GetTokenPosOfNode(node, file, false)
-						diagnostic := ast.NewDiagnostic(file, core.NewTextRange(start, node.End()), message, args...)
+					Report: func(location core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+						diagnostic := ast.NewDiagnostic(file, location, message, args...)
 						if config.LintRules()[name] == "warning" {
 							diagnostic.SetCategory(diagnostics.CategoryWarning)
 						}
 						outputs[index] = append(outputs[index], diagnostic)
+						reportRules[diagnostic] = name
 						return diagnostic
 					},
 				}))
 			}
 			Walk(file.AsNode(), visitors)
+			for _, visitor := range visitors {
+				if provider, ok := visitor.(rules.SuggestionProvider); ok {
+					for diagnostic, suggestions := range provider.Suggestions() {
+						diagnostic.SetCodeFixSuggestions(suggestions...)
+					}
+				}
+				outputs[index] = core.Filter(outputs[index], func(diagnostic *ast.Diagnostic) bool {
+					name := reportRules[diagnostic]
+					return name == "" || !isSuppressed(file, directives, name, diagnostic.Loc())
+				})
+			}
 		})
 	}
 	group.RunAndWait()

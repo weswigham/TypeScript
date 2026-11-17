@@ -1,0 +1,27 @@
+/input.ts(1,19): error TS2304: Cannot find name 'NotKnown'.
+/input.ts(1,19): error TS24064: 'NotKnown' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    type ErrorTypes = NotKnown & 0;
+                      ~~~~~~~~
+!!! error TS2304: Cannot find name 'NotKnown'.
+                      ~~~~~~~~
+!!! error TS24064: 'NotKnown' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.

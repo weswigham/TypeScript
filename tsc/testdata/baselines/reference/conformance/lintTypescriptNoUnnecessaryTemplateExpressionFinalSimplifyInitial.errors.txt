@@ -1,0 +1,23 @@
+/input.ts(1,32): error TS24087: Template literal expression is unnecessary and can be simplified.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-template-expression": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const text: string; `${text}`;
+                                   ~~~~
+!!! error TS24087: Template literal expression is unnecessary and can be simplified.

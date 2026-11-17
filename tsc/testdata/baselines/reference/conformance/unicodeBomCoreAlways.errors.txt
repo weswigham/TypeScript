@@ -1,0 +1,15 @@
+input.ts(1,1): error TS24357: Expected Unicode BOM (Byte Order Mark).
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "unicode-bom": ["error", "always"] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    // leading comment
+    
+!!! error TS24357: Expected Unicode BOM (Byte Order Mark).
+    const value = 1;

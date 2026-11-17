@@ -1,0 +1,23 @@
+/input.ts(1,12): error TS24146: Parameter should be a read only type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-readonly-parameter-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f(value: { [key: string]: number }) {}
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.

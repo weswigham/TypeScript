@@ -1,0 +1,44 @@
+/input.tsx(1,1): error TS24255: 'mod' import is restricted from being used.
+/input.tsx(1,10): error TS24268: 'bar' import from 'mod' is restricted. Import bar from qux instead.
+/input.tsx(1,21): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "name": "mod"
+                            },
+                            {
+                                "importNames": [
+                                    "bar"
+                                ],
+                                "message": "Import bar from qux instead.",
+                                "name": "mod"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    import { bar } from 'mod'
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'mod' import is restricted from being used.
+             ~~~
+!!! error TS24268: 'bar' import from 'mod' is restricted. Import bar from qux instead.
+                        ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

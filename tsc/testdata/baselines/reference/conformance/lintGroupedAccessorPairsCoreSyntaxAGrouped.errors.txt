@@ -1,0 +1,22 @@
+/input.ts(1,55): error TS19272: Accessor pair getter 'value' and setter 'value' should be grouped.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "grouped-accessor-pairs": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const object = { get value() { return 1; }, other: 1, set value(value) {} };
+                                                          ~~~~~~~~~~~~~~~~~~~
+!!! error TS19272: Accessor pair getter 'value' and setter 'value' should be grouped.

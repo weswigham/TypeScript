@@ -1,0 +1,20 @@
+input.ts(1,50): error TS21082: Unnecessary assertion: Array#reduce accepts a type parameter for the default value.
+input.ts(2,50): error TS21082: Unnecessary assertion: Array#reduce accepts a type parameter for the default value.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"compilerOptions": { "target": "esnext", "strict": true },
+    	"lint": { "rules": { "@typescript-eslint/prefer-reduce-type-parameter": "error" } },
+    	"files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    [1, 2].reduce((acc, value) => acc.concat(value), [] as number[]);
+                                                     ~~~~~~~~~~~~~~
+!!! error TS21082: Unnecessary assertion: Array#reduce accepts a type parameter for the default value.
+    [1, 2].reduce((acc, value) => acc.concat(value), <number[]>[]);
+                                                     ~~~~~~~~~~~~
+!!! error TS21082: Unnecessary assertion: Array#reduce accepts a type parameter for the default value.
+    [1, 2].reduce<number[]>((acc, value) => acc.concat(value), []);
+    ['a', 'b'].reduce((acc, key) => acc, {} as Record<'a' | 'b', boolean>);

@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,51): error TS2339: Property 'c' does not exist on type 'A'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-this-before-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends B { constructor() { super(); this.c(); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                                                      ~
+!!! error TS2339: Property 'c' does not exist on type 'A'.

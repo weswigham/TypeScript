@@ -1,0 +1,26 @@
+input.ts(1,25): error TS20471: Expected a `const` instead of a literal type assertion.
+input.ts(2,24): error TS20471: Expected a `const` instead of a literal type assertion.
+input.ts(3,16): error TS20472: Expected a `const` assertion instead of a literal type annotation.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-as-const": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    const asserted = "a" as "a";
+                            ~~~
+!!! error TS20471: Expected a `const` instead of a literal type assertion.
+    const angleAsserted = <1>1;
+                           ~
+!!! error TS20471: Expected a `const` instead of a literal type assertion.
+    let annotated: 1 = 1;
+                   ~
+!!! error TS20472: Expected a `const` assertion instead of a literal type annotation.
+    
+    const constant = "a" as const;
+    const differentRawLiteral = 0x10 as 16;
+    const widened = "a" as string;

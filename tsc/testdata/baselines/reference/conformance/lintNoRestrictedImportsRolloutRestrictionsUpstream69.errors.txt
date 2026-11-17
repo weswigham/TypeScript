@@ -1,0 +1,32 @@
+/input.tsx(1,21): error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "importNamePattern": "^Foo",
+                                "regex": "my/relative-module"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    import { Bar } from '../../my/relative-module';
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.

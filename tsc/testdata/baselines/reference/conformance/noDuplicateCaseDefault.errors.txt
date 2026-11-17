@@ -1,0 +1,61 @@
+input.ts(4,5): error TS22012: Duplicate case label.
+input.ts(5,5): error TS22012: Duplicate case label.
+input.ts(9,5): error TS22012: Duplicate case label.
+input.ts(11,5): error TS22012: Duplicate case label.
+input.ts(13,5): error TS22012: Duplicate case label.
+input.ts(15,5): error TS22012: Duplicate case label.
+input.ts(18,5): error TS22012: Duplicate case label.
+input.ts(20,5): error TS22012: Duplicate case label.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-duplicate-case": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (8 errors) ====
+    declare const value: any, object: any, call: any;
+    switch (value) {
+        case 1: break;
+        case 1: break;
+        ~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case 1: break;
+        ~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case 0x1: break;
+        case "text": break;
+        case 'text': break;
+        case "text": break;
+        ~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case (value): break;
+        case value: break;
+        ~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case object.property: break;
+        case object /* preserve */ . property: break;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case call(value + 1).property: break;
+        case call(value+1) .property: break;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case call((value + 1)).property: break;
+        case /pattern/g: break;
+        case /pattern/g: break;
+        ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        case `value${value}`: break;
+        case `value${value}`: break;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22012: Duplicate case label.
+        default: break;
+    }
+    switch (value) { case value: break; }
+    switch (value) { case value: break; }
+    switch (value) {
+        case 1: switch (value) { case 1: break; }
+    }

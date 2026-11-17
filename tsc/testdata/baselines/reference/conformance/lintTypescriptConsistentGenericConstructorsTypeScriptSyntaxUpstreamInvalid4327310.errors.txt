@@ -1,0 +1,33 @@
+/input.ts(2,14): error TS24446: The generic type arguments should be specified as part of the type annotation.
+/input.ts(2,24): error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": [
+                    "error",
+                    "type-annotation"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    function foo([a] = new Foo<string>()) {}
+                 ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24446: The generic type arguments should be specified as part of the type annotation.
+                           ~~~
+!!! error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+!!! related TS2728 /input.ts:2:10: 'foo' is declared here.
+          

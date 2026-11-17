@@ -1,0 +1,25 @@
+/input.tsx(1,13): error TS24277: Using 'Literal[regex.flags=/./]' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "Literal[regex.flags=/./]"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    console.log(/a/i);
+                ~~~~
+!!! error TS24277: Using 'Literal[regex.flags=/./]' is not allowed.

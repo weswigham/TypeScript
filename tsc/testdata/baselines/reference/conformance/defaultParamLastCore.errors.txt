@@ -1,0 +1,21 @@
+input.ts(1,18): error TS19242: Default parameters should be last.
+input.ts(2,19): error TS19242: Default parameters should be last.
+input.ts(2,35): error TS1016: A required parameter cannot follow an optional parameter.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "default-param-last": "error" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    function invalid(first = 1, second: number) {}
+                     ~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+    function optional(first?: number, second: number) {}
+                      ~~~~~~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+                                      ~~~~~~
+!!! error TS1016: A required parameter cannot follow an optional parameter.
+    function valid(first = 1, ...rest: number[]) {}

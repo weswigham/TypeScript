@@ -1,0 +1,79 @@
+input.ts(1,20): error TS19505: Return statement should not contain assignment.
+input.ts(1,27): error TS2304: Cannot find name 'result'.
+input.ts(1,36): error TS2304: Cannot find name 'a'.
+input.ts(1,40): error TS2304: Cannot find name 'b'.
+input.ts(2,29): error TS2304: Cannot find name 'result'.
+input.ts(2,38): error TS2304: Cannot find name 'a'.
+input.ts(2,42): error TS2304: Cannot find name 'b'.
+input.ts(3,20): error TS19505: Return statement should not contain assignment.
+input.ts(3,28): error TS2304: Cannot find name 'result'.
+input.ts(3,39): error TS2304: Cannot find name 'a'.
+input.ts(3,43): error TS2304: Cannot find name 'b'.
+input.ts(4,15): error TS19506: Arrow function should not return assignment.
+input.ts(4,21): error TS2304: Cannot find name 'result'.
+input.ts(4,30): error TS2304: Cannot find name 'a'.
+input.ts(4,34): error TS2304: Cannot find name 'b'.
+input.ts(5,24): error TS2304: Cannot find name 'result'.
+input.ts(5,33): error TS2304: Cannot find name 'a'.
+input.ts(5,37): error TS2304: Cannot find name 'b'.
+input.ts(6,35): error TS2304: Cannot find name 'result'.
+input.ts(6,44): error TS2304: Cannot find name 'a'.
+input.ts(6,48): error TS2304: Cannot find name 'b'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-return-assign": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (21 errors) ====
+    function first() { return result = a * b; }
+                       ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19505: Return statement should not contain assignment.
+                              ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                       ~
+!!! error TS2304: Cannot find name 'a'.
+                                           ~
+!!! error TS2304: Cannot find name 'b'.
+    function second() { return (result = a * b); }
+                                ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                         ~
+!!! error TS2304: Cannot find name 'a'.
+                                             ~
+!!! error TS2304: Cannot find name 'b'.
+    function third() { return (result) = (a * b); }
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19505: Return statement should not contain assignment.
+                               ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                          ~
+!!! error TS2304: Cannot find name 'a'.
+                                              ~
+!!! error TS2304: Cannot find name 'b'.
+    const arrow = () => result = a * b;
+                  ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19506: Arrow function should not return assignment.
+                        ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                 ~
+!!! error TS2304: Cannot find name 'a'.
+                                     ~
+!!! error TS2304: Cannot find name 'b'.
+    const allowed = () => (result = a * b);
+                           ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                    ~
+!!! error TS2304: Cannot find name 'a'.
+                                        ~
+!!! error TS2304: Cannot find name 'b'.
+    const nested = () => function() { result = a * b; };
+                                      ~~~~~~
+!!! error TS2304: Cannot find name 'result'.
+                                               ~
+!!! error TS2304: Cannot find name 'a'.
+                                                   ~
+!!! error TS2304: Cannot find name 'b'.

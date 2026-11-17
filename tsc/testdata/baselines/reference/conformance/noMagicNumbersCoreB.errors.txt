@@ -1,0 +1,46 @@
+input.ts(4,12): error TS19371: No magic number: 6.
+input.ts(5,1): error TS2304: Cannot find name 'call'.
+input.ts(5,6): error TS19371: No magic number: 7.
+input.ts(5,9): error TS19371: No magic number: -8.
+input.ts(5,13): error TS19371: No magic number: 100n.
+input.ts(6,10): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+input.ts(7,17): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+input.ts(8,16): error TS19371: No magic number: 1.
+input.ts(8,19): error TS19371: No magic number: 2.
+input.ts(9,7): error TS19371: No magic number: 0.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-magic-numbers":"error"}},"files":["input.ts"]}
+==== input.ts (10 errors) ====
+    let declared = 3;
+    const object = { value: 4 };
+    object.value = 5;
+    declared = 6;
+               ~
+!!! error TS19371: No magic number: 6.
+    call(7, -8, 100n);
+    ~~~~
+!!! error TS2304: Cannot find name 'call'.
+         ~
+!!! error TS19371: No magic number: 7.
+            ~~
+!!! error TS19371: No magic number: -8.
+                ~~~~
+!!! error TS19371: No magic number: 100n.
+    parseInt(text, 10);
+             ~~~~
+!!! error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'Text' is declared here.
+    Number.parseInt(text, 16);
+                    ~~~~
+!!! error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'Text' is declared here.
+    const array = [1, 2];
+                   ~
+!!! error TS19371: No magic number: 1.
+                      ~
+!!! error TS19371: No magic number: 2.
+    array[0];
+          ~
+!!! error TS19371: No magic number: 0.

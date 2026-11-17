@@ -1,0 +1,24 @@
+/input.ts(1,30): error TS24186: Value returned in a context where a void return is expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-void-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn: () => void = () => Math.random()!;
+                                 ~~~~~~~~~~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.

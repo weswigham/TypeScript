@@ -1,0 +1,39 @@
+input.ts(1,17): error TS24129: Default value is useless because the property is not optional.
+input.ts(3,29): error TS24129: Default value is useless because the property is not optional.
+input.ts(10,21): error TS24129: Default value is useless because the parameter is not optional.
+input.ts(13,15): error TS24129: Default value is useless because the property is not optional.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-useless-default-assignment": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    const { value = 0 } = { value: 1 };
+                    ~
+!!! error TS24129: Default value is useless because the property is not optional.
+    
+    function required({ value = 0 }: { value: number }): number {
+                                ~
+!!! error TS24129: Default value is useless because the property is not optional.
+        return value;
+    }
+    function optional({ value = 0 }: { value?: number }): number {
+        return value;
+    }
+    
+    [1, 2].map((value = 1) => value);
+                        ~
+!!! error TS24129: Default value is useless because the parameter is not optional.
+    
+    declare const tuple: [number, ...number[]];
+    const [head = 1, tail = 2] = tuple;
+                  ~
+!!! error TS24129: Default value is useless because the property is not optional.
+    
+    declare const values: number[];
+    const [first = 1] = values;
+    const callback = (value: number = 1) => value;

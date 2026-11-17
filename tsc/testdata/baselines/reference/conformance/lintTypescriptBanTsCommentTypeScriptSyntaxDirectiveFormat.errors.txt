@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS22032: The description for the "@ts-expect-error" directive must match the ^: TS[0-9]+ format.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/ban-ts-comment": [
+                    "error",
+                    {
+                        "ts-expect-error": {
+                            "descriptionFormat": "^: TS[0-9]+"
+                        }
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    // @ts-expect-error: explanation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22032: The description for the "@ts-expect-error" directive must match the ^: TS[0-9]+ format.
+    work();

@@ -1,0 +1,29 @@
+/input.ts(1,6): error TS19366: Irregular whitespace not allowed.
+/input.ts(1,22): error TS19366: Irregular whitespace not allowed.
+/input.ts(2,19): error TS19366: Irregular whitespace not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-irregular-whitespace": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const value = ' '; // 
+         ~
+!!! error TS19366: Irregular whitespace not allowed.
+                         ~
+!!! error TS19366: Irregular whitespace not allowed.
+    const template = ` `;
+                      ~
+!!! error TS19366: Irregular whitespace not allowed.

@@ -1,0 +1,25 @@
+/input.ts(1,12): error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.
+/input.ts(1,35): error TS24326: Capture group '(d)' should be converted to a named or non-capturing group.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-named-capture-group": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const re = /(a)(?<word>b)(?:c)/u; RegExp("(d)");
+               ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.
+                                      ~~~~~~~~~~~~~
+!!! error TS24326: Capture group '(d)' should be converted to a named or non-capturing group.

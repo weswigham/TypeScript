@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS2304: Cannot find name 'abc'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    if(true && abc==='str'){}
+               ~~~
+!!! error TS2304: Cannot find name 'abc'.

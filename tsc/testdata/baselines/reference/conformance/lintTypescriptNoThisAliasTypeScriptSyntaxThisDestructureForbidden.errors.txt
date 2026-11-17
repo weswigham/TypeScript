@@ -1,0 +1,30 @@
+/input.ts(1,7): error TS20466: Unexpected aliasing of members of 'this' to local variables.
+/input.ts(1,9): error TS2339: Property 'value' does not exist on type 'typeof globalThis'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-this-alias": [
+                    "error",
+                    {
+                        "allowDestructuring": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const { value } = this;
+          ~~~~~~~~~
+!!! error TS20466: Unexpected aliasing of members of 'this' to local variables.
+            ~~~~~
+!!! error TS2339: Property 'value' does not exist on type 'typeof globalThis'.

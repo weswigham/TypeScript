@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,5): error TS22016: Expected a conditional expression and instead saw an assignment.
+/input.ts(1,13): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-cond-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if (value = other) {}
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+        ~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+                ~~~~~
+!!! error TS2304: Cannot find name 'other'.

@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS19326: Function 'run' has too many parameters (2). Maximum allowed is 1.
+/input.ts(1,22): error TS7006: Parameter 'first' implicitly has an 'any' type.
+/input.ts(1,29): error TS7006: Parameter 'second' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/max-params": [
+                    "error",
+                    {
+                        "maximum": 1
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    declare function run(first, second): void;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function 'run' has too many parameters (2). Maximum allowed is 1.
+                         ~~~~~
+!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
+                                ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.

@@ -1,0 +1,25 @@
+/input.tsx(1,13): error TS24277: Using 'BreakStatement[label]' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "BreakStatement[label]"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    A: for (;;) break A;
+                ~~~~~~~~
+!!! error TS24277: Using 'BreakStatement[label]' is not allowed.

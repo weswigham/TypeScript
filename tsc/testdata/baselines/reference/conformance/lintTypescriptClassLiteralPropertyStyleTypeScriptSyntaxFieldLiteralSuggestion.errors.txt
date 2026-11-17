@@ -1,0 +1,25 @@
+/input.ts(1,23): error TS20311: Literals should be exposed using getters.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/class-literal-property-style": [
+                    "error",
+                    "getters"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { readonly value = 1; }
+                          ~~~~~
+!!! error TS20311: Literals should be exposed using getters.

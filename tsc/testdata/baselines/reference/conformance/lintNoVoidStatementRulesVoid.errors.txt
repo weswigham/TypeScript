@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS19006: Expected 'undefined' and instead saw 'void'.
+/input.ts(1,23): error TS19006: Expected 'undefined' and instead saw 'void'.
+/input.ts(1,33): error TS19006: Expected 'undefined' and instead saw 'void'.
+/input.ts(1,38): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-void": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    void 0; const value = void(0); (void work());
+    ~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+                          ~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+                                    ~~~~~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+                                         ~~~~
+!!! error TS2304: Cannot find name 'work'.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

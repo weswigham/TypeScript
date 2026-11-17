@@ -1,0 +1,32 @@
+input.ts(2,5): error TS20475: Explicit enum value must only be a literal value (string or number) or a bitwise expression.
+input.ts(3,5): error TS20475: Explicit enum value must only be a literal value (string or number) or a bitwise expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-literal-enum-member": ["error", { "allowBitwiseExpressions": true }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    enum Computed {
+        Arithmetic = 1 + 1,
+        ~~~~~~~~~~
+!!! error TS20475: Explicit enum value must only be a literal value (string or number) or a bitwise expression.
+        Reference = Arithmetic,
+        ~~~~~~~~~
+!!! error TS20475: Explicit enum value must only be a literal value (string or number) or a bitwise expression.
+    }
+    
+    enum Literal {
+        Negative = -42,
+        Text = "text",
+        Template = `template`,
+    }
+    
+    enum Flags {
+        First = 1 << 0,
+        Second = 2,
+        Both = First | Flags.Second,
+    }

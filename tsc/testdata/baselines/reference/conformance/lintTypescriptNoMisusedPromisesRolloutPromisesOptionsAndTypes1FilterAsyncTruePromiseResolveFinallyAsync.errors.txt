@@ -1,0 +1,29 @@
+/input.ts(1,12): error TS24046: Expected a non-Promise value to be returned.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    [1].filter(async () => true); Promise.resolve().finally(async () => {});
+               ~~~~~~~~~~~~~~~~
+!!! error TS24046: Expected a non-Promise value to be returned.
+    export {};

@@ -1,0 +1,46 @@
+input.ts(2,5): error TS24145: Member 'stable' is never reassigned; mark it as `readonly`.
+input.ts(3,5): error TS24145: Member 'nested' is never reassigned; mark it as `readonly`.
+input.ts(4,5): error TS24145: Member '#stable' is never reassigned; mark it as `readonly`.
+input.ts(5,5): error TS24145: Member 'Symbol.iterator' is never reassigned; mark it as `readonly`.
+input.ts(9,17): error TS24145: Member 'parameter' is never reassigned; mark it as `readonly`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/prefer-readonly": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (5 errors) ====
+    class Owner {
+        private stable = 1;
+        ~~~~~~~~~~~~~~
+!!! error TS24145: Member 'stable' is never reassigned; mark it as `readonly`.
+        private nested = { count: 0 };
+        ~~~~~~~~~~~~~~
+!!! error TS24145: Member 'nested' is never reassigned; mark it as `readonly`.
+        #stable = 1;
+        ~~~~~~~
+!!! error TS24145: Member '#stable' is never reassigned; mark it as `readonly`.
+        private [Symbol.iterator] = () => 1;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24145: Member 'Symbol.iterator' is never reassigned; mark it as `readonly`.
+        private updated = 1;
+        private captured = 1;
+        private static updated = 1;
+        constructor(private parameter = 1) {
+                    ~~~~~~~~~~~~~~~~~
+!!! error TS24145: Member 'parameter' is never reassigned; mark it as `readonly`.
+            this.stable = 2;
+            Owner.updated++;
+            const self = this;
+            (() => self.captured++)();
+        }
+        update(other: { stable: number }) {
+            other.stable++;
+            this.nested.count++;
+            this['updated']++;
+            return this.#stable + this.parameter;
+        }
+    }

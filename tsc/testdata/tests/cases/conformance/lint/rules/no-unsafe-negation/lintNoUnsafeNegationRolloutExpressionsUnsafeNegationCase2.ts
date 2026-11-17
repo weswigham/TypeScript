@@ -1,0 +1,27 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestRolloutExpressionsUnsafeNegation (invocation 2).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "no-unsafe-negation": [
+                "error",
+                {
+                    "enforceForOrderingRelations": true
+                }
+            ]
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+(!value) in object;

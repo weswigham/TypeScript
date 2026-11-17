@@ -1,0 +1,32 @@
+/input.ts(2,21): error TS24293: The value assigned to 'done' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    function* generator() {
+                    let done = false;
+                        ~~~~
+!!! error TS24293: The value assigned to 'done' is not used in subsequent statements.
+                    yield 1;
+                    done = true;
+                    console.log(done);
+                }

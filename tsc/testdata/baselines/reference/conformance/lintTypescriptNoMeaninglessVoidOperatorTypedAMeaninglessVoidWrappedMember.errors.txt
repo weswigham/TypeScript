@@ -1,0 +1,23 @@
+/input.ts(1,39): error TS20723: void operator is useless here; it should only discard a call's return value
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-meaningless-void-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const obj: { value: string }; void (obj.value as string);
+                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20723: void operator is useless here; it should only discard a call's return value

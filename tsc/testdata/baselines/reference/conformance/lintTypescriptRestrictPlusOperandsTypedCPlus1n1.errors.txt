@@ -1,0 +1,26 @@
+/input.ts(1,1): error TS2365: Operator '+' cannot be applied to types '1n' and '1'.
+/input.ts(1,1): error TS21085: Numeric '+' operations must either be both bigints or both numbers. Got `bigint` + `number`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/restrict-plus-operands": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    1n + 1;
+    ~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types '1n' and '1'.
+    ~~~~~~
+!!! error TS21085: Numeric '+' operations must either be both bigints or both numbers. Got `bigint` + `number`.

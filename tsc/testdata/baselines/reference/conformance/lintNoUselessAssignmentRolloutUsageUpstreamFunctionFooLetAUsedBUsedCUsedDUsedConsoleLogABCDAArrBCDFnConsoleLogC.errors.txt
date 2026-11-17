@@ -1,0 +1,44 @@
+/input.ts(4,20): error TS24293: The value assigned to 'a' is not used in subsequent statements.
+/input.ts(4,29): error TS24293: The value assigned to 'b' is not used in subsequent statements.
+/input.ts(4,39): error TS2322: Type 'any[]' is not assignable to type 'string'.
+/input.ts(4,39): error TS24293: The value assigned to 'd' is not used in subsequent statements.
+/input.ts(4,46): error TS2304: Cannot find name 'fn'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (5 errors) ====
+    function foo() {
+                    let a = 'used', b = 'used', c = 'used', d = 'used';
+                    console.log(a, b, c, d);
+                    ({ a, arr: [b, c,, ...d] } = fn());
+                       ~
+!!! error TS24293: The value assigned to 'a' is not used in subsequent statements.
+                                ~
+!!! error TS24293: The value assigned to 'b' is not used in subsequent statements.
+                                          ~
+!!! error TS2322: Type 'any[]' is not assignable to type 'string'.
+                                          ~
+!!! error TS24293: The value assigned to 'd' is not used in subsequent statements.
+                                                 ~~
+!!! error TS2304: Cannot find name 'fn'.
+                    console.log(c);
+                }

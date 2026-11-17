@@ -1,0 +1,30 @@
+/input.ts(1,7): error TS2451: Cannot redeclare block-scoped variable 'Object'.
+/input.ts(1,16): error TS2304: Cannot find name 'custom'.
+/input.ts(1,40): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extend-native": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const Object = custom; function nested(Object) { Object.prototype.method = 0; }
+          ~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'Object'.
+!!! related TS6203 lib.es5.d.ts:--:--: 'Object' was also declared here.
+!!! related TS6204 lib.es5.d.ts:--:--: and here.
+                   ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.
+                                           ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.

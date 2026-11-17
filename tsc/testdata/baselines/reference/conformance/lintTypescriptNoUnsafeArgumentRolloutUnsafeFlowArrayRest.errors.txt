@@ -1,0 +1,23 @@
+/input.ts(1,82): error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-argument": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; declare function take(...x: string[]): void; take('a', value);
+                                                                                     ~~~~~
+!!! error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.

@@ -1,0 +1,19 @@
+input.ts(1,1): error TS22017: Expected a function expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "func-style": ["error", "expression", { "overrides": { "namedExports": "ignore" } }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (1 errors) ====
+    function declaration() {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22017: Expected a function expression.
+    const expression = function() {};
+    const arrow = () => 1;
+    export function named() {}
+    export default function() {}
+    function overloaded(value: number): void;
+    function overloaded(value: unknown) {}

@@ -1,0 +1,26 @@
+/input.ts(1,15): error TS24345: Expected object keys to be in natural insensitive ascending order. 'Item2' should be before 'item10'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": [
+                    "error",
+                    "asc",
+                    {
+                        "caseSensitive": false,
+                        "natural": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    ({ item10: 1, Item2: 2 });
+                  ~~~~~
+!!! error TS24345: Expected object keys to be in natural insensitive ascending order. 'Item2' should be before 'item10'.

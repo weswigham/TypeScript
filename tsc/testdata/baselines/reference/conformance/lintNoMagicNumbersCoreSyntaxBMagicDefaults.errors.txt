@@ -1,0 +1,32 @@
+/input.ts(1,77): error TS19371: No magic number: 6.
+/input.ts(1,80): error TS2304: Cannot find name 'call'.
+/input.ts(1,85): error TS19371: No magic number: 7.
+/input.ts(1,98): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-magic-numbers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    let declared = 3; const object = { value: 4 }; object.value = 5; declared = 6; call(7); parseInt(text, 10);
+                                                                                ~
+!!! error TS19371: No magic number: 6.
+                                                                                   ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                        ~
+!!! error TS19371: No magic number: 7.
+                                                                                                     ~~~~
+!!! error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'Text' is declared here.

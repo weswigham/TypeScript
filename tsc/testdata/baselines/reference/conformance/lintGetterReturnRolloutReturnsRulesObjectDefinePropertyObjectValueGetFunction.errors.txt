@@ -1,0 +1,26 @@
+/input.ts(1,23): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,42): error TS24210: Expected to return a value in method 'get'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "getter-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    Object.defineProperty(object, 'value', { get: function() {} });
+                          ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                             ~~~~~~~~~~~~~
+!!! error TS24210: Expected to return a value in method 'get'.

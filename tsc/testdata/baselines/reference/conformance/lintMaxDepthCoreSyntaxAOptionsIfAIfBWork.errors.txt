@@ -1,0 +1,36 @@
+/input.ts(1,5): error TS2304: Cannot find name 'a'.
+/input.ts(1,8): error TS19302: Blocks are nested too deeply (2). Maximum allowed is 1.
+/input.ts(1,12): error TS2304: Cannot find name 'b'.
+/input.ts(1,15): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-depth": [
+                    "error",
+                    {
+                        "maximum": 1
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    if (a) if (b) work();
+        ~
+!!! error TS2304: Cannot find name 'a'.
+           ~~~~~~~~~~~~~~
+!!! error TS19302: Blocks are nested too deeply (2). Maximum allowed is 1.
+               ~
+!!! error TS2304: Cannot find name 'b'.
+                  ~~~~
+!!! error TS2304: Cannot find name 'work'.

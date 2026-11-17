@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'obj'.
+/input.ts(1,16): error TS2304: Cannot find name 'obj'.
+/input.ts(1,34): error TS2304: Cannot find name 'obj'.
+/input.ts(1,46): error TS2304: Cannot find name 'fallback'.
+/input.ts(1,68): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unsafe-optional-chaining": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    obj?.method(); obj?.method?.(); (obj?.key ?? fallback).prop; ({ ...obj?.key });
+    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                   ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                     ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                 ~~~~~~~~
+!!! error TS2304: Cannot find name 'fallback'.
+                                                                       ~~~
+!!! error TS2304: Cannot find name 'obj'.

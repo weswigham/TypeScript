@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-named-capture-group": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /(a)/;
+               ~~~~~
+!!! error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.

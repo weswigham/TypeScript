@@ -1,0 +1,25 @@
+/input.ts(1,23): error TS2304: Cannot find name 'foo'.
+/input.ts(1,49): error TS19518: Setter cannot return a value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-setter-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    Object.defineProperty(foo, 'bar', { set: val => val });
+                          ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                    ~~~
+!!! error TS19518: Setter cannot return a value.

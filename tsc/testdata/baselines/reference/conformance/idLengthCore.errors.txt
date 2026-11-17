@@ -1,0 +1,35 @@
+input.ts(1,5): error TS22021: Identifier name 'a' is too short (< 2).
+input.ts(4,18): error TS22021: Identifier name 'b' is too short (< 2).
+input.ts(5,18): error TS22021: Identifier name 'c' is too short (< 2).
+input.ts(6,8): error TS2339: Property 'd' does not exist on type '{ c: number; valid: number; }'.
+input.ts(6,8): error TS22021: Identifier name 'd' is too short (< 2).
+input.ts(8,17): error TS22021: Identifier name '#e' is too short (< 2).
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "id-length": ["error", { "min": 2, "max": 10, "exceptions": ["i"], "exceptionPatterns": ["^_"] }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (6 errors) ====
+    let a = 1;
+        ~
+!!! error TS22021: Identifier name 'a' is too short (< 2).
+    let i = 0;
+    let _x = 1;
+    function inspect(b: number) { return b; }
+                     ~
+!!! error TS22021: Identifier name 'b' is too short (< 2).
+    const object = { c: 1, valid: 1 };
+                     ~
+!!! error TS22021: Identifier name 'c' is too short (< 2).
+    object.d = 1;
+           ~
+!!! error TS2339: Property 'd' does not exist on type '{ c: number; valid: number; }'.
+           ~
+!!! error TS22021: Identifier name 'd' is too short (< 2).
+    object.c;
+    class Example { #e = 1; method() { return this.#e; } }
+                    ~~
+!!! error TS22021: Identifier name '#e' is too short (< 2).

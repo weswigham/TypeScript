@@ -1,0 +1,26 @@
+/input.tsx(1,14): error TS7006: Parameter 'parseInt' implicitly has an 'any' type.
+/input.tsx(1,24): error TS7006: Parameter 'Number' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-numeric-literals": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    function foo(parseInt, Number) { parseInt('11', 2); Number.parseInt('67', 8); }
+                 ~~~~~~~~
+!!! error TS7006: Parameter 'parseInt' implicitly has an 'any' type.
+                           ~~~~~~
+!!! error TS7006: Parameter 'Number' implicitly has an 'any' type.

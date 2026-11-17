@@ -1,0 +1,23 @@
+/input.ts(1,17): error TS20906: Qualifier is unnecessary since 'A' is in scope.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-qualifier": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    enum E { A, B = E.A }
+                    ~
+!!! error TS20906: Qualifier is unnecessary since 'A' is in scope.

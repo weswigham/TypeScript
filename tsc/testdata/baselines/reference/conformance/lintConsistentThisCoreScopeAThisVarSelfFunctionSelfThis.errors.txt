@@ -1,0 +1,32 @@
+/input.ts(1,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
+/input.ts(1,5): error TS19857: Designated alias 'self' is not assigned to 'this'.
+/input.ts(1,32): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "consistent-this": [
+                    "error",
+                    "self"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    var self; (function() { self = this; })();
+        ~~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
+!!! related TS6203 lib.dom.d.ts:--:--: 'self' was also declared here.
+        ~~~~
+!!! error TS19857: Designated alias 'self' is not assigned to 'this'.
+                                   ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.

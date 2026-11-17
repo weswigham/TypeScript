@@ -1,0 +1,23 @@
+/input.ts(1,1): error TS24080: Unnecessary conditional, comparison is always true, since `1 === 1` is true.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    1 === 1;
+    ~~~~~~~
+!!! error TS24080: Unnecessary conditional, comparison is always true, since `1 === 1` is true.

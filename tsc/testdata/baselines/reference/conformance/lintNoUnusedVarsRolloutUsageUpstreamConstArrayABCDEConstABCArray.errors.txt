@@ -1,0 +1,35 @@
+/input.ts(1,49): error TS24290: 'a' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+/input.ts(1,56): error TS24290: 'c' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    const array = ['a', 'b', 'c', 'd', 'e']; const [a, _b, c] = array;
+                                                    ~
+!!! error TS24290: 'a' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.
+                                                           ~
+!!! error TS24290: 'c' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u.

@@ -1,0 +1,23 @@
+/input.ts(1,47): error TS21360: This assignment is unnecessary since it is already assigned by a parameter property.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-parameter-property-assignment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { constructor(public value: number) { this.value = value; } }
+                                                  ~~~~~~~~~~~~~~~~~~
+!!! error TS21360: This assignment is unnecessary since it is already assigned by a parameter property.

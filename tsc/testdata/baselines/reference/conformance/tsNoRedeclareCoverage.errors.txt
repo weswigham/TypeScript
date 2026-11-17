@@ -1,0 +1,19 @@
+input.ts(3,5): error TS21331: 'repeated' is already defined.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-redeclare":"error"}},"files":["input.ts"]}
+==== input.ts (1 errors) ====
+    export {};
+    var repeated: number;
+    var repeated: number;
+        ~~~~~~~~
+!!! error TS21331: 'repeated' is already defined.
+    interface Merged { first: string; }
+    interface Merged { second: number; }
+    class Augmented {}
+    interface Augmented { field: string; }
+    function overload(value: string): string;
+    function overload(value: number): number;
+    function overload(value: string | number) { return value; }
+    function separate() { var repeated: number; }

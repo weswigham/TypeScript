@@ -1,0 +1,43 @@
+/input.ts(2,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
+/input.ts(2,23): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(4,6): error TS2300: Duplicate identifier 'T'.
+/input.ts(5,6): error TS2300: Duplicate identifier 'T'.
+/tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+    import * as Type from 'foo';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
+                          ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    
+    type T = typeof Type;
+         ~
+!!! error TS2300: Duplicate identifier 'T'.
+    type T = typeof Type.foo;
+         ~
+!!! error TS2300: Duplicate identifier 'T'.
+              

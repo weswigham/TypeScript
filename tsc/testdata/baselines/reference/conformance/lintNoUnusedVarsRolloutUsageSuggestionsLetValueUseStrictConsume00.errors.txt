@@ -1,0 +1,33 @@
+/input.ts(1,5): error TS24290: 'value' is defined but never used.
+/input.ts(1,26): error TS2304: Cannot find name 'consume'.
+/input.ts(1,34): error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    let value; 'use strict'; consume(00);
+        ~~~~~
+!!! error TS24290: 'value' is defined but never used.
+                             ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.
+                                     ~~
+!!! error TS1121: Octal literals are not allowed. Use the syntax '0o0'.

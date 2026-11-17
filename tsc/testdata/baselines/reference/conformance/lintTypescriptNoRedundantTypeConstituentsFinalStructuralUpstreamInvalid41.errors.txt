@@ -1,0 +1,24 @@
+/input.ts(1,10): error TS24066: 'unknown' is overridden by other types in this intersection type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = unknown & number;
+             ~~~~~~~
+!!! error TS24066: 'unknown' is overridden by other types in this intersection type.

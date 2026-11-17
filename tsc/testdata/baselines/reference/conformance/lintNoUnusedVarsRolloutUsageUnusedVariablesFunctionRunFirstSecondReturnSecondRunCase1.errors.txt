@@ -1,0 +1,37 @@
+/input.ts(1,15): error TS7031: Binding element 'first' implicitly has an 'any' type.
+/input.ts(1,15): error TS24290: 'first' is defined but never used.
+/input.ts(1,23): error TS7006: Parameter 'second' implicitly has an 'any' type.
+/input.ts(1,50): error TS2554: Expected 2 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    function run({first}, second) { return second; } run();
+                  ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+                  ~~~~~
+!!! error TS24290: 'first' is defined but never used.
+                          ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
+                                                     ~~~
+!!! error TS2554: Expected 2 arguments, but got 0.
+!!! related TS6211 /input.ts:1:14: An argument matching this binding pattern was not provided.

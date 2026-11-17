@@ -1,0 +1,24 @@
+/input.ts(1,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Base extends Array<number> {}
+              ~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.

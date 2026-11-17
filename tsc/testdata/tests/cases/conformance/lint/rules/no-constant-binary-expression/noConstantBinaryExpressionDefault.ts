@@ -1,0 +1,68 @@
+// @lintOnly: true
+// @fix: true
+
+// @filename: tsconfig.json
+{
+    "compilerOptions": { "target": "esnext", "jsx": "preserve" },
+    "lint": { "rules": { "no-constant-binary-expression": "error" } },
+    "files": ["input.tsx"]
+}
+
+// @filename: input.tsx
+declare let value: any, other: any, result: any;
+[] && value;
+({}) || value;
+new Boolean(value) && other;
+`prefix${value}` && other;
+`${1}` && other;
+void value && other;
+typeof value && other;
+(value, true) && other;
+(result = false) && value;
+(result ||= true) && value;
+Boolean([]) && value;
+value && false && other;
+value || true || other;
+({}) ?? value;
+!value ?? other;
+(value + other) ?? result;
+String(value) ?? other;
+value ?? "fallback" ?? other;
+true == [];
+[] == true;
+[] === true;
+({}) == null;
+void value == true;
+typeof value == true;
+[value, other] == true;
+({}) === Boolean();
+true === Number(value);
+Boolean(0) === Boolean(1);
+value === {};
+value !== [];
+value === new Promise(() => {});
+value === /pattern/;
+value === (result ? {} : []);
+({}) == [];
+[value] != [value];
+value && other;
+`${value}` && other;
+(result += 1) && value;
+delete value.property && other;
+[value] == true;
+[,,,] == true;
+[...value, 1] == true;
+`${value}` == true;
+new Custom() == true;
+new Custom() === value;
+value ?? null ?? other;
+value && true && other;
+5 < 10;
+<div /> && value;
+<></> ?? value;
+function shadowed(Boolean: any, String: any, undefined: any, Promise: any) {
+    Boolean([]) && value;
+    String(value) ?? other;
+    undefined ?? value;
+    value === new Promise();
+}

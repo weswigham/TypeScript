@@ -1,0 +1,31 @@
+/input.tsx(1,1): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+/input.tsx(1,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+/input.tsx(1,46): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    "pkg"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    require('pkg'); import('pkg'); type T=import('pkg').T;
+    ~~~~~~~
+!!! error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+                           ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+                                                 ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

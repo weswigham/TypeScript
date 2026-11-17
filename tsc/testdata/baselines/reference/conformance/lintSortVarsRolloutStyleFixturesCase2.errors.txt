@@ -1,0 +1,28 @@
+/input.ts(3,13): error TS2304: Cannot find name 'compute'.
+/input.ts(3,24): error TS24346: Variables within the same declaration block should be sorted alphabetically.
+/input.ts(4,23): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    
+    var alpha = 2, middle = 3, zebra = 1;
+    let later = compute(), earlier = 0;
+                ~~~~~~~
+!!! error TS2304: Cannot find name 'compute'.
+                           ~~~~~~~~~~~
+!!! error TS24346: Variables within the same declaration block should be sorted alphabetically.
+    const [last, first] = source;
+                          ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

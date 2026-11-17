@@ -1,0 +1,43 @@
+input.ts(9,8): error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
+input.ts(10,8): error TS24022: 'mixed' may use Object's default stringification format ('[object Object]') when stringified.
+input.ts(11,8): error TS24022: 'unknownValue' may use Object's default stringification format ('[object Object]') when stringified.
+input.ts(12,1): error TS24021: Using `join()` for tuple will use Object's default stringification format ('[object Object]') when stringified.
+input.ts(13,2): error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
+input.ts(17,15): error TS24022: 'value' will use Object's default stringification format ('[object Object]') when stringified.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/no-base-to-string": ["error", { "checkUnknown": true }] } }
+    }
+==== input.ts (6 errors) ====
+    export {};
+    declare const unknownValue: unknown;
+    declare const mixed: string | { value: number };
+    declare const tuple: [string, { value: number }];
+    declare const coercible: { [Symbol.toPrimitive](): string };
+    class Custom {
+        toString() { return "custom"; }
+    }
+    String({});
+           ~~
+!!! error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
+    String(mixed);
+           ~~~~~
+!!! error TS24022: 'mixed' may use Object's default stringification format ('[object Object]') when stringified.
+    String(unknownValue);
+           ~~~~~~~~~~~~
+!!! error TS24022: 'unknownValue' may use Object's default stringification format ('[object Object]') when stringified.
+    tuple.join();
+    ~~~~~
+!!! error TS24021: Using `join()` for tuple will use Object's default stringification format ('[object Object]') when stringified.
+    ({}).toLocaleString();
+     ~~
+!!! error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
+    String(new Custom());
+    String(coercible);
+    function stringify<T extends { value: number }>(value: T) {
+        return `${value}`;
+                  ~~~~~
+!!! error TS24022: 'value' will use Object's default stringification format ('[object Object]') when stringified.
+    }

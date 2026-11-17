@@ -1,0 +1,33 @@
+/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
+/input.ts(1,36): error TS19516: Expected an error object to be thrown.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/only-throw-error": [
+                    "error",
+                    {
+                        "allowRethrowing": false,
+                        "allowThrowingAny": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try {} catch ({ message }) { throw message; }
+                    ~~~~~~~
+!!! error TS2339: Property 'message' does not exist on type 'unknown'.
+                                       ~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.

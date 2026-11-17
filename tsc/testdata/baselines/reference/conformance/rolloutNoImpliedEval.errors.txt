@@ -1,0 +1,21 @@
+input.ts(1,1): error TS24237: Implied eval. Consider passing a function instead of a string.
+input.ts(3,1): error TS24237: Implied eval. Consider passing a function instead of a string.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-implied-eval": "error" } }
+    }
+==== input.ts (2 errors) ====
+    setTimeout("code", 1);
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24237: Implied eval. Consider passing a function instead of a string.
+    const code = "code";
+    window.setInterval(code, 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24237: Implied eval. Consider passing a function instead of a string.
+    setTimeout(() => {}, 1);
+    function shadowed(setTimeout: Function, window: any) {
+        setTimeout("code");
+        window.setInterval("code");
+    }

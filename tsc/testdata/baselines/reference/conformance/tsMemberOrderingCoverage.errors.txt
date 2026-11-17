@@ -1,0 +1,34 @@
+input.ts(3,5): error TS24012: Member value should be declared before all public instance method definitions.
+input.ts(7,5): error TS24012: Member value should be declared before all method definitions.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/member-ordering": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    class InvalidOrder {
+        run(): number { return this.value; }
+        value = 1;
+        ~~~~~~~~~~
+!!! error TS24012: Member value should be declared before all public instance method definitions.
+    }
+    interface InvalidInterface {
+        run(): void;
+        value: number;
+        ~~~~~~~~~~~~~~
+!!! error TS24012: Member value should be declared before all method definitions.
+    }
+    class ValidOrder {
+        value = 1;
+        constructor() { this.value = 2; }
+        run(): number { return this.value; }
+    }
+    interface ValidInterface {
+        value: number;
+        run(): void;
+    }
+    export {};

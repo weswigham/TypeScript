@@ -1,0 +1,108 @@
+input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(1,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(2,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(2,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(3,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(5,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(6,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(6,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(7,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(7,1): error TS19005: The '__proto__' property is deprecated.
+input.ts(8,8): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(8,8): error TS19005: The '__proto__' property is deprecated.
+input.ts(9,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(9,8): error TS2304: Cannot find name '__proto__'.
+input.ts(10,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(11,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(12,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(16,5): error TS7008: Member '#__proto__' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-proto": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (22 errors) ====
+    object.__proto__;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object["__proto__"];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object[`__proto__`];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object["__pro\u0074o__"];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object?.__proto__;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object?.["__proto__"];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object.__proto__ = null;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    delete object.__proto__;
+           ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+           ~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+    object[__proto__];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+           ~~~~~~~~~
+!!! error TS2304: Cannot find name '__proto__'.
+    object["__" + "proto__"];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    object[`__proto__${""}`];
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    object[`__proto__
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    `];
+    const literal = { __proto__: null };
+    class Example {
+        #__proto__;
+        ~~~~~~~~~~
+!!! error TS7008: Member '#__proto__' implicitly has an 'any' type.
+        inspect() {
+            this.#__proto__;
+        }
+    }

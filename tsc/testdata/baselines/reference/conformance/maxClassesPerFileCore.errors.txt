@@ -1,0 +1,17 @@
+input.ts(1,1): error TS19296: File has too many classes (2). Maximum allowed is 1.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "max-classes-per-file": ["error", { "max": 1, "ignoreExpressions": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (1 errors) ====
+    class First {}
+    ~~~~~~~~~~~~~~
+    const expression = class {};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    class Second {}
+    ~~~~~~~~~~~~~~~
+!!! error TS19296: File has too many classes (2). Maximum allowed is 1.

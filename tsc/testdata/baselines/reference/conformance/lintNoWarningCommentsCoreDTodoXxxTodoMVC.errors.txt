@@ -1,0 +1,24 @@
+/input.ts(2,1): error TS19669: Unexpected 'xxx' comment: 'xxx'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-warning-comments": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    #!todo
+    // xxx
+    ~~~~~~
+!!! error TS19669: Unexpected 'xxx' comment: 'xxx'.
+    // TodoMVC

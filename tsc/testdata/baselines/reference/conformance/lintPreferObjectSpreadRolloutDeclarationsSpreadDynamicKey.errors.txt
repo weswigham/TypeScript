@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'ObjectConstructor'.
+/input.ts(1,8): error TS2304: Cannot find name 'assign'.
+/input.ts(1,20): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-object-spread": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    Object[assign]({}, source);
+    ~~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'ObjectConstructor'.
+           ~~~~~~
+!!! error TS2304: Cannot find name 'assign'.
+                       ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

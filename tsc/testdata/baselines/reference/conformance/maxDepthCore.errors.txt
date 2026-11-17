@@ -1,0 +1,52 @@
+input.ts(1,5): error TS2304: Cannot find name 'first'.
+input.ts(1,21): error TS2304: Cannot find name 'second'.
+input.ts(1,31): error TS19302: Blocks are nested too deeply (3). Maximum allowed is 2.
+input.ts(1,42): error TS2304: Cannot find name 'work'.
+input.ts(2,5): error TS2304: Cannot find name 'first'.
+input.ts(2,24): error TS2304: Cannot find name 'second'.
+input.ts(2,44): error TS2304: Cannot find name 'third'.
+input.ts(3,5): error TS2304: Cannot find name 'first'.
+input.ts(3,40): error TS2304: Cannot find name 'second'.
+input.ts(4,30): error TS2304: Cannot find name 'first'.
+input.ts(4,43): error TS2304: Cannot find name 'second'.
+input.ts(4,53): error TS19302: Blocks are nested too deeply (3). Maximum allowed is 2.
+input.ts(4,57): error TS2304: Cannot find name 'third'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "max-depth": ["error", { "max": 2 }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (13 errors) ====
+    if (first) { while (second) { for (;;) { work(); } } }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                        ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                  ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19302: Blocks are nested too deeply (3). Maximum allowed is 2.
+                                             ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    if (first) {} else if (second) {} else if (third) {}
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                           ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                               ~~~~~
+!!! error TS2304: Cannot find name 'third'.
+    if (first) { function separate() { if (second) {} } }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                           ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    class Example { static { if (first) { if (second) { if (third) {} } } } }
+                                 ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                              ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                                        ~~~~~~~~~~~~~
+!!! error TS19302: Blocks are nested too deeply (3). Maximum allowed is 2.
+                                                            ~~~~~
+!!! error TS2304: Cannot find name 'third'.

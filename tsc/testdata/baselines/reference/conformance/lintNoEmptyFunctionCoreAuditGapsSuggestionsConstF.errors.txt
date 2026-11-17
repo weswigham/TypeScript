@@ -1,0 +1,23 @@
+/input.ts(1,17): error TS19358: Unexpected empty arrow function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-function": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const f = () => {};
+                    ~~
+!!! error TS19358: Unexpected empty arrow function.

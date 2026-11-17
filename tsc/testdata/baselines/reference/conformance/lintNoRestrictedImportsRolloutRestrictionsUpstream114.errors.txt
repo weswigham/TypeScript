@@ -1,0 +1,86 @@
+/input.tsx(1,10): error TS24268: 'Image' import from 'react-native' is restricted. import Image from ui/_components instead
+/input.tsx(1,17): error TS24268: 'Text' import from 'react-native' is restricted. import Text from ui/_components instead
+/input.tsx(1,23): error TS24268: 'ScrollView' import from 'react-native' is restricted. import ScrollView from ui/_components instead
+/input.tsx(1,41): error TS2307: Cannot find module 'react-native' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "Text"
+                                ],
+                                "message": "import Text from ui/_components instead",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "TextInput"
+                                ],
+                                "message": "import TextInput from ui/_components instead",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "View"
+                                ],
+                                "message": "import View from ui/_components instead ",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "ScrollView"
+                                ],
+                                "message": "import ScrollView from ui/_components instead",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "KeyboardAvoidingView"
+                                ],
+                                "message": "import KeyboardAvoidingView from ui/_components instead",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "ImageBackground"
+                                ],
+                                "message": "import ImageBackground from ui/_components instead",
+                                "name": "react-native"
+                            },
+                            {
+                                "importNames": [
+                                    "Image"
+                                ],
+                                "message": "import Image from ui/_components instead",
+                                "name": "react-native"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (4 errors) ====
+    import { Image, Text, ScrollView } from 'react-native'
+             ~~~~~
+!!! error TS24268: 'Image' import from 'react-native' is restricted. import Image from ui/_components instead
+                    ~~~~
+!!! error TS24268: 'Text' import from 'react-native' is restricted. import Text from ui/_components instead
+                          ~~~~~~~~~~
+!!! error TS24268: 'ScrollView' import from 'react-native' is restricted. import ScrollView from ui/_components instead
+                                            ~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'react-native' or its corresponding type declarations.

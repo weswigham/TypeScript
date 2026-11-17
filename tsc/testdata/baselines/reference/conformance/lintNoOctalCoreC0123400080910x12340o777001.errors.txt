@@ -1,0 +1,43 @@
+/input.ts(1,1): error TS1121: Octal literals are not allowed. Use the syntax '0o1234'.
+/input.ts(1,1): error TS19511: Octal literals should not be used.
+/input.ts(1,8): error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
+/input.ts(1,8): error TS19511: Octal literals should not be used.
+/input.ts(1,12): error TS1489: Decimals with leading zeros are not allowed.
+/input.ts(1,12): error TS19511: Octal literals should not be used.
+/input.ts(1,16): error TS1489: Decimals with leading zeros are not allowed.
+/input.ts(1,16): error TS19511: Octal literals should not be used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-octal": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    01234; 00; 08; 09.1; 0x1234; 0o777; 0; 0.1;
+    ~~~~~
+!!! error TS1121: Octal literals are not allowed. Use the syntax '0o1234'.
+    ~~~~~
+!!! error TS19511: Octal literals should not be used.
+           ~~
+!!! error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
+           ~~
+!!! error TS19511: Octal literals should not be used.
+               ~~
+!!! error TS1489: Decimals with leading zeros are not allowed.
+               ~~
+!!! error TS19511: Octal literals should not be used.
+                   ~~~~
+!!! error TS1489: Decimals with leading zeros are not allowed.
+                   ~~~~
+!!! error TS19511: Octal literals should not be used.

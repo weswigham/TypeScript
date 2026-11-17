@@ -1,0 +1,38 @@
+/input.ts(2,1): error TS21283: Imports "A" are only used as type.
+/input.ts(2,36): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "fixStyle": "inline-type-imports",
+                        "prefer": "type-imports"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import { B, /* comment */ A } from 'foo';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21283: Imports "A" are only used as type.
+                                       ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    type T = A;
+              

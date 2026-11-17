@@ -1,0 +1,35 @@
+/input.tsx(11,13): error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    interface FunctionWithProps {
+      (): string;
+      prop: boolean;
+    }
+    
+    type FunctionWithoutProps = () => string;
+    
+    declare const obj: FunctionWithProps | FunctionWithoutProps | object;
+    
+    const o = { ...obj };
+                ~~~~~~
+!!! error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
+          

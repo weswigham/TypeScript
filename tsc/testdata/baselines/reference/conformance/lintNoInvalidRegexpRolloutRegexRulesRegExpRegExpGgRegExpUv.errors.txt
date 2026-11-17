@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS24239: Invalid regular expression: /[/: Unterminated character class.
+/input.ts(1,14): error TS24239: Duplicate flags ('g') supplied to RegExp constructor.
+/input.ts(1,32): error TS24239: Regex 'u' and 'v' flags cannot be used together.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-invalid-regexp": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    RegExp("["); RegExp(".","gg"); RegExp(".","uv");
+    ~~~~~~~~~~~
+!!! error TS24239: Invalid regular expression: /[/: Unterminated character class.
+                 ~~~~~~~~~~~~~~~~
+!!! error TS24239: Duplicate flags ('g') supplied to RegExp constructor.
+                                   ~~~~~~~~~~~~~~~~
+!!! error TS24239: Regex 'u' and 'v' flags cannot be used together.

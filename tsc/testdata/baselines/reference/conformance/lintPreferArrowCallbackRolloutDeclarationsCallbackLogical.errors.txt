@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,5): error TS2304: Cannot find name 'other'.
+/input.ts(1,14): error TS24321: Unexpected function expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-arrow-callback": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    foo(other || function() {});
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+        ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                 ~~~~~~~~~~~~~
+!!! error TS24321: Unexpected function expression.

@@ -1,0 +1,37 @@
+/input.ts(1,15): error TS7006: Parameter 'cb' implicitly has an 'any' type.
+/input.ts(1,26): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/input.ts(1,41): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,62): error TS2554: Expected 1 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    function* foo(cb) { cb = yield function(a) { cb(1 + a); }; } foo();
+                  ~~
+!!! error TS7006: Parameter 'cb' implicitly has an 'any' type.
+                             ~~~~~
+!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+                                            ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                                                                 ~~~
+!!! error TS2554: Expected 1 arguments, but got 0.
+!!! related TS6210 /input.ts:1:15: An argument for 'cb' was not provided.

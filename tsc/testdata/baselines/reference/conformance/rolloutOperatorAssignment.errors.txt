@@ -1,0 +1,30 @@
+input.ts(2,1): warning TS24216: Assignment (=) can be replaced with operator assignment (+=).
+input.ts(3,1): warning TS24216: Assignment (=) can be replaced with operator assignment (*=).
+input.ts(4,1): warning TS24216: Assignment (=) can be replaced with operator assignment (+=).
+input.ts(5,1): warning TS24216: Assignment (=) can be replaced with operator assignment (**=).
+input.ts(6,1): warning TS24216: Assignment (=) can be replaced with operator assignment (+=).
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "operator-assignment": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (5 errors) ====
+    declare let value: number, other: number, object: any, key: any;
+    value = value + other;
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (+=).
+    value = other * value;
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (*=).
+    object[key] = object[key] + other;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (+=).
+    object.key = object.key ** other;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (**=).
+    value = /* keep */ value + other;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24216: Assignment (=) can be replaced with operator assignment (+=).

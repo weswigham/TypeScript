@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS20485: Useless constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A extends B { constructor() { super(...arguments); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.

@@ -1,0 +1,117 @@
+input.ts(1,1): error TS24255: 'blocked' import is restricted from being used.
+input.ts(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'blocked'.
+input.ts(2,8): error TS24268: 'default' import from 'named' is restricted. Use the public API.
+input.ts(2,17): error TS24268: 'bad' import from 'named' is restricted. Use the public API.
+input.ts(2,31): error TS2300: Duplicate identifier 'safe'.
+input.ts(2,43): error TS2307: Cannot find module 'named' or its corresponding type declarations.
+input.ts(3,8): error TS24266: * import is invalid because 'bad' and 'default' from 'named' are restricted. Use the public API.
+input.ts(3,22): error TS2307: Cannot find module 'named' or its corresponding type declarations.
+input.ts(4,10): error TS24268: 'bad' import from 'named' is restricted. Use the public API.
+input.ts(4,32): error TS2307: Cannot find module 'named' or its corresponding type declarations.
+input.ts(5,8): error TS24266: * import is invalid because 'bad' and 'default' from 'named' are restricted. Use the public API.
+input.ts(5,28): error TS2307: Cannot find module 'named' or its corresponding type declarations.
+input.ts(6,10): error TS2300: Duplicate identifier 'safe'.
+input.ts(6,16): error TS2300: Duplicate identifier 'bad'.
+input.ts(6,16): error TS24269: 'bad' import from 'allowed' is restricted because only 'safe' and 'other' are allowed.
+input.ts(6,27): error TS2307: Cannot find module 'allowed' or its corresponding type declarations.
+input.ts(7,8): error TS24271: * import is invalid because only 'safe' and 'other' from 'allowed' are allowed.
+input.ts(7,29): error TS2307: Cannot find module 'allowed' or its corresponding type declarations.
+input.ts(8,15): error TS2300: Duplicate identifier 'bad'.
+input.ts(8,26): error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+input.ts(9,25): error TS24267: 'bad' import from 'typed' is restricted.
+input.ts(9,47): error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+input.ts(10,20): error TS24267: 'bad' import from 'typed' is restricted.
+input.ts(10,42): error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+input.ts(11,20): error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+input.ts(12,34): error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+input.ts(13,1): error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+input.ts(13,1): error TS24255: 'typed-path' import is restricted from being used.
+input.ts(13,30): error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+input.ts(14,8): error TS2307: Cannot find module 'blocked' or its corresponding type declarations.
+input.ts(15,1): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+input.ts(16,23): error TS2307: Cannot find module 'blocked' or its corresponding type declarations.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-imports":["error",{"paths":["blocked",{"name":"named","importNames":["bad","default"],"message":"Use the public API."},{"name":"allowed","allowImportNames":["safe","other"]},{"name":"typed","importNames":["bad"],"allowTypeImports":true},{"name":"typed-path","allowTypeImports":true}]}]}},"files":["input.ts"]}
+==== input.ts (32 errors) ====
+    import "blocked";
+    ~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'blocked' import is restricted from being used.
+           ~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'blocked'.
+    import value, { bad as alias, safe } from "named";
+           ~~~~~
+!!! error TS24268: 'default' import from 'named' is restricted. Use the public API.
+                    ~~~~~~~~~~~~
+!!! error TS24268: 'bad' import from 'named' is restricted. Use the public API.
+                                  ~~~~
+!!! error TS2300: Duplicate identifier 'safe'.
+                                              ~~~~~~~
+!!! error TS2307: Cannot find module 'named' or its corresponding type declarations.
+    import * as all from "named";
+           ~~~~~~~~
+!!! error TS24266: * import is invalid because 'bad' and 'default' from 'named' are restricted. Use the public API.
+                         ~~~~~~~
+!!! error TS2307: Cannot find module 'named' or its corresponding type declarations.
+    export { bad as renamed } from "named";
+             ~~~~~~~~~~~~~~
+!!! error TS24268: 'bad' import from 'named' is restricted. Use the public API.
+                                   ~~~~~~~
+!!! error TS2307: Cannot find module 'named' or its corresponding type declarations.
+    export * as namespace from "named";
+           ~
+!!! error TS24266: * import is invalid because 'bad' and 'default' from 'named' are restricted. Use the public API.
+                               ~~~~~~~
+!!! error TS2307: Cannot find module 'named' or its corresponding type declarations.
+    import { safe, bad } from "allowed";
+             ~~~~
+!!! error TS2300: Duplicate identifier 'safe'.
+                   ~~~
+!!! error TS2300: Duplicate identifier 'bad'.
+                   ~~~
+!!! error TS24269: 'bad' import from 'allowed' is restricted because only 'safe' and 'other' are allowed.
+                              ~~~~~~~~~
+!!! error TS2307: Cannot find module 'allowed' or its corresponding type declarations.
+    import * as everything from "allowed";
+           ~~~~~~~~~~~~~~~
+!!! error TS24271: * import is invalid because only 'safe' and 'other' from 'allowed' are allowed.
+                                ~~~~~~~~~
+!!! error TS2307: Cannot find module 'allowed' or its corresponding type declarations.
+    import type { bad } from "typed";
+                  ~~~
+!!! error TS2300: Duplicate identifier 'bad'.
+                             ~~~~~~~
+!!! error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+    import { type bad as T, bad as runtime } from "typed";
+                            ~~~~~~~~~~~~~~
+!!! error TS24267: 'bad' import from 'typed' is restricted.
+                                                  ~~~~~~~
+!!! error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+    export { type bad, bad as runtime } from "typed";
+                       ~~~~~~~~~~~~~~
+!!! error TS24267: 'bad' import from 'typed' is restricted.
+                                             ~~~~~~~
+!!! error TS2307: Cannot find module 'typed' or its corresponding type declarations.
+    export type * from "typed-path";
+                       ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+    import type typeModule = require("typed-path");
+                                     ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+    import moduleValue = require("typed-path");
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'typed-path' import is restricted from being used.
+                                 ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'typed-path' or its corresponding type declarations.
+    import("blocked");
+           ~~~~~~~~~
+!!! error TS2307: Cannot find module 'blocked' or its corresponding type declarations.
+    require("blocked");
+    ~~~~~~~
+!!! error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+    type Dynamic = import("blocked").T;
+                          ~~~~~~~~~
+!!! error TS2307: Cannot find module 'blocked' or its corresponding type declarations.

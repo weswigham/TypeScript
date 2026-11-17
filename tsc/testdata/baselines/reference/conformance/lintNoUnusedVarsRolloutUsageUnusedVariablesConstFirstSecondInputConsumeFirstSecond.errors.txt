@@ -1,0 +1,40 @@
+/input.ts(1,8): error TS24291: '_first' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+/input.ts(1,26): error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+/input.ts(1,33): error TS2304: Cannot find name 'consume'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "^_",
+                        "reportUsedIgnorePattern": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    const [_first, second] = input; consume(_first, second);
+           ~~~~~~
+!!! error TS24291: '_first' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
+                             ~~~~~
+!!! error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'oninput' is declared here.
+                                    ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.

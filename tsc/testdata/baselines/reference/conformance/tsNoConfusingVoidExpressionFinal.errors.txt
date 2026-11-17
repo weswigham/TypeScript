@@ -1,0 +1,41 @@
+input.ts(4,15): error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.
+input.ts(5,21): error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+input.ts(6,34): error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+input.ts(6,46): error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+input.ts(8,12): error TS24027: Returning a void expression from a function is forbidden. Please remove the `return` statement.
+input.ts(11,22): error TS24026: Returning a void expression from a function is forbidden. Please move it before the `return` statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/no-confusing-void-expression": "error" } }
+    }
+==== input.ts (6 errors) ====
+    export {};
+    declare function nothing(): void;
+    declare const flag: boolean;
+    const value = nothing();
+                  ~~~~~~~~~
+!!! error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.
+    const arrow = () => nothing();
+                        ~~~~~~~~~
+!!! error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+    const conditional = () => flag ? nothing() : nothing();
+                                     ~~~~~~~~~
+!!! error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+                                                 ~~~~~~~~~
+!!! error TS24024: Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.
+    function finalReturn() {
+        return nothing();
+               ~~~~~~~~~
+!!! error TS24027: Returning a void expression from a function is forbidden. Please remove the `return` statement.
+    }
+    function earlyReturn() {
+        if (flag) return nothing();
+                         ~~~~~~~~~
+!!! error TS24026: Returning a void expression from a function is forbidden. Please move it before the `return` statement.
+        nothing();
+    }
+    nothing();
+    flag && nothing();
+    const sequence = (nothing(), 1);

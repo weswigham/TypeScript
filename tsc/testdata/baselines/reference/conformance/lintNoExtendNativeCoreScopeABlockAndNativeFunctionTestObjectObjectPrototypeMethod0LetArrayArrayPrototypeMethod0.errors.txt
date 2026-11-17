@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+/input.ts(1,69): error TS18048: 'Array' is possibly 'undefined'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extend-native": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function test(Object) { Object.prototype.method = 0; } { let Array; Array.prototype.method = 0; }
+                  ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
+                                                                        ~~~~~
+!!! error TS18048: 'Array' is possibly 'undefined'.

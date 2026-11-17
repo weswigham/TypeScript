@@ -1,0 +1,30 @@
+/input.ts(1,50): error TS2339: Property 'value' does not exist on type '{}'.
+/input.ts(1,64): error TS2304: Cannot find name 'amount'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    const object = {}; async function run() { object.value = await amount; }
+                                                     ~~~~~
+!!! error TS2339: Property 'value' does not exist on type '{}'.
+                                                                   ~~~~~~
+!!! error TS2304: Cannot find name 'amount'.

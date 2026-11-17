@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS24366: Expected literal to be on the right side of <=.
+/input.ts(1,12): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "yoda": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (-1n <= value) {}
+        ~~~~~~~~~~~~
+!!! error TS24366: Expected literal to be on the right side of <=.
+               ~~~~~
+!!! error TS2304: Cannot find name 'value'.

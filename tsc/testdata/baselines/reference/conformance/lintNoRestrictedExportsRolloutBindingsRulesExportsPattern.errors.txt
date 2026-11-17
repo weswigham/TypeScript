@@ -1,0 +1,38 @@
+/input.ts(1,27): error TS24253: 'denied' is restricted from being used as an exported name.
+/input.ts(1,47): error TS2304: Cannot find name 'value'.
+/input.ts(1,56): error TS2528: A module cannot have multiple default exports.
+/input.ts(1,66): error TS2528: A module cannot have multiple default exports.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-exports": [
+                    "error",
+                    {
+                        "restrictedNamedExportsPattern": "^(?!allowed$).+$"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    export const allowed = 1, denied = 2; export {value as default}; export default 1;
+                              ~~~~~~
+!!! error TS24253: 'denied' is restricted from being used as an exported name.
+                                                  ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                           ~~~~~~~
+!!! error TS2528: A module cannot have multiple default exports.
+!!! related TS2753 /input.ts:1:66: Another export default is here.
+                                                                     ~~~~~~~~~~~~~~~~~
+!!! error TS2528: A module cannot have multiple default exports.
+!!! related TS2752 /input.ts:1:56: The first export default is here.

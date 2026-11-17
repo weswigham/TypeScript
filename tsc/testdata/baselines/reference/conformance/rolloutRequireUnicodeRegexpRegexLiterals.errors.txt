@@ -1,0 +1,28 @@
+input.ts(1,16): error TS24340: Use the 'u' flag.
+input.ts(4,1): error TS24340: Use the 'u' flag.
+input.ts(5,1): error TS24340: Use the 'u' flag.
+input.ts(6,13): error TS2304: Cannot find name 'flags'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "require-unicode-regexp": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    const legacy = /a/;
+                   ~~~
+!!! error TS24340: Use the 'u' flag.
+    const unicode = /b/u;
+    const sets = /[[a-z]--[aeiou]]/v;
+    RegExp("c");
+    ~~~~~~~~~~~
+!!! error TS24340: Use the 'u' flag.
+    new RegExp("d", "g");
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24340: Use the 'u' flag.
+    RegExp("e", flags);
+                ~~~~~
+!!! error TS2304: Cannot find name 'flags'.

@@ -1,0 +1,24 @@
+input.ts(2,14): error TS7006: Parameter 'parameter' implicitly has an 'any' type.
+input.ts(3,5): error TS20007: Found identifier with same name as label.
+input.ts(3,19): error TS2304: Cannot find name 'ready'.
+input.ts(4,5): error TS20007: Found identifier with same name as label.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-label-var":"error"}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    let outer;
+    function run(parameter) {
+                 ~~~~~~~~~
+!!! error TS7006: Parameter 'parameter' implicitly has an 'any' type.
+        outer: while (ready) { break outer; }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20007: Found identifier with same name as label.
+                      ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+        parameter: {}
+        ~~~~~~~~~~~~~
+!!! error TS20007: Found identifier with same name as label.
+        fresh: {}
+    }
+    function separate() { let fresh; }

@@ -1,0 +1,38 @@
+/input.ts(4,3): error TS24290: '_' is assigned a value but never used. Allowed unused caught errors must match /ignored/u.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "caughtErrorsIgnorePattern": "ignored",
+                        "varsIgnorePattern": "_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    
+    try {
+    } catch (_) {
+      _ = 'foo'
+      ~
+!!! error TS24290: '_' is assigned a value but never used. Allowed unused caught errors must match /ignored/u.
+    }
+                

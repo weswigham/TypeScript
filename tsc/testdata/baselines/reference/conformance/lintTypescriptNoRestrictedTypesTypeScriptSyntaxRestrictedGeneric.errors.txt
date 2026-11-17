@@ -1,0 +1,32 @@
+/input.ts(1,10): error TS2304: Cannot find name 'Bad'.
+/input.ts(1,10): error TS20482: Don't use `Bad<string>` as a type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-restricted-types": [
+                    "error",
+                    {
+                        "types": {
+                            "Bad< string >": true
+                        }
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    type T = Bad<string>;
+             ~~~
+!!! error TS2304: Cannot find name 'Bad'.
+             ~~~~~~~~~~~
+!!! error TS20482: Don't use `Bad<string>` as a type.

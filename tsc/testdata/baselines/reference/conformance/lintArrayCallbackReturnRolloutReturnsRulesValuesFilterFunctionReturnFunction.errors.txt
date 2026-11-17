@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS2304: Cannot find name 'values'.
+/input.ts(1,36): error TS24199: Array.prototype.filter() expects a return value from function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "array-callback-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    values.filter((function() { return function() {}; })());
+    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                                       ~~~~~~~~
+!!! error TS24199: Array.prototype.filter() expects a return value from function.

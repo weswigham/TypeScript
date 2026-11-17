@@ -1,0 +1,38 @@
+/input.tsx(1,10): error TS24269: 'baz' import from 'foo' is restricted because only 'bar' is allowed.
+/input.tsx(1,21): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "allowImportNames": [
+                                    "bar"
+                                ],
+                                "allowTypeImports": true,
+                                "name": "foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { baz } from "foo";
+             ~~~
+!!! error TS24269: 'baz' import from 'foo' is restricted because only 'bar' is allowed.
+                        ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

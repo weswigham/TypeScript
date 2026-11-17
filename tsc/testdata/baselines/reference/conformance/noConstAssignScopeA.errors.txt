@@ -1,0 +1,69 @@
+input.ts(2,1): error TS2588: Cannot assign to 'constant' because it is a constant.
+input.ts(2,1): error TS19852: 'constant' is constant.
+input.ts(3,4): error TS2588: Cannot assign to 'constant' because it is a constant.
+input.ts(3,4): error TS19852: 'constant' is constant.
+input.ts(3,17): error TS2304: Cannot find name 'value'.
+input.ts(4,9): error TS2588: Cannot assign to 'constant' because it is a constant.
+input.ts(4,9): error TS19852: 'constant' is constant.
+input.ts(4,26): error TS2304: Cannot find name 'value'.
+input.ts(5,5): error TS2588: Cannot assign to 'constant' because it is a constant.
+input.ts(5,5): error TS19852: 'constant' is constant.
+input.ts(5,17): error TS2304: Cannot find name 'value'.
+input.ts(6,18): error TS2304: Cannot find name 'createResource'.
+input.ts(7,1): error TS2588: Cannot assign to 'resource' because it is a constant.
+input.ts(7,1): error TS19852: 'resource' is constant.
+input.ts(7,12): error TS2304: Cannot find name 'value'.
+input.ts(8,19): error TS2304: Cannot find name 'values'.
+input.ts(8,29): error TS2304: Cannot find name 'use'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-const-assign": "error" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (17 errors) ====
+    const constant = 0;
+    constant++;
+    ~~~~~~~~
+!!! error TS2588: Cannot assign to 'constant' because it is a constant.
+    ~~~~~~~~
+!!! error TS19852: 'constant' is constant.
+    ({ constant } = value);
+       ~~~~~~~~
+!!! error TS2588: Cannot assign to 'constant' because it is a constant.
+       ~~~~~~~~
+!!! error TS19852: 'constant' is constant.
+                    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ({ key: constant = 1 } = value);
+            ~~~~~~~~
+!!! error TS2588: Cannot assign to 'constant' because it is a constant.
+            ~~~~~~~~
+!!! error TS19852: 'constant' is constant.
+                             ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    [...constant] = value;
+        ~~~~~~~~
+!!! error TS2588: Cannot assign to 'constant' because it is a constant.
+        ~~~~~~~~
+!!! error TS19852: 'constant' is constant.
+                    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    using resource = createResource();
+                     ~~~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'createResource'.
+    resource = value;
+    ~~~~~~~~
+!!! error TS2588: Cannot assign to 'resource' because it is a constant.
+    ~~~~~~~~
+!!! error TS19852: 'resource' is constant.
+               ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    for (const key of values) { use(key); }
+                      ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                                ~~~
+!!! error TS2304: Cannot find name 'use'.
+    function shadow(constant: number) { constant = 1; }

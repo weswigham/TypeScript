@@ -19,6 +19,33 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func TestCatalogDiagnosticIdentities(t *testing.T) {
+	t.Parallel()
+	codes := make(map[int32]*Message, len(allMessages))
+	keys := make(map[Key]*Message, len(allMessages))
+	for _, entry := range allMessages {
+		message := *entry
+		assert.Assert(t, message.Code() > 0, "uncatalogued message: %s", message.String())
+		assert.Assert(t, codes[message.Code()] == nil, "duplicate diagnostic code %d", message.Code())
+		assert.Assert(t, keys[message.Key()] == nil, "duplicate diagnostic key %q", message.Key())
+		assert.Equal(t, keyToMessage(message.Key()), message)
+		codes[message.Code()] = message
+		keys[message.Key()] = message
+	}
+}
+
+func TestCatalogIdentifierCollision(t *testing.T) {
+	t.Parallel()
+	object := Always_prefer_const_x_Colon_T
+	array := Always_prefer_const_x_Colon_T_22004
+	assert.Assert(t, object.Code() != array.Code())
+	assert.Assert(t, object.Key() != array.Key())
+	assert.Equal(t, object.String(), "Always prefer const x: T = { ... }.")
+	assert.Equal(t, array.String(), "Always prefer const x: T[] = [ ... ].")
+	assert.Equal(t, Localize(locale.Default, nil, object.Key()), object.String())
+	assert.Equal(t, Localize(locale.Default, nil, array.Key()), array.String())
+}
+
 func TestLocalize(t *testing.T) {
 	t.Parallel()
 

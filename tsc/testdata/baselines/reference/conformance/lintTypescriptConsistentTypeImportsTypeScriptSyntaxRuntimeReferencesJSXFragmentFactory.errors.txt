@@ -1,0 +1,31 @@
+/input.tsx(1,26): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.tsx(1,66): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+/tsconfig.json(4,9): error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "jsxFragmentFactory": "Fragment",
+            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { Fragment } from 'x'; type F = Fragment; const element = <>text</>;
+                             ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                                                     ~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.

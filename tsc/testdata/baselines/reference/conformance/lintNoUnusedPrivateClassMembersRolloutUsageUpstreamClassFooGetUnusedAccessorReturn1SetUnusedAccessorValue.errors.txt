@@ -1,0 +1,32 @@
+/input.ts(5,9): error TS24288: '#unusedAccessor' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    class Foo {
+        get #unusedAccessor() {
+            return 1;
+        }
+        set #unusedAccessor(value) {}
+            ~~~~~~~~~~~~~~~
+!!! error TS24288: '#unusedAccessor' is defined but never used.
+    }

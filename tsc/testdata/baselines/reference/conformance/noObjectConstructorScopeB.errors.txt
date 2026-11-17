@@ -1,0 +1,26 @@
+input.ts(1,1): error TS20006: The object literal notation {} is preferable.
+input.ts(2,16): error TS20006: The object literal notation {} is preferable.
+input.ts(3,24): error TS20006: The object literal notation {} is preferable.
+input.ts(4,8): error TS2304: Cannot find name 'value'.
+input.ts(6,17): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-object-constructor":"error"}},"files":["input.ts"]}
+==== input.ts (5 errors) ====
+    Object();
+    ~~~~~~~~
+!!! error TS20006: The object literal notation {} is preferable.
+    const object = new Object;
+                   ~~~~~~~~~~
+!!! error TS20006: The object literal notation {} is preferable.
+    const callback = () => Object?.();
+                           ~~~~~~~~~~
+!!! error TS20006: The object literal notation {} is preferable.
+    Object(value);
+           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    new globalThis.Object();
+    function shadow(Object) { Object(); }
+                    ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.

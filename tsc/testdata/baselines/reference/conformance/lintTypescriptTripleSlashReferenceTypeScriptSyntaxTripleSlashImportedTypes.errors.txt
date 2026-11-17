@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS20490: Do not use a triple slash reference for value, use `import` style instead.
+/input.ts(1,23): error TS2688: Cannot find type definition file for 'value'.
+/input.ts(2,19): error TS2307: Cannot find module 'value' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/triple-slash-reference": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    /// <reference types="value" />
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20490: Do not use a triple slash reference for value, use `import` style instead.
+                          ~~~~~
+!!! error TS2688: Cannot find type definition file for 'value'.
+    import value from 'value';
+                      ~~~~~~~
+!!! error TS2307: Cannot find module 'value' or its corresponding type declarations.

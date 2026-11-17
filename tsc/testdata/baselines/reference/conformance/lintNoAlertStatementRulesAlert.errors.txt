@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS19000: Unexpected alert.
+/input.ts(1,10): error TS19000: Unexpected confirm.
+/input.ts(1,21): error TS19000: Unexpected prompt.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-alert": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    alert(); confirm(); prompt();
+    ~~~~~~~
+!!! error TS19000: Unexpected alert.
+             ~~~~~~~~~
+!!! error TS19000: Unexpected confirm.
+                        ~~~~~~~~
+!!! error TS19000: Unexpected prompt.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

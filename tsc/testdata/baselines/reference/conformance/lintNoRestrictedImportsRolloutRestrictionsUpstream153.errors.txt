@@ -1,0 +1,40 @@
+/input.tsx(1,10): error TS24259: 'Foo' import from '../../my/relative-module' is restricted from being used by a pattern.
+/input.tsx(1,21): error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "group": [
+                                    "**/my/relative-module"
+                                ],
+                                "importNamePattern": "^Foo",
+                                "importNames": [
+                                    "Foo"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { Foo } from '../../my/relative-module';
+             ~~~
+!!! error TS24259: 'Foo' import from '../../my/relative-module' is restricted from being used by a pattern.
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.

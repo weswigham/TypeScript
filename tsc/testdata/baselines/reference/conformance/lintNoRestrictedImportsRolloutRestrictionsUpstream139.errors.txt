@@ -1,0 +1,41 @@
+/input.tsx(1,8): error TS24263: * import is invalid because 'Foo' and 'Bar' from 'foo-bar-baz' are restricted from being used by a pattern. Use only 'Baz'.
+/input.tsx(1,39): error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "group": [
+                                    "**/*-*-baz"
+                                ],
+                                "importNames": [
+                                    "Foo",
+                                    "Bar"
+                                ],
+                                "message": "Use only 'Baz'."
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import * as AllWithCustomMessage from 'foo-bar-baz';
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24263: * import is invalid because 'Foo' and 'Bar' from 'foo-bar-baz' are restricted from being used by a pattern. Use only 'Baz'.
+                                          ~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.

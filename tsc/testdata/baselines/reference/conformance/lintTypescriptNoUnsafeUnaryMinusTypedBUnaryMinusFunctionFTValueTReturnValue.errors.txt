@@ -1,0 +1,23 @@
+/input.ts(1,34): error TS20900: Argument of unary negation should be assignable to number | bigint but is T instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-unary-minus": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f<T>(value: T) { return -value; }
+                                     ~~~~~~
+!!! error TS20900: Argument of unary negation should be assignable to number | bigint but is T instead.

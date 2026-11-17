@@ -1,0 +1,29 @@
+/input.ts(1,62): error TS24150: Async arrow function 'g' has no 'await' expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/require-await": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const f = async () => Promise.resolve(1); const g = async () => 1;
+                                                                 ~~
+!!! error TS24150: Async arrow function 'g' has no 'await' expression.
+    export {};

@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'values'.
+/input.ts(1,16): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,30): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "array-callback-return": [
+                    "error",
+                    {
+                        "allowVoid": true,
+                        "checkForEach": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    values.forEach(value => void use(value));
+    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                   ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                                 ~~~
+!!! error TS2304: Cannot find name 'use'.

@@ -1,0 +1,32 @@
+/input.ts(1,1): error TS21410: Expected a `for-of` loop instead of a `for` loop with this simple iteration.
+/input.ts(1,21): error TS2304: Cannot find name 'items'.
+/input.ts(1,42): error TS2304: Cannot find name 'use'.
+/input.ts(1,46): error TS2304: Cannot find name 'items'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-for-of": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    for (let i = 0; i < items.length; i++) { use(items[i]); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21410: Expected a `for-of` loop instead of a `for` loop with this simple iteration.
+                        ~~~~~
+!!! error TS2304: Cannot find name 'items'.
+                                             ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                 ~~~~~
+!!! error TS2304: Cannot find name 'items'.

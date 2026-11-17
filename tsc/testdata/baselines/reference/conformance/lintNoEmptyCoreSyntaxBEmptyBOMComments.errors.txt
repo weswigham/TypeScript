@@ -1,0 +1,28 @@
+/input.ts(1,5): error TS2304: Cannot find name 'ready'.
+/input.ts(1,42): error TS2304: Cannot find name 'value'.
+/input.ts(1,49): error TS22014: Empty switch statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if (ready) {﻿/* intentional */﻿} switch (value) {﻿}
+        ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                             ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                    ~~~
+!!! error TS22014: Empty switch statement.

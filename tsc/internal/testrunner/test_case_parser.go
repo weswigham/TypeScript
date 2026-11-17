@@ -131,6 +131,9 @@ type ParseTestFilesOptions struct {
 	// In this case, an implicit first file is created using the fileName parameter.
 	// This matches the behavior of the TypeScript fourslash test harness.
 	AllowImplicitFirstFile bool
+	// Preserve leading blank lines and literal CR characters. Headers and file separators must use LF;
+	// the single LF separating a file's content from the next @Filename directive is not part of the file.
+	PreserveFileContent bool
 }
 
 // Given a test file containing // @FileName and // @symlink directives,
@@ -141,7 +144,9 @@ func ParseTestFilesAndSymlinks[T any](
 	fileName string,
 	parseFile func(filename string, content string, fileOptions map[string]string) (T, error),
 ) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
-	return ParseTestFilesAndSymlinksWithOptions(code, fileName, parseFile, ParseTestFilesOptions{})
+	return ParseTestFilesAndSymlinksWithOptions(code, fileName, parseFile, ParseTestFilesOptions{
+		PreserveFileContent: strings.EqualFold(extractCompilerSettings(code)["preservefilecontent"], "true"),
+	})
 }
 
 func ParseTestFilesAndSymlinksWithOptions[T any](
@@ -153,7 +158,12 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 	// List of all the subfiles we've parsed out
 	var testUnits []T
 
-	lines := lineDelimiter.Split(code, -1)
+	var lines []string
+	if options.PreserveFileContent {
+		lines = strings.Split(code, "\n")
+	} else {
+		lines = lineDelimiter.Split(code, -1)
+	}
 
 	// Stuff related to the subfile we're parsing
 	var currentFileContent strings.Builder
@@ -253,10 +263,10 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 		} else {
 			// Subfile content line
 			// Append to the current subfile content, inserting a newline if needed
-			// For fourslash tests, use seenContentLine to preserve leading blank lines
-			// (matching TS fourslash's //// content markers). For compiler tests, use
+			// For fourslash tests and exact-content compiler fixtures, use seenContentLine to preserve
+			// leading blank lines (matching TS fourslash's //// content markers). By default, use
 			// Len() != 0 which drops leading blanks (matching TS's harness behavior).
-			if options.AllowImplicitFirstFile {
+			if options.AllowImplicitFirstFile || options.PreserveFileContent {
 				if seenContentLine {
 					currentFileContent.WriteRune('\n')
 				}

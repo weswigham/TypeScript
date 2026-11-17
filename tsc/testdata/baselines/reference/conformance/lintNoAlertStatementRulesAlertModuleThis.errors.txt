@@ -1,0 +1,27 @@
+/input.ts(1,12): error TS2532: Object is possibly 'undefined'.
+/input.ts(1,26): error TS19000: Unexpected alert.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-alert": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    export {}; this.alert(); window.alert();
+               ~~~~
+!!! error TS2532: Object is possibly 'undefined'.
+                             ~~~~~~~~~~~~~~
+!!! error TS19000: Unexpected alert.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

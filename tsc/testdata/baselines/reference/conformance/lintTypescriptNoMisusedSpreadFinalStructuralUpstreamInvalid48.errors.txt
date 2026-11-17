@@ -1,0 +1,32 @@
+/input.tsx(3,16): error TS1058: The return type of an async function must either be a valid promise or must not contain a callable 'then' member.
+/input.tsx(4,12): error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    
+    declare const promise: Promise<any>;
+    async function foo() {
+                   ~~~
+!!! error TS1058: The return type of an async function must either be a valid promise or must not contain a callable 'then' member.
+      return { ...(Math.random() < 0.5 ? promise : {}) };
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+    }
+          

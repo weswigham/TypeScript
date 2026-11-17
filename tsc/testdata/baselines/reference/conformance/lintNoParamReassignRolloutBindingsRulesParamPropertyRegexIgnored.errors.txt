@@ -1,0 +1,30 @@
+/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-param-reassign": [
+                    "error",
+                    {
+                        "ignorePropertyModificationsForRegex": [
+                            "(?<=val)ue$"
+                        ],
+                        "props": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function task(value) { value.prop = 1; }
+                  ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

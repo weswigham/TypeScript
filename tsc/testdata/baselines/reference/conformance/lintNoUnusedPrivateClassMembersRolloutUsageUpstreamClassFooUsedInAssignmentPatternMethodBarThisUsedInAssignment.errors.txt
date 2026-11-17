@@ -1,0 +1,35 @@
+/input.ts(2,5): error TS7008: Member '#usedInAssignmentPattern' implicitly has an 'any' type.
+/input.ts(4,10): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    class Foo {
+        #usedInAssignmentPattern;
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#usedInAssignmentPattern' implicitly has an 'any' type.
+        method() {
+            [bar] = this.#usedInAssignmentPattern;
+             ~~~
+!!! error TS2304: Cannot find name 'bar'.
+        }
+    }

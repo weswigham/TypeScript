@@ -1,0 +1,33 @@
+/input.tsx(1,1): error TS24255: 'import1' import is restricted from being used.
+/input.tsx(1,21): error TS2307: Cannot find module 'import1' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            "import1",
+                            "import2"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    export { foo } from 'import1';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'import1' import is restricted from being used.
+                        ~~~~~~~~~
+!!! error TS2307: Cannot find module 'import1' or its corresponding type declarations.

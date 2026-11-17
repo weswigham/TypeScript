@@ -1,0 +1,24 @@
+/input.ts(1,33): error TS24184: Async function used in a context where a void function is expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-void-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn: () => void = async () => await Promise.resolve();
+                                    ~~
+!!! error TS24184: Async function used in a context where a void function is expected.

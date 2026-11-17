@@ -1,0 +1,30 @@
+/input.ts(1,46): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-function-return-type": [
+                    "error",
+                    {
+                        "allowConciseArrowFunctionExpressionsStartingWithVoid": true,
+                        "allowedNames": [
+                            "allowed"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function allowed() {} const run = () => void work();
+                                                 ~~~~
+!!! error TS2304: Cannot find name 'work'.

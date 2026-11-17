@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS20909: Using !! on a boolean does not change the type or value of the boolean.
+/input.ts(1,9): error TS20909: Using the unary + operator on a number does not change the type or value of the number.
+/input.ts(1,13): error TS20909: Using ~~ on an integer does not change the type or value of the number.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-conversion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    !!true; +2; ~~2; ~~2.5;
+    ~~
+!!! error TS20909: Using !! on a boolean does not change the type or value of the boolean.
+            ~
+!!! error TS20909: Using the unary + operator on a number does not change the type or value of the number.
+                ~~
+!!! error TS20909: Using ~~ on an integer does not change the type or value of the number.

@@ -1,0 +1,30 @@
+input.ts(2,5): error TS24015: Variable name `rejected_name` must match one of the following formats: camelCase
+input.ts(3,26): error TS24015: Parameter name `rejected_parameter` must match one of the following formats: camelCase
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/naming-convention": [
+                    "error",
+                    { "selector": "variable", "format": ["camelCase"] },
+                    { "selector": ["variable", "parameter"], "modifiers": ["const"], "format": null },
+                    { "selector": "parameter", "format": ["camelCase"] }
+                ]
+            }
+        },
+        "files": ["input.ts"]
+    }
+==== input.ts (2 errors) ====
+    const allowed_name = 1;
+    let rejected_name = allowed_name;
+        ~~~~~~~~~~~~~
+!!! error TS24015: Variable name `rejected_name` must match one of the following formats: camelCase
+    function acceptParameter(rejected_parameter: number) {
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24015: Parameter name `rejected_parameter` must match one of the following formats: camelCase
+        return rejected_parameter;
+    }
+    

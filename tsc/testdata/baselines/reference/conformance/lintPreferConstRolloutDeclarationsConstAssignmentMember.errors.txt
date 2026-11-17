@@ -1,0 +1,25 @@
+/input.ts(1,9): error TS2304: Cannot find name 'obj'.
+/input.ts(1,21): error TS2304: Cannot find name 'values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let x; [obj.y, x] = values;
+            ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                        ~~~~~~
+!!! error TS2304: Cannot find name 'values'.

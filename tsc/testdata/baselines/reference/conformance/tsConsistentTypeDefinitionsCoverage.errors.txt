@@ -1,0 +1,23 @@
+input.ts(2,6): error TS22049: Use an `interface` instead of a `type`.
+input.ts(3,6): error TS22049: Use an `interface` instead of a `type`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-type-definitions": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    /** Retained documentation for the converted declaration. */
+    type ShapeViolation = { value: number };
+         ~~~~~~~~~~~~~~
+!!! error TS22049: Use an `interface` instead of a `type`.
+    type GenericViolation<Value> = { readonly value: Value };
+         ~~~~~~~~~~~~~~~~
+!!! error TS22049: Use an `interface` instead of a `type`.
+    interface ValidShape { value: number; }
+    type ValidUnion = string | number;
+    type ValidFunction = (value: number) => number;
+    export {};

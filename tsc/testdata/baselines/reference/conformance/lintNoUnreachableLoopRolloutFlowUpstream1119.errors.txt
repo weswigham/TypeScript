@@ -1,0 +1,31 @@
+/input.ts(1,28): error TS2304: Cannot find name 'a'.
+/input.ts(1,33): error TS2304: Cannot find name 'b'.
+/input.ts(1,43): error TS2304: Cannot find name 'foo'.
+/input.ts(1,52): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function someFunc() { for (a in b) while (foo) if (bar) return; }
+                               ~
+!!! error TS2304: Cannot find name 'a'.
+                                    ~
+!!! error TS2304: Cannot find name 'b'.
+                                              ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                       ~~~
+!!! error TS2304: Cannot find name 'bar'.

@@ -1,0 +1,28 @@
+/input.ts(1,16): error TS7006: Parameter 'undefined' implicitly has an 'any' type.
+/input.ts(1,58): error TS20150: It's not necessary to initialize '{ x }' to undefined.
+/input.ts(1,60): error TS2339: Property 'x' does not exist on type 'undefined'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-undef-init": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function local(undefined) { let value = undefined; } let { x } = undefined;
+                   ~~~~~~~~~
+!!! error TS7006: Parameter 'undefined' implicitly has an 'any' type.
+                                                             ~~~~~~~~~~~~~~~~~
+!!! error TS20150: It's not necessary to initialize '{ x }' to undefined.
+                                                               ~
+!!! error TS2339: Property 'x' does not exist on type 'undefined'.

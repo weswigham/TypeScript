@@ -1,0 +1,40 @@
+/input.ts(1,1): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Console'.
+  No index signature with a parameter of type 'string' was found on type 'Console'.
+/input.ts(1,1): error TS19855: Unexpected console statement. Only these console methods are allowed: warn, 42.
+/input.ts(1,25): error TS7053: Element implicitly has an 'any' type because expression of type '42' can't be used to index type 'Console'.
+  Property '42' does not exist on type 'Console'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": [
+                    "error",
+                    {
+                        "allow": [
+                            "warn",
+                            "42"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    console['wa' + 'rn'](); console[(42)]();
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Console'.
+!!! error TS7053:   No index signature with a parameter of type 'string' was found on type 'Console'.
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: warn, 42.
+                            ~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '42' can't be used to index type 'Console'.
+!!! error TS7053:   Property '42' does not exist on type 'Console'.

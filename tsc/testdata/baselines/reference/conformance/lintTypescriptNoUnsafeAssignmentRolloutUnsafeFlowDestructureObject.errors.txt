@@ -1,0 +1,26 @@
+/input.ts(1,8): error TS24103: Unsafe object destructuring of a property with an `any` value.
+/input.ts(1,18): error TS24097: Unsafe assignment of an `any` value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const {value} = {value: 1 as any};
+           ~~~~~
+!!! error TS24103: Unsafe object destructuring of a property with an `any` value.
+                     ~~~~~~~~~~~~~~~
+!!! error TS24097: Unsafe assignment of an `any` value.

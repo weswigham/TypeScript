@@ -1,0 +1,28 @@
+/input.ts(1,8): error TS2304: Cannot find name 'left'.
+/input.ts(4,1): error TS2304: Cannot find name 'next'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    typeof left // Left
+           ~~~~
+!!! error TS2304: Cannot find name 'left'.
+    === // Right
+    "string" // Trailing
+    next()
+    ~~~~
+!!! error TS2304: Cannot find name 'next'.

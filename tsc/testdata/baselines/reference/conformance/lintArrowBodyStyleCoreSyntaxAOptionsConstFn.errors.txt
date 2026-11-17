@@ -1,0 +1,25 @@
+/input.ts(1,18): error TS22036: Unexpected block statement surrounding arrow body; put a value of `undefined` immediately after the `=>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "arrow-body-style": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn = () => {};
+                     ~~
+!!! error TS22036: Unexpected block statement surrounding arrow body; put a value of `undefined` immediately after the `=>`.

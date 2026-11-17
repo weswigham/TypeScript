@@ -1,0 +1,34 @@
+input.ts(5,1): error TS22009: Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`.
+input.ts(6,1): error TS20322: Confusing combination of non-null assertion and `in` operator like `a! in b`, which might be misinterpreted as `!(a in b)`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-confusing-non-null-assertion": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    declare const value: string | undefined;
+    declare const other: string;
+    declare const record: Record<string, unknown>;
+    
+    value! === other;
+    ~~~~~~~~~~~~~~~~
+!!! error TS22009: Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`.
+    value! in record;
+    ~~~~~~~~~~~~~~~~
+!!! error TS20322: Confusing combination of non-null assertion and `in` operator like `a! in b`, which might be misinterpreted as `!(a in b)`.
+    
+    (value!) === other;
+    (value!) in record;
+    value === other;

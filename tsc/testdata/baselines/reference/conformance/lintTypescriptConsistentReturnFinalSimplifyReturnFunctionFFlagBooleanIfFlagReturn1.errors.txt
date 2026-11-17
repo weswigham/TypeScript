@@ -1,0 +1,28 @@
+/input.ts(1,10): error TS24006: Expected to return a value at the end of function 'f'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-return": [
+                    "error",
+                    {
+                        "treatUndefinedAsUnspecified": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f(flag: boolean) { if (flag) return 1; }
+             ~
+!!! error TS24006: Expected to return a value at the end of function 'f'.

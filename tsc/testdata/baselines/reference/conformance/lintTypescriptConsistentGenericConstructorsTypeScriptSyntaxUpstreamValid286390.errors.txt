@@ -1,0 +1,33 @@
+/input.ts(2,17): error TS2304: Cannot find name 'Foo'.
+/input.ts(2,35): error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": [
+                    "error",
+                    "type-annotation"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    function foo(a: Foo<string> = new Foo()) {}
+                    ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                                      ~~~
+!!! error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
+!!! related TS2728 /input.ts:2:10: 'foo' is declared here.
+          

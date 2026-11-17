@@ -1,0 +1,44 @@
+/input.ts(2,1): error TS2322: Type 'number' is not assignable to type 'string'.
+/input.ts(2,1): error TS24290: 'a' is assigned a value but never used.
+/input.ts(3,10): error TS24290: 'foo' is defined but never used.
+/input.ts(3,16): error TS2322: Type 'number' is not assignable to type 'string'.
+/input.ts(3,23): error TS2322: Type '() => void' is not assignable to type 'string'.
+/input.ts(3,34): error TS2322: Type 'number' is not assignable to type 'string'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (6 errors) ====
+    let a = 'a';
+    a = 10;
+    ~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+    ~
+!!! error TS24290: 'a' is assigned a value but never used.
+    function foo(){a = 11;a = () => {a = 13}}
+             ~~~
+!!! error TS24290: 'foo' is defined but never used.
+                   ~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+                          ~
+!!! error TS2322: Type '() => void' is not assignable to type 'string'.
+                                     ~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.

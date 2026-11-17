@@ -1,0 +1,27 @@
+/input.ts(3,8): error TS24034: Explicit undefined is unnecessary on an optional parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    type T = undefined;
+    (arg?: T | string) => {};
+           ~
+!!! error TS24034: Explicit undefined is unnecessary on an optional parameter.
+          

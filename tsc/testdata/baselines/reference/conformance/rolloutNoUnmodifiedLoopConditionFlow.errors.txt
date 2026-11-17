@@ -1,0 +1,24 @@
+input.ts(2,46): error TS24280: 'count' is not modified in this loop.
+input.ts(4,64): error TS24280: 'second' is not modified in this loop.
+input.ts(5,68): error TS24280: 'count' is not modified in this loop.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-unmodified-loop-condition": ["error", { "checkConditionalExpressions": true }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    declare function work(): void;
+    function unchanged() { let count = 2; while (count > 0) { work(); } }
+                                                 ~~~~~
+!!! error TS24280: 'count' is not modified in this loop.
+    function changed() { let count = 2; while (count > 0) { count--; } }
+    function groups() { let first = 2, second = 3; while (first && second) { first--; } }
+                                                                   ~~~~~~
+!!! error TS24280: 'second' is not modified in this loop.
+    function conditional() { let flag = true, count = 3; while (flag ? count : 0) { flag = false; } }
+                                                                       ~~~~~
+!!! error TS24280: 'count' is not modified in this loop.
+    function closure() { let count = 2; function update() { count--; } while (count) { update(); } }

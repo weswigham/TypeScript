@@ -1,0 +1,35 @@
+/input.tsx(3,16): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+/input.tsx(4,13): error TS2552: Cannot find name 'A'. Did you mean 'a'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (2 errors) ====
+    function App() {
+    				const obj = { a: 1 };
+    				const { a, b = a } = obj;
+    				           ~
+!!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+    				return <A prop={b} />;
+    				        ~
+!!! error TS2552: Cannot find name 'A'. Did you mean 'a'?
+!!! related TS2728 /input.tsx:3:13: 'a' is declared here.
+    			}

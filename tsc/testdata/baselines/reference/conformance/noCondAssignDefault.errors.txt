@@ -1,0 +1,47 @@
+input.ts(2,5): error TS22016: Expected a conditional expression and instead saw an assignment.
+input.ts(3,8): error TS18048: 'value' is possibly 'undefined'.
+input.ts(3,8): error TS22016: Expected a conditional expression and instead saw an assignment.
+input.ts(4,14): error TS22016: Expected a conditional expression and instead saw an assignment.
+input.ts(5,8): error TS22016: Expected a conditional expression and instead saw an assignment.
+input.ts(6,11): error TS22016: Expected a conditional expression and instead saw an assignment.
+input.ts(12,5): error TS22016: Expected a conditional expression and instead saw an assignment.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-cond-assign": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (7 errors) ====
+    let value, other, result;
+    if (value = other) {}
+        ~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    while (value += 1) {}
+           ~~~~~
+!!! error TS18048: 'value' is possibly 'undefined'.
+           ~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    do {} while (value = other);
+                 ~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    for (; value = other;) {}
+           ~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    result = (value = other) ? 1 : 0;
+              ~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    if ((value = other)) {}
+    while ((value = other)) {}
+    do {} while ((value = other));
+    for (; (value = other);) {}
+    result = ((value = other)) ? 1 : 0;
+    if ((value) = (other)) {}
+        ~~~~~~~~~~~~~~~~~
+!!! error TS22016: Expected a conditional expression and instead saw an assignment.
+    if (value || (value = other)) {}
+    if ((() => value = other)()) {}
+    switch (value) { case value = other: break; }
+    for (;;) { break; }

@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS2304: Cannot find name 'values'.
+/input.ts(1,1): error TS24362: Array prototype method 'lastIndexOf' cannot find NaN.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "use-isnan": [
+                    "error",
+                    {
+                        "enforceForIndexOf": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    values?.['lastIndexOf']?.(Number.NaN);
+    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24362: Array prototype method 'lastIndexOf' cannot find NaN.

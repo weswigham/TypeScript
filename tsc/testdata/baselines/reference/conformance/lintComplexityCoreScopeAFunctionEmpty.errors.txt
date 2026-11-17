@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS19856: Function 'empty' has a complexity of 1. Maximum allowed is 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "complexity": [
+                    "error",
+                    0
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function empty() {}
+    ~~~~~~~~~~~~~~
+!!! error TS19856: Function 'empty' has a complexity of 1. Maximum allowed is 0.

@@ -1,0 +1,25 @@
+/input.ts(1,16): error TS24305: Unexpected var, use let or const instead.
+/input.ts(1,20): error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f() { var x = x; }
+                   ~~~~~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.
+                       ~
+!!! error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.

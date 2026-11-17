@@ -1,0 +1,37 @@
+/input.ts(1,14): error TS7006: Parameter 'cb' implicitly has an 'any' type.
+/input.ts(1,57): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,75): error TS2304: Cannot find name 'register'.
+/input.ts(1,103): error TS2554: Expected 1 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    function foo(cb) { cb = function() { function something(a) { cb(1 + a); } register(something); }(); } foo();
+                 ~~
+!!! error TS7006: Parameter 'cb' implicitly has an 'any' type.
+                                                            ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                                                                              ~~~~~~~~
+!!! error TS2304: Cannot find name 'register'.
+                                                                                                          ~~~
+!!! error TS2554: Expected 1 arguments, but got 0.
+!!! related TS6210 /input.ts:1:14: An argument for 'cb' was not provided.

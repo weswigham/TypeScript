@@ -1,0 +1,31 @@
+/input.ts(1,11): error TS7008: Member '#bad' implicitly has an 'any' type.
+/input.ts(1,11): error TS24213: Identifier '#bad' is restricted.
+/input.ts(1,44): error TS24213: Identifier '#bad' is restricted.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-denylist": [
+                    "error",
+                    "bad"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class C { #bad; method() { this.#bad; this.#bad = 1; } }
+              ~~~~
+!!! error TS7008: Member '#bad' implicitly has an 'any' type.
+              ~~~~
+!!! error TS24213: Identifier '#bad' is restricted.
+                                               ~~~~
+!!! error TS24213: Identifier '#bad' is restricted.

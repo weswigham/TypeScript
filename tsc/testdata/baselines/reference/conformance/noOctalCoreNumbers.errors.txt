@@ -1,0 +1,49 @@
+input.js(1,1): error TS1121: Octal literals are not allowed. Use the syntax '0o1234'.
+input.js(1,1): error TS19511: Octal literals should not be used.
+input.js(2,1): error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
+input.js(2,1): error TS19511: Octal literals should not be used.
+input.js(3,1): error TS1489: Decimals with leading zeros are not allowed.
+input.js(3,1): error TS19511: Octal literals should not be used.
+input.js(4,1): error TS1489: Decimals with leading zeros are not allowed.
+input.js(4,1): error TS19511: Octal literals should not be used.
+input.js(5,1): error TS1489: Decimals with leading zeros are not allowed.
+input.js(5,1): error TS19511: Octal literals should not be used.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "allowJs": true },
+        "lint": { "rules": { "no-octal": "error" } },
+        "files": ["input.js"]
+    }
+    
+==== input.js (10 errors) ====
+    01234;
+    ~~~~~
+!!! error TS1121: Octal literals are not allowed. Use the syntax '0o1234'.
+    ~~~~~
+!!! error TS19511: Octal literals should not be used.
+    00;
+    ~~
+!!! error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
+    ~~
+!!! error TS19511: Octal literals should not be used.
+    08;
+    ~~
+!!! error TS1489: Decimals with leading zeros are not allowed.
+    ~~
+!!! error TS19511: Octal literals should not be used.
+    09.1;
+    ~~~~
+!!! error TS1489: Decimals with leading zeros are not allowed.
+    ~~~~
+!!! error TS19511: Octal literals should not be used.
+    019e1;
+    ~~~~~
+!!! error TS1489: Decimals with leading zeros are not allowed.
+    ~~~~~
+!!! error TS19511: Octal literals should not be used.
+    0x1234;
+    0o777;
+    0;
+    0.1;

@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2365: Operator '+=' cannot be applied to types 'Window & typeof globalThis' and 'typeof globalThis'.
+/input.ts(1,1): error TS19857: Designated alias 'self' is not assigned to 'this'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "consistent-this": [
+                    "error",
+                    "self"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    self += this;
+    ~~~~~~~~~~~~
+!!! error TS2365: Operator '+=' cannot be applied to types 'Window & typeof globalThis' and 'typeof globalThis'.
+    ~~~~~~~~~~~~
+!!! error TS19857: Designated alias 'self' is not assigned to 'this'.

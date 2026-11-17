@@ -1,0 +1,26 @@
+/input.tsx(1,10): error TS19668: Export  unnecessarily renamed.
+/input.tsx(1,26): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-rename": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    export { '' as '' } from 'mod';
+             ~~~~~~~~
+!!! error TS19668: Export  unnecessarily renamed.
+                             ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

@@ -1,0 +1,32 @@
+input.ts(2,1): error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.
+input.ts(2,1): warning TS24285: Unexpected negating the left operand of 'in' operator.
+input.ts(3,1): error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+input.ts(3,1): warning TS24285: Unexpected negating the left operand of 'instanceof' operator.
+input.ts(4,1): warning TS24285: Unexpected negating the left operand of '<' operator.
+input.ts(5,1): error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-unsafe-negation": ["warn", { "enforceForOrderingRelations": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (6 errors) ====
+    declare const value: any, object: any;
+    !value in object;
+    ~~~~~~
+!!! error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.
+    ~~~~~~
+!!! warning TS24285: Unexpected negating the left operand of 'in' operator.
+    !value instanceof Object;
+    ~~~~~~
+!!! error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+    ~~~~~~
+!!! warning TS24285: Unexpected negating the left operand of 'instanceof' operator.
+    !value < object;
+    ~~~~~~
+!!! warning TS24285: Unexpected negating the left operand of '<' operator.
+    (!value) in object;
+    ~~~~~~~~
+!!! error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.

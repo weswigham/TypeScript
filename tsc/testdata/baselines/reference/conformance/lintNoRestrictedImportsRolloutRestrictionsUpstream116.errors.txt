@@ -1,0 +1,52 @@
+/input.tsx(1,10): error TS24268: 'foo' import from 'mod' is restricted. Don't use 'foo' and `qux` from 'mod'.
+/input.tsx(1,15): error TS24268: 'bar' import from 'mod' is restricted. Use `barbaz` instead of `bar`.
+/input.tsx(1,25): error TS24268: 'qux' import from 'mod' is restricted. Don't use 'foo' and `qux` from 'mod'.
+/input.tsx(1,36): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "bar"
+                                ],
+                                "message": "Use `barbaz` instead of `bar`.",
+                                "name": "mod"
+                            },
+                            {
+                                "importNames": [
+                                    "foo",
+                                    "qux"
+                                ],
+                                "message": "Don't use 'foo' and `qux` from 'mod'.",
+                                "name": "mod"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (4 errors) ====
+    import { foo, bar, baz, qux } from 'mod'
+             ~~~
+!!! error TS24268: 'foo' import from 'mod' is restricted. Don't use 'foo' and `qux` from 'mod'.
+                  ~~~
+!!! error TS24268: 'bar' import from 'mod' is restricted. Use `barbaz` instead of `bar`.
+                            ~~~
+!!! error TS24268: 'qux' import from 'mod' is restricted. Don't use 'foo' and `qux` from 'mod'.
+                                       ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

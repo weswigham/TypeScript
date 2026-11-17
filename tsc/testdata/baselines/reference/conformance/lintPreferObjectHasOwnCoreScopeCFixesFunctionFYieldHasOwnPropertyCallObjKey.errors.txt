@@ -1,0 +1,28 @@
+/input.ts(1,22): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+/input.ts(1,47): error TS2304: Cannot find name 'obj'.
+/input.ts(1,52): error TS2304: Cannot find name 'key'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-object-has-own": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function* f() { yield({}).hasOwnProperty.call(obj, key); }
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+                                                  ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                       ~~~
+!!! error TS2304: Cannot find name 'key'.

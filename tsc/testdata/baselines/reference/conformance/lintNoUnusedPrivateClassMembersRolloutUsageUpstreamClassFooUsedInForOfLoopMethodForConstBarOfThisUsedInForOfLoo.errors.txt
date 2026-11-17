@@ -1,0 +1,34 @@
+/input.ts(2,5): error TS7008: Member '#usedInForOfLoop' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    class Foo {
+        #usedInForOfLoop;
+        ~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#usedInForOfLoop' implicitly has an 'any' type.
+        method() {
+            for (const bar of this.#usedInForOfLoop) {
+    
+            }
+        }
+    }

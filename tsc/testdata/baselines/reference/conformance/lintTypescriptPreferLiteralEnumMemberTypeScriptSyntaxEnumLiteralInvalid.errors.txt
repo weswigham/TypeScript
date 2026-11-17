@@ -1,0 +1,25 @@
+/input.ts(1,10): error TS20474: Explicit enum value must only be a literal value (string or number).
+/input.ts(1,21): error TS20474: Explicit enum value must only be a literal value (string or number).
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-literal-enum-member": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum E { A = 1 + 1, B = A }
+             ~
+!!! error TS20474: Explicit enum value must only be a literal value (string or number).
+                        ~
+!!! error TS20474: Explicit enum value must only be a literal value (string or number).

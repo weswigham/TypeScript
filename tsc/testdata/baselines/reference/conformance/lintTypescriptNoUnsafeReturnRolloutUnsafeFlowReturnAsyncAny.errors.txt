@@ -1,0 +1,23 @@
+/input.ts(1,24): error TS24124: Unsafe return of a value of type `Promise<any>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    async function get() { return Promise.resolve(1 as any); }
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24124: Unsafe return of a value of type `Promise<any>`.

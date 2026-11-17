@@ -1,0 +1,28 @@
+/input.ts(1,25): error TS2345: Argument of type '(error: any, extra: unknown) => void' is not assignable to parameter of type '(reason: any) => void | PromiseLike<void>'.
+  Target signature provides too few arguments. Expected 2 or more, but got 1.
+/input.ts(1,26): error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/use-unknown-in-catch-callback-variable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    Promise.resolve().catch((error: any, extra: unknown) => {});
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2345: Argument of type '(error: any, extra: unknown) => void' is not assignable to parameter of type '(reason: any) => void | PromiseLike<void>'.
+!!! error TS2345:   Target signature provides too few arguments. Expected 2 or more, but got 1.
+                             ~~~~~~~~~~
+!!! error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.

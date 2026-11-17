@@ -1,0 +1,29 @@
+/input.ts(1,60): error TS24050: Promise-returning method provided where a void return was expected by extended/implemented type 'Base'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Base { f(): void } class Child implements Base { async f() {} }
+                                                               ~~~~~~~~~~~~
+!!! error TS24050: Promise-returning method provided where a void return was expected by extended/implemented type 'Base'.
+    export {};

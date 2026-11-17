@@ -1,0 +1,32 @@
+/input.ts(1,17): error TS2339: Property 'errors' does not exist on type 'unknown'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "caughtErrorsIgnorePattern": "Error$"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    try {} catch ({ errors: [firstError] }) {}
+                    ~~~~~~
+!!! error TS2339: Property 'errors' does not exist on type 'unknown'.

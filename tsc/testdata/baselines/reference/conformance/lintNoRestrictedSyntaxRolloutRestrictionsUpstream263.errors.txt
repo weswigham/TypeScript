@@ -1,0 +1,22 @@
+/input.tsx(1,1): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    doSomething();
+    ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.

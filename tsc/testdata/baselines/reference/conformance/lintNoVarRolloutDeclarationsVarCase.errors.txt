@@ -1,0 +1,25 @@
+/input.ts(1,24): error TS2304: Cannot find name 'x'.
+/input.ts(1,37): error TS24305: Unexpected var, use let or const instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f() { switch (x) { case 1: var y = 1; } }
+                           ~
+!!! error TS2304: Cannot find name 'x'.
+                                        ~~~~~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.

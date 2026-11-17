@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS24035: Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-floating-promises": [
+                    "error",
+                    {
+                        "ignoreVoid": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    void /* keep */ Promise.resolve();
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24035: Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler.
+    export {};

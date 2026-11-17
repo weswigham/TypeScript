@@ -1,0 +1,25 @@
+/input.ts(1,11): error TS2391: Function implementation is missing or not immediately following the declaration.
+/input.ts(1,33): error TS2391: Function implementation is missing or not immediately following the declaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { f(a: string): void; ; f(a: number): void; }
+              ~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+                                    ~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.

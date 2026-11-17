@@ -1,0 +1,23 @@
+/input.ts(1,25): error TS24092: Type parameter T is used only once in the function signature.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-parameters": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function output<T>(): readonly [T];
+                            ~
+!!! error TS24092: Type parameter T is used only once in the function signature.

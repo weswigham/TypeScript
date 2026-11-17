@@ -1,0 +1,35 @@
+/input.ts(1,11): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": [
+                    "error",
+                    {
+                        "allowWithName": ".*Props$"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Base {}
+              ~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.

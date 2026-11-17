@@ -1,0 +1,25 @@
+/input.ts(1,14): error TS7006: Parameter 'Number' implicitly has an 'any' type.
+/input.ts(1,31): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "use-isnan": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function run(Number) { return value === Number.NaN; }
+                 ~~~~~~
+!!! error TS7006: Parameter 'Number' implicitly has an 'any' type.
+                                  ~~~~~
+!!! error TS2304: Cannot find name 'value'.

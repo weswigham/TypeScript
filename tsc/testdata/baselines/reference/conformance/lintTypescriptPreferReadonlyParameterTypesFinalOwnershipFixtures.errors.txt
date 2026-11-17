@@ -1,0 +1,43 @@
+/input.ts(6,18): error TS24146: Parameter should be a read only type.
+/input.ts(7,17): error TS24146: Parameter should be a read only type.
+/input.ts(8,18): error TS24146: Parameter should be a read only type.
+/input.ts(9,18): error TS24146: Parameter should be a read only type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-readonly-parameter-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+    interface Cycle { readonly next: Cycle; }
+    interface MutableCycle { next: MutableCycle; }
+    interface Methods { run(): void; }
+    type Brand = string & { readonly tag: unique symbol };
+    function mutable(value: string[]) {}
+                     ~~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    function nested(value: readonly string[][]) {}
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    function shallow(value: Readonly<MutableCycle>) {}
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    function methods(value: Methods) {}
+                     ~~~~~~~~~~~~~~
+!!! error TS24146: Parameter should be a read only type.
+    function recursive(value: Cycle) {}
+    function immutable(value: readonly [string, readonly number[]]) {}
+    function branded(value: Brand) {}

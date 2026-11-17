@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24318: Combine this with the previous 'const' statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": [
+                    "error",
+                    "consecutive"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const a=0; const b=1;
+               ~~~~~~~~~~
+!!! error TS24318: Combine this with the previous 'const' statement.

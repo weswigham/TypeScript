@@ -1,0 +1,58 @@
+/input.ts(1,1): error TS2304: Cannot find name 'a'.
+/input.ts(1,7): error TS2304: Cannot find name 'a'.
+/input.ts(1,7): error TS19515: 'a['b']' is assigned to itself.
+/input.ts(1,20): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+/input.ts(1,24): error TS19515: 'this.x' is assigned to itself.
+/input.ts(1,29): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+/input.ts(1,32): error TS2304: Cannot find name 'a'.
+/input.ts(1,38): error TS2304: Cannot find name 'a'.
+/input.ts(1,38): error TS19515: 'a?.b' is assigned to itself.
+/input.ts(1,44): error TS2304: Cannot find name 'a'.
+/input.ts(1,46): error TS2304: Cannot find name 'b'.
+/input.ts(1,55): error TS2304: Cannot find name 'a'.
+/input.ts(1,57): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-self-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (13 errors) ====
+    a.b = a['b']; this.x = this.x; a.b = a?.b; a[b + 1] = a[b + 1];
+    ~
+!!! error TS2304: Cannot find name 'a'.
+          ~
+!!! error TS2304: Cannot find name 'a'.
+          ~~~~~~
+!!! error TS19515: 'a['b']' is assigned to itself.
+                       ~
+!!! error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+                           ~~~~~~
+!!! error TS19515: 'this.x' is assigned to itself.
+                                ~
+!!! error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+                                   ~
+!!! error TS2304: Cannot find name 'a'.
+                                         ~
+!!! error TS2304: Cannot find name 'a'.
+                                         ~~~~
+!!! error TS19515: 'a?.b' is assigned to itself.
+                                               ~
+!!! error TS2304: Cannot find name 'a'.
+                                                 ~
+!!! error TS2304: Cannot find name 'b'.
+                                                          ~
+!!! error TS2304: Cannot find name 'a'.
+                                                            ~
+!!! error TS2304: Cannot find name 'b'.

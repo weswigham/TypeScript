@@ -1,0 +1,27 @@
+/input.ts(1,1): error TS19669: Unexpected 'todo' comment: 'TODO: work'.
+/input.ts(2,1): error TS19669: Unexpected 'fixme' comment: 'fixme'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-warning-comments": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    // TODO: work
+    ~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: 'TODO: work'.
+    /* fixme */
+    ~~~~~~~~~~~
+!!! error TS19669: Unexpected 'fixme' comment: 'fixme'.
+    const string = '// TODO'; const regex = /[/* TODO */]/;

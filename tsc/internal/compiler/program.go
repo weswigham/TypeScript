@@ -1378,7 +1378,7 @@ func (p *Program) verifyCompilerOptions() {
 	// !!! The below needs filesByName, which is not equivalent to p.filesByPath.
 
 	// If the emit is enabled make sure that every output file is unique and not overwriting any of the input files
-	if !options.NoEmit.IsTrue() && !options.SuppressOutputPathCheck.IsTrue() {
+	if !options.NoEmit.IsTrue() && !options.LintOnly.IsTrue() && !options.SuppressOutputPathCheck.IsTrue() {
 		var emitFilesSeen collections.Set[tspath.PathKey]
 
 		// Verify that all the emit files are unique and don't overwrite input files

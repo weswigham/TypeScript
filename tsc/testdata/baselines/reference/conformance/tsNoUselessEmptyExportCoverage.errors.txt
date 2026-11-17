@@ -1,0 +1,27 @@
+imported.ts(3,1): error TS20470: Empty export does nothing and can be removed.
+input.ts(2,1): error TS20470: Empty export does nothing and can be removed.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-useless-empty-export": "error" } },
+        "files": ["input.ts", "imported.ts", "standalone.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    export const value = 1;
+    export {};
+    ~~~~~~~~~~
+!!! error TS20470: Empty export does nothing and can be removed.
+    
+==== imported.ts (1 errors) ====
+    import { value } from "./input";
+    void value;
+    export {};
+    ~~~~~~~~~~
+!!! error TS20470: Empty export does nothing and can be removed.
+    
+==== standalone.ts (0 errors) ====
+    export {};
+    export {};

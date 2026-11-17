@@ -1,0 +1,26 @@
+/input.ts(1,10): error TS22005: Array type using 'Array<string>' is forbidden. Use 'string[]' instead.
+/input.ts(1,34): error TS22005: Array type using 'ReadonlyArray<string>' is forbidden. Use 'readonly string[]' instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/array-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    type A = Array<string>; type B = ReadonlyArray<string>;
+             ~~~~~~~~~~~~~
+!!! error TS22005: Array type using 'Array<string>' is forbidden. Use 'string[]' instead.
+                                     ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22005: Array type using 'ReadonlyArray<string>' is forbidden. Use 'readonly string[]' instead.

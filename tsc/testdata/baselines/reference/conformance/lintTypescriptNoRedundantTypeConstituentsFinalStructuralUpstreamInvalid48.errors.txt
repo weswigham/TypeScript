@@ -1,0 +1,31 @@
+/input.ts(4,10): error TS24068: number is overridden by the 1 | 2 in this intersection type.
+/input.ts(4,14): error TS24068: string is overridden by the "a" | "b" in this intersection type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    type S = 1 | 2;
+    type T = 'a' | 'b';
+    type U = S & T & string & number;
+             ~
+!!! error TS24068: number is overridden by the 1 | 2 in this intersection type.
+                 ~
+!!! error TS24068: string is overridden by the "a" | "b" in this intersection type.
+          

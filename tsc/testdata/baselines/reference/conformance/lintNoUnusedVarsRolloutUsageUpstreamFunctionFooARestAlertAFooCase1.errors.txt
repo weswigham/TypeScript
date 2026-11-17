@@ -1,0 +1,37 @@
+/input.ts(1,15): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,18): error TS7019: Rest parameter 'rest' implicitly has an 'any[]' type.
+/input.ts(1,21): error TS24290: 'rest' is defined but never used.
+/input.ts(1,41): error TS2555: Expected at least 1 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    function foo (a, ...rest) { alert(a); } foo();
+                  ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                     ~~~~~~~
+!!! error TS7019: Rest parameter 'rest' implicitly has an 'any[]' type.
+                        ~~~~
+!!! error TS24290: 'rest' is defined but never used.
+                                            ~~~
+!!! error TS2555: Expected at least 1 arguments, but got 0.
+!!! related TS6210 /input.ts:1:15: An argument for 'a' was not provided.

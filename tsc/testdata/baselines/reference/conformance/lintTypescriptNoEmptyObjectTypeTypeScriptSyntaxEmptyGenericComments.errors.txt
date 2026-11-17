@@ -1,0 +1,25 @@
+/input.ts(1,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+/input.ts(1,42): error TS2304: Cannot find name 'Base'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    interface Empty<T /* comment */> extends Base<T> {}
+              ~~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+                                             ~~~~
+!!! error TS2304: Cannot find name 'Base'.

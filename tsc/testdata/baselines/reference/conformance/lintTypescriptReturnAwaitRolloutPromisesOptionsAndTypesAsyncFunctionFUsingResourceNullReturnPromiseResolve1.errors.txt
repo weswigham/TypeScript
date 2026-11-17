@@ -1,0 +1,29 @@
+/input.ts(1,52): error TS24156: Returning an awaited promise is required in this context.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/return-await": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    async function f() { using resource = null; return Promise.resolve(1); }
+                                                       ~~~~~~~~~~~~~~~~~~
+!!! error TS24156: Returning an awaited promise is required in this context.
+    export {};

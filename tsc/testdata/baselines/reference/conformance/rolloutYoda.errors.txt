@@ -1,0 +1,24 @@
+input.ts(2,5): warning TS24366: Expected literal to be on the right side of <.
+input.ts(3,5): warning TS24366: Expected literal to be on the right side of <=.
+input.ts(5,5): warning TS24366: Expected literal to be on the right side of <=.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "yoda": ["warn", "never", { "exceptRange": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    declare const value: number, object: any;
+    if (1 < value) {}
+        ~~~~~~~~~
+!!! warning TS24366: Expected literal to be on the right side of <.
+    if (-1n <= value) {}
+        ~~~~~~~~~~~~
+!!! warning TS24366: Expected literal to be on the right side of <=.
+    if (0 <= value && value < 1) {}
+    if (1 <= value && value < 0) {}
+        ~~~~~~~~~~
+!!! warning TS24366: Expected literal to be on the right side of <=.
+    if (0 <= object.value && object["value"] <= 1) {}

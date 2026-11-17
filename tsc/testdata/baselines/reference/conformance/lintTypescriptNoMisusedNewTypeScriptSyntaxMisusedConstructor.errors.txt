@@ -1,0 +1,25 @@
+/input.ts(1,19): error TS20462: Interfaces cannot be constructed, only classes.
+/input.ts(1,33): error TS20462: Interfaces cannot be constructed, only classes.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-new": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    interface Value { new(): Value; constructor(): void; }
+                      ~~~~~~~~~~~~~
+!!! error TS20462: Interfaces cannot be constructed, only classes.
+                                    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS20462: Interfaces cannot be constructed, only classes.

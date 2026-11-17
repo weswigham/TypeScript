@@ -1,0 +1,47 @@
+//// [tests/cases/conformance/lint/rules/consistent-generic-constructors/consistentGenericConstructors.ts] ////
+
+//// [input.ts]
+class Box<T> {}
+const plain: Box<string> = new Box();
+const bare: Box<number> = new Box;
+const comments: /* before */ Box /* after */ <string> = new Box();
+const inside: Box</* retained */ string> = new Box();
+const existing: Box<string> = new Box<string>();
+const different: Other<string> = new Box();
+const builtin: Uint8Array<ArrayBufferLike> = new Uint8Array();
+function shadowed() {
+    class Uint8Array<T> {}
+    const local: Uint8Array<string> = new Uint8Array();
+}
+function defaults(value: Box<string> = new Box()) {}
+const arrow = (value: Box<string> = new Box()) => value;
+class Properties {
+    property: Box<string> = new Box();
+    ["computed"]: Box<number> = new Box;
+    accessor value: Box<string> = new Box();
+    constructor(public parameter: Box<string> = new Box()) {}
+    method(value: Box<string> = new Box()) {}
+}
+
+//// [input.ts]
+class Box<T> {}
+const plain = new Box<string>();
+const bare = new Box<number>();
+const comments = new Box/* before *//* after */<string>();
+const inside = new Box</* retained */ string>();
+const existing: Box<string> = new Box<string>();
+const different: Other<string> = new Box();
+const builtin: Uint8Array<ArrayBufferLike> = new Uint8Array();
+function shadowed() {
+    class Uint8Array<T> {}
+    const local = new Uint8Array<string>();
+}
+function defaults(value = new Box<string>()) {}
+const arrow = (value: Box<string> = new Box()) => value;
+class Properties {
+    property = new Box<string>();
+    ["computed"] = new Box<number>();
+    accessor value = new Box<string>();
+    constructor(public parameter: Box<string> = new Box()) {}
+    method(value = new Box<string>()) {}
+}

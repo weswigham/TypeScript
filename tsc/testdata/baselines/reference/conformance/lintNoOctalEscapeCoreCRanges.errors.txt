@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS19512: Don't use octal: '\37'. Use '\u....' instead.
+/input.ts(1,5): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1f'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-octal-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    'foo\378bar'
+    ~~~~~~~~~~~~
+!!! error TS19512: Don't use octal: '\37'. Use '\u....' instead.
+        ~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1f'.

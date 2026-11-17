@@ -1,0 +1,63 @@
+input.ts(3,7): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(6,33): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(7,7): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(9,7): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Flags'.
+input.ts(12,6): error TS24113: The argument passed here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(13,6): error TS24113: The argument passed here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(14,25): error TS24117: The value returned here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(15,45): error TS24117: The value returned here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(16,18): error TS24114: The value asserted here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(18,1): error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.
+input.ts(20,9): error TS24112: The computed key used here does not have a shared enum type with the expected enum 'Fruit'.
+input.ts(22,35): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/no-unsafe-enum-assignment":"error"}}}
+==== input.ts (12 errors) ====
+    enum Fruit { Apple, Banana }
+    enum Flags { Read = 1, Write = 2 }
+    const fruit: Fruit = 0;
+          ~~~~~~~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+    const safe: Fruit = Fruit.Apple;
+    const union: Fruit | number = 0;
+    const nested: {fruit: Fruit} = {fruit: 0};
+                                    ~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+    const generic: Set<Fruit> = new Set<number>();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+    const flags: Flags = Flags.Read | Flags.Write;
+    const invalidFlags: Flags = Flags.Read | 4;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Flags'.
+    declare function take(value: Fruit): void;
+    declare function rest(...values: [Fruit, Fruit]): void;
+    take(0);
+         ~
+!!! error TS24113: The argument passed here does not have a shared enum type with the expected enum 'Fruit'.
+    rest(...[Fruit.Apple, 1] as const);
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24113: The argument passed here does not have a shared enum type with the expected enum 'Fruit'.
+    function get(): Fruit { return 0; }
+                            ~~~~~~~~~
+!!! error TS24117: The value returned here does not have a shared enum type with the expected enum 'Fruit'.
+    async function getAsync(): Promise<Fruit> { return Promise.resolve(0); }
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24117: The value returned here does not have a shared enum type with the expected enum 'Fruit'.
+    const asserted = 0 as Fruit;
+                     ~~~~~~~~~~
+!!! error TS24114: The value asserted here does not have a shared enum type with the expected enum 'Fruit'.
+    let mutable = Fruit.Apple;
+    mutable++;
+    ~~~~~~~~~
+!!! error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.
+    declare const mapping: {[key in Fruit]: string};
+    mapping[0];
+            ~
+!!! error TS24112: The computed key used here does not have a shared enum type with the expected enum 'Fruit'.
+    interface HasFruit {fruit: Fruit}
+    class Basket implements HasFruit {fruit = 0;}
+                                      ~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.

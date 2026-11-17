@@ -1,0 +1,31 @@
+/input.ts(2,1): error TS19212: Comments should not begin with a lowercase character.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "capitalized-comments": [
+                    "error",
+                    "always",
+                    {
+                        "line": {
+                            "ignorePattern": "lower"
+                        }
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    // lowercase
+    /* lowercase */
+    ~~~~~~~~~~~~~~~
+!!! error TS19212: Comments should not begin with a lowercase character.

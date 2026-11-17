@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS19660: Unnecessary try/catch wrapper.
+/input.ts(1,7): error TS2304: Cannot find name 'call'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-catch": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try { call(); } catch (error) { /* keep */ throw error; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19660: Unnecessary try/catch wrapper.
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.

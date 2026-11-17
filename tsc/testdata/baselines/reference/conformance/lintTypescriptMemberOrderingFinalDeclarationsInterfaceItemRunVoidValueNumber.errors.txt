@@ -1,0 +1,26 @@
+/input.ts(1,31): error TS24012: Member value should be declared before all method definitions.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/member-ordering": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    interface Item { run(): void; value: number; }
+                                  ~~~~~~~~~~~~~~
+!!! error TS24012: Member value should be declared before all method definitions.

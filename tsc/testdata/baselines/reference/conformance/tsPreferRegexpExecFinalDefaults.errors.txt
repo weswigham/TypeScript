@@ -1,0 +1,28 @@
+input.ts(5,6): error TS24147: Use the `RegExp#exec()` method instead.
+input.ts(6,6): error TS24147: Use the `RegExp#exec()` method instead.
+input.ts(7,6): error TS24147: Use the `RegExp#exec()` method instead.
+input.ts(8,6): error TS24147: Use the `RegExp#exec()` method instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/prefer-regexp-exec":"error"}}}
+==== input.ts (4 errors) ====
+    declare const text: string;
+    declare const dynamic: string;
+    declare const unknownPattern: RegExp;
+    const fixed = "ab";
+    text.match(/ab/);
+         ~~~~~
+!!! error TS24147: Use the `RegExp#exec()` method instead.
+    text.match("a/b");
+         ~~~~~
+!!! error TS24147: Use the `RegExp#exec()` method instead.
+    text.match(fixed);
+         ~~~~~
+!!! error TS24147: Use the `RegExp#exec()` method instead.
+    text.match(new RegExp(dynamic));
+         ~~~~~
+!!! error TS24147: Use the `RegExp#exec()` method instead.
+    text.match(/ab/g);
+    text.match(unknownPattern);
+    text.match("[");

@@ -1,0 +1,59 @@
+/input.ts(1,1): error TS2349: This expression is not callable.
+  Type 'Math' has no call signatures.
+/input.ts(1,1): error TS24247: 'Math' is not a function.
+/input.ts(1,9): error TS24247: 'JSON' is not a function.
+/input.ts(1,13): error TS2351: This expression is not constructable.
+  Type 'JSON' has no construct signatures.
+/input.ts(1,21): error TS2349: This expression is not callable.
+  Type 'typeof Intl' has no call signatures.
+/input.ts(1,21): error TS24247: 'Intl' is not a function.
+/input.ts(1,31): error TS2349: This expression is not callable.
+  Type 'typeof Temporal' has no call signatures.
+/input.ts(1,31): error TS24247: 'Temporal' is not a function.
+/input.ts(1,43): error TS2349: This expression is not callable.
+  Type 'typeof globalThis' has no call signatures.
+/input.ts(1,43): error TS24247: 'globalThis' is not a function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-obj-calls": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (10 errors) ====
+    Math(); new JSON(); Intl?.(); Temporal(); globalThis();
+    ~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Math' has no call signatures.
+    ~~~~~~
+!!! error TS24247: 'Math' is not a function.
+            ~~~~~~~~~~
+!!! error TS24247: 'JSON' is not a function.
+                ~~~~
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type 'JSON' has no construct signatures.
+                        ~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'typeof Intl' has no call signatures.
+                        ~~~~~~~~
+!!! error TS24247: 'Intl' is not a function.
+                                  ~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'typeof Temporal' has no call signatures.
+                                  ~~~~~~~~~~
+!!! error TS24247: 'Temporal' is not a function.
+                                              ~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'typeof globalThis' has no call signatures.
+                                              ~~~~~~~~~~~~
+!!! error TS24247: 'globalThis' is not a function.

@@ -1,0 +1,62 @@
+/input.ts(1,11): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+/input.ts(1,26): error TS19105: An interface declaring no members is equivalent to its supertype.
+/input.ts(1,36): error TS2304: Cannot find name 'Base'.
+/input.ts(1,53): error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+/module.ts(1,18): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": [
+                    "error",
+                    {
+                        "allowInterfaces": "never",
+                        "allowObjectTypes": "never"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (1 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+                     ~~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+==== /input.ts (4 errors) ====
+    interface I {} interface J extends Base {} type T = {};
+              ~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+                             ~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+                                       ~~~~
+!!! error TS2304: Cannot find name 'Base'.
+                                                        ~~
+!!! error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19106: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+!!! error TS19106: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19106: - If you want a type meaning "any value", you probably want `unknown` instead.

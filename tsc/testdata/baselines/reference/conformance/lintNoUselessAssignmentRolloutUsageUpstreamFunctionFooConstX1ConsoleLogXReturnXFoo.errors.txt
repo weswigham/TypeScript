@@ -1,0 +1,33 @@
+/input.ts(6,13): error TS2588: Cannot assign to 'x' because it is a constant.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    function foo() {
+                const x = 1;
+                console.log(x);
+                return;
+    
+                x = 'Foo'
+                ~
+!!! error TS2588: Cannot assign to 'x' because it is a constant.
+            }

@@ -1,0 +1,126 @@
+input.ts(1,17): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+input.ts(1,19): error TS2304: Cannot find name 'value'.
+input.ts(2,18): error TS20013: Unexpected implicit coercion encountered. Use `Boolean((first, second))` instead.
+input.ts(2,21): error TS2304: Cannot find name 'first'.
+input.ts(2,21): error TS2695: Left side of comma operator is unused and has no side effects.
+input.ts(2,28): error TS2304: Cannot find name 'second'.
+input.ts(3,7): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+input.ts(3,9): error TS2304: Cannot find name 'value'.
+input.ts(4,1): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+input.ts(4,2): error TS2304: Cannot find name 'value'.
+input.ts(5,1): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+input.ts(5,4): error TS2304: Cannot find name 'value'.
+input.ts(6,1): error TS2304: Cannot find name 'value'.
+input.ts(6,1): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+input.ts(7,1): error TS2304: Cannot find name 'value'.
+input.ts(7,1): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+input.ts(8,1): error TS20013: Unexpected implicit coercion encountered. Use `String(value)` instead.
+input.ts(8,6): error TS2304: Cannot find name 'value'.
+input.ts(9,1): error TS2304: Cannot find name 'value'.
+input.ts(9,1): error TS20013: Unexpected implicit coercion encountered. Use `value = String(value)` instead.
+input.ts(10,1): error TS20013: Unexpected implicit coercion encountered. Use `items.indexOf(value) !== -1` instead.
+input.ts(10,2): error TS2304: Cannot find name 'items'.
+input.ts(10,16): error TS2304: Cannot find name 'value'.
+input.ts(11,1): error TS20013: Unexpected implicit coercion encountered. Use `items?.lastIndexOf(value) >= 0` instead.
+input.ts(11,2): error TS2304: Cannot find name 'items'.
+input.ts(11,21): error TS2304: Cannot find name 'value'.
+input.ts(12,4): error TS2304: Cannot find name 'value'.
+input.ts(13,17): error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
+input.ts(13,35): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+input.ts(13,37): error TS2304: Cannot find name 'value'.
+input.ts(14,17): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+input.ts(14,30): error TS2304: Cannot find name 'value'.
+input.ts(15,1): error TS2304: Cannot find name 'value'.
+input.ts(16,2): error TS2304: Cannot find name 'value'.
+input.ts(16,2): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-implicit-coercion":"error"}},"files":["input.ts"]}
+==== input.ts (35 errors) ====
+    const boolean = !!value;
+                    ~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+                      ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    const sequence = !!(first, second);
+                     ~~~~~~~~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean((first, second))` instead.
+                        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                        ~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                               ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    typeof!!value;
+          ~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    +value;
+    ~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    - -value;
+    ~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+       ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value * 1;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+    value - 0;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
+    "" + value;
+    ~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `String(value)` instead.
+         ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value += "";
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `value = String(value)` instead.
+    ~items.indexOf(value);
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `items.indexOf(value) !== -1` instead.
+     ~~~~~
+!!! error TS2304: Cannot find name 'items'.
+                   ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~items?.lastIndexOf(value);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `items?.lastIndexOf(value) >= 0` instead.
+     ~~~~~
+!!! error TS2304: Cannot find name 'items'.
+                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    `${value}`;
+       ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    function shadow(Boolean) { return !!value; }
+                    ~~~~~~~
+!!! error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
+                                      ~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+                                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    const comment = !!(/* keep */value);
+                    ~~~~~~~~~~~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+                                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    value * 1 / 4;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    (value * 1) / 4;
+     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+     ~~~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.

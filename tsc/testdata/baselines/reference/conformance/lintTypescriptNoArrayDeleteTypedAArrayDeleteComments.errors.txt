@@ -1,0 +1,24 @@
+/input.ts(2,3): error TS20722: Using the `delete` operator with an array expression is unsafe.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-array-delete": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const arr: number[];
+      delete /*keep*/ arr[0 /*key*/];
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20722: Using the `delete` operator with an array expression is unsafe.

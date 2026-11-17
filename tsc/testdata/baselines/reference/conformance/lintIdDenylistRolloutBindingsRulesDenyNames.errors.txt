@@ -1,0 +1,38 @@
+/input.ts(1,5): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,10): error TS24212: Identifier 'bad' is restricted.
+/input.ts(1,19): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+/input.ts(1,33): error TS2351: This expression is not constructable.
+  Type 'Number' has no construct signatures.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-denylist": [
+                    "error",
+                    "bad"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    let bad; bad = 1; bad(bad); new bad(bad);
+        ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+             ~~~
+!!! error TS24212: Identifier 'bad' is restricted.
+                      ~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Number' has no call signatures.
+                                    ~~~
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type 'Number' has no construct signatures.

@@ -1,0 +1,28 @@
+/input.tsx(3,12): error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    function withPromise<P extends Promise<void>>(promise: P) {
+      return { ...promise };
+               ~~~~~~~~~~
+!!! error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+    }
+          

@@ -1,0 +1,23 @@
+/input.ts(1,39): error TS24191: Switch is not exhaustive. Cases not matched: false | true
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/switch-exhaustiveness-check": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: boolean; switch (value) {}
+                                          ~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: false | true

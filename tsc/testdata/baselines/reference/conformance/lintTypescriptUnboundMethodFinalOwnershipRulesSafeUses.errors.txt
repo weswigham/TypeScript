@@ -1,0 +1,26 @@
+/input.ts(1,94): error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/input.ts(1,132): error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unbound-method": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { method() {} } const value = new C(); value.method(); value.method.bind(value); if (value.method) {} typeof value.method; value.method && 0;
+                                                                                                 ~~~~~~~~~~~~
+!!! error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
+                                                                                                                                       ~~~~~~~~~~~~
+!!! error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?

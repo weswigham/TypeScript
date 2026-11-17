@@ -1,0 +1,33 @@
+input.ts(2,18): warning TS24198: Array.prototype.map() expects a value to be returned at the end of arrow function.
+input.ts(3,42): warning TS24199: Array.prototype.filter() expects a return value from function 'callback'.
+input.ts(6,37): warning TS24199: Array.fromAsync() expects a return value from async arrow function.
+input.ts(7,22): warning TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+input.ts(8,27): warning TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "array-callback-return": ["warn", { "checkForEach": true, "allowVoid": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (5 errors) ====
+    declare const values: number[], ready: boolean;
+    values.map(value => { if (ready) return value; });
+                     ~~
+!!! warning TS24198: Array.prototype.map() expects a value to be returned at the end of arrow function.
+    values.filter(function callback(value) { return; });
+                                             ~~~~~~~
+!!! warning TS24199: Array.prototype.filter() expects a return value from function 'callback'.
+    values.some(value => { try { return value > 0; } finally { console.log(value); } });
+    values.every(value => { while (true) { if (ready) return true; } });
+    Array.fromAsync(values, async value => { console.log(value); });
+                                        ~~
+!!! warning TS24199: Array.fromAsync() expects a return value from async arrow function.
+    values.forEach(value => console.log(value));
+                         ~~
+!!! warning TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+    values.forEach(value => { return value + 1; });
+                              ~~~~~~~~~~~~~~~~~
+!!! warning TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
+    values.forEach(value => void console.log(value));

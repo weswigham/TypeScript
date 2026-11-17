@@ -1,0 +1,28 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestFinalBooleanOptional/declare_const_value:_{_a:_string_}_|_null;_value_&&_value.a;#01 (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "strict": true,
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "@typescript-eslint/prefer-optional-chain": [
+                "error",
+                {
+                    "allowPotentiallyUnsafeFixesThatModifyTheReturnTypeIKnowWhatImDoing": true
+                }
+            ]
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+declare const value: { a: string } | null; value && value.a;

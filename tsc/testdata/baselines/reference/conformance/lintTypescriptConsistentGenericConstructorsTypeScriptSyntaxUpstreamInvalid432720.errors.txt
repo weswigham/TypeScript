@@ -1,0 +1,24 @@
+/input.ts(1,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const a: Map <string, number> = new Map();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.

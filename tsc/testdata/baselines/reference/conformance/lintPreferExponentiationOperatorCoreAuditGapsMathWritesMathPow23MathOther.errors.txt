@@ -1,0 +1,23 @@
+/input.ts(1,24): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-exponentiation-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    Math.pow(2, 3); Math = other;
+                           ~~~~~
+!!! error TS2304: Cannot find name 'other'.

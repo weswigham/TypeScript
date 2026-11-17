@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS2872: This kind of expression is always truthy.
+/input.ts(1,7): error TS24224: Unexpected constant condition.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    while(() => {});
+          ~~~~~~~~
+!!! error TS2872: This kind of expression is always truthy.
+          ~~~~~~~~
+!!! error TS24224: Unexpected constant condition.

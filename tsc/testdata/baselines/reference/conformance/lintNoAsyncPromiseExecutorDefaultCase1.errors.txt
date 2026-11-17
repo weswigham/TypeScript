@@ -1,0 +1,22 @@
+/input.ts(1,13): error TS22027: Promise executor functions should not be async.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-async-promise-executor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    new Promise(async function executor(resolve, reject) {})
+                ~~~~~
+!!! error TS22027: Promise executor functions should not be async.

@@ -1,0 +1,31 @@
+/input.ts(1,5): error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
+/input.ts(1,52): error TS2304: Cannot find name 'ready'.
+/input.ts(1,61): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'value'.
+/input.ts(1,67): error TS7005: Variable 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-loop-func": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    let value; function update() { value = 1; } while (ready) { () => value; }
+        ~~~~~
+!!! error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
+                                                       ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                                                ~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'value'.
+                                                                      ~~~~~
+!!! error TS7005: Variable 'value' implicitly has an 'any' type.

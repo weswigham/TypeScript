@@ -1,0 +1,29 @@
+/input.ts(1,24): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
+/input.ts(1,31): error TS2304: Cannot find name 'x'.
+/input.ts(1,31): error TS24283: Unreachable code.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function foo() { throw error; x = 1; }
+                           ~~~~~
+!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
+                                  ~
+!!! error TS2304: Cannot find name 'x'.
+                                  ~~~~~~
+!!! error TS24283: Unreachable code.

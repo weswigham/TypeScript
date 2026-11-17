@@ -1,0 +1,24 @@
+/input.ts(1,1): error TS24319: Split 'var' declarations into multiple statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    var foo = 1, // comment
+    ~~~~~~~~~~~~~~~~~~~~~~~
+        bar = 2;
+    ~~~~~~~~~~~~
+!!! error TS24319: Split 'var' declarations into multiple statements.

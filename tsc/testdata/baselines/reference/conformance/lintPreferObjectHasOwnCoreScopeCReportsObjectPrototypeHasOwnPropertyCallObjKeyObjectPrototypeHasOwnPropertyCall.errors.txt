@@ -1,0 +1,31 @@
+/input.ts(1,41): error TS2304: Cannot find name 'obj'.
+/input.ts(1,46): error TS2304: Cannot find name 'key'.
+/input.ts(1,92): error TS2304: Cannot find name 'obj'.
+/input.ts(1,97): error TS2304: Cannot find name 'key'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-object-has-own": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    (Object?.prototype.hasOwnProperty).call(obj, key); (Object.prototype.hasOwnProperty?.call)(obj, key);
+                                            ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                 ~~~
+!!! error TS2304: Cannot find name 'key'.
+                                                                                               ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                                                                    ~~~
+!!! error TS2304: Cannot find name 'key'.

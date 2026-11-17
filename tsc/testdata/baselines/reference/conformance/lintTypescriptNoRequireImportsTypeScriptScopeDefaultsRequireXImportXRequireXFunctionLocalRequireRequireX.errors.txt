@@ -1,0 +1,38 @@
+/input.ts(1,1): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+/input.ts(1,1): error TS21340: A `require()` style import is forbidden.
+/input.ts(1,15): error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+/input.ts(1,26): error TS21340: A `require()` style import is forbidden.
+/input.ts(1,34): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.ts(1,55): error TS7006: Parameter 'require' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-require-imports": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    require('x'); import x = require('x'); function local(require) { require('x'); }
+    ~~~~~~~
+!!! error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+    ~~~~~~~~~~~~
+!!! error TS21340: A `require()` style import is forbidden.
+                  ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
+                             ~~~~~~~~~~~~
+!!! error TS21340: A `require()` style import is forbidden.
+                                     ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                                          ~~~~~~~
+!!! error TS7006: Parameter 'require' implicitly has an 'any' type.

@@ -1,0 +1,25 @@
+/input.ts(1,8): error TS20272: Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring.
+/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try {} catch ({ message }) { throw new TypeError(message); }
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20272: Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring.
+                    ~~~~~~~
+!!! error TS2339: Property 'message' does not exist on type 'unknown'.

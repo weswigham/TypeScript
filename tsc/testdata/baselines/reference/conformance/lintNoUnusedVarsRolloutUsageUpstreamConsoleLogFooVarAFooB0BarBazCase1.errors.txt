@@ -1,0 +1,41 @@
+/input.ts(2,6): error TS24290: 'a' is assigned a value but never used.
+/input.ts(2,11): error TS2304: Cannot find name 'foo'.
+/input.ts(3,2): error TS2304: Cannot find name 'b'.
+/input.ts(3,10): error TS2304: Cannot find name 'bar'.
+/input.ts(3,18): error TS2304: Cannot find name 'baz'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (5 errors) ====
+    console.log('foo')
+    var [a] = foo;
+         ~
+!!! error TS24290: 'a' is assigned a value but never used.
+              ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    +b > 0 ? bar() : baz()
+     ~
+!!! error TS2304: Cannot find name 'b'.
+             ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                     ~~~
+!!! error TS2304: Cannot find name 'baz'.

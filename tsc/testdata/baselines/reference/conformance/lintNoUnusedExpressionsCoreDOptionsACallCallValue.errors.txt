@@ -1,0 +1,39 @@
+/input.ts(1,1): error TS2304: Cannot find name 'a'.
+/input.ts(1,6): error TS2304: Cannot find name 'call'.
+/input.ts(1,14): error TS2304: Cannot find name 'call'.
+/input.ts(1,14): error TS19656: Expected an assignment or function call and instead saw an expression.
+/input.ts(1,24): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-expressions": [
+                    "error",
+                    {
+                        "allowShortCircuit": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    a && call(); call() || value;
+    ~
+!!! error TS2304: Cannot find name 'a'.
+         ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                 ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                 ~~~~~~~~~~~~~~~~
+!!! error TS19656: Expected an assignment or function call and instead saw an expression.
+                           ~~~~~
+!!! error TS2304: Cannot find name 'value'.

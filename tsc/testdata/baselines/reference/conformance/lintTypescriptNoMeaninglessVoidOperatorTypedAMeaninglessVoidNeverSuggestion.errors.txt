@@ -1,0 +1,28 @@
+/input.ts(1,33): error TS20724: void operator shouldn't be used on never; it should convey that a return value is being ignored
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-meaningless-void-operator": [
+                    "error",
+                    {
+                        "checkNever": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function fail(): never; void fail();
+                                    ~~~~~~~~~~~
+!!! error TS20724: void operator shouldn't be used on never; it should convey that a return value is being ignored

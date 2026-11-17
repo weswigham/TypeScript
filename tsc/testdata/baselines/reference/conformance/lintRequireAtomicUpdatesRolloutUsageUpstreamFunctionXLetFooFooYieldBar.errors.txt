@@ -1,0 +1,30 @@
+/input.ts(1,33): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/input.ts(1,39): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    function* x() { let foo; foo += yield bar; }
+                                    ~~~~~
+!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+                                          ~~~
+!!! error TS2304: Cannot find name 'bar'.

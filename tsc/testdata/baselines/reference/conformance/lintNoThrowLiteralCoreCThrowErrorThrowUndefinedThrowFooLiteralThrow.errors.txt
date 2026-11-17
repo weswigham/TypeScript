@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS19516: Expected an error object to be thrown.
+/input.ts(1,16): error TS19517: Do not throw undefined.
+/input.ts(1,33): error TS19516: Expected an error object to be thrown.
+/input.ts(1,39): error TS2304: Cannot find name 'foo'.
+/input.ts(1,57): error TS19516: Expected an error object to be thrown.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-throw-literal": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    throw 'error'; throw undefined; throw foo && 'literal'; throw {};
+    ~~~~~~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+                   ~~~~~~~~~~~~~~~~
+!!! error TS19517: Do not throw undefined.
+                                    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+                                          ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                            ~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.

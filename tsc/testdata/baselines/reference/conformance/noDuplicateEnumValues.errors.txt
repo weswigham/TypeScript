@@ -1,0 +1,47 @@
+input.ts(3,5): error TS19103: Duplicate enum member value 16.
+input.ts(5,5): error TS19103: Duplicate enum member value value.
+input.ts(8,5): error TS19103: Duplicate enum member value 0.
+input.ts(10,5): error TS19103: Duplicate enum member value 100.
+input.ts(12,5): error TS19103: Duplicate enum member value -1.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "@typescript-eslint/no-duplicate-enum-values": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (5 errors) ====
+    enum Duplicate {
+        First = 16,
+        Hex = 0x10,
+        ~~~~~~~~~~
+!!! error TS19103: Duplicate enum member value 16.
+        String = "value",
+        Template = `value`,
+        ~~~~~~~~~~~~~~~~~~
+!!! error TS19103: Duplicate enum member value value.
+        Positive = +0,
+        Negative = -0,
+        NegativeAgain = -0,
+        ~~~~~~~~~~~~~~~~~~
+!!! error TS19103: Duplicate enum member value 0.
+        Coerced = +"1e2",
+        Hundred = 100,
+        ~~~~~~~~~~~~~
+!!! error TS19103: Duplicate enum member value 100.
+        Nested = -+1,
+        NestedAgain = +-1,
+        ~~~~~~~~~~~~~~~~~
+!!! error TS19103: Duplicate enum member value -1.
+    }
+    enum Unchecked {
+        First = 1,
+        Implicit,
+        Expression = 1 + 1,
+        Reference = First,
+        NotANumber = NaN,
+        NotANumberAgain = NaN,
+        Interpolated = `${"value"}`,
+    }

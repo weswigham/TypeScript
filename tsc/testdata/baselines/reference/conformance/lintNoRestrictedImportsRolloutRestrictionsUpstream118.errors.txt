@@ -1,0 +1,48 @@
+/input.tsx(1,8): error TS24266: * import is invalid because 'bar' from 'mod' is restricted. Import bar from qux instead.
+/input.tsx(1,8): error TS24266: * import is invalid because 'foo' from 'mod' is restricted. Import foo from qux instead.
+/input.tsx(1,22): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "foo"
+                                ],
+                                "message": "Import foo from qux instead.",
+                                "name": "mod"
+                            },
+                            {
+                                "importNames": [
+                                    "bar"
+                                ],
+                                "message": "Import bar from qux instead.",
+                                "name": "mod"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    import * as mod from 'mod'
+           ~~~~~~~~
+!!! error TS24266: * import is invalid because 'bar' from 'mod' is restricted. Import bar from qux instead.
+           ~~~~~~~~
+!!! error TS24266: * import is invalid because 'foo' from 'mod' is restricted. Import foo from qux instead.
+                         ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

@@ -255,7 +255,7 @@ test("schemas retain historical options as deprecated", () => {
         const lib = schema.definitions.compilerOptions.properties.lib;
         assert(accepts(lib, ["es2022.sharedmemory", "ES2022.SharedMemory"], schema));
         assert(!accepts(lib, ["es2022.sharedmemory.invalid"], schema));
-        const suggestions = lib.anyOf![0].items!.anyOf![0];
+        const suggestions = (lib.anyOf![0].items! as JSONSchema).anyOf![0];
         assert.equal(suggestions.enumDescriptions![suggestions.enum!.indexOf("es2022.sharedmemory")], "Deprecated.");
     }
 });
@@ -278,6 +278,8 @@ function accepts(schema: JSONSchema, value: unknown, root: JSONSchema): boolean 
                 "additionalProperties",
                 "required",
                 "items",
+                "additionalItems",
+                "minItems",
                 "anyOf",
                 "allOf",
                 "enum",
@@ -313,7 +315,15 @@ function accepts(schema: JSONSchema, value: unknown, root: JSONSchema): boolean 
         if (schema.minLength !== undefined && value.length < schema.minLength) return false;
     }
     if (typeof value === "number" && schema.minimum !== undefined && value < schema.minimum) return false;
-    if (Array.isArray(value) && schema.items && !value.every(item => accepts(schema.items!, item, root))) return false;
+    if (Array.isArray(value)) {
+        if (schema.minItems !== undefined && value.length < schema.minItems) return false;
+        const items = schema.items;
+        if (Array.isArray(items)) {
+            if (schema.additionalItems === false && value.length > items.length) return false;
+            if (!value.every((item, index) => index >= items.length || accepts(items[index], item, root))) return false;
+        }
+        else if (items && !value.every(item => accepts(items, item, root))) return false;
+    }
     if (typeof value === "object" && value !== null && !Array.isArray(value)) {
         if (schema.required?.some(name => !Object.hasOwn(value, name))) return false;
         for (const [name, property] of Object.entries(value)) {
@@ -349,6 +359,51 @@ test("formatting schemas validate inherited editor settings without admitting CL
         assert(!accepts(schema, { lint: { rules: { "no-debugger": "invalid" } } }, schema));
         assert(!accepts(schema, { lint: { rules: [] } }, schema));
         assert(!accepts(schema, { lint: { unknown: true } }, schema));
+    }
+});
+
+test("lint schemas accept severity-or-tuple configurations without validating individual rule options", () => {
+    const valid = [
+        "off",
+        "warning",
+        "warn",
+        "error",
+        0,
+        1,
+        2,
+        null,
+        ["error"],
+        ["warn", { allow: ["warn", "error"], nested: { enabled: true } }],
+        [0, "always"],
+        [2, {}, null, false, 3, [{ nested: [null] }]],
+    ];
+    const invalid = [
+        true,
+        false,
+        "invalid",
+        "ERROR",
+        -1,
+        3,
+        1.5,
+        {},
+        [],
+        [null],
+        [null, "error"],
+        [true],
+        ["invalid", {}],
+        [3],
+        [["error"]],
+    ];
+    for (const kind of ["tsconfig", "jsconfig"] as const) {
+        const schema = generateConfigSchema(kind);
+        assert(accepts(schema, { lint: null }, schema));
+        assert(accepts(schema, { lint: { rules: null } }, schema));
+        for (const value of valid) {
+            assert(accepts(schema, { lint: { rules: { configured: value } } }, schema), `${kind}: ${JSON.stringify(value)}`);
+        }
+        for (const value of invalid) {
+            assert(!accepts(schema, { lint: { rules: { configured: value } } }, schema), `${kind}: ${JSON.stringify(value)}`);
+        }
     }
 });
 

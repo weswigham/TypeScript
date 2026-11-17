@@ -1,0 +1,19 @@
+/input.ts(1,49): error TS24351: Unnecessary 'use strict' directive.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function foo() { 'use strict'; function bar() { 'use strict'; } }
+                                                    ~~~~~~~~~~~~~
+!!! error TS24351: Unnecessary 'use strict' directive.

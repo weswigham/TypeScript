@@ -1,0 +1,31 @@
+/input.ts(1,11): error TS2390: Constructor implementation is missing.
+/input.ts(1,35): error TS2564: Property 'property' has no initializer and is not definitely assigned in the constructor.
+/input.ts(1,53): error TS2390: Constructor implementation is missing.
+/input.ts(1,53): error TS19100: All constructor signatures should be adjacent.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class C { constructor(a: string); property: number; constructor(a: number); }
+              ~~~~~~~~~~~
+!!! error TS2390: Constructor implementation is missing.
+                                      ~~~~~~~~
+!!! error TS2564: Property 'property' has no initializer and is not definitely assigned in the constructor.
+                                                        ~~~~~~~~~~~
+!!! error TS2390: Constructor implementation is missing.
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19100: All constructor signatures should be adjacent.

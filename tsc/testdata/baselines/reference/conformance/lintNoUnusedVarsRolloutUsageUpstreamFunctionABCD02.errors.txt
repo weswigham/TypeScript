@@ -1,0 +1,50 @@
+/input.ts(1,11): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,11): error TS24290: 'a' is defined but never used. Allowed unused args must match /d/u.
+/input.ts(1,14): error TS7006: Parameter 'b' implicitly has an 'any' type.
+/input.ts(1,14): error TS24290: 'b' is defined but never used. Allowed unused args must match /d/u.
+/input.ts(1,18): error TS7031: Binding element 'c' implicitly has an 'any' type.
+/input.ts(1,18): error TS24290: 'c' is defined but never used. Allowed unused args must match /d/u.
+/input.ts(1,21): error TS7031: Binding element 'd' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "argsIgnorePattern": "d"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (7 errors) ====
+    (function(a, b, {c, d}) {})
+              ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+              ~
+!!! error TS24290: 'a' is defined but never used. Allowed unused args must match /d/u.
+                 ~
+!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
+                 ~
+!!! error TS24290: 'b' is defined but never used. Allowed unused args must match /d/u.
+                     ~
+!!! error TS7031: Binding element 'c' implicitly has an 'any' type.
+                     ~
+!!! error TS24290: 'c' is defined but never used. Allowed unused args must match /d/u.
+                        ~
+!!! error TS7031: Binding element 'd' implicitly has an 'any' type.

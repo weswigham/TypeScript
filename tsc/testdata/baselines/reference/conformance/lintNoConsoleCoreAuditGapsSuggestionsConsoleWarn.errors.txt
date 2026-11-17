@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS19855: Unexpected console statement. Only these console methods are allowed: log.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": [
+                    "error",
+                    {
+                        "allow": [
+                            "log"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    console.warn();
+    ~~~~~~~~~~~~
+!!! error TS19855: Unexpected console statement. Only these console methods are allowed: log.

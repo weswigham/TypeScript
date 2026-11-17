@@ -1,0 +1,28 @@
+/input.ts(1,16): error TS2304: Cannot find name 'custom'.
+/input.ts(1,26): error TS19863: Object prototype is read only, properties should not be added.
+/input.ts(1,43): error TS2339: Property 'method' does not exist on type 'Object'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extend-native": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    { var Object = custom; } Object.prototype.method = 0;
+                   ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: Object prototype is read only, properties should not be added.
+                                              ~~~~~~
+!!! error TS2339: Property 'method' does not exist on type 'Object'.

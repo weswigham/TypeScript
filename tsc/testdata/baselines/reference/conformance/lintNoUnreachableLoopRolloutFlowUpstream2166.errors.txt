@@ -1,0 +1,31 @@
+/input.ts(1,24): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,46): error TS2304: Cannot find name 'b'.
+/input.ts(1,59): error TS2304: Cannot find name 'b'.
+/input.ts(1,62): error TS2304: Cannot find name 'c'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    async function foo() { for await (const a of b) { for (a; b; c); break; } }
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                                 ~
+!!! error TS2304: Cannot find name 'b'.
+                                                              ~
+!!! error TS2304: Cannot find name 'b'.
+                                                                 ~
+!!! error TS2304: Cannot find name 'c'.

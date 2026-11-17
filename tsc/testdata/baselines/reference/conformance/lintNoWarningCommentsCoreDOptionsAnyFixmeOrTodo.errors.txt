@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS19669: Unexpected 'fixme' comment: 'any fixme or todo'.
+/input.ts(1,1): error TS19669: Unexpected 'todo' comment: 'any fixme or todo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-warning-comments": [
+                    "error",
+                    {
+                        "location": "anywhere"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    // any fixme or todo
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'fixme' comment: 'any fixme or todo'.
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: 'any fixme or todo'.

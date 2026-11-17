@@ -1,0 +1,25 @@
+/input.ts(1,44): error TS19370: This number literal will lose precision at runtime.
+/input.ts(1,72): error TS19370: This number literal will lose precision at runtime.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-loss-of-precision": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const values = [123.456, 9.00e2, 0.000123, .1230000000000000000000000, 1.0000000000000000000000123];
+                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19370: This number literal will lose precision at runtime.
+                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19370: This number literal will lose precision at runtime.

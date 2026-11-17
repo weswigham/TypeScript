@@ -1,0 +1,25 @@
+/input.ts(1,6): error TS2304: Cannot find name 'key'.
+/input.ts(1,21): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if ((key || 'k') in obj) {}
+         ~~~
+!!! error TS2304: Cannot find name 'key'.
+                        ~~~
+!!! error TS2304: Cannot find name 'obj'.

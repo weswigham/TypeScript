@@ -1,0 +1,9 @@
+//// [tests/cases/conformance/lint/rules/no-unused-vars/lintNoUnusedVarsRolloutUsageUpstreamFunctionObjVarNameForNameInObjReturnCase2.ts] ////
+
+//// [globals.d.ts]
+
+//// [input.ts]
+(function(obj) { var name; for ( name in obj ) return; })({});
+
+//// [input.ts]
+(function(obj) { var name; for ( name in obj ) return; })({});

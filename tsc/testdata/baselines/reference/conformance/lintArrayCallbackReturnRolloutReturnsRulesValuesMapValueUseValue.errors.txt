@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS2304: Cannot find name 'values'.
+/input.ts(1,12): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,18): error TS24199: Array.prototype.map() expects a return value from arrow function.
+/input.ts(1,23): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "array-callback-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    values.map(value => { use(value); });
+    ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+               ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                     ~~
+!!! error TS24199: Array.prototype.map() expects a return value from arrow function.
+                          ~~~
+!!! error TS2304: Cannot find name 'use'.

@@ -1,0 +1,29 @@
+/input.ts(1,22): error TS2300: Duplicate identifier 'Function'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new-func": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    Function(); function Function() {}
+                         ~~~~~~~~
+!!! error TS2300: Duplicate identifier 'Function'.
+!!! related TS6203 lib.es5.d.ts:--:--: 'Function' was also declared here.
+!!! related TS6204 lib.es5.d.ts:--:--: and here.
+!!! related TS6204 lib.es2015.core.d.ts:--:--: and here.
+!!! related TS6204 lib.es2015.symbol.wellknown.d.ts:--:--: and here.
+!!! related TS6204 lib.esnext.decorators.d.ts:--:--: and here.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

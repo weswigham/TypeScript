@@ -1,0 +1,31 @@
+input.ts(2,13): error TS20461: The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type.
+input.ts(3,20): error TS20461: The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type.
+input.ts(4,21): error TS20461: The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unsafe-function-type":"error"}},"files":["input.ts"]}
+==== input.ts (3 errors) ====
+    export {};
+    let unsafe: Function;
+                ~~~~~~~~
+!!! error TS20461: The `Function` type accepts any function-like value.
+!!! error TS20461: Prefer explicitly defining any function parameters and return type.
+    type UnsafeAlias = Function;
+                       ~~~~~~~~
+!!! error TS20461: The `Function` type accepts any function-like value.
+!!! error TS20461: Prefer explicitly defining any function parameters and return type.
+    let optionalUnsafe: Function | undefined;
+                        ~~~~~~~~
+!!! error TS20461: The `Function` type accepts any function-like value.
+!!! error TS20461: Prefer explicitly defining any function parameters and return type.
+    let safe: () => void;
+    type Callable = (value: string) => number;
+    type Constructor = new () => object;
+    {
+        type Function = () => void;
+        let local: Function;
+    }

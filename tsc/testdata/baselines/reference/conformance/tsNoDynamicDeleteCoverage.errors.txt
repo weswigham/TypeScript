@@ -1,0 +1,34 @@
+input.ts(4,15): error TS20324: Do not delete dynamically computed property keys.
+input.ts(5,15): error TS20324: Do not delete dynamically computed property keys.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-dynamic-delete": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    declare const record: Record<string, unknown>;
+    declare const key: string;
+    
+    delete record[key];
+                  ~~~
+!!! error TS20324: Do not delete dynamically computed property keys.
+    delete record[`key`];
+                  ~~~~~
+!!! error TS20324: Do not delete dynamically computed property keys.
+    
+    delete record.key;
+    delete record["key"];
+    delete record[0];
+    delete record[-1];

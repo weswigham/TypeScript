@@ -1,0 +1,32 @@
+input.ts(1,1): error TS24011: All exports in the declaration are only used as types. Use `export type`.
+input.ts(2,1): error TS24010: Type export Alias is not a value and should be exported using `export type`.
+input.ts(6,1): error TS24011: All exports in the declaration are only used as types. Use `export type`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-type-exports": "error" } },
+        "files": ["input.ts", "provider.ts"]
+    }
+    
+==== provider.ts (0 errors) ====
+    export interface Shape { value: number; }
+    export type Alias = string;
+    export const value = 1;
+    export class Both { value = 1; }
+    
+==== input.ts (3 errors) ====
+    export { Shape } from "./provider";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24011: All exports in the declaration are only used as types. Use `export type`.
+    export { Alias, value } from "./provider";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24010: Type export Alias is not a value and should be exported using `export type`.
+    export type { Shape as ValidShape } from "./provider";
+    export { value as validValue, Both } from "./provider";
+    type Local = { value: number };
+    export { Local };
+    ~~~~~~~~~~~~~~~~~
+!!! error TS24011: All exports in the declaration are only used as types. Use `export type`.
+    export type { Local as ValidLocal };

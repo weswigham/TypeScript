@@ -1,0 +1,31 @@
+input.ts(2,5): error TS20317: Missing accessibility modifier on class property value.
+input.ts(3,5): error TS20317: Missing accessibility modifier on method definition run.
+input.ts(4,5): error TS20317: Missing accessibility modifier on get property accessor inferred.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/explicit-member-accessibility": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    class Accessibility {
+        value = 1;
+        ~~~~~
+!!! error TS20317: Missing accessibility modifier on class property value.
+        run(): number { return this.value; }
+        ~~~
+!!! error TS20317: Missing accessibility modifier on method definition run.
+        get inferred(): number { return this.value; }
+        ~~~~~~~~~~~~
+!!! error TS20317: Missing accessibility modifier on get property accessor inferred.
+        public constructor() {}
+        public validField = 2;
+        public validMethod(): number { return this.validField; }
+        protected protectedField = 3;
+        private privateField = 4;
+        #nativePrivate = 5;
+    }
+    export {};

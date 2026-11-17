@@ -1,0 +1,31 @@
+/input.ts(1,35): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
+/input.ts(1,50): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-match": [
+                    "error",
+                    "^[a-z]+$",
+                    {
+                        "onlyDeclarations": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    import {bad_name as good, good as bad_name} from 'mod';
+                                      ~~~~~~~~
+!!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
+                                                     ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

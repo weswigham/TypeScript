@@ -1,0 +1,28 @@
+/input.ts(1,14): error TS2304: Cannot find name 'value'.
+/input.ts(1,14): error TS24335: Unexpected string concatenation.
+/input.ts(1,23): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-template": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const text = value + '\033';
+                 ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                 ~~~~~~~~~~~~~~
+!!! error TS24335: Unexpected string concatenation.
+                          ~~~~
+!!! error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1b'.

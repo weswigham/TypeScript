@@ -1,0 +1,43 @@
+input.ts(2,15): error TS1117: An object literal cannot have multiple properties with the same name.
+input.ts(2,16): error TS19356: Duplicate key 'value'.
+input.ts(3,9): error TS2300: Duplicate identifier 'pair'.
+input.ts(3,35): error TS2300: Duplicate identifier 'pair'.
+input.ts(3,55): error TS1118: An object literal cannot have multiple get/set accessors with the same name.
+input.ts(3,55): error TS2300: Duplicate identifier 'pair'.
+input.ts(3,55): error TS19356: Duplicate key 'pair'.
+input.ts(5,14): error TS19356: Duplicate key '16'.
+input.ts(8,11): error TS2304: Cannot find name 'first'.
+input.ts(8,25): error TS2304: Cannot find name 'second'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-dupe-keys":"error"}},"files":["input.ts"]}
+==== input.ts (10 errors) ====
+    const object = {
+        value: 1, ['value']: 2,
+                  ~~~~~~~~~
+!!! error TS1117: An object literal cannot have multiple properties with the same name.
+                   ~~~~~~~
+!!! error TS19356: Duplicate key 'value'.
+        get pair() { return 1; }, set pair(value) {}, get pair() { return 2; },
+            ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                      ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                                          ~~~~
+!!! error TS1118: An object literal cannot have multiple get/set accessors with the same name.
+                                                          ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                                          ~~~~
+!!! error TS19356: Duplicate key 'pair'.
+        __proto__: null, ['__proto__']: 1,
+        0x10: 1, 16: 2,
+                 ~~
+!!! error TS19356: Duplicate key '16'.
+        nested: { value: 1 }
+    };
+    ({ value: first, value: second } = object);
+              ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                            ~~~~~~
+!!! error TS2304: Cannot find name 'second'.

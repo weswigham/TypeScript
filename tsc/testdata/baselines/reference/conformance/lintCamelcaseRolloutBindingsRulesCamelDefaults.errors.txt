@@ -1,0 +1,36 @@
+/input.ts(1,7): error TS24203: Identifier 'snake_case' is not in camel case.
+/input.ts(1,23): error TS2588: Cannot assign to 'snake_case' because it is a constant.
+/input.ts(1,23): error TS24203: Identifier 'snake_case' is not in camel case.
+/input.ts(1,37): error TS2304: Cannot find name 'use'.
+/input.ts(1,54): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    const snake_case = 1; snake_case++; use(snake_case); snake_case();
+          ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.
+                          ~~~~~~~~~~
+!!! error TS2588: Cannot assign to 'snake_case' because it is a constant.
+                          ~~~~~~~~~~
+!!! error TS24203: Identifier 'snake_case' is not in camel case.
+                                        ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                         ~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Number' has no call signatures.

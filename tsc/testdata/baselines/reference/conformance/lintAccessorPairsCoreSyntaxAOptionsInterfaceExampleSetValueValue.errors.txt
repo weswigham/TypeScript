@@ -1,0 +1,33 @@
+/input.ts(1,21): error TS22051: Getter is not present for type setter 'value'.
+/input.ts(1,25): error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(1,31): error TS7006: Parameter 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "accessor-pairs": [
+                    "error",
+                    {
+                        "enforceForTSTypes": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    interface Example { set value(value); }
+                        ~~~~~~~~~~~~~~~~~
+!!! error TS22051: Getter is not present for type setter 'value'.
+                            ~~~~~
+!!! error TS7032: Property 'value' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                                  ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

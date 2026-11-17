@@ -1,0 +1,31 @@
+/input.ts(1,35): error TS19248: .default is a syntax error.
+/input.ts(1,70): error TS2538: Type 'true' cannot be used as an index type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/dot-notation": [
+                    "error",
+                    {
+                        "allowKeywords": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    declare const object: any; object.default; object['default']; object[true];
+                                      ~~~~~~~
+!!! error TS19248: .default is a syntax error.
+                                                                         ~~~~
+!!! error TS2538: Type 'true' cannot be used as an index type.

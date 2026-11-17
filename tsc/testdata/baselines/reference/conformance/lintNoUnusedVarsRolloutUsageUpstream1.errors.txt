@@ -1,0 +1,36 @@
+/input.ts(1,1): error TS7006: Parameter '_' implicitly has an 'any' type.
+/input.ts(1,8): error TS24290: '_' is assigned a value but never used. Allowed unused args must match /ignored/u.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "argsIgnorePattern": "ignored",
+                        "varsIgnorePattern": "_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    _ => { _ = _ + 1 };
+    ~
+!!! error TS7006: Parameter '_' implicitly has an 'any' type.
+           ~
+!!! error TS24290: '_' is assigned a value but never used. Allowed unused args must match /ignored/u.

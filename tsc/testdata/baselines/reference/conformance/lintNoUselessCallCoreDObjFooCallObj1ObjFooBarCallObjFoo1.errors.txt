@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS19654: Unnecessary '.call()'.
+/input.ts(1,2): error TS2304: Cannot find name 'obj'.
+/input.ts(1,17): error TS2304: Cannot find name 'obj'.
+/input.ts(1,26): error TS2304: Cannot find name 'obj'.
+/input.ts(1,26): error TS19654: Unnecessary '.call()'.
+/input.ts(1,44): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-call": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    (obj?.foo).call(obj, 1); obj?.foo.bar.call(obj?.foo, 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+     ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                             ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+                                               ~~~
+!!! error TS2304: Cannot find name 'obj'.

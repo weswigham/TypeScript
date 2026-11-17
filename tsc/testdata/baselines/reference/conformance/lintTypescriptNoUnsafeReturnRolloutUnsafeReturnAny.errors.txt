@@ -1,0 +1,23 @@
+/input.ts(1,44): error TS24124: Unsafe return of a value of type `any`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; function get() { return value; }
+                                               ~~~~~~~~~~~~~
+!!! error TS24124: Unsafe return of a value of type `any`.

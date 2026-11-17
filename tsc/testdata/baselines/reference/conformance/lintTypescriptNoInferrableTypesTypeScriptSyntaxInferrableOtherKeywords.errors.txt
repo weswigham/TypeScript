@@ -1,0 +1,31 @@
+/input.ts(1,7): error TS19107: Type bigint trivially inferred from a bigint literal, remove type annotation.
+/input.ts(1,31): error TS19107: Type null trivially inferred from a null literal, remove type annotation.
+/input.ts(1,53): error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+/input.ts(1,82): error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    const a: bigint = -10n; const b: null = null; const c: undefined = void 0; const d: symbol = Symbol?.();
+          ~~~~~~~~~~~~~~~~
+!!! error TS19107: Type bigint trivially inferred from a bigint literal, remove type annotation.
+                                  ~~~~~~~~~~~~~~
+!!! error TS19107: Type null trivially inferred from a null literal, remove type annotation.
+                                                        ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+                                                                                     ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.

@@ -1,0 +1,49 @@
+input.ts(1,15): error TS20621: Empty class.
+input.ts(2,23): error TS20621: Empty class.
+input.ts(6,16): error TS20621: Empty class.
+input.ts(7,22): error TS20621: Empty class.
+input.ts(8,21): error TS20621: Empty class.
+input.ts(10,22): error TS20621: Empty class.
+input.ts(10,24): error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.
+input.ts(11,24): error TS20621: Empty class.
+input.ts(11,28): error TS1514: Expected a capturing group name.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-empty-character-class": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (9 errors) ====
+    const empty = /^abc[]/;
+                  ~~~~~~~~
+!!! error TS20621: Empty class.
+    const escapedPrefix = /\[[]/;
+                          ~~~~~~
+!!! error TS20621: Empty class.
+    const negated = /[^]/;
+    const escaped = /\[]/;
+    const literalBracket = /[[]/;
+    const nested = /[[a][]]/v;
+                   ~~~~~~~~~~
+!!! error TS20621: Empty class.
+    const intersection = /[a&&[]]/v;
+                         ~~~~~~~~~~
+!!! error TS20621: Empty class.
+    const subtraction = /[a--[]]/v;
+                        ~~~~~~~~~~
+!!! error TS20621: Empty class.
+    const emptyString = /[\q{}]/v;
+    const legacyEscape = /\1[]/;
+                         ~~~~~~
+!!! error TS20621: Empty class.
+                           ~
+!!! error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.
+    const identityEscape = /\k<[]>/;
+                           ~~~~~~~~
+!!! error TS20621: Empty class.
+                               
+!!! error TS1514: Expected a capturing group name.
+    const constructor = new RegExp("[]");

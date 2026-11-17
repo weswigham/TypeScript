@@ -1,0 +1,36 @@
+/input.ts(1,17): error TS2304: Cannot find name 'obj'.
+/input.ts(1,24): error TS2304: Cannot find name 'hasEnumerableProperties'.
+/input.ts(1,81): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": [
+                    "error",
+                    {
+                        "ignore": [
+                            "ForInStatement",
+                            "ForOfStatement"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    for (var key in obj) { hasEnumerableProperties = true; break; } for (const a of b) break;
+                    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                           ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'hasEnumerableProperties'.
+                                                                                    ~
+!!! error TS2304: Cannot find name 'b'.

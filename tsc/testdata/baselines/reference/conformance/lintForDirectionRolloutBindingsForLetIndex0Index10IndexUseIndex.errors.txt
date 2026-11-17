@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS24209: The update clause in this loop moves the variable in the wrong direction.
+/input.ts(1,44): error TS2304: Cannot find name 'use'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "for-direction": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    for (let index = 0; index < 10; index--) { use(index); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24209: The update clause in this loop moves the variable in the wrong direction.
+                                               ~~~
+!!! error TS2304: Cannot find name 'use'.

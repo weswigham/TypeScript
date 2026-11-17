@@ -1,0 +1,34 @@
+/input.ts(1,5): error TS2397: Declaration name conflicts with built-in global identifier 'undefined'.
+/input.ts(1,5): error TS20162: Unexpected use of undefined.
+/input.ts(1,16): error TS20162: Unexpected use of undefined.
+/input.ts(1,62): error TS2304: Cannot find name 'source'.
+/input.ts(1,73): error TS20162: Unexpected use of undefined.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-undefined": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    let undefined; undefined = 0; const { undefined: renamed } = source; ({ undefined });
+        ~~~~~~~~~
+!!! error TS2397: Declaration name conflicts with built-in global identifier 'undefined'.
+        ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+                   ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.
+                                                                 ~~~~~~
+!!! error TS2304: Cannot find name 'source'.
+                                                                            ~~~~~~~~~
+!!! error TS20162: Unexpected use of undefined.

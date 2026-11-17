@@ -1,0 +1,22 @@
+/input.ts(1,30): error TS24280: 'foo' is not modified in this loop.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    var foo = 0, bar = 0; while (foo && bar) { ++bar; } foo = 1;
+                                 ~~~
+!!! error TS24280: 'foo' is not modified in this loop.

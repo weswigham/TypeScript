@@ -1,0 +1,23 @@
+/input.ts(1,56): error TS24093: Unsafe argument of type `Set<Set<any>>` assigned to a parameter of type `Set<Set<string>>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-argument": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function take(x: Set<Set<string>>): void; take(new Set<Set<any>>());
+                                                           ~~~~~~~~~~~~~~~~~~~
+!!! error TS24093: Unsafe argument of type `Set<Set<any>>` assigned to a parameter of type `Set<Set<string>>`.

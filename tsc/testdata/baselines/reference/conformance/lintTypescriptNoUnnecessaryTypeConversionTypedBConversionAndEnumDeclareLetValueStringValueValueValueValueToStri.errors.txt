@@ -1,0 +1,32 @@
+/input.ts(1,33): error TS20909: Concatenating a string with '' does not change the type or value of the string.
+/input.ts(1,40): error TS20909: Concatenating '' with a string does not change the type or value of the string.
+/input.ts(1,52): error TS20909: Concatenating a string with '' does not change the type or value of the string.
+/input.ts(1,71): error TS20909: Calling a string's .toString() method does not change the type or value of the string.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-conversion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    declare let value: string; value + ''; '' + value; value += ''; value.toString();
+                                    ~~~~~
+!!! error TS20909: Concatenating a string with '' does not change the type or value of the string.
+                                           ~~~~~
+!!! error TS20909: Concatenating '' with a string does not change the type or value of the string.
+                                                       ~~~~~~~~~~~
+!!! error TS20909: Concatenating a string with '' does not change the type or value of the string.
+                                                                          ~~~~~~~~~~
+!!! error TS20909: Calling a string's .toString() method does not change the type or value of the string.

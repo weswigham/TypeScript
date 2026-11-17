@@ -1,0 +1,44 @@
+/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
+/input.ts(1,24): error TS2552: Cannot find name 'cache'. Did you mean 'Cache'?
+/input.ts(1,52): error TS2552: Cannot find name 'cache'. Did you mean 'Cache'?
+/input.ts(1,75): error TS2322: Type '1' is not assignable to type 'never'.
+/input.ts(1,112): error TS2304: Cannot find name 'other'.
+/input.ts(1,121): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-param-reassign": [
+                    "error",
+                    {
+                        "props": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    function task(value) { cache(value.prop).prop = 1; cache[value.prop] = 1; (value ? [] : [])[0] = 1; ({[value]: other} = source); }
+                  ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
+                           ~~~~~
+!!! error TS2552: Cannot find name 'cache'. Did you mean 'Cache'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'Cache' is declared here.
+                                                       ~~~~~
+!!! error TS2552: Cannot find name 'cache'. Did you mean 'Cache'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'Cache' is declared here.
+                                                                              ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '1' is not assignable to type 'never'.
+                                                                                                                   ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                                                                                                            ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

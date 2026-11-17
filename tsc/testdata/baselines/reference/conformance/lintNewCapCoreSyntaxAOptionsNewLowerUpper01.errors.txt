@@ -1,0 +1,33 @@
+/input.ts(1,5): error TS2304: Cannot find name 'lower'.
+/input.ts(1,14): error TS2304: Cannot find name 'Upper'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "new-cap": [
+                    "error",
+                    {
+                        "capIsNewExceptionPattern": "^Upper$",
+                        "newIsCapExceptions": [
+                            "lower"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    new lower(); Upper();
+        ~~~~~
+!!! error TS2304: Cannot find name 'lower'.
+                 ~~~~~
+!!! error TS2304: Cannot find name 'Upper'.

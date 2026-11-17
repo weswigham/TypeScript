@@ -1,0 +1,40 @@
+/input.ts(2,5): error TS7008: Member '#unusedForOfLoop' implicitly has an 'any' type.
+/input.ts(2,5): error TS24288: '#unusedForOfLoop' is defined but never used.
+/input.ts(4,39): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    class Foo {
+        #unusedForOfLoop;
+        ~~~~~~~~~~~~~~~~
+!!! error TS7008: Member '#unusedForOfLoop' implicitly has an 'any' type.
+        ~~~~~~~~~~~~~~~~
+!!! error TS24288: '#unusedForOfLoop' is defined but never used.
+        method() {
+            for (this.#unusedForOfLoop of bar) {
+                                          ~~~
+!!! error TS2304: Cannot find name 'bar'.
+    
+            }
+        }
+    }

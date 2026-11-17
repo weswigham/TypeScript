@@ -1,0 +1,24 @@
+/input.ts(1,95): error TS24186: Value returned in a context where a void return is expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-void-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function fn(cb: () => any): void; declare function fn(cb: () => void): void; fn(() => false);
+                                                                                                  ~~~~~
+!!! error TS24186: Value returned in a context where a void return is expected.

@@ -1,0 +1,36 @@
+/input.ts(2,9): error TS2669: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.
+/input.ts(3,13): error TS20314: Use a `type` instead of an `interface`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "type"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    declare global {
+            ~~~~~~
+!!! error TS2669: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.
+      interface Array<T> {
+                ~~~~~
+!!! error TS20314: Use a `type` instead of an `interface`.
+        foo(x: (x: number) => T): T[];
+      }
+    }
+          

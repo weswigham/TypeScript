@@ -1,0 +1,33 @@
+/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(3,22): error TS2448: Block-scoped variable 'foo' used before its declaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import foo from 'foo';
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    const foo: foo.Foo = foo.fn();
+                         ~~~
+!!! error TS2448: Block-scoped variable 'foo' used before its declaration.
+!!! related TS2728 /input.ts:3:7: 'foo' is declared here.
+            

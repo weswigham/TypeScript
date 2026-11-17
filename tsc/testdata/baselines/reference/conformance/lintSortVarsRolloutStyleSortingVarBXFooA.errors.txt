@@ -1,0 +1,22 @@
+/input.ts(1,14): error TS2304: Cannot find name 'foo'.
+/input.ts(1,21): error TS24346: Variables within the same declaration block should be sorted alphabetically.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var b, {x} = foo(), a;
+                 ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                        ~
+!!! error TS24346: Variables within the same declaration block should be sorted alphabetically.

@@ -1,0 +1,25 @@
+/input.ts(1,41): error TS2304: Cannot find name 'bar'.
+/input.ts(1,72): error TS2304: Cannot find name 'a'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function someFunc() { do { try { return bar(); } catch (e) {} } while (a) }
+                                            ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                                                                           ~
+!!! error TS2304: Cannot find name 'a'.

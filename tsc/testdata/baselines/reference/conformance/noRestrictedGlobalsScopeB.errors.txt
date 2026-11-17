@@ -1,0 +1,29 @@
+input.ts(1,1): error TS19351: Unexpected use of 'event'.
+input.ts(2,18): error TS19351: Unexpected use of 'event'.
+input.ts(4,1): error TS2304: Cannot find name 'missing'.
+input.ts(4,1): error TS20015: Unexpected use of 'missing'. Use a local binding.
+input.ts(5,17): error TS7006: Parameter 'event' implicitly has an 'any' type.
+input.ts(6,11): error TS2749: 'event' refers to a value, but is being used as a type here. Did you mean 'typeof event'?
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-globals":["error","event",{"name":"missing","message":"Use a local binding."}]}},"files":["input.ts"]}
+==== input.ts (6 errors) ====
+    event;
+    ~~~~~
+!!! error TS19351: Unexpected use of 'event'.
+    const object = { event };
+                     ~~~~~
+!!! error TS19351: Unexpected use of 'event'.
+    object.event;
+    missing();
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'missing'.
+    ~~~~~~~
+!!! error TS20015: Unexpected use of 'missing'. Use a local binding.
+    function shadow(event) { return event; }
+                    ~~~~~
+!!! error TS7006: Parameter 'event' implicitly has an 'any' type.
+    let type: event;
+              ~~~~~
+!!! error TS2749: 'event' refers to a value, but is being used as a type here. Did you mean 'typeof event'?

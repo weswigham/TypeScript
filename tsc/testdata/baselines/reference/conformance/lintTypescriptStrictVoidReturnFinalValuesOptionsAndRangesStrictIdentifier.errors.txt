@@ -1,0 +1,24 @@
+/input.ts(1,58): error TS24185: Value-returning function used in a context where a void function is expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-void-return": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function value(): number; const fn: () => void = value;
+                                                             ~~~~~
+!!! error TS24185: Value-returning function used in a context where a void function is expected.

@@ -1,0 +1,37 @@
+input.ts(6,5): error TS24159: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+input.ts(7,5): error TS24168: Unexpected string value in conditional. An explicit empty string check is required.
+input.ts(8,5): error TS24165: Unexpected number value in conditional. An explicit zero/NaN check is required.
+input.ts(9,5): error TS24166: Unexpected object value in conditional. The condition is always true.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/strict-boolean-expressions": ["error", { "allowString": false, "allowNumber": false, "allowNullableBoolean": false }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    declare const nullable: boolean | null;
+    declare const text: string;
+    declare const count: number;
+    declare const object: object;
+    
+    if (nullable) {}
+        ~~~~~~~~
+!!! error TS24159: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    if (text) {}
+        ~~~~
+!!! error TS24168: Unexpected string value in conditional. An explicit empty string check is required.
+    if (count) {}
+        ~~~~~
+!!! error TS24165: Unexpected number value in conditional. An explicit zero/NaN check is required.
+    if (object) {}
+        ~~~~~~
+!!! error TS24166: Unexpected object value in conditional. The condition is always true.
+    
+    declare const enabled: boolean;
+    if (enabled) {}
+    if (nullable === true) {}
+    if (text.length > 0) {}
+    if (count !== 0) {}

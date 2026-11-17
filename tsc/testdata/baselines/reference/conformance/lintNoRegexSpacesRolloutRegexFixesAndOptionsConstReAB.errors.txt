@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24252: Spaces are hard to count. Use {3}.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-regex-spaces": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /a   b/;
+               ~~~~~~~
+!!! error TS24252: Spaces are hard to count. Use {3}.

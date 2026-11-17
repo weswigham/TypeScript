@@ -1,0 +1,28 @@
+/input.ts(1,94): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+/input.ts(1,104): error TS19362: The function binding is unnecessary.
+/input.ts(1,109): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extra-bind": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const first = function() { class Item { field = this; static { this; } } function nested() { this; } }.bind(value);
+                                                                                                 ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+                                                                                                           ~~~~
+!!! error TS19362: The function binding is unnecessary.
+                                                                                                                ~~~~~
+!!! error TS2304: Cannot find name 'value'.

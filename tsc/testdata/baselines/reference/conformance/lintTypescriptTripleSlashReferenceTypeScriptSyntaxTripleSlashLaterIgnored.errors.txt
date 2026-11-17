@@ -1,0 +1,23 @@
+/input.ts(1,1): error TS2304: Cannot find name 'run'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/triple-slash-reference": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    run();
+    ~~~
+!!! error TS2304: Cannot find name 'run'.
+    /// <reference path="value" />

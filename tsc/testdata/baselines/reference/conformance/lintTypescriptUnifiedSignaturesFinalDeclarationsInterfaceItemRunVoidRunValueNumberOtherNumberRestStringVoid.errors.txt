@@ -1,0 +1,26 @@
+/input.ts(1,66): error TS24195: These overloads can be combined into one signature with a rest parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unified-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    interface Item { run(): void; run(value: number, other?: number, ...rest: string[]): void; }
+                                                                     ~~~~~~~~~~~~~~~~~
+!!! error TS24195: These overloads can be combined into one signature with a rest parameter.

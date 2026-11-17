@@ -1,0 +1,22 @@
+input.ts(1,58): error TS19272: Accessor pair getter 'value' and setter 'value' should be grouped.
+input.ts(2,48): error TS22019: Expected getter 'value' to be before setter 'value'.
+input.ts(4,48): error TS22019: Expected getter 'value' to be before setter 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "grouped-accessor-pairs": ["error", "getBeforeSet", { "enforceForTSTypes": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    const separated = { get value() { return 1; }, other: 1, set value(value: number) {} };
+                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19272: Accessor pair getter 'value' and setter 'value' should be grouped.
+    class WrongOrder { set value(value: number) {} get value() { return 1; } }
+                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22019: Expected getter 'value' to be before setter 'value'.
+    class Valid { get value() { return 1; } set value(value: number) {} }
+    interface Contract { set value(value: number); get value(): number; }
+                                                   ~~~~~~~~~~~~~~~~~~~~
+!!! error TS22019: Expected getter 'value' to be before setter 'value'.

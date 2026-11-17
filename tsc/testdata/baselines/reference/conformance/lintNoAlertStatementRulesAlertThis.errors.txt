@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS19000: Unexpected alert.
+/input.ts(1,33): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+/input.ts(1,74): error TS7041: The containing arrow function captures the global value of 'this'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-alert": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    this.alert(); function test() { this.alert(); } { this.alert(); } (() => this.alert())();
+    ~~~~~~~~~~~~
+!!! error TS19000: Unexpected alert.
+                                    ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+                                                                             ~~~~
+!!! error TS7041: The containing arrow function captures the global value of 'this'.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

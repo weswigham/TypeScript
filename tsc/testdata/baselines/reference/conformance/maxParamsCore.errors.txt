@@ -1,0 +1,22 @@
+input.ts(1,1): error TS19326: Function 'excessive' has too many parameters (3). Maximum allowed is 2.
+input.ts(3,18): error TS19326: Function has too many parameters (3). Maximum allowed is 2.
+input.ts(4,1): error TS19326: Function 'declared' has too many parameters (3). Maximum allowed is 2.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "max-params": ["error", { "max": 2, "countThis": "never" }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    function excessive(first: number, second: number, third: number) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function 'excessive' has too many parameters (3). Maximum allowed is 2.
+    function valid(this: object, first: number, second: number) {}
+    type Excessive = (first: number, second: number, third: number) => void;
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function has too many parameters (3). Maximum allowed is 2.
+    declare function declared(first: number, second: number, third: number): void;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function 'declared' has too many parameters (3). Maximum allowed is 2.

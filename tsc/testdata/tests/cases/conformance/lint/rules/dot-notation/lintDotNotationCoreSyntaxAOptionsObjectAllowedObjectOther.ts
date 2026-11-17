@@ -1,0 +1,27 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestCoreSyntaxAOptions/dot-notation/object['allowed'];_object['other']; (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "dot-notation": [
+                "error",
+                {
+                    "allowPattern": "^allowed$"
+                }
+            ]
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+object['allowed']; object['other'];

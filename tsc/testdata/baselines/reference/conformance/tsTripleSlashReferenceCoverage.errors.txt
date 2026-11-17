@@ -1,0 +1,32 @@
+input.ts(1,1): error TS20490: Do not use a triple slash reference for ./dependency.d.ts, use `import` style instead.
+input.ts(2,1): error TS20490: Do not use a triple slash reference for coverage-types, use `import` style instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/triple-slash-reference": ["error", { "path": "never", "types": "prefer-import", "lib": "always" }] } },
+        "files": ["input.ts", "valid.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    /// <reference path="./dependency.d.ts" />
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20490: Do not use a triple slash reference for ./dependency.d.ts, use `import` style instead.
+    /// <reference types="coverage-types" />
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20490: Do not use a triple slash reference for coverage-types, use `import` style instead.
+    import { value } from "coverage-types";
+    void value;
+    
+==== valid.ts (0 errors) ====
+    /// <reference lib="esnext" />
+    import type { Shape } from "./dependency";
+    const shape: Shape = { size: 1 };
+    void shape;
+==== dependency.d.ts (0 errors) ====
+    export interface Shape { size: number; }
+    
+==== node_modules/@types/coverage-types/index.d.ts (0 errors) ====
+    export const value: number;
+    

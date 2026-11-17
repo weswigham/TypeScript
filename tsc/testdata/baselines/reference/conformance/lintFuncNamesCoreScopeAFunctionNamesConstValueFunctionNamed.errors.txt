@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS19861: Unexpected named function 'named'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "func-names": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const value = function named() {};
+                  ~~~~~~~~~~~~~~
+!!! error TS19861: Unexpected named function 'named'.

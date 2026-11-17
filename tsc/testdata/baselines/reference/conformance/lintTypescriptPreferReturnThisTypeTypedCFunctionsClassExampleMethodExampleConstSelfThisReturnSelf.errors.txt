@@ -1,0 +1,23 @@
+/input.ts(1,27): error TS21086: Use `this` type instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-return-this-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Example { method(): Example { const self = this; return self; } }
+                              ~~~~~~~
+!!! error TS21086: Use `this` type instead.

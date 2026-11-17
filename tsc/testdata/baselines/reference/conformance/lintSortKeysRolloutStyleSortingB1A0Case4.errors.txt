@@ -1,0 +1,27 @@
+/input.ts(3,4): error TS24345: Expected object keys to be in ascending order. 'a' should be before 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-keys": [
+                    "error",
+                    "asc",
+                    {
+                        "allowLineSeparatedGroups": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    ({ b: 1, /*
+    
+    */ a: 0 });
+       ~
+!!! error TS24345: Expected object keys to be in ascending order. 'a' should be before 'b'.

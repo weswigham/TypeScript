@@ -1,0 +1,39 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,13): error TS2304: Cannot find name 'value'.
+/input.ts(1,20): error TS2304: Cannot find name 'value'.
+/input.ts(1,20): error TS19351: Unexpected use of '|'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-bitwise": [
+                    "error",
+                    {
+                        "allow": [
+                            "~"
+                        ],
+                        "int32Hint": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    value | 0; ~value; value | 1;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                       ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                       ~~~~~~~~~
+!!! error TS19351: Unexpected use of '|'.

@@ -1,0 +1,25 @@
+/input.ts(1,14): error TS19371: No magic number: 3.
+/input.ts(1,22): error TS19371: No magic number: 4.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-magic-numbers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Item { 3() {} [4]() {} }
+                 ~
+!!! error TS19371: No magic number: 3.
+                         ~
+!!! error TS19371: No magic number: 4.

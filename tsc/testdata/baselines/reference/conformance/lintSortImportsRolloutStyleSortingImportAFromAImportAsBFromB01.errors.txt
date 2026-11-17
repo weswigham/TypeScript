@@ -1,0 +1,32 @@
+/input.ts(1,15): error TS2307: Cannot find module 'a' or its corresponding type declarations.
+/input.ts(1,39): error TS2307: Cannot find module 'b' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "sort-imports": [
+                    "error",
+                    {
+                        "memberSyntaxSortOrder": [
+                            "single",
+                            "all",
+                            "multiple",
+                            "none"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    import a from 'a'; import * as b from 'b';
+                  ~~~
+!!! error TS2307: Cannot find module 'a' or its corresponding type declarations.
+                                          ~~~
+!!! error TS2307: Cannot find module 'b' or its corresponding type declarations.

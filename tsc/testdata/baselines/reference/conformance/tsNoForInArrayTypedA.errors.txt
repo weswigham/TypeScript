@@ -1,0 +1,28 @@
+input.ts(2,1): error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+input.ts(8,1): error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+input.ts(11,5): error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/no-for-in-array": "error" } }
+    }
+==== input.ts (3 errors) ====
+    declare const array: number[] | null | { value: string };
+    for (const key in array) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+    
+    declare const numericIndex: { [key: number]: number };
+    for (const key in numericIndex) {}
+    
+    declare const arrayLike: { [key: number]: number; length: 1 };
+    for (const key in arrayLike) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+    
+    function generic<T extends readonly number[]>(values: T) {
+        for (const key in values) {}
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20720: For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.
+    }

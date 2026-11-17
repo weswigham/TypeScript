@@ -1,0 +1,40 @@
+/input.ts(4,17): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    function* generator() {
+                let done = false;
+                try {
+                    foo();
+                    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                } catch {
+                    yield 1;
+                    done = true;
+                } finally {
+                    yield 2;
+                    if (!done) {
+                        console.log(done);
+                    }
+                }
+            }

@@ -1,0 +1,24 @@
+/project/src/input.ts(1,34): error TS21081: `get()` type should be assignable to its equivalent `set()` type.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/related-getter-setter-pairs": "error"
+            }
+        },
+        "files": [
+            "src/input.ts"
+        ]
+    }
+==== /project/src/input.ts (1 errors) ====
+    type C = { get ['v\u0061lue'](): number; set ['value'](v: string); };
+                                     ~~~~~~
+!!! error TS21081: `get()` type should be assignable to its equivalent `set()` type.
+    export {};

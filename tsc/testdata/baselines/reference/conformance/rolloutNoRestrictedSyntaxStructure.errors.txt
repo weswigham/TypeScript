@@ -1,0 +1,53 @@
+input.tsx(1,1): error TS24277: Using '!FunctionDeclaration:has(CallExpression[callee.name='eval'])' is not allowed.
+input.tsx(1,34): error TS24277: Using 'ExpressionStatement + ExpressionStatement' is not allowed.
+input.tsx(2,5): error TS24277: Using 'VariableDeclarator:not([init]):matches([id.name=/^missing/],[id.name='absent'])' is not allowed.
+input.tsx(3,5): error TS24277: Using 'VariableDeclarator:not([init]):matches([id.name=/^missing/],[id.name='absent'])' is not allowed.
+input.tsx(4,20): error TS24277: Using 'ArrayExpression > Literal:nth-child(2)' is not allowed.
+input.tsx(5,1): error TS2304: Cannot find name 'first'.
+input.tsx(6,1): error TS2304: Cannot find name 'second'.
+input.tsx(6,1): error TS24277: Using 'ExpressionStatement + ExpressionStatement' is not allowed.
+input.tsx(7,19): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+input.tsx(7,28): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+input.tsx(7,28): error TS24277: Using 'JSXElement ~ JSXElement' is not allowed.
+input.tsx(8,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.tsx(8,1): error TS24277: Using 'MemberExpression[computed=type(boolean)][property.name='denied']' is not allowed.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext","jsx":"preserve"},"lint":{"rules":{"no-restricted-syntax":["error","!FunctionDeclaration:has(CallExpression[callee.name='eval'])","VariableDeclarator:not([init]):matches([id.name=/^missing/],[id.name='absent'])","ArrayExpression > Literal:nth-child(2)","ExpressionStatement + ExpressionStatement","JSXElement ~ JSXElement","MemberExpression[computed=type(boolean)][property.name='denied']"]}},"files":["input.tsx"]}
+==== input.tsx (13 errors) ====
+    function task() { eval("first"); eval("second"); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using '!FunctionDeclaration:has(CallExpression[callee.name='eval'])' is not allowed.
+                                     ~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'ExpressionStatement + ExpressionStatement' is not allowed.
+    let missingValue;
+        ~~~~~~~~~~~~
+!!! error TS24277: Using 'VariableDeclarator:not([init]):matches([id.name=/^missing/],[id.name='absent'])' is not allowed.
+    let absent;
+        ~~~~~~
+!!! error TS24277: Using 'VariableDeclarator:not([init]):matches([id.name=/^missing/],[id.name='absent'])' is not allowed.
+    const values = [1, 2, 3];
+                       ~
+!!! error TS24277: Using 'ArrayExpression > Literal:nth-child(2)' is not allowed.
+    first();
+    ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+    second();
+    ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    ~~~~~~~~~
+!!! error TS24277: Using 'ExpressionStatement + ExpressionStatement' is not allowed.
+    const elements = [<div />, <span />];
+                      ~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                               ~~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                               ~~~~~~~~
+!!! error TS24277: Using 'JSXElement ~ JSXElement' is not allowed.
+    object.denied;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~
+!!! error TS24277: Using 'MemberExpression[computed=type(boolean)][property.name='denied']' is not allowed.

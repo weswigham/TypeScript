@@ -1,0 +1,22 @@
+/input.ts(1,1): error TS20277: Missing radix parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "radix": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    parseInt('10');
+    ~~~~~~~~~~~~~~
+!!! error TS20277: Missing radix parameter.

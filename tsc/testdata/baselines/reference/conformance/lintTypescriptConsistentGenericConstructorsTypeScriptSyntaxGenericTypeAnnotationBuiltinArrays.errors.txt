@@ -1,0 +1,33 @@
+/input.ts(1,7): error TS24446: The generic type arguments should be specified as part of the type annotation.
+/input.ts(1,11): error TS2554: Expected 1-3 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": [
+                    "error",
+                    "type-annotation"
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (2 errors) ====
+    const a = new Uint8Array<ArrayBuffer>();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24446: The generic type arguments should be specified as part of the type annotation.
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 1-3 arguments, but got 0.
+!!! related TS6210 lib.es5.d.ts:--:--: An argument for 'buffer' was not provided.

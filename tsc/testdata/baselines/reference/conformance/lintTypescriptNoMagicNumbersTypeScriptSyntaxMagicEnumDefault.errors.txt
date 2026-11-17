@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS19371: No magic number: 1.
+/input.ts(1,22): error TS19371: No magic number: -2.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-magic-numbers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum E { A = +1, B = -2 }
+                  ~
+!!! error TS19371: No magic number: 1.
+                         ~~
+!!! error TS19371: No magic number: -2.

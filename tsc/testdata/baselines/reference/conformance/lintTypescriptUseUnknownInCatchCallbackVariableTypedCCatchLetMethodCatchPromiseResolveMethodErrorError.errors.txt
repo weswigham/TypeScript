@@ -1,0 +1,28 @@
+/input.ts(1,23): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Promise<void>'.
+  No index signature with a parameter of type 'string' was found on type 'Promise<void>'.
+/input.ts(1,50): error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/use-unknown-in-catch-callback-variable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let method = 'catch'; Promise.resolve()[method]((error: Error) => {});
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Promise<void>'.
+!!! error TS7053:   No index signature with a parameter of type 'string' was found on type 'Promise<void>'.
+                                                     ~~~~~~~~~~~~
+!!! error TS21088: Prefer the safe `: unknown` for a `catch` callback variable.

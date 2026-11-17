@@ -1,0 +1,27 @@
+input.ts(2,9): error TS22023: Literals should be exposed using readonly fields.
+input.ts(3,9): error TS22023: Literals should be exposed using readonly fields.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/class-literal-property-style": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    class LiteralGetters {
+        get label() { return "fixed"; }
+            ~~~~~
+!!! error TS22023: Literals should be exposed using readonly fields.
+        get count() { return 1; }
+            ~~~~~
+!!! error TS22023: Literals should be exposed using readonly fields.
+        readonly validLabel = "fixed";
+        readonly validCount = 1;
+        private stored = 0;
+        get mutable() { return 1; }
+        set mutable(value: number) { this.stored = value; }
+        get computed() { return this.stored + 1; }
+    }
+    export {};

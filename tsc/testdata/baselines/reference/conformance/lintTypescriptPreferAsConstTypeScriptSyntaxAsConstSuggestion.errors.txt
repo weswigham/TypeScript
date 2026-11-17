@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS20472: Expected a `const` assertion instead of a literal type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-as-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    let value: 1 = 1;
+               ~
+!!! error TS20472: Expected a `const` assertion instead of a literal type annotation.

@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS2304: Cannot find name 'work'.
+/input.ts(1,25): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-statements": [
+                    "error",
+                    1,
+                    {
+                        "ignoreTopLevelFunctions": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function fn() { work(); other(); }
+                    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                            ~~~~~
+!!! error TS2304: Cannot find name 'other'.

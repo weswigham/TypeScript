@@ -1,0 +1,34 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS24283: Unreachable code.
+/input.ts(1,27): error TS2304: Cannot find name 'unreachable'.
+/input.ts(1,41): error TS2304: Cannot find name 'code'.
+/input.ts(1,47): error TS2377: Constructors for derived classes must contain a 'super' call.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    class C extends B { foo = unreachable + code; constructor() {} }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+                              ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'unreachable'.
+                                            ~~~~
+!!! error TS2304: Cannot find name 'code'.
+                                                  ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.

@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS20009: Block is redundant.
+/input.ts(1,4): error TS20009: Block is redundant.
+/input.ts(1,51): error TS22024: Nested block is redundant.
+/input.ts(1,81): error TS2304: Cannot find name 'value'.
+/input.ts(1,109): error TS20009: Block is redundant.
+/input.ts(1,112): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-lone-blocks": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    {} { var item; } { let scoped; } function run() { { const only = 1; } } switch (value) { case 1: {} case 2: {} work(); }
+    ~~
+!!! error TS20009: Block is redundant.
+       ~~~~~~~~~~~~~
+!!! error TS20009: Block is redundant.
+                                                      ~~~~~~~~~~~~~~~~~~~
+!!! error TS22024: Nested block is redundant.
+                                                                                    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                                                                ~~
+!!! error TS20009: Block is redundant.
+                                                                                                                   ~~~~
+!!! error TS2304: Cannot find name 'work'.

@@ -1,0 +1,30 @@
+/input.ts(1,45): error TS24280: 'bar' is not modified in this loop.
+/input.ts(1,51): error TS24280: 'baz' is not modified in this loop.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": [
+                    "error",
+                    {
+                        "checkConditionalExpressions": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let foo = 0, bar = 1, baz = 2; while (foo ? bar : baz) { foo += 1; }
+                                                ~~~
+!!! error TS24280: 'bar' is not modified in this loop.
+                                                      ~~~
+!!! error TS24280: 'baz' is not modified in this loop.

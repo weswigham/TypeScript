@@ -1,0 +1,26 @@
+/input.ts(1,34): error TS19290: Variable 'value' should be initialized on declaration.
+/input.ts(1,66): error TS2552: Cannot find name 'items'. Did you mean 'item'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/init-declarations": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    declare let ambient: number; let value: number; for (let item of items) {}
+                                     ~~~~~
+!!! error TS19290: Variable 'value' should be initialized on declaration.
+                                                                     ~~~~~
+!!! error TS2552: Cannot find name 'items'. Did you mean 'item'?
+!!! related TS2728 /input.ts:1:58: 'item' is declared here.

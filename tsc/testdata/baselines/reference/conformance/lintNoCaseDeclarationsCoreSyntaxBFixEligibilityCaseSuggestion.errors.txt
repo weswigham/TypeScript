@@ -1,0 +1,25 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,26): error TS19352: Unexpected lexical declaration in case block.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-case-declarations": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    switch (value) { case 1: let local; }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                             ~~~~~~~~~~
+!!! error TS19352: Unexpected lexical declaration in case block.

@@ -1,0 +1,37 @@
+/input.ts(1,7): error TS22041: Unexpected empty object pattern.
+/input.ts(1,12): error TS2304: Cannot find name 'value'.
+/input.ts(1,33): error TS2571: Object is of type 'unknown'.
+/input.ts(1,33): error TS22041: Unexpected empty object pattern.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-pattern": [
+                    "error",
+                    {
+                        "allowObjectPatternsAsParameters": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    const {} = value; try {} catch ({}) {}
+          ~~
+!!! error TS22041: Unexpected empty object pattern.
+               ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                    ~~
+!!! error TS2571: Object is of type 'unknown'.
+                                    ~~
+!!! error TS22041: Unexpected empty object pattern.

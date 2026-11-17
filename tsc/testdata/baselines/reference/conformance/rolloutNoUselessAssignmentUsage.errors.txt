@@ -1,0 +1,31 @@
+input.ts(2,9): error TS24293: The value assigned to 'value' is not used in subsequent statements.
+input.ts(9,5): error TS24293: The value assigned to 'value' is not used in subsequent statements.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-useless-assignment": "error" } }
+    }
+==== input.ts (2 errors) ====
+    export function select(condition: boolean) {
+        let value = 0;
+            ~~~~~
+!!! error TS24293: The value assigned to 'value' is not used in subsequent statements.
+        if (condition) {
+            value = 1;
+        } else {
+            value = 2;
+        }
+        console.log(value);
+        value = 3;
+        ~~~~~
+!!! error TS24293: The value assigned to 'value' is not used in subsequent statements.
+        return;
+    }
+    export function loop() {
+        let value = 0;
+        while (true) {
+            console.log(value);
+            value = 1;
+        }
+    }

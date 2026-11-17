@@ -1,0 +1,31 @@
+/input.ts(1,23): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,30): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+/input.ts(1,33): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+/input.ts(1,40): error TS2304: Cannot find name 'c'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function someFunc() { for ({ a, b } of c) return; }
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                 ~
+!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
+                                    ~
+!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
+                                           ~
+!!! error TS2304: Cannot find name 'c'.

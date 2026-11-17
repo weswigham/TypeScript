@@ -1,0 +1,120 @@
+input.ts(1,1): error TS2304: Cannot find name 'x'.
+input.ts(1,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(1,7): error TS2304: Cannot find name 'x'.
+input.ts(2,1): error TS2304: Cannot find name 'x'.
+input.ts(2,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(2,7): error TS2304: Cannot find name 'x'.
+input.ts(3,1): error TS2304: Cannot find name 'x'.
+input.ts(3,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(3,6): error TS2304: Cannot find name 'x'.
+input.ts(4,1): error TS2304: Cannot find name 'x'.
+input.ts(4,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(4,6): error TS2304: Cannot find name 'x'.
+input.ts(5,1): error TS2304: Cannot find name 'x'.
+input.ts(5,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(5,5): error TS2304: Cannot find name 'x'.
+input.ts(6,1): error TS2304: Cannot find name 'x'.
+input.ts(6,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(6,5): error TS2304: Cannot find name 'x'.
+input.ts(7,1): error TS2304: Cannot find name 'x'.
+input.ts(7,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(7,6): error TS2304: Cannot find name 'x'.
+input.ts(8,1): error TS2304: Cannot find name 'x'.
+input.ts(8,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(8,6): error TS2304: Cannot find name 'x'.
+input.ts(9,1): error TS2304: Cannot find name 'foo'.
+input.ts(9,1): error TS19514: Comparing to itself is potentially pointless.
+input.ts(9,22): error TS2304: Cannot find name 'foo'.
+input.ts(10,1): error TS2304: Cannot find name 'x'.
+input.ts(10,7): error TS2304: Cannot find name 'y'.
+input.ts(12,17): error TS7008: Member '#field' implicitly has an 'any' type.
+input.ts(12,36): error TS19514: Comparing to itself is potentially pointless.
+input.ts(12,81): error TS7053: Element implicitly has an 'any' type because expression of type '"#field"' can't be used to index type 'Example'.
+  Property '#field' does not exist on type 'Example'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-self-compare": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (32 errors) ====
+    x === x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+          ~
+!!! error TS2304: Cannot find name 'x'.
+    x !== x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+          ~
+!!! error TS2304: Cannot find name 'x'.
+    x == x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+         ~
+!!! error TS2304: Cannot find name 'x'.
+    x != x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+         ~
+!!! error TS2304: Cannot find name 'x'.
+    x > x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+        ~
+!!! error TS2304: Cannot find name 'x'.
+    x < x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+        ~
+!!! error TS2304: Cannot find name 'x'.
+    x >= x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+         ~
+!!! error TS2304: Cannot find name 'x'.
+    x <= x;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+    ~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+         ~
+!!! error TS2304: Cannot find name 'x'.
+    foo.bar().baz.qux >= foo.bar ().baz .qux;
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+                         ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    x === y;
+    ~
+!!! error TS2304: Cannot find name 'x'.
+          ~
+!!! error TS2304: Cannot find name 'y'.
+    'x' === "x";
+    class Example { #field; method() { this.#field === this.#field; this.#field === this['#field']; } }
+                    ~~~~~~
+!!! error TS7008: Member '#field' implicitly has an 'any' type.
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.
+                                                                                    ~~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '"#field"' can't be used to index type 'Example'.
+!!! error TS7053:   Property '#field' does not exist on type 'Example'.

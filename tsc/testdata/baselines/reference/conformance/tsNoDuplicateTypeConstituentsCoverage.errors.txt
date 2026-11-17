@@ -1,0 +1,45 @@
+input.ts(3,36): error TS24033: Union type constituent is duplicated with Original.
+input.ts(4,45): error TS24033: Union type constituent is duplicated with { value: string }.
+input.ts(5,43): error TS24033: Union type constituent is duplicated with string.
+input.ts(6,41): error TS24034: Explicit undefined is unnecessary on an optional parameter.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-type-constituents": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    type Original = string;
+    type Alias = Original;
+    type DuplicateAliases = Original | Alias;
+                                       ~~~~~
+!!! error TS24033: Union type constituent is duplicated with Original.
+    type DuplicateObjects = { value: string } | { value: string };
+                                                ~~~~~~~~~~~~~~~~~
+!!! error TS24033: Union type constituent is duplicated with { value: string }.
+    type NestedDuplicate = string | (number | string);
+                                              ~~~~~~
+!!! error TS24033: Union type constituent is duplicated with string.
+    function optionalValue(value?: string | undefined) {
+                                            ~~~~~~~~~
+!!! error TS24034: Explicit undefined is unnecessary on an optional parameter.
+        return value;
+    }
+    
+    type DistinctPrimitives = string | number;
+    type DistinctIntersection = { first: string } & { second: number };
+    type DistinctObjectSyntax = { first: string; second: number } | { second: number; first: string };
+    function optionalString(value?: string) {
+        return value;
+    }

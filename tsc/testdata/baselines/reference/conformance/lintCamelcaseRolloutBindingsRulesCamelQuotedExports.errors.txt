@@ -1,0 +1,25 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+/input.ts(1,63): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    export {value as 'snake_case'}; export * as 'other_name' from 'mod';
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                  ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

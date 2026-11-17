@@ -1,0 +1,57 @@
+input.ts(1,1): error TS19672: Use binary literals instead of parseInt().
+input.ts(2,1): error TS19672: Use octal literals instead of Number.parseInt().
+input.ts(3,1): error TS19672: Use hexadecimal literals instead of parseInt().
+input.ts(4,1): error TS19672: Use binary literals instead of parseInt().
+input.ts(5,1): error TS19672: Use octal literals instead of parseInt().
+input.ts(6,1): error TS19672: Use octal literals instead of parseInt().
+input.ts(7,1): error TS19672: Use binary literals instead of Number./* keep */parseInt().
+input.ts(8,19): error TS7006: Parameter 'parseInt' implicitly has an 'any' type.
+input.ts(8,29): error TS7006: Parameter 'Number' implicitly has an 'any' type.
+input.ts(9,30): error TS19672: Use binary literals instead of (Number).parseInt().
+input.ts(10,1): error TS19672: Use binary literals instead of parseInt().
+input.ts(10,21): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "prefer-numeric-literals": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (12 errors) ====
+    parseInt("11", 2);
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of parseInt().
+    Number.parseInt(`67`, 8);
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use octal literals instead of Number.parseInt().
+    parseInt("1F7", 16);
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use hexadecimal literals instead of parseInt().
+    parseInt("1_0", 2);
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of parseInt().
+    parseInt("799", 8);
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use octal literals instead of parseInt().
+    parseInt("", 8);
+    ~~~~~~~~~~~~~~~
+!!! error TS19672: Use octal literals instead of parseInt().
+    Number./* keep */parseInt("11", 2);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of Number./* keep */parseInt().
+    function shadowed(parseInt, Number) { parseInt("11", 2); Number.parseInt("67", 8); }
+                      ~~~~~~~~
+!!! error TS7006: Parameter 'parseInt' implicitly has an 'any' type.
+                                ~~~~~~
+!!! error TS7006: Parameter 'Number' implicitly has an 'any' type.
+    function* generator() { yield(Number).parseInt("11", 2); }
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of (Number).parseInt().
+    parseInt("11", 2)in object;
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of parseInt().
+                        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

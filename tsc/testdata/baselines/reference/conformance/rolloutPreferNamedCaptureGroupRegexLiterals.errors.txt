@@ -1,0 +1,26 @@
+input.ts(1,17): error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.
+input.ts(1,17): error TS24326: Capture group '(b)' should be converted to a named or non-capturing group.
+input.ts(3,1): error TS24326: Capture group '(c)' should be converted to a named or non-capturing group.
+input.ts(4,1): error TS24326: Capture group '(\w)' should be converted to a named or non-capturing group.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "prefer-named-capture-group": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    const unnamed = /(a)(b)/;
+                    ~~~~~~~~
+!!! error TS24326: Capture group '(a)' should be converted to a named or non-capturing group.
+                    ~~~~~~~~
+!!! error TS24326: Capture group '(b)' should be converted to a named or non-capturing group.
+    const named = /(?<word>a)(?:b)/u;
+    RegExp("(c)");
+    ~~~~~~~~~~~~~
+!!! error TS24326: Capture group '(c)' should be converted to a named or non-capturing group.
+    new RegExp(String.raw`(\w)`);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24326: Capture group '(\w)' should be converted to a named or non-capturing group.

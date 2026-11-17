@@ -1,0 +1,64 @@
+input.ts(2,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(3,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(4,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(5,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(7,18): error TS2304: Cannot find name 'Other'.
+input.ts(11,11): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(13,19): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(16,5): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(17,5): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(18,5): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+input.ts(20,12): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "@typescript-eslint/consistent-generic-constructors": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (11 errors) ====
+    class Box<T> {}
+    const plain: Box<string> = new Box();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    const bare: Box<number> = new Box;
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    const comments: /* before */ Box /* after */ <string> = new Box();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    const inside: Box</* retained */ string> = new Box();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    const existing: Box<string> = new Box<string>();
+    const different: Other<string> = new Box();
+                     ~~~~~
+!!! error TS2304: Cannot find name 'Other'.
+    const builtin: Uint8Array<ArrayBufferLike> = new Uint8Array();
+    function shadowed() {
+        class Uint8Array<T> {}
+        const local: Uint8Array<string> = new Uint8Array();
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    }
+    function defaults(value: Box<string> = new Box()) {}
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    const arrow = (value: Box<string> = new Box()) => value;
+    class Properties {
+        property: Box<string> = new Box();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+        ["computed"]: Box<number> = new Box;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+        accessor value: Box<string> = new Box();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+        constructor(public parameter: Box<string> = new Box()) {}
+        method(value: Box<string> = new Box()) {}
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    }

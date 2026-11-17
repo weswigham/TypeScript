@@ -1,0 +1,38 @@
+/input.tsx(1,10): error TS24274: 'Bar' import from 'foo' is restricted because only imports that match the pattern '/^Foo/u' are allowed from 'foo'. Only imports that match the pattern '/^Foo/u' are allowed to be imported from 'foo'.
+/input.tsx(1,21): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowImportNamePattern": "^Foo",
+                                "group": [
+                                    "foo"
+                                ],
+                                "message": "Only imports that match the pattern '/^Foo/u' are allowed to be imported from 'foo'."
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    export { Bar } from 'foo';
+             ~~~
+!!! error TS24274: 'Bar' import from 'foo' is restricted because only imports that match the pattern '/^Foo/u' are allowed from 'foo'. Only imports that match the pattern '/^Foo/u' are allowed to be imported from 'foo'.
+                        ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

@@ -1,0 +1,28 @@
+/input.ts(1,26): error TS20314: Use a `type` instead of an `interface`.
+/input.ts(1,42): error TS2304: Cannot find name 'Base'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "type"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    export default interface Item<T> extends Base<T> {}
+                             ~~~~
+!!! error TS20314: Use a `type` instead of an `interface`.
+                                             ~~~~
+!!! error TS2304: Cannot find name 'Base'.

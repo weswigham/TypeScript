@@ -1,0 +1,28 @@
+// @lintOnly: true
+// @fix: true
+
+// @filename: tsconfig.json
+{
+    "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+    "lint": { "rules": { "@typescript-eslint/no-useless-default-assignment": "error" } },
+    "files": ["input.ts"]
+}
+
+// @filename: input.ts
+const { value = 0 } = { value: 1 };
+
+function required({ value = 0 }: { value: number }): number {
+    return value;
+}
+function optional({ value = 0 }: { value?: number }): number {
+    return value;
+}
+
+[1, 2].map((value = 1) => value);
+
+declare const tuple: [number, ...number[]];
+const [head = 1, tail = 2] = tuple;
+
+declare const values: number[];
+const [first = 1] = values;
+const callback = (value: number = 1) => value;

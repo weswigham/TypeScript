@@ -1,0 +1,23 @@
+/input.ts(1,56): error TS2407: The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter, but here has type 'never'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-for-in-array": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const arr: null | undefined; for (const key in arr) {}
+                                                           ~~~
+!!! error TS2407: The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter, but here has type 'never'.

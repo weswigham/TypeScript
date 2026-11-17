@@ -1,0 +1,39 @@
+/input.ts(1,12): error TS7006: Parameter 'bar' implicitly has an 'any' type.
+/input.ts(1,17): error TS7006: Parameter 'baz' implicitly has an 'any' type.
+/input.ts(1,39): error TS2554: Expected 2 arguments, but got 0.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "vars": "all"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    function g(bar, baz) { return baz; }; g();
+               ~~~
+!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.
+                    ~~~
+!!! error TS7006: Parameter 'baz' implicitly has an 'any' type.
+                                          ~
+!!! error TS2554: Expected 2 arguments, but got 0.
+!!! related TS6210 /input.ts:1:12: An argument for 'bar' was not provided.

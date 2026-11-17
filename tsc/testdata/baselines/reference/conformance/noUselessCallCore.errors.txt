@@ -1,0 +1,72 @@
+input.ts(1,1): error TS2304: Cannot find name 'foo'.
+input.ts(1,1): error TS19654: Unnecessary '.call()'.
+input.ts(2,1): error TS2304: Cannot find name 'foo'.
+input.ts(2,1): error TS19654: Unnecessary '.apply()'.
+input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(3,1): error TS19654: Unnecessary '.call()'.
+input.ts(3,20): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,1): error TS19654: Unnecessary '.call()'.
+input.ts(4,2): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(4,23): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(5,20): error TS2304: Cannot find name 'other'.
+input.ts(6,1): error TS2304: Cannot find name 'foo'.
+input.ts(7,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(7,21): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+input.ts(7,29): error TS2304: Cannot find name 'args'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-call": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (16 errors) ====
+    foo.call(undefined, 1);
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+    foo.apply(void 0, [1]);
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.apply()'.
+    object.method.call(object, 1);
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+                       ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    (object?.method).call(object, 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+     ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                          ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+    object.method.call(other, 1);
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                       ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+    foo["call"](null, 1);
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    object.method.apply(object, args);
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                        ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                                ~~~~
+!!! error TS2304: Cannot find name 'args'.

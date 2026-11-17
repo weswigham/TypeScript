@@ -1,0 +1,40 @@
+input.ts(2,5): error TS21331: 'repeated' is already defined.
+input.ts(3,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'Object' must be of type 'ObjectConstructor', but here has type 'any'.
+input.ts(3,5): error TS21330: 'Object' is already defined as a built-in global variable.
+input.ts(4,21): error TS7006: Parameter 'parameter' implicitly has an 'any' type.
+input.ts(4,38): error TS21331: 'parameter' is already defined.
+input.ts(5,48): error TS2403: Subsequent variable declarations must have the same type.  Variable 'parameter' must be of type 'number', but here has type 'any'.
+input.ts(6,35): error TS7006: Parameter 'expression' implicitly has an 'any' type.
+input.ts(6,53): error TS21331: 'expression' is already defined.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "no-redeclare": "error" } }
+    }
+==== input.ts (8 errors) ====
+    var repeated;
+    var repeated;
+        ~~~~~~~~
+!!! error TS21331: 'repeated' is already defined.
+    var Object;
+        ~~~~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'Object' must be of type 'ObjectConstructor', but here has type 'any'.
+!!! related TS6203 lib.es5.d.ts:--:--: 'Object' was also declared here.
+        ~~~~~~
+!!! error TS21330: 'Object' is already defined as a built-in global variable.
+    function parameters(parameter) { var parameter; }
+                        ~~~~~~~~~
+!!! error TS7006: Parameter 'parameter' implicitly has an 'any' type.
+                                         ~~~~~~~~~
+!!! error TS21331: 'parameter' is already defined.
+    function defaultParameter(parameter = 1) { var parameter; }
+                                                   ~~~~~~~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'parameter' must be of type 'number', but here has type 'any'.
+!!! related TS6203 input.ts:5:27: 'parameter' was also declared here.
+    const named = function expression(expression) { var expression; };
+                                      ~~~~~~~~~~
+!!! error TS7006: Parameter 'expression' implicitly has an 'any' type.
+                                                        ~~~~~~~~~~
+!!! error TS21331: 'expression' is already defined.
+    { let repeated; }

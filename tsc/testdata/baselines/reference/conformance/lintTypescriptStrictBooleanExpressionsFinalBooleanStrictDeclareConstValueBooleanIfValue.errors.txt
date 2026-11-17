@@ -1,0 +1,23 @@
+/input.ts(1,45): error TS24166: Unexpected object value in conditional. The condition is always true.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-boolean-expressions": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: boolean; if (value && ({})) {}
+                                                ~~
+!!! error TS24166: Unexpected object value in conditional. The condition is always true.

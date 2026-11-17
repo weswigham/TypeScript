@@ -1,0 +1,22 @@
+/input.ts(1,30): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-await": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    async function run() { await work(); }
+                                 ~~~~
+!!! error TS2304: Cannot find name 'work'.

@@ -1,0 +1,23 @@
+/input.ts(1,15): error TS24183: Predicate function should not be 'async'; expected a boolean return type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-boolean-expressions": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    [1, 2].filter(async value => value > 0);
+                  ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24183: Predicate function should not be 'async'; expected a boolean return type.

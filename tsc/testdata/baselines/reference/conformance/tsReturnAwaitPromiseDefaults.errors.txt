@@ -1,0 +1,33 @@
+input.ts(1,38): error TS24155: Returning an awaited value that is not a promise is not allowed.
+input.ts(2,36): error TS24153: Returning an awaited promise is not allowed in this context.
+input.ts(4,18): error TS24156: Returning an awaited promise is required in this context.
+input.ts(6,28): error TS24155: Returning an awaited value that is not a promise is not allowed.
+input.ts(9,12): error TS24156: Returning an awaited promise is required in this context.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/return-await": "error" } }
+    }
+==== input.ts (5 errors) ====
+    async function nonPromise() { return await /* retained */ 1; }
+                                         ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24155: Returning an awaited value that is not a promise is not allowed.
+    async function ordinary() { return await Promise.resolve(1); }
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24153: Returning an awaited promise is not allowed in this context.
+    async function guarded() {
+        try { return Promise.resolve(1); } catch { return Promise.resolve(2); }
+                     ~~~~~~~~~~~~~~~~~~
+!!! error TS24156: Returning an awaited promise is required in this context.
+    }
+    const object = async () => await { value: 1 };
+                               ~~~~~~~~~~~~~~~~~~
+!!! error TS24155: Returning an awaited value that is not a promise is not allowed.
+    async function resources() {
+        using resource = { [Symbol.dispose]() {} };
+        return Promise.resolve(1);
+               ~~~~~~~~~~~~~~~~~~
+!!! error TS24156: Returning an awaited promise is required in this context.
+    }
+    export {};

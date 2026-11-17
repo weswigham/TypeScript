@@ -1,0 +1,32 @@
+input.ts(1,7): error TS24015: Variable name `bad_name` must match one of the following formats: camelCase, UPPER_CASE
+input.ts(2,24): error TS24015: Parameter name `BadParameter` must match one of the following formats: camelCase
+input.ts(3,11): error TS24015: Interface name `bad_interface` must match one of the following formats: PascalCase
+input.ts(4,7): error TS24015: Class name `bad_class` must match one of the following formats: PascalCase
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/naming-convention": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    const bad_name = 1;
+          ~~~~~~~~
+!!! error TS24015: Variable name `bad_name` must match one of the following formats: camelCase, UPPER_CASE
+    function validFunction(BadParameter: number): number { return BadParameter; }
+                           ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24015: Parameter name `BadParameter` must match one of the following formats: camelCase
+    interface bad_interface { value: number; }
+              ~~~~~~~~~~~~~
+!!! error TS24015: Interface name `bad_interface` must match one of the following formats: PascalCase
+    class bad_class { value = 1; }
+          ~~~~~~~~~
+!!! error TS24015: Class name `bad_class` must match one of the following formats: PascalCase
+    const goodName = 1;
+    const GOOD_NAME = 2;
+    interface GoodInterface { value: number; }
+    class GoodClass { value = 1; }
+    function goodFunction(goodParameter: number): number { return goodParameter; }
+    export {};

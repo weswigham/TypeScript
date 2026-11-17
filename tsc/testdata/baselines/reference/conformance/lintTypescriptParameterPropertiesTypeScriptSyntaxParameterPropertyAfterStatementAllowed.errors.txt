@@ -1,0 +1,27 @@
+/input.ts(1,55): error TS2304: Cannot find name 'run'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/parameter-properties": [
+                    "error",
+                    {
+                        "prefer": "parameter-property"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { value: string; constructor(value: string) { run(); this.value = value; } }
+                                                          ~~~
+!!! error TS2304: Cannot find name 'run'.

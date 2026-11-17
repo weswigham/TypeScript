@@ -1,0 +1,86 @@
+input.ts(1,1): error TS24258: 'private/module' import is restricted from being used by a pattern. Use public modules.
+input.ts(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'private/module'.
+input.ts(2,8): error TS2882: Cannot find module or type declarations for side-effect import of 'private/public'.
+input.ts(3,1): error TS24258: 'PRIVATE/MODULE' import is restricted from being used by a pattern. Use public modules.
+input.ts(3,8): error TS2882: Cannot find module or type declarations for side-effect import of 'PRIVATE/MODULE'.
+input.ts(4,10): error TS24259: 'secret' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+input.ts(4,18): error TS24259: 'unsafeMethod' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+input.ts(4,32): error TS2300: Duplicate identifier 'safe'.
+input.ts(4,44): error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+input.ts(5,34): error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+input.ts(6,8): error TS24261: * import is invalid because 'secret' from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+input.ts(6,28): error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+input.ts(7,10): error TS24259: 'unsafeMethod' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+input.ts(7,30): error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+input.ts(8,8): error TS24275: * import is invalid because only imports that match the pattern '/^safe/u' from 'pkg/private' are allowed.
+input.ts(8,15): error TS2307: Cannot find module 'pkg/private' or its corresponding type declarations.
+input.ts(9,10): error TS24273: 'unsafe' import from 'pkg/private' is restricted because only imports that match the pattern '/^safe/u' are allowed from 'pkg/private'.
+input.ts(9,18): error TS2300: Duplicate identifier 'safe'.
+input.ts(9,30): error TS2307: Cannot find module 'pkg/private' or its corresponding type declarations.
+input.ts(10,8): error TS2882: Cannot find module or type declarations for side-effect import of 'pkg/public'.
+input.ts(11,10): error TS24269: 'bad' import from 'CaseSensitive' is restricted because only 'safe' is allowed.
+input.ts(11,21): error TS2307: Cannot find module 'CaseSensitive' or its corresponding type declarations.
+input.ts(12,34): error TS2307: Cannot find module 'casesensitive' or its corresponding type declarations.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-imports":["error",{"patterns":[{"group":["private/*","!private/public"],"message":"Use public modules."},{"group":["**/internal/**"],"importNames":["secret"],"importNamePattern":"^unsafe","allowTypeImports":true},{"regex":"^pkg/(?!public$)","allowImportNamePattern":"^safe"},{"group":["CaseSensitive"],"caseSensitive":true,"allowImportNames":["safe"]}]}]}},"files":["input.ts"]}
+==== input.ts (23 errors) ====
+    import "private/module";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24258: 'private/module' import is restricted from being used by a pattern. Use public modules.
+           ~~~~~~~~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'private/module'.
+    import "private/public";
+           ~~~~~~~~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'private/public'.
+    import "PRIVATE/MODULE";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24258: 'PRIVATE/MODULE' import is restricted from being used by a pattern. Use public modules.
+           ~~~~~~~~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'PRIVATE/MODULE'.
+    import { secret, unsafeMethod, safe } from "@scope/pkg/internal/module";
+             ~~~~~~
+!!! error TS24259: 'secret' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+                     ~~~~~~~~~~~~
+!!! error TS24259: 'unsafeMethod' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+                                   ~~~~
+!!! error TS2300: Duplicate identifier 'safe'.
+                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+    import type { secret as T } from "@scope/pkg/internal/module";
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+    import * as namespace from "@scope/pkg/internal/module";
+           ~~~~~~~~~~~~~~
+!!! error TS24261: * import is invalid because 'secret' from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+    export { unsafeMethod } from "@scope/pkg/internal/module";
+             ~~~~~~~~~~~~
+!!! error TS24259: 'unsafeMethod' import from '@scope/pkg/internal/module' is restricted from being used by a pattern.
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module '@scope/pkg/internal/module' or its corresponding type declarations.
+    export * from "pkg/private";
+           ~
+!!! error TS24275: * import is invalid because only imports that match the pattern '/^safe/u' from 'pkg/private' are allowed.
+                  ~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'pkg/private' or its corresponding type declarations.
+    import { unsafe, safe } from "pkg/private";
+             ~~~~~~
+!!! error TS24273: 'unsafe' import from 'pkg/private' is restricted because only imports that match the pattern '/^safe/u' are allowed from 'pkg/private'.
+                     ~~~~
+!!! error TS2300: Duplicate identifier 'safe'.
+                                 ~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'pkg/private' or its corresponding type declarations.
+    import "pkg/public";
+           ~~~~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'pkg/public'.
+    import { bad } from "CaseSensitive";
+             ~~~
+!!! error TS24269: 'bad' import from 'CaseSensitive' is restricted because only 'safe' is allowed.
+                        ~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'CaseSensitive' or its corresponding type declarations.
+    import { bad as permitted } from "casesensitive";
+                                     ~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'casesensitive' or its corresponding type declarations.

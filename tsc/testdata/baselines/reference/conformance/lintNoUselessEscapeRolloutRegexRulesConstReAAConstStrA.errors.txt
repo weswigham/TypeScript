@@ -1,0 +1,34 @@
+/input.ts(1,13): error TS24300: Unnecessary escape character: \a.
+/input.ts(1,16): error TS24300: Unnecessary escape character: \-.
+/input.ts(1,19): error TS24300: Unnecessary escape character: \^.
+/input.ts(1,22): error TS24300: Unnecessary escape character: \-.
+/input.ts(1,40): error TS24300: Unnecessary escape character: \a.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-escape": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    const re = /\a[\-a\^]\-/; const str = "\a";
+                ~
+!!! error TS24300: Unnecessary escape character: \a.
+                   ~
+!!! error TS24300: Unnecessary escape character: \-.
+                      ~
+!!! error TS24300: Unnecessary escape character: \^.
+                         ~
+!!! error TS24300: Unnecessary escape character: \-.
+                                           ~
+!!! error TS24300: Unnecessary escape character: \a.

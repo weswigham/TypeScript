@@ -1,0 +1,47 @@
+/input.ts(1,17): error TS2304: Cannot find name 'D'.
+/input.ts(3,17): error TS2377: Constructors for derived classes must contain a 'super' call.
+/input.ts(3,17): error TS24206: Expected to call 'super()'.
+/input.ts(5,29): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class C extends D {
+                    ~
+!!! error TS2304: Cannot find name 'D'.
+    
+                    constructor() {
+                    ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.
+                    ~~~~~~~~~~~~~~~
+                        for (let i = 1;;i++) {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            if (bar) {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                                break;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+                        }
+    ~~~~~~~~~~~~~~~~~~~~~
+                    }
+    ~~~~~~~~~~~~~~~~~
+!!! error TS24206: Expected to call 'super()'.
+    
+                }

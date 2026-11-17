@@ -1,0 +1,50 @@
+/input.ts(3,21): error TS2304: Cannot find name 'opts'.
+/input.ts(5,53): error TS2304: Cannot find name 'run'.
+/input.ts(5,57): error TS2304: Cannot find name 'opts'.
+/input.ts(6,25): error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
+/input.ts(8,25): error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    declare var process: any;
+    
+==== /input.ts (5 errors) ====
+    
+                    async () => {
+                        opts.spec = process.stdin;
+                        ~~~~
+!!! error TS2304: Cannot find name 'opts'.
+                        try {
+                            const { exit_code } = await run(opts);
+                                                        ~~~
+!!! error TS2304: Cannot find name 'run'.
+                                                            ~~~~
+!!! error TS2304: Cannot find name 'opts'.
+                            process.exitCode = exit_code;
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
+                        } catch (e) {
+                            process.exitCode = 1;
+                            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
+                        }
+                  };
+                

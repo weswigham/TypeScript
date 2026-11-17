@@ -1,0 +1,23 @@
+/input.ts(1,26): error TS22026: Prefer the safe `: unknown` for a `catch` callback variable. The thrown error may not be iterable.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/use-unknown-in-catch-callback-variable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    Promise.resolve().catch(([error]: [unknown]) => {});
+                             ~~~~~~~~~~~~~~~~~~
+!!! error TS22026: Prefer the safe `: unknown` for a `catch` callback variable. The thrown error may not be iterable.

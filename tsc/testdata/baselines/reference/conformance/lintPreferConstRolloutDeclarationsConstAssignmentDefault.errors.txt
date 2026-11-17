@@ -1,0 +1,28 @@
+/input.ts(1,13): error TS24322: 'x' is never reassigned. Use 'const' instead.
+/input.ts(1,20): error TS24322: 'y' is never reassigned. Use 'const' instead.
+/input.ts(1,25): error TS2304: Cannot find name 'obj'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    let x, y; ({x = 0, y} = obj);
+                ~
+!!! error TS24322: 'x' is never reassigned. Use 'const' instead.
+                       ~
+!!! error TS24322: 'y' is never reassigned. Use 'const' instead.
+                            ~~~
+!!! error TS2304: Cannot find name 'obj'.

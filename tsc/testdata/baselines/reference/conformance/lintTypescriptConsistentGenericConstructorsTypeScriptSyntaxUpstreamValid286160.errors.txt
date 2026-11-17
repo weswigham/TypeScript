@@ -1,0 +1,31 @@
+/input.ts(3,18): error TS2304: Cannot find name 'Foo'.
+/input.ts(3,28): error TS2304: Cannot find name 'Foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    class A {
+      constructor(a: Foo = new Foo<string>()) {}
+                     ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                               ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+    }
+        

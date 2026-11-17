@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,33): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,52): error TS2339: Property 'a' does not exist on type 'A'.
+/input.ts(1,82): error TS2339: Property 'foo' does not exist on type 'A'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-this-before-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class A extends B { constructor(a) { super(); this.a = a && function(){} && this.foo; } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                                    ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                                                       ~
+!!! error TS2339: Property 'a' does not exist on type 'A'.
+                                                                                     ~~~
+!!! error TS2339: Property 'foo' does not exist on type 'A'.

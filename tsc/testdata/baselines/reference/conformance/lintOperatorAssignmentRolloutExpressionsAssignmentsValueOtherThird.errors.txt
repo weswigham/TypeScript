@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,1): error TS24320: Unexpected operator assignment (+=) shorthand.
+/input.ts(1,10): error TS2304: Cannot find name 'other'.
+/input.ts(1,18): error TS2304: Cannot find name 'third'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "operator-assignment": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    value += other + third;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24320: Unexpected operator assignment (+=) shorthand.
+             ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                     ~~~~~
+!!! error TS2304: Cannot find name 'third'.

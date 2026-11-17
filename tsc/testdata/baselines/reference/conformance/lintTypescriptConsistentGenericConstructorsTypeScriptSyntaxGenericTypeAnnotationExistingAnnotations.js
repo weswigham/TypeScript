@@ -1,0 +1,11 @@
+//// [tests/cases/conformance/lint/rules/consistent-generic-constructors/lintTypescriptConsistentGenericConstructorsTypeScriptSyntaxGenericTypeAnnotationExistingAnnotations.ts] ////
+
+//// [module.ts]
+export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+//// [input.ts]
+const a: Foo<string> = new Foo(); const b: Foo = new Foo<string>(); const c: Other = new Foo<string>();
+
+//// [input.ts]
+const a: Foo<string> = new Foo(); const b: Foo = new Foo<string>(); const c: Other = new Foo<string>();
+//// [module.ts]
+export interface Shape {} export type Alias = string; export const value = 1; export class Both {}

@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS2693: 'Console' only refers to a type, but is being used as a value here.
+/input.ts(1,13): error TS2304: Cannot find name 'value'.
+/input.ts(1,21): error TS2304: Cannot find name 'use'.
+/input.ts(1,45): error TS2304: Cannot find name 'custom'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    Console.log(value); use(console); console = custom;
+    ~~~~~~~
+!!! error TS2693: 'Console' only refers to a type, but is being used as a value here.
+                ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                        ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.

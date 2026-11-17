@@ -1,0 +1,22 @@
+/input.ts(1,16): error TS24239: Invalid regular expression: /\1/u: Invalid escape.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-invalid-regexp": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    RegExp("\\1"); RegExp("\\1", "u");
+                   ~~~~~~~~~~~~~~~~~~
+!!! error TS24239: Invalid regular expression: /\1/u: Invalid escape.

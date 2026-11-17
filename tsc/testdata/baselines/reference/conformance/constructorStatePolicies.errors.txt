@@ -1,0 +1,68 @@
+input.ts(12,40): error TS24207: Unexpected duplicate 'super()'.
+input.ts(15,5): error TS2377: Constructors for derived classes must contain a 'super' call.
+input.ts(23,13): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
+input.ts(23,13): error TS24278: 'this' is not allowed before 'super()'.
+input.ts(28,5): error TS2377: Constructors for derived classes must contain a 'super' call.
+input.ts(31,21): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
+input.ts(31,21): error TS24278: 'this' is not allowed before 'super()'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": {
+            "rules": {
+                "constructor-super": "error",
+                "no-this-before-super": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+==== input.ts (7 errors) ====
+    declare class Base { value: number; }
+    declare const flag: boolean;
+    declare const error: Error;
+    
+    class UnreachableSuper extends Base {
+        constructor() { return { value: 0 }; super(); this.value; }
+    }
+    class Initialized extends Base {
+        constructor() { super(); this.value; }
+    }
+    class MixedSuper extends Base {
+        constructor() { if (flag) super(); super(); this.value; }
+                                           ~~~~~~~
+!!! error TS24207: Unexpected duplicate 'super()'.
+    }
+    class ReturnedObject extends Base {
+        constructor() { return { value: 0 }; }
+        ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.
+    }
+    class MixedObjectReturn extends Base {
+        constructor() {
+            try {
+                if (flag) super();
+                return { value: 0 };
+            } finally {
+                this.value;
+                ~~~~
+!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
+                ~~~~
+!!! error TS24278: 'this' is not allowed before 'super()'.
+            }
+        }
+    }
+    class UnreachableReturn extends Base {
+        constructor() { throw error; return { value: 0 }; }
+        ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.
+    }
+    class BeforeSuper extends Base {
+        constructor() { this.value; super(); }
+                        ~~~~
+!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
+                        ~~~~
+!!! error TS24278: 'this' is not allowed before 'super()'.
+    }
+    

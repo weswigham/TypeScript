@@ -1,0 +1,34 @@
+/input.ts(1,24): error TS19853: Do not assign to the exception parameter.
+/input.ts(1,35): error TS18046: 'error' is of type 'unknown'.
+/input.ts(1,35): error TS19853: Do not assign to the exception parameter.
+/input.ts(1,45): error TS19853: Do not assign to the exception parameter.
+/input.ts(1,54): error TS2304: Cannot find name 'values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-ex-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    try {} catch (error) { error = 1; error++; [error] = values; }
+                           ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+                                      ~~~~~
+!!! error TS18046: 'error' is of type 'unknown'.
+                                      ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+                                                ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.
+                                                         ~~~~~~
+!!! error TS2304: Cannot find name 'values'.

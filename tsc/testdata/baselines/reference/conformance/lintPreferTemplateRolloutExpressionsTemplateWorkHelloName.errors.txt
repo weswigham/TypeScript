@@ -1,0 +1,26 @@
+/input.ts(1,1): error TS2304: Cannot find name 'work'.
+/input.ts(2,1): error TS24335: Unexpected string concatenation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-template": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    work()
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    'hello ' + name;
+    ~~~~~~~~~~~~~~~
+!!! error TS24335: Unexpected string concatenation.

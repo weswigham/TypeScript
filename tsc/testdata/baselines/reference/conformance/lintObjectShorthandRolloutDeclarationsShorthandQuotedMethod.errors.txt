@@ -1,0 +1,28 @@
+/input.ts(1,12): error TS24307: Expected longform method syntax for string literal keys.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "object-shorthand": [
+                    "error",
+                    "always",
+                    {
+                        "avoidQuotes": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const o = {'f'() {}};
+               ~~~~~~~~
+!!! error TS24307: Expected longform method syntax for string literal keys.

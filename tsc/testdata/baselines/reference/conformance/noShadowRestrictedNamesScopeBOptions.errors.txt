@@ -1,0 +1,16 @@
+input.ts(1,18): error TS7006: Parameter 'globalThis' implicitly has an 'any' type.
+input.ts(2,21): error TS7006: Parameter 'Infinity' implicitly has an 'any' type.
+input.ts(2,21): error TS20011: Shadowing of global property 'Infinity'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-shadow-restricted-names":["error",{"reportGlobalThis":false}]}},"files":["input.ts"]}
+==== input.ts (3 errors) ====
+    function allowed(globalThis) {}
+                     ~~~~~~~~~~
+!!! error TS7006: Parameter 'globalThis' implicitly has an 'any' type.
+    function disallowed(Infinity) {}
+                        ~~~~~~~~
+!!! error TS7006: Parameter 'Infinity' implicitly has an 'any' type.
+                        ~~~~~~~~
+!!! error TS20011: Shadowing of global property 'Infinity'.

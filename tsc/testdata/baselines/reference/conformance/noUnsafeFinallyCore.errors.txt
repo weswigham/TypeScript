@@ -1,0 +1,21 @@
+input.ts(1,38): error TS19653: Unsafe usage of ReturnStatement.
+input.ts(2,55): error TS19653: Unsafe usage of ContinueStatement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-unsafe-finally": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    function unsafe() { try {} finally { return 1; } }
+                                         ~~~~~~~~~
+!!! error TS19653: Unsafe usage of ReturnStatement.
+    outer: while (true) { try {} finally { while (true) { continue outer; } } }
+                                                          ~~~~~~~~~~~~~~~
+!!! error TS19653: Unsafe usage of ContinueStatement.
+    try {} finally { label: while (true) { continue label; } }
+    try {} finally { while (true) { break; } }
+    try {} finally { function nested() { return 1; } }

@@ -1,0 +1,33 @@
+/input.ts(1,20): error TS7006: Parameter 'object' implicitly has an 'any' type.
+/input.ts(1,51): error TS2304: Cannot find name 'get'.
+/input.ts(1,70): error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    async function run(object) { const result = await get(object.value); object.value = result; }
+                       ~~~~~~
+!!! error TS7006: Parameter 'object' implicitly has an 'any' type.
+                                                      ~~~
+!!! error TS2304: Cannot find name 'get'.
+                                                                         ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.

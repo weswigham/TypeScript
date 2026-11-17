@@ -1,0 +1,32 @@
+/input.ts(1,15): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "destructuredArrayIgnorePattern": "Error$"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    try {} catch ([firstError]) {}
+                  ~~~~~~~~~~~~
+!!! error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.

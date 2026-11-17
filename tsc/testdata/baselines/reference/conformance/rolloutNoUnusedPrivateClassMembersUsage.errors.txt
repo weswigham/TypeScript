@@ -1,0 +1,32 @@
+input.ts(2,5): error TS24288: '#unused' is defined but never used.
+input.ts(3,5): error TS24288: '#writeOnly' is defined but never used.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-unused-private-class-members": "error" } }
+    }
+==== input.ts (2 errors) ====
+    export class Box {
+        #unused = 1;
+        ~~~~~~~
+!!! error TS24288: '#unused' is defined but never used.
+        #writeOnly = 0;
+        ~~~~~~~~~~
+!!! error TS24288: '#writeOnly' is defined but never used.
+        #read = 1;
+        set #accessor(value: number) {}
+        method() {
+            this.#writeOnly++;
+            this.#accessor = 1;
+            return this.#read;
+        }
+        nested() {
+            return class {
+                #read = 1;
+                method() {
+                    return this.#read;
+                }
+            };
+        }
+    }

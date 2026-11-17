@@ -1,0 +1,36 @@
+/input.tsx(1,1): error TS24258: 'FOO' import is restricted from being used by a pattern. foo is forbidden, use bar instead
+/input.tsx(1,39): error TS2307: Cannot find module 'FOO' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "caseSensitive": true,
+                                "message": "foo is forbidden, use bar instead",
+                                "regex": "FOO"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import withPatternsCaseSensitive from 'FOO';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24258: 'FOO' import is restricted from being used by a pattern. foo is forbidden, use bar instead
+                                          ~~~~~
+!!! error TS2307: Cannot find module 'FOO' or its corresponding type declarations.

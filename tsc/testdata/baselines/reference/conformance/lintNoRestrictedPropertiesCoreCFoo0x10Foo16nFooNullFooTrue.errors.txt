@@ -1,0 +1,54 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19520: '16' is restricted from being used.
+/input.ts(1,12): error TS2304: Cannot find name 'foo'.
+/input.ts(1,12): error TS19520: '16' is restricted from being used.
+/input.ts(1,22): error TS2304: Cannot find name 'foo'.
+/input.ts(1,22): error TS19520: 'null' is restricted from being used.
+/input.ts(1,33): error TS2304: Cannot find name 'foo'.
+/input.ts(1,33): error TS19520: 'true' is restricted from being used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-properties": [
+                    "error",
+                    {
+                        "property": "16"
+                    },
+                    {
+                        "property": "null"
+                    },
+                    {
+                        "property": "true"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    foo[0x10]; foo[16n]; foo[null]; foo[true];
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~
+!!! error TS19520: '16' is restricted from being used.
+               ~~~
+!!! error TS2304: Cannot find name 'foo'.
+               ~~~~~~~~
+!!! error TS19520: '16' is restricted from being used.
+                         ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                         ~~~~~~~~~
+!!! error TS19520: 'null' is restricted from being used.
+                                    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                    ~~~~~~~~~
+!!! error TS19520: 'true' is restricted from being used.

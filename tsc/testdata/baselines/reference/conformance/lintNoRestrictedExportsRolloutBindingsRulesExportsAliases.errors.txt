@@ -1,0 +1,50 @@
+/input.ts(1,39): error TS2300: Duplicate identifier 'denied'.
+/input.ts(1,39): error TS24253: 'denied' is restricted from being used as an exported name.
+/input.ts(1,56): error TS2300: Duplicate identifier ''denied''.
+/input.ts(1,56): error TS24253: 'denied' is restricted from being used as an exported name.
+/input.ts(1,71): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+/input.ts(1,90): error TS2300: Duplicate identifier 'denied'.
+/input.ts(1,90): error TS24253: 'denied' is restricted from being used as an exported name.
+/input.ts(1,102): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-exports": [
+                    "error",
+                    {
+                        "restrictedNamedExports": [
+                            "denied"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    export {denied as allowed, allowed as denied, value as 'denied'} from 'mod'; export * as denied from 'mod';
+                                          ~~~~~~
+!!! error TS2300: Duplicate identifier 'denied'.
+                                          ~~~~~~
+!!! error TS24253: 'denied' is restricted from being used as an exported name.
+                                                           ~~~~~~~~
+!!! error TS2300: Duplicate identifier ''denied''.
+                                                           ~~~~~~~~
+!!! error TS24253: 'denied' is restricted from being used as an exported name.
+                                                                          ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+                                                                                             ~~~~~~
+!!! error TS2300: Duplicate identifier 'denied'.
+                                                                                             ~~~~~~
+!!! error TS24253: 'denied' is restricted from being used as an exported name.
+                                                                                                         ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

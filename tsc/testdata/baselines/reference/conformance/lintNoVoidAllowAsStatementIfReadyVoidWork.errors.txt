@@ -1,0 +1,30 @@
+/input.ts(1,5): error TS2304: Cannot find name 'ready'.
+/input.ts(1,17): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-void": [
+                    "error",
+                    {
+                        "allowAsStatement": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (ready) void work();
+        ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                    ~~~~
+!!! error TS2304: Cannot find name 'work'.

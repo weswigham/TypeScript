@@ -1,0 +1,16 @@
+input.ts(1,1): error TS2304: Cannot find name 'work'.
+input.ts(2,1): error TS2304: Cannot find name 'work'.
+input.ts(2,9): error TS19365: Unexpected comment inline with code.
+
+
+==== tsconfig.json (0 errors) ====
+    {"lint":{"rules":{"no-inline-comments":["error",{"ignorePattern":"Note:"}]}},"files":["input.ts"]}
+==== input.ts (3 errors) ====
+    work(); // Note: ignored.
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    work(); // Reported.
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+            ~~~~~~~~~~~~
+!!! error TS19365: Unexpected comment inline with code.

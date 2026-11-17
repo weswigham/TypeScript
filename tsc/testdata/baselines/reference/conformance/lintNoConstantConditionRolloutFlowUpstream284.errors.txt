@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS2365: Operator '+' cannot be applied to types 'Number' and 'number'.
+/input.ts(1,16): error TS2304: Cannot find name 'x'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (new Number(x) + 1 === 2) {}
+        ~~~~~~~~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'Number' and 'number'.
+                   ~
+!!! error TS2304: Cannot find name 'x'.

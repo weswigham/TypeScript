@@ -1,0 +1,31 @@
+/input.ts(1,14): error TS2393: Duplicate function implementation.
+/input.ts(1,25): error TS2393: Duplicate function implementation.
+/input.ts(1,40): error TS2393: Duplicate function implementation.
+/input.ts(1,40): error TS19354: Duplicate name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-dupe-class-members": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class Item { value() {} ['value']() {} value() {} }
+                 ~~~~~
+!!! error TS2393: Duplicate function implementation.
+                            ~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+                                           ~~~~~
+!!! error TS2393: Duplicate function implementation.
+                                           ~~~~~
+!!! error TS19354: Duplicate name 'value'.

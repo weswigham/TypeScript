@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS2304: Cannot find name 'foo'.
+/input.ts(1,10): error TS24319: Split 'var' declarations into multiple statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (foo) var a, b;
+        ~~~
+!!! error TS2304: Cannot find name 'foo'.
+             ~~~~~~~~~
+!!! error TS24319: Split 'var' declarations into multiple statements.

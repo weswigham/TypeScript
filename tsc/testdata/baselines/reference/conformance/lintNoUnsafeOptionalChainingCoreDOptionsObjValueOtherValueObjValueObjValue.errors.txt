@@ -1,0 +1,48 @@
+/input.ts(1,1): error TS2304: Cannot find name 'obj'.
+/input.ts(1,1): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
+/input.ts(1,14): error TS2304: Cannot find name 'other'.
+/input.ts(1,21): error TS2304: Cannot find name 'value'.
+/input.ts(1,30): error TS2304: Cannot find name 'obj'.
+/input.ts(1,30): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
+/input.ts(1,43): error TS2304: Cannot find name 'obj'.
+/input.ts(1,43): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unsafe-optional-chaining": [
+                    "error",
+                    {
+                        "disallowArithmeticOperators": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    obj?.value + other; value += obj?.value; +obj?.value;
+    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+    ~~~~~~~~~~
+!!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
+                 ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                 ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                 ~~~~~~~~~~
+!!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
+                                              ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                              ~~~~~~~~~~
+!!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.

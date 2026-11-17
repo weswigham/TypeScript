@@ -1,0 +1,59 @@
+/input.ts(6,5): error TS24318: Combine this with the previous 'var' statement.
+/input.ts(7,5): error TS24319: Split 'let' declarations into multiple statements.
+/input.ts(9,5): error TS24318: Combine this with the previous 'const' statement.
+/input.ts(10,5): error TS24319: Split 'using' declarations into multiple statements.
+/input.ts(12,5): error TS24318: Combine this with the previous 'await using' statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "lib": [
+                "esnext"
+            ],
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "one-var": [
+                    "error",
+                    {
+                        "awaitUsing": "always",
+                        "const": "consecutive",
+                        "let": "never",
+                        "separateRequires": true,
+                        "using": "never",
+                        "var": "always"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    
+    declare function acquire(): Disposable & AsyncDisposable;
+    
+    async function example() {
+        var first;
+        var second;
+        ~~~~~~~~~~~
+!!! error TS24318: Combine this with the previous 'var' statement.
+        let third = 1, fourth = 2;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24319: Split 'let' declarations into multiple statements.
+        const fifth = 5;
+        const sixth = 6;
+        ~~~~~~~~~~~~~~~~
+!!! error TS24318: Combine this with the previous 'const' statement.
+        using seventh = acquire(), eighth = acquire();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24319: Split 'using' declarations into multiple statements.
+        await using ninth = acquire();
+        await using tenth = acquire();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24318: Combine this with the previous 'await using' statement.
+    }

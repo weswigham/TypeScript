@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS24150: Async method 'run' has no 'await' expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-await": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const object = { run: async function() { return 1; } };
+                     ~~~~~~~~~~~~~~~~~~~
+!!! error TS24150: Async method 'run' has no 'await' expression.

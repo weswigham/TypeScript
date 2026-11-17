@@ -1,0 +1,33 @@
+/input.tsx(1,1): error TS24257: 'foo/bar' import is restricted from being used by a pattern.
+/input.tsx(1,28): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            "foo/*",
+                            "!foo/baz"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import withGitignores from "foo/bar";
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24257: 'foo/bar' import is restricted from being used by a pattern.
+                               ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

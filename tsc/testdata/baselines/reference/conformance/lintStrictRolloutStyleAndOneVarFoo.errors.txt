@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS24348: Use the global form of 'use strict'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": [
+                    "error",
+                    "global"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    foo();
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~
+!!! error TS24348: Use the global form of 'use strict'.

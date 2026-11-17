@@ -1,0 +1,22 @@
+/input.ts(1,44): error TS19853: Do not assign to the exception parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-ex-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch (error) { function nested() { error = 0; } }
+                                               ~~~~~
+!!! error TS19853: Do not assign to the exception parameter.

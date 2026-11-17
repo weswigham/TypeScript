@@ -1,0 +1,28 @@
+/input.ts(1,6): error TS2304: Cannot find name 'first'.
+/input.ts(1,16): error TS2304: Cannot find name 'second'.
+/input.ts(1,26): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-keys": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    ({a: first, a: second} = source); const object = { a: {a: 1}, b: 2 };
+         ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                   ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                             ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS2304: Cannot find name 'decorator'.
+/input.ts(1,29): error TS22023: Literals should be exposed using readonly fields.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/class-literal-property-style": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Item { @decorator get value() { return 1; } }
+                  ~~~~~~~~~
+!!! error TS2304: Cannot find name 'decorator'.
+                                ~~~~~
+!!! error TS22023: Literals should be exposed using readonly fields.

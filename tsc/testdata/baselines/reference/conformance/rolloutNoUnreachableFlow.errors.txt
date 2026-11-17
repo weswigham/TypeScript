@@ -1,0 +1,29 @@
+input.ts(3,30): error TS24283: Unreachable code.
+input.ts(4,63): error TS24283: Unreachable code.
+input.ts(5,60): error TS24283: Unreachable code.
+input.ts(6,39): error TS24283: Unreachable code.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-unreachable": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (4 errors) ====
+    declare function work(): void;
+    declare const flag: boolean;
+    function stopped() { return; work(); work(); }
+                                 ~~~~~~~~~~~~~~~
+!!! error TS24283: Unreachable code.
+    function branches() { if (flag) { return; } else { throw 0; } work(); }
+                                                                  ~~~~~~~
+!!! error TS24283: Unreachable code.
+    function finalized() { try { work(); } finally { return; } work(); }
+                                                               ~~~~~~~
+!!! error TS24283: Unreachable code.
+    function infinite() { while (true) {} work(); }
+                                          ~~~~~~~
+!!! error TS24283: Unreachable code.
+    function hoisted() { return value; var value; }
+    function catchable() { try { work(); return; } catch { work(); } }

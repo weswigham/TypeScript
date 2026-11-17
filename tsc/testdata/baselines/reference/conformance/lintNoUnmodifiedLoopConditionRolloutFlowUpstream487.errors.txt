@@ -1,0 +1,29 @@
+/input.ts(1,21): error TS24280: 'foo' is not modified in this loop.
+/input.ts(1,28): error TS2554: Expected 1 arguments, but got 0.
+/input.ts(1,56): error TS7006: Parameter 'foo' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    var foo = 0; while (foo) { update(); } function update(foo) { ++foo; }
+                        ~~~
+!!! error TS24280: 'foo' is not modified in this loop.
+                               ~~~~~~
+!!! error TS2554: Expected 1 arguments, but got 0.
+!!! related TS6210 /input.ts:1:56: An argument for 'foo' was not provided.
+                                                           ~~~
+!!! error TS7006: Parameter 'foo' implicitly has an 'any' type.

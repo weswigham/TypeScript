@@ -1,0 +1,32 @@
+input.ts(5,1): error TS20724: void operator shouldn't be used on void; it should convey that a return value is being ignored
+input.ts(6,1): error TS20724: void operator shouldn't be used on never; it should convey that a return value is being ignored
+input.ts(10,1): error TS20723: void operator is useless here; it should only discard a call's return value
+input.ts(11,16): error TS20723: void operator is useless here; it should only discard a call's return value
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "@typescript-eslint/no-meaningless-void-operator": ["error", { "checkNever": true }] } }
+    }
+==== input.ts (4 errors) ====
+    declare function nothing(): void;
+    declare function fail(): never;
+    declare function value(): string;
+    declare const promise: Promise<number>;
+    void nothing();
+    ~~~~~~~~~~~~~~
+!!! error TS20724: void operator shouldn't be used on void; it should convey that a return value is being ignored
+    void fail();
+    ~~~~~~~~~~~
+!!! error TS20724: void operator shouldn't be used on never; it should convey that a return value is being ignored
+    void value();
+    void promise;
+    void 0;
+    void 1;
+    ~~~~~~
+!!! error TS20723: void operator is useless here; it should only discard a call's return value
+    const result = void "value";
+                   ~~~~~~~~~~~~
+!!! error TS20723: void operator is useless here; it should only discard a call's return value
+    let assigned: number;
+    () => void (assigned = 1);

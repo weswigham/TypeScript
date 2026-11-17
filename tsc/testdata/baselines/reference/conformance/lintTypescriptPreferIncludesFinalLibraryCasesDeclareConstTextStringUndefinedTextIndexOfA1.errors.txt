@@ -1,0 +1,23 @@
+/input.ts(1,41): error TS24137: Use 'includes()' method instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-includes": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const text: string | undefined; text?.indexOf('a') !== -1;
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24137: Use 'includes()' method instead.

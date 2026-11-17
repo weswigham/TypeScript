@@ -1,0 +1,23 @@
+/input.ts(1,29): error TS24149: Use 'String#startsWith' method instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-string-starts-ends-with": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const text: string; text.slice(0, 2) === 'ab';
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24149: Use 'String#startsWith' method instead.

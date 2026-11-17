@@ -1,0 +1,22 @@
+/input.ts(1,24): error TS2304: Cannot find name 'left'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    /* Leading */ ((typeof left) /* Left */ !== /* Right */ ("string")); /* Trailing */
+                           ~~~~
+!!! error TS2304: Cannot find name 'left'.

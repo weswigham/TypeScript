@@ -1,0 +1,23 @@
+/input.ts(1,7): error TS24099: Unsafe array destructuring of an `any` array value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const [value] = [] as any[];
+          ~~~~~~~
+!!! error TS24099: Unsafe array destructuring of an `any` array value.

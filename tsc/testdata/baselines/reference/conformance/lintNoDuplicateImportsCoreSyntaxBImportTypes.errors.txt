@@ -1,0 +1,33 @@
+/input.ts(1,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+/input.ts(1,55): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+/input.ts(1,82): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-duplicate-imports": [
+                    "error",
+                    {
+                        "allowSeparateTypeImports": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    import type Item from 'pkg'; import type {Other} from 'pkg'; import {value} from 'pkg';
+                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+                                                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+                                                                                     ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

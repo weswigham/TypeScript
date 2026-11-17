@@ -1,0 +1,37 @@
+/input.ts(1,15): error TS7032: Property 'a' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(1,17): error TS7006: Parameter 'val' implicitly has an 'any' type.
+/input.ts(1,24): error TS2408: Setters cannot return a value.
+/input.ts(1,24): error TS19518: Setter cannot return a value.
+/input.ts(1,36): error TS2408: Setters cannot return a value.
+/input.ts(1,36): error TS19518: Setter cannot return a value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-setter-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    class A { set a(val) { return val; return undefined; } }
+                  ~
+!!! error TS7032: Property 'a' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                    ~~~
+!!! error TS7006: Parameter 'val' implicitly has an 'any' type.
+                           ~~~~~~
+!!! error TS2408: Setters cannot return a value.
+                           ~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.
+                                       ~~~~~~
+!!! error TS2408: Setters cannot return a value.
+                                       ~~~~~~~~~~~~~~~~~
+!!! error TS19518: Setter cannot return a value.

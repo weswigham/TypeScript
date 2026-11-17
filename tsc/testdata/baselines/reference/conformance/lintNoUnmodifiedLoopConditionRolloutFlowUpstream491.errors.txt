@@ -1,0 +1,30 @@
+/input.ts(1,49): error TS24280: 'done' is not modified in this loop.
+/input.ts(1,73): error TS2304: Cannot find name 'nextOrNull'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": [
+                    "error",
+                    {
+                        "checkConditionalExpressions": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let chunk = true, done = false; while (chunk ? !done : false) { chunk = nextOrNull(); }
+                                                    ~~~~
+!!! error TS24280: 'done' is not modified in this loop.
+                                                                            ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'nextOrNull'.

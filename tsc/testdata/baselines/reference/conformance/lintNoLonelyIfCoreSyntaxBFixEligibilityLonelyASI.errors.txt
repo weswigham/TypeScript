@@ -1,0 +1,35 @@
+/input.ts(1,5): error TS2304: Cannot find name 'first'.
+/input.ts(1,22): error TS19369: Unexpected if as the only statement in an else block.
+/input.ts(1,26): error TS2304: Cannot find name 'second'.
+/input.ts(1,34): error TS2304: Cannot find name 'call'.
+/input.ts(2,13): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-lonely-if": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    if (first) {} else { if (second) call() }
+        ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                         ~~~~~~~~~~~~~~~~~~
+!!! error TS19369: Unexpected if as the only statement in an else block.
+                             ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                     ~~~~
+!!! error TS2304: Cannot find name 'call'.
+    [1].forEach(work);
+                ~~~~
+!!! error TS2304: Cannot find name 'work'.

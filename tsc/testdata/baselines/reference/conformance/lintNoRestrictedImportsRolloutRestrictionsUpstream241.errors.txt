@@ -1,0 +1,35 @@
+/input.tsx(1,1): error TS24255: 'import-foo' import is restricted from being used.
+/input.tsx(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'import-foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "allowTypeImports": true,
+                                "name": "import-foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import 'import-foo';
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24255: 'import-foo' import is restricted from being used.
+           ~~~~~~~~~~~~
+!!! error TS2882: Cannot find module or type declarations for side-effect import of 'import-foo'.

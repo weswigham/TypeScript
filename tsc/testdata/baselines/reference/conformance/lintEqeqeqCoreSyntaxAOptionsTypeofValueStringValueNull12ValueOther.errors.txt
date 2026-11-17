@@ -1,0 +1,40 @@
+/input.ts(1,8): error TS2304: Cannot find name 'value'.
+/input.ts(1,27): error TS2304: Cannot find name 'value'.
+/input.ts(1,42): error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
+/input.ts(1,50): error TS2304: Cannot find name 'value'.
+/input.ts(1,56): error TS19254: Expected '===' and instead saw '=='.
+/input.ts(1,59): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": [
+                    "error",
+                    "smart"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    typeof value == 'string'; value == null; 1 == 2; value == other;
+           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                              ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                             ~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
+                                                     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                           ~~
+!!! error TS19254: Expected '===' and instead saw '=='.
+                                                              ~~~~~
+!!! error TS2304: Cannot find name 'other'.

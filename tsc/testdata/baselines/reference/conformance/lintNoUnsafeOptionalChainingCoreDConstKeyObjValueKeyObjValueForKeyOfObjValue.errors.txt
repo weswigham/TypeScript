@@ -1,0 +1,43 @@
+/input.ts(1,17): error TS2304: Cannot find name 'obj'.
+/input.ts(1,17): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+/input.ts(1,31): error TS2588: Cannot assign to 'key' because it is a constant.
+/input.ts(1,38): error TS2304: Cannot find name 'obj'.
+/input.ts(1,38): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+/input.ts(1,56): error TS2588: Cannot assign to 'key' because it is a constant.
+/input.ts(1,63): error TS2304: Cannot find name 'obj'.
+/input.ts(1,63): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unsafe-optional-chaining": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    const { key } = obj?.value; ([key] = obj?.value); for (key of obj?.value) {}
+                    ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                    ~~~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+                                  ~~~
+!!! error TS2588: Cannot assign to 'key' because it is a constant.
+                                         ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                         ~~~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
+                                                           ~~~
+!!! error TS2588: Cannot assign to 'key' because it is a constant.
+                                                                  ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                                  ~~~~~~~~~~
+!!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.

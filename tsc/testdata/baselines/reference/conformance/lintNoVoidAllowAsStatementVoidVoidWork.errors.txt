@@ -1,0 +1,30 @@
+/input.ts(1,6): error TS19006: Expected 'undefined' and instead saw 'void'.
+/input.ts(1,11): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-void": [
+                    "error",
+                    {
+                        "allowAsStatement": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    void void work();
+         ~~~~~~~~~~~
+!!! error TS19006: Expected 'undefined' and instead saw 'void'.
+              ~~~~
+!!! error TS2304: Cannot find name 'work'.

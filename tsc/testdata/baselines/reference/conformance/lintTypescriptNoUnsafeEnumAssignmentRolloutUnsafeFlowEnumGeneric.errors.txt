@@ -1,0 +1,23 @@
+/input.ts(1,28): error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-enum-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    enum Fruit { Apple } const value: Set<Fruit> = new Set<number>();
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24115: The value assigned here does not have a shared enum type with the expected enum 'Fruit'.

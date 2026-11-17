@@ -1,0 +1,22 @@
+/input.ts(1,25): error TS20460: Prefer using the primitive `number` as a type name, rather than the upper-cased `Number`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-wrapper-object-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Value extends Number {}
+                            ~~~~~~
+!!! error TS20460: Prefer using the primitive `number` as a type name, rather than the upper-cased `Number`.

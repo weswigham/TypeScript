@@ -1,0 +1,35 @@
+input.ts(5,5): warning TS24318: Combine this with the previous 'var' statement.
+input.ts(6,5): warning TS24319: Split 'let' declarations into multiple statements.
+input.ts(8,5): warning TS24318: Combine this with the previous 'const' statement.
+input.ts(9,5): warning TS24319: Split 'using' declarations into multiple statements.
+input.ts(11,5): warning TS24318: Combine this with the previous 'await using' statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "lib": ["esnext"] },
+        "lint": { "rules": { "one-var": ["warn", { "var": "always", "let": "never", "const": "consecutive", "using": "never", "awaitUsing": "always", "separateRequires": true }] } }
+    }
+==== input.ts (5 errors) ====
+    declare function acquire(): Disposable & AsyncDisposable;
+    
+    async function example() {
+        var first;
+        var second;
+        ~~~~~~~~~~~
+!!! warning TS24318: Combine this with the previous 'var' statement.
+        let third = 1, fourth = 2;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24319: Split 'let' declarations into multiple statements.
+        const fifth = 5;
+        const sixth = 6;
+        ~~~~~~~~~~~~~~~~
+!!! warning TS24318: Combine this with the previous 'const' statement.
+        using seventh = acquire(), eighth = acquire();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24319: Split 'using' declarations into multiple statements.
+        await using ninth = acquire();
+        await using tenth = acquire();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24318: Combine this with the previous 'await using' statement.
+    }

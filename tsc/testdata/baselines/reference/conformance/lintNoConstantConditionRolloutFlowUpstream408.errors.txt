@@ -1,0 +1,30 @@
+/input.ts(1,12): error TS2304: Cannot find name 'x'.
+/input.ts(1,12): error TS24224: Unexpected constant condition.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": [
+                    "error",
+                    {
+                        "checkLoops": "all"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    do{ }while(x = 1)
+               ~
+!!! error TS2304: Cannot find name 'x'.
+               ~~~~~
+!!! error TS24224: Unexpected constant condition.

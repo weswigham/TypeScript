@@ -1,0 +1,25 @@
+/input.ts(1,12): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,53): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    for (;;) { for (var i = 1; i < 10; i ++) break; if (foo) break; continue; }
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                                        ~~~
+!!! error TS2304: Cannot find name 'foo'.

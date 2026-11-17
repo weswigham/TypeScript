@@ -1,0 +1,29 @@
+/input.tsx(1,15): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.tsx(1,33): error TS2304: Cannot find name 'decorate'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import A from 'x'; type T = A; @decorate class C {}
+                  ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                    ~~~~~~~~
+!!! error TS2304: Cannot find name 'decorate'.

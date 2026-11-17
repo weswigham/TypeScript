@@ -1,0 +1,28 @@
+/input.ts(1,12): error TS24310: Expected method shorthand.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "object-shorthand": [
+                    "error",
+                    "always",
+                    {
+                        "avoidExplicitReturnArrows": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const o = {f: <T>(x: T): T => { return x; }};
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24310: Expected method shorthand.

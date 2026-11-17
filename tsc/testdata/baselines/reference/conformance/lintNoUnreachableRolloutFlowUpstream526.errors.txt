@@ -1,0 +1,25 @@
+/input.ts(1,25): error TS2454: Variable 'x' is used before being assigned.
+/input.ts(1,28): error TS24283: Unreachable code.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function foo() { return x; var x = 1; }
+                            ~
+!!! error TS2454: Variable 'x' is used before being assigned.
+                               ~~~~~~~~~~
+!!! error TS24283: Unreachable code.

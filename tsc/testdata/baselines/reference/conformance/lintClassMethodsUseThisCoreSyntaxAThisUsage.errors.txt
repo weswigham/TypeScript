@@ -1,0 +1,25 @@
+/input.ts(1,11): error TS19218: Expected 'this' to be used by class method 'method'.
+/input.ts(1,61): error TS19218: Expected 'this' to be used by class arrow function 'field'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "class-methods-use-this": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { method() {} used() { return () => this; } field = () => 1; static staticMethod() {} }
+              ~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'method'.
+                                                                ~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class arrow function 'field'.

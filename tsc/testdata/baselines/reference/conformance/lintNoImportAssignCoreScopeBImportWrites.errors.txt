@@ -1,0 +1,37 @@
+/input.ts(1,31): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+/input.ts(1,38): error TS2632: Cannot assign to 'value' because it is an import.
+/input.ts(1,38): error TS20001: 'value' is read-only.
+/input.ts(1,49): error TS20002: The members of 'space' are read-only.
+/input.ts(1,62): error TS20002: The members of 'space' are read-only.
+/input.ts(1,80): error TS20002: The members of 'space' are read-only.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-import-assign": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    import value, * as space from 'pkg'; value = 1; space.key++; delete space.key; Object.assign(space, {}); space.key.deep = 1; value.key = 1;
+                                  ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+                                         ~~~~~
+!!! error TS2632: Cannot assign to 'value' because it is an import.
+                                         ~~~~~~~~~
+!!! error TS20001: 'value' is read-only.
+                                                    ~~~~~~~~~~~
+!!! error TS20002: The members of 'space' are read-only.
+                                                                 ~~~~~~~~~~~~~~~~
+!!! error TS20002: The members of 'space' are read-only.
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20002: The members of 'space' are read-only.

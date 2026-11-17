@@ -1,0 +1,38 @@
+/input.ts(4,9): error TS24191: Switch is not exhaustive. Cases not matched: State.Waiting
+/input.ts(6,9): error TS24191: Switch is not exhaustive. Cases not matched: "closed"
+/input.ts(8,9): error TS24191: Switch is not exhaustive. Cases not matched: false
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/switch-exhaustiveness-check": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    
+    enum State { Ready, Waiting }
+    declare const state: State;
+    switch (state) { case State.Ready: break; }
+            ~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: State.Waiting
+    declare const payload: { kind: 'open' } | { kind: 'closed' };
+    switch (payload.kind) { case 'open': break; default: break; }
+            ~~~~~~~~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: "closed"
+    declare const enabled: boolean;
+    switch (enabled) { case true: break; }
+            ~~~~~~~
+!!! error TS24191: Switch is not exhaustive. Cases not matched: false
+    declare const numeric: number;
+    switch (numeric) { case 1: break; }

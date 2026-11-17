@@ -1,0 +1,26 @@
+/input.ts(1,34): error TS2391: Function implementation is missing or not immediately following the declaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unified-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (1 errors) ====
+    { function run(): void; function run(value: number): void; }
+                                     ~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.

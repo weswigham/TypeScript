@@ -1,0 +1,43 @@
+input.ts(10,6): error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+input.ts(12,6): error TS24093: Unsafe argument of type `Set<Set<any>>` assigned to a parameter of type `Set<Set<string>>`.
+input.ts(13,6): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+input.ts(13,16): error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+input.ts(14,6): error TS24096: Unsafe spread of a tuple type. The argument is of type `any` and is assigned to a parameter of type `string`.
+input.ts(15,6): error TS24096: Unsafe spread of a tuple type. The argument is of type `any` and is assigned to a parameter of type `string`.
+input.ts(17,7): error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/no-unsafe-argument":"error"}}}
+==== input.ts (7 errors) ====
+    declare const unsafe: any;
+    declare const nested: Set<Set<any>>;
+    declare const tuple: [string, ...string[]];
+    declare function text(value: string): void;
+    declare function unknownValue(value: unknown): void;
+    declare function sets(value: Set<Set<string>>): void;
+    declare function rest(...values: [string, string]): void;
+    declare function generic<T extends any[]>(...values: T): void;
+    declare function tag(strings: TemplateStringsArray, value: string): void;
+    text(unsafe);
+         ~~~~~~
+!!! error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+    unknownValue(unsafe);
+    sets(nested);
+         ~~~~~~
+!!! error TS24093: Unsafe argument of type `Set<Set<any>>` assigned to a parameter of type `Set<Set<string>>`.
+    rest(...tuple, unsafe);
+         ~~~~~~~~
+!!! error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+                   ~~~~~~
+!!! error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
+    rest(...[unsafe, unsafe] as const);
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24096: Unsafe spread of a tuple type. The argument is of type `any` and is assigned to a parameter of type `string`.
+    text(...[unsafe]);
+         ~~~~~~~~~~~
+!!! error TS24096: Unsafe spread of a tuple type. The argument is of type `any` and is assigned to a parameter of type `string`.
+    generic(unsafe);
+    tag`${unsafe}`;
+          ~~~~~~
+!!! error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.

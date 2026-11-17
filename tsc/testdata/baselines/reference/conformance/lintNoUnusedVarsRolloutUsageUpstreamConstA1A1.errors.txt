@@ -1,0 +1,30 @@
+/input.ts(1,14): error TS2588: Cannot assign to 'a' because it is a constant.
+/input.ts(1,14): error TS24290: 'a' is assigned a value but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    const a = 1; a += 1;
+                 ~
+!!! error TS2588: Cannot assign to 'a' because it is a constant.
+                 ~
+!!! error TS24290: 'a' is assigned a value but never used.

@@ -1,0 +1,37 @@
+/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(3,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": true,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "disallowTypeAnnotations": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    let foo: import('foo');
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    let bar: import('foo').Bar;
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+              

@@ -1,0 +1,34 @@
+input.ts(6,1): error TS24137: Use 'includes()' method instead.
+input.ts(7,1): error TS24137: Use 'includes()' method instead.
+input.ts(8,1): error TS24137: Use 'includes()' method instead.
+input.ts(9,1): error TS24137: Use 'includes()' method instead.
+input.ts(11,1): error TS24138: Use `String#includes()` method with a string instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/prefer-includes":"error"}}}
+==== input.ts (5 errors) ====
+    declare const values: number[];
+    declare const text: string;
+    declare const optional: string | undefined;
+    declare const custom: { indexOf(value: string): number; includes(value: string): boolean };
+    declare const incompatible: { indexOf(value: string): number; includes(other: string): boolean };
+    values.indexOf(1) !== -1;
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24137: Use 'includes()' method instead.
+    text.indexOf("a") < 0;
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24137: Use 'includes()' method instead.
+    optional?.indexOf("a") !== -1;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24137: Use 'includes()' method instead.
+    custom.indexOf("a") >= 0;
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24137: Use 'includes()' method instead.
+    incompatible.indexOf("a") >= 0;
+    /a\x62/.test(text);
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS24138: Use `String#includes()` method with a string instead.
+    /a|b/.test(text);
+    /a/i.test(text);
+    /a/g.test(text);

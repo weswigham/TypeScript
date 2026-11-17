@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(2,1): error TS19854: Unexpected console statement.
+/input.ts(3,13): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    foo();
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    console.log();
+    ~~~~~~~~~~~
+!!! error TS19854: Unexpected console statement.
+    [1].forEach(work);
+                ~~~~
+!!! error TS2304: Cannot find name 'work'.

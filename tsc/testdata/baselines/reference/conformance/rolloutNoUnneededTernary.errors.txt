@@ -1,0 +1,26 @@
+input.ts(2,17): warning TS24281: Unnecessary use of boolean literals in conditional expression.
+input.ts(3,17): warning TS24281: Unnecessary use of boolean literals in conditional expression.
+input.ts(4,18): warning TS24282: Unnecessary use of conditional expression for default assignment.
+input.ts(5,19): warning TS24281: Unnecessary use of boolean literals in conditional expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-unneeded-ternary": ["warn", { "defaultAssignment": false }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (4 errors) ====
+    declare const value: any, other: any;
+    const boolean = value ? true : false;
+                    ~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24281: Unnecessary use of boolean literals in conditional expression.
+    const inverse = value === other ? false : true;
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24281: Unnecessary use of boolean literals in conditional expression.
+    const fallback = value ? value : other ?? 0;
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24282: Unnecessary use of conditional expression for default assignment.
+    const unchanged = (() => value)() ? true : true;
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24281: Unnecessary use of boolean literals in conditional expression.

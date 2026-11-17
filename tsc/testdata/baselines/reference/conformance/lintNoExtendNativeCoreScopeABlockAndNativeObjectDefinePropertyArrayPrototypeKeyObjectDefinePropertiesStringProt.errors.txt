@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS19863: Array prototype is read only, properties should not be added.
+/input.ts(1,52): error TS19863: String prototype is read only, properties should not be added.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extend-native": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    Object.defineProperty(Array.prototype, 'key', {}); Object?.defineProperties(String?.prototype, {});
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: Array prototype is read only, properties should not be added.
+                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: String prototype is read only, properties should not be added.

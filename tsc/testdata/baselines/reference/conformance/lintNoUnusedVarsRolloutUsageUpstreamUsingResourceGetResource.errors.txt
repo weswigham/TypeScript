@@ -1,0 +1,33 @@
+/input.ts(1,18): error TS2552: Cannot find name 'getResource'. Did you mean 'resource'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    {
+                        "ignoreUsingDeclarations": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    using resource = getResource();
+                     ~~~~~~~~~~~
+!!! error TS2552: Cannot find name 'getResource'. Did you mean 'resource'?
+!!! related TS2728 /input.ts:1:7: 'resource' is declared here.

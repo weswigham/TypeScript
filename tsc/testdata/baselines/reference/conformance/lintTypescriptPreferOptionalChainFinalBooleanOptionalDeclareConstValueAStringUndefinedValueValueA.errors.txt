@@ -1,0 +1,23 @@
+/input.ts(1,49): error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-optional-chain": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: { a: string } | undefined; value && value.a;
+                                                    ~~~~~~~~~~~~~~~~
+!!! error TS24144: Prefer using an optional chain expression instead, as it's more concise and easier to read.

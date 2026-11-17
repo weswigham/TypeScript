@@ -1,0 +1,36 @@
+/input.ts(1,7): error TS7022: 'value' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+/input.ts(1,16): error TS2304: Cannot find name 'foo'.
+/input.ts(1,23): error TS2304: Cannot find name 'bar'.
+/input.ts(2,1): error TS19662: Unexpected newline between function and ( of function call.
+/input.ts(2,2): error TS2448: Block-scoped variable 'value' used before its declaration.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unexpected-multiline": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    const value = (foo || bar)
+          ~~~~~
+!!! error TS7022: 'value' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                   ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                          ~~~
+!!! error TS2304: Cannot find name 'bar'.
+    (value).method();
+    ~
+!!! error TS19662: Unexpected newline between function and ( of function call.
+     ~~~~~
+!!! error TS2448: Block-scoped variable 'value' used before its declaration.
+!!! related TS2728 /input.ts:1:7: 'value' is declared here.

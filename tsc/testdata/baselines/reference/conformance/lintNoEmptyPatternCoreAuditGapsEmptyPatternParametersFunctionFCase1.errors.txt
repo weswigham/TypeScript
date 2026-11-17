@@ -1,0 +1,28 @@
+/input.ts(1,15): error TS22041: Unexpected empty object pattern.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-pattern": [
+                    "error",
+                    {
+                        "allowObjectPatternsAsParameters": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f(...{}) {}
+                  ~~
+!!! error TS22041: Unexpected empty object pattern.

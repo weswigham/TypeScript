@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "arrow-body-style": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const fn = () => { return 1; };
+                     ~~~~~~~~~~~~~
+!!! error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.

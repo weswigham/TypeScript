@@ -1,0 +1,44 @@
+/input.ts(2,27): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/input.ts(3,20): error TS2307: Cannot find module 'baz' or its corresponding type declarations.
+/tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "fixStyle": "inline-type-imports",
+                        "prefer": "type-imports"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import { B, type C } from 'foo';
+                              ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    import type A from 'baz';
+                       ~~~~~
+!!! error TS2307: Cannot find module 'baz' or its corresponding type declarations.
+    type T = A;
+    type Z = C;
+    const b = B;
+              

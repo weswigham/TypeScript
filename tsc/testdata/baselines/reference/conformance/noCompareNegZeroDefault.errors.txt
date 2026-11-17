@@ -1,0 +1,74 @@
+input.ts(2,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(3,1): error TS22011: Do not use the '!==' operator to compare against -0.
+input.ts(4,1): error TS22011: Do not use the '==' operator to compare against -0.
+input.ts(5,1): error TS22011: Do not use the '!=' operator to compare against -0.
+input.ts(6,1): error TS22011: Do not use the '>' operator to compare against -0.
+input.ts(7,1): error TS22011: Do not use the '>=' operator to compare against -0.
+input.ts(8,1): error TS22011: Do not use the '<' operator to compare against -0.
+input.ts(9,1): error TS22011: Do not use the '<=' operator to compare against -0.
+input.ts(10,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(11,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(12,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(13,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(14,1): error TS22011: Do not use the '===' operator to compare against -0.
+input.ts(15,1): error TS22011: Do not use the '===' operator to compare against -0.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-compare-neg-zero": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (14 errors) ====
+    declare const value: any;
+    value === -0;
+    ~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    -0 !== value;
+    ~~~~~~~~~~~~
+!!! error TS22011: Do not use the '!==' operator to compare against -0.
+    value == -0;
+    ~~~~~~~~~~~
+!!! error TS22011: Do not use the '==' operator to compare against -0.
+    -0 != value;
+    ~~~~~~~~~~~
+!!! error TS22011: Do not use the '!=' operator to compare against -0.
+    value > -0;
+    ~~~~~~~~~~
+!!! error TS22011: Do not use the '>' operator to compare against -0.
+    -0 >= value;
+    ~~~~~~~~~~~
+!!! error TS22011: Do not use the '>=' operator to compare against -0.
+    value < -0;
+    ~~~~~~~~~~
+!!! error TS22011: Do not use the '<' operator to compare against -0.
+    -0 <= value;
+    ~~~~~~~~~~~
+!!! error TS22011: Do not use the '<=' operator to compare against -0.
+    -0 === -0;
+    ~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === -(0x0);
+    ~~~~~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === (-0.0);
+    ~~~~~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === -0e10;
+    ~~~~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === -1e-9999;
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === /* keep this comment */ -0;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22011: Do not use the '===' operator to compare against -0.
+    value === 0;
+    value === "-0";
+    value === -1;
+    value === -0n;
+    value === +0;
+    value === -(-0);
+    Object.is(value, -0);

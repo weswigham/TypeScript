@@ -1,0 +1,23 @@
+/input.ts(1,21): error TS24129: Default value is useless because the parameter is not optional.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-useless-default-assignment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    [1, 2].map((value = 1) => value);
+                        ~
+!!! error TS24129: Default value is useless because the parameter is not optional.

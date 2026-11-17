@@ -1,0 +1,30 @@
+/input.tsx(1,23): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            "foo",
+                            "bar"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    import withPaths from "foo/bar";
+                          ~~~~~~~~~
+!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

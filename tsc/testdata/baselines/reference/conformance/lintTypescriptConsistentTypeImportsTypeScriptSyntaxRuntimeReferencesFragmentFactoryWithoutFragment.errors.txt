@@ -1,0 +1,37 @@
+/input.tsx(1,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
+/input.tsx(1,26): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.tsx(1,66): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(1,67): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+/tsconfig.json(4,9): error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "jsxFragmentFactory": "Fragment",
+            ~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (4 errors) ====
+    import { Fragment } from 'x'; type F = Fragment; const element = <div />;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
+                             ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                                                     ~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                                                                      ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.

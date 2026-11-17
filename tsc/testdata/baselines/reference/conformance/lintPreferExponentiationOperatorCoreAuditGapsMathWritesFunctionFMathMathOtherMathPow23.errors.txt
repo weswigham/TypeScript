@@ -1,0 +1,29 @@
+/input.ts(1,12): error TS7006: Parameter 'Math' implicitly has an 'any' type.
+/input.ts(1,27): error TS2304: Cannot find name 'other'.
+/input.ts(1,36): error TS24323: Use the '**' operator instead of 'Math.pow'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-exponentiation-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function f(Math) { Math = other; } Math.pow(2, 3);
+               ~~~~
+!!! error TS7006: Parameter 'Math' implicitly has an 'any' type.
+                              ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                       ~~~~~~~~~~~~~~
+!!! error TS24323: Use the '**' operator instead of 'Math.pow'.

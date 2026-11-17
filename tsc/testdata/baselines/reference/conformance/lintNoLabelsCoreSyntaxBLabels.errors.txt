@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS22043: Unexpected labeled statement.
+/input.ts(1,23): error TS22042: Unexpected label in continue statement.
+/input.ts(1,39): error TS19368: Unexpected label in break statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-labels": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    outer: while (true) { continue outer; break outer; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22043: Unexpected labeled statement.
+                          ~~~~~~~~~~~~~~~
+!!! error TS22042: Unexpected label in continue statement.
+                                          ~~~~~~~~~~~~
+!!! error TS19368: Unexpected label in break statement.

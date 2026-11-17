@@ -1,0 +1,27 @@
+/input.ts(1,27): error TS2304: Cannot find name 'other'.
+/input.ts(1,34): error TS2349: This expression is not callable.
+  Type 'Math' has no call signatures.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-obj-calls": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let alias = Math; alias = other; alias();
+                              ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                     ~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Math' has no call signatures.

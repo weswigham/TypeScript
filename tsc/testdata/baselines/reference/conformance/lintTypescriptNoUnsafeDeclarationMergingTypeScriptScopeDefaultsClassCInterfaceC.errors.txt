@@ -1,0 +1,26 @@
+/input.ts(1,7): error TS21370: Unsafe declaration merging between classes and interfaces.
+/input.ts(1,22): error TS21370: Unsafe declaration merging between classes and interfaces.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-declaration-merging": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C {} interface C {}
+          ~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.
+                         ~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.

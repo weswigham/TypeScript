@@ -1,0 +1,26 @@
+/input.ts(1,17): error TS19218: Expected 'this' to be used by class method 'method'.
+/input.ts(1,55): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "class-methods-use-this": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Example { method() { function nested() { return this; } } }
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'method'.
+                                                          ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+!!! related TS2738 /input.ts:1:37: An outer value of 'this' is shadowed by this container.

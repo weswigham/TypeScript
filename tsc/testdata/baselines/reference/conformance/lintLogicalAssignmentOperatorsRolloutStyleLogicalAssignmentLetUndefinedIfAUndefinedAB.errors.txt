@@ -1,0 +1,31 @@
+/input.ts(1,22): error TS2304: Cannot find name 'a'.
+/input.ts(1,38): error TS2304: Cannot find name 'a'.
+/input.ts(1,42): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "logical-assignment-operators": [
+                    "error",
+                    "always",
+                    {
+                        "enforceForIfStatements": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    { let undefined; if (a == undefined) a = b }
+                         ~
+!!! error TS2304: Cannot find name 'a'.
+                                         ~
+!!! error TS2304: Cannot find name 'a'.
+                                             ~
+!!! error TS2304: Cannot find name 'b'.

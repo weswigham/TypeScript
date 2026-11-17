@@ -1,0 +1,23 @@
+/input.ts(1,66): error TS24089: This assertion is unnecessary since the receiver accepts the original type of the expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-type-assertion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: number | null; const other: number | null = value!;
+                                                                     ~~~~~~
+!!! error TS24089: This assertion is unnecessary since the receiver accepts the original type of the expression.

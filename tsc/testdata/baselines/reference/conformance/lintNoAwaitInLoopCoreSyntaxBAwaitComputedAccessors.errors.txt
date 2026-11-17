@@ -1,0 +1,43 @@
+/input.ts(1,31): error TS2304: Cannot find name 'ready'.
+/input.ts(1,57): error TS2378: A 'get' accessor must return a value.
+/input.ts(1,58): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,64): error TS2304: Cannot find name 'getter'.
+/input.ts(1,81): error TS7032: Property '[await setter]' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+/input.ts(1,82): error TS19350: Unexpected `await` inside a loop.
+/input.ts(1,88): error TS2304: Cannot find name 'setter'.
+/input.ts(1,96): error TS7006: Parameter 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-await-in-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    async function run() { while (ready) { class Item { get [await getter]() {} set [await setter](value) {} } } }
+                                  ~~~~~
+!!! error TS2304: Cannot find name 'ready'.
+                                                            ~~~~~~~~~~~~~~
+!!! error TS2378: A 'get' accessor must return a value.
+                                                             ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                   ~~~~~~
+!!! error TS2304: Cannot find name 'getter'.
+                                                                                    ~~~~~~~~~~~~~~
+!!! error TS7032: Property '[await setter]' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+                                                                                     ~~~~~~~~~~~~
+!!! error TS19350: Unexpected `await` inside a loop.
+                                                                                           ~~~~~~
+!!! error TS2304: Cannot find name 'setter'.
+                                                                                                   ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

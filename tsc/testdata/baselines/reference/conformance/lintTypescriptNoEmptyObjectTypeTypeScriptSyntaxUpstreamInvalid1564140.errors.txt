@@ -1,0 +1,33 @@
+/input.ts(1,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+/input.ts(1,39): error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    interface Base extends Array<number | {}> {}
+              ~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+                                          ~~
+!!! error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19106: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+!!! error TS19106: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19106: - If you want a type meaning "any value", you probably want `unknown` instead.

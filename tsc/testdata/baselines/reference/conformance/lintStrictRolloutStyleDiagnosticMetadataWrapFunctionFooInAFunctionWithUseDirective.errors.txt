@@ -1,0 +1,19 @@
+/input.ts(1,1): error TS24356: Wrap function 'foo' in a function with 'use strict' directive.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function foo(value = 0) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24356: Wrap function 'foo' in a function with 'use strict' directive.

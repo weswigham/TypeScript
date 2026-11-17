@@ -1,0 +1,19 @@
+/input.ts(1,1): error TS24352: 'use strict' is unnecessary inside of modules.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    'use strict'; export {};
+    ~~~~~~~~~~~~~
+!!! error TS24352: 'use strict' is unnecessary inside of modules.

@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS19510: Script URL is a form of eval.
+/input.ts(1,16): error TS19510: Script URL is a form of eval.
+/input.ts(1,31): error TS2304: Cannot find name 'tag'.
+/input.ts(1,63): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-script-url": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    'JavaScript:'; `javascript:`; tag`javascript:`; `javascript:${foo}`
+    ~~~~~~~~~~~~~
+!!! error TS19510: Script URL is a form of eval.
+                   ~~~~~~~~~~~~~
+!!! error TS19510: Script URL is a form of eval.
+                                  ~~~
+!!! error TS2304: Cannot find name 'tag'.
+                                                                  ~~~
+!!! error TS2304: Cannot find name 'foo'.

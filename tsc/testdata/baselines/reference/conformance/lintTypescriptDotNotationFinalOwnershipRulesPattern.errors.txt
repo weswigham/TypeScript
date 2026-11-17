@@ -1,0 +1,28 @@
+/input.ts(1,57): error TS22050: ["other"] is better written in dot notation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/dot-notation": [
+                    "error",
+                    {
+                        "allowPattern": "_"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const object: any; object['snake_case']; object['other'];
+                                                            ~~~~~~~
+!!! error TS22050: ["other"] is better written in dot notation.

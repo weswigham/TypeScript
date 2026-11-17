@@ -1,0 +1,42 @@
+/input.ts(5,26): error TS22050: ["value"] is better written in dot notation.
+/input.ts(5,42): error TS22050: ["count"] is better written in dot notation.
+/input.ts(8,10): error TS22050: ["value"] is better written in dot notation.
+/input.ts(10,8): error TS22050: ["other"] is better written in dot notation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/dot-notation": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    
+    class Owner {
+        private value = 1;
+        protected count = 2;
+        read() { return this['value'] + this['count']; }
+                             ~~~~~~~
+!!! error TS22050: ["value"] is better written in dot notation.
+                                             ~~~~~~~
+!!! error TS22050: ["count"] is better written in dot notation.
+    }
+    declare const object: { value: number } | null;
+    object?.['value'];
+             ~~~~~~~
+!!! error TS22050: ["value"] is better written in dot notation.
+    declare const record: Record<string, number>;
+    record['other'];
+           ~~~~~~~
+!!! error TS22050: ["other"] is better written in dot notation.
+    record['not an identifier'];

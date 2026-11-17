@@ -1,0 +1,31 @@
+/input.tsx(4,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(4,16): error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    
+    const promise = new Promise(() => {});
+    
+    const o = <div {...promise} />;
+              ~~~~~~~~~~~~~~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                   ~~~~~~~~~~~~
+!!! error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
+          

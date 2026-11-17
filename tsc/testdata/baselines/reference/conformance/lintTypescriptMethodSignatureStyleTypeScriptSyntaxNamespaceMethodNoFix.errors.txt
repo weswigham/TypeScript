@@ -1,0 +1,22 @@
+/input.ts(1,36): error TS22031: Shorthand method signature is forbidden. Use a function property instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/method-signature-style": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    namespace Space { interface Item { run(): void; } }
+                                       ~~~~~~~~~~~~
+!!! error TS22031: Shorthand method signature is forbidden. Use a function property instead.

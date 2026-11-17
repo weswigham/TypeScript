@@ -1,0 +1,27 @@
+input.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+input.ts(2,1): error TS18175: Unexpected 'debugger' statement.
+input.ts(3,1): warning TS19854: Unexpected console statement.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": {
+            "rules": {
+                "no-debugger": "error",
+                "no-console": "warning"
+            }
+        },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    const value: number = "text";
+          ~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+    debugger;
+    ~~~~~~~~~
+!!! error TS18175: Unexpected 'debugger' statement.
+    console.log(value);
+    ~~~~~~~~~~~
+!!! warning TS19854: Unexpected console statement.
+    

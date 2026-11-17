@@ -1,0 +1,25 @@
+/input.ts(1,44): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+/input.ts(1,67): error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-loop-func": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    for (var index = 0; index < 3; index++) { (async () => index)(); (function*() { yield index; })(); }
+                                               ~~~~~~~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.
+                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20016: Function declared in a loop contains unsafe references to variable(s) 'index'.

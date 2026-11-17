@@ -1,0 +1,23 @@
+/input.ts(1,31): error TS2322: Type 'string' is not assignable to type 'number'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/related-getter-setter-pairs": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Example { get value() { return ''; } set value(value: number) {} }
+                                  ~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.

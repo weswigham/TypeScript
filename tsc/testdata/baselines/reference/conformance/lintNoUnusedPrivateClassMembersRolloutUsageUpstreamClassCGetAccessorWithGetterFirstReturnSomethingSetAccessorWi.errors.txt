@@ -1,0 +1,40 @@
+/input.ts(3,16): error TS2304: Cannot find name 'something'.
+/input.ts(6,9): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    class C {
+        get #accessorWithGetterFirst() {
+            return something();
+                   ~~~~~~~~~
+!!! error TS2304: Cannot find name 'something'.
+        }
+        set #accessorWithGetterFirst(value) {
+            doSomething(value);
+            ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.
+        }
+        method() {
+            this.#accessorWithGetterFirst += 1;
+        }
+    }

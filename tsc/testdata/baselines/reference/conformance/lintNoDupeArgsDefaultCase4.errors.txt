@@ -1,0 +1,34 @@
+/input.ts(1,11): error TS22013: Duplicate param 'first'.
+/input.ts(1,20): error TS2300: Duplicate identifier 'first'.
+/input.ts(1,20): error TS7031: Binding element 'first' implicitly has an 'any' type.
+/input.ts(1,36): error TS2300: Duplicate identifier 'first'.
+/input.ts(1,36): error TS7031: Binding element 'first' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-args": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    function f({ key: [first, { other: first }] }) {}
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22013: Duplicate param 'first'.
+                       ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                       ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.
+                                       ~~~~~
+!!! error TS2300: Duplicate identifier 'first'.
+                                       ~~~~~
+!!! error TS7031: Binding element 'first' implicitly has an 'any' type.

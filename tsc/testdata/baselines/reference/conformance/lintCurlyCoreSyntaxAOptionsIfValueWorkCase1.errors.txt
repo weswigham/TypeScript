@@ -1,0 +1,31 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,12): error TS22044: Unnecessary { after 'if' condition.
+/input.ts(1,14): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "curly": [
+                    "error",
+                    "multi"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    if (value) { work(); }
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+               ~~~~~~~~~~~
+!!! error TS22044: Unnecessary { after 'if' condition.
+                 ~~~~
+!!! error TS2304: Cannot find name 'work'.

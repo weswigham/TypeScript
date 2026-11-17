@@ -1,0 +1,30 @@
+/input.ts(1,15): error TS7006: Parameter 'String' implicitly has an 'any' type.
+/input.ts(1,23): error TS7006: Parameter 'Number' implicitly has an 'any' type.
+/input.ts(1,31): error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new-wrappers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function test(String, Number, Boolean) { new String(); new Number(); new Boolean(); }
+                  ~~~~~~
+!!! error TS7006: Parameter 'String' implicitly has an 'any' type.
+                          ~~~~~~
+!!! error TS7006: Parameter 'Number' implicitly has an 'any' type.
+                                  ~~~~~~~
+!!! error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

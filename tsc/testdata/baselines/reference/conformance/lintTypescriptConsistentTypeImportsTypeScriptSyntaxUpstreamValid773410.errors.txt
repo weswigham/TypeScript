@@ -1,0 +1,32 @@
+/input.ts(2,33): error TS2307: Cannot find module './constants' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    import type * as constants from './constants';
+                                    ~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module './constants' or its corresponding type declarations.
+    
+    export type Y = {
+      [constants.X]: ReadonlyArray<string>;
+    };
+            

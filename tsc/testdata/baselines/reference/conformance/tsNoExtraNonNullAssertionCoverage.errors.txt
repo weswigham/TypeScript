@@ -1,0 +1,32 @@
+input.ts(4,1): error TS20327: Forbidden extra non-null assertion.
+input.ts(5,2): error TS20327: Forbidden extra non-null assertion.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-extra-non-null-assertion": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    declare const value: string | undefined;
+    declare const record: { value: string } | undefined;
+    
+    value!!;
+    ~~~~~~
+!!! error TS20327: Forbidden extra non-null assertion.
+    (record!)?.value;
+     ~~~~~~~
+!!! error TS20327: Forbidden extra non-null assertion.
+    
+    value!;
+    record?.value;

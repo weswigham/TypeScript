@@ -1,0 +1,22 @@
+/input.ts(1,8): error TS2304: Cannot find name 'fn'.
+/input.ts(1,14): error TS24318: Combine this with the previous 'var' statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var a; fn(); var b;
+           ~~
+!!! error TS2304: Cannot find name 'fn'.
+                 ~~~~~~
+!!! error TS24318: Combine this with the previous 'var' statement.

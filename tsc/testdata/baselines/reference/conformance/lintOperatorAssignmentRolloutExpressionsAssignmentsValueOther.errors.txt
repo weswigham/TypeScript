@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,11): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "operator-assignment": [
+                    "error",
+                    "never"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    value ||= other;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+              ~~~~~
+!!! error TS2304: Cannot find name 'other'.

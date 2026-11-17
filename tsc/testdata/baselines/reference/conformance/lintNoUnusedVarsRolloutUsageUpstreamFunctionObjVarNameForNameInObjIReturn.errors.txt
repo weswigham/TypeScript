@@ -1,0 +1,30 @@
+/input.ts(1,34): error TS24290: 'name' is assigned a value but never used.
+/input.ts(1,50): error TS2304: Cannot find name 'i'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    (function(obj) { var name; for ( name in obj ) { i(); return; } })({});
+                                     ~~~~
+!!! error TS24290: 'name' is assigned a value but never used.
+                                                     ~
+!!! error TS2304: Cannot find name 'i'.

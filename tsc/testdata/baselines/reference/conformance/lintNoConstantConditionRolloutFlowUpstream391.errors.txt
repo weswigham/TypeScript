@@ -1,0 +1,31 @@
+/input.ts(1,4): error TS24224: Unexpected constant condition.
+/input.ts(1,9): error TS2304: Cannot find name 'x'.
+/input.ts(1,20): error TS2304: Cannot find name 'y'.
+/input.ts(1,22): error TS1313: The body of an 'if' statement cannot be the empty statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    if(void x === void y);
+       ~~~~~~~~~~~~~~~~~
+!!! error TS24224: Unexpected constant condition.
+            ~
+!!! error TS2304: Cannot find name 'x'.
+                       ~
+!!! error TS2304: Cannot find name 'y'.
+                         ~
+!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

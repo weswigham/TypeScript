@@ -1,0 +1,23 @@
+/input.ts(1,59): error TS24083: Unnecessary optional chain on a non-nullish value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: { a: { b: string } } | null; value?.a?.b
+                                                              ~~
+!!! error TS24083: Unnecessary optional chain on a non-nullish value.

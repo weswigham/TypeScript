@@ -1,0 +1,34 @@
+/input.ts(1,20): error TS19856: Function 'nested' has a complexity of 2. Maximum allowed is 1.
+/input.ts(1,44): error TS2304: Cannot find name 'a'.
+/input.ts(1,52): error TS19856: Function 'other' has a complexity of 2. Maximum allowed is 1.
+/input.ts(1,78): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "complexity": [
+                    "error",
+                    1
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function outer() { function nested() { if (a) {} } function other() { while (b) {} } }
+                       ~~~~~~~~~~~~~~~
+!!! error TS19856: Function 'nested' has a complexity of 2. Maximum allowed is 1.
+                                               ~
+!!! error TS2304: Cannot find name 'a'.
+                                                       ~~~~~~~~~~~~~~
+!!! error TS19856: Function 'other' has a complexity of 2. Maximum allowed is 1.
+                                                                                 ~
+!!! error TS2304: Cannot find name 'b'.

@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS2378: A 'get' accessor must return a value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-dupe-class-members": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { get value() {} set value(input) {} }
+                     ~~~~~
+!!! error TS2378: A 'get' accessor must return a value.

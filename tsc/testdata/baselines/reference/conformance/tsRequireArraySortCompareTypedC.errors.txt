@@ -1,0 +1,29 @@
+input.ts(1,1): error TS21080: Require 'compare' argument.
+input.ts(5,1): error TS21080: Require 'compare' argument.
+input.ts(7,5): error TS21080: Require 'compare' argument.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/require-array-sort-compare": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    [1, 2].sort();
+    ~~~~~~~~~~~~~
+!!! error TS21080: Require 'compare' argument.
+    ['a', 'b'].sort();
+    [1, 2].sort((left, right) => left - right);
+    declare const tuple: readonly [string, ...number[]];
+    tuple.toSorted();
+    ~~~~~~~~~~~~~~~~
+!!! error TS21080: Require 'compare' argument.
+    function sortNumbers<Values extends number[]>(values: Values) {
+        values.sort();
+        ~~~~~~~~~~~~~
+!!! error TS21080: Require 'compare' argument.
+    }
+    declare const custom: { sort(): void };
+    custom.sort();

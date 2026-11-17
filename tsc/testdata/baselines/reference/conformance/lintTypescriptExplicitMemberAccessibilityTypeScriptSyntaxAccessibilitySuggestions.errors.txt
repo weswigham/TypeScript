@@ -1,0 +1,25 @@
+/input.ts(1,14): error TS20317: Missing accessibility modifier on class property value.
+/input.ts(1,25): error TS20317: Missing accessibility modifier on method definition run.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-member-accessibility": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Item { value = 1; run() {} #hidden() {} }
+                 ~~~~~
+!!! error TS20317: Missing accessibility modifier on class property value.
+                            ~~~
+!!! error TS20317: Missing accessibility modifier on method definition run.

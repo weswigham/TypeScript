@@ -140,18 +140,46 @@
                         "null"
                     ],
                     "additionalProperties": {
-                        "enum": [
-                            "off",
-                            "warning",
-                            "error",
-                            null
+                        "anyOf": [
+                            {
+                                "enum": [
+                                    "off",
+                                    "warn",
+                                    "warning",
+                                    "error",
+                                    0,
+                                    1,
+                                    2
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "minItems": 1,
+                                "items": [
+                                    {
+                                        "enum": [
+                                            "off",
+                                            "warn",
+                                            "warning",
+                                            "error",
+                                            0,
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                ],
+                                "additionalItems": true
+                            }
                         ]
                     }
                 }
             },
             "additionalProperties": false,
-            "description": "Lint rules, inherited per rule. Execution requires --lint or --lintOnly.",
-            "markdownDescription": "Lint rules, inherited per rule. Execution requires --lint or --lintOnly."
+            "description": "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly.",
+            "markdownDescription": "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly."
         },
         "contentMappers": {
             "anyOf": [

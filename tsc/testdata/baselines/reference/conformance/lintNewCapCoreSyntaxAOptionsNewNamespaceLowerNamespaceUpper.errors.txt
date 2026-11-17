@@ -1,0 +1,30 @@
+/input.ts(1,5): error TS2304: Cannot find name 'namespace'.
+/input.ts(1,24): error TS2304: Cannot find name 'namespace'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "new-cap": [
+                    "error",
+                    {
+                        "properties": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    new namespace.lower(); namespace.Upper();
+        ~~~~~~~~~
+!!! error TS2304: Cannot find name 'namespace'.
+                           ~~~~~~~~~
+!!! error TS2304: Cannot find name 'namespace'.

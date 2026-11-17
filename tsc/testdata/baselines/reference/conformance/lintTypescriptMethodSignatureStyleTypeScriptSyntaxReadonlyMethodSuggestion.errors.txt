@@ -1,0 +1,25 @@
+/input.ts(1,18): error TS20321: Function property signature is forbidden. Use a method shorthand instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/method-signature-style": [
+                    "error",
+                    "method"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface Item { readonly run: () => void; }
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20321: Function property signature is forbidden. Use a method shorthand instead.

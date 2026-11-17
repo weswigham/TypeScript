@@ -1,0 +1,31 @@
+input.ts(3,5): error TS19218: Expected 'this' to be used by class method 'missing'.
+input.ts(4,5): error TS19218: Expected 'this' to be used by class method 'nested'.
+input.ts(4,43): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+input.ts(6,13): error TS19218: Expected 'this' to be used by class arrow function 'field'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "class-methods-use-this": ["error", { "exceptMethods": ["excepted"], "ignoreOverrideMethods": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (4 errors) ====
+    class Example {
+        constructor() {}
+        missing() { return 1; }
+        ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'missing'.
+        nested() { return function() { return this; }; }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'nested'.
+                                              ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+!!! related TS2738 input.ts:4:23: An outer value of 'this' is shadowed by this container.
+        present() { return () => this; }
+        field = () => 1;
+                ~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class arrow function 'field'.
+        excepted() {}
+        static staticMethod() {}
+    }

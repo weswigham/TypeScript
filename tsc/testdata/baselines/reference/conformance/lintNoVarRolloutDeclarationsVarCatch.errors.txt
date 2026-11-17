@@ -1,0 +1,22 @@
+/input.ts(1,35): error TS24305: Unexpected var, use let or const instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    function f() { try {} catch (x) { var x = 1; } }
+                                      ~~~~~~~~~~
+!!! error TS24305: Unexpected var, use let or const instead.

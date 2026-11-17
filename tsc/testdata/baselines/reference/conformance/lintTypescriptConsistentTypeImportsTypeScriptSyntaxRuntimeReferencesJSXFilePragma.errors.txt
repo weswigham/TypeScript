@@ -1,0 +1,28 @@
+/input.tsx(2,19): error TS2307: Cannot find module 'x' or its corresponding type declarations.
+/input.tsx(2,60): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    /** @jsx h */
+    import { h } from 'x'; type FC = typeof h; const element = <div />;
+                      ~~~
+!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
+                                                               ~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.

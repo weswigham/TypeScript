@@ -1,0 +1,28 @@
+/input.ts(1,10): error TS24314: Combine this with the previous 'var' statement with initialized variables.
+/input.ts(1,19): error TS24315: Split uninitialized 'var' declarations into multiple statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "one-var": [
+                    "error",
+                    {
+                        "initialized": "always",
+                        "uninitialized": "never"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var a=1; var b=2; var c,d;
+             ~~~~~~~~
+!!! error TS24314: Combine this with the previous 'var' statement with initialized variables.
+                      ~~~~~~~~
+!!! error TS24315: Split uninitialized 'var' declarations into multiple statements.

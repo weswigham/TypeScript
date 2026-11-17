@@ -1,0 +1,28 @@
+input.ts(1,1): error TS19236: Expected a default case.
+input.ts(1,9): error TS2304: Cannot find name 'value'.
+input.ts(2,9): error TS2304: Cannot find name 'value'.
+input.ts(3,9): error TS2304: Cannot find name 'value'.
+input.ts(4,9): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "default-case": "error" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (5 errors) ====
+    switch (value) { case 1: break; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19236: Expected a default case.
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    switch (value) { case 1: break; /* no default */ }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    switch (value) { case 1: break; default: break; }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    switch (value) {}
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.

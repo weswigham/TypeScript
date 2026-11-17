@@ -1,0 +1,35 @@
+/input.ts(1,9): error TS24290: 'x' is assigned a value but never used.
+/input.ts(1,15): error TS2304: Cannot find name 'obj'.
+/input.ts(2,7): error TS24290: 'y' is assigned a value but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    const { x } = obj,
+            ~
+!!! error TS24290: 'x' is assigned a value but never used.
+                  ~~~
+!!! error TS2304: Cannot find name 'obj'.
+          y = () => {}
+          ~
+!!! error TS24290: 'y' is assigned a value but never used.
+    (console.log)()

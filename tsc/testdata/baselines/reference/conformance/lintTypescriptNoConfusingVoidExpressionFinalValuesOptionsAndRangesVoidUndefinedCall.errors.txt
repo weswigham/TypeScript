@@ -1,0 +1,24 @@
+/input.ts(1,49): error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-confusing-void-expression": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function fn(): undefined; const value = fn();
+                                                    ~~~~
+!!! error TS24023: Placing a void expression inside another expression is forbidden. Move it to its own statement instead.

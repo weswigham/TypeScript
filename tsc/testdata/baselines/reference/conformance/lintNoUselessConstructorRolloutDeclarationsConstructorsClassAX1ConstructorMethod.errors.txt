@@ -1,0 +1,27 @@
+/input.ts(2,1): error TS20485: Useless constructor.
+/input.ts(3,2): error TS2304: Cannot find name 'method'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class A { x = 1
+    constructor() {}
+    ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.
+    [method]() {} }
+     ~~~~~~
+!!! error TS2304: Cannot find name 'method'.

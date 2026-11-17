@@ -1,0 +1,25 @@
+input.ts(4,5): error TS24336: Possible race condition: `shared` might be reassigned based on an outdated value of `shared`.
+input.ts(7,9): error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "require-atomic-updates": "error" } }
+    }
+==== input.ts (2 errors) ====
+    let shared = 0;
+    declare function work(): Promise<number>;
+    export async function update(object: { value: number }) {
+        shared += await work();
+        ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24336: Possible race condition: `shared` might be reassigned based on an outdated value of `shared`.
+        shared = (await work()) + shared;
+        if (object.value) {
+            object.value = await work();
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.
+        }
+        let local = 0;
+        local += await work();
+        return local;
+    }

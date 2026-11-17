@@ -1,0 +1,30 @@
+input.ts(1,1): error TS24227: `eval` can be harmful.
+input.ts(2,19): error TS24227: `eval` can be harmful.
+input.ts(3,15): error TS24227: `eval` can be harmful.
+input.ts(4,19): error TS1100: Invalid use of 'eval' in strict mode.
+input.ts(5,5): error TS24227: `eval` can be harmful.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-eval": "error" } }
+    }
+==== input.ts (5 errors) ====
+    eval("code");
+    ~~~~
+!!! error TS24227: `eval` can be harmful.
+    const reference = eval;
+                      ~~~~
+!!! error TS24227: `eval` can be harmful.
+    window.window["eval"]("code");
+                  ~~~~~~
+!!! error TS24227: `eval` can be harmful.
+    function shadowed(eval: Function, window: any) {
+                      ~~~~
+!!! error TS1100: Invalid use of 'eval' in strict mode.
+        eval("code");
+        ~~~~
+!!! error TS24227: `eval` can be harmful.
+        window.eval("code");
+        return eval;
+    }

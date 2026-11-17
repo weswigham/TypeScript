@@ -1,0 +1,26 @@
+/input.ts(1,53): error TS2345: Argument of type 'bigint' is not assignable to parameter of type 'number'.
+/input.ts(1,81): error TS2345: Argument of type 'bigint' is not assignable to parameter of type 'number'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-find": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    declare const arr: number[]; arr.filter(Boolean).at(1n); arr.filter(Boolean).at(-1n);
+                                                        ~~
+!!! error TS2345: Argument of type 'bigint' is not assignable to parameter of type 'number'.
+                                                                                    ~~~
+!!! error TS2345: Argument of type 'bigint' is not assignable to parameter of type 'number'.

@@ -1,0 +1,25 @@
+/input.ts(1,21): error TS7031: Binding element 'value' implicitly has an 'any' type.
+/input.ts(1,39): error TS7031: Binding element 'other' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-args": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f({ first: value }, { first: other }) {}
+                        ~~~~~
+!!! error TS7031: Binding element 'value' implicitly has an 'any' type.
+                                          ~~~~~
+!!! error TS7031: Binding element 'other' implicitly has an 'any' type.

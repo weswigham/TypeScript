@@ -1,0 +1,25 @@
+/input.ts(1,33): error TS19862: 'value' declared on line 1 column 7 is used outside of binding context.
+/input.ts(1,51): error TS19862: 'value' declared on line 1 column 7 is used outside of binding context.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "block-scoped-var": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    { var value; } const object = { value }; export { value as renamed };
+                                    ~~~~~
+!!! error TS19862: 'value' declared on line 1 column 7 is used outside of binding context.
+                                                      ~~~~~
+!!! error TS19862: 'value' declared on line 1 column 7 is used outside of binding context.

@@ -1,0 +1,25 @@
+/input.ts(1,8): error TS2304: Cannot find name 'value'.
+/input.ts(1,18): error TS20296: Invalid typeof comparison value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "valid-typeof": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    typeof value === undefined;
+           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                     ~~~~~~~~~
+!!! error TS20296: Invalid typeof comparison value.

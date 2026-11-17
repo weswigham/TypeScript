@@ -1,0 +1,23 @@
+/input.tsx(1,4): error TS19667: Unnecessarily computed property ['x'] found.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-computed-key": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    ({ [/* keep */ 'x']: 0 });
+       ~~~~~~~~~~~~~~~~~~~
+!!! error TS19667: Unnecessarily computed property ['x'] found.

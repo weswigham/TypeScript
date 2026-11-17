@@ -1,0 +1,27 @@
+/input.ts(1,13): error TS20483: Number constants declarations must use 'const'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-magic-numbers": [
+                    "error",
+                    {
+                        "enforceConst": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    let value = 5;
+                ~
+!!! error TS20483: Number constants declarations must use 'const'.

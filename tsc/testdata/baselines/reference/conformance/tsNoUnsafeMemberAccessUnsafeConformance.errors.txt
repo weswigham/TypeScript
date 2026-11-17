@@ -1,0 +1,56 @@
+input.ts(4,8): error TS24122: Unsafe member access .outer on an `any` value.
+input.ts(5,9): error TS24122: Unsafe member access .outer on an `any` value.
+input.ts(7,15): error TS24122: Unsafe member access .inner on an `any` value.
+input.ts(8,8): error TS24121: Computed name [key] resolves to an `any` value.
+input.ts(8,8): error TS24122: Unsafe member access [key] on an `any` value.
+input.ts(9,1): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ value: string; }'.
+input.ts(9,6): error TS24121: Computed name [key] resolves to an `any` value.
+input.ts(10,1): error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{ value: string; }'.
+  No index signature with a parameter of type 'number' was found on type '{ value: string; }'.
+input.ts(10,6): error TS2588: Cannot assign to 'key' because it is a constant.
+input.ts(12,1): error TS2304: Cannot find name 'unresolved'.
+input.ts(12,12): error TS24119: Unsafe member access .value on a type that cannot be resolved.
+input.ts(13,28): error TS2503: Cannot find namespace 'Missing'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/no-unsafe-member-access":["error",{"allowOptionalChaining":true}]}}}
+==== input.ts (12 errors) ====
+    declare const unsafe: any;
+    declare const safe: {value: string};
+    declare const key: any;
+    unsafe.outer.inner;
+           ~~~~~
+!!! error TS24122: Unsafe member access .outer on an `any` value.
+    (unsafe.outer).inner;
+            ~~~~~
+!!! error TS24122: Unsafe member access .outer on an `any` value.
+    unsafe?.outer;
+    unsafe?.outer.inner;
+                  ~~~~~
+!!! error TS24122: Unsafe member access .inner on an `any` value.
+    unsafe[key];
+           ~~~
+!!! error TS24121: Computed name [key] resolves to an `any` value.
+           ~~~
+!!! error TS24122: Unsafe member access [key] on an `any` value.
+    safe[key];
+    ~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ value: string; }'.
+         ~~~
+!!! error TS24121: Computed name [key] resolves to an `any` value.
+    safe[key++];
+    ~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{ value: string; }'.
+!!! error TS7053:   No index signature with a parameter of type 'number' was found on type '{ value: string; }'.
+         ~~~
+!!! error TS2588: Cannot assign to 'key' because it is a constant.
+    safe.value;
+    unresolved.value;
+    ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'unresolved'.
+               ~~~~~
+!!! error TS24119: Unsafe member access .value on a type that cannot be resolved.
+    interface Heritage extends Missing.Type {}
+                               ~~~~~~~
+!!! error TS2503: Cannot find namespace 'Missing'.

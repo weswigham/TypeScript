@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-implicit-coercion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    typeof!!value;
+          ~~~~~~~
+!!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.

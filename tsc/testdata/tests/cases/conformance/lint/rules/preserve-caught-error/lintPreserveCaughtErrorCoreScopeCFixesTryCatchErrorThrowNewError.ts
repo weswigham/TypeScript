@@ -1,0 +1,22 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestCoreScopeCFixes/preserve-caught-error/try_{}_catch_(error)_{_throw_new_Error();_} (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "preserve-caught-error": "error"
+        }
+    },
+    "files": [
+        "input.ts"
+    ]
+}
+// @filename: /input.ts
+try {} catch (error) { throw new Error(); }

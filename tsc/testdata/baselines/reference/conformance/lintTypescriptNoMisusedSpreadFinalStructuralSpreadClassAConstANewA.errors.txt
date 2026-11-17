@@ -1,0 +1,24 @@
+/input.ts(1,23): error TS24056: Using the spread operator on class instances will lose their class prototype.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class A {} const a = {...new A()};
+                          ~~~~~~~~~~
+!!! error TS24056: Using the spread operator on class instances will lose their class prototype.

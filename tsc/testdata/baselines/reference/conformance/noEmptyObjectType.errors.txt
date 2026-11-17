@@ -1,0 +1,97 @@
+input.ts(1,11): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(3,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+input.ts(5,19): error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(6,21): error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(9,34): error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(10,11): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(12,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+input.ts(14,18): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+input.ts(15,26): error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "@typescript-eslint/no-empty-object-type": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (9 errors) ====
+    interface Empty {}
+              ~~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+    interface Parent { value: string }
+    interface Derived<T> extends Parent {}
+              ~~~~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+    interface Multiple extends Parent, Empty {}
+    type EmptyAlias = {};
+                      ~~
+!!! error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19106: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+!!! error TS19106: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19106: - If you want a type meaning "any value", you probably want `unknown` instead.
+    type Union<T> = T | {};
+                        ~~
+!!! error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19106: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+!!! error TS19106: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19106: - If you want a type meaning "any value", you probably want `unknown` instead.
+    type NonNullable<T> = T & {};
+    type Parenthesized<T> = T & ({});
+    type Nested<T> = T & { property: {} };
+                                     ~~
+!!! error TS19106: The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19106: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+!!! error TS19106: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19106: - If you want a type meaning "any value", you probably want `unknown` instead.
+    interface Merged {}
+              ~~~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+    interface Merged { value: number }
+    interface WithClass extends Parent {}
+              ~~~~~~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+    class WithClass {}
+    export interface Exported {}
+                     ~~~~~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+    export default interface DefaultExport {}
+                             ~~~~~~~~~~~~~
+!!! error TS19104: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+!!! error TS19104: - If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+!!! error TS19104: - If you want a type meaning "any object", you probably want `object` instead.
+!!! error TS19104: - If you want a type meaning "any value", you probably want `unknown` instead.
+    function inner() {
+        interface Empty { value: number }
+    }

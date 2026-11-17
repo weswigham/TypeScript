@@ -1,0 +1,28 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,43): error TS17011: 'super' must be called before accessing a property of 'super' in the constructor of a derived class.
+/input.ts(1,43): error TS24278: 'super' is not allowed before 'super()'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-this-before-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class A extends B { constructor() { super(super.c()); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                                              ~~~~~
+!!! error TS17011: 'super' must be called before accessing a property of 'super' in the constructor of a derived class.
+                                              ~~~~~
+!!! error TS24278: 'super' is not allowed before 'super()'.

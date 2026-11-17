@@ -1,0 +1,44 @@
+/module.ts(1,18): error TS24015: Interface name `Shape` must match one of the following formats: camelCase
+/module.ts(1,39): error TS24015: Type Alias name `Alias` must match one of the following formats: camelCase
+/module.ts(1,92): error TS24015: Class name `Both` must match one of the following formats: camelCase
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/naming-convention": [
+                    "error",
+                    {
+                        "format": [
+                            "camelCase"
+                        ],
+                        "selector": "default"
+                    },
+                    {
+                        "format": null,
+                        "selector": "variable"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (3 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+                     ~~~~~
+!!! error TS24015: Interface name `Shape` must match one of the following formats: camelCase
+                                          ~~~~~
+!!! error TS24015: Type Alias name `Alias` must match one of the following formats: camelCase
+                                                                                               ~~~~
+!!! error TS24015: Class name `Both` must match one of the following formats: camelCase
+==== /input.ts (0 errors) ====
+    const bad_name = 1;

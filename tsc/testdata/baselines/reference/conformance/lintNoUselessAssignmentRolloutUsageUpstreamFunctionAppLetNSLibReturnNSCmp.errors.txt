@@ -1,0 +1,30 @@
+/input.tsx(2,14): error TS2304: Cannot find name 'Lib'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (1 errors) ====
+    function App() {
+    				let NS = Lib;
+    				         ~~~
+!!! error TS2304: Cannot find name 'Lib'.
+    				return <NS.Cmp />;
+    			}

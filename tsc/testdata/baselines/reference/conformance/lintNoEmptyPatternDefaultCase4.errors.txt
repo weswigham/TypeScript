@@ -1,0 +1,25 @@
+/input.ts(1,17): error TS22041: Unexpected empty array pattern.
+/input.ts(1,24): error TS2304: Cannot find name 'source'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-pattern": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let { property: [] } = source;
+                    ~~
+!!! error TS22041: Unexpected empty array pattern.
+                           ~~~~~~
+!!! error TS2304: Cannot find name 'source'.

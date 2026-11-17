@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
+/input.ts(1,23): error TS2304: Cannot find name 'a'.
+/input.ts(1,36): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "complexity": [
+                    "error",
+                    3
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function test() { if (a) {} while (b) {} for (;;) {} }
+    ~~~~~~~~~~~~~
+!!! error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
+                          ~
+!!! error TS2304: Cannot find name 'a'.
+                                       ~
+!!! error TS2304: Cannot find name 'b'.

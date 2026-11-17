@@ -1,0 +1,23 @@
+/input.ts(1,42): error TS24159: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-boolean-expressions": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: boolean | null; if (value) {}
+                                             ~~~~~
+!!! error TS24159: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.

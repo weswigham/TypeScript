@@ -1,0 +1,23 @@
+/input.ts(1,56): error TS22050: ["value"] is better written in dot notation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/dot-notation": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const object: {value: number} | null; object?.['value'];
+                                                           ~~~~~~~
+!!! error TS22050: ["value"] is better written in dot notation.

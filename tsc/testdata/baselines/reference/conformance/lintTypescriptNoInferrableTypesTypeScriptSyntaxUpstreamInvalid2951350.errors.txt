@@ -1,0 +1,24 @@
+/input.ts(1,7): error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const a: symbol = Symbol('a');
+          ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type symbol trivially inferred from a symbol literal, remove type annotation.

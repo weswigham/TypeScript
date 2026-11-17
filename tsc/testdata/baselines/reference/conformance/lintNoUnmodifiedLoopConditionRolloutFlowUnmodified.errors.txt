@@ -1,0 +1,25 @@
+/input.ts(1,34): error TS24280: 'n' is not modified in this loop.
+/input.ts(1,43): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unmodified-loop-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f() { let n = 2; while (n > 0) { work(); } }
+                                     ~
+!!! error TS24280: 'n' is not modified in this loop.
+                                              ~~~~
+!!! error TS2304: Cannot find name 'work'.

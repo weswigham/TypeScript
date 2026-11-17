@@ -1,0 +1,26 @@
+/input.ts(1,35): error TS2304: Cannot find name 'work'.
+/input.ts(1,35): error TS20008: Return values from promise executor functions cannot be read.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-promise-executor-return": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    new Promise(resolve => /* keep */ work());
+                                      ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                      ~~~~~~
+!!! error TS20008: Return values from promise executor functions cannot be read.

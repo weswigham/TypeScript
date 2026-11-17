@@ -1,0 +1,45 @@
+input.ts(1,1): error TS2304: Cannot find name 'value'.
+input.ts(1,1): error TS19367: Reserved name '__iterator__'.
+input.ts(2,1): error TS2304: Cannot find name 'value'.
+input.ts(2,1): error TS19367: Reserved name '__iterator__'.
+input.ts(3,1): error TS2304: Cannot find name 'value'.
+input.ts(3,1): error TS19367: Reserved name '__iterator__'.
+input.ts(4,1): error TS2304: Cannot find name 'value'.
+input.ts(4,1): error TS19367: Reserved name '__iterator__'.
+input.ts(5,1): error TS2304: Cannot find name 'value'.
+input.ts(5,7): error TS2552: Cannot find name 'iterator'. Did you mean 'Iterator'?
+input.ts(6,18): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-iterator":"error"}},"files":["input.ts"]}
+==== input.ts (11 errors) ====
+    value.__iterator__;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS19367: Reserved name '__iterator__'.
+    value['__iterator__'];
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19367: Reserved name '__iterator__'.
+    value[`__iterator__`];
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19367: Reserved name '__iterator__'.
+    value?.__iterator__;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS19367: Reserved name '__iterator__'.
+    value[iterator];
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+          ~~~~~~~~
+!!! error TS2552: Cannot find name 'iterator'. Did you mean 'Iterator'?
+!!! related TS2728 lib.es2025.iterator.d.ts:--:--: 'Iterator' is declared here.
+    ({ __iterator__: value });
+                     ~~~~~
+!!! error TS2304: Cannot find name 'value'.

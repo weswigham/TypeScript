@@ -1,0 +1,40 @@
+input.ts(5,4): error TS24152: Invalid type "{}" of template literal expression.
+input.ts(6,4): error TS24152: Invalid type "123" of template literal expression.
+input.ts(7,4): error TS24152: Invalid type "(string | number)[]" of template literal expression.
+input.ts(8,4): error TS24152: Invalid type "unknown" of template literal expression.
+input.ts(9,4): error TS24152: Invalid type "never" of template literal expression.
+input.ts(14,15): error TS24152: Invalid type "string | { value: number; }" of template literal expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/restrict-template-expressions": ["error", { "allowArray": true, "allowNumber": false, "allowAny": false }] } }
+    }
+==== input.ts (6 errors) ====
+    export {};
+    declare const unknownValue: unknown;
+    declare const neverValue: never;
+    declare const branded: string & { brand: true };
+    `${{}}`;
+       ~~
+!!! error TS24152: Invalid type "{}" of template literal expression.
+    `${123}`;
+       ~~~
+!!! error TS24152: Invalid type "123" of template literal expression.
+    `${["text", 1]}`;
+       ~~~~~~~~~~~
+!!! error TS24152: Invalid type "(string | number)[]" of template literal expression.
+    `${unknownValue}`;
+       ~~~~~~~~~~~~
+!!! error TS24152: Invalid type "unknown" of template literal expression.
+    `${neverValue}`;
+       ~~~~~~~~~~
+!!! error TS24152: Invalid type "never" of template literal expression.
+    `${new Error()}`;
+    `${branded}`;
+    `${["text"]}`;
+    function constrained<T extends string | { value: number }>(value: T) {
+        return `${value}`;
+                  ~~~~~
+!!! error TS24152: Invalid type "string | { value: number; }" of template literal expression.
+    }

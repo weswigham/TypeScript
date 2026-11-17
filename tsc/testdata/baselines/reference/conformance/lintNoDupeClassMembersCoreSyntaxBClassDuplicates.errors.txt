@@ -1,0 +1,52 @@
+/input.ts(1,14): error TS2300: Duplicate identifier 'value'.
+/input.ts(1,14): error TS7008: Member 'value' implicitly has an 'any' type.
+/input.ts(1,21): error TS2300: Duplicate identifier 'value'.
+/input.ts(1,21): error TS19354: Duplicate name 'value'.
+/input.ts(1,54): error TS2300: Duplicate identifier 'pair'.
+/input.ts(1,54): error TS2378: A 'get' accessor must return a value.
+/input.ts(1,68): error TS2300: Duplicate identifier 'pair'.
+/input.ts(1,87): error TS2300: Duplicate identifier 'pair'.
+/input.ts(1,87): error TS2378: A 'get' accessor must return a value.
+/input.ts(1,87): error TS19354: Duplicate name 'pair'.
+/input.ts(1,97): error TS7008: Member '#value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-class-members": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (11 errors) ====
+    class Item { value; value() {} static value() {} get pair() {} set pair(value) {} get pair() {} #value; }
+                 ~~~~~
+!!! error TS2300: Duplicate identifier 'value'.
+                 ~~~~~
+!!! error TS7008: Member 'value' implicitly has an 'any' type.
+                        ~~~~~
+!!! error TS2300: Duplicate identifier 'value'.
+                        ~~~~~
+!!! error TS19354: Duplicate name 'value'.
+                                                         ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                                         ~~~~
+!!! error TS2378: A 'get' accessor must return a value.
+                                                                       ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                                                                          ~~~~
+!!! error TS2300: Duplicate identifier 'pair'.
+                                                                                          ~~~~
+!!! error TS2378: A 'get' accessor must return a value.
+                                                                                          ~~~~
+!!! error TS19354: Duplicate name 'pair'.
+                                                                                                    ~~~~~~
+!!! error TS7008: Member '#value' implicitly has an 'any' type.

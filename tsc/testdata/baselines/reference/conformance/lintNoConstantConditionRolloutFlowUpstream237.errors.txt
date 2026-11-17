@@ -1,0 +1,25 @@
+/input.ts(1,4): error TS2304: Cannot find name 'abc'.
+/input.ts(1,28): error TS2304: Cannot find name 'def'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if(abc==='str' || false || def ==='str'){}
+       ~~~
+!!! error TS2304: Cannot find name 'abc'.
+                               ~~~
+!!! error TS2304: Cannot find name 'def'.

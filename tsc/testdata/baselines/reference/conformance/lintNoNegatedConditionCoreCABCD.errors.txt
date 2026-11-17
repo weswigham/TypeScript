@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'a'.
+/input.ts(1,1): error TS19501: Unexpected negated condition.
+/input.ts(1,7): error TS2304: Cannot find name 'b'.
+/input.ts(1,11): error TS2304: Cannot find name 'c'.
+/input.ts(1,15): error TS2304: Cannot find name 'd'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-negated-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    a !== b ? c : d
+    ~
+!!! error TS2304: Cannot find name 'a'.
+    ~~~~~~~~~~~~~~~
+!!! error TS19501: Unexpected negated condition.
+          ~
+!!! error TS2304: Cannot find name 'b'.
+              ~
+!!! error TS2304: Cannot find name 'c'.
+                  ~
+!!! error TS2304: Cannot find name 'd'.

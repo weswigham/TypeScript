@@ -1,0 +1,37 @@
+/input.ts(5,21): error TS2304: Cannot find name 'condition'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    function foo () {
+                let v = 'used';
+                console.log(v);
+                for (let i = 0; i < 10; i++) {
+                    if (condition) {
+                        ~~~~~~~~~
+!!! error TS2304: Cannot find name 'condition'.
+                        v = 'maybe used';
+                        continue;
+                    }
+                    console.log(v);
+                }
+            }

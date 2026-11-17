@@ -1,0 +1,25 @@
+/input.ts(1,11): error TS7008: Member '#field' implicitly has an 'any' type.
+/input.ts(1,27): error TS19514: Comparing to itself is potentially pointless.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-self-compare": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { #field; foo() { this.#field === this.#\u0066ield; } }
+              ~~~~~~
+!!! error TS7008: Member '#field' implicitly has an 'any' type.
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19514: Comparing to itself is potentially pointless.

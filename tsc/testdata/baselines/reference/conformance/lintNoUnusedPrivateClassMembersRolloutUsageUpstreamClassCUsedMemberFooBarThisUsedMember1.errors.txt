@@ -1,0 +1,36 @@
+/input.ts(2,5): error TS7008: Member '#usedMember' implicitly has an 'any' type.
+/input.ts(5,9): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    class C {
+        #usedMember;
+        ~~~~~~~~~~~
+!!! error TS7008: Member '#usedMember' implicitly has an 'any' type.
+    
+        foo() {
+            bar(this.#usedMember += 1);
+            ~~~
+!!! error TS2304: Cannot find name 'bar'.
+        }
+    }

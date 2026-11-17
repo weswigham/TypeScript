@@ -1,0 +1,28 @@
+/input.ts(1,17): error TS2304: Cannot find name 'x'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "object-shorthand": [
+                    "error",
+                    "always",
+                    {
+                        "avoidQuotes": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const o = {'x': x};
+                    ~
+!!! error TS2304: Cannot find name 'x'.

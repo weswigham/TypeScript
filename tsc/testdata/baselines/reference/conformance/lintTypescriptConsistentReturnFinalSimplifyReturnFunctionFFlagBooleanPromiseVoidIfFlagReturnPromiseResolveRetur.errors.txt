@@ -1,0 +1,31 @@
+/input.ts(1,80): error TS2322: Type 'undefined' is not assignable to type 'Promise<void>'.
+/input.ts(1,80): error TS24007: Function 'f' expected a return value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-return": [
+                    "error",
+                    {
+                        "treatUndefinedAsUnspecified": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function f(flag: boolean): Promise<void> { if (flag) return Promise.resolve(); return; }
+                                                                                   ~~~~~~
+!!! error TS2322: Type 'undefined' is not assignable to type 'Promise<void>'.
+                                                                                   ~~~~~~~
+!!! error TS24007: Function 'f' expected a return value.

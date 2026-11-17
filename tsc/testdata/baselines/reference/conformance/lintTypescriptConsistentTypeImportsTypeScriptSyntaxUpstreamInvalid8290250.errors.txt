@@ -1,0 +1,36 @@
+/input.ts(2,10): error TS21280: `import()` type annotations are forbidden.
+/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": false,
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "prefer": "type-imports"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    let foo: import('foo');
+             ~~~~~~~~~~~~~
+!!! error TS21280: `import()` type annotations are forbidden.
+                    ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+              

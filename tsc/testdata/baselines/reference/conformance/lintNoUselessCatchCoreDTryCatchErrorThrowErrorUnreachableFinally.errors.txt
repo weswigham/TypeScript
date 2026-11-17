@@ -1,0 +1,25 @@
+/input.ts(1,8): error TS19659: Unnecessary catch clause.
+/input.ts(1,39): error TS2304: Cannot find name 'unreachable'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-catch": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    try {} catch (error) { throw (error); unreachable(); } finally {}
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19659: Unnecessary catch clause.
+                                          ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'unreachable'.

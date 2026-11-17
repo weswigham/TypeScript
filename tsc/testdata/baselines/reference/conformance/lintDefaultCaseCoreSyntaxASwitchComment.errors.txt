@@ -1,0 +1,22 @@
+/input.ts(1,9): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "default-case": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    switch (value) { case 1: break; /* no default */ }
+            ~~~~~
+!!! error TS2304: Cannot find name 'value'.

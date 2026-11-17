@@ -1,0 +1,43 @@
+/input.ts(1,1): error TS19332: Function 'one' has too many statements (2). Maximum allowed is 1.
+/input.ts(1,18): error TS2304: Cannot find name 'work'.
+/input.ts(1,26): error TS2304: Cannot find name 'other'.
+/input.ts(1,37): error TS19332: Function 'two' has too many statements (2). Maximum allowed is 1.
+/input.ts(1,54): error TS2304: Cannot find name 'work'.
+/input.ts(1,62): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-statements": [
+                    "error",
+                    1,
+                    {
+                        "ignoreTopLevelFunctions": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    function one() { work(); other(); } function two() { work(); other(); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19332: Function 'one' has too many statements (2). Maximum allowed is 1.
+                     ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                             ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19332: Function 'two' has too many statements (2). Maximum allowed is 1.
+                                                         ~~~~
+!!! error TS2304: Cannot find name 'work'.
+                                                                 ~~~~~
+!!! error TS2304: Cannot find name 'other'.

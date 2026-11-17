@@ -1,0 +1,50 @@
+/input.tsx(8,11): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ b: string; }'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "jsx": "preserve",
+            "module": "commonjs",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "/jsx.d.ts"
+        ]
+    }
+==== /jsx.d.ts (0 errors) ====
+    declare namespace JSX {
+        interface IntrinsicElements { div: AriaAttributes }
+        interface AriaAttributes {
+            /** @deprecated in ARIA 1.1 */
+            "aria-grabbed"?: boolean | "false" | "true";
+        }
+    }
+==== /input.tsx (1 errors) ====
+    
+    const a = {
+      /** @deprecated */
+      b: 'string',
+    };
+    
+    const complex = Symbol() as any;
+    const c = a[complex];
+              ~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ b: string; }'.
+        
+==== /deprecated.ts (0 errors) ====
+    /** @deprecated */
+    export function deprecatedFunction(): void {}
+    /** @deprecated Reason */
+    export type T = { a: string };
+    export type U = { b: string };
+    /** @deprecated */
+    export default { foo: 1 };

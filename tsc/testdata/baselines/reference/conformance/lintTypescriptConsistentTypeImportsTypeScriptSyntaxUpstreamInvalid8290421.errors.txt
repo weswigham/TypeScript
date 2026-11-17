@@ -1,0 +1,41 @@
+/input.ts(2,1): error TS21281: Use an `import` instead of an `import type`.
+/input.ts(2,39): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+/tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+
+
+==== /tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "emitDecoratorMetadata": true,
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
+            "experimentalDecorators": false,
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "prefer": "no-type-imports"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    
+    import type /*comment*/ { Type } from 'foo';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21281: Use an `import` instead of an `import type`.
+                                          ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+    
+    type T = { c: Type };
+              

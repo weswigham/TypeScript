@@ -1,0 +1,23 @@
+/input.ts(1,44): error TS21080: Require 'compare' argument.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/require-array-sort-compare": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const values: number[] | string[]; values.sort();
+                                               ~~~~~~~~~~~~~
+!!! error TS21080: Require 'compare' argument.

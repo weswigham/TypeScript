@@ -1,0 +1,23 @@
+/input.ts(1,24): error TS20270: There is no `cause` attached to the symptom error being thrown.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch (error) { throw new Error; }
+                           ~~~~~~~~~~~~~~~~
+!!! error TS20270: There is no `cause` attached to the symptom error being thrown.

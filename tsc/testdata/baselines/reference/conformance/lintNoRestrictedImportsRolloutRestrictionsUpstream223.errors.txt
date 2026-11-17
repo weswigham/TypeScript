@@ -1,0 +1,35 @@
+/input.tsx(1,14): error TS2503: Cannot find namespace 'Foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "allowTypeImports": true,
+                                "importNames": [
+                                    "Bar"
+                                ],
+                                "name": "import-foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    import Bar = Foo.Bar;
+                 ~~~
+!!! error TS2503: Cannot find namespace 'Foo'.

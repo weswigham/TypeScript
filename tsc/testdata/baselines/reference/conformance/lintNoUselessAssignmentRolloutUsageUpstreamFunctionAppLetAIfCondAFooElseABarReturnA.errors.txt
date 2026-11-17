@@ -1,0 +1,41 @@
+/input.tsx(3,9): error TS2304: Cannot find name 'cond'.
+/input.tsx(4,11): error TS2304: Cannot find name 'Foo'.
+/input.tsx(6,11): error TS2304: Cannot find name 'Bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (3 errors) ====
+    function App() {
+    				let A;
+    				if (cond) {
+    				    ~~~~
+!!! error TS2304: Cannot find name 'cond'.
+    				  A = Foo;
+    				      ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+    				} else {
+    				  A = Bar;
+    				      ~~~
+!!! error TS2304: Cannot find name 'Bar'.
+    				}
+    				return <A />;
+    			}

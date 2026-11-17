@@ -1,0 +1,23 @@
+input.ts(1,1): error TS24150: Async function 'plain' has no 'await' expression.
+input.ts(4,1): error TS24150: Async generator function 'plainGenerator' has no 'await' expression.
+input.ts(6,1): error TS24150: Async function 'nested' has no 'await' expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "@typescript-eslint/require-await": "error" } }
+    }
+==== input.ts (3 errors) ====
+    async function plain(): Promise<number> { return 1; }
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24150: Async function 'plain' has no 'await' expression.
+    async function promised() { return Promise.resolve(1); }
+    async function empty() {}
+    async function* plainGenerator() { yield 1; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24150: Async generator function 'plainGenerator' has no 'await' expression.
+    async function* promisedGenerator() { yield Promise.resolve(1); }
+    async function nested() { async function inner() { await 1; } }
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24150: Async function 'nested' has no 'await' expression.
+    export {};

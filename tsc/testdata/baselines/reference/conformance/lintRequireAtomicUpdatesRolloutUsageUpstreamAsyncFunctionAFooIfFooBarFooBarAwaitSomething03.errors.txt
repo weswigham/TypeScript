@@ -1,0 +1,44 @@
+/input.ts(2,34): error TS7006: Parameter 'foo' implicitly has an 'any' type.
+/input.ts(4,25): error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
+/input.ts(4,41): error TS2304: Cannot find name 'something'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": [
+                    "error",
+                    {
+                        "allowProperties": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    
+                    async function a(foo) {
+                                     ~~~
+!!! error TS7006: Parameter 'foo' implicitly has an 'any' type.
+                        if (foo.bar) {
+                            foo.bar = await something;
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
+                                            ~~~~~~~~~
+!!! error TS2304: Cannot find name 'something'.
+                        }
+                    }
+                

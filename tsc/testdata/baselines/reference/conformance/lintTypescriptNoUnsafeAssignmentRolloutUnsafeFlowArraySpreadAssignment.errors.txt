@@ -1,0 +1,23 @@
+/input.ts(1,45): error TS24101: Unsafe spread of an `any` value in an array.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any[]; const result = [...value];
+                                                ~~~~~~~~
+!!! error TS24101: Unsafe spread of an `any` value in an array.

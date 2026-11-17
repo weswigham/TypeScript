@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19654: Unnecessary '.call()'.
+/input.ts(1,25): error TS2304: Cannot find name 'foo'.
+/input.ts(1,25): error TS19654: Unnecessary '.apply()'.
+/input.ts(1,40): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-call": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    foo.call(undefined, 1); foo.apply(void work(), [1]);
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.call()'.
+                            ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19654: Unnecessary '.apply()'.
+                                           ~~~~
+!!! error TS2304: Cannot find name 'work'.

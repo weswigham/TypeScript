@@ -1,0 +1,42 @@
+/input.ts(1,1): error TS24449: Unexpected constant relational comparison. Both sides of the `<` are literal values.
+/input.ts(1,8): error TS24449: Unexpected constant relational comparison. Both sides of the `>=` are literal values.
+/input.ts(1,16): error TS24449: Unexpected constant relational comparison. Both sides of the `>` are literal values.
+/input.ts(1,27): error TS24449: Unexpected constant relational comparison. Both sides of the `<=` are literal values.
+/input.ts(1,37): error TS18050: The value 'undefined' cannot be used here.
+/input.ts(1,37): error TS24449: Unexpected constant relational comparison. Both sides of the `>` are literal values.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-binary-expression": [
+                    "error",
+                    {
+                        "checkRelationalComparisons": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    1 < 2; 2 >= 3; `a` > 'b'; +1 <= -1; undefined > 0;
+    ~~~~~
+!!! error TS24449: Unexpected constant relational comparison. Both sides of the `<` are literal values.
+           ~~~~~~
+!!! error TS24449: Unexpected constant relational comparison. Both sides of the `>=` are literal values.
+                   ~~~~~~~~~
+!!! error TS24449: Unexpected constant relational comparison. Both sides of the `>` are literal values.
+                              ~~~~~~~~
+!!! error TS24449: Unexpected constant relational comparison. Both sides of the `<=` are literal values.
+                                        ~~~~~~~~~
+!!! error TS18050: The value 'undefined' cannot be used here.
+                                        ~~~~~~~~~~~~~
+!!! error TS24449: Unexpected constant relational comparison. Both sides of the `>` are literal values.

@@ -1,0 +1,23 @@
+/input.tsx(1,1): error TS19672: Use binary literals instead of Number./* keep */parseInt().
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-numeric-literals": "error"
+            }
+        },
+        "files": [
+            "input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    Number./* keep */parseInt('11', 2);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19672: Use binary literals instead of Number./* keep */parseInt().

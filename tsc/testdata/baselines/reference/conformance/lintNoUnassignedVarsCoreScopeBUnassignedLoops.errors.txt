@@ -1,0 +1,31 @@
+/input.ts(1,24): error TS2304: Cannot find name 'values'.
+/input.ts(1,32): error TS2304: Cannot find name 'use'.
+/input.ts(1,55): error TS18048: 'update' is possibly 'undefined'.
+/input.ts(1,69): error TS20012: 'shorthand' is always 'undefined' because it's never assigned.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unassigned-vars": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    let read; for (read of values) use(read); let update; update++; let shorthand; const object = {shorthand};
+                           ~~~~~~
+!!! error TS2304: Cannot find name 'values'.
+                                   ~~~
+!!! error TS2304: Cannot find name 'use'.
+                                                          ~~~~~~
+!!! error TS18048: 'update' is possibly 'undefined'.
+                                                                        ~~~~~~~~~
+!!! error TS20012: 'shorthand' is always 'undefined' because it's never assigned.

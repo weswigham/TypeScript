@@ -1,0 +1,27 @@
+/input.ts(1,10): error TS2304: Cannot find name 'Values'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-magic-numbers": [
+                    "error",
+                    {
+                        "ignoreTypeIndexes": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = Values[1 | -2];
+             ~~~~~~
+!!! error TS2304: Cannot find name 'Values'.

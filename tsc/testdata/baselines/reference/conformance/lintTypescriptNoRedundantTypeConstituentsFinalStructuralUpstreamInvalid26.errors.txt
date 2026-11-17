@@ -1,0 +1,24 @@
+/input.ts(1,11): error TS24065: -1n | 1n is overridden by bigint in this union type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-redundant-type-constituents": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = (-1n | 1n) | bigint;
+              ~~~~~~~~
+!!! error TS24065: -1n | 1n is overridden by bigint in this union type.

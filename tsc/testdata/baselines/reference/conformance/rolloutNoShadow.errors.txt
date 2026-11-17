@@ -1,0 +1,36 @@
+input.ts(2,19): error TS7006: Parameter 'outer' implicitly has an 'any' type.
+input.ts(2,19): error TS21351: 'outer' is already declared in the upper scope on line 1 column 5.
+input.ts(2,26): error TS7006: Parameter 'Object' implicitly has an 'any' type.
+input.ts(2,26): error TS21350: 'Object' is already a global variable.
+input.ts(3,25): error TS21351: 'later' is already declared in the upper scope on line 4 column 10.
+input.ts(6,17): error TS2304: Cannot find name 'wrap'.
+input.ts(6,31): error TS21351: 'wrapped' is already declared in the upper scope on line 6 column 7.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+    	"lint": { "rules": { "no-shadow": ["error", { "builtinGlobals": true }] } }
+    }
+==== input.ts (7 errors) ====
+    let outer;
+    function shadowed(outer, Object) {}
+                      ~~~~~
+!!! error TS7006: Parameter 'outer' implicitly has an 'any' type.
+                      ~~~~~
+!!! error TS21351: 'outer' is already declared in the upper scope on line 1 column 5.
+                             ~~~~~~
+!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
+                             ~~~~~~
+!!! error TS21350: 'Object' is already a global variable.
+    function before() { let later; }
+                            ~~~~~
+!!! error TS21351: 'later' is already declared in the upper scope on line 4 column 10.
+    function later() {}
+    const named = function named() {};
+    const wrapped = wrap(function wrapped() {});
+                    ~~~~
+!!! error TS2304: Cannot find name 'wrap'.
+                                  ~~~~~~~
+!!! error TS21351: 'wrapped' is already declared in the upper scope on line 6 column 7.
+    type TypeName = string;
+    function independent() { const TypeName = 1; }

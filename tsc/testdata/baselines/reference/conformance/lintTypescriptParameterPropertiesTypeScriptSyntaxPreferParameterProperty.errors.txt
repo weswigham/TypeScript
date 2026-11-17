@@ -1,0 +1,27 @@
+/input.ts(1,11): error TS20487: Property value should be declared as a parameter property.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/parameter-properties": [
+                    "error",
+                    {
+                        "prefer": "parameter-property"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class C { value: string; constructor(value: string) { this.value = value; } }
+              ~~~~~~~~~~~~~~
+!!! error TS20487: Property value should be declared as a parameter property.

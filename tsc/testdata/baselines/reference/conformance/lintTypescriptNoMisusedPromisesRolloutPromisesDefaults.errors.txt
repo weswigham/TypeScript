@@ -1,0 +1,33 @@
+/input.ts(1,5): error TS2801: This condition will always return true since this 'Promise<boolean>' is always defined.
+/input.ts(1,5): error TS24045: Expected non-Promise value in a boolean conditional.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    if (Promise.resolve(true)) {}
+        ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2801: This condition will always return true since this 'Promise<boolean>' is always defined.
+!!! related TS2773 /input.ts:1:5: Did you forget to use 'await'?
+        ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24045: Expected non-Promise value in a boolean conditional.
+    export {};

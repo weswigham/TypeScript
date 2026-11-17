@@ -1,0 +1,28 @@
+/input.ts(3,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    class Float32Array<T> {}
+    const a: Float32Array<ArrayBufferLike> = new Float32Array();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+    export {};
+          

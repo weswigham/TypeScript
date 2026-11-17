@@ -1,0 +1,28 @@
+/input.ts(1,46): error TS2304: Cannot find name 'b'.
+/input.ts(1,54): error TS2588: Cannot assign to 'a' because it is a constant.
+/input.ts(1,59): error TS2304: Cannot find name 'b'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    async function foo() { for await (const a of b) for (a in b); }
+                                                 ~
+!!! error TS2304: Cannot find name 'b'.
+                                                         ~
+!!! error TS2588: Cannot assign to 'a' because it is a constant.
+                                                              ~
+!!! error TS2304: Cannot find name 'b'.

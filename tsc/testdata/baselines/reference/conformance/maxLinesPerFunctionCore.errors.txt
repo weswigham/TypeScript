@@ -1,0 +1,47 @@
+input.ts(1,1): error TS19308: Function 'excessive' has too many lines (4). Maximum allowed is 3.
+input.ts(2,5): error TS2304: Cannot find name 'work'.
+input.ts(3,5): error TS2304: Cannot find name 'other'.
+input.ts(8,5): error TS2304: Cannot find name 'work'.
+input.ts(11,5): error TS2304: Cannot find name 'work'.
+input.ts(12,5): error TS2304: Cannot find name 'other'.
+input.ts(13,5): error TS2304: Cannot find name 'last'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "max-lines-per-function": ["error", { "max": 3, "skipComments": true, "skipBlankLines": true }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (7 errors) ====
+    function excessive() {
+    ~~~~~~~~~~~~~~~~~~~~~~
+        work();
+    ~~~~~~~~~~~
+        ~~~~
+!!! error TS2304: Cannot find name 'work'.
+        other();
+    ~~~~~~~~~~~~
+        ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+    }
+    ~
+!!! error TS19308: Function 'excessive' has too many lines (4). Maximum allowed is 3.
+    function valid() {
+        // Comment-only line.
+    
+        work();
+        ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    }
+    (() => {
+        work();
+        ~~~~
+!!! error TS2304: Cannot find name 'work'.
+        other();
+        ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+        last();
+        ~~~~
+!!! error TS2304: Cannot find name 'last'.
+    })();

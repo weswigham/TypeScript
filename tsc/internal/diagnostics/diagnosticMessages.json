@@ -9175,5 +9175,3013 @@
     "Remove all 'debugger' statements": {
         "category": "Message",
         "code": 18179
+    },
+    "'{0}' declared on line {1} column {2} is used outside of binding context.": {
+        "category": "Error",
+        "code": 19862
+    },
+    "'{0}' export is duplicated as import.": {
+        "category": "Error",
+        "code": 19357
+    },
+    "'{0}' export is duplicated.": {
+        "category": "Error",
+        "code": 22000
+    },
+    "'{0}' import is duplicated as export.": {
+        "category": "Error",
+        "code": 22001
+    },
+    "'{0}' import is duplicated.": {
+        "category": "Error",
+        "code": 22002
+    },
+    "'{0}' is a class.": {
+        "category": "Error",
+        "code": 19851
+    },
+    "'{0}' is a function.": {
+        "category": "Error",
+        "code": 20000
+    },
+    "'{0}' is already a global variable.": {
+        "category": "Error",
+        "code": 21350
+    },
+    "'{0}' is already declared in the upper scope on line {1} column {2}.": {
+        "category": "Error",
+        "code": 21351
+    },
+    "'{0}' is already defined as a built-in global variable.": {
+        "category": "Error",
+        "code": 21330
+    },
+    "'{0}' is already defined.": {
+        "category": "Error",
+        "code": 21331
+    },
+    "'{0}' is always 'undefined' because it's never assigned.": {
+        "category": "Error",
+        "code": 20012
+    },
+    "'{0}' is assigned to itself.": {
+        "category": "Error",
+        "code": 19515
+    },
+    "'{0}' is constant.": {
+        "category": "Error",
+        "code": 19852
+    },
+    "'{0}' is marked as ignored but is used. Used {1} must not match /{2}/u.": {
+        "category": "Error",
+        "code": 21391
+    },
+    "'{0}' is read-only.": {
+        "category": "Error",
+        "code": 20001
+    },
+    "'{0}' is restricted from being used.{1}": {
+        "category": "Error",
+        "code": 19520
+    },
+    "'{0}' is {1} but {2}{3}.": {
+        "category": "Error",
+        "code": 21390
+    },
+    "'{0}' was used before it was defined.": {
+        "category": "Error",
+        "code": 21400
+    },
+    "'{0}.{1}' is restricted from being used.{2}": {
+        "category": "Error",
+        "code": 19519
+    },
+    "'{0}:' is defined but never used.": {
+        "category": "Error",
+        "code": 19666
+    },
+    ".{0} is a syntax error.": {
+        "category": "Error",
+        "code": 19248
+    },
+    "A `require()` style import is forbidden.": {
+        "category": "Error",
+        "code": 21340
+    },
+    "A constructor name should not start with a lowercase letter.": {
+        "category": "Error",
+        "code": 19338
+    },
+    "A function with a name starting with an uppercase letter should only be used as a constructor.": {
+        "category": "Error",
+        "code": 22003
+    },
+    "A record is preferred over an index signature.": {
+        "category": "Error",
+        "code": 21271
+    },
+    "A regular expression literal can be confused with '/='.": {
+        "category": "Error",
+        "code": 20620
+    },
+    "Accessor pair {0} and {1} should be grouped.": {
+        "category": "Error",
+        "code": 19272
+    },
+    "All 'var' declarations must be at the top of the function scope.": {
+        "category": "Error",
+        "code": 19661
+    },
+    "All imports in the declaration are only used as types. Use `import type`.": {
+        "category": "Error",
+        "code": 21282
+    },
+    "All {0} signatures should be adjacent.": {
+        "category": "Error",
+        "code": 19100
+    },
+    "Always prefer const x: T = { ... }.": {
+        "category": "Error",
+        "code": 20313
+    },
+    "Always prefer const x: T[] = [ ... ].": {
+        "category": "Error",
+        "code": 22004
+    },
+    "An empty interface declaration allows any non-nullish value, including literals like `0` and `\"\"`.\n- If that's what you want, disable this lint rule with an inline comment or configure the '{0}' rule option.\n- If you want a type meaning \"any object\", you probably want `object` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead.": {
+        "category": "Error",
+        "code": 19104
+    },
+    "An index signature is preferred over a record.": {
+        "category": "Error",
+        "code": 21270
+    },
+    "An interface declaring no members is equivalent to its supertype.": {
+        "category": "Error",
+        "code": 19105
+    },
+    "Argument '{0}' should be typed with a non-any type.": {
+        "category": "Error",
+        "code": 21292
+    },
+    "Argument '{0}' should be typed.": {
+        "category": "Error",
+        "code": 21291
+    },
+    "Argument of unary negation should be assignable to number | bigint but is {0} instead.": {
+        "category": "Error",
+        "code": 20900
+    },
+    "Array type using '{0}\u003c{1}\u003e' is forbidden for simple types. Use '{2}' instead.": {
+        "category": "Error",
+        "code": 21261
+    },
+    "Array type using '{0}\u003c{1}\u003e' is forbidden. Use '{2}' instead.": {
+        "category": "Error",
+        "code": 22005
+    },
+    "Array type using '{0}{1}[]' is forbidden for non-simple types. Use '{2}\u003c{1}\u003e' instead.": {
+        "category": "Error",
+        "code": 21260
+    },
+    "Array type using '{0}{1}[]' is forbidden. Use '{2}\u003c{1}\u003e' instead.": {
+        "category": "Error",
+        "code": 22006
+    },
+    "Arrow function should not return assignment.": {
+        "category": "Error",
+        "code": 19506
+    },
+    "Avoid arguments.{0}.": {
+        "category": "Error",
+        "code": 19001
+    },
+    "Block is redundant.": {
+        "category": "Error",
+        "code": 20009
+    },
+    "Blocks are nested too deeply ({0}). Maximum allowed is {1}.": {
+        "category": "Error",
+        "code": 19302
+    },
+    "Class cannot have method named `new`.": {
+        "category": "Error",
+        "code": 20463
+    },
+    "Comments should not begin with a lowercase character.": {
+        "category": "Error",
+        "code": 19212
+    },
+    "Comments should not begin with an uppercase character.": {
+        "category": "Error",
+        "code": 22007
+    },
+    "Comparing to itself is potentially pointless.": {
+        "category": "Error",
+        "code": 19514
+    },
+    "Confusing combination of non-null assertion and `{0}` operator like `a! {0} b`, which might be misinterpreted as `!(a {0} b)`.": {
+        "category": "Error",
+        "code": 20322
+    },
+    "Confusing combination of non-null assertion and assignment like `a! = b`, which looks very similar to `a != b`.": {
+        "category": "Error",
+        "code": 22008
+    },
+    "Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`.": {
+        "category": "Error",
+        "code": 22009
+    },
+    "Constraining the generic type `{0}` to `{1}` does nothing and is unnecessary.": {
+        "category": "Error",
+        "code": 20468
+    },
+    "Default clause should be the last clause.": {
+        "category": "Error",
+        "code": 19230
+    },
+    "Default parameters should be last.": {
+        "category": "Error",
+        "code": 19242
+    },
+    "Designated alias '{0}' is not assigned to 'this'.": {
+        "category": "Error",
+        "code": 19857
+    },
+    "Do not access Object.prototype method '{0}' from target object.": {
+        "category": "Error",
+        "code": 20014
+    },
+    "Do not assign to the exception parameter.": {
+        "category": "Error",
+        "code": 19853
+    },
+    "Do not delete dynamically computed property keys.": {
+        "category": "Error",
+        "code": 20324
+    },
+    "Do not nest ternary expressions.": {
+        "category": "Error",
+        "code": 19500
+    },
+    "Do not throw undefined.": {
+        "category": "Error",
+        "code": 19517
+    },
+    "Do not use \"@ts-{0}\" because it alters compilation errors.": {
+        "category": "Error",
+        "code": 20310
+    },
+    "Do not use 'new' for side effects.": {
+        "category": "Error",
+        "code": 19502
+    },
+    "Do not use a triple slash reference for {0}, use `import` style instead.": {
+        "category": "Error",
+        "code": 20490
+    },
+    "Do not use any type assertions.": {
+        "category": "Error",
+        "code": 22010
+    },
+    "Do not use the '{0}' operator to compare against -0.": {
+        "category": "Error",
+        "code": 22011
+    },
+    "Do not use {0} as a constructor.": {
+        "category": "Error",
+        "code": 19004
+    },
+    "Don't use '{0}' escape sequence.": {
+        "category": "Error",
+        "code": 19513
+    },
+    "Don't use `{0}` as a type.{1}": {
+        "category": "Error",
+        "code": 20482
+    },
+    "Don't use octal: '\\{0}'. Use '\\u....' instead.": {
+        "category": "Error",
+        "code": 19512
+    },
+    "Duplicate case label.": {
+        "category": "Error",
+        "code": 22012
+    },
+    "Duplicate enum member value {0}.": {
+        "category": "Error",
+        "code": 19103
+    },
+    "Duplicate key '{0}'.": {
+        "category": "Error",
+        "code": 19356
+    },
+    "Duplicate name '{0}'.": {
+        "category": "Error",
+        "code": 19354
+    },
+    "Duplicate param '{0}'.": {
+        "category": "Error",
+        "code": 22013
+    },
+    "ES2015 module syntax is preferred over namespaces.": {
+        "category": "Error",
+        "code": 20464
+    },
+    "Empty block statement.": {
+        "category": "Error",
+        "code": 19360
+    },
+    "Empty class.": {
+        "category": "Error",
+        "code": 20621
+    },
+    "Empty export does nothing and can be removed.": {
+        "category": "Error",
+        "code": 20470
+    },
+    "Empty switch statement.": {
+        "category": "Error",
+        "code": 22014
+    },
+    "Enum members are added to the enum scope, so references to '{0}' in enum member initializers resolve to this member instead of the declaration in the upper scope on line {1} column {2}.": {
+        "category": "Error",
+        "code": 22015
+    },
+    "Expected 'this' to be used by class {0}.": {
+        "category": "Error",
+        "code": 19218
+    },
+    "Expected 'undefined' and instead saw 'void'.": {
+        "category": "Error",
+        "code": 19006
+    },
+    "Expected '{0}' and instead saw '{1}'.": {
+        "category": "Error",
+        "code": 19254
+    },
+    "Expected Symbol to have a description.": {
+        "category": "Error",
+        "code": 20290
+    },
+    "Expected a `const` assertion instead of a literal type annotation.": {
+        "category": "Error",
+        "code": 20472
+    },
+    "Expected a `const` instead of a literal type assertion.": {
+        "category": "Error",
+        "code": 20471
+    },
+    "Expected a `for-of` loop instead of a `for` loop with this simple iteration.": {
+        "category": "Error",
+        "code": 21410
+    },
+    "Expected a conditional expression and instead saw an assignment.": {
+        "category": "Error",
+        "code": 22016
+    },
+    "Expected a default case.": {
+        "category": "Error",
+        "code": 19236
+    },
+    "Expected a function declaration.": {
+        "category": "Error",
+        "code": 19266
+    },
+    "Expected a function expression.": {
+        "category": "Error",
+        "code": 22017
+    },
+    "Expected an assignment or function call and instead saw an expression.": {
+        "category": "Error",
+        "code": 19656
+    },
+    "Expected an error object to be thrown.": {
+        "category": "Error",
+        "code": 19516
+    },
+    "Expected block statement surrounding arrow body.": {
+        "category": "Error",
+        "code": 19206
+    },
+    "Expected the Promise rejection reason to be an Error.": {
+        "category": "Error",
+        "code": 20258
+    },
+    "Expected { after '{0}' condition.": {
+        "category": "Error",
+        "code": 19224
+    },
+    "Expected { after '{0}'.": {
+        "category": "Error",
+        "code": 22018
+    },
+    "Expected {0} to be before {1}.": {
+        "category": "Error",
+        "code": 22019
+    },
+    "Explicit enum value must only be a literal value (string or number) or a bitwise expression.": {
+        "category": "Error",
+        "code": 20475
+    },
+    "Explicit enum value must only be a literal value (string or number).": {
+        "category": "Error",
+        "code": 20474
+    },
+    "File has too many classes ({0}). Maximum allowed is {1}.": {
+        "category": "Error",
+        "code": 19296
+    },
+    "File has too many lines ({0}). Maximum allowed is {1}.": {
+        "category": "Error",
+        "code": 19314
+    },
+    "For-in loops over arrays skips holes, returns indices as strings, and may visit the prototype chain or other enumerable properties. Use a more robust iteration method such as for-of or array.forEach instead.": {
+        "category": "Error",
+        "code": 20720
+    },
+    "Forbidden extra non-null assertion.": {
+        "category": "Error",
+        "code": 20327
+    },
+    "Forbidden non-null assertion.": {
+        "category": "Error",
+        "code": 19108
+    },
+    "Found identifier with same name as label.": {
+        "category": "Error",
+        "code": 20007
+    },
+    "Function declared in a loop contains unsafe references to variable(s) {0}.": {
+        "category": "Error",
+        "code": 20016
+    },
+    "Function name `{0}` should {1} {2} name `{3}`.": {
+        "category": "Error",
+        "code": 19260
+    },
+    "Function property signature is forbidden. Use a method shorthand instead.": {
+        "category": "Error",
+        "code": 20321
+    },
+    "Functions that return promises must be async.": {
+        "category": "Error",
+        "code": 21087
+    },
+    "Functions that return promises must be async. Consider adding an explicit return type annotation if the function is intended to return a union of promise and non-promise types.": {
+        "category": "Error",
+        "code": 22020
+    },
+    "Getter is not present in property descriptor.": {
+        "category": "Error",
+        "code": 19200
+    },
+    "Identifier name '{0}' is too long (\u003e {1}).": {
+        "category": "Error",
+        "code": 19284
+    },
+    "Identifier name '{0}' is too short (\u003c {1}).": {
+        "category": "Error",
+        "code": 22021
+    },
+    "Imports {0} are only used as type.": {
+        "category": "Error",
+        "code": 21283
+    },
+    "Include a description after the \"@ts-{0}\" directive to explain why the @ts-{0} is necessary. The description must be {1} characters or longer.": {
+        "category": "Error",
+        "code": 22022
+    },
+    "Interfaces cannot be constructed, only classes.": {
+        "category": "Error",
+        "code": 20462
+    },
+    "Invalid operand for a '+' operation. Operands must each be a number or {0}. Got `{1}`.": {
+        "category": "Error",
+        "code": 21083
+    },
+    "Invalid radix parameter, must be an integer between 2 and 36.": {
+        "category": "Error",
+        "code": 20278
+    },
+    "Invalid typeof comparison value.": {
+        "category": "Error",
+        "code": 20296
+    },
+    "Irregular whitespace not allowed.": {
+        "category": "Error",
+        "code": 19366
+    },
+    "It's not necessary to initialize '{0}' to undefined.": {
+        "category": "Error",
+        "code": 20150
+    },
+    "Literals should be exposed using getters.": {
+        "category": "Error",
+        "code": 20311
+    },
+    "Literals should be exposed using readonly fields.": {
+        "category": "Error",
+        "code": 22023
+    },
+    "Missing accessibility modifier on {0} {1}.": {
+        "category": "Error",
+        "code": 20317
+    },
+    "Missing parameters.": {
+        "category": "Error",
+        "code": 20276
+    },
+    "Missing radix parameter.": {
+        "category": "Error",
+        "code": 20277
+    },
+    "Missing return type on function.": {
+        "category": "Error",
+        "code": 21290
+    },
+    "Move {0} declaration to {1} root.": {
+        "category": "Error",
+        "code": 20010
+    },
+    "Multiline support is limited to browsers supporting ES5 only.": {
+        "category": "Error",
+        "code": 19373
+    },
+    "Nested block is redundant.": {
+        "category": "Error",
+        "code": 22024
+    },
+    "No magic number: {0}.": {
+        "category": "Error",
+        "code": 19371
+    },
+    "Number constants declarations must use 'const'.": {
+        "category": "Error",
+        "code": 20483
+    },
+    "Numeric '+' operations must either be both bigints or both numbers. Got `{0}` + `{1}`.": {
+        "category": "Error",
+        "code": 21085
+    },
+    "Octal literals should not be used.": {
+        "category": "Error",
+        "code": 19511
+    },
+    "Operands of '+' operations must be a number or {0}. Got `{1}` + `{2}`.": {
+        "category": "Error",
+        "code": 21084
+    },
+    "Optional chain expressions can return undefined by design - using a non-null assertion is unsafe and wrong.": {
+        "category": "Error",
+        "code": 20467
+    },
+    "Prefer the safe `: unknown` for a `{0}`{1} callback variable.": {
+        "category": "Error",
+        "code": 21088
+    },
+    "Prefer the safe `: unknown` for a `{0}`{1} callback variable. The thrown error may be nullable, or may not have the expected shape.": {
+        "category": "Error",
+        "code": 22025
+    },
+    "Prefer the safe `: unknown` for a `{0}`{1} callback variable. The thrown error may not be iterable.": {
+        "category": "Error",
+        "code": 22026
+    },
+    "Prefer using the primitive `{0}` as a type name, rather than the upper-cased `{1}`.": {
+        "category": "Error",
+        "code": 20460
+    },
+    "Private class member '{0}' is defined but never used.": {
+        "category": "Error",
+        "code": 21380
+    },
+    "Promise executor functions should not be async.": {
+        "category": "Error",
+        "code": 22027
+    },
+    "Property {0} should be declared as a class property.": {
+        "category": "Error",
+        "code": 20486
+    },
+    "Property {0} should be declared as a parameter property.": {
+        "category": "Error",
+        "code": 20487
+    },
+    "Public accessibility modifier on {0} {1}.": {
+        "category": "Error",
+        "code": 22028
+    },
+    "Qualifier is unnecessary since '{0}' is in scope.": {
+        "category": "Error",
+        "code": 20906
+    },
+    "Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring.": {
+        "category": "Error",
+        "code": 20272
+    },
+    "Redundant Boolean call.": {
+        "category": "Error",
+        "code": 19363
+    },
+    "Redundant double negation.": {
+        "category": "Error",
+        "code": 22029
+    },
+    "Require 'compare' argument.": {
+        "category": "Error",
+        "code": 21080
+    },
+    "Reserved name '__iterator__'.": {
+        "category": "Error",
+        "code": 19367
+    },
+    "Return statement should not contain assignment.": {
+        "category": "Error",
+        "code": 19505
+    },
+    "Return values from promise executor functions cannot be read.": {
+        "category": "Error",
+        "code": 20008
+    },
+    "Script URL is a form of eval.": {
+        "category": "Error",
+        "code": 19510
+    },
+    "Setter cannot return a value.": {
+        "category": "Error",
+        "code": 19518
+    },
+    "Setter is not present in property descriptor.": {
+        "category": "Error",
+        "code": 22030
+    },
+    "Shadowing of global property '{0}'.": {
+        "category": "Error",
+        "code": 20011
+    },
+    "Shorthand method signature is forbidden. Use a function property instead.": {
+        "category": "Error",
+        "code": 22031
+    },
+    "Ternary operator used.": {
+        "category": "Error",
+        "code": 19503
+    },
+    "The '__proto__' property is deprecated.": {
+        "category": "Error",
+        "code": 19005
+    },
+    "The Function constructor is eval.": {
+        "category": "Error",
+        "code": 19003
+    },
+    "The `Function` type accepts any function-like value.\nPrefer explicitly defining any function parameters and return type.": {
+        "category": "Error",
+        "code": 20461
+    },
+    "The `{}` (\"empty object\") type allows any non-nullish value, including literals like `0` and `\"\"`.\n- If that's what you want, disable this lint rule with an inline comment or configure the '{0}' rule option.\n- If you want a type meaning \"any object\", you probably want `object` instead.\n- If you want a type meaning \"any value\", you probably want `unknown` instead.": {
+        "category": "Error",
+        "code": 19106
+    },
+    "The array literal notation [] is preferable.": {
+        "category": "Error",
+        "code": 19859
+    },
+    "The body of a for-in should be wrapped in an if statement to filter unwanted properties from the prototype.": {
+        "category": "Error",
+        "code": 19278
+    },
+    "The case statement does not have a shared enum type with the switch predicate.": {
+        "category": "Error",
+        "code": 20911
+    },
+    "The caught error is being attached as `cause`, but is shadowed by a closer scoped redeclaration.": {
+        "category": "Error",
+        "code": 20274
+    },
+    "The caught error is not accessible because the catch clause lacks the error parameter. Start referencing the caught error using the catch parameter.": {
+        "category": "Error",
+        "code": 20273
+    },
+    "The description for the \"@ts-{0}\" directive must match the {1} format.": {
+        "category": "Error",
+        "code": 22032
+    },
+    "The function binding is unnecessary.": {
+        "category": "Error",
+        "code": 19362
+    },
+    "The generic type arguments should be specified as part of the constructor type arguments.": {
+        "category": "Error",
+        "code": 19102
+    },
+    "The members of '{0}' are read-only.": {
+        "category": "Error",
+        "code": 20002
+    },
+    "The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed.": {
+        "category": "Error",
+        "code": 21320
+    },
+    "The object literal notation {} is preferable.": {
+        "category": "Error",
+        "code": 20006
+    },
+    "The symptom error is being thrown with an incorrect `cause`.": {
+        "category": "Error",
+        "code": 20271
+    },
+    "The two values in this comparison do not have a shared enum type.": {
+        "category": "Error",
+        "code": 20910
+    },
+    "The value of the member '{0}' should be explicitly defined.": {
+        "category": "Error",
+        "code": 20473
+    },
+    "There is no `cause` attached to the symptom error being thrown.": {
+        "category": "Error",
+        "code": 20270
+    },
+    "This assignment is unnecessary since it is already assigned by a parameter property.": {
+        "category": "Error",
+        "code": 21360
+    },
+    "This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain.": {
+        "category": "Error",
+        "code": 19355
+    },
+    "This generator function does not have 'yield'.": {
+        "category": "Error",
+        "code": 19652
+    },
+    "This is the default value for this type parameter, so it can be omitted.": {
+        "category": "Error",
+        "code": 20907
+    },
+    "This label '{0}' is unnecessary.": {
+        "category": "Error",
+        "code": 19364
+    },
+    "This number literal will lose precision at runtime.": {
+        "category": "Error",
+        "code": 19370
+    },
+    "This type resolves to `{}`, the empty object type. This was likely not intentional.": {
+        "category": "Error",
+        "code": 20721
+    },
+    "Too many nested callbacks ({0}). Maximum allowed is {1}.": {
+        "category": "Error",
+        "code": 19320
+    },
+    "Type {0} trivially inferred from a {0} literal, remove type annotation.": {
+        "category": "Error",
+        "code": 19107
+    },
+    "TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import.": {
+        "category": "Error",
+        "code": 20331
+    },
+    "Typeof comparisons should be to string literals.": {
+        "category": "Error",
+        "code": 20297
+    },
+    "Unary operator '{0}' used.": {
+        "category": "Error",
+        "code": 19504
+    },
+    "Unexpected 'this'.": {
+        "category": "Error",
+        "code": 21310
+    },
+    "Unexpected '{0}' comment: '{1}'.": {
+        "category": "Error",
+        "code": 19669
+    },
+    "Unexpected `await` inside a loop.": {
+        "category": "Error",
+        "code": 19350
+    },
+    "Unexpected alias '{0}' for 'this'.": {
+        "category": "Error",
+        "code": 19858
+    },
+    "Unexpected aliasing of 'this' to local variable.": {
+        "category": "Error",
+        "code": 20465
+    },
+    "Unexpected aliasing of members of 'this' to local variables.": {
+        "category": "Error",
+        "code": 20466
+    },
+    "Unexpected any. Specify a different type.": {
+        "category": "Error",
+        "code": 20326
+    },
+    "Unexpected block statement surrounding arrow body.": {
+        "category": "Error",
+        "code": 22033
+    },
+    "Unexpected block statement surrounding arrow body; move the returned value immediately after the `=\u003e`.": {
+        "category": "Error",
+        "code": 22034
+    },
+    "Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=\u003e`.": {
+        "category": "Error",
+        "code": 22035
+    },
+    "Unexpected block statement surrounding arrow body; put a value of `undefined` immediately after the `=\u003e`.": {
+        "category": "Error",
+        "code": 22036
+    },
+    "Unexpected chained assignment.": {
+        "category": "Error",
+        "code": 19372
+    },
+    "Unexpected class with only a constructor.": {
+        "category": "Error",
+        "code": 20329
+    },
+    "Unexpected class with only static properties.": {
+        "category": "Error",
+        "code": 20330
+    },
+    "Unexpected comma in middle of array.": {
+        "category": "Error",
+        "code": 19508
+    },
+    "Unexpected comment inline with code.": {
+        "category": "Error",
+        "code": 19365
+    },
+    "Unexpected comparison of two newly constructed objects. These two values can never be equal.": {
+        "category": "Error",
+        "code": 22037
+    },
+    "Unexpected comparison to newly constructed object. These two values can never be equal.": {
+        "category": "Error",
+        "code": 22038
+    },
+    "Unexpected console statement.": {
+        "category": "Error",
+        "code": 19854
+    },
+    "Unexpected console statement. Only these console methods are allowed: {0}.": {
+        "category": "Error",
+        "code": 19855
+    },
+    "Unexpected constant binary expression. Compares constantly with the {0}-hand side of the `{1}`.": {
+        "category": "Error",
+        "code": 22039
+    },
+    "Unexpected constant {0} on the left-hand side of a `{1}` expression.": {
+        "category": "Error",
+        "code": 22040
+    },
+    "Unexpected dangling '_' in '{0}'.": {
+        "category": "Error",
+        "code": 20168
+    },
+    "Unexpected empty class.": {
+        "category": "Error",
+        "code": 20328
+    },
+    "Unexpected empty static block.": {
+        "category": "Error",
+        "code": 19359
+    },
+    "Unexpected empty {0} pattern.": {
+        "category": "Error",
+        "code": 22041
+    },
+    "Unexpected empty {0}.": {
+        "category": "Error",
+        "code": 19358
+    },
+    "Unexpected if as the only statement in an else block.": {
+        "category": "Error",
+        "code": 19369
+    },
+    "Unexpected implicit coercion encountered. Use `{0}` instead.": {
+        "category": "Error",
+        "code": 20013
+    },
+    "Unexpected label in break statement.": {
+        "category": "Error",
+        "code": 19368
+    },
+    "Unexpected label in continue statement.": {
+        "category": "Error",
+        "code": 22042
+    },
+    "Unexpected labeled statement.": {
+        "category": "Error",
+        "code": 22043
+    },
+    "Unexpected lexical declaration in case block.": {
+        "category": "Error",
+        "code": 19352
+    },
+    "Unexpected named {0}.": {
+        "category": "Error",
+        "code": 19861
+    },
+    "Unexpected negated condition.": {
+        "category": "Error",
+        "code": 19501
+    },
+    "Unexpected newline between function and ( of function call.": {
+        "category": "Error",
+        "code": 19662
+    },
+    "Unexpected newline between numerator and division operator.": {
+        "category": "Error",
+        "code": 19665
+    },
+    "Unexpected newline between object and [ of property access.": {
+        "category": "Error",
+        "code": 19663
+    },
+    "Unexpected newline between template tag and template literal.": {
+        "category": "Error",
+        "code": 19664
+    },
+    "Unexpected return statement in constructor.": {
+        "category": "Error",
+        "code": 19850
+    },
+    "Unexpected string concatenation of literals.": {
+        "category": "Error",
+        "code": 19651
+    },
+    "Unexpected template string expression.": {
+        "category": "Error",
+        "code": 19509
+    },
+    "Unexpected unnamed {0}.": {
+        "category": "Error",
+        "code": 19860
+    },
+    "Unexpected use of 'with' statement.": {
+        "category": "Error",
+        "code": 19650
+    },
+    "Unexpected use of '{0}'.": {
+        "category": "Error",
+        "code": 19351
+    },
+    "Unexpected use of '{0}'. {1}": {
+        "category": "Error",
+        "code": 20015
+    },
+    "Unexpected use of comma operator.": {
+        "category": "Error",
+        "code": 19507
+    },
+    "Unexpected use of continue statement.": {
+        "category": "Error",
+        "code": 19353
+    },
+    "Unexpected use of undefined.": {
+        "category": "Error",
+        "code": 20162
+    },
+    "Unexpected {0}.": {
+        "category": "Error",
+        "code": 19000
+    },
+    "Unnecessarily computed property [{0}] found.": {
+        "category": "Error",
+        "code": 19667
+    },
+    "Unnecessary '.{0}()'.": {
+        "category": "Error",
+        "code": 19654
+    },
+    "Unnecessary assertion: Array#reduce accepts a type parameter for the default value.": {
+        "category": "Error",
+        "code": 21082
+    },
+    "Unnecessary catch clause.": {
+        "category": "Error",
+        "code": 19659
+    },
+    "Unnecessary try/catch wrapper.": {
+        "category": "Error",
+        "code": 19660
+    },
+    "Unnecessary { after '{0}' condition.": {
+        "category": "Error",
+        "code": 22044
+    },
+    "Unnecessary { after '{0}'.": {
+        "category": "Error",
+        "code": 22045
+    },
+    "Unsafe arithmetic operation on optional chaining. It can result in NaN.": {
+        "category": "Error",
+        "code": 19658
+    },
+    "Unsafe assertion from {0} detected: consider using type guards or a safer assertion.": {
+        "category": "Error",
+        "code": 20902
+    },
+    "Unsafe assertion to {0} detected: consider using a more specific type to ensure safety.": {
+        "category": "Error",
+        "code": 20901
+    },
+    "Unsafe declaration merging between classes and interfaces.": {
+        "category": "Error",
+        "code": 21370
+    },
+    "Unsafe type assertion: '{0}' could be instantiated with an arbitrary type which could be unrelated to the original type.": {
+        "category": "Error",
+        "code": 20903
+    },
+    "Unsafe type assertion: the original type is assignable to the constraint of type '{0}', but '{0}' could be instantiated with a different subtype of its constraint.": {
+        "category": "Error",
+        "code": 20904
+    },
+    "Unsafe type assertion: type '{0}' is more narrow than the original type.": {
+        "category": "Error",
+        "code": 20905
+    },
+    "Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.": {
+        "category": "Error",
+        "code": 19657
+    },
+    "Unsafe usage of {0}.": {
+        "category": "Error",
+        "code": 19653
+    },
+    "Use \"@ts-expect-error\" instead of \"@ts-ignore\", as \"@ts-ignore\" will do nothing if the following line is error-free.": {
+        "category": "Error",
+        "code": 22046
+    },
+    "Use '\u003c{0}\u003e' instead of 'as {0}'.": {
+        "category": "Error",
+        "code": 22047
+    },
+    "Use '===' to compare with null.": {
+        "category": "Error",
+        "code": 19361
+    },
+    "Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.": {
+        "category": "Error",
+        "code": 20246
+    },
+    "Use 'as {0}' instead of '\u003c{0}\u003e'.": {
+        "category": "Error",
+        "code": 22048
+    },
+    "Use 'namespace' instead of 'module' to declare custom TypeScript modules.": {
+        "category": "Error",
+        "code": 20469
+    },
+    "Use `this` type instead.": {
+        "category": "Error",
+        "code": 21086
+    },
+    "Use a ! assertion to more succinctly remove null and undefined from the type.": {
+        "category": "Error",
+        "code": 20908
+    },
+    "Use a `type` instead of an `interface`.": {
+        "category": "Error",
+        "code": 20314
+    },
+    "Use an `import` instead of an `import type`.": {
+        "category": "Error",
+        "code": 21281
+    },
+    "Use an `interface` instead of a `type`.": {
+        "category": "Error",
+        "code": 22049
+    },
+    "Use the rest parameters instead of 'arguments'.": {
+        "category": "Error",
+        "code": 20264
+    },
+    "Use the spread operator instead of '.apply()'.": {
+        "category": "Error",
+        "code": 19655
+    },
+    "Use {0} literals instead of {1}().": {
+        "category": "Error",
+        "code": 19672
+    },
+    "Useless constructor.": {
+        "category": "Error",
+        "code": 20485
+    },
+    "Using the `delete` operator with an array expression is unsafe.": {
+        "category": "Error",
+        "code": 20722
+    },
+    "Variable '{0}' should be initialized on declaration.": {
+        "category": "Error",
+        "code": 19290
+    },
+    "Variable '{0}' should not be initialized on declaration.": {
+        "category": "Error",
+        "code": 20318
+    },
+    "Variables should not be deleted.": {
+        "category": "Error",
+        "code": 19002
+    },
+    "[{0}] is better written in dot notation.": {
+        "category": "Error",
+        "code": 22050
+    },
+    "`get()` type should be assignable to its equivalent `set()` type.": {
+        "category": "Error",
+        "code": 21081
+    },
+    "`import()` type annotations are forbidden.": {
+        "category": "Error",
+        "code": 21280
+    },
+    "`{0}` cannot be called as a constructor.": {
+        "category": "Error",
+        "code": 20005
+    },
+    "tslint comment detected: \"{0}\"": {
+        "category": "Error",
+        "code": 19101
+    },
+    "void is not valid as a constituent in a union type": {
+        "category": "Error",
+        "code": 20481
+    },
+    "void is only valid as a return type or generic type argument or the type of a `this` parameter.": {
+        "category": "Error",
+        "code": 20479
+    },
+    "void is only valid as a return type or generic type argument.": {
+        "category": "Error",
+        "code": 20477
+    },
+    "void is only valid as a return type.": {
+        "category": "Error",
+        "code": 20476
+    },
+    "void is only valid as return type or type of `this` parameter.": {
+        "category": "Error",
+        "code": 20478
+    },
+    "void operator is useless here; it should only discard a call's return value": {
+        "category": "Error",
+        "code": 20723
+    },
+    "void operator shouldn't be used on {0}; it should convey that a return value is being ignored": {
+        "category": "Error",
+        "code": 20724
+    },
+    "{0} argument should be typed with a non-any type.": {
+        "category": "Error",
+        "code": 21294
+    },
+    "{0} argument should be typed.": {
+        "category": "Error",
+        "code": 21293
+    },
+    "{0} does not change the type or value of the {1}.": {
+        "category": "Error",
+        "code": 20909
+    },
+    "{0} has a complexity of {1}. Maximum allowed is {2}.": {
+        "category": "Error",
+        "code": 19856
+    },
+    "{0} has too many lines ({1}). Maximum allowed is {2}.": {
+        "category": "Error",
+        "code": 19308
+    },
+    "{0} has too many parameters ({1}). Maximum allowed is {2}.": {
+        "category": "Error",
+        "code": 19326
+    },
+    "{0} has too many statements ({1}). Maximum allowed is {2}.": {
+        "category": "Error",
+        "code": 19332
+    },
+    "{0} is not present for {1}{2}.": {
+        "category": "Error",
+        "code": 22051
+    },
+    "{0} may not have void as a type argument.": {
+        "category": "Error",
+        "code": 20480
+    },
+    "{0} prototype is read only, properties should not be added.": {
+        "category": "Error",
+        "code": 19863
+    },
+    "{0} {1} unnecessarily renamed.": {
+        "category": "Error",
+        "code": 19668
+    },
+    "Unexpected `await` of a non-Promise (non-\"Thenable\") value.": {
+        "category": "Error",
+        "code": 24000
+    },
+    "Unexpected `await using` of a value that is not async disposable.": {
+        "category": "Error",
+        "code": 24001
+    },
+    "Convert to an ordinary `for...of` loop.": {
+        "category": "Message",
+        "code": 24002
+    },
+    "Unexpected `for await...of` of a value that is not async iterable.": {
+        "category": "Error",
+        "code": 24003
+    },
+    "Unexpected iterable of non-Promise (non-\"Thenable\") values passed to promise aggregator.": {
+        "category": "Error",
+        "code": 24004
+    },
+    "Remove unnecessary `await`.": {
+        "category": "Message",
+        "code": 24005
+    },
+    "Expected to return a value at the end of {0}.": {
+        "category": "Error",
+        "code": 24006
+    },
+    "{0} expected a return value.": {
+        "category": "Error",
+        "code": 24007
+    },
+    "{0} expected no return value.": {
+        "category": "Error",
+        "code": 24008
+    },
+    "Type exports {0} are not values and should be exported using `export type`.": {
+        "category": "Error",
+        "code": 24009
+    },
+    "Type export {0} is not a value and should be exported using `export type`.": {
+        "category": "Error",
+        "code": 24010
+    },
+    "All exports in the declaration are only used as types. Use `export type`.": {
+        "category": "Error",
+        "code": 24011
+    },
+    "Member {0} should be declared before all {1} definitions.": {
+        "category": "Error",
+        "code": 24012
+    },
+    "Member {0} should be declared before member {1}.": {
+        "category": "Error",
+        "code": 24013
+    },
+    "Member {0} should be declared after all {1} members.": {
+        "category": "Error",
+        "code": 24014
+    },
+    "{0} name `{1}` must match one of the following formats: {2}": {
+        "category": "Error",
+        "code": 24015
+    },
+    "{0} name `{1}` trimmed as `{2}` must match one of the following formats: {3}": {
+        "category": "Error",
+        "code": 24016
+    },
+    "{0} name `{1}` must have one of the following {2}es: {3}": {
+        "category": "Error",
+        "code": 24017
+    },
+    "{0} name `{1}` must have {2} {3} underscore(s).": {
+        "category": "Error",
+        "code": 24018
+    },
+    "{0} name `{1}` must {2} the RegExp: {3}": {
+        "category": "Error",
+        "code": 24019
+    },
+    "{0} name `{1}` must not have a {2} underscore.": {
+        "category": "Error",
+        "code": 24020
+    },
+    "Using `join()` for {0} {1} use Object's default stringification format ('[object Object]') when stringified.": {
+        "category": "Error",
+        "code": 24021
+    },
+    "'{0}' {1} use Object's default stringification format ('[object Object]') when stringified.": {
+        "category": "Error",
+        "code": 24022
+    },
+    "Placing a void expression inside another expression is forbidden. Move it to its own statement instead.": {
+        "category": "Error",
+        "code": 24023
+    },
+    "Returning a void expression from an arrow function shorthand is forbidden. Please add braces to the arrow function.": {
+        "category": "Error",
+        "code": 24024
+    },
+    "Void expressions returned from an arrow function shorthand must be marked explicitly with the `void` operator.": {
+        "category": "Error",
+        "code": 24025
+    },
+    "Returning a void expression from a function is forbidden. Please move it before the `return` statement.": {
+        "category": "Error",
+        "code": 24026
+    },
+    "Returning a void expression from a function is forbidden. Please remove the `return` statement.": {
+        "category": "Error",
+        "code": 24027
+    },
+    "Void expressions returned from a function must be marked explicitly with the `void` operator.": {
+        "category": "Error",
+        "code": 24028
+    },
+    "Void expressions used inside another expression must be moved to its own statement or marked explicitly with the `void` operator.": {
+        "category": "Error",
+        "code": 24029
+    },
+    "Mark with an explicit `void` operator.": {
+        "category": "Message",
+        "code": 24030
+    },
+    "`{0}` is deprecated.": {
+        "category": "Error",
+        "code": 24031
+    },
+    "`{0}` is deprecated. {1}": {
+        "category": "Error",
+        "code": 24032
+    },
+    "{0} type constituent is duplicated with {1}.": {
+        "category": "Error",
+        "code": 24033
+    },
+    "Explicit undefined is unnecessary on an optional parameter.": {
+        "category": "Error",
+        "code": 24034
+    },
+    "Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler.": {
+        "category": "Error",
+        "code": 24035
+    },
+    "Add await operator.": {
+        "category": "Message",
+        "code": 24036
+    },
+    "Add void operator to ignore.": {
+        "category": "Message",
+        "code": 24037
+    },
+    "An array of Promises may be unintentional. Consider handling the promises' fulfillment or rejection with Promise.all or similar.": {
+        "category": "Error",
+        "code": 24038
+    },
+    "An array of Promises may be unintentional. Consider handling the promises' fulfillment or rejection with Promise.all or similar, or explicitly marking the expression as ignored with the `void` operator.": {
+        "category": "Error",
+        "code": 24039
+    },
+    "Promises must be awaited, end with a call to .catch, or end with a call to .then with a rejection handler. A rejection handler that is not a function will be ignored.": {
+        "category": "Error",
+        "code": 24040
+    },
+    "Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator. A rejection handler that is not a function will be ignored.": {
+        "category": "Error",
+        "code": 24041
+    },
+    "Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.": {
+        "category": "Error",
+        "code": 24042
+    },
+    "Implied eval. Do not use the Function constructor to create functions.": {
+        "category": "Error",
+        "code": 24043
+    },
+    "Implied eval. Consider passing a function.": {
+        "category": "Error",
+        "code": 24044
+    },
+    "Expected non-Promise value in a boolean conditional.": {
+        "category": "Error",
+        "code": 24045
+    },
+    "Expected a non-Promise value to be returned.": {
+        "category": "Error",
+        "code": 24046
+    },
+    "Expected a non-Promise value to be spread in an object.": {
+        "category": "Error",
+        "code": 24047
+    },
+    "Promise returned in function argument where a void return was expected.": {
+        "category": "Error",
+        "code": 24048
+    },
+    "Promise-returning function provided to attribute where a void return was expected.": {
+        "category": "Error",
+        "code": 24049
+    },
+    "Promise-returning method provided where a void return was expected by extended/implemented type '{0}'.": {
+        "category": "Error",
+        "code": 24050
+    },
+    "Promise-returning function provided to property where a void return was expected.": {
+        "category": "Error",
+        "code": 24051
+    },
+    "Promise-returning function provided to return value where a void return was expected.": {
+        "category": "Error",
+        "code": 24052
+    },
+    "Promise-returning function provided to variable where a void return was expected.": {
+        "category": "Error",
+        "code": 24053
+    },
+    "Using the spread operator on an array in an object will result in a list of indices.": {
+        "category": "Error",
+        "code": 24054
+    },
+    "Using the spread operator on class declarations will spread only their static properties, and will lose their class prototype.": {
+        "category": "Error",
+        "code": 24055
+    },
+    "Using the spread operator on class instances will lose their class prototype.": {
+        "category": "Error",
+        "code": 24056
+    },
+    "Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?": {
+        "category": "Error",
+        "code": 24057
+    },
+    "Using the spread operator on an Iterable in an object can cause unexpected behavior.": {
+        "category": "Error",
+        "code": 24058
+    },
+    "Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?": {
+        "category": "Error",
+        "code": 24059
+    },
+    "Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?": {
+        "category": "Error",
+        "code": 24060
+    },
+    "Using the spread operator on a string can mishandle special characters, as can `.split(\"\")`.\n- `...` produces Unicode code points, which will decompose complex emojis into individual emojis\n- .split(\"\") produces UTF-16 code units, which breaks rich characters in many languages\nConsider using `Intl.Segmenter` for locale-aware string decomposition.\nOtherwise, if you don't need to preserve emojis or other non-Ascii characters, disable this lint rule on this line or configure the 'allow' rule option.": {
+        "category": "Error",
+        "code": 24061
+    },
+    "Replace map spread in object with `Object.fromEntries()`": {
+        "category": "Message",
+        "code": 24062
+    },
+    "Mixing number and string enums can be confusing.": {
+        "category": "Error",
+        "code": 24063
+    },
+    "'{0}' is an 'error' type that acts as 'any' and overrides all other types in this {1} type.": {
+        "category": "Error",
+        "code": 24064
+    },
+    "{0} is overridden by {1} in this union type.": {
+        "category": "Error",
+        "code": 24065
+    },
+    "'{0}' is overridden by other types in this {1} type.": {
+        "category": "Error",
+        "code": 24066
+    },
+    "'{0}' overrides all other types in this {1} type.": {
+        "category": "Error",
+        "code": 24067
+    },
+    "{0} is overridden by the {1} in this intersection type.": {
+        "category": "Error",
+        "code": 24068
+    },
+    "This expression unnecessarily compares a nullable boolean value to false instead of using the ?? operator to provide a default.": {
+        "category": "Error",
+        "code": 24069
+    },
+    "This expression unnecessarily compares a nullable boolean value to true instead of using it directly.": {
+        "category": "Error",
+        "code": 24070
+    },
+    "This expression unnecessarily compares a nullable boolean value to true instead of negating it.": {
+        "category": "Error",
+        "code": 24071
+    },
+    "This expression unnecessarily compares a boolean value to a boolean instead of using it directly.": {
+        "category": "Error",
+        "code": 24072
+    },
+    "This expression unnecessarily compares a boolean value to a boolean instead of negating it.": {
+        "category": "Error",
+        "code": 24073
+    },
+    "This rule requires the `strictNullChecks` compiler option to be turned on to function correctly.": {
+        "category": "Error",
+        "code": 24074
+    },
+    "Unnecessary conditional, value is always falsy.": {
+        "category": "Error",
+        "code": 24075
+    },
+    "This callback should return a conditional, but return is always falsy.": {
+        "category": "Error",
+        "code": 24076
+    },
+    "Unnecessary conditional, left-hand side of `??` operator is always `null` or `undefined`.": {
+        "category": "Error",
+        "code": 24077
+    },
+    "Unnecessary conditional, value is always truthy.": {
+        "category": "Error",
+        "code": 24078
+    },
+    "This callback should return a conditional, but return is always truthy.": {
+        "category": "Error",
+        "code": 24079
+    },
+    "Unnecessary conditional, comparison is always {0}, since `{1} {2} {3}` is {0}.": {
+        "category": "Error",
+        "code": 24080
+    },
+    "Unnecessary conditional, value is `never`.": {
+        "category": "Error",
+        "code": 24081
+    },
+    "Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.": {
+        "category": "Error",
+        "code": 24082
+    },
+    "Unnecessary optional chain on a non-nullish value.": {
+        "category": "Error",
+        "code": 24083
+    },
+    "Unnecessary conditional, the types have no overlap.": {
+        "category": "Error",
+        "code": 24084
+    },
+    "Remove unnecessary optional chain": {
+        "category": "Message",
+        "code": 24085
+    },
+    "Unnecessary conditional, expression already has the type being checked by the {0}.": {
+        "category": "Error",
+        "code": 24086
+    },
+    "Template literal expression is unnecessary and can be simplified.": {
+        "category": "Error",
+        "code": 24087
+    },
+    "The type arguments for this generic call may be inferred from the assertion. Specify them explicitly instead.": {
+        "category": "Error",
+        "code": 24088
+    },
+    "This assertion is unnecessary since the receiver accepts the original type of the expression.": {
+        "category": "Error",
+        "code": 24089
+    },
+    "This assertion is unnecessary since it does not change the type of the expression.": {
+        "category": "Error",
+        "code": 24090
+    },
+    "Replace all usages of type parameter with its constraint.": {
+        "category": "Message",
+        "code": 24091
+    },
+    "Type parameter {0} is {1} in the {2} signature.": {
+        "category": "Error",
+        "code": 24092
+    },
+    "Unsafe argument of type {0} assigned to a parameter of type {1}.": {
+        "category": "Error",
+        "code": 24093
+    },
+    "Unsafe spread of an {0} array type.": {
+        "category": "Error",
+        "code": 24094
+    },
+    "Unsafe spread of an {0} type.": {
+        "category": "Error",
+        "code": 24095
+    },
+    "Unsafe spread of a tuple type. The argument is {0} and is assigned to a parameter of type {1}.": {
+        "category": "Error",
+        "code": 24096
+    },
+    "Unsafe assignment of an {0} value.": {
+        "category": "Error",
+        "code": 24097
+    },
+    "Unsafe assignment of an {0} value. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function.": {
+        "category": "Error",
+        "code": 24098
+    },
+    "Unsafe array destructuring of an {0} array value.": {
+        "category": "Error",
+        "code": 24099
+    },
+    "Unsafe array destructuring of a tuple element with an {0} value.": {
+        "category": "Error",
+        "code": 24100
+    },
+    "Unsafe spread of an {0} value in an array.": {
+        "category": "Error",
+        "code": 24101
+    },
+    "Unsafe assignment of type {0} to a variable of type {1}.": {
+        "category": "Error",
+        "code": 24102
+    },
+    "Unsafe object destructuring of a property with an {0} value.": {
+        "category": "Error",
+        "code": 24103
+    },
+    "Unsafe call of a type that could not be resolved.": {
+        "category": "Error",
+        "code": 24104
+    },
+    "Unsafe call of a `this` type that could not be resolved.": {
+        "category": "Error",
+        "code": 24105
+    },
+    "Unsafe construction of a type that could not be resolved.": {
+        "category": "Error",
+        "code": 24106
+    },
+    "Unsafe use of a template tag whose type could not be resolved.": {
+        "category": "Error",
+        "code": 24107
+    },
+    "Unsafe call of {0} typed value.": {
+        "category": "Error",
+        "code": 24108
+    },
+    "Unsafe call of {0} typed value. `this` is typed as {0}.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function.": {
+        "category": "Error",
+        "code": 24109
+    },
+    "Unsafe construction of {0} typed value.": {
+        "category": "Error",
+        "code": 24110
+    },
+    "Unsafe use of {0} typed template tag.": {
+        "category": "Error",
+        "code": 24111
+    },
+    "The computed key used here does not have a shared enum type with the expected enum {0}.": {
+        "category": "Error",
+        "code": 24112
+    },
+    "The argument passed here does not have a shared enum type with the expected enum {0}.": {
+        "category": "Error",
+        "code": 24113
+    },
+    "The value asserted here does not have a shared enum type with the expected enum {0}.": {
+        "category": "Error",
+        "code": 24114
+    },
+    "The value assigned here does not have a shared enum type with the expected enum {0}.": {
+        "category": "Error",
+        "code": 24115
+    },
+    "This mutation can produce a value outside of the expected enum {0}.": {
+        "category": "Error",
+        "code": 24116
+    },
+    "The value returned here does not have a shared enum type with the expected enum {0}.": {
+        "category": "Error",
+        "code": 24117
+    },
+    "The type of computed name {0} cannot be resolved.": {
+        "category": "Error",
+        "code": 24118
+    },
+    "Unsafe member access {0} on a type that cannot be resolved.": {
+        "category": "Error",
+        "code": 24119
+    },
+    "Unsafe member access {0}. The type of `this` cannot be resolved.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function.": {
+        "category": "Error",
+        "code": 24120
+    },
+    "Computed name {0} resolves to an `any` value.": {
+        "category": "Error",
+        "code": 24121
+    },
+    "Unsafe member access {0} on an `any` value.": {
+        "category": "Error",
+        "code": 24122
+    },
+    "Unsafe member access {0} on an `any` value. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function.": {
+        "category": "Error",
+        "code": 24123
+    },
+    "Unsafe return of a value of type {0}.": {
+        "category": "Error",
+        "code": 24124
+    },
+    "Unsafe return of type `{0}` from function with return type `{1}`.": {
+        "category": "Error",
+        "code": 24125
+    },
+    "Unsafe return of a value of type `{0}`. `this` is typed as `any`.\nYou can try to fix this by turning on the `noImplicitThis` compiler option, or adding a `this` parameter to the function.": {
+        "category": "Error",
+        "code": 24126
+    },
+    "Using `= undefined` to make a parameter optional adds unnecessary runtime logic.": {
+        "category": "Error",
+        "code": 24127
+    },
+    "Remove the default value.": {
+        "category": "Message",
+        "code": 24128
+    },
+    "Default value is useless because the {0} is not optional.": {
+        "category": "Error",
+        "code": 24129
+    },
+    "Default value is useless because it is undefined. Optional {0}s are already undefined by default.": {
+        "category": "Error",
+        "code": 24130
+    },
+    "Use the `?` optional syntax instead.": {
+        "category": "Message",
+        "code": 24131
+    },
+    "Use {0} destructuring.": {
+        "category": "Error",
+        "code": 24132
+    },
+    "Prefer .find(...) instead of .filter(...)[0].": {
+        "category": "Error",
+        "code": 24133
+    },
+    "Use .find(...) instead of .filter(...)[0].": {
+        "category": "Message",
+        "code": 24134
+    },
+    "{0} only has a call signature, you should use a function type instead.": {
+        "category": "Error",
+        "code": 24135
+    },
+    "`this` refers to the function type '{0}', did you intend to use a generic `this` parameter like `<Self>(this: Self, ...) => Self` instead?": {
+        "category": "Error",
+        "code": 24136
+    },
+    "Use 'includes()' method instead.": {
+        "category": "Error",
+        "code": 24137
+    },
+    "Use `String#includes()` method with a string instead.": {
+        "category": "Error",
+        "code": 24138
+    },
+    "Prefer using nullish coalescing operator (`??{0}`) instead of an assignment expression, as it is simpler to read.": {
+        "category": "Error",
+        "code": 24139
+    },
+    "Prefer using nullish coalescing operator (`??{0}`) instead of a logical {1} (`||{0}`), as it is a safer operator.": {
+        "category": "Error",
+        "code": 24140
+    },
+    "Prefer using nullish coalescing operator (`??{0}`) instead of a ternary expression, as it is simpler to read.": {
+        "category": "Error",
+        "code": 24141
+    },
+    "Fix to nullish coalescing operator (`??{0}`).": {
+        "category": "Message",
+        "code": 24142
+    },
+    "Change to an optional chain.": {
+        "category": "Message",
+        "code": 24143
+    },
+    "Prefer using an optional chain expression instead, as it's more concise and easier to read.": {
+        "category": "Error",
+        "code": 24144
+    },
+    "Member '{0}' is never reassigned; mark it as `readonly`.": {
+        "category": "Error",
+        "code": 24145
+    },
+    "Parameter should be a read only type.": {
+        "category": "Error",
+        "code": 24146
+    },
+    "Use the `RegExp#exec()` method instead.": {
+        "category": "Error",
+        "code": 24147
+    },
+    "Use the 'String#endsWith' method instead.": {
+        "category": "Error",
+        "code": 24148
+    },
+    "Use 'String#startsWith' method instead.": {
+        "category": "Error",
+        "code": 24149
+    },
+    "{0} has no 'await' expression.": {
+        "category": "Error",
+        "code": 24150
+    },
+    "Remove 'async'.": {
+        "category": "Message",
+        "code": 24151
+    },
+    "Invalid type \"{0}\" of template literal expression.": {
+        "category": "Error",
+        "code": 24152
+    },
+    "Returning an awaited promise is not allowed in this context.": {
+        "category": "Error",
+        "code": 24153
+    },
+    "Remove `await` before the expression. Use caution as this may impact control flow.": {
+        "category": "Message",
+        "code": 24154
+    },
+    "Returning an awaited value that is not a promise is not allowed.": {
+        "category": "Error",
+        "code": 24155
+    },
+    "Returning an awaited promise is required in this context.": {
+        "category": "Error",
+        "code": 24156
+    },
+    "Add `await` before the expression. Use caution as this may impact control flow.": {
+        "category": "Message",
+        "code": 24157
+    },
+    "Unexpected any value in {0}. An explicit comparison or type conversion is required.": {
+        "category": "Error",
+        "code": 24158
+    },
+    "Unexpected nullable boolean value in {0}. Please handle the nullish case explicitly.": {
+        "category": "Error",
+        "code": 24159
+    },
+    "Unexpected nullable enum value in {0}. Please handle the nullish/zero/NaN cases explicitly.": {
+        "category": "Error",
+        "code": 24160
+    },
+    "Unexpected nullable number value in {0}. Please handle the nullish/zero/NaN cases explicitly.": {
+        "category": "Error",
+        "code": 24161
+    },
+    "Unexpected nullable object value in {0}. An explicit null check is required.": {
+        "category": "Error",
+        "code": 24162
+    },
+    "Unexpected nullable string value in {0}. Please handle the nullish/empty cases explicitly.": {
+        "category": "Error",
+        "code": 24163
+    },
+    "Unexpected nullish value in conditional. The condition is always false.": {
+        "category": "Error",
+        "code": 24164
+    },
+    "Unexpected number value in {0}. An explicit zero/NaN check is required.": {
+        "category": "Error",
+        "code": 24165
+    },
+    "Unexpected object value in {0}. The condition is always true.": {
+        "category": "Error",
+        "code": 24166
+    },
+    "Unexpected value in conditional. A boolean expression is required.": {
+        "category": "Error",
+        "code": 24167
+    },
+    "Unexpected string value in {0}. An explicit empty string check is required.": {
+        "category": "Error",
+        "code": 24168
+    },
+    "Explicitly convert value to a boolean (`Boolean(value)`)": {
+        "category": "Message",
+        "code": 24169
+    },
+    "Change condition to check array's length (`value.length > 0`)": {
+        "category": "Message",
+        "code": 24170
+    },
+    "Change condition to check array's length (`value.length === 0`)": {
+        "category": "Message",
+        "code": 24171
+    },
+    "Change condition to check for empty string (`value !== \"\"`)": {
+        "category": "Message",
+        "code": 24172
+    },
+    "Change condition to check if false (`value === false`)": {
+        "category": "Message",
+        "code": 24173
+    },
+    "Change condition to check for NaN (`!Number.isNaN(value)`)": {
+        "category": "Message",
+        "code": 24174
+    },
+    "Change condition to check for null/undefined (`value != null`)": {
+        "category": "Message",
+        "code": 24175
+    },
+    "Change condition to check string's length (`value.length !== 0`)": {
+        "category": "Message",
+        "code": 24176
+    },
+    "Change condition to check if true (`value === true`)": {
+        "category": "Message",
+        "code": 24177
+    },
+    "Change condition to check for 0 (`value !== 0`)": {
+        "category": "Message",
+        "code": 24178
+    },
+    "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)": {
+        "category": "Message",
+        "code": 24179
+    },
+    "Explicitly treat nullish value the same as false (`value ?? false`)": {
+        "category": "Message",
+        "code": 24180
+    },
+    "Explicitly treat nullish value the same as 0 (`value ?? 0`)": {
+        "category": "Message",
+        "code": 24181
+    },
+    "Add an explicit `boolean` return type annotation.": {
+        "category": "Message",
+        "code": 24182
+    },
+    "Predicate function should not be 'async'; expected a boolean return type.": {
+        "category": "Error",
+        "code": 24183
+    },
+    "Async function used in a context where a void function is expected.": {
+        "category": "Error",
+        "code": 24184
+    },
+    "Value-returning function used in a context where a void function is expected.": {
+        "category": "Error",
+        "code": 24185
+    },
+    "Value returned in a context where a void return is expected.": {
+        "category": "Error",
+        "code": 24186
+    },
+    "Add a void operator to discard the return value.": {
+        "category": "Message",
+        "code": 24187
+    },
+    "Wrap the function body in an async IIFE.": {
+        "category": "Message",
+        "code": 24188
+    },
+    "Add branches for missing cases.": {
+        "category": "Message",
+        "code": 24189
+    },
+    "The switch statement is exhaustive, so the default case is unnecessary.": {
+        "category": "Error",
+        "code": 24190
+    },
+    "Switch is not exhaustive. Cases not matched: {0}": {
+        "category": "Error",
+        "code": 24191
+    },
+    "A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.\nConsider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. ": {
+        "category": "Error",
+        "code": 24192
+    },
+    "A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.\nConsider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. \nIf a function does not access `this`, it can be annotated with `this: void`.": {
+        "category": "Error",
+        "code": 24193
+    },
+    "{0} with identical parameters.": {
+        "category": "Error",
+        "code": 24194
+    },
+    "{0} with a rest parameter.": {
+        "category": "Error",
+        "code": 24195
+    },
+    "{0} with an optional parameter.": {
+        "category": "Error",
+        "code": 24196
+    },
+    "{0} taking `{1}`.": {
+        "category": "Error",
+        "code": 24197
+    },
+    "{0}() expects a value to be returned at the end of {1}.": {
+        "category": "Error",
+        "code": 24198
+    },
+    "{0}() expects a return value from {1}.": {
+        "category": "Error",
+        "code": 24199
+    },
+    "{0}() expects no useless return value from {1}.": {
+        "category": "Error",
+        "code": 24200
+    },
+    "Wrap the expression in `{}`.": {
+        "category": "Message",
+        "code": 24201
+    },
+    "Prepend `void` to the expression.": {
+        "category": "Message",
+        "code": 24202
+    },
+    "Identifier '{0}' is not in camel case.": {
+        "category": "Error",
+        "code": 24203
+    },
+    "#{0} is not in camel case.": {
+        "category": "Error",
+        "code": 24204
+    },
+    "Lacked a call of 'super()' in some code paths.": {
+        "category": "Error",
+        "code": 24205
+    },
+    "Expected to call 'super()'.": {
+        "category": "Error",
+        "code": 24206
+    },
+    "Unexpected duplicate 'super()'.": {
+        "category": "Error",
+        "code": 24207
+    },
+    "Unexpected 'super()' because 'super' is not a constructor.": {
+        "category": "Error",
+        "code": 24208
+    },
+    "The update clause in this loop moves the variable in the wrong direction.": {
+        "category": "Error",
+        "code": 24209
+    },
+    "Expected to return a value in {0}.": {
+        "category": "Error",
+        "code": 24210
+    },
+    "Expected {0} to always return a value.": {
+        "category": "Error",
+        "code": 24211
+    },
+    "Identifier '{0}' is restricted.": {
+        "category": "Error",
+        "code": 24212
+    },
+    "Identifier '#{0}' is restricted.": {
+        "category": "Error",
+        "code": 24213
+    },
+    "Identifier '{0}' does not match the pattern '{1}'.": {
+        "category": "Error",
+        "code": 24214
+    },
+    "Identifier '#{0}' does not match the pattern '{1}'.": {
+        "category": "Error",
+        "code": 24215
+    },
+    "Assignment (=) can be replaced with operator assignment ({0}).": {
+        "category": "Error",
+        "code": 24216
+    },
+    "Convert this assignment to use the operator {0}.": {
+        "category": "Message",
+        "code": 24217
+    },
+    "Logical expression can be replaced with an assignment ({0}).": {
+        "category": "Error",
+        "code": 24218
+    },
+    "Replace this logical expression with an assignment with the operator {0}.": {
+        "category": "Message",
+        "code": 24219
+    },
+    "'if' statement can be replaced with a logical operator assignment with operator {0}.": {
+        "category": "Error",
+        "code": 24220
+    },
+    "Replace this 'if' statement with a logical assignment with operator {0}.": {
+        "category": "Message",
+        "code": 24221
+    },
+    "Unexpected logical operator assignment ({0}) shorthand.": {
+        "category": "Error",
+        "code": 24222
+    },
+    "Separate the logical assignment into an assignment with a logical operator.": {
+        "category": "Message",
+        "code": 24223
+    },
+    "Unexpected constant condition.": {
+        "category": "Error",
+        "code": 24224
+    },
+    "Unexpected control character(s) in regular expression: {0}.": {
+        "category": "Error",
+        "code": 24225
+    },
+    "Unnecessary 'else' after 'return'.": {
+        "category": "Error",
+        "code": 24226
+    },
+    "`eval` can be harmful.": {
+        "category": "Error",
+        "code": 24227
+    },
+    "Found a comment that would permit fallthrough, but case cannot fall through.": {
+        "category": "Error",
+        "code": 24228
+    },
+    "Expected a 'break' statement before 'case'.": {
+        "category": "Error",
+        "code": 24229
+    },
+    "Expected a 'break' statement before 'default'.": {
+        "category": "Error",
+        "code": 24230
+    },
+    "Read-only global '{0}' should not be modified.": {
+        "category": "Error",
+        "code": 24231
+    },
+    "Unexpected {0} declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.": {
+        "category": "Error",
+        "code": 24232
+    },
+    "Unexpected {0} declaration in the global scope, wrap in a block or in an IIFE.": {
+        "category": "Error",
+        "code": 24233
+    },
+    "Global variable leak, declare the variable if it is intended to be local.": {
+        "category": "Error",
+        "code": 24234
+    },
+    "Unexpected assignment to read-only global variable.": {
+        "category": "Error",
+        "code": 24235
+    },
+    "Unexpected redeclaration of read-only global variable.": {
+        "category": "Error",
+        "code": 24236
+    },
+    "Implied eval. Consider passing a function instead of a string.": {
+        "category": "Error",
+        "code": 24237
+    },
+    "Implied eval. Do not use execScript().": {
+        "category": "Error",
+        "code": 24238
+    },
+    "{0}.": {
+        "category": "Error",
+        "code": 24239
+    },
+    "Unexpected surrogate pair in character class. Use 'u' flag.": {
+        "category": "Error",
+        "code": 24240
+    },
+    "Unexpected surrogate pair in character class.": {
+        "category": "Error",
+        "code": 24241
+    },
+    "Unexpected combined character in character class.": {
+        "category": "Error",
+        "code": 24242
+    },
+    "Unexpected modified Emoji in character class.": {
+        "category": "Error",
+        "code": 24243
+    },
+    "Unexpected national flag in character class.": {
+        "category": "Error",
+        "code": 24244
+    },
+    "Unexpected joined character sequence in character class.": {
+        "category": "Error",
+        "code": 24245
+    },
+    "Add unicode 'u' flag to regex.": {
+        "category": "Message",
+        "code": 24246
+    },
+    "'{0}' is not a function.": {
+        "category": "Error",
+        "code": 24247
+    },
+    "'{0}' is reference to '{1}', which is not a function.": {
+        "category": "Error",
+        "code": 24248
+    },
+    "Assignment to function parameter '{0}'.": {
+        "category": "Error",
+        "code": 24249
+    },
+    "Assignment to property of function parameter '{0}'.": {
+        "category": "Error",
+        "code": 24250
+    },
+    "'{0}' is already defined by a variable declaration.": {
+        "category": "Error",
+        "code": 24251
+    },
+    "Spaces are hard to count. Use {{0}}.": {
+        "category": "Error",
+        "code": 24252
+    },
+    "'{0}' is restricted from being used as an exported name.": {
+        "category": "Error",
+        "code": 24253
+    },
+    "Exporting 'default' is restricted.": {
+        "category": "Error",
+        "code": 24254
+    },
+    "'{0}' import is restricted from being used.": {
+        "category": "Error",
+        "code": 24255
+    },
+    "'{0}' import is restricted from being used. {1}": {
+        "category": "Error",
+        "code": 24256
+    },
+    "'{0}' import is restricted from being used by a pattern.": {
+        "category": "Error",
+        "code": 24257
+    },
+    "'{0}' import is restricted from being used by a pattern. {1}": {
+        "category": "Error",
+        "code": 24258
+    },
+    "'{0}' import from '{1}' is restricted from being used by a pattern.": {
+        "category": "Error",
+        "code": 24259
+    },
+    "'{0}' import from '{1}' is restricted from being used by a pattern. {2}": {
+        "category": "Error",
+        "code": 24260
+    },
+    "* import is invalid because {0} from '{1}' {2} restricted from being used by a pattern.": {
+        "category": "Error",
+        "code": 24261
+    },
+    "* import is invalid because import name matching '{0}' pattern from '{1}' is restricted from being used.": {
+        "category": "Error",
+        "code": 24262
+    },
+    "* import is invalid because {0} from '{1}' {2} restricted from being used by a pattern. {3}": {
+        "category": "Error",
+        "code": 24263
+    },
+    "* import is invalid because import name matching '{0}' pattern from '{1}' is restricted from being used. {2}": {
+        "category": "Error",
+        "code": 24264
+    },
+    "* import is invalid because {0} from '{1}' {2} restricted.": {
+        "category": "Error",
+        "code": 24265
+    },
+    "* import is invalid because {0} from '{1}' {2} restricted. {3}": {
+        "category": "Error",
+        "code": 24266
+    },
+    "'{0}' import from '{1}' is restricted.": {
+        "category": "Error",
+        "code": 24267
+    },
+    "'{0}' import from '{1}' is restricted. {2}": {
+        "category": "Error",
+        "code": 24268
+    },
+    "'{0}' import from '{1}' is restricted because only {2} {3} allowed.": {
+        "category": "Error",
+        "code": 24269
+    },
+    "'{0}' import from '{1}' is restricted because only {2} {3} allowed. {4}": {
+        "category": "Error",
+        "code": 24270
+    },
+    "* import is invalid because only {0} from '{1}' {2} allowed.": {
+        "category": "Error",
+        "code": 24271
+    },
+    "* import is invalid because only {0} from '{1}' {2} allowed. {3}": {
+        "category": "Error",
+        "code": 24272
+    },
+    "'{0}' import from '{1}' is restricted because only imports that match the pattern '{2}' are allowed from '{1}'.": {
+        "category": "Error",
+        "code": 24273
+    },
+    "'{0}' import from '{1}' is restricted because only imports that match the pattern '{2}' are allowed from '{1}'. {3}": {
+        "category": "Error",
+        "code": 24274
+    },
+    "* import is invalid because only imports that match the pattern '{0}' from '{1}' are allowed.": {
+        "category": "Error",
+        "code": 24275
+    },
+    "* import is invalid because only imports that match the pattern '{0}' from '{1}' are allowed. {2}": {
+        "category": "Error",
+        "code": 24276
+    },
+    "{0}": {
+        "category": "Error",
+        "code": 24277
+    },
+    "'{0}' is not allowed before 'super()'.": {
+        "category": "Error",
+        "code": 24278
+    },
+    "'{0}' is not defined.": {
+        "category": "Error",
+        "code": 24279
+    },
+    "'{0}' is not modified in this loop.": {
+        "category": "Error",
+        "code": 24280
+    },
+    "Unnecessary use of boolean literals in conditional expression.": {
+        "category": "Error",
+        "code": 24281
+    },
+    "Unnecessary use of conditional expression for default assignment.": {
+        "category": "Error",
+        "code": 24282
+    },
+    "Unreachable code.": {
+        "category": "Error",
+        "code": 24283
+    },
+    "Invalid loop. Its body allows only one iteration.": {
+        "category": "Error",
+        "code": 24284
+    },
+    "Unexpected negating the left operand of '{0}' operator.": {
+        "category": "Error",
+        "code": 24285
+    },
+    "Negate '{0}' expression instead of its left operand. This changes the current behavior.": {
+        "category": "Message",
+        "code": 24286
+    },
+    "Wrap negation in '()' to make the intention explicit. This preserves the current behavior.": {
+        "category": "Message",
+        "code": 24287
+    },
+    "'{0}' is defined but never used.": {
+        "category": "Error",
+        "code": 24288
+    },
+    "Remove unused private class member '{0}'.": {
+        "category": "Message",
+        "code": 24289
+    },
+    "'{0}' is {1} but never used{2}.": {
+        "category": "Error",
+        "code": 24290
+    },
+    "'{0}' is marked as ignored but is used{1}.": {
+        "category": "Error",
+        "code": 24291
+    },
+    "Remove unused variable '{0}'.": {
+        "category": "Message",
+        "code": 24292
+    },
+    "The value assigned to '{0}' is not used in subsequent statements.": {
+        "category": "Error",
+        "code": 24293
+    },
+    "Backreference '{0}' will be ignored. It references group '{1}'{2} from within that group.": {
+        "category": "Error",
+        "code": 24294
+    },
+    "Backreference '{0}' will be ignored. It references group '{1}'{2} which appears later in the pattern.": {
+        "category": "Error",
+        "code": 24295
+    },
+    "Backreference '{0}' will be ignored. It references group '{1}'{2} which appears before in the same lookbehind.": {
+        "category": "Error",
+        "code": 24296
+    },
+    "Backreference '{0}' will be ignored. It references group '{1}'{2} which is in another alternative.": {
+        "category": "Error",
+        "code": 24297
+    },
+    "Backreference '{0}' will be ignored. It references group '{1}'{2} which is in a negative lookaround.": {
+        "category": "Error",
+        "code": 24298
+    },
+    "Remove the constructor.": {
+        "category": "Message",
+        "code": 24299
+    },
+    "Unnecessary escape character: \\{0}.": {
+        "category": "Error",
+        "code": 24300
+    },
+    "Remove the `\\`. This maintains the current functionality.": {
+        "category": "Message",
+        "code": 24301
+    },
+    "Remove the `\\` if it was inserted by mistake.": {
+        "category": "Message",
+        "code": 24302
+    },
+    "Replace the `\\` with `\\\\` to include the actual backslash character.": {
+        "category": "Message",
+        "code": 24303
+    },
+    "Unnecessary return statement.": {
+        "category": "Error",
+        "code": 24304
+    },
+    "Unexpected var, use let or const instead.": {
+        "category": "Error",
+        "code": 24305
+    },
+    "Expected shorthand for all properties.": {
+        "category": "Error",
+        "code": 24306
+    },
+    "Expected longform method syntax for string literal keys.": {
+        "category": "Error",
+        "code": 24307
+    },
+    "Expected property shorthand.": {
+        "category": "Error",
+        "code": 24308
+    },
+    "Expected longform property syntax.": {
+        "category": "Error",
+        "code": 24309
+    },
+    "Expected method shorthand.": {
+        "category": "Error",
+        "code": 24310
+    },
+    "Expected longform method syntax.": {
+        "category": "Error",
+        "code": 24311
+    },
+    "Unexpected mix of shorthand and non-shorthand properties.": {
+        "category": "Error",
+        "code": 24312
+    },
+    "Combine this with the previous '{0}' statement with uninitialized variables.": {
+        "category": "Error",
+        "code": 24313
+    },
+    "Combine this with the previous '{0}' statement with initialized variables.": {
+        "category": "Error",
+        "code": 24314
+    },
+    "Split uninitialized '{0}' declarations into multiple statements.": {
+        "category": "Error",
+        "code": 24315
+    },
+    "Split initialized '{0}' declarations into multiple statements.": {
+        "category": "Error",
+        "code": 24316
+    },
+    "Split requires to be separated into a single block.": {
+        "category": "Error",
+        "code": 24317
+    },
+    "Combine this with the previous '{0}' statement.": {
+        "category": "Error",
+        "code": 24318
+    },
+    "Split '{0}' declarations into multiple statements.": {
+        "category": "Error",
+        "code": 24319
+    },
+    "Unexpected operator assignment ({0}) shorthand.": {
+        "category": "Error",
+        "code": 24320
+    },
+    "Unexpected function expression.": {
+        "category": "Error",
+        "code": 24321
+    },
+    "'{0}' is never reassigned. Use 'const' instead.": {
+        "category": "Error",
+        "code": 24322
+    },
+    "Use the '**' operator instead of 'Math.pow'.": {
+        "category": "Error",
+        "code": 24323
+    },
+    "Add name to capture group.": {
+        "category": "Message",
+        "code": 24324
+    },
+    "Convert group to non-capturing.": {
+        "category": "Message",
+        "code": 24325
+    },
+    "Capture group '{0}' should be converted to a named or non-capturing group.": {
+        "category": "Error",
+        "code": 24326
+    },
+    "Use an object spread instead of `Object.assign` eg: `{ ...foo }`.": {
+        "category": "Error",
+        "code": 24327
+    },
+    "Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`.": {
+        "category": "Error",
+        "code": 24328
+    },
+    "Use a regular expression literal instead of the 'RegExp' constructor.": {
+        "category": "Error",
+        "code": 24329
+    },
+    "Replace with an equivalent regular expression literal.": {
+        "category": "Message",
+        "code": 24330
+    },
+    "Replace with an equivalent regular expression literal with flags '{0}'.": {
+        "category": "Message",
+        "code": 24331
+    },
+    "Replace with a regular expression literal with flags '{0}'.": {
+        "category": "Message",
+        "code": 24332
+    },
+    "Regular expression literal is unnecessarily wrapped within a 'RegExp' constructor.": {
+        "category": "Error",
+        "code": 24333
+    },
+    "Use regular expression literal with flags instead of the 'RegExp' constructor.": {
+        "category": "Error",
+        "code": 24334
+    },
+    "Unexpected string concatenation.": {
+        "category": "Error",
+        "code": 24335
+    },
+    "Possible race condition: `{0}` might be reassigned based on an outdated value of `{0}`.": {
+        "category": "Error",
+        "code": 24336
+    },
+    "Possible race condition: `{0}` might be assigned based on an outdated state of `{1}`.": {
+        "category": "Error",
+        "code": 24337
+    },
+    "Add the 'u' flag.": {
+        "category": "Message",
+        "code": 24338
+    },
+    "Add the 'v' flag.": {
+        "category": "Message",
+        "code": 24339
+    },
+    "Use the 'u' flag.": {
+        "category": "Error",
+        "code": 24340
+    },
+    "Use the 'v' flag.": {
+        "category": "Error",
+        "code": 24341
+    },
+    "Imports should be sorted alphabetically.": {
+        "category": "Error",
+        "code": 24342
+    },
+    "Member '{0}' of the import declaration should be sorted alphabetically.": {
+        "category": "Error",
+        "code": 24343
+    },
+    "Expected '{0}' syntax before '{1}' syntax.": {
+        "category": "Error",
+        "code": 24344
+    },
+    "Expected object keys to be in {0}{1}{2}ending order. '{3}' should be before '{4}'.": {
+        "category": "Error",
+        "code": 24345
+    },
+    "Variables within the same declaration block should be sorted alphabetically.": {
+        "category": "Error",
+        "code": 24346
+    },
+    "Use the function form of 'use strict'.": {
+        "category": "Error",
+        "code": 24347
+    },
+    "Use the global form of 'use strict'.": {
+        "category": "Error",
+        "code": 24348
+    },
+    "Multiple 'use strict' directives.": {
+        "category": "Error",
+        "code": 24349
+    },
+    "Strict mode is not permitted.": {
+        "category": "Error",
+        "code": 24350
+    },
+    "Unnecessary 'use strict' directive.": {
+        "category": "Error",
+        "code": 24351
+    },
+    "'use strict' is unnecessary inside of modules.": {
+        "category": "Error",
+        "code": 24352
+    },
+    "'use strict' is unnecessary when implied strict mode is enabled.": {
+        "category": "Error",
+        "code": 24353
+    },
+    "'use strict' is unnecessary inside of classes.": {
+        "category": "Error",
+        "code": 24354
+    },
+    "'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016.": {
+        "category": "Error",
+        "code": 24355
+    },
+    "Wrap {0} in a function with 'use strict' directive.": {
+        "category": "Error",
+        "code": 24356
+    },
+    "Expected Unicode BOM (Byte Order Mark).": {
+        "category": "Error",
+        "code": 24357
+    },
+    "Unexpected Unicode BOM (Byte Order Mark).": {
+        "category": "Error",
+        "code": 24358
+    },
+    "Use the isNaN function to compare with NaN.": {
+        "category": "Error",
+        "code": 24359
+    },
+    "'switch(NaN)' can never match a case clause. Use Number.isNaN instead of the switch.": {
+        "category": "Error",
+        "code": 24360
+    },
+    "'case NaN' can never match. Use Number.isNaN before the switch.": {
+        "category": "Error",
+        "code": 24361
+    },
+    "Array prototype method '{0}' cannot find NaN.": {
+        "category": "Error",
+        "code": 24362
+    },
+    "Replace with Number.isNaN.": {
+        "category": "Message",
+        "code": 24363
+    },
+    "Replace with Number.isNaN and cast to a Number.": {
+        "category": "Message",
+        "code": 24364
+    },
+    "Replace with Array.prototype.{0}.": {
+        "category": "Message",
+        "code": 24365
+    },
+    "Expected literal to be on the {0} side of {1}.": {
+        "category": "Error",
+        "code": 24366
+    },
+    "Include the original caught error as the `cause` of the symptom error.": {
+        "category": "Message",
+        "code": 24367
+    },
+    "Remove the console.{0}().": {
+        "category": "Message",
+        "code": 24368
+    },
+    "Remove the console method call.": {
+        "category": "Message",
+        "code": 24369
+    },
+    "Add comment inside empty {0}.": {
+        "category": "Message",
+        "code": 24370
+    },
+    "Invalid lint rule options for '{0}': {1}": {
+        "category": "Error",
+        "code": 24371
+    },
+    "Invalid lint directive: {0}": {
+        "category": "Error",
+        "code": 24372
+    },
+    "Fix all {0}": {
+        "category": "Message",
+        "code": 24373
+    },
+    "Fix {0}": {
+        "category": "Message",
+        "code": 24374
+    },
+    "Use a function type.": {
+        "category": "Message",
+        "code": 24375
+    },
+    "Use non-null assertions.": {
+        "category": "Message",
+        "code": 24376
+    },
+    "Use a non-null assertion.": {
+        "category": "Message",
+        "code": 24377
+    },
+    "Remove unnecessary boolean comparison.": {
+        "category": "Message",
+        "code": 24378
+    },
+    "Remove 'void'": {
+        "category": "Message",
+        "code": 24379
+    },
+    "Remove inferrable type annotations.": {
+        "category": "Message",
+        "code": 24380
+    },
+    "Remove type annotation.": {
+        "category": "Message",
+        "code": 24381
+    },
+    "Convert to a top-level type import": {
+        "category": "Message",
+        "code": 24382
+    },
+    "Remove extra non-null assertion": {
+        "category": "Message",
+        "code": 24383
+    },
+    "Replace any with a safer type": {
+        "category": "Message",
+        "code": 24384
+    },
+    "Convert method signature style": {
+        "category": "Message",
+        "code": 24385
+    },
+    "Remove public accessibility modifier": {
+        "category": "Message",
+        "code": 24386
+    },
+    "Use type exports.": {
+        "category": "Message",
+        "code": 24387
+    },
+    "Convert interface to type alias": {
+        "category": "Message",
+        "code": 24388
+    },
+    "Convert type alias to interface": {
+        "category": "Message",
+        "code": 24389
+    },
+    "Convert angle-bracket assertion to as assertion": {
+        "category": "Message",
+        "code": 24390
+    },
+    "Move generic type arguments to type annotations.": {
+        "category": "Message",
+        "code": 24391
+    },
+    "Move generic type arguments to the type annotation.": {
+        "category": "Message",
+        "code": 24392
+    },
+    "Move generic type arguments to constructors.": {
+        "category": "Message",
+        "code": 24393
+    },
+    "Move generic type arguments to the constructor.": {
+        "category": "Message",
+        "code": 24394
+    },
+    "Remove TSLint comments.": {
+        "category": "Message",
+        "code": 24395
+    },
+    "Remove TSLint comment.": {
+        "category": "Message",
+        "code": 24396
+    },
+    "Change existing type annotation to `: {0}`.": {
+        "category": "Message",
+        "code": 24397
+    },
+    "Add an explicit `: [unknown]` type annotation to the rejection callback rest variable.": {
+        "category": "Message",
+        "code": 24398
+    },
+    "Add an explicit `: unknown` type annotation to the rejection callback variable.": {
+        "category": "Message",
+        "code": 24399
+    },
+    "Mark the function async.": {
+        "category": "Message",
+        "code": 24400
+    },
+    "Use the `this` return type.": {
+        "category": "Message",
+        "code": 24401
+    },
+    "Use a type parameter instead of an assertion.": {
+        "category": "Message",
+        "code": 24402
+    },
+    "Can be fixed to {0} = {1}": {
+        "category": "Message",
+        "code": 24403
+    },
+    "You should use `as const` instead of type annotation.": {
+        "category": "Message",
+        "code": 24404
+    },
+    "Instead, assert that the value satisfies the {0} type.": {
+        "category": "Message",
+        "code": 24405
+    },
+    "Remove the type conversion.": {
+        "category": "Message",
+        "code": 24406
+    },
+    "Remove the unnecessary `{0}` constraint.": {
+        "category": "Message",
+        "code": 24407
+    },
+    "Replace `{0}` with `{1}`.": {
+        "category": "Message",
+        "code": 24408
+    },
+    "Consider using the optional chain operator `?.` instead. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator.": {
+        "category": "Message",
+        "code": 24409
+    },
+    "You should remove the non-null assertion.": {
+        "category": "Message",
+        "code": 24410
+    },
+    "Use `never` instead, this is useful when instantiating generic type parameters that you don't need to know the type of.": {
+        "category": "Message",
+        "code": 24411
+    },
+    "Use `unknown` instead, this will force you to explicitly, and safely assert the type is correct.": {
+        "category": "Message",
+        "code": 24412
+    },
+    "Use `PropertyKey` instead, this is more explicit than `keyof any`.": {
+        "category": "Message",
+        "code": 24413
+    },
+    "Replace empty interface with a type alias.": {
+        "category": "Message",
+        "code": 24414
+    },
+    "Replace empty interface with `{0}`.": {
+        "category": "Message",
+        "code": 24415
+    },
+    "Replace `{}` with `{0}`.": {
+        "category": "Message",
+        "code": 24416
+    },
+    "Wrap the left-hand side in parentheses to avoid confusion with \"{0}\" operator.": {
+        "category": "Message",
+        "code": 24417
+    },
+    "Remove unnecessary non-null assertion (!) in equality test.": {
+        "category": "Message",
+        "code": 24418
+    },
+    "Remove unnecessary non-null assertion (!) in assignment left-hand side.": {
+        "category": "Message",
+        "code": 24419
+    },
+    "Remove possibly unnecessary non-null assertion (!) in the left operand of the `{0}` operator.": {
+        "category": "Message",
+        "code": 24420
+    },
+    "Use `array.splice()` instead.": {
+        "category": "Message",
+        "code": 24421
+    },
+    "Convert to a method signature. This removes the `readonly` modifier, allowing the member to be reassigned.": {
+        "category": "Message",
+        "code": 24422
+    },
+    "Add '{0}' accessibility modifier": {
+        "category": "Message",
+        "code": 24423
+    },
+    "Use const x = [ ... ] satisfies {0} instead.": {
+        "category": "Message",
+        "code": 24424
+    },
+    "Use const x = { ... } satisfies {0} instead.": {
+        "category": "Message",
+        "code": 24425
+    },
+    "Use const x: {0} = [ ... ] instead.": {
+        "category": "Message",
+        "code": 24426
+    },
+    "Use const x: {0} = { ... } instead.": {
+        "category": "Message",
+        "code": 24427
+    },
+    "Replace the literals with getters.": {
+        "category": "Message",
+        "code": 24428
+    },
+    "Replace the literals with readonly fields.": {
+        "category": "Message",
+        "code": 24429
+    },
+    "Replace \"@ts-ignore\" with \"@ts-expect-error\".": {
+        "category": "Message",
+        "code": 24430
+    },
+    "Replace '{0}' with '{1}' to include the actual backslash character.": {
+        "category": "Message",
+        "code": 24431
+    },
+    "Replace '{0}' with '{1}'. This maintains the current functionality.": {
+        "category": "Message",
+        "code": 24432
+    },
+    "Remove unused variable \"{0}\".": {
+        "category": "Message",
+        "code": 24433
+    },
+    "Remove the non-null assertion.": {
+        "category": "Message",
+        "code": 24434
+    },
+    "Remove unnecessary syntax.": {
+        "category": "Message",
+        "code": 24435
+    },
+    "Replace spaces with a quantifier": {
+        "category": "Message",
+        "code": 24436
+    },
+    "Use Object.hasOwn": {
+        "category": "Message",
+        "code": 24437
+    },
+    "Remove unnecessary undefined initializer": {
+        "category": "Message",
+        "code": 24438
+    },
+    "Replace else block with else if": {
+        "category": "Message",
+        "code": 24439
+    },
+    "Use explicit Boolean conversion": {
+        "category": "Message",
+        "code": 24440
+    },
+    "Remove unnecessary label": {
+        "category": "Message",
+        "code": 24441
+    },
+    "Remove redundant boolean cast": {
+        "category": "Message",
+        "code": 24442
+    },
+    "Remove unnecessary binding": {
+        "category": "Message",
+        "code": 24443
+    },
+    "Replace Array constructors with array literals": {
+        "category": "Message",
+        "code": 24444
+    },
+    "Replace with an array literal": {
+        "category": "Message",
+        "code": 24445
+    },
+    "The generic type arguments should be specified as part of the type annotation.": {
+        "category": "Error",
+        "code": 24446
+    },
+    "Change into an index signature instead of a record.": {
+        "category": "Message",
+        "code": 24447
+    },
+    "Change into a record instead of an index signature.": {
+        "category": "Message",
+        "code": 24448
+    },
+    "Unexpected constant relational comparison. Both sides of the `{0}` are literal values.": {
+        "category": "Error",
+        "code": 24449
     }
 }

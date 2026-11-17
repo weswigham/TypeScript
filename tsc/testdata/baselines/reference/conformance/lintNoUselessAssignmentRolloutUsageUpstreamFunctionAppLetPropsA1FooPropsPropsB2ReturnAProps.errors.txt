@@ -1,0 +1,38 @@
+/input.tsx(3,5): error TS2304: Cannot find name 'foo'.
+/input.tsx(4,15): error TS2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
+/input.tsx(5,13): error TS2304: Cannot find name 'A'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (3 errors) ====
+    function App() {
+    				let props = { a: 1 };
+    				foo(props);
+    				~~~
+!!! error TS2304: Cannot find name 'foo'.
+    				props = { b: 2 };
+    				          ~
+!!! error TS2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
+    				return <A {...props} />;
+    				        ~
+!!! error TS2304: Cannot find name 'A'.
+    			}

@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS21290: Missing return type on function.
+/input.ts(1,19): error TS7006: Parameter 'arg' implicitly has an 'any' type.
+/input.ts(1,19): error TS21291: Argument 'arg' should be typed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/explicit-module-boundary-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    export function f(arg) { return arg; }
+    ~~~~~~~~~~~~~~~~~
+!!! error TS21290: Missing return type on function.
+                      ~~~
+!!! error TS7006: Parameter 'arg' implicitly has an 'any' type.
+                      ~~~
+!!! error TS21291: Argument 'arg' should be typed.

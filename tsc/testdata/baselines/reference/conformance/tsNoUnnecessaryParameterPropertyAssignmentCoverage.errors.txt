@@ -1,0 +1,26 @@
+input.ts(4,9): error TS21360: This assignment is unnecessary since it is already assigned by a parameter property.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-parameter-property-assignment":"error"}},"files":["input.ts"]}
+==== input.ts (1 errors) ====
+    export {};
+    class Redundant {
+        constructor(public value: number) {
+            this.value = value;
+            ~~~~~~~~~~~~~~~~~~
+!!! error TS21360: This assignment is unnecessary since it is already assigned by a parameter property.
+        }
+    }
+    class Modified {
+        constructor(public value: number) {
+            value = 1;
+            this.value = value;
+        }
+    }
+    class Ordinary {
+        value: number;
+        constructor(value: number) {
+            this.value = value;
+        }
+    }

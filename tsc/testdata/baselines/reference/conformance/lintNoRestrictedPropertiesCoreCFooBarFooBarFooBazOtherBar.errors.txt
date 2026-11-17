@@ -1,0 +1,43 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19519: 'foo.bar' is restricted from being used.
+/input.ts(1,10): error TS2304: Cannot find name 'foo'.
+/input.ts(1,10): error TS19519: 'foo.bar' is restricted from being used.
+/input.ts(1,22): error TS2304: Cannot find name 'foo'.
+/input.ts(1,31): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-properties": [
+                    "error",
+                    {
+                        "object": "foo",
+                        "property": "bar"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    foo.bar; foo['bar']; foo.baz; other.bar;
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~
+!!! error TS19519: 'foo.bar' is restricted from being used.
+             ~~~
+!!! error TS2304: Cannot find name 'foo'.
+             ~~~~~~~~~~
+!!! error TS19519: 'foo.bar' is restricted from being used.
+                         ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                  ~~~~~
+!!! error TS2304: Cannot find name 'other'.

@@ -1,0 +1,26 @@
+input.ts(1,19): error TS20620: A regular expression literal can be confused with '/='.
+input.ts(2,15): error TS20620: A regular expression literal can be confused with '/='.
+input.ts(3,28): error TS20620: A regular expression literal can be confused with '/='.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-div-regex": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    const ambiguous = /=foo/;
+                      ~~~~~~
+!!! error TS20620: A regular expression literal can be confused with '/='.
+    const flags = /=foo/giu;
+                  ~~~~~~~~~
+!!! error TS20620: A regular expression literal can be confused with '/='.
+    const comment = /* keep */ /=/;
+                               ~~~
+!!! error TS20620: A regular expression literal can be confused with '/='.
+    const escaped = /\=foo/;
+    const normal = /foo/;
+    const characterClass = /[=]foo/;
+    const constructor = new RegExp("=foo");

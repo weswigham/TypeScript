@@ -1,0 +1,17 @@
+input.ts(2,17): error TS20907: This is the default value for this type parameter, so it can be omitted.
+input.ts(5,14): error TS20907: This is the default value for this type parameter, so it can be omitted.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true},"lint":{"rules":{"@typescript-eslint/no-unnecessary-type-arguments":"error"}}}
+==== input.ts (2 errors) ====
+    function invoke<T = number, U = string>() {}
+    invoke<boolean, string>();
+                    ~~~~~~
+!!! error TS20907: This is the default value for this type parameter, so it can be omitted.
+    invoke<number, boolean>();
+    type Box<T = string> = T[];
+    let box: Box<string>;
+                 ~~~~~~
+!!! error TS20907: This is the default value for this type parameter, so it can be omitted.
+    const instantiated = invoke<number, string>;

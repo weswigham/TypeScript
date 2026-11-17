@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,10): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unused-expressions": [
+                    "error",
+                    {
+                        "allowShortCircuit": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    value && value?.();
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+             ~~~~~
+!!! error TS2304: Cannot find name 'value'.

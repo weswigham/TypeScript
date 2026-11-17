@@ -1,0 +1,31 @@
+/input.ts(1,1): error TS19326: Function 'fn' has too many parameters (2). Maximum allowed is 1.
+/input.ts(1,25): error TS7006: Parameter 'value' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-params": [
+                    "error",
+                    {
+                        "countVoidThis": true,
+                        "max": 1
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function fn(this: void, value) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19326: Function 'fn' has too many parameters (2). Maximum allowed is 1.
+                            ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

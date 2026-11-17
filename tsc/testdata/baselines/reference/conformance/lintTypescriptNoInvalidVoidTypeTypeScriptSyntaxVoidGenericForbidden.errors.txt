@@ -1,0 +1,27 @@
+/input.ts(1,18): error TS20476: void is only valid as a return type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-invalid-void-type": [
+                    "error",
+                    {
+                        "allowInGenericTypeArguments": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = Promise<void>;
+                     ~~~~
+!!! error TS20476: void is only valid as a return type.

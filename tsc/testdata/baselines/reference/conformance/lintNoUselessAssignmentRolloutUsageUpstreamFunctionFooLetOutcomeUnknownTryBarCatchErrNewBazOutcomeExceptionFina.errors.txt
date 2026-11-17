@@ -1,0 +1,48 @@
+/input.ts(2,9): error TS24293: The value assigned to 'outcome' is not used in subsequent statements.
+/input.ts(5,6): error TS2304: Cannot find name 'bar'.
+/input.ts(7,10): error TS2304: Cannot find name 'Baz'.
+/input.ts(8,6): error TS24293: The value assigned to 'outcome' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    function foo() {
+    				let outcome = 'unknown';
+    				    ~~~~~~~
+!!! error TS24293: The value assigned to 'outcome' is not used in subsequent statements.
+    
+    				try {
+    					bar();
+    					~~~
+!!! error TS2304: Cannot find name 'bar'.
+    				} catch (err) {
+    					new Baz();
+    					    ~~~
+!!! error TS2304: Cannot find name 'Baz'.
+    					outcome = 'exception'; 
+    					~~~~~~~
+!!! error TS24293: The value assigned to 'outcome' is not used in subsequent statements.
+    				} finally {
+    					return;
+    					console.log(outcome);
+    				}
+    			}

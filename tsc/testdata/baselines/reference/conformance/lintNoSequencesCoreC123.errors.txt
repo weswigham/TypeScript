@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2695: Left side of comma operator is unused and has no side effects.
+/input.ts(1,1): error TS2695: Left side of comma operator is unused and has no side effects.
+/input.ts(1,2): error TS19507: Unexpected use of comma operator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-sequences": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    1, 2, 3;
+    ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+     ~
+!!! error TS19507: Unexpected use of comma operator.

@@ -1,0 +1,49 @@
+/input.ts(1,1): error TS2304: Cannot find name 'foo'.
+/input.ts(1,1): error TS19655: Use the spread operator instead of '.apply()'.
+/input.ts(1,17): error TS2304: Cannot find name 'args'.
+/input.ts(1,24): error TS2304: Cannot find name 'obj'.
+/input.ts(1,24): error TS19655: Use the spread operator instead of '.apply()'.
+/input.ts(1,38): error TS2304: Cannot find name 'obj'.
+/input.ts(1,43): error TS2304: Cannot find name 'args'.
+/input.ts(1,50): error TS2304: Cannot find name 'foo'.
+/input.ts(1,50): error TS19655: Use the spread operator instead of '.apply()'.
+/input.ts(1,69): error TS2304: Cannot find name 'args'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-spread": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (10 errors) ====
+    foo.apply(null, args); obj.foo.apply(obj, args); foo['apply'](null, args);
+    ~~~
+!!! error TS2304: Cannot find name 'foo'.
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19655: Use the spread operator instead of '.apply()'.
+                    ~~~~
+!!! error TS2304: Cannot find name 'args'.
+                           ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                           ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19655: Use the spread operator instead of '.apply()'.
+                                         ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                              ~~~~
+!!! error TS2304: Cannot find name 'args'.
+                                                     ~~~
+!!! error TS2304: Cannot find name 'foo'.
+                                                     ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19655: Use the spread operator instead of '.apply()'.
+                                                                        ~~~~
+!!! error TS2304: Cannot find name 'args'.

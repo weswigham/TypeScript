@@ -1,0 +1,28 @@
+input.ts(2,15): error TS21086: Use `this` type instead.
+input.ts(5,17): error TS21086: Use `this` type instead.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/prefer-return-this-type": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    class Example<T> {
+        method(): Example<T> {
+                  ~~~~~~~~~~
+!!! error TS21086: Use `this` type instead.
+            return this;
+        }
+        arrow = (): Example<T> => this;
+                    ~~~~~~~~~~
+!!! error TS21086: Use `this` type instead.
+        explicit(this: Example<T>): Example<T> {
+            return this;
+        }
+        construct(): Example<T> {
+            return new Example<T>();
+        }
+    }

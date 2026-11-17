@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS19242: Default parameters should be last.
+/input.ts(1,26): error TS7006: Parameter 'second' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "default-param-last": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    function test(first = 1, second) {}
+                  ~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+                             ~~~~~~
+!!! error TS7006: Parameter 'second' implicitly has an 'any' type.

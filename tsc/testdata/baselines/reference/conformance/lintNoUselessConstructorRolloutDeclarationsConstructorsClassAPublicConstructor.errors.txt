@@ -1,0 +1,22 @@
+/input.ts(1,11): error TS20485: Useless constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class A { public constructor() {} }
+              ~~~~~~~~~~~~~~~~~~
+!!! error TS20485: Useless constructor.

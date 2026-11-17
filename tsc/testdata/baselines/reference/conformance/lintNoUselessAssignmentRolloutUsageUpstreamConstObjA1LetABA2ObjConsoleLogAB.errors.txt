@@ -1,0 +1,32 @@
+/input.ts(4,13): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    const obj = { a: 1 };
+            let {
+                a,
+                b = (a = 2)
+                ~
+!!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+            } = obj;
+            console.log(a, b);

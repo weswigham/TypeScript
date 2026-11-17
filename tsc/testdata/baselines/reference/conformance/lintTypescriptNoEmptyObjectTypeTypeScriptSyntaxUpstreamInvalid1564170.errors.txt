@@ -1,0 +1,27 @@
+/input.ts(1,11): error TS19105: An interface declaring no members is equivalent to its supertype.
+/input.ts(1,27): error TS2304: Cannot find name 'Derived'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-empty-object-type": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    interface Base<T> extends Derived<T> {}
+              ~~~~
+!!! error TS19105: An interface declaring no members is equivalent to its supertype.
+                              ~~~~~~~
+!!! error TS2304: Cannot find name 'Derived'.

@@ -1,0 +1,38 @@
+/input.tsx(1,8): error TS24268: 'default' import from 'foo' is restricted. Please import the default import of 'foo' from /bar/ instead.
+/input.tsx(1,69): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            {
+                                "importNames": [
+                                    "default"
+                                ],
+                                "message": "Please import the default import of 'foo' from /bar/ instead.",
+                                "name": "foo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import DisallowedObject, { AllowedObject as AllowedObjectTwo } from "foo";
+           ~~~~~~~~~~~~~~~~
+!!! error TS24268: 'default' import from 'foo' is restricted. Please import the default import of 'foo' from /bar/ instead.
+                                                                        ~~~~~
+!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

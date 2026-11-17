@@ -1,0 +1,31 @@
+input.ts(2,1): error TS21340: A `require()` style import is forbidden.
+input.ts(3,20): error TS21340: A `require()` style import is forbidden.
+input.ts(5,1): error TS21340: A `require()` style import is forbidden.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-require-imports":["error",{"allow":["^\\./allowed$"]}]}},"files":["input.ts","dependency.ts","allowed.ts","globals.d.ts"]}
+==== input.ts (3 errors) ====
+    import { value } from "./dependency";
+    require("./dependency");
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21340: A `require()` style import is forbidden.
+    import forbidden = require("./dependency");
+                       ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21340: A `require()` style import is forbidden.
+    declare const path: string;
+    require(path);
+    ~~~~~~~~~~~~~
+!!! error TS21340: A `require()` style import is forbidden.
+    require("./allowed");
+    import allowed = require("./allowed");
+    function local(require: (path: string) => unknown) {
+        return require("./dependency");
+    }
+    value;
+==== dependency.ts (0 errors) ====
+    export const value = 1;
+==== allowed.ts (0 errors) ====
+    export const value = 2;
+==== globals.d.ts (0 errors) ====
+    declare function require(path: string): unknown;

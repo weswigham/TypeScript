@@ -1,0 +1,26 @@
+/input.ts(1,47): error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.
+/input.ts(1,56): error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-enum-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum Fruit { Apple } let fruit = Fruit.Apple; fruit++; fruit += 1;
+                                                  ~~~~~~~
+!!! error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.
+                                                           ~~~~~~~~~~
+!!! error TS24116: This mutation can produce a value outside of the expected enum 'Fruit'.

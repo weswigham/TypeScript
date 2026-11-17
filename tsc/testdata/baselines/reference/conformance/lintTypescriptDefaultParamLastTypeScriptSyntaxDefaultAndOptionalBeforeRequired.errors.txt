@@ -1,0 +1,28 @@
+/input.ts(1,14): error TS19242: Default parameters should be last.
+/input.ts(1,25): error TS19242: Default parameters should be last.
+/input.ts(1,42): error TS1016: A required parameter cannot follow an optional parameter.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/default-param-last": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function run(first = 0, second?: string, third: number) {}
+                 ~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+                            ~~~~~~~~~~~~~~~
+!!! error TS19242: Default parameters should be last.
+                                             ~~~~~
+!!! error TS1016: A required parameter cannot follow an optional parameter.

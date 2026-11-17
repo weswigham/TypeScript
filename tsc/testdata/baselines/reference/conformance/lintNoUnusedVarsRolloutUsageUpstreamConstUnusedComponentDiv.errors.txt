@@ -1,0 +1,30 @@
+/input.tsx(1,7): error TS24290: 'UnusedComponent' is assigned a value but never used.
+/input.tsx(1,31): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.tsx",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.tsx (2 errors) ====
+    const UnusedComponent = () => <div />;
+          ~~~~~~~~~~~~~~~
+!!! error TS24290: 'UnusedComponent' is assigned a value but never used.
+                                  ~~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.

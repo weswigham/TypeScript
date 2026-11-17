@@ -1,0 +1,34 @@
+/input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
+/input.ts(1,25): error TS2304: Cannot find name 'base'.
+/input.ts(1,31): error TS2304: Cannot find name 'exponent'.
+/input.ts(1,41): error TS2304: Cannot find name 'extra'.
+/input.ts(1,41): error TS2554: Expected 2 arguments, but got 3.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-exponentiation-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    const result = Math.pow(base, exponent, extra);
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24323: Use the '**' operator instead of 'Math.pow'.
+                            ~~~~
+!!! error TS2304: Cannot find name 'base'.
+                                  ~~~~~~~~
+!!! error TS2304: Cannot find name 'exponent'.
+                                            ~~~~~
+!!! error TS2304: Cannot find name 'extra'.
+                                            ~~~~~
+!!! error TS2554: Expected 2 arguments, but got 3.

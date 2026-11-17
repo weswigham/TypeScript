@@ -1,0 +1,19 @@
+/input.ts(1,19): error TS24354: 'use strict' is unnecessary inside of classes.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "strict": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class A { foo() { 'use strict'; } }
+                      ~~~~~~~~~~~~~
+!!! error TS24354: 'use strict' is unnecessary inside of classes.

@@ -1,0 +1,39 @@
+/input.tsx(1,8): error TS24259: 'default' import from 'mod' is restricted from being used by a pattern.
+/input.tsx(1,17): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "group": [
+                                    "mod"
+                                ],
+                                "importNames": [
+                                    "default"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import Foo from 'mod';
+           ~~~
+!!! error TS24259: 'default' import from 'mod' is restricted from being used by a pattern.
+                    ~~~~~
+!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

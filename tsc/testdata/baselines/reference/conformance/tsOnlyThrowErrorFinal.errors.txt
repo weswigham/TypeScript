@@ -1,0 +1,38 @@
+input.ts(3,22): error TS19516: Expected an error object to be thrown.
+input.ts(4,29): error TS19516: Expected an error object to be thrown.
+input.ts(5,11): error TS19517: Do not throw undefined.
+input.ts(8,11): error TS19516: Expected an error object to be thrown.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "@typescript-eslint/only-throw-error": ["error", { "allowThrowingAny": false, "allowThrowingUnknown": false }] } }
+    }
+==== input.ts (4 errors) ====
+    export {};
+    function invalid(value: any, unknownValue: unknown) {
+        if (value) throw value;
+                         ~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+        if (unknownValue) throw unknownValue;
+                                ~~~~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+        throw undefined;
+              ~~~~~~~~~
+!!! error TS19517: Do not throw undefined.
+    }
+    function structural() {
+        throw { name: "Error", message: "not an Error instance" };
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19516: Expected an error object to be thrown.
+    }
+    function constrained<T extends Error>(value: T) {
+        throw value;
+    }
+    try {
+        throw new TypeError();
+    } catch (error) {
+        throw error;
+    }
+    Promise.reject().catch(error => { throw error; });
+    Promise.reject().then(undefined, error => { throw error; });

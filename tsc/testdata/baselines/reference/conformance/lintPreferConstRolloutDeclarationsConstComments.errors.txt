@@ -1,0 +1,22 @@
+/input.ts(1,16): error TS24322: 'x' is never reassigned. Use 'const' instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-const": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    let /* keep */ x = 1;
+                   ~
+!!! error TS24322: 'x' is never reassigned. Use 'const' instead.

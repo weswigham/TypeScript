@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS19101: tslint comment detected: "/* tslint:disable */"
+/input.ts(1,34): error TS19101: tslint comment detected: "/* tslint:enable */"
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/ban-tslint-comment": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const /* tslint:disable */ value /* tslint:enable */ = 1;
+          ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "/* tslint:disable */"
+                                     ~~~~~~~~~~~~~~~~~~~
+!!! error TS19101: tslint comment detected: "/* tslint:enable */"

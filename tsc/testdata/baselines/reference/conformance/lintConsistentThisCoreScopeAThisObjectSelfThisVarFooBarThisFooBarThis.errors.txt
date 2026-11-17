@@ -1,0 +1,35 @@
+/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+/input.ts(1,27): error TS7022: 'foo' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+/input.ts(1,32): error TS7022: 'bar' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+/input.ts(1,46): error TS2488: Type 'typeof globalThis' must have a '[Symbol.iterator]()' method that returns an iterator.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "consistent-this": [
+                    "error",
+                    "self"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    object.self = this; var { foo, bar } = this; [foo, bar] = this;
+    ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
+                              ~~~
+!!! error TS7022: 'foo' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                                   ~~~
+!!! error TS7022: 'bar' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                                                 ~~~~~~~~~~
+!!! error TS2488: Type 'typeof globalThis' must have a '[Symbol.iterator]()' method that returns an iterator.

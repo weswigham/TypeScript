@@ -1,0 +1,34 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,16): error TS2304: Cannot find name 'value'.
+/input.ts(1,22): error TS19254: Expected '!==' and instead saw '!='.
+/input.ts(1,25): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": [
+                    "error",
+                    "allow-null"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    value == null; value != other;
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                   ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                         ~~
+!!! error TS19254: Expected '!==' and instead saw '!='.
+                            ~~~~~
+!!! error TS2304: Cannot find name 'other'.

@@ -1,0 +1,32 @@
+/input.ts(1,1): error TS2304: Cannot find name 'work'.
+/input.ts(2,1): error TS24366: Expected literal to be on the right side of ===.
+/input.ts(2,8): error TS2304: Cannot find name 'value'.
+/input.ts(2,23): error TS2304: Cannot find name 'item'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "yoda": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    work()
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    0 === [value].indexOf(item);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24366: Expected literal to be on the right side of ===.
+           ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                          ~~~~
+!!! error TS2304: Cannot find name 'item'.

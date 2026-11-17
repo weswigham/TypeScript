@@ -1,0 +1,23 @@
+/input.ts(1,34): error TS24147: Use the `RegExp#exec()` method instead.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-regexp-exec": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const text: string; text.match(/a/);
+                                     ~~~~~
+!!! error TS24147: Use the `RegExp#exec()` method instead.

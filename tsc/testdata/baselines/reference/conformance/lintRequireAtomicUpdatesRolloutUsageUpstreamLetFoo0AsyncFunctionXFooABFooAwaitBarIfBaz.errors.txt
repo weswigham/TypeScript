@@ -1,0 +1,42 @@
+/input.ts(1,35): error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
+/input.ts(1,42): error TS2304: Cannot find name 'a'.
+/input.ts(1,46): error TS2304: Cannot find name 'b'.
+/input.ts(1,63): error TS2304: Cannot find name 'bar'.
+/input.ts(1,72): error TS2304: Cannot find name 'baz'.
+/input.ts(1,76): error TS1313: The body of an 'if' statement cannot be the empty statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "require-atomic-updates": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (6 errors) ====
+    let foo = 0; async function x() { foo = (a ? b : foo) + await bar; if (baz); }
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
+                                             ~
+!!! error TS2304: Cannot find name 'a'.
+                                                 ~
+!!! error TS2304: Cannot find name 'b'.
+                                                                  ~~~
+!!! error TS2304: Cannot find name 'bar'.
+                                                                           ~~~
+!!! error TS2304: Cannot find name 'baz'.
+                                                                               ~
+!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

@@ -1,0 +1,29 @@
+/input.ts(1,1): error TS24254: Exporting 'default' is restricted.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-exports": [
+                    "error",
+                    {
+                        "restrictDefaultExports": {
+                            "direct": true
+                        }
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    export default function task() {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24254: Exporting 'default' is restricted.

@@ -1,0 +1,22 @@
+/input.ts(1,39): error TS19100: All call signatures should be adjacent.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/adjacent-overload-signatures": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    interface I { (): void; call(): void; (a: number): void; }
+                                          ~~~~~~~~~~~~~~~~~~
+!!! error TS19100: All call signatures should be adjacent.

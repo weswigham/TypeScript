@@ -71,6 +71,7 @@ type HarnessOptions struct {
 	FileName             string
 	LibFiles             []string
 	NoImplicitReferences bool
+	PreserveFileContent  bool
 	CurrentDirectory     tspath.RootedDirectoryPath
 	Symlink              string
 	Link                 string
@@ -443,6 +444,10 @@ var harnessCommandLineOptions = []*tsoptions.CommandLineOption{
 		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
+		Name: "preserveFileContent",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
+	},
+	{
 		Name: "currentDirectory",
 		Kind: tsoptions.CommandLineOptionTypeString,
 	},
@@ -502,6 +507,8 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 		}
 	case "noImplicitReferences":
 		harnessOptions.NoImplicitReferences = value.(bool)
+	case "preserveFileContent":
+		harnessOptions.PreserveFileContent = value.(bool)
 	case "currentDirectory":
 		harnessOptions.CurrentDirectory = tspath.ToRootedDirectoryPath(value.(string), harnessOptions.CurrentDirectory)
 	case "symlink":

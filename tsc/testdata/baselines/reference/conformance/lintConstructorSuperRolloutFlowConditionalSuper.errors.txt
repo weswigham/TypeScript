@@ -1,0 +1,28 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS24205: Lacked a call of 'super()' in some code paths.
+/input.ts(1,37): error TS2304: Cannot find name 'flag'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "constructor-super": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class A extends B { constructor() { flag && super(); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24205: Lacked a call of 'super()' in some code paths.
+                                        ~~~~
+!!! error TS2304: Cannot find name 'flag'.

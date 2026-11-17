@@ -1,0 +1,23 @@
+/input.ts(1,36): error TS24132: Use array destructuring.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/prefer-destructuring": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const arr: number[]; const first = arr[0];
+                                       ~~~~~~~~~~~~~~
+!!! error TS24132: Use array destructuring.

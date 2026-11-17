@@ -1,0 +1,50 @@
+/input.ts(1,30): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+/input.ts(1,31): error TS2304: Cannot find name 'a'.
+/input.ts(1,36): error TS2304: Cannot find name 'b'.
+/input.ts(1,41): error TS2552: Cannot find name 'c'. Did you mean 'C'?
+/input.ts(1,46): error TS2304: Cannot find name 'd'.
+/input.ts(1,58): error TS2304: Cannot find name 'e'.
+/input.ts(1,63): error TS2304: Cannot find name 'f'.
+/input.ts(1,79): error TS2304: Cannot find name 'g'.
+/input.ts(1,84): error TS2304: Cannot find name 'h'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "complexity": [
+                    "error",
+                    2
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    function outer() { class C { [a || b] = c || d; static { e || f; } method() { g || h; } } }
+                                 ~~~~~~~~
+!!! error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+                                  ~
+!!! error TS2304: Cannot find name 'a'.
+                                       ~
+!!! error TS2304: Cannot find name 'b'.
+                                            ~
+!!! error TS2552: Cannot find name 'c'. Did you mean 'C'?
+!!! related TS2728 /input.ts:1:26: 'C' is declared here.
+                                                 ~
+!!! error TS2304: Cannot find name 'd'.
+                                                             ~
+!!! error TS2304: Cannot find name 'e'.
+                                                                  ~
+!!! error TS2304: Cannot find name 'f'.
+                                                                                  ~
+!!! error TS2304: Cannot find name 'g'.
+                                                                                       ~
+!!! error TS2304: Cannot find name 'h'.

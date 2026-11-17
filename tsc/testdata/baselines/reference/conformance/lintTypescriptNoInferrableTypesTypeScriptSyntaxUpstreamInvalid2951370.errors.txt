@@ -1,0 +1,24 @@
+/input.ts(1,7): error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const a: undefined = undefined;
+          ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type undefined trivially inferred from a undefined literal, remove type annotation.

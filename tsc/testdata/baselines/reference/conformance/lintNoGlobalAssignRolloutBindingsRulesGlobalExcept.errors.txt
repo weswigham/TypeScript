@@ -1,0 +1,35 @@
+/input.ts(1,1): error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+/input.ts(1,12): error TS2322: Type 'number' is not assignable to type 'StringConstructor'.
+/input.ts(1,12): error TS24231: Read-only global 'String' should not be modified.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-global-assign": [
+                    "error",
+                    {
+                        "exceptions": [
+                            "Array"
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    Array = 1; String = 1;
+    ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'ArrayConstructor'.
+               ~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'StringConstructor'.
+               ~~~~~~
+!!! error TS24231: Read-only global 'String' should not be modified.

@@ -1,0 +1,29 @@
+/input.ts(1,15): error TS24053: Promise-returning function provided to variable where a void return was expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    using value = { async [Symbol.dispose]() {} };
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24053: Promise-returning function provided to variable where a void return was expected.
+    export {};

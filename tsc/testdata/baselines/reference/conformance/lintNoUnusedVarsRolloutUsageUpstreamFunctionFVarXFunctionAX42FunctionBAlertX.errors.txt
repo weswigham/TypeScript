@@ -1,0 +1,42 @@
+/input.ts(1,10): error TS24290: 'f' is defined but never used.
+/input.ts(1,18): error TS7034: Variable 'x' implicitly has type 'any' in some locations where its type cannot be determined.
+/input.ts(1,29): error TS24290: 'a' is defined but never used.
+/input.ts(1,48): error TS24290: 'b' is defined but never used.
+/input.ts(1,58): error TS7005: Variable 'x' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": [
+                    "error",
+                    "all"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (5 errors) ====
+    function f(){var x;function a(){x=42;}function b(){alert(x);}}
+             ~
+!!! error TS24290: 'f' is defined but never used.
+                     ~
+!!! error TS7034: Variable 'x' implicitly has type 'any' in some locations where its type cannot be determined.
+                                ~
+!!! error TS24290: 'a' is defined but never used.
+                                                   ~
+!!! error TS24290: 'b' is defined but never used.
+                                                             ~
+!!! error TS7005: Variable 'x' implicitly has an 'any' type.

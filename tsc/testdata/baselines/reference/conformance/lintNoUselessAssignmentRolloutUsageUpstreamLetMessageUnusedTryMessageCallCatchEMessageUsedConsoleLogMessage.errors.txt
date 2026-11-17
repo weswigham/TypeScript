@@ -1,0 +1,36 @@
+/input.ts(1,5): error TS24293: The value assigned to 'message' is not used in subsequent statements.
+/input.ts(3,27): error TS2304: Cannot find name 'call'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    let message = 'unused';
+        ~~~~~~~
+!!! error TS24293: The value assigned to 'message' is not used in subsequent statements.
+                try {
+                    message = call();
+                              ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                } catch (e) {
+                    message = 'used';
+                }
+                console.log(message)

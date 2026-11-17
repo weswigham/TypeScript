@@ -1,0 +1,14 @@
+input.ts(1,19): error TS19373: Multiline support is limited to browsers supporting ES5 only.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-multi-str":"error"}},"files":["input.ts"]}
+==== input.ts (1 errors) ====
+    const multiline = 'first\
+                      ~~~~~~~
+    second';
+    ~~~~~~~
+!!! error TS19373: Multiline support is limited to browsers supporting ES5 only.
+    const escaped = 'first\nsecond';
+    const template = `first
+    second`;

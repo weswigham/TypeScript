@@ -1,0 +1,28 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,1): error TS24359: Use the isNaN function to compare with NaN.
+/input.ts(1,12): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "use-isnan": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    value === (work(), NaN);
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24359: Use the isNaN function to compare with NaN.
+               ~~~~
+!!! error TS2304: Cannot find name 'work'.

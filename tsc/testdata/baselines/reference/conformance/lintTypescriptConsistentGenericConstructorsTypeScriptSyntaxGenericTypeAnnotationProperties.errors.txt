@@ -1,0 +1,44 @@
+/input.ts(1,11): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+/input.ts(1,11): error TS24446: The generic type arguments should be specified as part of the type annotation.
+/input.ts(1,12): error TS2304: Cannot find name 'key'.
+/input.ts(1,27): error TS2304: Cannot find name 'Foo'.
+/input.ts(1,42): error TS24446: The generic type arguments should be specified as part of the type annotation.
+/input.ts(1,59): error TS2304: Cannot find name 'Foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": [
+                    "error",
+                    "type-annotation"
+                ]
+            }
+        },
+        "files": [
+            "input.ts",
+            "module.ts"
+        ]
+    }
+==== /module.ts (0 errors) ====
+    export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
+==== /input.ts (6 errors) ====
+    class C { [key + 1] = new Foo<string>(); accessor a = new Foo<number>(); }
+              ~~~~~~~~~
+!!! error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24446: The generic type arguments should be specified as part of the type annotation.
+               ~~~
+!!! error TS2304: Cannot find name 'key'.
+                              ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24446: The generic type arguments should be specified as part of the type annotation.
+                                                              ~~~
+!!! error TS2304: Cannot find name 'Foo'.

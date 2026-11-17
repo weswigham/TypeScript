@@ -1,0 +1,30 @@
+input.ts(5,1): error TS19656: Expected an assignment or function call and instead saw an expression.
+input.ts(6,1): error TS19656: Expected an assignment or function call and instead saw an expression.
+input.ts(7,1): error TS19656: Expected an assignment or function call and instead saw an expression.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/no-unused-expressions": ["error", { "allowShortCircuit": true }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    declare const value: number;
+    declare const enabled: boolean;
+    declare function run(): void;
+    
+    value as number;
+    ~~~~~~~~~~~~~~~~
+!!! error TS19656: Expected an assignment or function call and instead saw an expression.
+    value!;
+    ~~~~~~~
+!!! error TS19656: Expected an assignment or function call and instead saw an expression.
+    enabled && value;
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19656: Expected an assignment or function call and instead saw an expression.
+    
+    run();
+    enabled && run();
+    void value;

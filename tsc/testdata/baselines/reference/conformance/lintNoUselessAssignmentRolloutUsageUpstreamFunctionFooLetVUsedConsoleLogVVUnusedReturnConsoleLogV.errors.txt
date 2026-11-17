@@ -1,0 +1,33 @@
+/input.ts(4,17): error TS24293: The value assigned to 'v' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (1 errors) ====
+    function foo () {
+                    let v = 'used';
+                    console.log(v);
+                    v = 'unused';
+                    ~
+!!! error TS24293: The value assigned to 'v' is not used in subsequent statements.
+                    return;
+                    console.log(v);
+                }

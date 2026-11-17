@@ -1,0 +1,34 @@
+/input.ts(3,3): error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": [
+                    "error",
+                    {
+                        "ignoreParameters": false,
+                        "ignoreProperties": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    class Foo {
+      b: boolean = true;
+      ~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type boolean trivially inferred from a boolean literal, remove type annotation.
+    }
+          

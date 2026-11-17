@@ -1,0 +1,33 @@
+input.ts(1,1): error TS19669: Unexpected 'fixme' comment: 'any fixme or todo'.
+input.ts(1,1): error TS19669: Unexpected 'todo' comment: 'any fixme or todo'.
+input.ts(2,1): error TS19669: Unexpected 'todo' comment: '* TODO: work'.
+input.ts(3,1): error TS19669: Unexpected '[litera|$]' comment: 'regex [litera|$]'.
+input.ts(4,1): error TS19669: Unexpected 'todo' comment: 'TODO: something really longer than 40...'.
+input.ts(5,1): error TS19669: Unexpected 'todo' comment: '...'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-warning-comments": ["error", { "terms": ["todo", "fixme", "[litera|$]"], "location": "anywhere", "decoration": ["*"] }] } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (6 errors) ====
+    // any fixme or todo
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'fixme' comment: 'any fixme or todo'.
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: 'any fixme or todo'.
+    /** TODO: work */
+    ~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: '* TODO: work'.
+    // regex [litera|$]
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected '[litera|$]' comment: 'regex [litera|$]'.
+    // TODO: something really longer than 40 characters
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: 'TODO: something really longer than 40...'.
+    // https://github.com/eslint/eslint/pull/13522#discussion_r470293411 TODO
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19669: Unexpected 'todo' comment: '...'.

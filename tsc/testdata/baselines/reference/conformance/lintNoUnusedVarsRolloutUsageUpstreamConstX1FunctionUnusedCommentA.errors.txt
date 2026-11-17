@@ -1,0 +1,39 @@
+/input.ts(1,7): error TS24290: 'x' is assigned a value but never used.
+/input.ts(2,10): error TS24290: 'unused' is defined but never used.
+/input.ts(4,2): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(4,2): error TS24290: 'a' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-vars": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (4 errors) ====
+    const x = 1;
+          ~
+!!! error TS24290: 'x' is assigned a value but never used.
+    function unused() {}
+             ~~~~~~
+!!! error TS24290: 'unused' is defined but never used.
+    /* comment */
+    (a) => {}
+     ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+     ~
+!!! error TS24290: 'a' is defined but never used.

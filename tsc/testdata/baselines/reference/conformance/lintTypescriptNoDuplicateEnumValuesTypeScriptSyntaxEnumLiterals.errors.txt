@@ -1,0 +1,25 @@
+/input.ts(1,20): error TS19103: Duplicate enum member value 16.
+/input.ts(1,37): error TS19103: Duplicate enum member value x.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-duplicate-enum-values": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    enum E { A = 0x10, B = 16, C = 'x', D = `x` }
+                       ~~~~~~
+!!! error TS19103: Duplicate enum member value 16.
+                                        ~~~~~~~
+!!! error TS19103: Duplicate enum member value x.

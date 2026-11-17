@@ -1,0 +1,37 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS7008: Member 'foo' implicitly has an 'any' type.
+/input.ts(1,21): error TS24283: Unreachable code.
+/input.ts(1,26): error TS2377: Constructors for derived classes must contain a 'super' call.
+/input.ts(1,43): error TS7008: Member 'bar' implicitly has an 'any' type.
+/input.ts(1,43): error TS24283: Unreachable code.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    class C extends B { foo; constructor() {} bar; }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~
+!!! error TS7008: Member 'foo' implicitly has an 'any' type.
+                        ~~~~
+!!! error TS24283: Unreachable code.
+                             ~~~~~~~~~~~
+!!! error TS2377: Constructors for derived classes must contain a 'super' call.
+                                              ~~~
+!!! error TS7008: Member 'bar' implicitly has an 'any' type.
+                                              ~~~~
+!!! error TS24283: Unreachable code.

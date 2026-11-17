@@ -1,0 +1,26 @@
+/input.ts(1,25): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,25): error TS21351: 'a' is already declared in the upper scope on line 1 column 7.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-shadow": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const a = 1; function f(a) {} type T = number; function g() { const T = 1; }
+                            ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                            ~
+!!! error TS21351: 'a' is already declared in the upper scope on line 1 column 7.

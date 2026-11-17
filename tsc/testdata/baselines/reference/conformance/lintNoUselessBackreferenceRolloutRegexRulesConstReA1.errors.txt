@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24296: Backreference '\1' will be ignored. It references group '(a)' which appears before in the same lookbehind.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-backreference": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /(?<=(a)\1)/;
+               ~~~~~~~~~~~~
+!!! error TS24296: Backreference '\1' will be ignored. It references group '(a)' which appears before in the same lookbehind.

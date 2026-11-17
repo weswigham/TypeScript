@@ -1,0 +1,28 @@
+input.ts(2,7): error TS21370: Unsafe declaration merging between classes and interfaces.
+input.ts(3,11): error TS21370: Unsafe declaration merging between classes and interfaces.
+input.ts(4,11): error TS21370: Unsafe declaration merging between classes and interfaces.
+input.ts(5,7): error TS21370: Unsafe declaration merging between classes and interfaces.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unsafe-declaration-merging":"error"}},"files":["input.ts"]}
+==== input.ts (4 errors) ====
+    export {};
+    class Unsafe {}
+          ~~~~~~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.
+    interface Unsafe { field: string; }
+              ~~~~~~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.
+    interface Reverse { value: number; }
+              ~~~~~~~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.
+    class Reverse {}
+          ~~~~~~~
+!!! error TS21370: Unsafe declaration merging between classes and interfaces.
+    interface Safe { first: string; }
+    interface Safe { second: number; }
+    class Namespaced {}
+    namespace Namespaced { export const value = 1; }
+    class Separate {}
+    namespace Nested { export interface Separate { value: string; } }

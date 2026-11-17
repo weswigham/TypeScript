@@ -1,0 +1,23 @@
+/input.ts(1,27): error TS24158: Unexpected any value in conditional. An explicit comparison or type conversion is required.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/strict-boolean-expressions": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; value && ({})
+                              ~~~~~
+!!! error TS24158: Unexpected any value in conditional. An explicit comparison or type conversion is required.

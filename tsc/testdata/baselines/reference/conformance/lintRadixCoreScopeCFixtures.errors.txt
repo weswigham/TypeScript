@@ -1,0 +1,48 @@
+/input.ts(1,1): error TS2554: Expected 1-2 arguments, but got 0.
+/input.ts(1,1): error TS20276: Missing parameters.
+/input.ts(2,1): error TS20277: Missing radix parameter.
+/input.ts(3,1): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+/input.ts(4,1): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+/input.ts(5,1): error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "radix": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (6 errors) ====
+    parseInt();
+    ~~~~~~~~
+!!! error TS2554: Expected 1-2 arguments, but got 0.
+!!! related TS6210 lib.es5.d.ts:--:--: An argument for 'string' was not provided.
+    ~~~~~~~~~~
+!!! error TS20276: Missing parameters.
+    parseInt("10");
+    ~~~~~~~~~~~~~~
+!!! error TS20277: Missing radix parameter.
+    Number.parseInt("10", 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+    parseInt("10", undefined);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+    parseInt("10", +37);
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS20278: Invalid radix parameter, must be an integer between 2 and 36.
+    parseInt("10", 2);
+    Number.parseInt("10", 36);
+    function shadowed(parseInt: any, Number: any) {
+        parseInt("10");
+        Number.parseInt("10");
+    }

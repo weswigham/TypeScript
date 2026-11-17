@@ -1,0 +1,27 @@
+input.ts(2,18): warning TS24335: Unexpected string concatenation.
+input.ts(3,17): warning TS24335: Unexpected string concatenation.
+input.ts(4,17): warning TS24335: Unexpected string concatenation.
+input.ts(5,18): warning TS24335: Unexpected string concatenation.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "prefer-template": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (4 errors) ====
+    declare const value: number, other: number;
+    const greeting = "hello " + value + "!";
+                     ~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24335: Unexpected string concatenation.
+    const numeric = value + other + "px";
+                    ~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24335: Unexpected string concatenation.
+    const escaped = "${literal}`" + value;
+                    ~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24335: Unexpected string concatenation.
+    const comments = "prefix" /* keep */ + value;
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24335: Unexpected string concatenation.
+    const unchanged = "a" + "b";

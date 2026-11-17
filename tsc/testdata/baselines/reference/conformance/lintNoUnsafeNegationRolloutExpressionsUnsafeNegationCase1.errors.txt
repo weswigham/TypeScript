@@ -1,0 +1,37 @@
+/input.ts(1,1): error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.
+/input.ts(1,1): error TS24285: Unexpected negating the left operand of 'in' operator.
+/input.ts(1,2): error TS2304: Cannot find name 'value'.
+/input.ts(1,11): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unsafe-negation": [
+                    "error",
+                    {
+                        "enforceForOrderingRelations": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    !value in object;
+    ~~~~~~
+!!! error TS2322: Type 'boolean' is not assignable to type 'string | number | symbol'.
+    ~~~~~~
+!!! error TS24285: Unexpected negating the left operand of 'in' operator.
+     ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+              ~~~~~~
+!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

@@ -1,0 +1,23 @@
+/input.ts(1,29): error TS20724: void operator shouldn't be used on void; it should convey that a return value is being ignored
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-meaningless-void-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function f(): void; void f();
+                                ~~~~~~~~
+!!! error TS20724: void operator shouldn't be used on void; it should convey that a return value is being ignored

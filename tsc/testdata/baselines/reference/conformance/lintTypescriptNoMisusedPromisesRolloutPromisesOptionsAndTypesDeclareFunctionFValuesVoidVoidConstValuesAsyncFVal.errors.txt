@@ -1,0 +1,29 @@
+/input.ts(1,89): error TS24048: Promise returned in function argument where a void return was expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare function f(...values: (() => void)[]): void; const values = [async () => {}]; f(...values);
+                                                                                            ~~~~~~~~~
+!!! error TS24048: Promise returned in function argument where a void return was expected.
+    export {};

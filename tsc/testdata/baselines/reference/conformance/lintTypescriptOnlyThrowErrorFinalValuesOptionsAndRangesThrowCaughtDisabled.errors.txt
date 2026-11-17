@@ -1,0 +1,30 @@
+/input.ts(1,30): error TS19516: Expected an error object to be thrown.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/only-throw-error": [
+                    "error",
+                    {
+                        "allowRethrowing": false,
+                        "allowThrowingUnknown": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch (value) { throw value; }
+                                 ~~~~~
+!!! error TS19516: Expected an error object to be thrown.

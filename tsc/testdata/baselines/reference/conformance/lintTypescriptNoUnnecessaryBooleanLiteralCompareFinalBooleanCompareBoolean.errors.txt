@@ -1,0 +1,23 @@
+/input.ts(1,31): error TS24072: This expression unnecessarily compares a boolean value to a boolean instead of using it directly.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: boolean; value === true;
+                                  ~~~~~~~~~~~~~~
+!!! error TS24072: This expression unnecessarily compares a boolean value to a boolean instead of using it directly.

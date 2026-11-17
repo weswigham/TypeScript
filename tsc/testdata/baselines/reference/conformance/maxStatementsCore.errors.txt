@@ -1,0 +1,55 @@
+input.ts(1,1): error TS19332: Function 'excessive' has too many statements (3). Maximum allowed is 2.
+input.ts(1,24): error TS2304: Cannot find name 'first'.
+input.ts(1,33): error TS2304: Cannot find name 'second'.
+input.ts(1,43): error TS2304: Cannot find name 'third'.
+input.ts(2,1): error TS19332: Function 'nested' has too many statements (3). Maximum allowed is 2.
+input.ts(2,25): error TS2304: Cannot find name 'value'.
+input.ts(2,34): error TS2304: Cannot find name 'first'.
+input.ts(2,43): error TS2304: Cannot find name 'second'.
+input.ts(3,42): error TS2304: Cannot find name 'first'.
+input.ts(3,51): error TS2304: Cannot find name 'second'.
+input.ts(3,63): error TS2304: Cannot find name 'last'.
+input.ts(4,26): error TS2304: Cannot find name 'first'.
+input.ts(4,35): error TS2304: Cannot find name 'second'.
+input.ts(4,45): error TS2304: Cannot find name 'third'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "max-statements": ["error", { "max": 2 }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (14 errors) ====
+    function excessive() { first(); second(); third(); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19332: Function 'excessive' has too many statements (3). Maximum allowed is 2.
+                           ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                    ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                              ~~~~~
+!!! error TS2304: Cannot find name 'third'.
+    function nested() { if (value) { first(); second(); } }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19332: Function 'nested' has too many statements (3). Maximum allowed is 2.
+                            ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                     ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                              ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+    function separate() { function inner() { first(); second(); } last(); }
+                                             ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                                      ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                                                  ~~~~
+!!! error TS2304: Cannot find name 'last'.
+    class Example { static { first(); second(); third(); } }
+                             ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                                      ~~~~~~
+!!! error TS2304: Cannot find name 'second'.
+                                                ~~~~~
+!!! error TS2304: Cannot find name 'third'.

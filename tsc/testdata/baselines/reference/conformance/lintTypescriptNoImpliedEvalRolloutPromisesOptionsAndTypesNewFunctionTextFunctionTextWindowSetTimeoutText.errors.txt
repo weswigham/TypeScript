@@ -1,0 +1,35 @@
+/input.ts(1,1): error TS24043: Implied eval. Do not use the Function constructor to create functions.
+/input.ts(1,23): error TS24043: Implied eval. Do not use the Function constructor to create functions.
+/input.ts(1,62): error TS24044: Implied eval. Consider passing a function.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-implied-eval": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    new Function('text'); Function('text'); window['setTimeout']('text');
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24043: Implied eval. Do not use the Function constructor to create functions.
+                          ~~~~~~~~~~~~~~~~
+!!! error TS24043: Implied eval. Do not use the Function constructor to create functions.
+                                                                 ~~~~~~
+!!! error TS24044: Implied eval. Consider passing a function.
+    export {};

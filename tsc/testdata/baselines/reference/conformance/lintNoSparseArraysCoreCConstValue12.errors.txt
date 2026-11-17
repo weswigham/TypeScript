@@ -1,0 +1,28 @@
+/input.ts(1,18): error TS19508: Unexpected comma in middle of array.
+/input.ts(1,21): error TS19508: Unexpected comma in middle of array.
+/input.ts(1,22): error TS19508: Unexpected comma in middle of array.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-sparse-arrays": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const value = [1,,2,,,];
+                     ~
+!!! error TS19508: Unexpected comma in middle of array.
+                        ~
+!!! error TS19508: Unexpected comma in middle of array.
+                         ~
+!!! error TS19508: Unexpected comma in middle of array.

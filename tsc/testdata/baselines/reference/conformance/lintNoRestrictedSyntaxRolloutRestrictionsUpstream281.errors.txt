@@ -1,0 +1,25 @@
+/input.tsx(1,12): error TS24277: Using 'Property > Literal.key' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "Property > Literal.key"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    ({ foo: 1, 'bar': 2 })
+               ~~~~~
+!!! error TS24277: Using 'Property > Literal.key' is not allowed.

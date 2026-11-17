@@ -1,0 +1,29 @@
+/input.ts(1,30): error TS24152: Invalid type "any" of template literal expression.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/restrict-template-expressions": [
+                    "error",
+                    {
+                        "allowAny": false
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    declare const value: any; `${value}`;
+                                 ~~~~~
+!!! error TS24152: Invalid type "any" of template literal expression.

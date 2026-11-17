@@ -1,0 +1,31 @@
+/input.ts(1,23): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,37): error TS2304: Cannot find name 'f'.
+/input.ts(1,39): error TS2304: Cannot find name 'b'.
+/input.ts(1,58): error TS2304: Cannot find name 'bar'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    function someFunc() { for (let a in f(b)) { try { return bar(); } catch (e) { break; } } }
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                        ~
+!!! error TS2304: Cannot find name 'f'.
+                                          ~
+!!! error TS2304: Cannot find name 'b'.
+                                                             ~~~
+!!! error TS2304: Cannot find name 'bar'.

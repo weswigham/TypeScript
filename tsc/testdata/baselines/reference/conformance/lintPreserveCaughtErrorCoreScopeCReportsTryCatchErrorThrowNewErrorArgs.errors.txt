@@ -1,0 +1,22 @@
+/input.ts(1,43): error TS2304: Cannot find name 'args'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "preserve-caught-error": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    try {} catch (error) { throw new Error(...args); }
+                                              ~~~~
+!!! error TS2304: Cannot find name 'args'.

@@ -1,0 +1,42 @@
+input.ts(1,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(2,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(3,1): error TS19357: 'pkg' export is duplicated as import.
+input.ts(3,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(4,1): error TS19357: 'pkg' export is duplicated as import.
+input.ts(4,1): error TS22000: 'pkg' export is duplicated.
+input.ts(4,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(5,28): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(6,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+input.ts(7,15): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-duplicate-imports":["error",{"includeExports":true,"allowSeparateTypeImports":true}]}},"files":["input.ts"]}
+==== input.ts (10 errors) ====
+    import type Item from 'pkg';
+                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    import { value } from 'pkg';
+                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    export { other } from 'pkg';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19357: 'pkg' export is duplicated as import.
+                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    export { third } from 'pkg';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19357: 'pkg' export is duplicated as import.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS22000: 'pkg' export is duplicated.
+                          ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    import type { Other } from 'pkg';
+                               ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    export * as space from 'pkg';
+                           ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
+    export * from 'pkg';
+                  ~~~~~
+!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

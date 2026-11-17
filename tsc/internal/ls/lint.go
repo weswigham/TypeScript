@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/codefix"
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/lint"
+	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/change"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp/lsproto"
@@ -49,11 +50,15 @@ func (l *LanguageService) lintCodeActions(ctx context.Context, program *compiler
 		return nil
 	}
 	diagnostics := lint.GetDiagnosticsForFile(ctx, program, file)
+	return l.lintCodeActionsForDiagnostics(ctx, program, diagnostics, params)
+}
+
+func (l *LanguageService) lintCodeActionsForDiagnostics(ctx context.Context, program *compiler.Program, diagnostics []*ast.Diagnostic, params *lsproto.CodeActionParams) []lsproto.CommandOrCodeAction {
 	var actions []lsproto.CommandOrCodeAction
 	requested := make(map[string]bool)
 	kind := lsproto.CodeActionKindQuickFix
 	for _, diagnostic := range diagnostics {
-		if diagnostic.File() == nil || len(diagnostic.CodeFixes()) == 0 {
+		if diagnostic.File() == nil || len(diagnostic.CodeFixes())+len(diagnostic.CodeFixSuggestions()) == 0 {
 			continue
 		}
 		location, fidelity := l.converters.ToLSPRangeForFeature(diagnostic.File(), diagnostic.Loc(), spanmap.FeatureCodeActions)
@@ -65,17 +70,17 @@ func (l *LanguageService) lintCodeActions(ctx context.Context, program *compiler
 				supplied.Source != nil && *supplied.Source != "ts" {
 				continue
 			}
-			for _, fix := range diagnostic.CodeFixes() {
+			for index, fix := range slices.Concat(diagnostic.CodeFixes(), diagnostic.CodeFixSuggestions()) {
 				changes := l.codeFixWorkspaceChanges(program, fix.Changes)
 				if len(changes) == 0 || len(fix.Commands) != 0 {
 					continue
 				}
 				actions = append(actions, lsproto.CommandOrCodeAction{CodeAction: &lsproto.CodeAction{
-					Title: fix.Description, Kind: &kind,
+					Title: fix.Description.Localize(locale.FromContext(ctx)), Kind: &kind,
 					Edit:        &lsproto.WorkspaceEdit{Changes: &changes},
 					Diagnostics: &[]*lsproto.Diagnostic{supplied},
 				}})
-				if fix.FixID != "" {
+				if index < len(diagnostic.CodeFixes()) && fix.FixID != "" && fix.FixAllDescription != nil {
 					requested[fix.FixID] = true
 				}
 			}
@@ -91,7 +96,7 @@ func (l *LanguageService) lintCodeActions(ctx context.Context, program *compiler
 		var fixes []*codefix.CodeFixAction
 		for _, diagnostic := range diagnostics {
 			for _, fix := range diagnostic.CodeFixes() {
-				if fix.FixID == id {
+				if fix.FixID == id && fix.FixAllDescription != nil {
 					fixes = append(fixes, fix)
 					break
 				}
@@ -103,7 +108,7 @@ func (l *LanguageService) lintCodeActions(ctx context.Context, program *compiler
 		changes := l.codeFixWorkspaceChanges(program, codefix.CombineCodeFixes(fixes).Changes)
 		if len(changes) > 0 {
 			actions = append(actions, lsproto.CommandOrCodeAction{CodeAction: &lsproto.CodeAction{
-				Title: fixes[0].FixAllDescription, Kind: &kind,
+				Title: fixes[0].FixAllDescription.Localize(locale.FromContext(ctx)), Kind: &kind,
 				Edit: &lsproto.WorkspaceEdit{Changes: &changes},
 			}})
 		}

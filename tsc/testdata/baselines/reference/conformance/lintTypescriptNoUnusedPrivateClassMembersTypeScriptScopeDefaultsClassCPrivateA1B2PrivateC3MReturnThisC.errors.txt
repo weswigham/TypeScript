@@ -1,0 +1,26 @@
+/input.ts(1,19): error TS21380: Private class member 'a' is defined but never used.
+/input.ts(1,26): error TS21380: Private class member 'b' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class C { private a = 1; #b = 2; private c = 3; m() { return this.c; } }
+                      ~
+!!! error TS21380: Private class member 'a' is defined but never used.
+                             ~~
+!!! error TS21380: Private class member 'b' is defined but never used.

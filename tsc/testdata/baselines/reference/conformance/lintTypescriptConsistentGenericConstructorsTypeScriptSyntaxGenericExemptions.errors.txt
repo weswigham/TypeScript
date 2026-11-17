@@ -1,0 +1,43 @@
+/input.ts(1,10): error TS2304: Cannot find name 'Other'.
+/input.ts(1,30): error TS2304: Cannot find name 'Box'.
+/input.ts(1,46): error TS2304: Cannot find name 'Box'.
+/input.ts(1,64): error TS2304: Cannot find name 'Box'.
+/input.ts(1,88): error TS2304: Cannot find name 'Box'.
+/input.ts(1,98): error TS2304: Cannot find name 'Box'.
+/input.ts(1,114): error TS2304: Cannot find name 'Box'.
+/input.ts(1,128): error TS2304: Cannot find name 'Box'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    const a: Other<string> = new Box(); const b: Box<string> = new Box<string>(); const c: Box = new Box(); const d: Box<string> = Box();
+             ~~~~~
+!!! error TS2304: Cannot find name 'Other'.
+                                 ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                 ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                                   ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                                                           ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                                                                     ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                                                                                     ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                                                                                                                   ~~~
+!!! error TS2304: Cannot find name 'Box'.

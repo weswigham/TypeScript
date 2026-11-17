@@ -1,0 +1,22 @@
+/input.ts(1,18): error TS22023: Literals should be exposed using readonly fields.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/class-literal-property-style": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    class Item { get value() { return 1; } }
+                     ~~~~~
+!!! error TS22023: Literals should be exposed using readonly fields.

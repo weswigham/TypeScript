@@ -1,0 +1,30 @@
+/input.ts(1,20): error TS2304: Cannot find name 'condition'.
+/input.ts(1,42): error TS2304: Cannot find name 'consume'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "legacy",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (2 errors) ====
+    let value = 0; if (condition) value = 1; consume(value);
+                       ~~~~~~~~~
+!!! error TS2304: Cannot find name 'condition'.
+                                             ~~~~~~~
+!!! error TS2304: Cannot find name 'consume'.

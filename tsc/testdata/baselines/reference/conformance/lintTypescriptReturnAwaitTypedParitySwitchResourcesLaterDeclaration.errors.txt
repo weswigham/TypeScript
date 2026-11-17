@@ -1,0 +1,27 @@
+/project/src/input.ts(1,58): error TS24153: Returning an awaited promise is not allowed in this context.
+/project/src/input.ts(1,92): error TS1547: 'using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block.
+
+
+==== /project/tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/return-await": "error"
+            }
+        },
+        "files": [
+            "src/input.ts"
+        ]
+    }
+==== /project/src/input.ts (2 errors) ====
+    async function f(k: number) { switch(k) { case 0: return await Promise.resolve(1); case 1: using r = null; } }
+                                                             ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24153: Returning an awaited promise is not allowed in this context.
+                                                                                               ~~~~~~~~~~~~~~
+!!! error TS1547: 'using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block.
+    export {};

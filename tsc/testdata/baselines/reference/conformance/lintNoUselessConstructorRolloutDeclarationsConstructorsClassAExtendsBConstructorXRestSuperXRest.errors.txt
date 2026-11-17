@@ -1,0 +1,31 @@
+/input.ts(1,17): error TS2304: Cannot find name 'B'.
+/input.ts(1,21): error TS20485: Useless constructor.
+/input.ts(1,33): error TS7006: Parameter 'x' implicitly has an 'any' type.
+/input.ts(1,36): error TS7019: Rest parameter 'rest' implicitly has an 'any[]' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-constructor": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    class A extends B { constructor(x, ...rest) { super(x, ...rest); } }
+                    ~
+!!! error TS2304: Cannot find name 'B'.
+                        ~~~~~~~~~~~
+!!! error TS20485: Useless constructor.
+                                    ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+                                       ~~~~~~~
+!!! error TS7019: Rest parameter 'rest' implicitly has an 'any[]' type.

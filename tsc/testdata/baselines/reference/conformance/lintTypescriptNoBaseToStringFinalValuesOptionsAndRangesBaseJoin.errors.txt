@@ -1,0 +1,24 @@
+/input.ts(1,1): error TS24021: Using `join()` for [{}, 'text'] may use Object's default stringification format ('[object Object]') when stringified.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-base-to-string": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    [{}, 'text'].join();
+    ~~~~~~~~~~~~
+!!! error TS24021: Using `join()` for [{}, 'text'] may use Object's default stringification format ('[object Object]') when stringified.

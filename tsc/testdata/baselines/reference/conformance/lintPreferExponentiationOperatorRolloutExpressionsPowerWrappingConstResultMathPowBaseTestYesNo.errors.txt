@@ -1,0 +1,34 @@
+/input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
+/input.ts(1,25): error TS2304: Cannot find name 'base'.
+/input.ts(1,31): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+/input.ts(1,38): error TS2304: Cannot find name 'yes'.
+/input.ts(1,44): error TS2304: Cannot find name 'no'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-exponentiation-operator": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    const result = Math.pow(base, test ? yes : no);
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24323: Use the '**' operator instead of 'Math.pow'.
+                            ~~~~
+!!! error TS2304: Cannot find name 'base'.
+                                  ~~~~
+!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+                                         ~~~
+!!! error TS2304: Cannot find name 'yes'.
+                                               ~~
+!!! error TS2304: Cannot find name 'no'.

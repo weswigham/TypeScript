@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS2304: Cannot find name 'left'.
+/input.ts(1,6): error TS19254: Expected '===' and instead saw '=='.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "eqeqeq": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    left == null;
+    ~~~~
+!!! error TS2304: Cannot find name 'left'.
+         ~~
+!!! error TS19254: Expected '===' and instead saw '=='.

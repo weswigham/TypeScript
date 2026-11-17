@@ -1,0 +1,30 @@
+/input.ts(1,15): error TS1100: Invalid use of 'arguments' in strict mode.
+/input.ts(1,15): error TS7006: Parameter 'arguments' implicitly has an 'any' type.
+/input.ts(1,28): error TS19001: Avoid arguments.callee.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-caller": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function test(arguments) { arguments.callee; }
+                  ~~~~~~~~~
+!!! error TS1100: Invalid use of 'arguments' in strict mode.
+                  ~~~~~~~~~
+!!! error TS7006: Parameter 'arguments' implicitly has an 'any' type.
+                               ~~~~~~~~~~~~~~~~
+!!! error TS19001: Avoid arguments.callee.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

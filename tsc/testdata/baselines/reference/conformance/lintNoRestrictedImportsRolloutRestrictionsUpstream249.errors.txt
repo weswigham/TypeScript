@@ -1,0 +1,37 @@
+/input.tsx(1,1): error TS24258: 'import1/private-package' import is restricted from being used by a pattern. usage of import1 private modules not allowed.
+/input.tsx(1,21): error TS2307: Cannot find module 'import1/private-package' or its corresponding type declarations.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "allowTypeImports": true,
+                                "caseSensitive": true,
+                                "message": "usage of import1 private modules not allowed.",
+                                "regex": "import1/private-[a-z]*"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    import { foo } from 'import1/private-package';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24258: 'import1/private-package' import is restricted from being used by a pattern. usage of import1 private modules not allowed.
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'import1/private-package' or its corresponding type declarations.

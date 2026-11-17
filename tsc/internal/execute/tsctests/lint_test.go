@@ -49,6 +49,20 @@ func TestTscLint(t *testing.T) {
 	}
 }
 
+func TestTscLintOnlyJavaScriptDoesNotValidateEmitPaths(t *testing.T) {
+	t.Parallel()
+	const source = "debugger; const value = 1;"
+	sys := newTestSys(&tscInput{cwd: "/app", files: FileMap{
+		"/app/tsconfig.json": `{"compilerOptions":{"allowJs":true,"checkJs":true},"lint":{"rules":{"no-debugger":"error"}},"files":["input.js"]}`,
+		"/app/input.js":      source,
+	}}, false)
+	result := execute.CommandLine(t.Context(), sys, []string{"-p", ".", "--lintOnly", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusDiagnosticsPresent_OutputsSkipped)
+	assert.Assert(t, strings.Contains(sys.getOutput(false), "Unexpected 'debugger' statement."))
+	assert.Assert(t, !strings.Contains(sys.getOutput(false), "error TS5055:"), "%s", sys.getOutput(false))
+	assert.Equal(t, sys.readFileNoError("/app/input.js"), source)
+}
+
 func TestTscLintWatch(t *testing.T) {
 	t.Parallel()
 	for _, build := range []bool{false, true} {
@@ -231,6 +245,19 @@ func TestTscLintFix(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestTscLintSuggestionsAreNotAutomatic(t *testing.T) {
+	t.Parallel()
+	const source = "declare const value: { method(): void } | undefined;\nvalue!.method();"
+	sys := newTestSys(&tscInput{cwd: "/app", files: FileMap{
+		"/app/tsconfig.json": `{"compilerOptions":{"strict":true},"lint":{"rules":{"@typescript-eslint/no-non-null-assertion":"error"}},"files":["input.ts"]}`,
+		"/app/input.ts":      source,
+	}}, false)
+	result := execute.CommandLine(t.Context(), sys, []string{"-p", ".", "--lintOnly", "--fix", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusDiagnosticsPresent_OutputsSkipped)
+	assert.Assert(t, strings.Contains(sys.getOutput(false), "Forbidden non-null assertion."))
+	assert.Equal(t, sys.readFileNoError("/app/input.ts"), source)
 }
 
 func TestTscLintStopBuildOnErrors(t *testing.T) {

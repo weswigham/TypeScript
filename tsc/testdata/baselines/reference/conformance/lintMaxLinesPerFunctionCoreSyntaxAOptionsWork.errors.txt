@@ -1,0 +1,27 @@
+/input.ts(2,1): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-lines-per-function": [
+                    "error",
+                    1
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    (() => {
+    work();
+    ~~~~
+!!! error TS2304: Cannot find name 'work'.
+    })();

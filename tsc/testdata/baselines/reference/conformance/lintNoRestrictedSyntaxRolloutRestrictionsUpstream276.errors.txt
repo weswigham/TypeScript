@@ -1,0 +1,28 @@
+/input.tsx(1,1): error TS24277: Using 'EmptyStatement' is not allowed.
+/input.tsx(1,15): error TS7006: Parameter 'a' implicitly has an 'any' type.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "EmptyStatement"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    ;function lol(a) { return 42; }
+    ~
+!!! error TS24277: Using 'EmptyStatement' is not allowed.
+                  ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.

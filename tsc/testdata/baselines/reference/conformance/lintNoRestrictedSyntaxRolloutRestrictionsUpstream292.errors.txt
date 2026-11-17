@@ -1,0 +1,37 @@
+/input.tsx(1,14): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(1,14): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+/input.tsx(1,22): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+/input.tsx(1,22): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+/input.tsx(1,22): error TS24277: Using '* ~ *' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "* ~ *"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (5 errors) ====
+    const foo = [<div/>, <div/>]
+                 ~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                 ~~~~~~
+!!! error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+                         ~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+                         ~~~~~~
+!!! error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+                         ~~~~~~
+!!! error TS24277: Using '* ~ *' is not allowed.

@@ -1,0 +1,52 @@
+input.ts(3,5): error TS24078: Unnecessary conditional, value is always truthy.
+input.ts(5,5): error TS24075: Unnecessary conditional, value is always falsy.
+input.ts(9,5): error TS24078: Unnecessary conditional, value is always truthy.
+input.ts(11,14): error TS24083: Unnecessary optional chain on a non-nullish value.
+input.ts(16,13): error TS24078: Unnecessary conditional, value is always truthy.
+input.ts(18,1): error TS24082: Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.
+input.ts(21,8): error TS24078: Unnecessary conditional, value is always truthy.
+input.ts(23,10): error TS24086: Unnecessary conditional, expression already has the type being checked by the type guard.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-condition":["error",{"checkTypePredicates":true,"allowConstantLoopConditions":"only-allowed-literals"}]}},"files":["input.ts"]}
+==== input.ts (8 errors) ====
+    export {};
+    declare const object: object;
+    if (object) {}
+        ~~~~~~
+!!! error TS24078: Unnecessary conditional, value is always truthy.
+    declare const zero: 0n;
+    if (zero) {}
+        ~~~~
+!!! error TS24075: Unnecessary conditional, value is always falsy.
+    declare const array: object[];
+    if (array[0]) {}
+    declare const tuple: [object];
+    if (tuple[0]) {}
+        ~~~~~~~~
+!!! error TS24078: Unnecessary conditional, value is always truthy.
+    declare const nested: { first: { second: string } } | null;
+    nested?.first?.second;
+                 ~~
+!!! error TS24083: Unnecessary optional chain on a non-nullish value.
+    declare const optional: { first?: { second: string } } | null;
+    optional?.first?.second;
+    declare const flag: boolean;
+    flag && true;
+    if (flag && true) {}
+                ~~~~
+!!! error TS24078: Unnecessary conditional, value is always truthy.
+    declare const text: string;
+    text ?? "default";
+    ~~~~
+!!! error TS24082: Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.
+    while (1) { break; }
+    declare const loopValue: 2;
+    while (loopValue) { break; }
+           ~~~~~~~~~
+!!! error TS24078: Unnecessary conditional, value is always truthy.
+    declare function isString(value: unknown): value is string;
+    isString(text);
+             ~~~~
+!!! error TS24086: Unnecessary conditional, expression already has the type being checked by the type guard.

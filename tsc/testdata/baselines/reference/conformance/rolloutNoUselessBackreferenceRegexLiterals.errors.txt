@@ -1,0 +1,32 @@
+input.ts(1,17): error TS24295: Backreference '\1' will be ignored. It references group '(a)' which appears later in the pattern.
+input.ts(2,16): error TS24294: Backreference '\1' will be ignored. It references group '(a\1)' from within that group.
+input.ts(3,21): error TS24297: Backreference '\1' will be ignored. It references group '(a)' which is in another alternative.
+input.ts(4,18): error TS24298: Backreference '\1' will be ignored. It references group '(a)' which is in a negative lookaround.
+input.ts(5,18): error TS24296: Backreference '\1' will be ignored. It references group '(a)' which appears before in the same lookbehind.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-backreference": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (5 errors) ====
+    const forward = /\1(a)/;
+                    ~~~~~~~
+!!! error TS24295: Backreference '\1' will be ignored. It references group '(a)' which appears later in the pattern.
+    const nested = /(a\1)/;
+                   ~~~~~~~
+!!! error TS24294: Backreference '\1' will be ignored. It references group '(a\1)' from within that group.
+    const disjunctive = /(a)|\1/;
+                        ~~~~~~~~
+!!! error TS24297: Backreference '\1' will be ignored. It references group '(a)' which is in another alternative.
+    const negative = /(?!(a))\1/;
+                     ~~~~~~~~~~~
+!!! error TS24298: Backreference '\1' will be ignored. It references group '(a)' which is in a negative lookaround.
+    const backward = /(?<=(a)\1)/;
+                     ~~~~~~~~~~~~
+!!! error TS24296: Backreference '\1' will be ignored. It references group '(a)' which appears before in the same lookbehind.
+    const useful = /(a)\1/;
+    const names = /(?<word>a)|(?<word>b)\k<word>/u;

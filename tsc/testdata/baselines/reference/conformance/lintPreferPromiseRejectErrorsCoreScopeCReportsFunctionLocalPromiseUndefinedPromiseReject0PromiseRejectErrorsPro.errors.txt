@@ -1,0 +1,35 @@
+/input.ts(1,16): error TS7006: Parameter 'Promise' implicitly has an 'any' type.
+/input.ts(1,25): error TS7006: Parameter 'undefined' implicitly has an 'any' type.
+/input.ts(1,59): error TS20258: Expected the Promise rejection reason to be an Error.
+/input.ts(1,77): error TS2552: Cannot find name 'errors'. Did you mean 'Error'?
+/input.ts(1,101): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-promise-reject-errors": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    function local(Promise, undefined) { Promise.reject(0); } Promise.reject(...errors); Promise.reject(value);
+                   ~~~~~~~
+!!! error TS7006: Parameter 'Promise' implicitly has an 'any' type.
+                            ~~~~~~~~~
+!!! error TS7006: Parameter 'undefined' implicitly has an 'any' type.
+                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20258: Expected the Promise rejection reason to be an Error.
+                                                                                ~~~~~~
+!!! error TS2552: Cannot find name 'errors'. Did you mean 'Error'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
+                                                                                                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.

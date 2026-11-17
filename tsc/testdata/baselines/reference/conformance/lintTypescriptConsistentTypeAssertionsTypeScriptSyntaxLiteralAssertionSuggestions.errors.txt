@@ -1,0 +1,30 @@
+/input.ts(1,15): error TS20313: Always prefer const x: T = { ... }.
+/input.ts(1,21): error TS2304: Cannot find name 'Item'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": [
+                    "error",
+                    {
+                        "objectLiteralTypeAssertions": "never"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const value = {} as Item;
+                  ~~~~~~~~~~
+!!! error TS20313: Always prefer const x: T = { ... }.
+                        ~~~~
+!!! error TS2304: Cannot find name 'Item'.

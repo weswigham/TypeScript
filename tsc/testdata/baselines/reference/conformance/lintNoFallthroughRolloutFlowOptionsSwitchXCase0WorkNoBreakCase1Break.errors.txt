@@ -1,0 +1,30 @@
+/input.ts(1,8): error TS2304: Cannot find name 'x'.
+/input.ts(1,21): error TS2304: Cannot find name 'work'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-fallthrough": [
+                    "error",
+                    {
+                        "commentPattern": "no break"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    switch(x) { case 0: work(); /* no break */ case 1: break; }
+           ~
+!!! error TS2304: Cannot find name 'x'.
+                        ~~~~
+!!! error TS2304: Cannot find name 'work'.

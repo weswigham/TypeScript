@@ -1,0 +1,27 @@
+/input.ts(1,1): error TS2304: Cannot find name 'value'.
+/input.ts(1,1): error TS19005: The '__proto__' property is deprecated.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-proto": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    value['__pro\u0074o__'];
+    ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19005: The '__proto__' property is deprecated.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

@@ -1,0 +1,77 @@
+input.ts(1,1): error TS21400: 'called' was used before it was defined.
+input.ts(4,7): error TS7022: 'immediate' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+input.ts(4,20): error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+input.ts(4,26): error TS2448: Block-scoped variable 'immediate' used before its declaration.
+input.ts(4,26): error TS21400: 'immediate' was used before it was defined.
+input.ts(5,7): error TS2506: 'C' is referenced directly or indirectly in its own base expression.
+input.ts(5,17): error TS21400: 'C' was used before it was defined.
+input.ts(7,5): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+input.ts(7,6): error TS2449: Class 'D' used before its declaration.
+input.ts(7,6): error TS21400: 'D' was used before it was defined.
+input.ts(8,20): error TS2448: Block-scoped variable 'later' used before its declaration.
+input.ts(8,20): error TS7005: Variable 'later' implicitly has an 'any' type.
+input.ts(8,20): error TS21400: 'later' was used before it was defined.
+input.ts(9,16): error TS7005: Variable 'later' implicitly has an 'any' type.
+input.ts(11,5): error TS7034: Variable 'later' implicitly has type 'any' in some locations where its type cannot be determined.
+input.ts(12,10): error TS7022: 'item' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+input.ts(12,18): error TS2448: Block-scoped variable 'item' used before its declaration.
+input.ts(12,18): error TS21400: 'item' was used before it was defined.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "no-use-before-define": ["error", { "variables": false }] } }
+    }
+==== input.ts (18 errors) ====
+    called();
+    ~~~~~~
+!!! error TS21400: 'called' was used before it was defined.
+    function called() {}
+    const recursive = () => recursive;
+    const immediate = (() => immediate)();
+          ~~~~~~~~~
+!!! error TS7022: 'immediate' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                       ~~~~~~~~~~~~~~~
+!!! error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+                             ~~~~~~~~~
+!!! error TS2448: Block-scoped variable 'immediate' used before its declaration.
+!!! related TS2728 input.ts:4:7: 'immediate' is declared here.
+                             ~~~~~~~~~
+!!! error TS21400: 'immediate' was used before it was defined.
+    class C extends C {}
+          ~
+!!! error TS2506: 'C' is referenced directly or indirectly in its own base expression.
+                    ~
+!!! error TS21400: 'C' was used before it was defined.
+    class D {
+        [D]() {}
+        ~~~
+!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+         ~
+!!! error TS2449: Class 'D' used before its declaration.
+!!! related TS2728 input.ts:6:7: 'D' is declared here.
+         ~
+!!! error TS21400: 'D' was used before it was defined.
+        static field = later;
+                       ~~~~~
+!!! error TS2448: Block-scoped variable 'later' used before its declaration.
+!!! related TS2728 input.ts:11:5: 'later' is declared here.
+                       ~~~~~
+!!! error TS7005: Variable 'later' implicitly has an 'any' type.
+                       ~~~~~
+!!! error TS21400: 'later' was used before it was defined.
+        instance = later;
+                   ~~~~~
+!!! error TS7005: Variable 'later' implicitly has an 'any' type.
+    }
+    let later;
+        ~~~~~
+!!! error TS7034: Variable 'later' implicitly has type 'any' in some locations where its type cannot be determined.
+    for (let item of item) {}
+             ~~~~
+!!! error TS7022: 'item' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                     ~~~~
+!!! error TS2448: Block-scoped variable 'item' used before its declaration.
+!!! related TS2728 input.ts:12:10: 'item' is declared here.
+                     ~~~~
+!!! error TS21400: 'item' was used before it was defined.

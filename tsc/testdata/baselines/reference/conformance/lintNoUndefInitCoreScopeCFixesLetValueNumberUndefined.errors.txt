@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS2322: Type 'undefined' is not assignable to type 'number'.
+/input.ts(1,5): error TS20150: It's not necessary to initialize 'value' to undefined.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-undef-init": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let value: number = undefined;
+        ~~~~~
+!!! error TS2322: Type 'undefined' is not assignable to type 'number'.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20150: It's not necessary to initialize 'value' to undefined.

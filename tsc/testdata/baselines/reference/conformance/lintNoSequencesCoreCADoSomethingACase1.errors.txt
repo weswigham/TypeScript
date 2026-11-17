@@ -1,0 +1,25 @@
+/input.ts(1,1): error TS7006: Parameter 'a' implicitly has an 'any' type.
+/input.ts(1,8): error TS2304: Cannot find name 'doSomething'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-sequences": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    a => ((doSomething(), a))
+    ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+           ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'doSomething'.

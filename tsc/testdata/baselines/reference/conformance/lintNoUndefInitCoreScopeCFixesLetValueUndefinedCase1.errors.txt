@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS20150: It's not necessary to initialize '{ value }' to undefined.
+/input.ts(1,7): error TS2339: Property 'value' does not exist on type 'undefined'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-undef-init": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    let { value } = undefined;
+        ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20150: It's not necessary to initialize '{ value }' to undefined.
+          ~~~~~
+!!! error TS2339: Property 'value' does not exist on type 'undefined'.

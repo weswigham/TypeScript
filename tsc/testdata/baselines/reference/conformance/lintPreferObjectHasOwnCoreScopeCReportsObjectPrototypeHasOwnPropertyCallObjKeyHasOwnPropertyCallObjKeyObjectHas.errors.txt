@@ -1,0 +1,46 @@
+/input.ts(1,1): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+/input.ts(1,38): error TS2304: Cannot find name 'obj'.
+/input.ts(1,43): error TS2304: Cannot find name 'key'.
+/input.ts(1,49): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+/input.ts(1,74): error TS2304: Cannot find name 'obj'.
+/input.ts(1,79): error TS2304: Cannot find name 'key'.
+/input.ts(1,85): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+/input.ts(1,112): error TS2304: Cannot find name 'obj'.
+/input.ts(1,117): error TS2304: Cannot find name 'key'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "prefer-object-has-own": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (9 errors) ====
+    Object.prototype.hasOwnProperty.call(obj, key); ({}).hasOwnProperty.call(obj, key); Object.hasOwnProperty.call(obj, key);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+                                         ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                              ~~~
+!!! error TS2304: Cannot find name 'key'.
+                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+                                                                             ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                                                  ~~~
+!!! error TS2304: Cannot find name 'key'.
+                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
+                                                                                                                   ~~~
+!!! error TS2304: Cannot find name 'obj'.
+                                                                                                                        ~~~
+!!! error TS2304: Cannot find name 'key'.

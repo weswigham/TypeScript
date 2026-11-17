@@ -1,0 +1,22 @@
+/input.ts(1,10): error TS20481: void is not valid as a constituent in a union type
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-invalid-void-type": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    type T = void | number;
+             ~~~~
+!!! error TS20481: void is not valid as a constituent in a union type

@@ -1,0 +1,25 @@
+/input.ts(1,5): error TS24214: Identifier 'forbidden' does not match the pattern '^(?!forbidden$)[a-z]+$'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "id-match": [
+                    "error",
+                    "^(?!forbidden$)[a-z]+$"
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    let forbidden; let valid;
+        ~~~~~~~~~
+!!! error TS24214: Identifier 'forbidden' does not match the pattern '^(?!forbidden$)[a-z]+$'.

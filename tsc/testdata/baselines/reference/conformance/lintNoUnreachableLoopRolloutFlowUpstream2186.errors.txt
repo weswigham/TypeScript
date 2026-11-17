@@ -1,0 +1,57 @@
+/input.ts(1,1): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,8): error TS2304: Cannot find name 'a'.
+/input.ts(1,18): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,35): error TS2304: Cannot find name 'b'.
+/input.ts(1,39): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,55): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,60): error TS2304: Cannot find name 'c'.
+/input.ts(1,65): error TS2304: Cannot find name 'd'.
+/input.ts(1,75): error TS24284: Invalid loop. Its body allows only one iteration.
+/input.ts(1,80): error TS2304: Cannot find name 'e'.
+/input.ts(1,85): error TS2304: Cannot find name 'f'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unreachable-loop": [
+                    "error",
+                    {
+                        "ignore": []
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (11 errors) ====
+    while (a) break; do break; while (b); for (;;) break; for (c in d) break; for (e of f) break;
+    ~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+           ~
+!!! error TS2304: Cannot find name 'a'.
+                     ~~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                      ~
+!!! error TS2304: Cannot find name 'b'.
+                                          ~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                                          ~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                                               ~
+!!! error TS2304: Cannot find name 'c'.
+                                                                    ~
+!!! error TS2304: Cannot find name 'd'.
+                                                                              ~~~~~~~~~~~~~~~~~~~
+!!! error TS24284: Invalid loop. Its body allows only one iteration.
+                                                                                   ~
+!!! error TS2304: Cannot find name 'e'.
+                                                                                        ~
+!!! error TS2304: Cannot find name 'f'.

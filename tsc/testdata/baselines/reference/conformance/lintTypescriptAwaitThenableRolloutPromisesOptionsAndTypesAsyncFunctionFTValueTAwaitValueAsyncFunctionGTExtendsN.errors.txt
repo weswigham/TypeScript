@@ -1,0 +1,29 @@
+/input.ts(1,95): error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/await-thenable": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    async function f<T>(value: T) { await value; } async function g<T extends number>(value: T) { await value; }
+                                                                                                  ~~~~~~~~~~~
+!!! error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+    export {};

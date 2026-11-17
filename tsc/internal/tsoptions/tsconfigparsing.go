@@ -670,7 +670,7 @@ func convertArrayLiteralExpressionToJson(
 	for _, element := range elements {
 		convertedValue, err := convertPropertyValueToJson(sourceFile, element, elementOption, returnValue, nil)
 		errors = append(errors, err...)
-		if convertedValue != nil {
+		if convertedValue != nil || elementOption == nil && element.Kind == ast.KindNullKeyword {
 			value = append(value, convertedValue)
 		}
 	}

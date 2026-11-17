@@ -1,0 +1,33 @@
+/input.ts(1,1): error TS19004: Do not use String as a constructor.
+/input.ts(1,18): error TS19004: Do not use Number as a constructor.
+/input.ts(1,33): error TS19004: Do not use Boolean as a constructor.
+/input.ts(1,53): error TS19004: Do not use String as a constructor.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-new-wrappers": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (4 errors) ====
+    new String('x'); new Number(1); new Boolean(false); new (String);
+    ~~~~~~~~~~~~~~~
+!!! error TS19004: Do not use String as a constructor.
+                     ~~~~~~~~~~~~~
+!!! error TS19004: Do not use Number as a constructor.
+                                    ~~~~~~~~~~~~~~~~~~
+!!! error TS19004: Do not use Boolean as a constructor.
+                                                        ~~~~~~~~~~~~
+!!! error TS19004: Do not use String as a constructor.
+==== /custom.ts (0 errors) ====
+    export default class Custom {}

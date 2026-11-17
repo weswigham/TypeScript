@@ -1,0 +1,22 @@
+/input.ts(1,24): error TS1104: A 'continue' statement can only be used within an enclosing iteration statement.
+/input.ts(1,24): error TS19353: Unexpected use of continue statement.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {},
+        "lint": {
+            "rules": {
+                "no-continue": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+     /* leading comment */ continue;
+                           ~~~~~~~~~
+!!! error TS1104: A 'continue' statement can only be used within an enclosing iteration statement.
+                           ~~~~~~~~~
+!!! error TS19353: Unexpected use of continue statement.

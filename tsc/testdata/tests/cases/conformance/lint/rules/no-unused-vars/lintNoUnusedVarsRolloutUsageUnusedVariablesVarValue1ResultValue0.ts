@@ -1,0 +1,27 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestRolloutUsageUnusedVariables/var_value_=_1;_result_=_(value++,_0); (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "module": "esnext",
+        "moduleDetection": "legacy",
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "no-unused-vars": "error"
+        }
+    },
+    "files": [
+        "/input.ts",
+        "globals.d.ts"
+    ]
+}
+// @filename: /globals.d.ts
+
+// @filename: /input.ts
+var value = 1; result = (value++, 0);

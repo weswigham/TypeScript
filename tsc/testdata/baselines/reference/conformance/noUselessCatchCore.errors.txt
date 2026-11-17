@@ -1,0 +1,51 @@
+input.ts(1,1): error TS19660: Unnecessary try/catch wrapper.
+input.ts(1,7): error TS2304: Cannot find name 'call'.
+input.ts(2,7): error TS2304: Cannot find name 'call'.
+input.ts(2,17): error TS19659: Unnecessary catch clause.
+input.ts(2,60): error TS2304: Cannot find name 'cleanup'.
+input.ts(3,1): error TS19660: Unnecessary try/catch wrapper.
+input.ts(3,7): error TS2304: Cannot find name 'call'.
+input.ts(3,46): error TS2304: Cannot find name 'unreachable'.
+input.ts(4,7): error TS2304: Cannot find name 'call'.
+input.ts(4,26): error TS2339: Property 'error' does not exist on type 'unknown'.
+input.ts(5,7): error TS2304: Cannot find name 'call'.
+input.ts(5,33): error TS2304: Cannot find name 'work'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-useless-catch": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (12 errors) ====
+    try { call(); } catch (error) { /* keep */ throw error; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19660: Unnecessary try/catch wrapper.
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.
+    try { call(); } catch (error) { throw (error); } finally { cleanup(); }
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19659: Unnecessary catch clause.
+                                                               ~~~~~~~
+!!! error TS2304: Cannot find name 'cleanup'.
+    try { call(); } catch (error) { throw error; unreachable(); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19660: Unnecessary try/catch wrapper.
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                 ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'unreachable'.
+    try { call(); } catch ({ error }) { throw error; }
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                             ~~~~~
+!!! error TS2339: Property 'error' does not exist on type 'unknown'.
+    try { call(); } catch (error) { work(); throw error; }
+          ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                    ~~~~
+!!! error TS2304: Cannot find name 'work'.

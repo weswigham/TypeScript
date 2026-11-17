@@ -1,0 +1,24 @@
+// @lintOnly: true
+// @fix: true
+// @preserveFileContent: true
+// @currentDirectory: /
+// Migrated from TestFinalStructuralConstituents/intersection (invocation 1).
+// @filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "module": "esnext",
+        "strict": true,
+        "target": "esnext"
+    },
+    "lint": {
+        "rules": {
+            "@typescript-eslint/no-redundant-type-constituents": "error"
+        }
+    },
+    "files": [
+        "/input.ts"
+    ]
+}
+// @filename: /input.ts
+type A = string & 'x';

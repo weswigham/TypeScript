@@ -1,0 +1,23 @@
+input.ts(1,29): error TS21271: A record is preferred over an index signature.
+input.ts(2,1): error TS21271: A record is preferred over an index signature.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "module": "preserve", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/consistent-indexed-object-style": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    type StringIndexViolation = { [name: string]: number };
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21271: A record is preferred over an index signature.
+    interface NumberIndexViolation { [index: number]: string; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS21271: A record is preferred over an index signature.
+    type ValidRecord = Record<string, number>;
+    type RecursiveValid = { [name: string]: RecursiveValid };
+    type DependentValid<Shape> = { [Name in keyof Shape]: Shape[Name] };
+    interface NamedValid { name: string; }
+    export {};

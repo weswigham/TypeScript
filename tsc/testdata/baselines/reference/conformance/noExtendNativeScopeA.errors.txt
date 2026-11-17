@@ -1,0 +1,45 @@
+input.ts(1,1): error TS19863: Object prototype is read only, properties should not be added.
+input.ts(1,18): error TS2339: Property 'method' does not exist on type 'Object'.
+input.ts(1,27): error TS2304: Cannot find name 'value'.
+input.ts(2,1): error TS19863: String prototype is read only, properties should not be added.
+input.ts(2,53): error TS18004: No value exists in scope for the shorthand property 'value'. Either declare one or provide an initializer.
+input.ts(3,1): error TS19863: Number prototype is read only, properties should not be added.
+input.ts(4,17): error TS2339: Property 'method' does not exist on type 'any[]'.
+input.ts(4,26): error TS2304: Cannot find name 'value'.
+input.ts(5,25): error TS2339: Property 'method' does not exist on type 'Object'.
+input.ts(6,58): error TS2304: Cannot find name 'value'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-extend-native": ["error", { "exceptions": ["Array"] }] } },
+        "files": ["input.ts"]
+    }
+==== input.ts (10 errors) ====
+    Object.prototype.method = value;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: Object prototype is read only, properties should not be added.
+                     ~~~~~~
+!!! error TS2339: Property 'method' does not exist on type 'Object'.
+                              ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    Object.defineProperty(String.prototype, "method", { value });
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: String prototype is read only, properties should not be added.
+                                                        ~~~~~
+!!! error TS18004: No value exists in scope for the shorthand property 'value'. Either declare one or provide an initializer.
+    Object?.defineProperties(Number?.prototype, {});
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19863: Number prototype is read only, properties should not be added.
+    Array.prototype.method = value;
+                    ~~~~~~
+!!! error TS2339: Property 'method' does not exist on type 'any[]'.
+                             ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+    delete Object.prototype.method;
+                            ~~~~~~
+!!! error TS2339: Property 'method' does not exist on type 'Object'.
+    function shadow(Object: any) { Object.prototype.method = value; }
+                                                             ~~~~~
+!!! error TS2304: Cannot find name 'value'.

@@ -1,0 +1,43 @@
+/input.ts(1,18): error TS1539: A 'bigint' literal cannot be used as a property name.
+/input.ts(1,28): error TS19356: Duplicate key '16'.
+/input.ts(1,35): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+/input.ts(1,36): error TS19356: Duplicate key '16'.
+/input.ts(1,51): error TS1117: An object literal cannot have multiple properties with the same name.
+/input.ts(1,51): error TS19356: Duplicate key '16'.
+/input.ts(1,60): error TS1539: A 'bigint' literal cannot be used as a property name.
+/input.ts(1,60): error TS19356: Duplicate key '16'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-dupe-keys": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (8 errors) ====
+    const object = { 0x10n: 1, 16: 2, [0b1_0000n]: 3, '16': 4, 0o20n: 5 };
+                     ~~~~~
+!!! error TS1539: A 'bigint' literal cannot be used as a property name.
+                               ~~
+!!! error TS19356: Duplicate key '16'.
+                                      ~~~~~~~~~~~
+!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+                                       ~~~~~~~~~
+!!! error TS19356: Duplicate key '16'.
+                                                      ~~~~
+!!! error TS1117: An object literal cannot have multiple properties with the same name.
+                                                      ~~~~
+!!! error TS19356: Duplicate key '16'.
+                                                               ~~~~~
+!!! error TS1539: A 'bigint' literal cannot be used as a property name.
+                                                               ~~~~~
+!!! error TS19356: Duplicate key '16'.

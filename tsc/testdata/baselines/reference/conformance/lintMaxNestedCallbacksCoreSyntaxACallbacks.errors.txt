@@ -1,0 +1,55 @@
+/input.ts(1,1): error TS2304: Cannot find name 'call'.
+/input.ts(1,13): error TS2304: Cannot find name 'call'.
+/input.ts(1,25): error TS2304: Cannot find name 'call'.
+/input.ts(1,37): error TS2304: Cannot find name 'call'.
+/input.ts(1,49): error TS2304: Cannot find name 'call'.
+/input.ts(1,61): error TS2304: Cannot find name 'call'.
+/input.ts(1,73): error TS2304: Cannot find name 'call'.
+/input.ts(1,85): error TS2304: Cannot find name 'call'.
+/input.ts(1,97): error TS2304: Cannot find name 'call'.
+/input.ts(1,109): error TS2304: Cannot find name 'call'.
+/input.ts(1,121): error TS2304: Cannot find name 'call'.
+/input.ts(1,126): error TS19320: Too many nested callbacks (11). Maximum allowed is 10.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "max-nested-callbacks": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (12 errors) ====
+    call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {call(() => {});});});});});});});});});});});
+    ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                            ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                        ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                    ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                            ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                        ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                                    ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                                                ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                                                            ~~~~
+!!! error TS2304: Cannot find name 'call'.
+                                                                                                                                 ~~~~~~~~
+!!! error TS19320: Too many nested callbacks (11). Maximum allowed is 10.

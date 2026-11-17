@@ -1,0 +1,32 @@
+/input.ts(2,26): error TS20314: Use a `type` instead of an `interface`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-type-definitions": [
+                    "error",
+                    "type"
+                ]
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    
+    export default interface Test {
+                             ~~~~
+!!! error TS20314: Use a `type` instead of an `interface`.
+      bar(): string;
+      foo(): number;
+    }
+          

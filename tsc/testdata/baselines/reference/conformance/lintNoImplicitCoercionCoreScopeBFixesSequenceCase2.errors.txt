@@ -1,0 +1,28 @@
+/input.ts(1,25): error TS2304: Cannot find name 'first'.
+/input.ts(1,25): error TS2695: Left side of comma operator is unused and has no side effects.
+/input.ts(1,32): error TS2304: Cannot find name 'second'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-implicit-coercion": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const result = Boolean((first, second));
+                            ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                            ~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                                   ~~~~~~
+!!! error TS2304: Cannot find name 'second'.

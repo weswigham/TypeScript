@@ -1,0 +1,30 @@
+/input.ts(1,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+/input.ts(1,24): error TS2304: Cannot find name 'Foo'.
+/input.ts(1,56): error TS2304: Cannot find name 'Foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "react",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    const a: /* comment */ Foo/* another */ <string> = new Foo();
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+                           ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                                                           ~~~
+!!! error TS2304: Cannot find name 'Foo'.

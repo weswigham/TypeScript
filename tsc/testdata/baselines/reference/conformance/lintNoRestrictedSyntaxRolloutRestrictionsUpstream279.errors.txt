@@ -1,0 +1,32 @@
+/input.tsx(1,1): error TS2304: Cannot find name 'bar'.
+/input.tsx(1,1): error TS24277: Using 'Identifier' is not allowed.
+/input.tsx(1,1): error TS24277: Using 'Identifier[name="bar"]' is not allowed.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "Identifier",
+                    "Identifier[name=\"bar\"]"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (3 errors) ====
+    bar;
+    ~~~
+!!! error TS2304: Cannot find name 'bar'.
+    ~~~
+!!! error TS24277: Using 'Identifier' is not allowed.
+    ~~~
+!!! error TS24277: Using 'Identifier[name="bar"]' is not allowed.

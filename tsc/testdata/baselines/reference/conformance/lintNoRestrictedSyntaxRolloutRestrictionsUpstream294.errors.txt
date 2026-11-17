@@ -1,0 +1,28 @@
+/input.tsx(1,22): error TS24277: Using 'VariableDeclaration[kind='await using']' is not allowed.
+/input.tsx(1,38): error TS2304: Cannot find name 'foo'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-restricted-syntax": [
+                    "error",
+                    "VariableDeclaration[kind='await using']"
+                ]
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (2 errors) ====
+    async function f() { await using x = foo(); }
+                         ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24277: Using 'VariableDeclaration[kind='await using']' is not allowed.
+                                         ~~~
+!!! error TS2304: Cannot find name 'foo'.

@@ -1,0 +1,32 @@
+/input.tsx(8,13): error TS24056: Using the spread operator on class instances will lose their class prototype.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-spread": "error"
+            }
+        },
+        "files": [
+            "/input.tsx"
+        ]
+    }
+==== /input.tsx (1 errors) ====
+    
+    class A {
+      a = 1;
+    }
+    
+    declare const a: A;
+    
+    const o = { ...a };
+                ~~~~
+!!! error TS24056: Using the spread operator on class instances will lose their class prototype.
+          

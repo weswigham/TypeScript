@@ -1,0 +1,38 @@
+input.ts(7,1): error TS24031: `legacyValue` is deprecated.
+input.ts(8,1): error TS24032: `oldValue` is deprecated. Use currentValue.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "target": "esnext",
+            "module": "preserve"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-deprecated": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    /** @deprecated */
+    const legacyValue = 1;
+    /** @deprecated Use currentValue. */
+    const oldValue = 2;
+    const currentValue = 3;
+    
+    legacyValue;
+    ~~~~~~~~~~~
+!!! error TS24031: `legacyValue` is deprecated.
+    oldValue;
+    ~~~~~~~~
+!!! error TS24032: `oldValue` is deprecated. Use currentValue.
+    currentValue;
+    
+    /** @deprecated */
+    const unusedLegacyValue = 4;
+    const documentation = "/** @deprecated */";
+    documentation;

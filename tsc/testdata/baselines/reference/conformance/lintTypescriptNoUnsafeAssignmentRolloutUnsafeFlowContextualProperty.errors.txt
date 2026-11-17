@@ -1,0 +1,23 @@
+/input.ts(1,39): error TS24102: Unsafe assignment of type `Set<any>` to a variable of type `Set<string>`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const result: {value: Set<string>} = {value: new Set<any>()};
+                                          ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24102: Unsafe assignment of type `Set<any>` to a variable of type `Set<string>`.

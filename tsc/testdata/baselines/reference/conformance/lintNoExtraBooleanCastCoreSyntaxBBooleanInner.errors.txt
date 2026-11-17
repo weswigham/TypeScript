@@ -1,0 +1,54 @@
+/input.ts(1,5): error TS2304: Cannot find name 'value'.
+/input.ts(1,14): error TS19363: Redundant Boolean call.
+/input.ts(1,22): error TS2304: Cannot find name 'other'.
+/input.ts(1,37): error TS2304: Cannot find name 'value'.
+/input.ts(1,46): error TS19363: Redundant Boolean call.
+/input.ts(1,54): error TS2304: Cannot find name 'other'.
+/input.ts(1,70): error TS2304: Cannot find name 'value'.
+/input.ts(1,70): error TS2695: Left side of comma operator is unused and has no side effects.
+/input.ts(1,77): error TS19363: Redundant Boolean call.
+/input.ts(1,85): error TS2304: Cannot find name 'other'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extra-boolean-cast": [
+                    "error",
+                    {
+                        "enforceForInnerExpressions": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (10 errors) ====
+    if (value && Boolean(other)) {} if (value ?? Boolean(other)) {} if ((value, Boolean(other))) {}
+        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                 ~~~~~~~~~~~~~~
+!!! error TS19363: Redundant Boolean call.
+                         ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                        ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                 ~~~~~~~~~~~~~~
+!!! error TS19363: Redundant Boolean call.
+                                                         ~~~~~
+!!! error TS2304: Cannot find name 'other'.
+                                                                         ~~~~~
+!!! error TS2304: Cannot find name 'value'.
+                                                                         ~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                                                                                ~~~~~~~~~~~~~~
+!!! error TS19363: Redundant Boolean call.
+                                                                                        ~~~~~
+!!! error TS2304: Cannot find name 'other'.

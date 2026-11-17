@@ -1,0 +1,23 @@
+/input.ts(1,52): error TS20906: Qualifier is unnecessary since 'B' is in scope.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-unnecessary-qualifier": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    namespace A { export type B = number; const value: A.B = 3; }
+                                                       ~
+!!! error TS20906: Qualifier is unnecessary since 'B' is in scope.

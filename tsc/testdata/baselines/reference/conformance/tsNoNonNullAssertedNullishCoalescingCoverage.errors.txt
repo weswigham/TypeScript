@@ -1,0 +1,20 @@
+input.ts(5,1): error TS21320: The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed.
+input.ts(7,1): error TS21320: The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext","module":"preserve"},"lint":{"rules":{"@typescript-eslint/no-non-null-asserted-nullish-coalescing":"error"}},"files":["input.ts"]}
+==== input.ts (2 errors) ====
+    export {};
+    let unassigned: string;
+    unassigned! ?? "fallback";
+    declare const object: { text?: string };
+    object.text! ?? "fallback";
+    ~~~~~~~~~~~~
+!!! error TS21320: The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed.
+    let initialized = "ready";
+    initialized! ?? "fallback";
+    ~~~~~~~~~~~~
+!!! error TS21320: The nullish coalescing operator is designed to handle undefined and null - using a non-null assertion is not needed.
+    object.text ?? "fallback";
+    initialized ?? "fallback";

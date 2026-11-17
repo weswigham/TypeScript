@@ -1,0 +1,46 @@
+input.ts(1,1): warning TS24347: Use the function form of 'use strict'.
+input.ts(2,1): warning TS24347: Use the function form of 'use strict'.
+input.ts(6,9): warning TS24351: Unnecessary 'use strict' directive.
+input.ts(9,19): error TS1346: This parameter is not allowed with 'use strict' directive.
+input.ts(10,5): error TS1347: 'use strict' directive cannot be used with non-simple parameter list.
+input.ts(10,5): warning TS24355: 'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016.
+input.ts(14,9): warning TS24354: 'use strict' is unnecessary inside of classes.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "lint": { "rules": { "strict": ["warn", "function"] } }
+    }
+==== input.ts (7 errors) ====
+    "use strict";
+    ~~~~~~~~~~~~~
+!!! warning TS24347: Use the function form of 'use strict'.
+    function absent() {}
+    ~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24347: Use the function form of 'use strict'.
+    function outer() {
+        "use strict";
+        function inner() {
+            "use strict";
+            ~~~~~~~~~~~~~
+!!! warning TS24351: Unnecessary 'use strict' directive.
+        }
+    }
+    function defaults(value = 0) {
+                      ~~~~~~~~~
+!!! error TS1346: This parameter is not allowed with 'use strict' directive.
+!!! related TS1349 input.ts:10:5: 'use strict' directive used here.
+        "use strict";
+        ~~~~~~~~~~~~~
+!!! error TS1347: 'use strict' directive cannot be used with non-simple parameter list.
+!!! related TS1348 input.ts:9:19: Non-simple parameter declared here.
+        ~~~~~~~~~~~~~
+!!! warning TS24355: 'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016.
+    }
+    class Example {
+        method() {
+            "use strict";
+            ~~~~~~~~~~~~~
+!!! warning TS24354: 'use strict' is unnecessary inside of classes.
+        }
+    }

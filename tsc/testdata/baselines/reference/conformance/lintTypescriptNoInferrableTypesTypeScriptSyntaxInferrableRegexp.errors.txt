@@ -1,0 +1,25 @@
+/input.ts(1,7): error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.
+/input.ts(1,30): error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-inferrable-types": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    const a: RegExp = /a/; const b: RegExp = new RegExp('b');
+          ~~~~~~~~~~~~~~~
+!!! error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19107: Type RegExp trivially inferred from a RegExp literal, remove type annotation.

@@ -1,0 +1,30 @@
+/input.ts(1,1): error TS2304: Cannot find name 'undefined_name'.
+/input.ts(1,1): error TS24203: Identifier 'undefined_name' is not in camel case.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "camelcase": [
+                    "error",
+                    {
+                        "ignoreGlobals": true
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    undefined_name;
+    ~~~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'undefined_name'.
+    ~~~~~~~~~~~~~~
+!!! error TS24203: Identifier 'undefined_name' is not in camel case.

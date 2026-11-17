@@ -1,0 +1,35 @@
+/input.ts(2,5): error TS7008: Member 'bar' implicitly has an 'any' type.
+/input.ts(2,10): error TS7008: Member '#unused2' implicitly has an 'any' type.
+/input.ts(2,10): error TS24288: '#unused2' is defined but never used.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-unused-private-class-members": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    class C {
+        bar; #unused2; // keep
+        ~~~
+!!! error TS7008: Member 'bar' implicitly has an 'any' type.
+             ~~~~~~~~
+!!! error TS7008: Member '#unused2' implicitly has an 'any' type.
+             ~~~~~~~~
+!!! error TS24288: '#unused2' is defined but never used.
+    }

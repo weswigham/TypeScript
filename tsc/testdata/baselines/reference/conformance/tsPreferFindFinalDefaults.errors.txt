@@ -1,0 +1,27 @@
+input.ts(5,1): error TS24133: Prefer .find(...) instead of .filter(...)[0].
+input.ts(6,1): error TS24133: Prefer .find(...) instead of .filter(...)[0].
+input.ts(7,1): error TS24133: Prefer .find(...) instead of .filter(...)[0].
+input.ts(8,1): error TS24133: Prefer .find(...) instead of .filter(...)[0].
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/prefer-find":"error"}}}
+==== input.ts (4 errors) ====
+    declare const values: readonly number[];
+    declare const optional: number[] | undefined;
+    declare const condition: boolean;
+    const zero = 0;
+    values.filter(value => value > 0)[zero];
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
+    values["filter"](Boolean).at(0);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
+    (condition ? values.filter(Boolean) : values.filter(Boolean))[0];
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
+    optional?.filter(Boolean)[0];
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
+    values.filter(Boolean)?.[0];
+    values.filter(Boolean).at(1);

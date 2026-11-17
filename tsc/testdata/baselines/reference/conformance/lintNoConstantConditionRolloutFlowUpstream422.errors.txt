@@ -1,0 +1,28 @@
+/input.ts(1,23): error TS2630: Cannot assign to 'foo' because it is a function.
+/input.ts(1,29): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/input.ts(1,36): error TS24224: Unexpected constant condition.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-constant-condition": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    function* foo() {for (foo = yield; true;) {}}
+                          ~~~
+!!! error TS2630: Cannot assign to 'foo' because it is a function.
+                                ~~~~~
+!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+                                       ~~~~
+!!! error TS24224: Unexpected constant condition.

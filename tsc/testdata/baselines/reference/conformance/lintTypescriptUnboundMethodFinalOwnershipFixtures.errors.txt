@@ -1,0 +1,71 @@
+/input.ts(9,18): error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`.
+/input.ts(10,15): error TS24192: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+/input.ts(11,9): error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`.
+/input.ts(12,18): error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`.
+/input.ts(13,17): error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/unbound-method": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (5 errors) ====
+    
+    class Owner {
+        method() {}
+        typed(this: Owner) {}
+        independent(this: void) {}
+        arrow = () => {};
+    }
+    const owner = new Owner();
+    const detached = owner.method;
+                     ~~~~~~~~~~~~
+!!! error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24193: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+!!! error TS24193: If a function does not access `this`, it can be annotated with `this: void`.
+    const typed = owner.typed;
+                  ~~~~~~~~~~~
+!!! error TS24192: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24192: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+    const { method: renamed } = owner;
+            ~~~~~~
+!!! error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24193: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+!!! error TS24193: If a function does not access `this`, it can be annotated with `this: void`.
+    const computed = owner['method'];
+                     ~~~~~~~~~~~~~~~
+!!! error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24193: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+!!! error TS24193: If a function does not access `this`, it can be annotated with `this: void`.
+    const promise = Promise.all;
+                    ~~~~~~~~~~~
+!!! error TS24193: A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+!!! error TS24193: Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+!!! error TS24193: If a function does not access `this`, it can be annotated with `this: void`.
+    owner.method();
+    owner.method.bind(owner);
+    const safe = owner.independent;
+    const arrow = owner.arrow;
+    const native = Math.floor;
+    const compare = new Intl.Collator().compare;

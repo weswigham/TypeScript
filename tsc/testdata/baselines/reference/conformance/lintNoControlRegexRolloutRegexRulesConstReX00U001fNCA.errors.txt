@@ -1,0 +1,22 @@
+/input.ts(1,12): error TS24225: Unexpected control character(s) in regular expression: \x00, \x1f.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-control-regex": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const re = /\x00\u001f\n\cA/;
+               ~~~~~~~~~~~~~~~~~
+!!! error TS24225: Unexpected control character(s) in regular expression: \x00, \x1f.

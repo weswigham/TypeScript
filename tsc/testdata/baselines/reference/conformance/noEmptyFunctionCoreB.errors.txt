@@ -1,0 +1,29 @@
+input.ts(1,18): error TS19358: Unexpected empty function 'empty'.
+input.ts(2,21): error TS19358: Unexpected empty arrow function.
+input.ts(5,14): error TS19358: Unexpected empty method 'method'.
+input.ts(6,25): error TS19358: Unexpected empty async method 'asyncMethod'.
+input.ts(7,18): error TS19358: Unexpected empty generator method 'generator'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-empty-function":"error"}},"files":["input.ts"]}
+==== input.ts (5 errors) ====
+    function empty() {}
+                     ~~
+!!! error TS19358: Unexpected empty function 'empty'.
+    const arrow = () => {};
+                        ~~
+!!! error TS19358: Unexpected empty arrow function.
+    class Item {
+        constructor(public value: number) {}
+        method() {}
+                 ~~
+!!! error TS19358: Unexpected empty method 'method'.
+        async asyncMethod() {}
+                            ~~
+!!! error TS19358: Unexpected empty async method 'asyncMethod'.
+        *generator() {}
+                     ~~
+!!! error TS19358: Unexpected empty generator method 'generator'.
+    }
+    function documented() { /* intentional */ }

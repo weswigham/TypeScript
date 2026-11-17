@@ -1,0 +1,36 @@
+input.ts(1,1): error TS21087: Functions that return promises must be async.
+input.ts(4,1): error TS22020: Functions that return promises must be async. Consider adding an explicit return type annotation if the function is intended to return a union of promise and non-promise types.
+input.ts(14,5): error TS21087: Functions that return promises must be async.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": { "rules": { "@typescript-eslint/promise-function-async": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (3 errors) ====
+    function promised() {
+    ~~~~~~~~~~~~~~~~~
+!!! error TS21087: Functions that return promises must be async.
+        return Promise.resolve(1);
+    }
+    function hybrid(flag: boolean) {
+    ~~~~~~~~~~~~~~~
+!!! error TS22020: Functions that return promises must be async. Consider adding an explicit return type annotation if the function is intended to return a union of promise and non-promise types.
+        return flag ? Promise.resolve(1) : 1;
+    }
+    function annotated(flag: boolean): Promise<number> | number {
+        return flag ? Promise.resolve(1) : 1;
+    }
+    class Example {
+        get value() {
+            return Promise.resolve(1);
+        }
+        method() {
+        ~~~~~~
+!!! error TS21087: Functions that return promises must be async.
+            return Promise.resolve(1);
+        }
+    }

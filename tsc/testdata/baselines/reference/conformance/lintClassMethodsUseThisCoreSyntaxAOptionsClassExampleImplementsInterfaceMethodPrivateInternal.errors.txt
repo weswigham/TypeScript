@@ -1,0 +1,30 @@
+/input.ts(1,26): error TS2304: Cannot find name 'Interface'.
+/input.ts(1,50): error TS19218: Expected 'this' to be used by class method 'internal'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "class-methods-use-this": [
+                    "error",
+                    {
+                        "ignoreClassesWithImplements": "public-fields"
+                    }
+                ]
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    class Example implements Interface { method() {} private internal() {} }
+                             ~~~~~~~~~
+!!! error TS2304: Cannot find name 'Interface'.
+                                                     ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19218: Expected 'this' to be used by class method 'internal'.

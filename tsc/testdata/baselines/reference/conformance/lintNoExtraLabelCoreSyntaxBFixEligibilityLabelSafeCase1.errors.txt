@@ -1,0 +1,22 @@
+/input.ts(1,29): error TS19364: This label 'outer' is unnecessary.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-extra-label": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    outer: while (true) { break outer; }
+                                ~~~~~
+!!! error TS19364: This label 'outer' is unnecessary.

@@ -1,0 +1,28 @@
+/input.ts(1,11): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+/input.ts(1,20): error TS2304: Cannot find name 'Box'.
+/input.ts(1,38): error TS2304: Cannot find name 'Box'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/consistent-generic-constructors": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (3 errors) ====
+    class C { ['key']: Box<string> = new Box; }
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
+                       ~~~
+!!! error TS2304: Cannot find name 'Box'.
+                                         ~~~
+!!! error TS2304: Cannot find name 'Box'.

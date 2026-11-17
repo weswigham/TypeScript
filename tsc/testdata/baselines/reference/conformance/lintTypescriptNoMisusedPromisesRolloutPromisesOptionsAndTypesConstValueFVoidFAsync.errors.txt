@@ -1,0 +1,29 @@
+/input.ts(1,36): error TS24051: Promise-returning function provided to property where a void return was expected.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "lib": [
+                "esnext",
+                "dom"
+            ],
+            "module": "esnext",
+            "strict": true,
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const value: { f: () => void } = { f: async () => {} };
+                                       ~~~~~~~~~~~~~~
+!!! error TS24051: Promise-returning function provided to property where a void return was expected.
+    export {};

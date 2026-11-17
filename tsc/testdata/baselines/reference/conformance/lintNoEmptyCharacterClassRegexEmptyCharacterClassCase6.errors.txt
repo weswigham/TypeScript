@@ -1,0 +1,22 @@
+/input.ts(1,17): error TS20621: Empty class.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-empty-character-class": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (1 errors) ====
+    const pattern = /[a&&[]]/v;
+                    ~~~~~~~~~~
+!!! error TS20621: Empty class.

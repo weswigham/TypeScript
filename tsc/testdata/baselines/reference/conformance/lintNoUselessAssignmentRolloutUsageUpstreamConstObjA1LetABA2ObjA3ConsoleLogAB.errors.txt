@@ -1,0 +1,39 @@
+/input.ts(3,17): error TS24293: The value assigned to 'a' is not used in subsequent statements.
+/input.ts(4,17): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+/input.ts(4,22): error TS24293: The value assigned to 'a' is not used in subsequent statements.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "jsx": "preserve",
+            "module": "esnext",
+            "moduleDetection": "force",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-useless-assignment": "error"
+            }
+        },
+        "files": [
+            "/input.ts",
+            "globals.d.ts"
+        ]
+    }
+==== /globals.d.ts (0 errors) ====
+    
+==== /input.ts (3 errors) ====
+    const obj = { a: 1 };
+                let {
+                    a,
+                    ~
+!!! error TS24293: The value assigned to 'a' is not used in subsequent statements.
+                    b = (a = 2)
+                    ~
+!!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+                         ~
+!!! error TS24293: The value assigned to 'a' is not used in subsequent statements.
+                } = obj;
+                a = 3
+                console.log(a, b);

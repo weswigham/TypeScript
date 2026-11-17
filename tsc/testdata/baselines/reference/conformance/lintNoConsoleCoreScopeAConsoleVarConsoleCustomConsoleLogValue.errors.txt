@@ -1,0 +1,25 @@
+/input.ts(1,15): error TS2304: Cannot find name 'custom'.
+/input.ts(1,35): error TS2304: Cannot find name 'value'.
+
+
+==== /tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "module": "esnext",
+            "target": "esnext"
+        },
+        "lint": {
+            "rules": {
+                "no-console": "error"
+            }
+        },
+        "files": [
+            "input.ts"
+        ]
+    }
+==== /input.ts (2 errors) ====
+    var console = custom; console.log(value);
+                  ~~~~~~
+!!! error TS2304: Cannot find name 'custom'.
+                                      ~~~~~
+!!! error TS2304: Cannot find name 'value'.

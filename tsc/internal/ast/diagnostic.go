@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/TypeScript/tsc/internal/codefix"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
@@ -54,7 +53,8 @@ type Diagnostic struct {
 	reportsDeprecated  bool
 	skippedOnNoEmit    bool
 	repopulateInfo     *RepopulateDiagnosticInfo
-	codeFixes          []*codefix.CodeFixAction
+	codeFixes          []*CodeFixAction
+	codeFixSuggestions []*CodeFixAction
 }
 
 func (d *Diagnostic) File() *SourceFile                         { return d.file }
@@ -75,9 +75,16 @@ func (d *Diagnostic) ReportsDeprecated() bool                   { return d.repor
 func (d *Diagnostic) SkippedOnNoEmit() bool                     { return d.skippedOnNoEmit }
 func (d *Diagnostic) RepopulateInfo() *RepopulateDiagnosticInfo { return d.repopulateInfo }
 
-func (d *Diagnostic) CodeFixes() []*codefix.CodeFixAction { return d.codeFixes }
+func (d *Diagnostic) CodeFixes() []*CodeFixAction { return d.codeFixes }
 
-func (d *Diagnostic) SetCodeFixes(fixes ...*codefix.CodeFixAction) *Diagnostic {
+func (d *Diagnostic) CodeFixSuggestions() []*CodeFixAction { return d.codeFixSuggestions }
+
+func (d *Diagnostic) SetCodeFixSuggestions(suggestions ...*CodeFixAction) *Diagnostic {
+	d.codeFixSuggestions = suggestions
+	return d
+}
+
+func (d *Diagnostic) SetCodeFixes(fixes ...*CodeFixAction) *Diagnostic {
 	d.codeFixes = fixes
 	return d
 }

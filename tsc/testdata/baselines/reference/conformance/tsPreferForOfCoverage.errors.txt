@@ -1,0 +1,29 @@
+input.ts(4,1): error TS21410: Expected a `for-of` loop instead of a `for` loop with this simple iteration.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "strict": true, "target": "esnext", "module": "preserve" },
+        "lint": { "rules": { "@typescript-eslint/prefer-for-of": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (1 errors) ====
+    const items = [1, 2, 3];
+    declare function use(value: number): void;
+    
+    for (let index = 0; index < items.length; index++) {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        use(items[index]);
+    ~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS21410: Expected a `for-of` loop instead of a `for` loop with this simple iteration.
+    
+    for (const item of items) {
+        use(item);
+    }
+    
+    for (let index = 0; index < items.length; index++) {
+        items[index] = index;
+    }

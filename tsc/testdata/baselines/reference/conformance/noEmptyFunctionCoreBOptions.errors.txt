@@ -1,0 +1,22 @@
+input.ts(2,21): error TS19358: Unexpected empty arrow function.
+input.ts(3,23): error TS19358: Unexpected empty method 'method'.
+input.ts(7,6): error TS2304: Cannot find name 'decorate'.
+
+
+==== tsconfig.json (0 errors) ====
+    {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-empty-function":["error",{"allow":["functions","privateConstructors","overrideMethods","decoratedFunctions"]}]}},"files":["input.ts"]}
+==== input.ts (3 errors) ====
+    function allowed() {}
+    const arrow = () => {};
+                        ~~
+!!! error TS19358: Unexpected empty arrow function.
+    class Base { method() {} }
+                          ~~
+!!! error TS19358: Unexpected empty method 'method'.
+    class Item extends Base {
+        private constructor() { super(); }
+        override method() {}
+        @decorate methodWithDecorator() {}
+         ~~~~~~~~
+!!! error TS2304: Cannot find name 'decorate'.
+    }

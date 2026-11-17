@@ -1,0 +1,32 @@
+input.ts(2,1): warning TS24323: Use the '**' operator instead of 'Math.pow'.
+input.ts(3,1): warning TS24323: Use the '**' operator instead of 'Math.pow'.
+input.ts(4,1): warning TS24323: Use the '**' operator instead of 'Math.pow'.
+input.ts(6,1): warning TS24323: Use the '**' operator instead of 'Math.pow'.
+input.ts(7,1): warning TS24323: Use the '**' operator instead of 'Math.pow'.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "prefer-exponentiation-operator": "warn" } },
+        "files": ["input.ts"]
+    }
+==== input.ts (5 errors) ====
+    declare const value: number, exponent: number;
+    Math.pow(value, exponent);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24323: Use the '**' operator instead of 'Math.pow'.
+    Math.pow(-value, exponent + 1);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24323: Use the '**' operator instead of 'Math.pow'.
+    Math.pow(value, exponent).toString();
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24323: Use the '**' operator instead of 'Math.pow'.
+    const { pow } = Math;
+    pow(value, exponent);
+    ~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24323: Use the '**' operator instead of 'Math.pow'.
+    Math.pow(/* keep */ value, exponent);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! warning TS24323: Use the '**' operator instead of 'Math.pow'.
+    function shadowed(Math: any) { return Math.pow(value, exponent); }
