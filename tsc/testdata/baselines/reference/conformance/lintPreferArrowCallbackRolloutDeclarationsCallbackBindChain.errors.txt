@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'foo'.
 /input.ts(1,5): error TS24321: Unexpected function expression.
-/input.ts(1,35): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     foo(function() {}.bind(this).bind(other));
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
         ~~~~~~~~~~~~~
 !!! error TS24321: Unexpected function expression.
-                                      ~~~~~
-!!! error TS2304: Cannot find name 'other'.

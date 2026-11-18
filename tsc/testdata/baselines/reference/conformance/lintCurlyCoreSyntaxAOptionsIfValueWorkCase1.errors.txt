@@ -1,6 +1,4 @@
-/input.ts(1,5): error TS2304: Cannot find name 'value'.
 /input.ts(1,12): error TS22044: Unnecessary { after 'if' condition.
-/input.ts(1,14): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,11 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     if (value) { work(); }
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                ~~~~~~~~~~~
 !!! error TS22044: Unnecessary { after 'if' condition.
-                 ~~~~
-!!! error TS2304: Cannot find name 'work'.

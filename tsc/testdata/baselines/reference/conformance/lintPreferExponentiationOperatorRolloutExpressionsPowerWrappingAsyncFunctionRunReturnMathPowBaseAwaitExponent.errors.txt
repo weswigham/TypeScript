@@ -1,6 +1,4 @@
 /input.ts(1,31): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(1,40): error TS2304: Cannot find name 'base'.
-/input.ts(1,52): error TS2304: Cannot find name 'exponent'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     async function run() { return Math.pow(base, await exponent); }
                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-                                           ~~~~
-!!! error TS2304: Cannot find name 'base'.
-                                                       ~~~~~~~~
-!!! error TS2304: Cannot find name 'exponent'.

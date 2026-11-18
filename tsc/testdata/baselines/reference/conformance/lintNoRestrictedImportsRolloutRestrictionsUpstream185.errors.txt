@@ -1,12 +1,7 @@
 /input.tsx(3,18): error TS24259: 'Foo_Enum' import from '@app/api' is restricted from being used by a pattern.
-/input.tsx(3,34): error TS2307: Cannot find module '@app/api' or its corresponding type declarations.
 /input.tsx(4,18): error TS24259: 'Bar_Enum' import from '@app/api/bar' is restricted from being used by a pattern.
-/input.tsx(4,34): error TS2307: Cannot find module '@app/api/bar' or its corresponding type declarations.
 /input.tsx(5,18): error TS24259: 'Baz_Enum' import from '@app/api/baz' is restricted from being used by a pattern.
-/input.tsx(5,34): error TS2307: Cannot find module '@app/api/baz' or its corresponding type declarations.
 /input.tsx(6,18): error TS24259: 'B_Enum' import from '@app/api/enums/foo' is restricted from being used by a pattern.
-/input.tsx(6,32): error TS2307: Cannot find module '@app/api/enums/foo' or its corresponding type declarations.
-/input.tsx(9,32): error TS2307: Cannot find module '@app/api/enums' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -34,32 +29,22 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (9 errors) ====
+==== /input.tsx (4 errors) ====
     
             // error
             import { Foo_Enum } from '@app/api';
                      ~~~~~~~~
 !!! error TS24259: 'Foo_Enum' import from '@app/api' is restricted from being used by a pattern.
-                                     ~~~~~~~~~~
-!!! error TS2307: Cannot find module '@app/api' or its corresponding type declarations.
             import { Bar_Enum } from '@app/api/bar';
                      ~~~~~~~~
 !!! error TS24259: 'Bar_Enum' import from '@app/api/bar' is restricted from being used by a pattern.
-                                     ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '@app/api/bar' or its corresponding type declarations.
             import { Baz_Enum } from '@app/api/baz';
                      ~~~~~~~~
 !!! error TS24259: 'Baz_Enum' import from '@app/api/baz' is restricted from being used by a pattern.
-                                     ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '@app/api/baz' or its corresponding type declarations.
             import { B_Enum } from '@app/api/enums/foo';
                      ~~~~~~
 !!! error TS24259: 'B_Enum' import from '@app/api/enums/foo' is restricted from being used by a pattern.
-                                   ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '@app/api/enums/foo' or its corresponding type declarations.
     
             // no error
             import { C_Enum } from '@app/api/enums';
-                                   ~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '@app/api/enums' or its corresponding type declarations.
             

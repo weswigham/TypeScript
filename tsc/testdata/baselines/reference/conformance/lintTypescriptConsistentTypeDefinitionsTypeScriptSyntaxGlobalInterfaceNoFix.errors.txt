@@ -1,4 +1,3 @@
-/input.ts(1,9): error TS2669: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.
 /input.ts(1,28): error TS20314: Use a `type` instead of an `interface`.
 
 
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare global { interface Item {} }
-            ~~~~~~
-!!! error TS2669: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.
                                ~~~~
 !!! error TS20314: Use a `type` instead of an `interface`.

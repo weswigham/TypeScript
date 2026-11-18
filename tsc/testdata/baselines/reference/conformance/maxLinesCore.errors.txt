@@ -1,7 +1,4 @@
-input.ts(2,1): error TS2304: Cannot find name 'work'.
 input.ts(2,1): error TS19314: File has too many lines (3). Maximum allowed is 2.
-input.ts(4,1): error TS2304: Cannot find name 'other'.
-input.ts(5,1): error TS2304: Cannot find name 'last'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -10,20 +7,14 @@ input.ts(5,1): error TS2304: Cannot find name 'last'.
         "lint": { "rules": { "max-lines": ["error", { "max": 2, "skipComments": true, "skipBlankLines": true }] } },
         "files": ["input.ts"]
     }
-==== input.ts (4 errors) ====
+==== input.ts (1 errors) ====
     // Comment-only line.
     work();
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     ~~~~~~~
     
     
     other(); /* Inline comment counts as code. */
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     last();
     ~~~~~~~
 !!! error TS19314: File has too many lines (3). Maximum allowed is 2.
-    ~~~~
-!!! error TS2304: Cannot find name 'last'.

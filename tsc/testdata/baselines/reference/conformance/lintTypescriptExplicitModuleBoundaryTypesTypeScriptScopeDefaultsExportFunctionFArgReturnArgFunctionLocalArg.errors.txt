@@ -1,7 +1,5 @@
 /input.ts(1,1): error TS21290: Missing return type on function.
-/input.ts(1,19): error TS7006: Parameter 'arg' implicitly has an 'any' type.
 /input.ts(1,19): error TS21291: Argument 'arg' should be typed.
-/input.ts(1,55): error TS7006: Parameter 'arg' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,13 +18,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     export function f(arg) { return arg; } function local(arg) {}
     ~~~~~~~~~~~~~~~~~
 !!! error TS21290: Missing return type on function.
                       ~~~
-!!! error TS7006: Parameter 'arg' implicitly has an 'any' type.
-                      ~~~
 !!! error TS21291: Argument 'arg' should be typed.
-                                                          ~~~
-!!! error TS7006: Parameter 'arg' implicitly has an 'any' type.

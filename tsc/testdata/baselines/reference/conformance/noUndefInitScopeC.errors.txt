@@ -3,14 +3,13 @@ input.ts(2,5): error TS20150: It's not necessary to initialize 'removable' to un
 input.ts(3,5): error TS20150: It's not necessary to initialize 'annotated' to undefined.
 input.ts(4,5): error TS20150: It's not necessary to initialize 'commented' to undefined.
 input.ts(9,5): error TS20150: It's not necessary to initialize '{ destructured }' to undefined.
-input.ts(9,7): error TS2339: Property 'destructured' does not exist on type 'undefined'.
 
 
 ==== tsconfig.json (0 errors) ====
     {
         "lint": { "rules": { "no-undef-init": "error" } }
     }
-==== input.ts (6 errors) ====
+==== input.ts (5 errors) ====
     var retainedForHoisting = undefined;
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20150: It's not necessary to initialize 'retainedForHoisting' to undefined.
@@ -30,5 +29,3 @@ input.ts(9,7): error TS2339: Property 'destructured' does not exist on type 'und
     let { destructured } = undefined;
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20150: It's not necessary to initialize '{ destructured }' to undefined.
-          ~~~~~~~~~~~~
-!!! error TS2339: Property 'destructured' does not exist on type 'undefined'.

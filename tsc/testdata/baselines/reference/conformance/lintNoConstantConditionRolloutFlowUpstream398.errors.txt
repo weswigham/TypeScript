@@ -1,6 +1,4 @@
-/input.ts(1,4): error TS2304: Cannot find name 'abc'.
 /input.ts(1,4): error TS24224: Unexpected constant condition.
-/input.ts(1,27): error TS2304: Cannot find name 'def'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     if(abc==='str' || true || def ==='str'){}
-       ~~~
-!!! error TS2304: Cannot find name 'abc'.
        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24224: Unexpected constant condition.
-                              ~~~
-!!! error TS2304: Cannot find name 'def'.

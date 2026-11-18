@@ -1,8 +1,4 @@
-/input.tsx(3,9): error TS2503: Cannot find namespace 'ts'.
-/input.tsx(4,17): error TS2503: Cannot find namespace 'ts'.
-/input.tsx(8,17): error TS2304: Cannot find name 'getTypeFlags'.
 /input.tsx(10,7): error TS24032: `isReceiver` is deprecated. This param is not used and will be removed in the future.
-/input.tsx(10,29): error TS2304: Cannot find name 'ANY_OR_UNKNOWN'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -32,27 +28,19 @@
             "aria-grabbed"?: boolean | "false" | "true";
         }
     }
-==== /input.tsx (5 errors) ====
+==== /input.tsx (1 errors) ====
     
     export function isTypeFlagSet(
       type: ts.Type,
-            ~~
-!!! error TS2503: Cannot find namespace 'ts'.
       flagsToCheck: ts.TypeFlags,
-                    ~~
-!!! error TS2503: Cannot find namespace 'ts'.
       /** @deprecated This param is not used and will be removed in the future. */
       isReceiver?: boolean,
     ): boolean {
       const flags = getTypeFlags(type);
-                    ~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'getTypeFlags'.
     
       if (isReceiver && flags & ANY_OR_UNKNOWN) {
           ~~~~~~~~~~
 !!! error TS24032: `isReceiver` is deprecated. This param is not used and will be removed in the future.
-                                ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'ANY_OR_UNKNOWN'.
         return true;
       }
     

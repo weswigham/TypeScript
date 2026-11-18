@@ -1,5 +1,4 @@
 input.ts(2,5): error TS22016: Expected a conditional expression and instead saw an assignment.
-input.ts(3,8): error TS18048: 'value' is possibly 'undefined'.
 input.ts(3,8): error TS22016: Expected a conditional expression and instead saw an assignment.
 input.ts(4,14): error TS22016: Expected a conditional expression and instead saw an assignment.
 input.ts(5,8): error TS22016: Expected a conditional expression and instead saw an assignment.
@@ -14,14 +13,12 @@ input.ts(12,5): error TS22016: Expected a conditional expression and instead saw
         "files": ["input.ts"]
     }
     
-==== input.ts (7 errors) ====
+==== input.ts (6 errors) ====
     let value, other, result;
     if (value = other) {}
         ~~~~~~~~~~~~~
 !!! error TS22016: Expected a conditional expression and instead saw an assignment.
     while (value += 1) {}
-           ~~~~~
-!!! error TS18048: 'value' is possibly 'undefined'.
            ~~~~~~~~~~
 !!! error TS22016: Expected a conditional expression and instead saw an assignment.
     do {} while (value = other);

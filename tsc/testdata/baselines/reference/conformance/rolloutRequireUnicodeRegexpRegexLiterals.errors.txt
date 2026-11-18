@@ -1,7 +1,6 @@
 input.ts(1,16): error TS24340: Use the 'u' flag.
 input.ts(4,1): error TS24340: Use the 'u' flag.
 input.ts(5,1): error TS24340: Use the 'u' flag.
-input.ts(6,13): error TS2304: Cannot find name 'flags'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -11,7 +10,7 @@ input.ts(6,13): error TS2304: Cannot find name 'flags'.
         "files": ["input.ts"]
     }
     
-==== input.ts (4 errors) ====
+==== input.ts (3 errors) ====
     const legacy = /a/;
                    ~~~
 !!! error TS24340: Use the 'u' flag.
@@ -24,5 +23,3 @@ input.ts(6,13): error TS2304: Cannot find name 'flags'.
     ~~~~~~~~~~~~~~~~~~~~
 !!! error TS24340: Use the 'u' flag.
     RegExp("e", flags);
-                ~~~~~
-!!! error TS2304: Cannot find name 'flags'.

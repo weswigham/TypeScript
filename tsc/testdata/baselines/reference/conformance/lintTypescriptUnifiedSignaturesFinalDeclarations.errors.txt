@@ -1,4 +1,3 @@
-/input.ts(1,54): error TS2391: Function implementation is missing or not immediately following the declaration.
 /input.ts(1,58): error TS24197: These overloads can be combined into one signature taking `string | number | boolean`.
 
 
@@ -21,9 +20,7 @@
     }
 ==== /module.ts (0 errors) ====
     export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function run(value: string | number): void; function run(value: number | boolean): void;
-                                                         ~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
                                                              ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24197: These overloads can be combined into one signature taking `string | number | boolean`.

@@ -1,6 +1,3 @@
-/input.ts(2,24): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(3,24): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(5,11): error TS1361: 'B' cannot be used as a value because it was imported using 'import type'.
 /tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
 
 
@@ -30,17 +27,10 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (0 errors) ====
     
     import { type B } from 'foo';
-                           ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     import type { A } from 'foo';
-                           ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     type T = A;
     const b = B;
-              ~
-!!! error TS1361: 'B' cannot be used as a value because it was imported using 'import type'.
-!!! related TS1376 /input.ts:2:10: 'B' was imported here.
               

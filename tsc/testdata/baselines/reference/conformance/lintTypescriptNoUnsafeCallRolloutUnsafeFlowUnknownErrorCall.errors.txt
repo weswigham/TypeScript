@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'missing'.
 /input.ts(1,1): error TS24104: Unsafe call of a type that could not be resolved.
 
 
@@ -18,9 +17,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     missing();
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'missing'.
     ~~~~~~~
 !!! error TS24104: Unsafe call of a type that could not be resolved.

@@ -1,6 +1,4 @@
 /input.ts(1,13): error TS24290: 'a' is assigned a value but never used.
-/input.ts(1,17): error TS2304: Cannot find name 'aDefault'.
-/input.ts(1,32): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,12 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function a([a = aDefault]) { } a();
                 ~
 !!! error TS24290: 'a' is assigned a value but never used.
-                    ~~~~~~~~
-!!! error TS2304: Cannot find name 'aDefault'.
-                                   ~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6211 /input.ts:1:12: An argument matching this binding pattern was not provided.

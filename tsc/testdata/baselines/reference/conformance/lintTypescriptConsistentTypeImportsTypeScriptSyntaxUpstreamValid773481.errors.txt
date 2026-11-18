@@ -1,5 +1,3 @@
-/input.ts(2,24): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
-/input.ts(3,11): error TS1361: 'T' cannot be used as a value because it was imported using 'import type'.
 /tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
 
 
@@ -24,13 +22,8 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (0 errors) ====
     
     import { type T } from 'mod';
-                           ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
     const x = T;
-              ~
-!!! error TS1361: 'T' cannot be used as a value because it was imported using 'import type'.
-!!! related TS1376 /input.ts:2:10: 'T' was imported here.
             

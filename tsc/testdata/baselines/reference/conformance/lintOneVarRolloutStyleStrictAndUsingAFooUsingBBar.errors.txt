@@ -1,10 +1,6 @@
-error TS2318: Cannot find global type 'Disposable'.
-/input.ts(1,9): error TS2304: Cannot find name 'foo'.
 /input.ts(1,16): error TS24318: Combine this with the previous 'using' statement.
-/input.ts(1,24): error TS2304: Cannot find name 'bar'.
 
 
-!!! error TS2318: Cannot find global type 'Disposable'.
 ==== /tsconfig.json (0 errors) ====
     {
         "compilerOptions": {},
@@ -17,11 +13,7 @@ error TS2318: Cannot find global type 'Disposable'.
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     using a=foo(); using b=bar();
-            ~~~
-!!! error TS2304: Cannot find name 'foo'.
                    ~~~~~~~~~~~~~~
 !!! error TS24318: Combine this with the previous 'using' statement.
-                           ~~~
-!!! error TS2304: Cannot find name 'bar'.

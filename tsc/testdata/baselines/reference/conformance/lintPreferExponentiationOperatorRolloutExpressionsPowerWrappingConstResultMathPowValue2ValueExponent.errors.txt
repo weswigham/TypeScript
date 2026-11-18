@@ -1,5 +1,4 @@
 /input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(1,43): error TS2304: Cannot find name 'exponent'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const result = Math.pow({value: 2}.value, exponent);
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-                                              ~~~~~~~~
-!!! error TS2304: Cannot find name 'exponent'.

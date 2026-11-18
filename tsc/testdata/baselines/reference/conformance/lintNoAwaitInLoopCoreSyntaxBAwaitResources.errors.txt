@@ -1,7 +1,5 @@
 /input.ts(1,39): error TS19350: Unexpected `await` inside a loop.
-/input.ts(1,62): error TS2304: Cannot find name 'acquire'.
 /input.ts(1,80): error TS19350: Unexpected `await` inside a loop.
-/input.ts(1,104): error TS2552: Cannot find name 'resources'. Did you mean 'resource'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,14 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     async function run() { while (true) { await using resource = acquire(); } for (await using resource of resources) {} }
                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19350: Unexpected `await` inside a loop.
-                                                                 ~~~~~~~
-!!! error TS2304: Cannot find name 'acquire'.
                                                                                    ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19350: Unexpected `await` inside a loop.
-                                                                                                           ~~~~~~~~~
-!!! error TS2552: Cannot find name 'resources'. Did you mean 'resource'?
-!!! related TS2728 /input.ts:1:92: 'resource' is declared here.

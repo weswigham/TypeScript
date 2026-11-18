@@ -1,6 +1,4 @@
-/input.ts(1,18): error TS2339: Property 'method' does not exist on type 'Object'.
 /input.ts(1,30): error TS19863: Array prototype is read only, properties should not be added.
-/input.ts(1,46): error TS2339: Property 'method' does not exist on type 'any[]'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,11 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     Object.prototype.method = 0; Array.prototype.method = 0;
-                     ~~~~~~
-!!! error TS2339: Property 'method' does not exist on type 'Object'.
                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19863: Array prototype is read only, properties should not be added.
-                                                 ~~~~~~
-!!! error TS2339: Property 'method' does not exist on type 'any[]'.

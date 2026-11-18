@@ -1,9 +1,5 @@
-/input.ts(1,5): error TS2304: Cannot find name 'lower'.
 /input.ts(1,5): error TS19338: A constructor name should not start with a lowercase letter.
-/input.ts(1,14): error TS2304: Cannot find name 'Upper'.
 /input.ts(1,14): error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
-/input.ts(1,27): error TS2304: Cannot find name 'Upper'.
-/input.ts(1,36): error TS2304: Cannot find name 'lower'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,17 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     new lower(); Upper(); new Upper(); lower(); Array();
-        ~~~~~
-!!! error TS2304: Cannot find name 'lower'.
         ~~~~~
 !!! error TS19338: A constructor name should not start with a lowercase letter.
                  ~~~~~
-!!! error TS2304: Cannot find name 'Upper'.
-                 ~~~~~
 !!! error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'Upper'.
-                                       ~~~~~
-!!! error TS2304: Cannot find name 'lower'.

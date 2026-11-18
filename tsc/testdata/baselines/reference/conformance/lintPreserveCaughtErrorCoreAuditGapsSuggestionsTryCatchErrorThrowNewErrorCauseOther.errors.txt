@@ -1,4 +1,3 @@
-/input.ts(1,53): error TS2304: Cannot find name 'other'.
 /input.ts(1,53): error TS20271: The symptom error is being thrown with an incorrect `cause`.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new Error('', {cause: (other)}); }
-                                                        ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                                                         ~~~~~
 !!! error TS20271: The symptom error is being thrown with an incorrect `cause`.

@@ -1,19 +1,12 @@
-input.ts(1,15): error TS2304: Cannot find name 'ready'.
-input.ts(2,9): error TS2304: Cannot find name 'skip'.
 input.ts(2,15): error TS19353: Unexpected use of continue statement.
 input.ts(3,5): error TS19353: Unexpected use of continue statement.
-input.ts(5,8): error TS2304: Cannot find name 'ready'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"lint":{"rules":{"no-continue":"error"}},"files":["input.ts"]}
-==== input.ts (5 errors) ====
+==== input.ts (2 errors) ====
     outer: while (ready) {
-                  ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
         if (skip) continue;
-            ~~~~
-!!! error TS2304: Cannot find name 'skip'.
                   ~~~~~~~~~
 !!! error TS19353: Unexpected use of continue statement.
         continue outer;
@@ -21,5 +14,3 @@ input.ts(5,8): error TS2304: Cannot find name 'ready'.
 !!! error TS19353: Unexpected use of continue statement.
     }
     while (ready) { break; }
-           ~~~~~
-!!! error TS2304: Cannot find name 'ready'.

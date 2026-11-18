@@ -1,5 +1,4 @@
 input.ts(1,5): error TS19290: Variable 'missing' should be initialized on declaration.
-input.ts(4,19): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== tsconfig.json (0 errors) ====
@@ -8,15 +7,12 @@ input.ts(4,19): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
         "lint": { "rules": { "init-declarations": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (2 errors) ====
+==== input.ts (1 errors) ====
     let missing: number;
         ~~~~~~~~~~~~~~~
 !!! error TS19290: Variable 'missing' should be initialized on declaration.
     let initialized = 1;
     for (let index; false;) {}
     for (const key in object) {}
-                      ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     declare let ambient: number;
     declare namespace Ambient { let value: number; }

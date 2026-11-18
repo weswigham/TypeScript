@@ -1,8 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'values'.
-/input.ts(1,16): error TS7006: Parameter 'value' implicitly has an 'any' type.
 /input.ts(1,22): error TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
-/input.ts(1,25): error TS2304: Cannot find name 'first'.
-/input.ts(1,33): error TS2304: Cannot find name 'second'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,15 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     values.forEach(value => first + second);
-    ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                   ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
                          ~~
 !!! error TS24200: Array.prototype.forEach() expects no useless return value from arrow function.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                    ~~~~~~
-!!! error TS2304: Cannot find name 'second'.

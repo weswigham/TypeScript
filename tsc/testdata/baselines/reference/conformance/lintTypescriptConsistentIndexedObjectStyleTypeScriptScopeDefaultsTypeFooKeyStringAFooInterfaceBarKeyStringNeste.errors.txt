@@ -1,5 +1,4 @@
 /input.ts(1,12): error TS21271: A record is preferred over an index signature.
-/input.ts(1,29): error TS2503: Cannot find namespace 'A'.
 /input.ts(1,38): error TS21271: A record is preferred over an index signature.
 
 
@@ -19,11 +18,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     type Foo = { [key: string]: A.Foo }; interface Bar { [key: string]: { nested: Bar } }
                ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21271: A record is preferred over an index signature.
-                                ~
-!!! error TS2503: Cannot find namespace 'A'.
                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21271: A record is preferred over an index signature.

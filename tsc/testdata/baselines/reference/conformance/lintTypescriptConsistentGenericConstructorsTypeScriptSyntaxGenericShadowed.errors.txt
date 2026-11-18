@@ -1,8 +1,4 @@
-/input.ts(1,7): error TS2300: Duplicate identifier 'Uint8Array'.
-/input.ts(1,30): error TS2322: Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'Uint8Array<string>'.
-  Type 'ArrayBuffer' is not assignable to type 'string'.
 /input.ts(1,30): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-/input.ts(1,48): error TS2344: Type 'string' does not satisfy the constraint 'ArrayBufferLike'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,19 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     class Uint8Array<T> {} const value: Uint8Array<string> = new Uint8Array();
-          ~~~~~~~~~~
-!!! error TS2300: Duplicate identifier 'Uint8Array'.
-!!! related TS6203 lib.es5.d.ts:--:--: 'Uint8Array' was also declared here.
-!!! related TS6204 lib.es5.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.core.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.iterable.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.symbol.wellknown.d.ts:--:--: and here.
-                                 ~~~~~
-!!! error TS2322: Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'Uint8Array<string>'.
-!!! error TS2322:   Type 'ArrayBuffer' is not assignable to type 'string'.
                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-                                                   ~~~~~~
-!!! error TS2344: Type 'string' does not satisfy the constraint 'ArrayBufferLike'.

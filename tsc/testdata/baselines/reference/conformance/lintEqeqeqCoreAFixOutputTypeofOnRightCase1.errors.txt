@@ -1,5 +1,4 @@
 /input.ts(1,21): error TS19254: Expected '===' and instead saw '=='.
-/input.ts(1,43): error TS2304: Cannot find name 'left'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     'string' /* Left */ == /* Right */ typeof left;
                         ~~
 !!! error TS19254: Expected '===' and instead saw '=='.
-                                              ~~~~
-!!! error TS2304: Cannot find name 'left'.

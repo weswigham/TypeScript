@@ -1,5 +1,4 @@
 /input.tsx(2,17): error TS24293: The value assigned to 'A' is not used in subsequent statements.
-/input.tsx(4,23): error TS2339: Property 'B' does not exist on type 'string'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,13 +21,11 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     function App() {
                 let A = "unused";
                     ~
 !!! error TS24293: The value assigned to 'A' is not used in subsequent statements.
                 A = "used";
                 return <A.B />;
-                          ~
-!!! error TS2339: Property 'B' does not exist on type 'string'.
                 }

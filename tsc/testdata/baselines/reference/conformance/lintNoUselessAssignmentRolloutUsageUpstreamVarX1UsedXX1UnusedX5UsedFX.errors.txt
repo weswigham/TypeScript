@@ -1,5 +1,4 @@
 /input.ts(3,13): error TS24293: The value assigned to 'x' is not used in subsequent statements.
-/input.ts(5,13): error TS2304: Cannot find name 'f'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,7 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
                 var x = 1; // used
                 x = x + 1; // unused
@@ -30,5 +29,3 @@
 !!! error TS24293: The value assigned to 'x' is not used in subsequent statements.
                 x = 5; // used
                 f(x);
-                ~
-!!! error TS2304: Cannot find name 'f'.

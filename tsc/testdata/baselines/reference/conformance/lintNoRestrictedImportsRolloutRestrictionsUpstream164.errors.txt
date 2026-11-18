@@ -1,5 +1,4 @@
 /input.tsx(1,25): error TS24269: 'DisallowedObject' import from 'foo' is restricted because only 'AllowedObject' is allowed.
-/input.tsx(1,49): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,9 +28,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import { AllowedObject, DisallowedObject } from "foo";
                             ~~~~~~~~~~~~~~~~
 !!! error TS24269: 'DisallowedObject' import from 'foo' is restricted because only 'AllowedObject' is allowed.
-                                                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

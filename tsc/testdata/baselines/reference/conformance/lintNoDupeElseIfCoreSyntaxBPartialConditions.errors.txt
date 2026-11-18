@@ -1,10 +1,4 @@
-/input.ts(1,5): error TS2304: Cannot find name 'a'.
-/input.ts(1,10): error TS2304: Cannot find name 'b'.
-/input.ts(1,25): error TS2304: Cannot find name 'b'.
 /input.ts(1,25): error TS19355: This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain.
-/input.ts(1,30): error TS2304: Cannot find name 'a'.
-/input.ts(1,40): error TS2304: Cannot find name 'a'.
-/input.ts(1,61): error TS2304: Cannot find name 'a'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,19 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (1 errors) ====
     if (a && b) {} else if (b && a) {} if (a === 1) {} else if (a === (1)) {}
-        ~
-!!! error TS2304: Cannot find name 'a'.
-             ~
-!!! error TS2304: Cannot find name 'b'.
-                            ~
-!!! error TS2304: Cannot find name 'b'.
                             ~~~~~~
 !!! error TS19355: This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain.
-                                 ~
-!!! error TS2304: Cannot find name 'a'.
-                                           ~
-!!! error TS2304: Cannot find name 'a'.
-                                                                ~
-!!! error TS2304: Cannot find name 'a'.

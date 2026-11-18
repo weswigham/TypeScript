@@ -1,10 +1,7 @@
-/input.ts(1,11): error TS7008: Member '#_field' implicitly has an 'any' type.
 /input.ts(1,11): error TS20168: Unexpected dangling '_' in '#_field'.
 /input.ts(1,20): error TS20168: Unexpected dangling '_' in '_method'.
 /input.ts(1,33): error TS20168: Unexpected dangling '_' in '_get'.
-/input.ts(1,37): error TS2378: A 'get' accessor must return a value.
 /input.ts(1,63): error TS20168: Unexpected dangling '_' in '_method'.
-/input.ts(1,81): error TS2378: A 'get' accessor must return a value.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,19 +25,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (4 errors) ====
     class C { #_field; _method() {} get _get() {} } const obj = { _method() {}, get _get() {} };
-              ~~~~~~~
-!!! error TS7008: Member '#_field' implicitly has an 'any' type.
               ~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '#_field'.
                        ~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_method'.
                                     ~~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_get'.
-                                        ~~~~
-!!! error TS2378: A 'get' accessor must return a value.
                                                                   ~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_method'.
-                                                                                    ~~~~
-!!! error TS2378: A 'get' accessor must return a value.

@@ -1,5 +1,4 @@
 /input.ts(1,24): error TS24304: Unnecessary return statement.
-/input.ts(1,44): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function run() { try { return; } finally { work(); } }
                            ~~~~~~~
 !!! error TS24304: Unnecessary return statement.
-                                               ~~~~
-!!! error TS2304: Cannot find name 'work'.

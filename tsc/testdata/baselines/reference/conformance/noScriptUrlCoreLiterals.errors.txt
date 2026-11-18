@@ -2,8 +2,6 @@ input.ts(1,1): error TS19510: Script URL is a form of eval.
 input.ts(2,1): error TS19510: Script URL is a form of eval.
 input.ts(3,1): error TS19510: Script URL is a form of eval.
 input.ts(4,1): error TS19510: Script URL is a form of eval.
-input.ts(5,1): error TS2304: Cannot find name 'tag'.
-input.ts(6,15): error TS2304: Cannot find name 'foo'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -13,7 +11,7 @@ input.ts(6,15): error TS2304: Cannot find name 'foo'.
         "files": ["input.ts"]
     }
     
-==== input.ts (6 errors) ====
+==== input.ts (4 errors) ====
     'javascript:void(0);';
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19510: Script URL is a form of eval.
@@ -27,9 +25,5 @@ input.ts(6,15): error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~
 !!! error TS19510: Script URL is a form of eval.
     tag`javascript:`;
-    ~~~
-!!! error TS2304: Cannot find name 'tag'.
     `javascript:${foo}`;
-                  ~~~
-!!! error TS2304: Cannot find name 'foo'.
     'xjavascript:';

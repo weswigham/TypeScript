@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24255: 'import1' import is restricted from being used.
-/input.tsx(1,21): error TS2307: Cannot find module 'import1' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,9 +24,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     export { foo } from 'import1';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24255: 'import1' import is restricted from being used.
-                        ~~~~~~~~~
-!!! error TS2307: Cannot find module 'import1' or its corresponding type declarations.

@@ -1,14 +1,9 @@
-input.ts(1,17): error TS2391: Function implementation is missing or not immediately following the declaration.
 input.ts(3,1): error TS19100: All choose signatures should be adjacent.
 input.ts(8,5): error TS19100: All call signatures should be adjacent.
 input.ts(11,5): error TS19100: All new signatures should be adjacent.
-input.ts(17,5): error TS2387: Function overload must be static.
 input.ts(18,5): error TS19100: All static run signatures should be adjacent.
-input.ts(19,5): error TS2391: Function implementation is missing or not immediately following the declaration.
-input.ts(21,5): error TS2389: Function implementation name must be '"#private"'.
 input.ts(21,5): error TS19100: All #private signatures should be adjacent.
 input.ts(22,5): error TS19100: All "#private" signatures should be adjacent.
-input.ts(25,14): error TS2391: Function implementation is missing or not immediately following the declaration.
 input.ts(27,5): error TS19100: All inner signatures should be adjacent.
 
 
@@ -19,10 +14,8 @@ input.ts(27,5): error TS19100: All inner signatures should be adjacent.
         "files": ["input.ts"]
     }
     
-==== input.ts (12 errors) ====
+==== input.ts (7 errors) ====
     export function choose(value: string): void;
-                    ~~~~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
     export const divider = 1;
     export function choose(value: number): void;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,18 +38,12 @@ input.ts(27,5): error TS19100: All inner signatures should be adjacent.
     class Methods {
         static run(value: string): void;
         run(): void {}
-        ~~~
-!!! error TS2387: Function overload must be static.
         static run(value: unknown) {}
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19100: All static run signatures should be adjacent.
         #private(): void;
-        ~~~~~~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
         "#private"(): void;
         #private(value?: number) {}
-        ~~~~~~~~
-!!! error TS2389: Function implementation name must be '"#private"'.
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19100: All #private signatures should be adjacent.
         "#private"(value?: number) {}
@@ -65,8 +52,6 @@ input.ts(27,5): error TS19100: All inner signatures should be adjacent.
     }
     function outer() {
         function inner(value: string): void;
-                 ~~~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
         const gap = 1;
         function inner(value: unknown) {}
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

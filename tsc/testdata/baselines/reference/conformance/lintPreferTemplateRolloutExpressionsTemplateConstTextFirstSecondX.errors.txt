@@ -1,6 +1,4 @@
-/input.ts(1,14): error TS2304: Cannot find name 'first'.
 /input.ts(1,14): error TS24335: Unexpected string concatenation.
-/input.ts(1,22): error TS2304: Cannot find name 'second'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const text = first + second + 'x';
-                 ~~~~~
-!!! error TS2304: Cannot find name 'first'.
                  ~~~~~~~~~~~~~~~~~~~~
 !!! error TS24335: Unexpected string concatenation.
-                         ~~~~~~
-!!! error TS2304: Cannot find name 'second'.

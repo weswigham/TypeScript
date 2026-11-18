@@ -1,10 +1,6 @@
-input.ts(3,45): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(3,45): error TS24278: 'this' is not allowed before 'super()'.
-input.ts(4,53): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(4,53): error TS24278: 'this' is not allowed before 'super()'.
-input.ts(5,67): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(5,67): error TS24278: 'this' is not allowed before 'super()'.
-input.ts(6,73): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(6,73): error TS24278: 'this' is not allowed before 'super()'.
 
 
@@ -14,27 +10,19 @@ input.ts(6,73): error TS24278: 'this' is not allowed before 'super()'.
         "files": ["input.ts"]
     }
     
-==== input.ts (8 errors) ====
+==== input.ts (4 errors) ====
     declare class Base { value: unknown; constructor(value?: unknown); }
     declare const flag: boolean;
     class Before extends Base { constructor() { this.value; super(); } }
                                                 ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
-                                                ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
     class Argument extends Base { constructor() { super(this.value); } }
-                                                        ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
                                                         ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
     class Conditional extends Base { constructor() { flag && super(); this.value; } }
                                                                       ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
-                                                                      ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
     class Finally extends Base { constructor() { try { super(); } finally { this.value; } } }
-                                                                            ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
                                                                             ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
     class After extends Base { constructor() { super(); this.value; } }

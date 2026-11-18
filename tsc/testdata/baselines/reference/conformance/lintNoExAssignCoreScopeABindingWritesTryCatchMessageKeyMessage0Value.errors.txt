@@ -1,6 +1,4 @@
-/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
 /input.ts(1,38): error TS19853: Do not assign to the exception parameter.
-/input.ts(1,54): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch ({ message }) { ({ key: message = 0 } = value); }
-                    ~~~~~~~
-!!! error TS2339: Property 'message' does not exist on type 'unknown'.
                                          ~~~~~~~
 !!! error TS19853: Do not assign to the exception parameter.
-                                                         ~~~~~
-!!! error TS2304: Cannot find name 'value'.

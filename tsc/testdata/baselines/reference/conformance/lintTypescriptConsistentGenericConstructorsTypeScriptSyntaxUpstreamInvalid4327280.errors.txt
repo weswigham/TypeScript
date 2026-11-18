@@ -1,8 +1,4 @@
-/input.ts(3,3): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
 /input.ts(3,3): error TS24446: The generic type arguments should be specified as part of the type annotation.
-/input.ts(3,4): error TS2304: Cannot find name 'a'.
-/input.ts(3,8): error TS2304: Cannot find name 'b'.
-/input.ts(3,21): error TS2558: Expected 0 type arguments, but got 1.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,19 +21,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     
     class Foo {
       [a + b] = new Foo<string>();
-      ~~~~~~~
-!!! error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24446: The generic type arguments should be specified as part of the type annotation.
-       ~
-!!! error TS2304: Cannot find name 'a'.
-           ~
-!!! error TS2304: Cannot find name 'b'.
-                        ~~~~~~
-!!! error TS2558: Expected 0 type arguments, but got 1.
     }
           

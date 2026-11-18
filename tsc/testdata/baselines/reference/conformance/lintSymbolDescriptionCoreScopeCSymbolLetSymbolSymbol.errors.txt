@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS20290: Expected Symbol to have a description.
-/input.ts(1,25): error TS2722: Cannot invoke an object which is possibly 'undefined'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     Symbol(); { let Symbol; Symbol(); }
     ~~~~~~~~
 !!! error TS20290: Expected Symbol to have a description.
-                            ~~~~~~
-!!! error TS2722: Cannot invoke an object which is possibly 'undefined'.

@@ -1,4 +1,3 @@
-/input.ts(1,75): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 /input.ts(1,75): error TS24110: Unsafe construction of a `Function` typed value.
 
 
@@ -18,9 +17,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     interface Value extends Function { (): void } declare const value: Value; new value();
-                                                                              ~~~~~~~~~~~
-!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
                                                                               ~~~~~~~~~~~
 !!! error TS24110: Unsafe construction of a `Function` typed value.

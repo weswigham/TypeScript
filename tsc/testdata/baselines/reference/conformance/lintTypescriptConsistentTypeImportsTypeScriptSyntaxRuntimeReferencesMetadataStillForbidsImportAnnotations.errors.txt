@@ -1,6 +1,4 @@
 /input.tsx(1,10): error TS21280: `import()` type annotations are forbidden.
-/input.tsx(1,17): error TS2307: Cannot find module 'x' or its corresponding type declarations.
-/input.tsx(1,26): error TS2304: Cannot find name 'decorate'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,11 +20,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     type T = import('x').A; @decorate class C {}
              ~~~~~~~~~~~~~
 !!! error TS21280: `import()` type annotations are forbidden.
-                    ~~~
-!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.
-                             ~~~~~~~~
-!!! error TS2304: Cannot find name 'decorate'.

@@ -1,4 +1,3 @@
-/input.ts(1,23): error TS2304: Cannot find name 'x'.
 /input.ts(1,23): error TS24283: Unreachable code.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     while (true) { break; x = 1; }
-                          ~
-!!! error TS2304: Cannot find name 'x'.
                           ~~~~~~
 !!! error TS24283: Unreachable code.

@@ -1,6 +1,5 @@
 /input.ts(3,4): error TS24290: 'foo' is defined but never used.
 /input.ts(4,4): error TS24290: 'bar' is defined but never used.
-/input.ts(6,1): error TS2304: Cannot find name 'foobar'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,7 +22,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     
     /* global foobar,
        foo,
@@ -34,5 +33,3 @@
 !!! error TS24290: 'bar' is defined but never used.
      */
     foobar;
-    ~~~~~~
-!!! error TS2304: Cannot find name 'foobar'.

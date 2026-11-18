@@ -1,5 +1,4 @@
 /input.ts(1,29): error TS24290: 'name' is assigned a value but never used.
-/input.ts(1,37): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     (function(iter) { for ( var name of iter ) { } })({});
                                 ~~~~
 !!! error TS24290: 'name' is assigned a value but never used.
-                                        ~~~~
-!!! error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.

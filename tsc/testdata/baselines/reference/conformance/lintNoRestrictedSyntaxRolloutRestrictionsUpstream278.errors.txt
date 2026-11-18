@@ -1,4 +1,3 @@
-/input.tsx(1,1): error TS2304: Cannot find name 'bar'.
 /input.tsx(1,1): error TS24277: Using 'Identifier[name="bar"]' is not allowed.
 
 
@@ -20,9 +19,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     bar;
-    ~~~
-!!! error TS2304: Cannot find name 'bar'.
     ~~~
 !!! error TS24277: Using 'Identifier[name="bar"]' is not allowed.

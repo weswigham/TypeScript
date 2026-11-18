@@ -1,16 +1,7 @@
-/input.ts(1,9): error TS2304: Cannot find name 'value'.
-/input.ts(1,18): error TS2300: Duplicate identifier 'default'.
-/input.ts(1,18): error TS2528: A module cannot have multiple default exports.
 /input.ts(1,18): error TS24254: Exporting 'default' is restricted.
-/input.ts(1,36): error TS2528: A module cannot have multiple default exports.
 /input.ts(1,36): error TS24254: Exporting 'default' is restricted.
-/input.ts(1,50): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
-/input.ts(1,74): error TS2528: A module cannot have multiple default exports.
 /input.ts(1,74): error TS24254: Exporting 'default' is restricted.
-/input.ts(1,88): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
-/input.ts(1,107): error TS2300: Duplicate identifier 'default'.
 /input.ts(1,107): error TS24254: Exporting 'default' is restricted.
-/input.ts(1,120): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -38,35 +29,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (13 errors) ====
+==== /input.ts (4 errors) ====
     export {value as default}; export {default} from 'mod'; export {value as default} from 'mod'; export * as default from 'mod';
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                     ~~~~~~~
-!!! error TS2300: Duplicate identifier 'default'.
-                     ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2753 /input.ts:1:36: Another export default is here.
-!!! related TS2753 /input.ts:1:74: Another export default is here.
                      ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
                                        ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2752 /input.ts:1:18: The first export default is here.
-                                       ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                                                     ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
-                                                                             ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2752 /input.ts:1:18: The first export default is here.
                                                                              ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                                                                                           ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
-                                                                                                              ~~~~~~~
-!!! error TS2300: Duplicate identifier 'default'.
                                                                                                               ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                                                                                                                           ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19856: Function 'test' has a complexity of 3. Maximum allowed is 2.
-/input.ts(1,27): error TS2304: Cannot find name 'a'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function test() { switch (a) { case 1: break; case 2: break; default: break; } }
     ~~~~~~~~~~~~~
 !!! error TS19856: Function 'test' has a complexity of 3. Maximum allowed is 2.
-                              ~
-!!! error TS2304: Cannot find name 'a'.

@@ -1,4 +1,3 @@
-/input.ts(1,2): error TS2304: Cannot find name 'value'.
 /input.ts(1,2): error TS20467: Optional chain expressions can return undefined by design - using a non-null assertion is unsafe and wrong.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     (value?.field)!.next;
-     ~~~~~
-!!! error TS2304: Cannot find name 'value'.
      ~~~~~~~~~~~~
 !!! error TS20467: Optional chain expressions can return undefined by design - using a non-null assertion is unsafe and wrong.

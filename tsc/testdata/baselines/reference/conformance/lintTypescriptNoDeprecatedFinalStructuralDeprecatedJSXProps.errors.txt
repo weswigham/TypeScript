@@ -1,4 +1,3 @@
-/input.tsx(1,86): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 /input.tsx(1,110): error TS24031: `old` is deprecated.
 
 
@@ -19,9 +18,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     interface Props { /** @deprecated */ old: string } function A(props: Props) { return <div />; } const a = <A old="" />;
-                                                                                         ~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
                                                                                                                  ~~~
 !!! error TS24031: `old` is deprecated.

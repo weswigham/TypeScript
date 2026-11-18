@@ -1,6 +1,5 @@
 /input.tsx(1,10): error TS24267: 'x' import from 'mod' is restricted.
 /input.tsx(1,18): error TS24267: 'x' import from 'mod' is restricted.
-/input.tsx(1,32): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,11 +29,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     export { x as y, x as z } from 'mod';
              ~~~~~~
 !!! error TS24267: 'x' import from 'mod' is restricted.
                      ~~~~~~
 !!! error TS24267: 'x' import from 'mod' is restricted.
-                                   ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

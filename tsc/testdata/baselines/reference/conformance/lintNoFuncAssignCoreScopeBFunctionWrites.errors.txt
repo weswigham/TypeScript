@@ -1,10 +1,5 @@
-/input.ts(1,19): error TS2630: Cannot assign to 'run' because it is a function.
 /input.ts(1,19): error TS20000: 'run' is a function.
-/input.ts(1,25): error TS2304: Cannot find name 'other'.
-/input.ts(1,33): error TS2630: Cannot assign to 'run' because it is a function.
 /input.ts(1,33): error TS20000: 'run' is a function.
-/input.ts(1,40): error TS2304: Cannot find name 'values'.
-/input.ts(1,84): error TS2630: Cannot assign to 'named' because it is a function.
 /input.ts(1,84): error TS20000: 'named' is a function.
 
 
@@ -23,21 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (3 errors) ====
     function run() {} run = other; [run] = values; const callback = function named() { named++; };
                       ~~~
-!!! error TS2630: Cannot assign to 'run' because it is a function.
-                      ~~~
 !!! error TS20000: 'run' is a function.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'other'.
-                                    ~~~
-!!! error TS2630: Cannot assign to 'run' because it is a function.
                                     ~~~
 !!! error TS20000: 'run' is a function.
-                                           ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                                                                                       ~~~~~
-!!! error TS2630: Cannot assign to 'named' because it is a function.
                                                                                        ~~~~~
 !!! error TS20000: 'named' is a function.

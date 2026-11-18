@@ -1,6 +1,4 @@
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 /input.ts(1,8): error TS22016: Expected a conditional expression and instead saw an assignment.
-/input.ts(1,16): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     for (; value = other;) {}
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
            ~~~~~~~~~~~~~
 !!! error TS22016: Expected a conditional expression and instead saw an assignment.
-                   ~~~~~
-!!! error TS2304: Cannot find name 'other'.

@@ -1,7 +1,5 @@
 /input.tsx(3,6): error TS24256: 'restricted-path' import is restricted from being used. This import is restricted.
-/input.tsx(3,26): error TS2307: Cannot find module 'restricted-path' or its corresponding type declarations.
 /input.tsx(4,6): error TS24256: 'restricted-path' import is restricted from being used. This import is restricted.
-/input.tsx(4,31): error TS2307: Cannot find module 'restricted-path' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,17 +28,13 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (4 errors) ====
+==== /input.tsx (2 errors) ====
     
     			  // Both regular and type imports should still be restricted
     			  import { Foo } from 'restricted-path';
     			  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24256: 'restricted-path' import is restricted from being used. This import is restricted.
-    			                      ~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'restricted-path' or its corresponding type declarations.
     			  import type { Bar } from 'restricted-path';
     			  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24256: 'restricted-path' import is restricted from being used. This import is restricted.
-    			                           ~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'restricted-path' or its corresponding type declarations.
     			

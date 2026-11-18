@@ -1,6 +1,4 @@
-/input.ts(1,15): error TS2451: Cannot redeclare block-scoped variable 'toString'.
 /input.ts(1,34): error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
-/input.ts(1,38): error TS2538: Type '() => string' cannot be used as an index type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,12 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     declare const toString: string; ({})[toString]();
-                  ~~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'toString'.
-!!! related TS6203 lib.dom.d.ts:--:--: 'toString' was also declared here.
                                      ~~
 !!! error TS24022: '{}' will use Object's default stringification format ('[object Object]') when stringified.
-                                         ~~~~~~~~
-!!! error TS2538: Type '() => string' cannot be used as an index type.

@@ -1,12 +1,5 @@
-input.ts(1,5): error TS2304: Cannot find name 'lower'.
 input.ts(1,5): error TS19338: A constructor name should not start with a lowercase letter.
-input.ts(2,1): error TS2304: Cannot find name 'Upper'.
 input.ts(2,1): error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
-input.ts(3,5): error TS2304: Cannot find name 'Upper'.
-input.ts(4,1): error TS2304: Cannot find name 'lower'.
-input.ts(5,5): error TS2304: Cannot find name 'allowed'.
-input.ts(6,1): error TS2304: Cannot find name 'Allowed'.
-input.ts(9,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(9,8): error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
 input.ts(10,36): error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
 
@@ -17,35 +10,20 @@ input.ts(10,36): error TS22003: A function with a name starting with an uppercas
         "lint": { "rules": { "new-cap": ["error", { "newIsCapExceptions": ["allowed"], "capIsNewExceptionPattern": "^Allowed$" }] } },
         "files": ["input.ts"]
     }
-==== input.ts (11 errors) ====
+==== input.ts (4 errors) ====
     new lower();
-        ~~~~~
-!!! error TS2304: Cannot find name 'lower'.
         ~~~~~
 !!! error TS19338: A constructor name should not start with a lowercase letter.
     Upper();
     ~~~~~
-!!! error TS2304: Cannot find name 'Upper'.
-    ~~~~~
 !!! error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
     new Upper();
-        ~~~~~
-!!! error TS2304: Cannot find name 'Upper'.
     lower();
-    ~~~~~
-!!! error TS2304: Cannot find name 'lower'.
     new allowed();
-        ~~~~~~~
-!!! error TS2304: Cannot find name 'allowed'.
     Allowed();
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'Allowed'.
     Array();
     Date.UTC(2000, 0);
     object.Upper();
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~
 !!! error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
     function shadow(Array: Function) { Array(); }

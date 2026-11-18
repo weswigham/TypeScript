@@ -12,27 +12,9 @@ input.ts(11,1): error TS19000: Unexpected alert.
 input.ts(12,1): error TS19000: Unexpected alert.
 input.ts(13,1): error TS19000: Unexpected confirm.
 input.ts(14,1): error TS19000: Unexpected alert.
-input.ts(15,1): error TS2304: Cannot find name 'other'.
-input.ts(16,8): error TS2538: Type '(message?: any) => void' cannot be used as an index type.
-input.ts(17,8): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
-input.ts(18,1): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-input.ts(19,19): error TS7006: Parameter 'alert' implicitly has an 'any' type.
-input.ts(19,26): error TS7006: Parameter 'confirm' implicitly has an 'any' type.
-input.ts(19,35): error TS7006: Parameter 'prompt' implicitly has an 'any' type.
-input.ts(19,43): error TS7006: Parameter 'window' implicitly has an 'any' type.
-input.ts(19,51): error TS7006: Parameter 'globalThis' implicitly has an 'any' type.
-input.ts(26,21): error TS7006: Parameter 'alert' implicitly has an 'any' type.
 input.ts(27,5): error TS19000: Unexpected alert.
-input.ts(30,5): error TS2454: Variable 'alert' is used before being assigned.
-input.ts(34,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-input.ts(39,8): error TS7041: The containing arrow function captures the global value of 'this'.
-input.ts(41,5): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
 input.ts(41,6): error TS19000: Unexpected alert.
-input.ts(42,14): error TS2339: Property 'alert' does not exist on type '{}'.
-input.ts(44,9): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
 input.ts(44,10): error TS19000: Unexpected confirm.
-input.ts(45,21): error TS2339: Property 'prompt' does not exist on type '{}'.
-module.ts(2,1): error TS2532: Object is possibly 'undefined'.
 module.ts(3,1): error TS19000: Unexpected alert.
 
 
@@ -43,7 +25,7 @@ module.ts(3,1): error TS19000: Unexpected alert.
         "files": ["input.ts", "module.ts"]
     }
     
-==== input.ts (34 errors) ====
+==== input.ts (17 errors) ====
     alert("message");
     ~~~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
@@ -87,28 +69,10 @@ module.ts(3,1): error TS19000: Unexpected alert.
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
     other.alert("message");
-    ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     window[alert]("message");
-           ~~~~~
-!!! error TS2538: Type '(message?: any) => void' cannot be used as an index type.
     window["al" + "ert"]("message");
-           ~~~~~~~~~~~~
-!!! error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
     new alert("message");
-    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     function shadowed(alert, confirm, prompt, window, globalThis) {
-                      ~~~~~
-!!! error TS7006: Parameter 'alert' implicitly has an 'any' type.
-                             ~~~~~~~
-!!! error TS7006: Parameter 'confirm' implicitly has an 'any' type.
-                                      ~~~~~~
-!!! error TS7006: Parameter 'prompt' implicitly has an 'any' type.
-                                              ~~~~~~
-!!! error TS7006: Parameter 'window' implicitly has an 'any' type.
-                                                      ~~~~~~~~~~
-!!! error TS7006: Parameter 'globalThis' implicitly has an 'any' type.
         alert();
         confirm();
         prompt();
@@ -116,55 +80,37 @@ module.ts(3,1): error TS19000: Unexpected alert.
         globalThis.alert();
     }
     function localAlert(alert) {
-                        ~~~~~
-!!! error TS7006: Parameter 'alert' implicitly has an 'any' type.
         window.alert();
         ~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
     }
     function hoisted() {
         alert();
-        ~~~~~
-!!! error TS2454: Variable 'alert' is used before being assigned.
         var alert = () => {};
     }
     function localThis() {
         this.alert();
-        ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     }
     {
         this.alert();
     }
     (() => this.alert())();
-           ~~~~
-!!! error TS7041: The containing arrow function captures the global value of 'this'.
     const methods = {
         [this.alert()]() {
-        ~~~~~~~~~~~~~~
-!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
          ~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
             this.alert();
-                 ~~~~~
-!!! error TS2339: Property 'alert' does not exist on type '{}'.
         },
         get [this.confirm()]() {
-            ~~~~~~~~~~~~~~~~
-!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
              ~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected confirm.
             return this.prompt();
-                        ~~~~~~
-!!! error TS2339: Property 'prompt' does not exist on type '{}'.
         },
     };
     
-==== module.ts (2 errors) ====
+==== module.ts (1 errors) ====
     export {};
     this.alert();
-    ~~~~
-!!! error TS2532: Object is possibly 'undefined'.
     alert();
     ~~~~~~~
 !!! error TS19000: Unexpected alert.

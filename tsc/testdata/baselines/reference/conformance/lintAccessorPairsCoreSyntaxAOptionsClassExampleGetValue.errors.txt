@@ -1,5 +1,4 @@
 /input.ts(1,17): error TS22051: Setter is not present for class getter 'value'.
-/input.ts(1,21): error TS2378: A 'get' accessor must return a value.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Example { get value() {} }
                     ~~~~~~~~~~~~~~
 !!! error TS22051: Setter is not present for class getter 'value'.
-                        ~~~~~
-!!! error TS2378: A 'get' accessor must return a value.

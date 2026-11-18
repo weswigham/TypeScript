@@ -1,4 +1,3 @@
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 /input.ts(1,18): error TS20296: Invalid typeof comparison value.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     typeof value === undefined;
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~~~~~~~~~
 !!! error TS20296: Invalid typeof comparison value.

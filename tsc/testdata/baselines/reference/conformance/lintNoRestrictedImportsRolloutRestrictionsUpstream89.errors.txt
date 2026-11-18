@@ -1,5 +1,4 @@
 /input.tsx(1,8): error TS24266: * import is invalid because 'foo' from 'fs' is restricted. Don't import 'foo'.
-/input.tsx(1,21): error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,9 +29,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     export * as ns from "fs";
            ~
 !!! error TS24266: * import is invalid because 'foo' from 'fs' is restricted. Don't import 'foo'.
-                        ~~~~
-!!! error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.

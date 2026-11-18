@@ -1,63 +1,27 @@
 input.ts(1,40): error TS19362: The function binding is unnecessary.
-input.ts(1,45): error TS2304: Cannot find name 'value'.
-input.ts(2,22): error TS7041: The containing arrow function captures the global value of 'this'.
 input.ts(2,28): error TS19362: The function binding is unnecessary.
-input.ts(2,33): error TS2304: Cannot find name 'value'.
-input.ts(3,44): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-input.ts(3,57): error TS2304: Cannot find name 'value'.
 input.ts(4,31): error TS19362: The function binding is unnecessary.
-input.ts(4,36): error TS2304: Cannot find name 'work'.
 input.ts(5,32): error TS19362: The function binding is unnecessary.
-input.ts(5,48): error TS2304: Cannot find name 'value'.
 input.ts(6,60): error TS19362: The function binding is unnecessary.
-input.ts(6,65): error TS2304: Cannot find name 'value'.
-input.ts(7,40): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
-input.ts(7,41): error TS2465: 'this' cannot be referenced in a computed property name.
-input.ts(7,46): error TS2339: Property 'key' does not exist on type 'Item'.
-input.ts(7,65): error TS2304: Cannot find name 'value'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-extra-bind":"error"}},"files":["input.ts"]}
-==== input.ts (17 errors) ====
+==== input.ts (5 errors) ====
     const first = function() { return 1; }.bind(value);
                                            ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                                ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const arrow = (() => this).bind(value);
-                         ~~~~
-!!! error TS7041: The containing arrow function captures the global value of 'this'.
                                ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const required = function() { return () => this; }.bind(value);
-                                               ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-                                                            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const effects = function() {}.bind(work());
                                   ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                       ~~~~
-!!! error TS2304: Cannot find name 'work'.
     const comments = function() {}.bind(/* keep */ value);
                                    ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const fields = function() { class Item { field = this; } }.bind(value);
                                                                ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const keys = function() { class Item { [this.key] = 1; } }.bind(value);
-                                           ~~~~~~~~~~
-!!! error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
-                                            ~~~~
-!!! error TS2465: 'this' cannot be referenced in a computed property name.
-                                                 ~~~
-!!! error TS2339: Property 'key' does not exist on type 'Item'.
-                                                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.

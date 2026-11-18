@@ -1,6 +1,4 @@
-/input.ts(1,20): error TS7006: Parameter 'object' implicitly has an 'any' type.
 /input.ts(1,48): error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.
-/input.ts(1,69): error TS2304: Cannot find name 'amount'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     async function run(object) { if (object.value) object.value = await amount; }
-                       ~~~~~~
-!!! error TS7006: Parameter 'object' implicitly has an 'any' type.
                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `object.value` might be assigned based on an outdated state of `object`.
-                                                                        ~~~~~~
-!!! error TS2304: Cannot find name 'amount'.

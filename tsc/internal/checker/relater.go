@@ -440,7 +440,7 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 	if node == nil || c.isOrHasGenericConditional(target) {
 		return false
 	}
-	if c.compilerOptions.NoCheck.IsTrue() {
+	if c.compilerOptions.GetNoCheck() {
 		return false
 	}
 	if c.elaborateDidYouMeanToCallOrConstruct(node, source, target, relation, SignatureKindConstruct, headMessage, diagnosticOutput) ||

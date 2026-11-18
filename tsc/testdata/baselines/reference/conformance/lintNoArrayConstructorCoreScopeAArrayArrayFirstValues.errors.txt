@@ -1,6 +1,4 @@
 /input.ts(1,1): error TS19859: The array literal notation [] is preferable.
-/input.ts(1,7): error TS2304: Cannot find name 'first'.
-/input.ts(1,17): error TS2304: Cannot find name 'values'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     Array(first, ...values);
     ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
-          ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                    ~~~~~~
-!!! error TS2304: Cannot find name 'values'.

@@ -1,7 +1,4 @@
-/input.ts(1,16): error TS2304: Cannot find name 'value'.
 /input.ts(1,16): error TS24282: Unnecessary use of conditional expression for default assignment.
-/input.ts(1,24): error TS2304: Cannot find name 'value'.
-/input.ts(1,32): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,13 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     const result = value ? value : other;
-                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                    ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24282: Unnecessary use of conditional expression for default assignment.
-                           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'other'.

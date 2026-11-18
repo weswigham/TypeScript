@@ -1,13 +1,6 @@
 /input.ts(1,1): error TS19002: Variables should not be deleted.
-/input.ts(1,8): error TS1102: 'delete' cannot be called on an identifier in strict mode.
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
-/input.ts(1,8): error TS2703: The operand of a 'delete' operator must be a property reference.
 /input.ts(1,15): error TS19002: Variables should not be deleted.
-/input.ts(1,23): error TS2304: Cannot find name 'value'.
-/input.ts(1,23): error TS2703: The operand of a 'delete' operator must be a property reference.
 /input.ts(1,31): error TS19002: Variables should not be deleted.
-/input.ts(1,40): error TS2304: Cannot find name 'value'.
-/input.ts(1,40): error TS2703: The operand of a 'delete' operator must be a property reference.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,27 +18,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (10 errors) ====
+==== /input.ts (3 errors) ====
     delete value; delete (value); delete ((value));
     ~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-           ~~~~~
-!!! error TS1102: 'delete' cannot be called on an identifier in strict mode.
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-           ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
                   ~~~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-                          ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                          ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
                                   ~~~~~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-                                           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                           ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
 ==== /custom.ts (0 errors) ====
     export default class Custom {}

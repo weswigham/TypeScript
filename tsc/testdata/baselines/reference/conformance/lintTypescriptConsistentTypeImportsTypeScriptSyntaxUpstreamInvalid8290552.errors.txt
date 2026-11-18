@@ -1,5 +1,4 @@
 /input.ts(2,1): error TS21283: Imports "B", "C" are only used as type.
-/input.ts(2,25): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,13 +26,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     import A, { B, C } from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21283: Imports "B", "C" are only used as type.
-                            ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     type T = B;
     type U = C;
     A();

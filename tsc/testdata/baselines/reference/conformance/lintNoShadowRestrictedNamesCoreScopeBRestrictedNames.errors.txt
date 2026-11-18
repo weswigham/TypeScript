@@ -1,9 +1,5 @@
-/input.ts(1,14): error TS7006: Parameter 'undefined' implicitly has an 'any' type.
 /input.ts(1,14): error TS20011: Shadowing of global property 'undefined'.
-/input.ts(1,25): error TS7006: Parameter 'NaN' implicitly has an 'any' type.
 /input.ts(1,25): error TS20011: Shadowing of global property 'NaN'.
-/input.ts(1,37): error TS1100: Invalid use of 'arguments' in strict mode.
-/input.ts(1,37): error TS7031: Binding element 'arguments' implicitly has an 'any' type.
 /input.ts(1,37): error TS20011: Shadowing of global property 'arguments'.
 
 
@@ -22,19 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (3 errors) ====
     function run(undefined, NaN, {eval: arguments}) {} function other() { var undefined; }
-                 ~~~~~~~~~
-!!! error TS7006: Parameter 'undefined' implicitly has an 'any' type.
                  ~~~~~~~~~
 !!! error TS20011: Shadowing of global property 'undefined'.
                             ~~~
-!!! error TS7006: Parameter 'NaN' implicitly has an 'any' type.
-                            ~~~
 !!! error TS20011: Shadowing of global property 'NaN'.
-                                        ~~~~~~~~~
-!!! error TS1100: Invalid use of 'arguments' in strict mode.
-                                        ~~~~~~~~~
-!!! error TS7031: Binding element 'arguments' implicitly has an 'any' type.
                                         ~~~~~~~~~
 !!! error TS20011: Shadowing of global property 'arguments'.

@@ -1,6 +1,4 @@
 /input.ts(1,11): error TS24290: 'b' is assigned a value but never used.
-/input.ts(1,16): error TS7034: Variable 'c' implicitly has type 'any' in some locations where its type cannot be determined.
-/input.ts(1,67): error TS7005: Variable 'c' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,11 +24,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     var a=10, b=0, c=null; setTimeout(function() { var b=2; alert(a+b+c); }, 0);
               ~
 !!! error TS24290: 'b' is assigned a value but never used.
-                   ~
-!!! error TS7034: Variable 'c' implicitly has type 'any' in some locations where its type cannot be determined.
-                                                                      ~
-!!! error TS7005: Variable 'c' implicitly has an 'any' type.

@@ -1,95 +1,36 @@
-input.ts(1,21): error TS2323: Cannot redeclare exported variable 'denied'.
 input.ts(1,21): error TS24253: 'denied' is restricted from being used as an exported name.
-input.ts(1,44): error TS2304: Cannot find name 'source'.
 input.ts(2,17): error TS24253: 'privateFunction' is restricted from being used as an exported name.
 input.ts(3,1): error TS24254: Exporting 'default' is restricted.
-input.ts(3,22): error TS2300: Duplicate identifier 'Example'.
-input.ts(3,22): error TS2323: Cannot redeclare exported variable 'default'.
-input.ts(3,22): error TS2528: A module cannot have multiple default exports.
-input.ts(4,10): error TS2323: Cannot redeclare exported variable 'denied'.
-input.ts(4,10): error TS2484: Export declaration conflicts with exported declaration of 'denied'.
 input.ts(4,21): error TS24253: 'denied' is restricted from being used as an exported name.
-input.ts(4,29): error TS2323: Cannot redeclare exported variable 'default'.
-input.ts(4,29): error TS2484: Export declaration conflicts with exported declaration of 'Example'.
-input.ts(4,40): error TS2300: Duplicate identifier 'default'.
-input.ts(4,40): error TS2528: A module cannot have multiple default exports.
 input.ts(4,40): error TS24254: Exporting 'default' is restricted.
-input.ts(5,10): error TS2528: A module cannot have multiple default exports.
 input.ts(5,10): error TS24254: Exporting 'default' is restricted.
-input.ts(5,25): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
-input.ts(6,19): error TS2528: A module cannot have multiple default exports.
 input.ts(6,19): error TS24254: Exporting 'default' is restricted.
-input.ts(6,34): error TS2307: Cannot find module 'other' or its corresponding type declarations.
-input.ts(7,13): error TS2300: Duplicate identifier 'default'.
 input.ts(7,13): error TS24254: Exporting 'default' is restricted.
-input.ts(7,26): error TS2307: Cannot find module 'namespace' or its corresponding type declarations.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-exports":["error",{"restrictedNamedExports":["denied"],"restrictedNamedExportsPattern":"^private","restrictDefaultExports":{"direct":true,"named":true,"defaultFrom":true,"namedFrom":true,"namespaceFrom":true}}]}},"files":["input.ts"]}
-==== input.ts (25 errors) ====
+==== input.ts (8 errors) ====
     export const { key: denied, ...allowed } = source;
                         ~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'denied'.
-                        ~~~~~~
 !!! error TS24253: 'denied' is restricted from being used as an exported name.
-                                               ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     export function privateFunction() {}
                     ~~~~~~~~~~~~~~~
 !!! error TS24253: 'privateFunction' is restricted from being used as an exported name.
     export default class Example {}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                         ~~~~~~~
-!!! error TS2300: Duplicate identifier 'Example'.
-                         ~~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'default'.
-                         ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2753 input.ts:5:10: Another export default is here.
-!!! related TS2753 input.ts:6:19: Another export default is here.
     export { allowed as denied, allowed as default };
-             ~~~~~~~~~~~~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'denied'.
-             ~~~~~~~~~~~~~~~~~
-!!! error TS2484: Export declaration conflicts with exported declaration of 'denied'.
                         ~~~~~~
 !!! error TS24253: 'denied' is restricted from being used as an exported name.
-                                ~~~~~~~~~~~~~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'default'.
-                                ~~~~~~~~~~~~~~~~~~
-!!! error TS2484: Export declaration conflicts with exported declaration of 'Example'.
-                                           ~~~~~~~
-!!! error TS2300: Duplicate identifier 'default'.
-                                           ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS6204 input.ts:5:10: and here.
-!!! related TS6204 input.ts:6:19: and here.
                                            ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
     export { default } from "module";
              ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2752 input.ts:3:22: The first export default is here.
-!!! related TS2752 input.ts:4:40: The first export default is here.
-             ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                            ~~~~~~~~
-!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     export { value as default } from "other";
                       ~~~~~~~
-!!! error TS2528: A module cannot have multiple default exports.
-!!! related TS2752 input.ts:3:22: The first export default is here.
-!!! related TS2752 input.ts:4:40: The first export default is here.
-                      ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                                     ~~~~~~~
-!!! error TS2307: Cannot find module 'other' or its corresponding type declarations.
     export * as default from "namespace";
                 ~~~~~~~
-!!! error TS2300: Duplicate identifier 'default'.
-                ~~~~~~~
 !!! error TS24254: Exporting 'default' is restricted.
-                             ~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'namespace' or its corresponding type declarations.

@@ -1,8 +1,4 @@
 /input.ts(1,1): error TS24284: Invalid loop. Its body allows only one iteration.
-/input.ts(1,8): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-/input.ts(1,11): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-/input.ts(1,18): error TS2304: Cannot find name 'c'.
-/input.ts(1,27): error TS2304: Cannot find name 'err'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     for ({ a, b } of c) throw err;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24284: Invalid loop. Its body allows only one iteration.
-           ~
-!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-              ~
-!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-                     ~
-!!! error TS2304: Cannot find name 'c'.
-                              ~~~
-!!! error TS2304: Cannot find name 'err'.

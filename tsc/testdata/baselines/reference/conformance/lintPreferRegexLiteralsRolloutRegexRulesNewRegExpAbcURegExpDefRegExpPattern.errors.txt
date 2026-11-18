@@ -1,6 +1,5 @@
 /input.ts(1,1): error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
 /input.ts(1,25): error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
-/input.ts(1,47): error TS2304: Cannot find name 'pattern'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     new RegExp('abc', 'u'); RegExp(`def`); RegExp(pattern);
     ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
                             ~~~~~~~~~~~~~
 !!! error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
-                                                  ~~~~~~~
-!!! error TS2304: Cannot find name 'pattern'.

@@ -1,7 +1,4 @@
 /input.ts(1,1): error TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
-/input.ts(1,13): error TS2304: Cannot find name 'a'.
-/input.ts(1,17): error TS2304: Cannot find name 'a'.
-/input.ts(1,21): error TS2304: Cannot find name 'b'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,13 +19,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     if (Boolean(a)) a = b
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24220: 'if' statement can be replaced with a logical operator assignment with operator &&=.
-                ~
-!!! error TS2304: Cannot find name 'a'.
-                    ~
-!!! error TS2304: Cannot find name 'a'.
-                        ~
-!!! error TS2304: Cannot find name 'b'.

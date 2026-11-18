@@ -1,26 +1,14 @@
-input.ts(1,1): error TS2304: Cannot find name 'first'.
-input.ts(1,9): error TS2304: Cannot find name 'second'.
-input.ts(2,19): error TS2304: Cannot find name 'first'.
 input.ts(2,19): error TS19372: Unexpected chained assignment.
-input.ts(3,22): error TS2304: Cannot find name 'first'.
 input.ts(3,22): error TS19372: Unexpected chained assignment.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-multi-assign":["error",{"ignoreNonDeclaration":true}]}},"files":["input.ts"]}
-==== input.ts (6 errors) ====
+==== input.ts (2 errors) ====
     first = second = 1;
-    ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-            ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
     let declaration = first = 1;
-                      ~~~~~
-!!! error TS2304: Cannot find name 'first'.
                       ~~~~~~~~~
 !!! error TS19372: Unexpected chained assignment.
     class Item { field = first = 1; }
-                         ~~~~~
-!!! error TS2304: Cannot find name 'first'.
                          ~~~~~~~~~
 !!! error TS19372: Unexpected chained assignment.

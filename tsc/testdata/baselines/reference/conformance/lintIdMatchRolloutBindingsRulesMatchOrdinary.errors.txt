@@ -1,7 +1,5 @@
 /input.ts(1,5): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
 /input.ts(1,15): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-/input.ts(1,29): error TS2349: This expression is not callable.
-  Type 'Number' has no call signatures.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,12 +20,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     let bad_name; bad_name = 1; bad_name(bad_name);
         ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
                   ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-                                ~~~~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Number' has no call signatures.

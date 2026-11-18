@@ -1,4 +1,3 @@
-/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
 /input.ts(1,40): error TS24249: Assignment to function parameter 'value'.
 
 
@@ -25,9 +24,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function task(value) { value.prop = 1; value = 1; }
-                  ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
                                            ~~~~~
 !!! error TS24249: Assignment to function parameter 'value'.

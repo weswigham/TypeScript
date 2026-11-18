@@ -1,8 +1,4 @@
-/input.ts(1,16): error TS2304: Cannot find name 'B'.
-/input.ts(1,20): error TS7008: Member 'foo' implicitly has an 'any' type.
 /input.ts(1,20): error TS24283: Unreachable code.
-/input.ts(1,25): error TS2377: Constructors for derived classes must contain a 'super' call.
-/input.ts(1,42): error TS7008: Member 'bar' implicitly has an 'any' type.
 /input.ts(1,42): error TS24283: Unreachable code.
 
 
@@ -21,17 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     (class extends B { foo; constructor() {} bar; })
-                   ~
-!!! error TS2304: Cannot find name 'B'.
-                       ~~~
-!!! error TS7008: Member 'foo' implicitly has an 'any' type.
                        ~~~~
 !!! error TS24283: Unreachable code.
-                            ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
-                                             ~~~
-!!! error TS7008: Member 'bar' implicitly has an 'any' type.
                                              ~~~~
 !!! error TS24283: Unreachable code.

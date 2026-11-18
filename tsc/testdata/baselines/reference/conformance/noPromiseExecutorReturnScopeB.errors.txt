@@ -1,20 +1,11 @@
 input.ts(1,24): error TS20008: Return values from promise executor functions cannot be read.
 input.ts(2,24): error TS20008: Return values from promise executor functions cannot be read.
-input.ts(5,9): error TS2304: Cannot find name 'ready'.
 input.ts(5,16): error TS20008: Return values from promise executor functions cannot be read.
-input.ts(5,23): error TS2304: Cannot find name 'value'.
-input.ts(8,1): error TS2348: Value of type 'PromiseConstructor' is not callable. Did you mean to include 'new'?
-input.ts(8,9): error TS7006: Parameter 'resolve' implicitly has an 'any' type.
-input.ts(9,13): error TS2304: Cannot find name 'first'.
-input.ts(9,20): error TS7006: Parameter 'resolve' implicitly has an 'any' type.
-input.ts(9,20): error TS2554: Expected 1 arguments, but got 2.
-input.ts(10,17): error TS7006: Parameter 'Promise' implicitly has an 'any' type.
-input.ts(10,40): error TS7006: Parameter 'resolve' implicitly has an 'any' type.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-promise-executor-return":"error"}},"files":["input.ts"]}
-==== input.ts (12 errors) ====
+==== input.ts (3 errors) ====
     new Promise(resolve => resolve(1));
                            ~~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.
@@ -24,28 +15,10 @@ input.ts(10,40): error TS7006: Parameter 'resolve' implicitly has an 'any' type.
     new Promise(function(resolve) {
         function nested() { return 1; }
         if (ready) return value;
-            ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                    ~~~~~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.
-                          ~~~~~
-!!! error TS2304: Cannot find name 'value'.
         return;
     });
     Promise(resolve => resolve(1));
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2348: Value of type 'PromiseConstructor' is not callable. Did you mean to include 'new'?
-            ~~~~~~~
-!!! error TS7006: Parameter 'resolve' implicitly has an 'any' type.
     new Promise(first, resolve => resolve(1));
-                ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                       ~~~~~~~
-!!! error TS7006: Parameter 'resolve' implicitly has an 'any' type.
-                       ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 2.
     function shadow(Promise) { new Promise(resolve => resolve(1)); }
-                    ~~~~~~~
-!!! error TS7006: Parameter 'Promise' implicitly has an 'any' type.
-                                           ~~~~~~~
-!!! error TS7006: Parameter 'resolve' implicitly has an 'any' type.

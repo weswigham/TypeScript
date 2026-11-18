@@ -1,13 +1,11 @@
 input.ts(1,8): error TS19351: Unexpected use of 'event'.
 input.ts(2,23): error TS19351: Unexpected use of 'event'.
 input.ts(3,12): error TS19351: Unexpected use of 'event'.
-input.ts(4,17): error TS7006: Parameter 'window' implicitly has an 'any' type.
-input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-restricted-globals":["error",{"globals":["event"],"checkGlobalObject":true,"globalObjects":["custom"]}]}},"files":["input.ts"]}
-==== input.ts (5 errors) ====
+==== input.ts (3 errors) ====
     window.event;
            ~~~~~
 !!! error TS19351: Unexpected use of 'event'.
@@ -18,9 +16,4 @@ input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
                ~~~~~
 !!! error TS19351: Unexpected use of 'event'.
     function shadow(window) { window.event; }
-                    ~~~~~~
-!!! error TS7006: Parameter 'window' implicitly has an 'any' type.
     object.window.event;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

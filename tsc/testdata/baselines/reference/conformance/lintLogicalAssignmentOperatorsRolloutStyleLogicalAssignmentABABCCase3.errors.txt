@@ -1,7 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'a'.
 /input.ts(1,1): error TS24216: Assignment (=) can be replaced with operator assignment (??=).
-/input.ts(1,7): error TS2304: Cannot find name 'a'.
-/input.ts(1,17): error TS2304: Cannot find name 'c'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -16,13 +13,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     a.b = a['b'] ?? c
-    ~
-!!! error TS2304: Cannot find name 'a'.
     ~~~~~~~~~~~~~~~~~
 !!! error TS24216: Assignment (=) can be replaced with operator assignment (??=).
-          ~
-!!! error TS2304: Cannot find name 'a'.
-                    ~
-!!! error TS2304: Cannot find name 'c'.

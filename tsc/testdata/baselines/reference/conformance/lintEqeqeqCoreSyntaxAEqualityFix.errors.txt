@@ -1,6 +1,4 @@
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 /input.ts(1,14): error TS19254: Expected '===' and instead saw '=='.
-/input.ts(1,27): error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
 /input.ts(1,29): error TS19254: Expected '!==' and instead saw '!='.
 
 
@@ -19,13 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     typeof value == 'string'; 1 != 2;
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                  ~~
 !!! error TS19254: Expected '===' and instead saw '=='.
-                              ~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '1' and '2' have no overlap.
                                 ~~
 !!! error TS19254: Expected '!==' and instead saw '!='.

@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19660: Unnecessary try/catch wrapper.
-/input.ts(1,7): error TS2304: Cannot find name 'call'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try { call(); } catch (error) { /* keep */ throw error; }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19660: Unnecessary try/catch wrapper.
-          ~~~~
-!!! error TS2304: Cannot find name 'call'.

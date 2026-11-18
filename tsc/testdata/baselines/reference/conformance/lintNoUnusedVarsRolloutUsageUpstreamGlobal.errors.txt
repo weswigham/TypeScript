@@ -1,5 +1,4 @@
 /input.ts(1,14): error TS24290: '数' is defined but never used.
-/input.ts(2,1): error TS2304: Cannot find name '変数'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /*global 変数, 数*/
                  ~
 !!! error TS24290: '数' is defined but never used.
     変数;
-    ~~
-!!! error TS2304: Cannot find name '変数'.

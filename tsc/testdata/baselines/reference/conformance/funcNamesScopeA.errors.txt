@@ -1,6 +1,4 @@
-input.ts(2,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(2,17): error TS19860: Unexpected unnamed function.
-input.ts(3,1): error TS2304: Cannot find name 'use'.
 input.ts(3,5): error TS19860: Unexpected unnamed function.
 input.ts(4,19): error TS19860: Unexpected unnamed generator function.
 input.ts(6,16): error TS19860: Unexpected unnamed function.
@@ -12,17 +10,12 @@ input.ts(6,16): error TS19860: Unexpected unnamed function.
         "lint": { "rules": { "func-names": ["error", "as-needed", { "generators": "always" }] } },
         "files": ["input.ts"]
     }
-==== input.ts (6 errors) ====
+==== input.ts (4 errors) ====
     const inferred = function() {};
     object.method = function() {};
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
                     ~~~~~~~~
 !!! error TS19860: Unexpected unnamed function.
     use(function() {});
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
         ~~~~~~~~
 !!! error TS19860: Unexpected unnamed function.
     const generator = function*() {};

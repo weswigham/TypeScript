@@ -1,5 +1,4 @@
 /input.ts(1,17): error TS20621: Empty class.
-/input.ts(1,19): error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const pattern = /\1[]/;
                     ~~~~~~
 !!! error TS20621: Empty class.
-                      ~
-!!! error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.

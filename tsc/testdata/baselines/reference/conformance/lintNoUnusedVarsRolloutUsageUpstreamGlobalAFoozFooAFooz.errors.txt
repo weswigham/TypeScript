@@ -1,5 +1,4 @@
 /input.ts(1,18): error TS24290: '$foo' is defined but never used.
-/input.ts(2,1): error TS2304: Cannot find name 'a$fooz'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /* global a$fooz,$foo */
                      ~~~~
 !!! error TS24290: '$foo' is defined but never used.
     a$fooz;
-    ~~~~~~
-!!! error TS2304: Cannot find name 'a$fooz'.

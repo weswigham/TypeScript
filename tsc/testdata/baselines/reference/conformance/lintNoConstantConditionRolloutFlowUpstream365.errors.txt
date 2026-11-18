@@ -1,7 +1,4 @@
-/input.ts(1,4): error TS2365: Operator '+' cannot be applied to types 'boolean' and 'number'.
 /input.ts(1,4): error TS24224: Unexpected constant condition.
-/input.ts(1,6): error TS2304: Cannot find name 'a'.
-/input.ts(1,19): error TS1313: The body of an 'if' statement cannot be the empty statement.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     if(!(a &&= 0) + 1);
        ~~~~~~~~~~~~~~
-!!! error TS2365: Operator '+' cannot be applied to types 'boolean' and 'number'.
-       ~~~~~~~~~~~~~~
 !!! error TS24224: Unexpected constant condition.
-         ~
-!!! error TS2304: Cannot find name 'a'.
-                      ~
-!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

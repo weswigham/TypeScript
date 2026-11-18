@@ -1,4 +1,3 @@
-/input.ts(1,12): error TS2304: Cannot find name 'foo'.
 /input.ts(1,19): error TS24290: 'x' is assigned a value but never used.
 
 
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let x = 0; foo = (x = x+1, 0);
-               ~~~
-!!! error TS2304: Cannot find name 'foo'.
                       ~
 !!! error TS24290: 'x' is assigned a value but never used.

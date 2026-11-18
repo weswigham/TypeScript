@@ -1,5 +1,4 @@
 /input.tsx(1,16): error TS24290: 'Button' is defined but never used.
-/input.tsx(1,30): error TS2307: Cannot find module './components.jsx' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import { Card, Button } from './components.jsx'; <Card />;
                    ~~~~~~
 !!! error TS24290: 'Button' is defined but never used.
-                                 ~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module './components.jsx' or its corresponding type declarations.

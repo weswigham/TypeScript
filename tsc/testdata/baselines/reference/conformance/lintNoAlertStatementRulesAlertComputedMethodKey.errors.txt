@@ -1,9 +1,5 @@
-/input.ts(1,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
 /input.ts(1,19): error TS19000: Unexpected alert.
-/input.ts(1,42): error TS2339: Property 'alert' does not exist on type '{}'.
-/input.ts(1,58): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
 /input.ts(1,59): error TS19000: Unexpected confirm.
-/input.ts(1,91): error TS2339: Property 'prompt' does not exist on type '{}'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,19 +17,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     const object = { [this.alert()]() { this.alert(); }, get [this.confirm()]() { return this.prompt(); } };
-                     ~~~~~~~~~~~~~~
-!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
                       ~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
-                                             ~~~~~
-!!! error TS2339: Property 'alert' does not exist on type '{}'.
-                                                             ~~~~~~~~~~~~~~~~
-!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
                                                               ~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected confirm.
-                                                                                              ~~~~~~
-!!! error TS2339: Property 'prompt' does not exist on type '{}'.
 ==== /custom.ts (0 errors) ====
     export default class Custom {}

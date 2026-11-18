@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS19672: Use binary literals instead of parseInt().
-/input.tsx(1,21): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,10 +17,7 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     parseInt('11', 2)in object;
     ~~~~~~~~~~~~~~~~~
 !!! error TS19672: Use binary literals instead of parseInt().
-                        ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

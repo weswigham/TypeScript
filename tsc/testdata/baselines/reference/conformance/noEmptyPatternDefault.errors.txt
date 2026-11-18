@@ -11,9 +11,7 @@ input.ts(11,14): error TS22041: Unexpected empty object pattern.
 input.ts(12,14): error TS22041: Unexpected empty array pattern.
 input.ts(13,2): error TS22041: Unexpected empty object pattern.
 input.ts(14,6): error TS22041: Unexpected empty object pattern.
-input.ts(15,6): error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
 input.ts(15,6): error TS22041: Unexpected empty array pattern.
-input.ts(16,15): error TS2571: Object is of type 'unknown'.
 input.ts(16,15): error TS22041: Unexpected empty object pattern.
 
 
@@ -24,7 +22,7 @@ input.ts(16,15): error TS22041: Unexpected empty object pattern.
         "files": ["input.ts"]
     }
     
-==== input.ts (17 errors) ====
+==== input.ts (15 errors) ====
     declare const source: any;
     let {} = source;
         ~~
@@ -67,12 +65,8 @@ input.ts(16,15): error TS22041: Unexpected empty object pattern.
 !!! error TS22041: Unexpected empty object pattern.
     for ([] in source) {}
          ~~
-!!! error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
-         ~~
 !!! error TS22041: Unexpected empty array pattern.
     try {} catch ({}) {}
-                  ~~
-!!! error TS2571: Object is of type 'unknown'.
                   ~~
 !!! error TS22041: Unexpected empty object pattern.
     let { value = {} } = source;

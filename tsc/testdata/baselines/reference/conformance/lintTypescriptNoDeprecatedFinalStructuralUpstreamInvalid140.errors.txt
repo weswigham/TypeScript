@@ -1,4 +1,3 @@
-/input.tsx(3,18): error TS7010: 'decorator', which lacks return-type annotation, implicitly has an 'any' return type.
 /input.tsx(5,2): error TS24031: `decorator` is deprecated.
 
 
@@ -29,12 +28,10 @@
             "aria-grabbed"?: boolean | "false" | "true";
         }
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     /** @deprecated */
     declare function decorator(constructor: Function);
-                     ~~~~~~~~~
-!!! error TS7010: 'decorator', which lacks return-type annotation, implicitly has an 'any' return type.
     
     @decorator
      ~~~~~~~~~

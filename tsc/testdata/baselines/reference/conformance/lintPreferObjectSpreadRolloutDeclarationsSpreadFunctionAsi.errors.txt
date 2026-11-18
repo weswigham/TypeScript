@@ -1,5 +1,4 @@
 /input.ts(2,1): error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-/input.ts(2,19): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,10 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const f = function() {}
     Object.assign({}, source);
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-                      ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

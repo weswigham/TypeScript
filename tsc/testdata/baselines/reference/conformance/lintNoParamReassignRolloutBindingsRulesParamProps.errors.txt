@@ -1,11 +1,8 @@
-/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
 /input.ts(1,24): error TS24250: Assignment to property of function parameter 'value'.
 /input.ts(1,47): error TS24250: Assignment to property of function parameter 'value'.
 /input.ts(1,59): error TS24250: Assignment to property of function parameter 'value'.
 /input.ts(1,80): error TS24250: Assignment to property of function parameter 'value'.
-/input.ts(1,94): error TS2304: Cannot find name 'source'.
 /input.ts(1,107): error TS24250: Assignment to property of function parameter 'value'.
-/input.ts(1,121): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,10 +25,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (5 errors) ====
     function task(value) { value.prop = 1; delete value.prop; value.get().prop++; [value.prop] = source; for (value.prop of source) {} }
-                  ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
                            ~~~~~
 !!! error TS24250: Assignment to property of function parameter 'value'.
                                                   ~~~~~
@@ -40,9 +35,5 @@
 !!! error TS24250: Assignment to property of function parameter 'value'.
                                                                                    ~~~~~
 !!! error TS24250: Assignment to property of function parameter 'value'.
-                                                                                                 ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
                                                                                                               ~~~~~
 !!! error TS24250: Assignment to property of function parameter 'value'.
-                                                                                                                            ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

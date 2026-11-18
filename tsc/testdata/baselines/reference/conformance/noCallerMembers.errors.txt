@@ -1,14 +1,7 @@
 input.ts(2,5): error TS19001: Avoid arguments.callee.
 input.ts(3,5): error TS19001: Avoid arguments.caller.
-input.ts(3,15): error TS2551: Property 'caller' does not exist on type 'IArguments'. Did you mean 'callee'?
 input.ts(4,5): error TS19001: Avoid arguments.callee.
 input.ts(5,5): error TS19001: Avoid arguments.caller.
-input.ts(5,17): error TS2551: Property 'caller' does not exist on type 'IArguments'. Did you mean 'callee'?
-input.ts(7,15): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
-input.ts(8,15): error TS2304: Cannot find name 'caller'.
-input.ts(11,5): error TS2304: Cannot find name 'other'.
-input.ts(13,20): error TS1100: Invalid use of 'arguments' in strict mode.
-input.ts(13,20): error TS7006: Parameter 'arguments' implicitly has an 'any' type.
 input.ts(14,5): error TS19001: Avoid arguments.callee.
 
 
@@ -19,7 +12,7 @@ input.ts(14,5): error TS19001: Avoid arguments.callee.
         "files": ["input.ts"]
     }
     
-==== input.ts (12 errors) ====
+==== input.ts (5 errors) ====
     function inspect() {
         arguments.callee;
         ~~~~~~~~~~~~~~~~
@@ -27,36 +20,20 @@ input.ts(14,5): error TS19001: Avoid arguments.callee.
         arguments.caller;
         ~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.caller.
-                  ~~~~~~
-!!! error TS2551: Property 'caller' does not exist on type 'IArguments'. Did you mean 'callee'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'callee' is declared here.
         arguments?.callee;
         ~~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.callee.
         (arguments).caller;
         ~~~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.caller.
-                    ~~~~~~
-!!! error TS2551: Property 'caller' does not exist on type 'IArguments'. Did you mean 'callee'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'callee' is declared here.
         arguments["callee"];
         arguments[`caller`];
-                  ~~~~~~~~
-!!! error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
         arguments[caller];
-                  ~~~~~~
-!!! error TS2304: Cannot find name 'caller'.
         arguments.length;
         arguments[0];
         other.caller;
-        ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     }
     function syntactic(arguments) {
-                       ~~~~~~~~~
-!!! error TS1100: Invalid use of 'arguments' in strict mode.
-                       ~~~~~~~~~
-!!! error TS7006: Parameter 'arguments' implicitly has an 'any' type.
         arguments.callee;
         ~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.callee.

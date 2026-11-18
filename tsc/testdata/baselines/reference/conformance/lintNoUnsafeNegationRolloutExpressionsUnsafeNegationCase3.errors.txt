@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
 /input.ts(1,1): error TS24285: Unexpected negating the left operand of 'instanceof' operator.
-/input.ts(1,2): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     !value instanceof Object;
     ~~~~~~
-!!! error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
-    ~~~~~~
 !!! error TS24285: Unexpected negating the left operand of 'instanceof' operator.
-     ~~~~~
-!!! error TS2304: Cannot find name 'value'.

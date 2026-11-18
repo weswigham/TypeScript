@@ -1,6 +1,5 @@
 /input.tsx(1,8): error TS24271: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed.
 /input.tsx(1,8): error TS24272: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed. Good luck!
-/input.tsx(1,28): error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -43,11 +42,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     import * as AllFooBar from "foo/bar";
            ~~~~~~~~~~~~~~
 !!! error TS24271: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed.
            ~~~~~~~~~~~~~~
 !!! error TS24272: * import is invalid because only 'Foo' and 'Bar' from 'foo/bar' are allowed. Good luck!
-                               ~~~~~~~~~
-!!! error TS2307: Cannot find module 'foo/bar' or its corresponding type declarations.

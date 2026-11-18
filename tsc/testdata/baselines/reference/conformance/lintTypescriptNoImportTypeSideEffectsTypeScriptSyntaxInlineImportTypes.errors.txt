@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS20331: TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import.
-/input.ts(1,50): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     import { type First, type Second as Alias } from 'mod';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20331: TypeScript will only remove the inline type specifiers which will leave behind a side effect import at runtime. Convert this to a top-level type qualifier to properly remove the entire import.
-                                                     ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

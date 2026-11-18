@@ -1,5 +1,4 @@
 /input.ts(2,1): error TS20485: Useless constructor.
-/input.ts(3,2): error TS2304: Cannot find name 'method'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,11 +16,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class A { x = 1
     constructor() {}
     ~~~~~~~~~~~
 !!! error TS20485: Useless constructor.
     [method]() {} }
-     ~~~~~~
-!!! error TS2304: Cannot find name 'method'.

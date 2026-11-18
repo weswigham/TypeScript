@@ -1,6 +1,5 @@
 /input.tsx(1,10): error TS24260: 'Foo' import from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
 /input.tsx(1,15): error TS24260: 'Bar' import from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
-/input.tsx(1,26): error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -34,11 +33,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     import { Foo, Bar } from '../../my/relative-module';
              ~~~
 !!! error TS24260: 'Foo' import from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
                   ~~~
 !!! error TS24260: 'Bar' import from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
-                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.

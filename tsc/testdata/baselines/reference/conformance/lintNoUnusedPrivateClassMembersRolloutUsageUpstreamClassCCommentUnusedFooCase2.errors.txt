@@ -1,6 +1,4 @@
-/input.ts(3,5): error TS7008: Member '#unused' implicitly has an 'any' type.
 /input.ts(3,5): error TS24288: '#unused' is defined but never used.
-/input.ts(3,14): error TS7008: Member 'foo' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,14 +21,10 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     class C {
         // comment
         #unused; foo;
         ~~~~~~~
-!!! error TS7008: Member '#unused' implicitly has an 'any' type.
-        ~~~~~~~
 !!! error TS24288: '#unused' is defined but never used.
-                 ~~~
-!!! error TS7008: Member 'foo' implicitly has an 'any' type.
     }

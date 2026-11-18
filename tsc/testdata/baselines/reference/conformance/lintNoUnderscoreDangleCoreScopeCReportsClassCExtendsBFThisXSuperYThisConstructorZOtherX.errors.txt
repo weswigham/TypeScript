@@ -1,7 +1,3 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
-/input.ts(1,32): error TS2339: Property '_x' does not exist on type 'C'.
-/input.ts(1,63): error TS2339: Property '_z' does not exist on type 'Function'.
-/input.ts(1,67): error TS2304: Cannot find name 'other'.
 /input.ts(1,67): error TS20168: Unexpected dangling '_' in '_x'.
 
 
@@ -27,15 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     class C extends B { f() { this._x; super._y; this.constructor._z; other._x; } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
-                                   ~~
-!!! error TS2339: Property '_x' does not exist on type 'C'.
-                                                                  ~~
-!!! error TS2339: Property '_z' does not exist on type 'Function'.
-                                                                      ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                                                                       ~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_x'.

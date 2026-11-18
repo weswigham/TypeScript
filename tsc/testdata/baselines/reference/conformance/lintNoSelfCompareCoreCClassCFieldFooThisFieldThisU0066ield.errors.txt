@@ -1,4 +1,3 @@
-/input.ts(1,11): error TS7008: Member '#field' implicitly has an 'any' type.
 /input.ts(1,27): error TS19514: Comparing to itself is potentially pointless.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class C { #field; foo() { this.#field === this.#\u0066ield; } }
-              ~~~~~~
-!!! error TS7008: Member '#field' implicitly has an 'any' type.
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19514: Comparing to itself is potentially pointless.

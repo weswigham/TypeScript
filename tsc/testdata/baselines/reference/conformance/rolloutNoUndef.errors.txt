@@ -1,14 +1,7 @@
-input.ts(1,1): error TS2693: 'unknown' only refers to a type, but is being used as a value here.
 input.ts(1,1): error TS24279: 'unknown' is not defined.
-input.ts(2,8): error TS2304: Cannot find name 'safe'.
-input.ts(3,1): error TS2304: Cannot find name 'known'.
 input.ts(3,1): error TS24279: 'known' is not defined.
-input.ts(4,18): error TS18004: No value exists in scope for the shorthand property 'shorthand'. Either declare one or provide an initializer.
 input.ts(4,18): error TS24279: 'shorthand' is not defined.
-input.ts(5,35): error TS2304: Cannot find name 'body'.
 input.ts(5,35): error TS24279: 'body' is not defined.
-input.ts(9,17): error TS2339: Property 'message' does not exist on type 'unknown'.
-input.ts(10,1): error TS2552: Cannot find name 'message'. Did you mean 'onmessage'?
 input.ts(10,1): error TS24279: 'message' is not defined.
 
 
@@ -16,39 +9,24 @@ input.ts(10,1): error TS24279: 'message' is not defined.
     {
         "lint": { "rules": { "no-undef": "error" } }
     }
-==== input.ts (12 errors) ====
+==== input.ts (5 errors) ====
     unknown;
-    ~~~~~~~
-!!! error TS2693: 'unknown' only refers to a type, but is being used as a value here.
     ~~~~~~~
 !!! error TS24279: 'unknown' is not defined.
     typeof safe;
-           ~~~~
-!!! error TS2304: Cannot find name 'safe'.
     known.property;
-    ~~~~~
-!!! error TS2304: Cannot find name 'known'.
     ~~~~~
 !!! error TS24279: 'known' is not defined.
     const object = { shorthand };
                      ~~~~~~~~~
-!!! error TS18004: No value exists in scope for the shorthand property 'shorthand'. Either declare one or provide an initializer.
-                     ~~~~~~~~~
 !!! error TS24279: 'shorthand' is not defined.
     function parameterDefault(value = body) {
-                                      ~~~~
-!!! error TS2304: Cannot find name 'body'.
                                       ~~~~
 !!! error TS24279: 'body' is not defined.
         var body;
         return arguments;
     }
     try {} catch ({ message }) { message; }
-                    ~~~~~~~
-!!! error TS2339: Property 'message' does not exist on type 'unknown'.
     message;
-    ~~~~~~~
-!!! error TS2552: Cannot find name 'message'. Did you mean 'onmessage'?
-!!! related TS2728 lib.dom.d.ts:--:--: 'onmessage' is declared here.
     ~~~~~~~
 !!! error TS24279: 'message' is not defined.

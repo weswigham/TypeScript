@@ -1,6 +1,5 @@
 /input.ts(1,1): error TS19351: Unexpected use of 'event'.
 /input.ts(1,24): error TS19351: Unexpected use of 'event'.
-/input.ts(1,59): error TS7006: Parameter 'event' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,11 +24,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     event; const object = {event}; object.event; function run(event) { return event; } let type: Event;
     ~~~~~
 !!! error TS19351: Unexpected use of 'event'.
                            ~~~~~
 !!! error TS19351: Unexpected use of 'event'.
-                                                              ~~~~~
-!!! error TS7006: Parameter 'event' implicitly has an 'any' type.

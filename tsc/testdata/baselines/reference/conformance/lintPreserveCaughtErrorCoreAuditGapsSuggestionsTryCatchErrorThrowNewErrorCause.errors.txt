@@ -1,4 +1,3 @@
-/input.ts(1,45): error TS18004: No value exists in scope for the shorthand property 'cause'. Either declare one or provide an initializer.
 /input.ts(1,45): error TS20271: The symptom error is being thrown with an incorrect `cause`.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new Error('', {cause}); }
-                                                ~~~~~
-!!! error TS18004: No value exists in scope for the shorthand property 'cause'. Either declare one or provide an initializer.
                                                 ~~~~~
 !!! error TS20271: The symptom error is being thrown with an incorrect `cause`.

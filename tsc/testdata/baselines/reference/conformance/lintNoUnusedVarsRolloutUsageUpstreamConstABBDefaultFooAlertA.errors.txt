@@ -1,6 +1,4 @@
 /input.ts(1,12): error TS24290: 'b' is assigned a value but never used.
-/input.ts(1,16): error TS2304: Cannot find name 'bDefault'.
-/input.ts(1,29): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const { a, b = bDefault } = foo; alert(a);
                ~
 !!! error TS24290: 'b' is assigned a value but never used.
-                   ~~~~~~~~
-!!! error TS2304: Cannot find name 'bDefault'.
-                                ~~~
-!!! error TS2304: Cannot find name 'foo'.

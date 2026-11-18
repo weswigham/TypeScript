@@ -1,4 +1,3 @@
-/input.ts(1,8): error TS2304: Cannot find name 'fn'.
 /input.ts(1,14): error TS24318: Combine this with the previous 'var' statement.
 
 
@@ -14,9 +13,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     var a; fn(); var b;
-           ~~
-!!! error TS2304: Cannot find name 'fn'.
                  ~~~~~~
 !!! error TS24318: Combine this with the previous 'var' statement.

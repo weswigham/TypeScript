@@ -1,10 +1,6 @@
 /input.ts(1,1): error TS19854: Unexpected console statement.
-/input.ts(1,13): error TS2304: Cannot find name 'value'.
-/input.ts(1,21): error TS2304: Cannot find name 'use'.
 /input.ts(1,25): error TS19854: Unexpected console statement.
-/input.ts(1,40): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
 /input.ts(1,40): error TS19854: Unexpected console statement.
-/input.ts(1,48): error TS2304: Cannot find name 'key'.
 /input.ts(1,56): error TS19854: Unexpected console statement.
 
 
@@ -23,21 +19,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (4 errors) ====
     console.log(value); use(console.warn); console[key](); console?.error();
     ~~~~~~~~~~~
 !!! error TS19854: Unexpected console statement.
-                ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                        ~~~
-!!! error TS2304: Cannot find name 'use'.
                             ~~~~~~~~~~~~
 !!! error TS19854: Unexpected console statement.
                                            ~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Console'.
-                                           ~~~~~~~~~~~~
 !!! error TS19854: Unexpected console statement.
-                                                   ~~~
-!!! error TS2304: Cannot find name 'key'.
                                                            ~~~~~~~~~~~~~~
 !!! error TS19854: Unexpected console statement.

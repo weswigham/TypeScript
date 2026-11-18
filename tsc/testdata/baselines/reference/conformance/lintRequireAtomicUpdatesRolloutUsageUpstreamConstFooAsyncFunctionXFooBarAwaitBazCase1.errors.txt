@@ -1,6 +1,4 @@
 /input.ts(1,38): error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
-/input.ts(1,42): error TS2339: Property 'bar' does not exist on type '{}'.
-/input.ts(1,55): error TS2304: Cannot find name 'baz'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const foo = {}; async function x() { foo.bar += await baz }
                                          ~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
-                                             ~~~
-!!! error TS2339: Property 'bar' does not exist on type '{}'.
-                                                          ~~~
-!!! error TS2304: Cannot find name 'baz'.

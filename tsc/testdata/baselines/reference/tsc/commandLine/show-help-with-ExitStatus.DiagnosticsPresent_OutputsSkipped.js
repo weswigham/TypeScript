@@ -52,7 +52,7 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 [94m               --lint  [39mLint input files after checking.
 
 
-[94m           --lintOnly  [39mLint input files without emitting JavaScript or declarations.
+[94m           --lintOnly  [39mLint input files without checking or emitting JavaScript or declarations.
 
 
 [94m                --fix  [39mApply available lint fixes to input files.

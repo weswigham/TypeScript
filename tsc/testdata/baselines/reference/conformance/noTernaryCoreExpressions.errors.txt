@@ -1,15 +1,6 @@
-input.ts(1,7): error TS2300: Duplicate identifier 'foo'.
 input.ts(1,13): error TS19503: Ternary operator used.
-input.ts(1,20): error TS2304: Cannot find name 'thing'.
-input.ts(1,28): error TS2304: Cannot find name 'stuff'.
 input.ts(2,1): error TS19503: Ternary operator used.
-input.ts(2,8): error TS2304: Cannot find name 'thing'.
-input.ts(2,18): error TS2304: Cannot find name 'stuff'.
-input.ts(3,10): error TS2300: Duplicate identifier 'foo'.
-input.ts(3,14): error TS7006: Parameter 'bar' implicitly has an 'any' type.
 input.ts(3,28): error TS19503: Ternary operator used.
-input.ts(3,34): error TS2304: Cannot find name 'baz'.
-input.ts(3,40): error TS2304: Cannot find name 'qux'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -19,32 +10,14 @@ input.ts(3,40): error TS2304: Cannot find name 'qux'.
         "files": ["input.ts"]
     }
     
-==== input.ts (12 errors) ====
+==== input.ts (3 errors) ====
     const foo = true ? thing : stuff;
-          ~~~
-!!! error TS2300: Duplicate identifier 'foo'.
                 ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19503: Ternary operator used.
-                       ~~~~~
-!!! error TS2304: Cannot find name 'thing'.
-                               ~~~~~
-!!! error TS2304: Cannot find name 'stuff'.
     true ? thing() : stuff();
     ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19503: Ternary operator used.
-           ~~~~~
-!!! error TS2304: Cannot find name 'thing'.
-                     ~~~~~
-!!! error TS2304: Cannot find name 'stuff'.
     function foo(bar) { return bar ? baz : qux; }
-             ~~~
-!!! error TS2300: Duplicate identifier 'foo'.
-                 ~~~
-!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.
                                ~~~~~~~~~~~~~~~
 !!! error TS19503: Ternary operator used.
-                                     ~~~
-!!! error TS2304: Cannot find name 'baz'.
-                                           ~~~
-!!! error TS2304: Cannot find name 'qux'.
     "x ? y";

@@ -1,7 +1,5 @@
 /input.ts(1,23): error TS24446: The generic type arguments should be specified as part of the type annotation.
-/input.ts(1,31): error TS2304: Cannot find name 'Foo'.
 /input.ts(1,56): error TS24446: The generic type arguments should be specified as part of the type annotation.
-/input.ts(1,64): error TS2304: Cannot find name 'Foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,13 +24,9 @@
     }
 ==== /module.ts (0 errors) ====
     export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     class C { constructor(a = new Foo<string>()) {} method(a = new Foo<string>()) {} }
                           ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24446: The generic type arguments should be specified as part of the type annotation.
-                                  ~~~
-!!! error TS2304: Cannot find name 'Foo'.
                                                            ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24446: The generic type arguments should be specified as part of the type annotation.
-                                                                   ~~~
-!!! error TS2304: Cannot find name 'Foo'.

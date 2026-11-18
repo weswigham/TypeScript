@@ -1,11 +1,7 @@
 /input.ts(2,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(2,30): error TS2307: Cannot find module 'named_types' or its corresponding type declarations.
 /input.ts(3,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(3,18): error TS2307: Cannot find module 'default_type' or its corresponding type declarations.
 /input.ts(4,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(4,24): error TS2307: Cannot find module 'namespace_type' or its corresponding type declarations.
 /input.ts(5,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(5,32): error TS2307: Cannot find module 'default_and_named_type' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,27 +23,19 @@
             "/input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (4 errors) ====
     
     import { Type1, Type2 } from 'named_types';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                                 ~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'named_types' or its corresponding type declarations.
     import Type from 'default_type';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                     ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'default_type' or its corresponding type declarations.
     import * as Types from 'namespace_type';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                           ~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'namespace_type' or its corresponding type declarations.
     import Default, { Named } from 'default_and_named_type';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                                   ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'default_and_named_type' or its corresponding type declarations.
     type T = Type1 | Type2 | Type | Types.A | Default | Named;
               

@@ -1,7 +1,4 @@
-/input.ts(1,37): error TS2304: Cannot find name 'work'.
-/input.ts(1,57): error TS2304: Cannot find name 'consume'.
 /input.ts(1,73): error TS24293: The value assigned to 'value' is not used in subsequent statements.
-/input.ts(1,90): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,14 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     function f() { let value = 0; try { work(); } finally { consume(value); value = 1; throw error; } }
-                                        ~~~~
-!!! error TS2304: Cannot find name 'work'.
-                                                            ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
                                                                             ~~~~~
 !!! error TS24293: The value assigned to 'value' is not used in subsequent statements.
-                                                                                             ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.

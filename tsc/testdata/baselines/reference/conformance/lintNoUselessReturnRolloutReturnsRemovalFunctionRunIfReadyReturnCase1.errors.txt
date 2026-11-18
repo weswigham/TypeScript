@@ -1,4 +1,3 @@
-/input.ts(1,22): error TS2304: Cannot find name 'ready'.
 /input.ts(1,31): error TS24304: Unnecessary return statement.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function run() { if (ready) { return; } }
-                         ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                                   ~~~~~~~
 !!! error TS24304: Unnecessary return statement.

@@ -1,5 +1,4 @@
 /input.ts(1,10): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-/input.ts(1,19): error TS7006: Parameter 'bad_param' implicitly has an 'any' type.
 /input.ts(1,19): error TS24214: Identifier 'bad_param' does not match the pattern '^[a-z]+$'.
 /input.ts(1,73): error TS24214: Identifier 'bad_var' does not match the pattern '^[a-z]+$'.
 
@@ -25,12 +24,10 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (3 errors) ====
     function bad_name(bad_param) { bad_param = 1; } class BadClass {} const bad_var = 1;
              ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-                      ~~~~~~~~~
-!!! error TS7006: Parameter 'bad_param' implicitly has an 'any' type.
                       ~~~~~~~~~
 !!! error TS24214: Identifier 'bad_param' does not match the pattern '^[a-z]+$'.
                                                                             ~~~~~~~

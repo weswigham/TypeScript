@@ -1,10 +1,4 @@
-/input.ts(1,5): error TS2304: Cannot find name 'a'.
-/input.ts(1,12): error TS2304: Cannot find name 'b'.
-/input.ts(1,19): error TS2304: Cannot find name 'c'.
-/input.ts(1,26): error TS2304: Cannot find name 'd'.
 /input.ts(1,29): error TS19302: Blocks are nested too deeply (5). Maximum allowed is 4.
-/input.ts(1,33): error TS2304: Cannot find name 'e'.
-/input.ts(1,36): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,19 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (1 errors) ====
     if (a) if (b) if (c) if (d) if (e) work();
-        ~
-!!! error TS2304: Cannot find name 'a'.
-               ~
-!!! error TS2304: Cannot find name 'b'.
-                      ~
-!!! error TS2304: Cannot find name 'c'.
-                             ~
-!!! error TS2304: Cannot find name 'd'.
                                 ~~~~~~~~~~~~~~
 !!! error TS19302: Blocks are nested too deeply (5). Maximum allowed is 4.
-                                    ~
-!!! error TS2304: Cannot find name 'e'.
-                                       ~~~~
-!!! error TS2304: Cannot find name 'work'.

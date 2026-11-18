@@ -1,9 +1,6 @@
-/input.ts(1,19): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 /input.ts(1,26): error TS19357: 'pkg' export is duplicated as import.
-/input.ts(1,46): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 /input.ts(1,53): error TS19357: 'pkg' export is duplicated as import.
 /input.ts(1,53): error TS22000: 'pkg' export is duplicated.
-/input.ts(1,74): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,17 +23,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     import value from 'pkg'; export {first} from 'pkg'; export {second} from 'pkg';
-                      ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
                              ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19357: 'pkg' export is duplicated as import.
-                                                 ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19357: 'pkg' export is duplicated as import.
                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22000: 'pkg' export is duplicated.
-                                                                             ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

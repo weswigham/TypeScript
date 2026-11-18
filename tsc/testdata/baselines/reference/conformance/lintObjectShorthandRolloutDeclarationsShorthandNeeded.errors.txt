@@ -1,6 +1,4 @@
 /input.ts(1,11): error TS24306: Expected shorthand for all properties.
-/input.ts(1,15): error TS2304: Cannot find name 'x'.
-/input.ts(1,21): error TS2304: Cannot find name 'y'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,11 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const o = {x: x, y: y};
               ~~~~~~~~~~~~
 !!! error TS24306: Expected shorthand for all properties.
-                  ~
-!!! error TS2304: Cannot find name 'x'.
-                        ~
-!!! error TS2304: Cannot find name 'y'.

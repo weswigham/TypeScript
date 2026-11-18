@@ -1,4 +1,3 @@
-/input.ts(1,14): error TS2588: Cannot assign to 'a' because it is a constant.
 /input.ts(1,14): error TS24290: 'a' is assigned a value but never used.
 
 
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const a = 1; a += 1;
-                 ~
-!!! error TS2588: Cannot assign to 'a' because it is a constant.
                  ~
 !!! error TS24290: 'a' is assigned a value but never used.

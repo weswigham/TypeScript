@@ -1,11 +1,5 @@
-input.ts(1,1): error TS2304: Cannot find name 'allowed'.
-input.ts(2,1): error TS2304: Cannot find name 'other'.
 input.ts(2,1): error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: allowed.
-input.ts(3,15): error TS2304: Cannot find name 'allowed'.
 input.ts(4,7): error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: allowed.
-input.ts(4,22): error TS2304: Cannot find name 'other'.
-input.ts(5,1): error TS2304: Cannot find name 'limited'.
-input.ts(6,1): error TS2304: Cannot find name 'limited'.
 input.ts(6,1): error TS19519: 'limited.bad' is restricted from being used. Only these properties are allowed: good. Use good.
 
 
@@ -16,28 +10,16 @@ input.ts(6,1): error TS19519: 'limited.bad' is restricted from being used. Only 
         "files": ["input.ts"]
     }
     
-==== input.ts (9 errors) ====
+==== input.ts (3 errors) ====
     allowed.bar;
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'allowed'.
     other.bar;
-    ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     ~~~~~~~~~
 !!! error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: allowed.
     const {bar} = allowed;
-                  ~~~~~~~
-!!! error TS2304: Cannot find name 'allowed'.
     const {bar: value} = other;
           ~~~~~~~~~~~~
 !!! error TS19520: 'bar' is restricted from being used. Property 'bar' is only allowed on these objects: allowed.
-                         ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     limited.good;
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'limited'.
     limited.bad;
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'limited'.
     ~~~~~~~~~~~
 !!! error TS19519: 'limited.bad' is restricted from being used. Only these properties are allowed: good. Use good.

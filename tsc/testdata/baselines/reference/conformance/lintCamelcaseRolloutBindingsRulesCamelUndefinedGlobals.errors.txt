@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'undefined_name'.
 /input.ts(1,1): error TS24203: Identifier 'undefined_name' is not in camel case.
 
 
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     undefined_name;
-    ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'undefined_name'.
     ~~~~~~~~~~~~~~
 !!! error TS24203: Identifier 'undefined_name' is not in camel case.

@@ -1,5 +1,4 @@
 /input.ts(1,19): error TS24290: 'rest' is defined but never used.
-/input.ts(1,30): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function foo ([...rest]) { } foo();
                       ~~~~
 !!! error TS24290: 'rest' is defined but never used.
-                                 ~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6211 /input.ts:1:15: An argument matching this binding pattern was not provided.

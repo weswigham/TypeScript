@@ -1,5 +1,4 @@
 /input.ts(1,27): error TS19362: The function binding is unnecessary.
-/input.ts(1,43): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const run = function() {}.bind(/* keep */ value);
                               ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                              ~~~~~
-!!! error TS2304: Cannot find name 'value'.

@@ -1,5 +1,3 @@
-input.ts(5,22): error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
-input.ts(5,22): error TS2741: Property 'method' is missing in type '{}' but required in type 'Example'.
 input.ts(5,22): error TS19850: Unexpected return statement in constructor.
 
 
@@ -9,17 +7,12 @@ input.ts(5,22): error TS19850: Unexpected return statement in constructor.
         "lint": { "rules": { "no-constructor-return": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (3 errors) ====
+==== input.ts (1 errors) ====
     class Example {
         constructor(value: boolean) {
             function nested() { return 1; }
             const arrow = () => { return 2; };
             if (value) { return {}; }
-                         ~~~~~~
-!!! error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
-                         ~~~~~~
-!!! error TS2741: Property 'method' is missing in type '{}' but required in type 'Example'.
-!!! related TS2728 input.ts:8:5: 'method' is declared here.
                          ~~~~~~~~~~
 !!! error TS19850: Unexpected return statement in constructor.
             return;

@@ -1,8 +1,4 @@
-/input.ts(1,18): error TS7006: Parameter 'shared' implicitly has an 'any' type.
-/input.ts(1,28): error TS2304: Cannot find name 'consume'.
-/input.ts(1,78): error TS2304: Cannot find name 'task'.
 /input.ts(1,86): error TS24337: Possible race condition: `shared.value` might be assigned based on an outdated state of `shared`.
-/input.ts(1,119): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,15 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     async function f(shared) { consume(shared.value); try { const result = await task(); shared.value = result; } catch { consume(shared); shared.value = 1; } }
-                     ~~~~~~
-!!! error TS7006: Parameter 'shared' implicitly has an 'any' type.
-                               ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
-                                                                                 ~~~~
-!!! error TS2304: Cannot find name 'task'.
                                                                                          ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `shared.value` might be assigned based on an outdated state of `shared`.
-                                                                                                                          ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

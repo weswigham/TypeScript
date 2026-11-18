@@ -1,8 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter 'first' implicitly has an 'any' type.
-/input.ts(1,21): error TS7006: Parameter 'second' implicitly has an 'any' type.
-/input.ts(1,29): error TS7006: Parameter 'third' implicitly has an 'any' type.
 /input.ts(1,29): error TS24290: 'third' is defined but never used.
-/input.ts(1,55): error TS2554: Expected 3 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,16 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function run(first, second, third) { return second; } run();
-                 ~~~~~
-!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
-                        ~~~~~~
-!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
-                                ~~~~~
-!!! error TS7006: Parameter 'third' implicitly has an 'any' type.
                                 ~~~~~
 !!! error TS24290: 'third' is defined but never used.
-                                                          ~~~
-!!! error TS2554: Expected 3 arguments, but got 0.
-!!! related TS6210 /input.ts:1:14: An argument for 'first' was not provided.

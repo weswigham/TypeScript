@@ -1,10 +1,5 @@
-input.ts(1,1): error TS2304: Cannot find name 'call'.
-input.ts(1,14): error TS2304: Cannot find name 'call'.
 input.ts(1,19): error TS19320: Too many nested callbacks (2). Maximum allowed is 1.
-input.ts(2,5): error TS2304: Cannot find name 'Example'.
-input.ts(2,25): error TS2304: Cannot find name 'Example'.
 input.ts(2,33): error TS19320: Too many nested callbacks (2). Maximum allowed is 1.
-input.ts(3,1): error TS2304: Cannot find name 'call'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -13,22 +8,12 @@ input.ts(3,1): error TS2304: Cannot find name 'call'.
         "lint": { "rules": { "max-nested-callbacks": ["error", { "max": 1, "checkConstructorCallCallbacks": true }] } },
         "files": ["input.ts"]
     }
-==== input.ts (7 errors) ====
+==== input.ts (2 errors) ====
     call(() => { call(() => 1); });
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                 ~~~~
-!!! error TS2304: Cannot find name 'call'.
                       ~~~~~~~
 !!! error TS19320: Too many nested callbacks (2). Maximum allowed is 1.
     new Example(() => { new Example(() => 1); });
-        ~~~~~~~
-!!! error TS2304: Cannot find name 'Example'.
-                            ~~~~~~~
-!!! error TS2304: Cannot find name 'Example'.
                                     ~~~~~~~
 !!! error TS19320: Too many nested callbacks (2). Maximum allowed is 1.
     call(function first() { function ordinary() {} });
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
     (() => { (() => 1)(); })();

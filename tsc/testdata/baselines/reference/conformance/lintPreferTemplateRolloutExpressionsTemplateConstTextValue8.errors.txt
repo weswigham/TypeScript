@@ -1,4 +1,3 @@
-/input.ts(1,14): error TS2304: Cannot find name 'value'.
 /input.ts(1,14): error TS24335: Unexpected string concatenation.
 /input.ts(1,23): error TS1488: Escape sequence '\8' is not allowed.
 
@@ -18,10 +17,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     const text = value + '\8';
-                 ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                  ~~~~~~~~~~~~
 !!! error TS24335: Unexpected string concatenation.
                           ~~

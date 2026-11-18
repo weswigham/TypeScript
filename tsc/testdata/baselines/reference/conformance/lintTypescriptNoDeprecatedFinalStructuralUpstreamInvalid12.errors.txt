@@ -1,4 +1,3 @@
-/input.tsx(2,22): error TS2370: A rest parameter must be of an array type.
 /input.tsx(6,5): error TS24031: `a` is deprecated.
 
 
@@ -29,11 +28,9 @@
             "aria-grabbed"?: boolean | "false" | "true";
         }
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     declare function log(...args: unknown): void;
-                         ~~~~~~~~~~~~~~~~
-!!! error TS2370: A rest parameter must be of an array type.
     
     /** @deprecated */ const a = { b: 1 };
     

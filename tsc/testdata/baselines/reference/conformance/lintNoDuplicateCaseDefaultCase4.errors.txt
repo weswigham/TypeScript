@@ -1,9 +1,4 @@
-/input.ts(1,9): error TS2304: Cannot find name 'value'.
-/input.ts(1,23): error TS2304: Cannot find name 'call'.
-/input.ts(1,28): error TS2304: Cannot find name 'value'.
 /input.ts(1,56): error TS22012: Duplicate case label.
-/input.ts(1,61): error TS2304: Cannot find name 'call'.
-/input.ts(1,66): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,17 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (1 errors) ====
     switch (value) { case call(value + 1).property: break; case call(value+1) .property: break; }
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                          ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                               ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22012: Duplicate case label.
-                                                                ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                                                                     ~~~~~
-!!! error TS2304: Cannot find name 'value'.

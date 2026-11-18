@@ -1,5 +1,4 @@
 /input.ts(1,24): error TS20270: There is no `cause` attached to the symptom error being thrown.
-/input.ts(1,34): error TS2304: Cannot find name 'CustomError'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,9 +26,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new CustomError(1); }
                            ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20270: There is no `cause` attached to the symptom error being thrown.
-                                     ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CustomError'.

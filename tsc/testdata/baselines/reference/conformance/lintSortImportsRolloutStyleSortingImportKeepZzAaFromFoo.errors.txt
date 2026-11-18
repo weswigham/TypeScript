@@ -1,5 +1,4 @@
 /input.ts(1,25): error TS24343: Member 'aa' of the import declaration should be sorted alphabetically.
-/input.ts(1,34): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -14,9 +13,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     import { /* keep */ zz, aa} from 'foo';
                             ~~
 !!! error TS24343: Member 'aa' of the import declaration should be sorted alphabetically.
-                                     ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

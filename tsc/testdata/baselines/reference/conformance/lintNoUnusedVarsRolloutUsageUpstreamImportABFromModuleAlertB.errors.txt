@@ -1,5 +1,4 @@
 /input.ts(1,10): error TS24290: 'a' is defined but never used.
-/input.ts(1,22): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     import { a, b } from 'module'; alert(b);
              ~
 !!! error TS24290: 'a' is defined but never used.
-                         ~~~~~~~~
-!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.

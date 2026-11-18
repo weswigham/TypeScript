@@ -1,6 +1,4 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
 /input.ts(1,21): error TS24205: Lacked a call of 'super()' in some code paths.
-/input.ts(1,43): error TS2552: Cannot find name 'a'. Did you mean 'A'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,12 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     class A extends B { constructor() { try { a; } catch (err) { super(); } } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24205: Lacked a call of 'super()' in some code paths.
-                                              ~
-!!! error TS2552: Cannot find name 'a'. Did you mean 'A'?
-!!! related TS2728 /input.ts:1:7: 'A' is declared here.

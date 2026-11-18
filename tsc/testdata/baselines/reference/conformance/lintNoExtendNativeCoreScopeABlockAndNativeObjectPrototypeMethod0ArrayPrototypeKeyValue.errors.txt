@@ -1,8 +1,5 @@
 /input.ts(1,1): error TS19863: Object prototype is read only, properties should not be added.
-/input.ts(1,18): error TS2339: Property 'method' does not exist on type 'Object'.
 /input.ts(1,30): error TS19863: Array prototype is read only, properties should not be added.
-/input.ts(1,49): error TS2304: Cannot find name 'key'.
-/input.ts(1,58): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     Object.prototype.method = 0; Array['prototype'][key] ||= value;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19863: Object prototype is read only, properties should not be added.
-                     ~~~~~~
-!!! error TS2339: Property 'method' does not exist on type 'Object'.
                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19863: Array prototype is read only, properties should not be added.
-                                                    ~~~
-!!! error TS2304: Cannot find name 'key'.
-                                                             ~~~~~
-!!! error TS2304: Cannot find name 'value'.

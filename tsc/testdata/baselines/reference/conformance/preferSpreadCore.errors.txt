@@ -1,22 +1,6 @@
-input.ts(1,1): error TS2304: Cannot find name 'foo'.
 input.ts(1,1): error TS19655: Use the spread operator instead of '.apply()'.
-input.ts(1,17): error TS2304: Cannot find name 'args'.
-input.ts(2,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(2,1): error TS19655: Use the spread operator instead of '.apply()'.
-input.ts(2,21): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(2,29): error TS2304: Cannot find name 'args'.
-input.ts(3,1): error TS2304: Cannot find name 'foo'.
 input.ts(3,1): error TS19655: Use the spread operator instead of '.apply()'.
-input.ts(3,20): error TS2304: Cannot find name 'args'.
-input.ts(4,1): error TS2304: Cannot find name 'foo'.
-input.ts(5,1): error TS2304: Cannot find name 'foo'.
-input.ts(5,20): error TS2304: Cannot find name 'args'.
-input.ts(6,2): error TS2304: Cannot find name 'a'.
-input.ts(6,20): error TS2304: Cannot find name 'a'.
-input.ts(6,28): error TS2304: Cannot find name 'args'.
-input.ts(7,1): error TS2304: Cannot find name 'a'.
-input.ts(7,19): error TS2304: Cannot find name 'a'.
-input.ts(7,28): error TS2304: Cannot find name 'args'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -26,51 +10,17 @@ input.ts(7,28): error TS2304: Cannot find name 'args'.
         "files": ["input.ts"]
     }
     
-==== input.ts (19 errors) ====
+==== input.ts (3 errors) ====
     foo.apply(null, args);
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19655: Use the spread operator instead of '.apply()'.
-                    ~~~~
-!!! error TS2304: Cannot find name 'args'.
     object.method.apply(object, args);
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19655: Use the spread operator instead of '.apply()'.
-                        ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                ~~~~
-!!! error TS2304: Cannot find name 'args'.
     foo["apply"](null, args);
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19655: Use the spread operator instead of '.apply()'.
-                       ~~~~
-!!! error TS2304: Cannot find name 'args'.
     foo.apply(null, []);
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     foo.apply(null, ...args);
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                       ~~~~
-!!! error TS2304: Cannot find name 'args'.
     (a?.b).c.foo.apply(a?.b.c, args);
-     ~
-!!! error TS2304: Cannot find name 'a'.
-                       ~
-!!! error TS2304: Cannot find name 'a'.
-                               ~~~~
-!!! error TS2304: Cannot find name 'args'.
     a?.b.c.foo.apply((a?.b).c, args);
-    ~
-!!! error TS2304: Cannot find name 'a'.
-                      ~
-!!! error TS2304: Cannot find name 'a'.
-                               ~~~~
-!!! error TS2304: Cannot find name 'args'.

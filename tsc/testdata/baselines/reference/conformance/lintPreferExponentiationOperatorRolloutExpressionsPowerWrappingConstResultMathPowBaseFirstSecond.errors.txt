@@ -1,8 +1,4 @@
 /input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(1,25): error TS2304: Cannot find name 'base'.
-/input.ts(1,32): error TS2304: Cannot find name 'first'.
-/input.ts(1,32): error TS2695: Left side of comma operator is unused and has no side effects.
-/input.ts(1,39): error TS2304: Cannot find name 'second'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     const result = Math.pow(base, (first, second));
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-                            ~~~~
-!!! error TS2304: Cannot find name 'base'.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                   ~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-                                          ~~~~~~
-!!! error TS2304: Cannot find name 'second'.

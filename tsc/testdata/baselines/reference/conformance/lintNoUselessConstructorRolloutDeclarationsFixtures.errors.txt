@@ -1,9 +1,6 @@
 /input.ts(2,15): error TS20485: Useless constructor.
-/input.ts(3,23): error TS2304: Cannot find name 'Base'.
 /input.ts(3,30): error TS20485: Useless constructor.
-/input.ts(6,29): error TS2304: Cannot find name 'Base'.
 /input.ts(9,5): error TS20485: Useless constructor.
-/input.ts(10,6): error TS2304: Cannot find name 'computed'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,27 +18,21 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     export {};
     class Empty { constructor() {} }
                   ~~~~~~~~~~~
 !!! error TS20485: Useless constructor.
     class Derived extends Base { constructor(value: number) { super(value); } }
-                          ~~~~
-!!! error TS2304: Cannot find name 'Base'.
                                  ~~~~~~~~~~~
 !!! error TS20485: Useless constructor.
     class ParameterProperty { constructor(public value: number) {} }
     class Restricted { private constructor() {} }
     class PublicDerived extends Base { public constructor() { super(); } }
-                                ~~~~
-!!! error TS2304: Cannot find name 'Base'.
     class Separator {
         value = 1
         constructor() {}
         ~~~~~~~~~~~
 !!! error TS20485: Useless constructor.
         [computed]() {}
-         ~~~~~~~~
-!!! error TS2304: Cannot find name 'computed'.
     }

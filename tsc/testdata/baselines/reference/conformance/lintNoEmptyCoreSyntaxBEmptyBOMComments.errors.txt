@@ -1,5 +1,3 @@
-/input.ts(1,5): error TS2304: Cannot find name 'ready'.
-/input.ts(1,42): error TS2304: Cannot find name 'value'.
 /input.ts(1,49): error TS22014: Empty switch statement.
 
 
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     if (ready) {﻿/* intentional */﻿} switch (value) {﻿}
-        ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
-                                             ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                     ~~~
 !!! error TS22014: Empty switch statement.

@@ -1,8 +1,4 @@
-/input.ts(1,4): error TS2873: This kind of expression is always falsy.
 /input.ts(1,4): error TS24224: Unexpected constant condition.
-/input.ts(1,9): error TS2304: Cannot find name 'x'.
-/input.ts(1,14): error TS2304: Cannot find name 'a'.
-/input.ts(1,16): error TS1313: The body of an 'if' statement cannot be the empty statement.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     if(void x && a);
-       ~~~~~~
-!!! error TS2873: This kind of expression is always falsy.
        ~~~~~~~~~~~
 !!! error TS24224: Unexpected constant condition.
-            ~
-!!! error TS2304: Cannot find name 'x'.
-                 ~
-!!! error TS2304: Cannot find name 'a'.
-                   ~
-!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

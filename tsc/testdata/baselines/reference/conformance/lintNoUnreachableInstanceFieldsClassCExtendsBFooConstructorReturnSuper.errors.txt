@@ -1,7 +1,3 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
-/input.ts(1,21): error TS7008: Member 'foo' implicitly has an 'any' type.
-/input.ts(1,42): error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
-/input.ts(1,42): error TS2741: Property 'foo' is missing in type '{}' but required in type 'C'.
 /input.ts(1,53): error TS24283: Unreachable code.
 
 
@@ -20,16 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     class C extends B { foo; constructor() { return {}; super(); } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
-                        ~~~
-!!! error TS7008: Member 'foo' implicitly has an 'any' type.
-                                             ~~~~~~
-!!! error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
-                                             ~~~~~~
-!!! error TS2741: Property 'foo' is missing in type '{}' but required in type 'C'.
-!!! related TS2728 /input.ts:1:21: 'foo' is declared here.
                                                         ~~~~~~~~
 !!! error TS24283: Unreachable code.

@@ -1,10 +1,6 @@
-/input.ts(1,1): error TS2304: Cannot find name 'foo'.
 /input.ts(1,1): error TS19520: '16' is restricted from being used.
-/input.ts(1,12): error TS2304: Cannot find name 'foo'.
 /input.ts(1,12): error TS19520: '16' is restricted from being used.
-/input.ts(1,22): error TS2304: Cannot find name 'foo'.
 /input.ts(1,22): error TS19520: 'null' is restricted from being used.
-/input.ts(1,33): error TS2304: Cannot find name 'foo'.
 /input.ts(1,33): error TS19520: 'true' is restricted from being used.
 
 
@@ -34,21 +30,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (4 errors) ====
     foo[0x10]; foo[16n]; foo[null]; foo[true];
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~
 !!! error TS19520: '16' is restricted from being used.
-               ~~~
-!!! error TS2304: Cannot find name 'foo'.
                ~~~~~~~~
 !!! error TS19520: '16' is restricted from being used.
-                         ~~~
-!!! error TS2304: Cannot find name 'foo'.
                          ~~~~~~~~~
 !!! error TS19520: 'null' is restricted from being used.
-                                    ~~~
-!!! error TS2304: Cannot find name 'foo'.
                                     ~~~~~~~~~
 !!! error TS19520: 'true' is restricted from being used.

@@ -1,9 +1,5 @@
 /input.ts(1,30): error TS24212: Identifier 'bad' is restricted.
-/input.ts(1,40): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 /input.ts(1,56): error TS24212: Identifier 'bad' is restricted.
-/input.ts(1,63): error TS2300: Duplicate identifier 'good'.
-/input.ts(1,86): error TS2300: Duplicate identifier 'good'.
-/input.ts(1,97): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,17 +20,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     import {bad as good, good as bad} from 'mod'; export { bad as good }; export {bad as good} from 'mod';
                                  ~~~
 !!! error TS24212: Identifier 'bad' is restricted.
-                                           ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
                                                            ~~~
 !!! error TS24212: Identifier 'bad' is restricted.
-                                                                  ~~~~
-!!! error TS2300: Duplicate identifier 'good'.
-                                                                                         ~~~~
-!!! error TS2300: Duplicate identifier 'good'.
-                                                                                                    ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

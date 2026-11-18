@@ -1,9 +1,4 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
-/input.ts(1,53): error TS2304: Cannot find name 'D'.
-/input.ts(1,87): error TS2339: Property 'e' does not exist on type 'C'.
-/input.ts(1,96): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 /input.ts(1,96): error TS24278: 'this' is not allowed before 'super()'.
-/input.ts(1,101): error TS2339: Property 'f' does not exist on type 'A'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,17 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (1 errors) ====
     class A extends B { constructor() { class C extends D { constructor() { super(); this.e(); } } this.f(); super(); } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
-                                                        ~
-!!! error TS2304: Cannot find name 'D'.
-                                                                                          ~
-!!! error TS2339: Property 'e' does not exist on type 'C'.
-                                                                                                   ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
                                                                                                    ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
-                                                                                                        ~
-!!! error TS2339: Property 'f' does not exist on type 'A'.

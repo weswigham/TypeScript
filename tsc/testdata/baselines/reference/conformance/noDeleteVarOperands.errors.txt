@@ -1,20 +1,7 @@
 input.ts(2,1): error TS19002: Variables should not be deleted.
-input.ts(2,8): error TS1102: 'delete' cannot be called on an identifier in strict mode.
-input.ts(2,8): error TS2703: The operand of a 'delete' operator must be a property reference.
 input.ts(3,1): error TS19002: Variables should not be deleted.
-input.ts(3,9): error TS2703: The operand of a 'delete' operator must be a property reference.
 input.ts(4,1): error TS19002: Variables should not be deleted.
-input.ts(4,10): error TS2703: The operand of a 'delete' operator must be a property reference.
 input.ts(5,1): error TS19002: Variables should not be deleted.
-input.ts(5,8): error TS1102: 'delete' cannot be called on an identifier in strict mode.
-input.ts(5,8): error TS2304: Cannot find name 'missing'.
-input.ts(5,8): error TS2703: The operand of a 'delete' operator must be a property reference.
-input.ts(6,8): error TS18048: 'value' is possibly 'undefined'.
-input.ts(7,8): error TS18048: 'value' is possibly 'undefined'.
-input.ts(8,15): error TS2339: Property 'property' does not exist on type 'never'.
-input.ts(9,9): error TS2695: Left side of comma operator is unused and has no side effects.
-input.ts(9,9): error TS2703: The operand of a 'delete' operator must be a property reference.
-input.ts(10,8): error TS2703: The operand of a 'delete' operator must be a property reference.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -24,48 +11,22 @@ input.ts(10,8): error TS2703: The operand of a 'delete' operator must be a prope
         "files": ["input.ts"]
     }
     
-==== input.ts (17 errors) ====
+==== input.ts (4 errors) ====
     var value;
     delete value;
     ~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-           ~~~~~
-!!! error TS1102: 'delete' cannot be called on an identifier in strict mode.
-           ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
     delete (value);
     ~~~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-            ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
     delete ((value));
     ~~~~~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-             ~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
     delete missing;
     ~~~~~~~~~~~~~~
 !!! error TS19002: Variables should not be deleted.
-           ~~~~~~~
-!!! error TS1102: 'delete' cannot be called on an identifier in strict mode.
-           ~~~~~~~
-!!! error TS2304: Cannot find name 'missing'.
-           ~~~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
     delete value.property;
-           ~~~~~
-!!! error TS18048: 'value' is possibly 'undefined'.
     delete value["property"];
-           ~~~~~
-!!! error TS18048: 'value' is possibly 'undefined'.
     delete value?.property;
-                  ~~~~~~~~
-!!! error TS2339: Property 'property' does not exist on type 'never'.
     delete (0, value);
-            ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-            ~~~~~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.
     delete this;
-           ~~~~
-!!! error TS2703: The operand of a 'delete' operator must be a property reference.

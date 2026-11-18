@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24255: 'os' import is restricted from being used.
-/input.tsx(1,16): error TS2307: Cannot find module 'os ' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,9 +22,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import os from "os ";
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24255: 'os' import is restricted from being used.
-                   ~~~~~
-!!! error TS2307: Cannot find module 'os ' or its corresponding type declarations.

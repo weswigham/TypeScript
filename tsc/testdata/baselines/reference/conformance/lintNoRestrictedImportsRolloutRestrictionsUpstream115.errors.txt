@@ -1,6 +1,5 @@
 /input.tsx(1,10): error TS24268: 'foo' import from 'mod' is restricted. Import foo from qux instead.
 /input.tsx(1,20): error TS24268: 'baz' import from 'mod' is restricted. Import baz from qux instead.
-/input.tsx(1,31): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -38,11 +37,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     import { foo, bar, baz } from 'mod'
              ~~~
 !!! error TS24268: 'foo' import from 'mod' is restricted. Import foo from qux instead.
                        ~~~
 !!! error TS24268: 'baz' import from 'mod' is restricted. Import baz from qux instead.
-                                  ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.

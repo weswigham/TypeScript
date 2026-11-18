@@ -1,6 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
 /input.ts(1,32): error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
-/input.ts(1,34): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function run(Boolean) { return !!value; }
-                 ~~~~~~~
-!!! error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
                                    ~~~~~~~
 !!! error TS20013: Unexpected implicit coercion encountered. Use `Boolean(value)` instead.
-                                     ~~~~~
-!!! error TS2304: Cannot find name 'value'.

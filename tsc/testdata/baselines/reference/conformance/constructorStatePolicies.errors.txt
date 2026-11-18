@@ -1,9 +1,5 @@
 input.ts(12,40): error TS24207: Unexpected duplicate 'super()'.
-input.ts(15,5): error TS2377: Constructors for derived classes must contain a 'super' call.
-input.ts(23,13): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(23,13): error TS24278: 'this' is not allowed before 'super()'.
-input.ts(28,5): error TS2377: Constructors for derived classes must contain a 'super' call.
-input.ts(31,21): error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
 input.ts(31,21): error TS24278: 'this' is not allowed before 'super()'.
 
 
@@ -18,7 +14,7 @@ input.ts(31,21): error TS24278: 'this' is not allowed before 'super()'.
         },
         "files": ["input.ts"]
     }
-==== input.ts (7 errors) ====
+==== input.ts (3 errors) ====
     declare class Base { value: number; }
     declare const flag: boolean;
     declare const error: Error;
@@ -36,8 +32,6 @@ input.ts(31,21): error TS24278: 'this' is not allowed before 'super()'.
     }
     class ReturnedObject extends Base {
         constructor() { return { value: 0 }; }
-        ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
     }
     class MixedObjectReturn extends Base {
         constructor() {
@@ -47,21 +41,15 @@ input.ts(31,21): error TS24278: 'this' is not allowed before 'super()'.
             } finally {
                 this.value;
                 ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
-                ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
             }
         }
     }
     class UnreachableReturn extends Base {
         constructor() { throw error; return { value: 0 }; }
-        ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
     }
     class BeforeSuper extends Base {
         constructor() { this.value; super(); }
-                        ~~~~
-!!! error TS17009: 'super' must be called before accessing 'this' in the constructor of a derived class.
                         ~~~~
 !!! error TS24278: 'this' is not allowed before 'super()'.
     }

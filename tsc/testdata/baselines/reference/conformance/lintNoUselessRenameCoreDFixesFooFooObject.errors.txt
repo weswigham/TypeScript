@@ -1,6 +1,4 @@
 /input.tsx(1,4): error TS19668: Destructuring assignment foo unnecessarily renamed.
-/input.tsx(1,10): error TS2304: Cannot find name 'foo'.
-/input.tsx(1,19): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,12 +17,7 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     ({ foo: (foo) } = object);
        ~~~~~~~~~~
 !!! error TS19668: Destructuring assignment foo unnecessarily renamed.
-             ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                      ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

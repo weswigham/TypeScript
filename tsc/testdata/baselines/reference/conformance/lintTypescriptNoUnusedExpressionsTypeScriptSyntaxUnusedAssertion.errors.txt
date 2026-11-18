@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS19656: Expected an assignment or function call and instead saw an expression.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     value as number;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.

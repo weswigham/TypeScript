@@ -1,6 +1,4 @@
 /input.ts(1,16): error TS24305: Unexpected var, use let or const instead.
-/input.ts(1,20): error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-/input.ts(1,25): error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function f() { var x = (() => x())(); }
                    ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
-                       ~
-!!! error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-                            ~~~~~~~~~
-!!! error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.

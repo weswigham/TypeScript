@@ -1,5 +1,4 @@
 /input.ts(1,53): error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
-/input.ts(1,66): error TS2304: Cannot find name 'bar'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function* x() { let foo; yield async function y() { foo += await bar; } }
                                                         ~~~~~~~~~~~~~~~~
 !!! error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
-                                                                     ~~~
-!!! error TS2304: Cannot find name 'bar'.

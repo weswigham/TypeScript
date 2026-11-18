@@ -1,6 +1,4 @@
 /input.ts(1,11): error TS20314: Use a `type` instead of an `interface`.
-/input.ts(1,21): error TS2304: Cannot find name 'B'.
-/input.ts(1,24): error TS2304: Cannot find name 'C'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     interface A extends B, C { x: number; };
               ~
 !!! error TS20314: Use a `type` instead of an `interface`.
-                        ~
-!!! error TS2304: Cannot find name 'B'.
-                           ~
-!!! error TS2304: Cannot find name 'C'.

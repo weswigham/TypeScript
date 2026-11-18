@@ -1,5 +1,4 @@
 /input.ts(1,44): error TS19518: Setter cannot return a value.
-/input.ts(1,79): error TS2304: Cannot find name 'foo'.
 /input.ts(1,118): error TS19518: Setter cannot return a value.
 
 
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     Object.create({}, { foo: { [`set`]: val => val } }); Object['defineProperty'](foo, 'bar', { set: function Object() { return 1; } });
                                                ~~~
 !!! error TS19518: Setter cannot return a value.
-                                                                                  ~~~
-!!! error TS2304: Cannot find name 'foo'.
                                                                                                                          ~~~~~~~~~
 !!! error TS19518: Setter cannot return a value.

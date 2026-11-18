@@ -1,7 +1,5 @@
 /input.tsx(1,4): error TS19667: Unnecessarily computed property [2] found.
-/input.tsx(1,7): error TS2378: A 'get' accessor must return a value.
 /input.tsx(1,30): error TS19667: Unnecessarily computed property [0] found.
-/input.tsx(1,36): error TS7008: Member '[0]' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,13 +18,9 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (4 errors) ====
+==== /input.tsx (2 errors) ====
     ({ get[2]() {} }); class C { static[0]; }
        ~~~~~~~~~~~
 !!! error TS19667: Unnecessarily computed property [2] found.
-          ~~~
-!!! error TS2378: A 'get' accessor must return a value.
                                  ~~~~~~~~~~
 !!! error TS19667: Unnecessarily computed property [0] found.
-                                       ~~~
-!!! error TS7008: Member '[0]' implicitly has an 'any' type.

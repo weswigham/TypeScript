@@ -1,20 +1,15 @@
 input.ts(1,7): error TS24203: Identifier 'snake_case' is not in camel case.
 input.ts(4,29): error TS24203: Identifier 'alias_name' is not in camel case.
-input.ts(4,44): error TS2304: Cannot find name 'source'.
-input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(6,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(6,8): error TS24203: Identifier 'snake_case' is not in camel case.
-input.ts(7,17): error TS7008: Member '#snake_case' implicitly has an 'any' type.
 input.ts(7,17): error TS24204: #snake_case is not in camel case.
 input.ts(7,30): error TS24203: Identifier 'snake_method' is not in camel case.
-input.ts(8,31): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 input.ts(9,10): error TS24203: Identifier 'snake_case' is not in camel case.
 input.ts(9,24): error TS24203: Identifier 'exported_name' is not in camel case.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"camelcase":["error",{"ignoreDestructuring":true,"ignoreImports":true,"allow":["^allowed_"]}]}},"files":["input.ts"]}
-==== input.ts (12 errors) ====
+==== input.ts (7 errors) ====
     const snake_case = 1;
           ~~~~~~~~~~
 !!! error TS24203: Identifier 'snake_case' is not in camel case.
@@ -23,28 +18,16 @@ input.ts(9,24): error TS24203: Identifier 'exported_name' is not in camel case.
     const { original_name, key: alias_name } = source;
                                 ~~~~~~~~~~
 !!! error TS24203: Identifier 'alias_name' is not in camel case.
-                                               ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     object.snake_case;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object.snake_case = 1;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~~~~~
 !!! error TS24203: Identifier 'snake_case' is not in camel case.
     class Example { #snake_case; snake_method() {} }
-                    ~~~~~~~~~~~
-!!! error TS7008: Member '#snake_case' implicitly has an 'any' type.
                     ~~~~~~~~~~~
 !!! error TS24204: #snake_case is not in camel case.
                                  ~~~~~~~~~~~~
 !!! error TS24203: Identifier 'snake_method' is not in camel case.
     import { original_name } from "module";
-                                  ~~~~~~~~
-!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     export { snake_case as exported_name };
              ~~~~~~~~~~
 !!! error TS24203: Identifier 'snake_case' is not in camel case.

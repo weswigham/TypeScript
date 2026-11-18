@@ -1,5 +1,4 @@
 /input.tsx(1,20): error TS24270: 'Disallowed' import from 'foo' is restricted because only 'Allowed1' and 'Allowed2' are allowed. Fix this please.
-/input.tsx(1,48): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -33,9 +32,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import { Allowed1, Disallowed, Allowed2 } from "foo";
                        ~~~~~~~~~~
 !!! error TS24270: 'Disallowed' import from 'foo' is restricted because only 'Allowed1' and 'Allowed2' are allowed. Fix this please.
-                                                   ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

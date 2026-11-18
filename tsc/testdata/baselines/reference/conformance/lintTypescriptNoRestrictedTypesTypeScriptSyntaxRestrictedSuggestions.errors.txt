@@ -1,4 +1,3 @@
-/input.ts(1,12): error TS2304: Cannot find name 'Bad'.
 /input.ts(1,12): error TS20482: Don't use `Bad` as a type.
 
 
@@ -29,9 +28,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let value: Bad;
-               ~~~
-!!! error TS2304: Cannot find name 'Bad'.
                ~~~
 !!! error TS20482: Don't use `Bad` as a type.

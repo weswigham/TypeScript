@@ -1,7 +1,4 @@
-/input.ts(1,8): error TS2304: Cannot find name 'foo'.
-/input.ts(1,23): error TS2304: Cannot find name 'a'.
 /input.ts(3,1): error TS24229: Expected a 'break' statement before 'case'.
-/input.ts(3,9): error TS2304: Cannot find name 'b'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,15 +21,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     switch(foo) { case 0: a();
-           ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                          ~
-!!! error TS2304: Cannot find name 'a'.
     /* no break */
     case 1: b(); }
     ~~~~~~~~~~~~
 !!! error TS24229: Expected a 'break' statement before 'case'.
-            ~
-!!! error TS2304: Cannot find name 'b'.

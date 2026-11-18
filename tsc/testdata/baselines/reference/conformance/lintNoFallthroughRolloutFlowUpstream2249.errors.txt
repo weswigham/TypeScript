@@ -1,7 +1,4 @@
-/input.ts(1,8): error TS2304: Cannot find name 'foo'.
-/input.ts(1,23): error TS2304: Cannot find name 'a'.
 /input.ts(2,1): error TS24230: Expected a 'break' statement before 'default'.
-/input.ts(2,10): error TS2304: Cannot find name 'b'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,14 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     switch(foo) { case 0: a();
-           ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                          ~
-!!! error TS2304: Cannot find name 'a'.
     default: b() }
     ~~~~~~~~~~~~
 !!! error TS24230: Expected a 'break' statement before 'default'.
-             ~
-!!! error TS2304: Cannot find name 'b'.

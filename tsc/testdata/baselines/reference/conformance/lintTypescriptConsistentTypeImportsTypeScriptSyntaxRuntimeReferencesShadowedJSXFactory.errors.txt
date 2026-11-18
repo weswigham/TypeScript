@@ -1,6 +1,4 @@
 /input.tsx(1,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.tsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-/input.tsx(1,85): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,11 +18,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     import React from 'react'; type FC = React.FC; function render(React: any) { return <div />; }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                      ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
-                                                                                        ~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.

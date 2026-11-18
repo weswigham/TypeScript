@@ -1,6 +1,4 @@
-/input.ts(1,24): error TS2304: Cannot find name 'left'.
 /input.ts(1,24): error TS20008: Return values from promise executor functions cannot be read.
-/input.ts(1,31): error TS2304: Cannot find name 'right'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,11 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     new Promise(resolve => left + right);
-                           ~~~~
-!!! error TS2304: Cannot find name 'left'.
                            ~~~~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.
-                                  ~~~~~
-!!! error TS2304: Cannot find name 'right'.

@@ -1,11 +1,7 @@
 /input.ts(2,1): error TS21283: Imports "Type1" are only used as type.
-/input.ts(2,31): error TS2307: Cannot find module 'named_import' or its corresponding type declarations.
 /input.ts(3,1): error TS21283: Imports "Type2" are only used as type.
-/input.ts(3,31): error TS2307: Cannot find module 'default_import' or its corresponding type declarations.
 /input.ts(4,1): error TS21283: Imports "Type3" are only used as type.
-/input.ts(4,31): error TS2307: Cannot find module 'default_import2' or its corresponding type declarations.
 /input.ts(5,1): error TS21283: Imports "Type4", "Type5" are only used as type.
-/input.ts(5,38): error TS2307: Cannot find module 'default_and_named_import' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,27 +23,19 @@
             "/input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (4 errors) ====
     
     import { Value1, Type1 } from 'named_import';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21283: Imports "Type1" are only used as type.
-                                  ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'named_import' or its corresponding type declarations.
     import Type2, { Value2 } from 'default_import';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21283: Imports "Type2" are only used as type.
-                                  ~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'default_import' or its corresponding type declarations.
     import Value3, { Type3 } from 'default_import2';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21283: Imports "Type3" are only used as type.
-                                  ~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'default_import2' or its corresponding type declarations.
     import Type4, { Type5, Value4 } from 'default_and_named_import';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21283: Imports "Type4", "Type5" are only used as type.
-                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'default_and_named_import' or its corresponding type declarations.
     type T = Type1 | Type2 | Type3 | Type4 | Type5;
               

@@ -1,4 +1,3 @@
-/input.ts(1,10): error TS2304: Cannot find name 'Other'.
 /input.ts(1,16): error TS20480: Other may not have void as a type argument.
 
 
@@ -24,9 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     type T = Other<void>;
-             ~~~~~
-!!! error TS2304: Cannot find name 'Other'.
                    ~~~~
 !!! error TS20480: Other may not have void as a type argument.

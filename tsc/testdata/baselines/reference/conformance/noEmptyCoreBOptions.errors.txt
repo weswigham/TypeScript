@@ -1,14 +1,11 @@
-input.ts(1,7): error TS2304: Cannot find name 'work'.
 input.ts(2,5): error TS19360: Empty block statement.
 input.ts(2,25): error TS19360: Empty block statement.
 
 
 ==== tsconfig.json (0 errors) ====
     {"lint":{"rules":{"no-empty":["error",{"allowEmptyCatch":true}]}},"files":["input.ts"]}
-==== input.ts (3 errors) ====
+==== input.ts (2 errors) ====
     try { work(); } catch {}
-          ~~~~
-!!! error TS2304: Cannot find name 'work'.
     try {} catch {} finally {}
         ~~
 !!! error TS19360: Empty block statement.

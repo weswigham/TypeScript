@@ -1,13 +1,10 @@
 input.ts(1,16): error TS20483: Number constants declarations must use 'const'.
 input.ts(2,25): error TS19371: No magic number: 4.
-input.ts(3,1): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-input.ts(4,1): error TS2304: Cannot find name 'call'.
-input.ts(9,14): error TS2304: Cannot find name 'Other'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-magic-numbers":["error",{"detectObjects":true,"enforceConst":true,"ignore":[-1,"100n"],"ignoreArrayIndexes":true,"ignoreDefaultValues":true,"ignoreClassFieldInitialValues":true,"ignoreEnums":true,"ignoreNumericLiteralTypes":true,"ignoreReadonlyClassProperties":true,"ignoreTypeIndexes":true}]}},"files":["input.ts"]}
-==== input.ts (5 errors) ====
+==== input.ts (2 errors) ====
     let declared = 3;
                    ~
 !!! error TS20483: Number constants declarations must use 'const'.
@@ -15,16 +12,9 @@ input.ts(9,14): error TS2304: Cannot find name 'Other'.
                             ~
 !!! error TS19371: No magic number: 4.
     array[0];
-    ~~~~~
-!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.
     call(-1, 100n);
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
     function run(value = 5) {}
     class Item { readonly value = 6; field = 7; }
     enum Choice { First = 8 }
     type Value = 9 | -10;
     type Index = Other[11 | 12];
-                 ~~~~~
-!!! error TS2304: Cannot find name 'Other'.

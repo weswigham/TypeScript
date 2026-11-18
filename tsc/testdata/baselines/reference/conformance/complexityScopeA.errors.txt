@@ -1,18 +1,8 @@
 input.ts(1,1): error TS19856: Function 'defaults' has a complexity of 3. Maximum allowed is 2.
-input.ts(1,55): error TS2304: Cannot find name 'value'.
 input.ts(2,1): error TS19856: Function 'optional' has a complexity of 3. Maximum allowed is 2.
-input.ts(7,13): error TS2304: Cannot find name 'first'.
 input.ts(7,13): error TS19856: Class field initializer has a complexity of 3. Maximum allowed is 2.
-input.ts(7,22): error TS2304: Cannot find name 'second'.
-input.ts(7,32): error TS2304: Cannot find name 'third'.
 input.ts(8,5): error TS19856: Method 'arrow' has a complexity of 3. Maximum allowed is 2.
-input.ts(8,19): error TS2304: Cannot find name 'first'.
-input.ts(8,28): error TS2304: Cannot find name 'second'.
-input.ts(8,38): error TS2304: Cannot find name 'third'.
 input.ts(9,5): error TS19856: Class static block has a complexity of 3. Maximum allowed is 2.
-input.ts(9,14): error TS2304: Cannot find name 'first'.
-input.ts(9,23): error TS2304: Cannot find name 'second'.
-input.ts(9,33): error TS2304: Cannot find name 'third'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -21,12 +11,10 @@ input.ts(9,33): error TS2304: Cannot find name 'third'.
         "lint": { "rules": { "complexity": ["error", { "max": 2, "variant": "modified" }] } },
         "files": ["input.ts"]
     }
-==== input.ts (15 errors) ====
+==== input.ts (5 errors) ====
     function defaults(first = 0) { const { second = 0 } = value; }
     ~~~~~~~~~~~~~~~~~
 !!! error TS19856: Function 'defaults' has a complexity of 3. Maximum allowed is 2.
-                                                          ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     function optional(value: any) { value?.method?.(); }
     ~~~~~~~~~~~~~~~~~
 !!! error TS19856: Function 'optional' has a complexity of 3. Maximum allowed is 2.
@@ -35,30 +23,12 @@ input.ts(9,33): error TS2304: Cannot find name 'third'.
     }
     class Example {
         field = first || second || third;
-                ~~~~~
-!!! error TS2304: Cannot find name 'first'.
                 ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19856: Class field initializer has a complexity of 3. Maximum allowed is 2.
-                         ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'third'.
         arrow = () => first || second || third;
         ~~~~~~~~
 !!! error TS19856: Method 'arrow' has a complexity of 3. Maximum allowed is 2.
-                      ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                               ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
-                                         ~~~~~
-!!! error TS2304: Cannot find name 'third'.
         static { first || second || third; }
         ~~~~~~
 !!! error TS19856: Class static block has a complexity of 3. Maximum allowed is 2.
-                 ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                          ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
-                                    ~~~~~
-!!! error TS2304: Cannot find name 'third'.
     }

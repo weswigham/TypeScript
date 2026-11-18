@@ -1,7 +1,4 @@
-/input.ts(1,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-/input.ts(1,51): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 /input.ts(1,58): error TS22002: 'pkg' import is duplicated.
-/input.ts(1,79): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     import * as space from 'pkg'; import {first} from 'pkg'; import {second} from 'pkg';
-                           ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-                                                      ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22002: 'pkg' import is duplicated.
-                                                                                  ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

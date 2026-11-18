@@ -1,4 +1,3 @@
-/input.ts(1,16): error TS2304: Cannot find name 'call'.
 /input.ts(1,16): error TS24281: Unnecessary use of boolean literals in conditional expression.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const result = call() ? true : true;
-                   ~~~~
-!!! error TS2304: Cannot find name 'call'.
                    ~~~~~~~~~~~~~~~~~~~~
 !!! error TS24281: Unnecessary use of boolean literals in conditional expression.

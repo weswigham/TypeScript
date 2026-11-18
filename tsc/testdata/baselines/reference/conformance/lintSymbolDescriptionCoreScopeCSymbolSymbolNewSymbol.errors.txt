@@ -1,6 +1,5 @@
 /input.ts(1,1): error TS20290: Expected Symbol to have a description.
 /input.ts(1,11): error TS20290: Expected Symbol to have a description.
-/input.ts(1,23): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     Symbol(); Symbol?.(); new Symbol();
     ~~~~~~~~
 !!! error TS20290: Expected Symbol to have a description.
               ~~~~~~~~~~
 !!! error TS20290: Expected Symbol to have a description.
-                          ~~~~~~~~~~~~
-!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.

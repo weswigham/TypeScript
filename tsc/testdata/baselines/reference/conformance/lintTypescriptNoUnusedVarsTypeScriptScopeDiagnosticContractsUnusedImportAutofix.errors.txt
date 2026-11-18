@@ -1,5 +1,4 @@
 /input.ts(1,10): error TS21390: 'unused' is defined but never used.
-/input.ts(1,24): error TS2307: Cannot find module 'x' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,9 +24,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     import { unused } from 'x';
              ~~~~~~
 !!! error TS21390: 'unused' is defined but never used.
-                           ~~~
-!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.

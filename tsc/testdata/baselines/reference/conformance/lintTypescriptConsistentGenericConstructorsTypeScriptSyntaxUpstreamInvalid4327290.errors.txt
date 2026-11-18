@@ -1,5 +1,4 @@
 /input.ts(2,14): error TS24446: The generic type arguments should be specified as part of the type annotation.
-/input.ts(2,22): error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,12 +21,9 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     function foo(a = new Foo<string>()) {}
                  ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24446: The generic type arguments should be specified as part of the type annotation.
-                         ~~~
-!!! error TS2552: Cannot find name 'Foo'. Did you mean 'foo'?
-!!! related TS2728 /input.ts:2:10: 'foo' is declared here.
           

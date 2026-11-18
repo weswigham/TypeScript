@@ -1,6 +1,4 @@
 /input.tsx(1,4): error TS19667: Unnecessarily computed property ['__proto__'] found.
-/input.tsx(1,19): error TS2304: Cannot find name 'value'.
-/input.tsx(1,29): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,11 +17,7 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     ({ ['__proto__']: value } = source);
        ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19667: Unnecessarily computed property ['__proto__'] found.
-                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

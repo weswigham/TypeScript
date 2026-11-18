@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS19108: Forbidden non-null assertion.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     value!.property;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~
 !!! error TS19108: Forbidden non-null assertion.

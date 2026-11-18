@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS24359: Use the isNaN function to compare with NaN.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     value < NaN;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~
 !!! error TS24359: Use the isNaN function to compare with NaN.

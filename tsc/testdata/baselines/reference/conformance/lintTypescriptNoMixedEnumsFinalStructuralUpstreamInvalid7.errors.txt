@@ -1,4 +1,3 @@
-/input.ts(4,11): error TS18033: Type 'string' is not assignable to type 'number' as required for computed enum member values.
 /input.ts(5,12): error TS24063: Mixing number and string enums can be confusing.
 
 
@@ -19,13 +18,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     const getValue = () => '';
     enum Fruit {
       Apple = getValue(),
-              ~~~~~~~~~~
-!!! error TS18033: Type 'string' is not assignable to type 'number' as required for computed enum member values.
       Banana = 0,
                ~
 !!! error TS24063: Mixing number and string enums can be confusing.

@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 /input.ts(1,1): error TS21340: A `require()` style import is forbidden.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     require('x');
-    ~~~~~~~
-!!! error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     ~~~~~~~~~~~~
 !!! error TS21340: A `require()` style import is forbidden.

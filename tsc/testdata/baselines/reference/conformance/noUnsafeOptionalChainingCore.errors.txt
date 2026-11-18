@@ -1,27 +1,11 @@
-input.ts(1,2): error TS2304: Cannot find name 'obj'.
 input.ts(1,2): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(2,2): error TS2304: Cannot find name 'obj'.
 input.ts(2,2): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(3,6): error TS2304: Cannot find name 'obj'.
 input.ts(3,6): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(4,17): error TS2304: Cannot find name 'obj'.
 input.ts(4,17): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(5,5): error TS18004: No value exists in scope for the shorthand property 'foo'. Either declare one or provide an initializer.
-input.ts(5,13): error TS2304: Cannot find name 'obj'.
 input.ts(5,13): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(6,6): error TS2304: Cannot find name 'item'.
-input.ts(6,14): error TS2304: Cannot find name 'obj'.
 input.ts(6,14): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(7,23): error TS2304: Cannot find name 'obj'.
 input.ts(7,23): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(8,20): error TS2304: Cannot find name 'obj'.
 input.ts(8,20): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-input.ts(9,25): error TS2304: Cannot find name 'obj'.
-input.ts(10,1): error TS2304: Cannot find name 'obj'.
-input.ts(11,2): error TS2304: Cannot find name 'obj'.
-input.ts(11,14): error TS2304: Cannot find name 'fallback'.
-input.ts(12,1): error TS2304: Cannot find name 'obj'.
-input.ts(12,14): error TS2304: Cannot find name 'other'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -31,64 +15,32 @@ input.ts(12,14): error TS2304: Cannot find name 'other'.
         "files": ["input.ts"]
     }
     
-==== input.ts (24 errors) ====
+==== input.ts (8 errors) ====
     (obj?.method)();
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
      ~~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     (obj?.key).prop;
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
      ~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     new (obj?.ctor)();
-         ~~~
-!!! error TS2304: Cannot find name 'obj'.
          ~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     const { key } = obj?.value;
-                    ~~~
-!!! error TS2304: Cannot find name 'obj'.
                     ~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     ([{ foo } = obj?.value] = []);
-        ~~~
-!!! error TS18004: No value exists in scope for the shorthand property 'foo'. Either declare one or provide an initializer.
-                ~~~
-!!! error TS2304: Cannot find name 'obj'.
                 ~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     for (item of obj?.items) {}
-         ~~~~
-!!! error TS2304: Cannot find name 'item'.
-                 ~~~
-!!! error TS2304: Cannot find name 'obj'.
                  ~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     class Example extends obj?.base {}
-                          ~~~
-!!! error TS2304: Cannot find name 'obj'.
                           ~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     const spread = [...obj?.items];
-                       ~~~
-!!! error TS2304: Cannot find name 'obj'.
                        ~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
     const safeSpread = { ...obj?.items };
-                            ~~~
-!!! error TS2304: Cannot find name 'obj'.
     obj?.method();
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
     (obj?.key ?? fallback).prop;
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                 ~~~~~~~~
-!!! error TS2304: Cannot find name 'fallback'.
     obj?.value + other;
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                 ~~~~~
-!!! error TS2304: Cannot find name 'other'.

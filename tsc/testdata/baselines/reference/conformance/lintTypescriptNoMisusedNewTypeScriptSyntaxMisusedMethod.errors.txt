@@ -1,4 +1,3 @@
-/input.ts(1,15): error TS2391: Function implementation is missing or not immediately following the declaration.
 /input.ts(1,15): error TS20463: Class cannot have method named `new`.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Value { new(): Value; }
-                  ~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
                   ~~~~~~~~~~~~~
 !!! error TS20463: Class cannot have method named `new`.

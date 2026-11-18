@@ -1,5 +1,4 @@
 /input.ts(1,8): error TS24225: Unexpected control character(s) in regular expression: \x01.
-/input.ts(1,25): error TS2304: Cannot find name 'pattern'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     RegExp("\\x01"); RegExp(pattern);
            ~~~~~~~
 !!! error TS24225: Unexpected control character(s) in regular expression: \x01.
-                            ~~~~~~~
-!!! error TS2304: Cannot find name 'pattern'.

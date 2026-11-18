@@ -1,5 +1,4 @@
 /input.ts(6,7): error TS24063: Mixing number and string enums can be confusing.
-/input.ts(9,3): error TS2432: In an enum with multiple declarations, only one declaration can omit an initializer for its first enum element.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,7 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     enum Foo {
       A,
@@ -31,7 +30,5 @@
     }
     enum Foo {
       C,
-      ~
-!!! error TS2432: In an enum with multiple declarations, only one declaration can omit an initializer for its first enum element.
     }
           

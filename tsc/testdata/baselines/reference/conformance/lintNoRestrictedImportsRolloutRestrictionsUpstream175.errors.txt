@@ -1,5 +1,4 @@
 /input.tsx(1,8): error TS24272: * import is invalid because only 'AllowedObject' and 'AnotherObject' from 'foo' are allowed. Nothing else.
-/input.tsx(1,32): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -31,9 +30,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import * as AllowedObject from "foo";
            ~~~~~~~~~~~~~~~~~~
 !!! error TS24272: * import is invalid because only 'AllowedObject' and 'AnotherObject' from 'foo' are allowed. Nothing else.
-                                   ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

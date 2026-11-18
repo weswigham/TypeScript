@@ -1,25 +1,19 @@
 input.ts(1,16): warning TS24346: Variables within the same declaration block should be sorted alphabetically.
 input.ts(1,27): warning TS24346: Variables within the same declaration block should be sorted alphabetically.
-input.ts(2,13): error TS2304: Cannot find name 'compute'.
 input.ts(2,24): warning TS24346: Variables within the same declaration block should be sorted alphabetically.
-input.ts(3,23): error TS2304: Cannot find name 'source'.
 
 
 ==== tsconfig.json (0 errors) ====
     {
     	"lint": { "rules": { "sort-vars": "warn" } }
     }
-==== input.ts (5 errors) ====
+==== input.ts (3 errors) ====
     var zebra = 1, alpha = 2, middle = 3;
                    ~~~~~~~~~
 !!! warning TS24346: Variables within the same declaration block should be sorted alphabetically.
                               ~~~~~~~~~~
 !!! warning TS24346: Variables within the same declaration block should be sorted alphabetically.
     let later = compute(), earlier = 0;
-                ~~~~~~~
-!!! error TS2304: Cannot find name 'compute'.
                            ~~~~~~~~~~~
 !!! warning TS24346: Variables within the same declaration block should be sorted alphabetically.
     const [last, first] = source;
-                          ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

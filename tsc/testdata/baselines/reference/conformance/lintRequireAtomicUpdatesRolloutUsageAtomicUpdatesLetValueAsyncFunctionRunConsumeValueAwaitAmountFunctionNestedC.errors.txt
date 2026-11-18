@@ -1,9 +1,3 @@
-/input.ts(1,5): error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
-/input.ts(1,35): error TS2304: Cannot find name 'consume'.
-/input.ts(1,43): error TS7005: Variable 'value' implicitly has an 'any' type.
-/input.ts(1,57): error TS2304: Cannot find name 'amount'.
-/input.ts(1,85): error TS2304: Cannot find name 'consume'.
-/input.ts(1,93): error TS7005: Variable 'value' implicitly has an 'any' type.
 /input.ts(1,103): error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.
 
 
@@ -27,19 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (7 errors) ====
+==== /input.ts (1 errors) ====
     let value; async function run() { consume(value); await amount; function nested() { consume(value); } value = 1; }
-        ~~~~~
-!!! error TS7034: Variable 'value' implicitly has type 'any' in some locations where its type cannot be determined.
-                                      ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
-                                              ~~~~~
-!!! error TS7005: Variable 'value' implicitly has an 'any' type.
-                                                            ~~~~~~
-!!! error TS2304: Cannot find name 'amount'.
-                                                                                        ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
-                                                                                                ~~~~~
-!!! error TS7005: Variable 'value' implicitly has an 'any' type.
                                                                                                           ~~~~~~~~~
 !!! error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.

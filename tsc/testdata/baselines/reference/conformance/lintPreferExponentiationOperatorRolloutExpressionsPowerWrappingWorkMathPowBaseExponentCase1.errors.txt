@@ -1,8 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'work'.
 /input.ts(2,1): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(2,10): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'number'.
-/input.ts(2,11): error TS2304: Cannot find name 'base'.
-/input.ts(2,18): error TS2304: Cannot find name 'exponent'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,16 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     work()
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     Math.pow([base], exponent);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-             ~~~~~~
-!!! error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'number'.
-              ~~~~
-!!! error TS2304: Cannot find name 'base'.
-                     ~~~~~~~~
-!!! error TS2304: Cannot find name 'exponent'.

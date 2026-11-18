@@ -1,16 +1,13 @@
 input.ts(2,12): error TS19359: Unexpected empty static block.
-input.ts(4,14): error TS2304: Cannot find name 'work'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-empty-static-block":"error"}},"files":["input.ts"]}
-==== input.ts (2 errors) ====
+==== input.ts (1 errors) ====
     class Item {
         static {}
                ~~
 !!! error TS19359: Unexpected empty static block.
         static { /* intentional */ }
         static { work(); }
-                 ~~~~
-!!! error TS2304: Cannot find name 'work'.
     }

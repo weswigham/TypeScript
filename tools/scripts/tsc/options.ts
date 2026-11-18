@@ -1602,7 +1602,7 @@ export const options: OptionsModel = {
             ["formatOnly", "FormatOnly", "Format input files without checking or emitting JavaScript or declarations."],
             ["formatDiagnostics", "FormatDiagnostics", "Report formatting changes as diagnostics instead of writing input files."],
             ["lint", "Lint", "Lint input files after checking."],
-            ["lintOnly", "LintOnly", "Lint input files without emitting JavaScript or declarations."],
+            ["lintOnly", "LintOnly", "Lint input files without checking or emitting JavaScript or declarations."],
             ["fix", "Fix", "Apply available lint fixes to input files."],
         ] as const).map(([name, goName, description]) => ({
             name,

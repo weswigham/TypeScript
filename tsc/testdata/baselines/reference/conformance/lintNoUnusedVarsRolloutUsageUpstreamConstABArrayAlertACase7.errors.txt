@@ -1,5 +1,4 @@
 /input.ts(1,17): error TS24290: 'b' is assigned a value but never used.
-/input.ts(1,25): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const [a, ...[{ b }]] = array; alert(a);
                     ~
 !!! error TS24290: 'b' is assigned a value but never used.
-                            ~~~~~
-!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.

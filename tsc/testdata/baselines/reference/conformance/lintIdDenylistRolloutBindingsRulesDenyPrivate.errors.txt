@@ -1,4 +1,3 @@
-/input.ts(1,11): error TS7008: Member '#bad' implicitly has an 'any' type.
 /input.ts(1,11): error TS24213: Identifier '#bad' is restricted.
 /input.ts(1,44): error TS24213: Identifier '#bad' is restricted.
 
@@ -21,10 +20,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     class C { #bad; method() { this.#bad; this.#bad = 1; } }
-              ~~~~
-!!! error TS7008: Member '#bad' implicitly has an 'any' type.
               ~~~~
 !!! error TS24213: Identifier '#bad' is restricted.
                                                ~~~~

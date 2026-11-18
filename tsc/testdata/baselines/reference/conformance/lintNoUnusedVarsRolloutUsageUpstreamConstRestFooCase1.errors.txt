@@ -1,5 +1,4 @@
 /input.ts(1,11): error TS24290: 'rest' is assigned a value but never used.
-/input.ts(1,19): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const [...rest] = foo;
               ~~~~
 !!! error TS24290: 'rest' is assigned a value but never used.
-                      ~~~
-!!! error TS2304: Cannot find name 'foo'.

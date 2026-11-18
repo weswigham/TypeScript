@@ -1,5 +1,4 @@
 /input.ts(1,25): error TS24290: 'y' is assigned a value but never used.
-/input.ts(1,31): error TS2304: Cannot find name 'z'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /*exported x*/ var { x, y } = z
                             ~
 !!! error TS24290: 'y' is assigned a value but never used.
-                                  ~
-!!! error TS2304: Cannot find name 'z'.

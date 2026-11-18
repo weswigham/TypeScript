@@ -1,8 +1,4 @@
 /input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(1,16): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Number'.
-/input.ts(1,25): error TS2304: Cannot find name 'base'.
-/input.ts(1,31): error TS2304: Cannot find name 'exponent'.
-/input.ts(1,41): error TS2304: Cannot find name 'key'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     const result = Math.pow(base, exponent)[key];
                    ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Number'.
-                            ~~~~
-!!! error TS2304: Cannot find name 'base'.
-                                  ~~~~~~~~
-!!! error TS2304: Cannot find name 'exponent'.
-                                            ~~~
-!!! error TS2304: Cannot find name 'key'.

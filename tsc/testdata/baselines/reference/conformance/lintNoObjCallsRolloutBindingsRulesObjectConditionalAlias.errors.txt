@@ -1,5 +1,3 @@
-/input.ts(1,15): error TS2304: Cannot find name 'condition'.
-/input.ts(1,27): error TS2304: Cannot find name 'other'.
 /input.ts(1,41): error TS24248: 'alias' is reference to 'JSON', which is not a function.
 
 
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const alias = condition ? other : JSON; alias();
-                  ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                                             ~~~~~~~
 !!! error TS24248: 'alias' is reference to 'JSON', which is not a function.

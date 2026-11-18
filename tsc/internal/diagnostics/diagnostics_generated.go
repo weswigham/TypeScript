@@ -4020,7 +4020,7 @@ var Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another
 
 var Lint_input_files_after_checking = &Message{code: 18173, category: CategoryMessage, key: "Lint_input_files_after_checking_18173", text: "Lint input files after checking."}
 
-var Lint_input_files_without_emitting_JavaScript_or_declarations = &Message{code: 18174, category: CategoryMessage, key: "Lint_input_files_without_emitting_JavaScript_or_declarations_18174", text: "Lint input files without emitting JavaScript or declarations."}
+var Lint_input_files_without_checking_or_emitting_JavaScript_or_declarations = &Message{code: 18174, category: CategoryMessage, key: "Lint_input_files_without_checking_or_emitting_JavaScript_or_declarations_18174", text: "Lint input files without checking or emitting JavaScript or declarations."}
 
 var Unexpected_debugger_statement = &Message{code: 18175, category: CategoryError, key: "Unexpected_debugger_statement_18175", text: "Unexpected 'debugger' statement."}
 
@@ -8086,7 +8086,7 @@ var allMessages = [...]**Message{
 	&Code_generation_outputs_0_and_1_overlap,
 	&Code_generation_commands_must_be_independent_Output_0_is_an_input_of_another_command,
 	&Lint_input_files_after_checking,
-	&Lint_input_files_without_emitting_JavaScript_or_declarations,
+	&Lint_input_files_without_checking_or_emitting_JavaScript_or_declarations,
 	&Unexpected_debugger_statement,
 	&Unknown_lint_rule_0,
 	&Apply_available_lint_fixes_to_input_files,

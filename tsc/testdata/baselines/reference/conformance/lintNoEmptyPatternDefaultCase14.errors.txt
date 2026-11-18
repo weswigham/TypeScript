@@ -1,6 +1,4 @@
-/input.ts(1,6): error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
 /input.ts(1,6): error TS22041: Unexpected empty array pattern.
-/input.ts(1,12): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     for ([] in source) {}
          ~~
-!!! error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
-         ~~
 !!! error TS22041: Unexpected empty array pattern.
-               ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

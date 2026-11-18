@@ -1,17 +1,7 @@
 /input.ts(1,1): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-/input.ts(1,38): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(1,46): error TS2304: Cannot find name 'key'.
 /input.ts(2,1): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-/input.ts(2,26): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(2,34): error TS2304: Cannot find name 'key'.
 /input.ts(3,1): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-/input.ts(3,30): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(3,38): error TS2304: Cannot find name 'key'.
 /input.ts(4,1): error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-/input.ts(4,48): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(4,56): error TS2304: Cannot find name 'key'.
-/input.ts(6,30): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(6,38): error TS2304: Cannot find name 'key'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,44 +19,19 @@
             "/input.ts"
         ]
     }
-==== /input.ts (14 errors) ====
+==== /input.ts (4 errors) ====
     Object.prototype.hasOwnProperty.call(object, key);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-                                         ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                                 ~~~
-!!! error TS2304: Cannot find name 'key'.
     ({}).hasOwnProperty.call(object, key);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-                             ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                     ~~~
-!!! error TS2304: Cannot find name 'key'.
     (Object.hasOwnProperty.call)(object, key);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-                                 ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                         ~~~
-!!! error TS2304: Cannot find name 'key'.
     Object./* keep */prototype.hasOwnProperty.call(object, key);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20246: Use 'Object.hasOwn()' instead of 'Object.prototype.hasOwnProperty.call()'.
-                                                   ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                                           ~~~
-!!! error TS2304: Cannot find name 'key'.
     function shadowed(Object: any) {
         ({}).hasOwnProperty.call(object, key);
-                                 ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 /input.ts:5:19: 'Object' is declared here.
-                                         ~~~
-!!! error TS2304: Cannot find name 'key'.
     }

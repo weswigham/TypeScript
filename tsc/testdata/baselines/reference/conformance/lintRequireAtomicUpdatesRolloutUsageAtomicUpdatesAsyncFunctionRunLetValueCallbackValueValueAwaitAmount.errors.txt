@@ -1,6 +1,4 @@
-/input.ts(1,35): error TS2304: Cannot find name 'callback'.
 /input.ts(1,58): error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.
-/input.ts(1,73): error TS2304: Cannot find name 'amount'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     async function run() { let value; callback(() => value); value += await amount; }
-                                      ~~~~~~~~
-!!! error TS2304: Cannot find name 'callback'.
                                                              ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.
-                                                                            ~~~~~~
-!!! error TS2304: Cannot find name 'amount'.

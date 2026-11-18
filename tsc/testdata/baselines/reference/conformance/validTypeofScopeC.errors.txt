@@ -1,19 +1,7 @@
-input.ts(1,1): error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"strnig"' have no overlap.
-input.ts(1,8): error TS2304: Cannot find name 'value'.
 input.ts(1,18): error TS20296: Invalid typeof comparison value.
-input.ts(2,8): error TS2304: Cannot find name 'value'.
 input.ts(2,18): error TS20297: Typeof comparisons should be to string literals.
-input.ts(3,1): error TS2367: This comparison appears to be unintentional because the types 'string' and 'number' have no overlap.
-input.ts(3,8): error TS2304: Cannot find name 'value'.
 input.ts(3,18): error TS20296: Invalid typeof comparison value.
-input.ts(4,8): error TS2304: Cannot find name 'value'.
-input.ts(4,18): error TS2304: Cannot find name 'other'.
 input.ts(4,18): error TS20297: Typeof comparisons should be to string literals.
-input.ts(5,8): error TS2304: Cannot find name 'value'.
-input.ts(5,25): error TS2304: Cannot find name 'other'.
-input.ts(6,8): error TS2304: Cannot find name 'value'.
-input.ts(7,21): error TS2304: Cannot find name 'value'.
-input.ts(9,19): error TS2304: Cannot find name 'value'.
 input.ts(9,29): error TS20297: Typeof comparisons should be to string literals.
 
 
@@ -21,48 +9,24 @@ input.ts(9,29): error TS20297: Typeof comparisons should be to string literals.
     {
         "lint": { "rules": { "valid-typeof": ["error", { "requireStringLiterals": true }] } }
     }
-==== input.ts (17 errors) ====
+==== input.ts (5 errors) ====
     typeof value === "strnig";
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"strnig"' have no overlap.
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~~~~~~~~
 !!! error TS20296: Invalid typeof comparison value.
     typeof value === undefined;
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~~~~~~~~~
 !!! error TS20297: Typeof comparisons should be to string literals.
     typeof value === 0;
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'string' and 'number' have no overlap.
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~
 !!! error TS20296: Invalid typeof comparison value.
     typeof value === other;
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                     ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                      ~~~~~
 !!! error TS20297: Typeof comparisons should be to string literals.
     typeof value === typeof other;
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     typeof value === "bigint";
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     "number" !== typeof value;
-                        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     function shadowed(undefined: string) {
         return typeof value === undefined;
-                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                 ~~~~~~~~~
 !!! error TS20297: Typeof comparisons should be to string literals.
     }

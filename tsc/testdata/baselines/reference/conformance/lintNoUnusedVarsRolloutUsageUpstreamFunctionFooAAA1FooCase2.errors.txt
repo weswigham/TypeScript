@@ -1,6 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
 /input.ts(1,19): error TS24290: 'a' is assigned a value but never used.
-/input.ts(1,31): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,12 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function foo(a) { a = a + 1 } foo();
-                 ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
                       ~
 !!! error TS24290: 'a' is assigned a value but never used.
-                                  ~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.ts:1:14: An argument for 'a' was not provided.

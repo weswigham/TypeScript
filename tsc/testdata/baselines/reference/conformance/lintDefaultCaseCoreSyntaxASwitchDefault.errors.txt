@@ -1,6 +1,4 @@
 /input.ts(1,1): error TS19236: Expected a default case.
-/input.ts(1,9): error TS2304: Cannot find name 'value'.
-/input.ts(1,43): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     switch (value) { case 1: break; } switch (value) {}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19236: Expected a default case.
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                              ~~~~~
-!!! error TS2304: Cannot find name 'value'.

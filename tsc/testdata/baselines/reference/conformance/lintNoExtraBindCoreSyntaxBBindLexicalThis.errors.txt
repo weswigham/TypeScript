@@ -1,8 +1,4 @@
-/input.ts(1,41): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-/input.ts(1,54): error TS2304: Cannot find name 'value'.
-/input.ts(1,84): error TS7041: The containing arrow function captures the global value of 'this'.
 /input.ts(1,90): error TS19362: The function binding is unnecessary.
-/input.ts(1,95): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     const first = function() { return () => this; }.bind(value); const second = (() => this).bind(value);
-                                            ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-                                                         ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                                                       ~~~~
-!!! error TS7041: The containing arrow function captures the global value of 'this'.
                                                                                              ~~~~
 !!! error TS19362: The function binding is unnecessary.
-                                                                                                  ~~~~~
-!!! error TS2304: Cannot find name 'value'.

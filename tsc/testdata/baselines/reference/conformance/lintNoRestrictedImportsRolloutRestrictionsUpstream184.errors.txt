@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24258: 'foo' import is restricted from being used by a pattern. foo is forbidden, use bar instead
-/input.tsx(1,39): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,9 +29,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import withPatternsCaseSensitive from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24258: 'foo' import is restricted from being used by a pattern. foo is forbidden, use bar instead
-                                          ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

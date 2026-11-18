@@ -2,15 +2,8 @@ input.ts(1,5): error TS20168: Unexpected dangling '_' in '_value'.
 input.ts(2,1): error TS20168: Unexpected dangling '_' in 'named_'.
 input.ts(2,17): error TS20168: Unexpected dangling '_' in '_parameter'.
 input.ts(5,7): error TS20168: Unexpected dangling '_' in '_binding'.
-input.ts(5,22): error TS2304: Cannot find name 'source'.
-input.ts(6,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(6,1): error TS20168: Unexpected dangling '_' in '_field'.
-input.ts(7,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(7,1): error TS20168: Unexpected dangling '_' in '_computed'.
-input.ts(7,8): error TS2304: Cannot find name '_computed'.
-input.ts(8,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(9,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(11,5): error TS7008: Member '#_private' implicitly has an 'any' type.
 input.ts(11,5): error TS20168: Unexpected dangling '_' in '#_private'.
 input.ts(12,5): error TS20168: Unexpected dangling '_' in '_method'.
 
@@ -19,7 +12,7 @@ input.ts(12,5): error TS20168: Unexpected dangling '_' in '_method'.
     {
         "lint": { "rules": { "no-underscore-dangle": ["error", { "allowFunctionParams": false, "allowInObjectDestructuring": false, "enforceInMethodNames": true, "enforceInClassFields": true }] } }
     }
-==== input.ts (15 errors) ====
+==== input.ts (8 errors) ====
     let _value = 0;
         ~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_value'.
@@ -35,34 +28,16 @@ input.ts(12,5): error TS20168: Unexpected dangling '_' in '_method'.
     const { _binding } = source;
           ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_binding'.
-                         ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     object._field;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     ~~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_field'.
     object[_computed];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     ~~~~~~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_computed'.
-           ~~~~~~~~~
-!!! error TS2304: Cannot find name '_computed'.
     object["_literal"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object.__proto__;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     class Example {
         #_private;
-        ~~~~~~~~~
-!!! error TS7008: Member '#_private' implicitly has an 'any' type.
         ~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '#_private'.
         _method() {}

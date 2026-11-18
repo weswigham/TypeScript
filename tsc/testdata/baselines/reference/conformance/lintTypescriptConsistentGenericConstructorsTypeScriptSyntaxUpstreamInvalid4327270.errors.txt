@@ -1,6 +1,4 @@
 /input.ts(3,3): error TS24446: The generic type arguments should be specified as part of the type annotation.
-/input.ts(3,4): error TS2304: Cannot find name 'a'.
-/input.ts(3,17): error TS2558: Expected 0 type arguments, but got 1.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,15 +21,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     
     class Foo {
       [a] = new Foo<string>();
       ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24446: The generic type arguments should be specified as part of the type annotation.
-       ~
-!!! error TS2304: Cannot find name 'a'.
-                    ~~~~~~
-!!! error TS2558: Expected 0 type arguments, but got 1.
     }
           

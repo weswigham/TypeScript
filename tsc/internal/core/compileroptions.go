@@ -159,6 +159,10 @@ func (options *CompilerOptions) GetIsolatedModules() bool {
 	return options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
 }
 
+func (options *CompilerOptions) GetNoCheck() bool {
+	return options.NoCheck.IsTrue() || options.LintOnly.IsTrue()
+}
+
 func (options *CompilerOptions) IsIncremental() bool {
 	return options.Incremental.IsTrue() || options.Composite.IsTrue()
 }

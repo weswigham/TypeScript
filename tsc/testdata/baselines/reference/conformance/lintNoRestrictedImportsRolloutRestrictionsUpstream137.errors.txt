@@ -1,5 +1,4 @@
 /input.tsx(1,8): error TS24263: * import is invalid because 'Foo' from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
-/input.tsx(1,39): error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -32,9 +31,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import * as AllWithCustomMessage from '../../my/relative-module';
            ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24263: * import is invalid because 'Foo' from '../../my/relative-module' is restricted from being used by a pattern. Import from @/utils instead.
-                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '../../my/relative-module' or its corresponding type declarations.

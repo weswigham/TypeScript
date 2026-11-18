@@ -1,4 +1,3 @@
-/input.tsx(4,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 /input.tsx(4,16): error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
 
 
@@ -19,13 +18,11 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     function f() {}
     
     const o = <div {...f} />;
-              ~~~~~~~~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
                    ~~~~~~
 !!! error TS24057: Using the spread operator on a function without additional properties can cause unexpected behavior. Did you forget to call the function?
           

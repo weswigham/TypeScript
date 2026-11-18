@@ -1,7 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'a'.
 /input.ts(1,1): error TS24222: Unexpected logical operator assignment (&&=) shorthand.
-/input.ts(1,7): error TS2304: Cannot find name 'b'.
-/input.ts(1,12): error TS2304: Cannot find name 'c'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     a &&= b || c
-    ~
-!!! error TS2304: Cannot find name 'a'.
     ~~~~~~~~~~~~
 !!! error TS24222: Unexpected logical operator assignment (&&=) shorthand.
-          ~
-!!! error TS2304: Cannot find name 'b'.
-               ~
-!!! error TS2304: Cannot find name 'c'.

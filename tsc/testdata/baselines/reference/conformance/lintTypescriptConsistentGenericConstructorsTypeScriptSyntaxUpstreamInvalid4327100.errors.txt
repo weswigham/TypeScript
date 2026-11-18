@@ -1,6 +1,4 @@
 /input.ts(3,3): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-/input.ts(3,4): error TS2304: Cannot find name 'a'.
-/input.ts(3,8): error TS2315: Type 'Foo' is not generic.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +18,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     
     class Foo {
       [a]: Foo<string> = new Foo();
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-       ~
-!!! error TS2304: Cannot find name 'a'.
-           ~~~~~~~~~~~
-!!! error TS2315: Type 'Foo' is not generic.
     }
           

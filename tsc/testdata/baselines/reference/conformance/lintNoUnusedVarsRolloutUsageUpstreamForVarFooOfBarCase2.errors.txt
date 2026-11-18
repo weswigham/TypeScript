@@ -1,5 +1,4 @@
 /input.ts(1,13): error TS24290: 'foo' is assigned a value but never used.
-/input.ts(1,22): error TS2304: Cannot find name 'bar'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     for ( var { foo } of bar ) { }
                 ~~~
 !!! error TS24290: 'foo' is assigned a value but never used.
-                         ~~~
-!!! error TS2304: Cannot find name 'bar'.

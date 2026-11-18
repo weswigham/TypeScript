@@ -1,8 +1,5 @@
-/input.tsx(1,1): error TS2304: Cannot find name 'foo'.
 /input.tsx(1,1): error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.
-/input.tsx(1,7): error TS2304: Cannot find name 'bar'.
 /input.tsx(1,7): error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.
-/input.tsx(1,13): error TS2304: Cannot find name 'baz'.
 /input.tsx(1,13): error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.
 
 
@@ -24,17 +21,11 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (6 errors) ====
+==== /input.tsx (3 errors) ====
     foo + bar + baz
     ~~~
-!!! error TS2304: Cannot find name 'foo'.
-    ~~~
 !!! error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.
           ~~~
-!!! error TS2304: Cannot find name 'bar'.
-          ~~~
 !!! error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.
-                ~~~
-!!! error TS2304: Cannot find name 'baz'.
                 ~~~
 !!! error TS24277: Using ':is(Identifier[name='foo'], Identifier[name='bar'], Identifier[name='baz'])' is not allowed.

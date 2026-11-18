@@ -1,7 +1,5 @@
 /input.ts(1,8): error TS24203: Identifier 'snake_case' is not in camel case.
-/input.ts(1,21): error TS2304: Cannot find name 'default_value'.
 /input.ts(1,49): error TS24203: Identifier 'alias_name' is not in camel case.
-/input.ts(1,63): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     const {snake_case = default_value, source_name: alias_name} = source;
            ~~~~~~~~~~
 !!! error TS24203: Identifier 'snake_case' is not in camel case.
-                        ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'default_value'.
                                                     ~~~~~~~~~~
 !!! error TS24203: Identifier 'alias_name' is not in camel case.
-                                                                  ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

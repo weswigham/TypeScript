@@ -1,21 +1,14 @@
 input.ts(1,5): error TS24212: Identifier 'denied' is restricted.
 input.ts(2,1): error TS24212: Identifier 'denied' is restricted.
-input.ts(3,1): error TS2349: This expression is not callable.
-  Type 'Number' has no call signatures.
-input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(5,8): error TS24212: Identifier 'denied' is restricted.
-input.ts(6,49): error TS2304: Cannot find name 'source'.
-input.ts(7,17): error TS7008: Member '#denied' implicitly has an 'any' type.
 input.ts(7,17): error TS24213: Identifier '#denied' is restricted.
 input.ts(7,42): error TS24213: Identifier '#denied' is restricted.
-input.ts(8,36): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 input.ts(9,22): error TS24212: Identifier 'denied' is restricted.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"id-denylist":["error","denied"]}},"files":["input.ts"]}
-==== input.ts (12 errors) ====
+==== input.ts (6 errors) ====
     let denied;
         ~~~~~~
 !!! error TS24212: Identifier 'denied' is restricted.
@@ -23,32 +16,17 @@ input.ts(9,22): error TS24212: Identifier 'denied' is restricted.
     ~~~~~~
 !!! error TS24212: Identifier 'denied' is restricted.
     denied(denied);
-    ~~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Number' has no call signatures.
     object.denied;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object.denied = 1;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~
 !!! error TS24212: Identifier 'denied' is restricted.
     const { denied: allowed, other: deniedAlias } = source;
-                                                    ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     class Example { #denied; method() { this.#denied = 1; } }
-                    ~~~~~~~
-!!! error TS7008: Member '#denied' implicitly has an 'any' type.
                     ~~~~~~~
 !!! error TS24213: Identifier '#denied' is restricted.
                                              ~~~~~~~
 !!! error TS24213: Identifier '#denied' is restricted.
     import { denied as imported } from "module";
-                                       ~~~~~~~~
-!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     export { imported as denied };
                          ~~~~~~
 !!! error TS24212: Identifier 'denied' is restricted.

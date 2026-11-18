@@ -518,7 +518,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 
 	// Report errors if build info indicates errors
 	if buildInfo.Errors || // Errors that need to be reported irrespective of "--noCheck"
-		(!t.resolved.CompilerOptions().NoCheck.IsTrue() && (buildInfo.SemanticErrors || buildInfo.CheckPending)) { // Errors without --noCheck
+		(!t.resolved.CompilerOptions().GetNoCheck() && (buildInfo.SemanticErrors || buildInfo.CheckPending)) { // Errors without --noCheck
 		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateBuildInfoWithErrors, data: buildInfoPath}
 	}
 
@@ -530,7 +530,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 
 		// Errors need to be reported if build info has errors
 		if (t.resolved.CompilerOptions().GetEmitDeclarations() && buildInfo.EmitDiagnosticsPerFile != nil) || // Always reported errors
-			(!t.resolved.CompilerOptions().NoCheck.IsTrue() && // Semantic errors if not --noCheck
+			(!t.resolved.CompilerOptions().GetNoCheck() && // Semantic errors if not --noCheck
 				(buildInfo.ChangeFileSet != nil || buildInfo.SemanticDiagnosticsPerFile != nil)) {
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateBuildInfoWithErrors, data: buildInfoPath}
 		}

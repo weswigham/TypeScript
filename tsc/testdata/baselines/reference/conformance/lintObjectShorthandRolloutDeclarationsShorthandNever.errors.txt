@@ -1,4 +1,3 @@
-/input.ts(1,12): error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
 /input.ts(1,12): error TS24309: Expected longform property syntax.
 
 
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const o = {x};
-               ~
-!!! error TS18004: No value exists in scope for the shorthand property 'x'. Either declare one or provide an initializer.
                ~
 !!! error TS24309: Expected longform property syntax.

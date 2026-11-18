@@ -1,7 +1,4 @@
 /input.ts(1,7): error TS24132: Use object destructuring.
-/input.ts(1,11): error TS2304: Cannot find name 'obj'.
-/input.ts(1,18): error TS2588: Cannot assign to 'x' because it is a constant.
-/input.ts(1,22): error TS2304: Cannot find name 'obj'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,13 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     const x = obj.x; x = obj.x;
           ~~~~~~~~~
 !!! error TS24132: Use object destructuring.
-              ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                     ~
-!!! error TS2588: Cannot assign to 'x' because it is a constant.
-                         ~~~
-!!! error TS2304: Cannot find name 'obj'.

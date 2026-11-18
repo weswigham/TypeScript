@@ -1,6 +1,4 @@
 /input.tsx(2,17): error TS24293: The value assigned to 'x' is not used in subsequent statements.
-/input.tsx(4,21): error TS2304: Cannot find name 'A'.
-/input.tsx(4,28): error TS2304: Cannot find name 'A'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,15 +21,11 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     function App() {
                 let x = 1;
                     ~
 !!! error TS24293: The value assigned to 'x' is not used in subsequent statements.
                 x = 2;
                 return <A>{x}</A>;
-                        ~
-!!! error TS2304: Cannot find name 'A'.
-                               ~
-!!! error TS2304: Cannot find name 'A'.
                 }

@@ -1,7 +1,4 @@
 /input.ts(1,1): error TS19854: Unexpected console statement.
-/input.ts(1,13): error TS2304: Cannot find name 'value'.
-/input.ts(1,36): error TS18048: 'console' is possibly 'undefined'.
-/input.ts(1,48): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     console.log(value); { let console; console.log(value); }
     ~~~~~~~~~~~
 !!! error TS19854: Unexpected console statement.
-                ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                       ~~~~~~~
-!!! error TS18048: 'console' is possibly 'undefined'.
-                                                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.

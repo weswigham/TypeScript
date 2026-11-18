@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS21083: Invalid operand for a '+' operation. Operands must each be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `RegExp`.
-/input.ts(1,1): error TS2365: Operator '+' cannot be applied to types 'RegExp' and 'number'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /a/ + 1;
     ~~~
 !!! error TS21083: Invalid operand for a '+' operation. Operands must each be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `RegExp`.
-    ~~~~~~~
-!!! error TS2365: Operator '+' cannot be applied to types 'RegExp' and 'number'.

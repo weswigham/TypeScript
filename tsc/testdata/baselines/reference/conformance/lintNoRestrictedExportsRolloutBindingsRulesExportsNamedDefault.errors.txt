@@ -1,6 +1,3 @@
-/input.ts(1,1): error TS2323: Cannot redeclare exported variable 'default'.
-/input.ts(1,27): error TS2304: Cannot find name 'value'.
-/input.ts(1,27): error TS2323: Cannot redeclare exported variable 'default'.
 /input.ts(1,36): error TS24253: 'default' is restricted from being used as an exported name.
 
 
@@ -26,13 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     export default 1; export {value as default};
-    ~~~~~~~~~~~~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'default'.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                              ~~~~~~~~~~~~~~~~
-!!! error TS2323: Cannot redeclare exported variable 'default'.
                                        ~~~~~~~
 !!! error TS24253: 'default' is restricted from being used as an exported name.

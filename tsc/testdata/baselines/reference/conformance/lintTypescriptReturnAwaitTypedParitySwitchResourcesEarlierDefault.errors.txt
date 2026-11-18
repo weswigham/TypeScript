@@ -1,4 +1,3 @@
-/project/src/input.ts(1,52): error TS1547: 'using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block.
 /project/src/input.ts(1,83): error TS24156: Returning an awaited promise is required in this context.
 
 
@@ -18,10 +17,8 @@
             "src/input.ts"
         ]
     }
-==== /project/src/input.ts (2 errors) ====
+==== /project/src/input.ts (1 errors) ====
     async function f(k: number) { switch(k) { default: using r = null; case 1: return Promise.resolve(1); } }
-                                                       ~~~~~~~~~~~~~~
-!!! error TS1547: 'using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block.
                                                                                       ~~~~~~~~~~~~~~~~~~
 !!! error TS24156: Returning an awaited promise is required in this context.
     export {};

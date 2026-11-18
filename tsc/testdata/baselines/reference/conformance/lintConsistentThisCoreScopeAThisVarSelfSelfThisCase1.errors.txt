@@ -1,8 +1,4 @@
-/input.ts(1,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
 /input.ts(1,5): error TS19857: Designated alias 'self' is not assigned to 'this'.
-/input.ts(1,20): error TS2322: Type 'typeof globalThis' is not assignable to type 'Window & typeof globalThis'.
-  Property 'name' is missing in type 'typeof globalThis' but required in type 'Window'.
-/input.ts(1,27): error TS7041: The containing arrow function captures the global value of 'this'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,16 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     var self; (() => { self = this; })();
         ~~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
-!!! related TS6203 lib.dom.d.ts:--:--: 'self' was also declared here.
-        ~~~~
 !!! error TS19857: Designated alias 'self' is not assigned to 'this'.
-                       ~~~~
-!!! error TS2322: Type 'typeof globalThis' is not assignable to type 'Window & typeof globalThis'.
-!!! error TS2322:   Property 'name' is missing in type 'typeof globalThis' but required in type 'Window'.
-!!! related TS2728 lib.dom.d.ts:--:--: 'name' is declared here.
-                              ~~~~
-!!! error TS7041: The containing arrow function captures the global value of 'this'.

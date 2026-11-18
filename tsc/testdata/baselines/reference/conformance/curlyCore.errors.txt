@@ -1,24 +1,10 @@
-input.ts(1,5): error TS2304: Cannot find name 'value'.
-input.ts(1,12): error TS2304: Cannot find name 'work'.
 input.ts(1,12): error TS19224: Expected { after 'if' condition.
-input.ts(1,25): error TS2304: Cannot find name 'other'.
 input.ts(1,25): error TS22018: Expected { after 'else'.
-input.ts(2,8): error TS2304: Cannot find name 'value'.
-input.ts(2,15): error TS2304: Cannot find name 'work'.
 input.ts(2,15): error TS19224: Expected { after 'while' condition.
-input.ts(3,4): error TS2304: Cannot find name 'work'.
 input.ts(3,4): error TS22018: Expected { after 'do'.
-input.ts(3,19): error TS2304: Cannot find name 'value'.
-input.ts(4,41): error TS2304: Cannot find name 'work'.
 input.ts(4,41): error TS19224: Expected { after 'for' condition.
-input.ts(5,19): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(5,27): error TS2304: Cannot find name 'work'.
 input.ts(5,27): error TS22018: Expected { after 'for-in'.
-input.ts(6,20): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-input.ts(6,27): error TS2304: Cannot find name 'work'.
 input.ts(6,27): error TS22018: Expected { after 'for-of'.
-input.ts(7,5): error TS2304: Cannot find name 'value'.
-input.ts(7,23): error TS2304: Cannot find name 'work'.
 input.ts(7,23): error TS19224: Expected { after 'if' condition.
 
 
@@ -28,57 +14,27 @@ input.ts(7,23): error TS19224: Expected { after 'if' condition.
         "lint": { "rules": { "curly": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (22 errors) ====
+==== input.ts (8 errors) ====
     if (value) work(); else other();
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-               ~~~~
-!!! error TS2304: Cannot find name 'work'.
                ~~~~~~~
 !!! error TS19224: Expected { after 'if' condition.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                             ~~~~~~~~
 !!! error TS22018: Expected { after 'else'.
     while (value) work();
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                  ~~~~
-!!! error TS2304: Cannot find name 'work'.
                   ~~~~~~~
 !!! error TS19224: Expected { after 'while' condition.
     do work(); while (value);
-       ~~~~
-!!! error TS2304: Cannot find name 'work'.
        ~~~~~~~
 !!! error TS22018: Expected { after 'do'.
-                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     for (let index = 0; index < 3; index++) work();
-                                            ~~~~
-!!! error TS2304: Cannot find name 'work'.
                                             ~~~~~~~
 !!! error TS19224: Expected { after 'for' condition.
     for (const key in object) work(key);
-                      ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                              ~~~~
-!!! error TS2304: Cannot find name 'work'.
                               ~~~~~~~~~~
 !!! error TS22018: Expected { after 'for-in'.
     for (const item of array) work(item);
-                       ~~~~~
-!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.
-                              ~~~~
-!!! error TS2304: Cannot find name 'work'.
                               ~~~~~~~~~~~
 !!! error TS22018: Expected { after 'for-of'.
     if (value) /* Keep */ work();
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                          ~~~~
-!!! error TS2304: Cannot find name 'work'.
                           ~~~~~~~
 !!! error TS19224: Expected { after 'if' condition.

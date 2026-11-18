@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2365: Operator '+' cannot be applied to types '1n' and '1'.
 /input.ts(1,1): error TS21085: Numeric '+' operations must either be both bigints or both numbers. Got `bigint` + `number`.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     1n + 1;
-    ~~~~~~
-!!! error TS2365: Operator '+' cannot be applied to types '1n' and '1'.
     ~~~~~~
 !!! error TS21085: Numeric '+' operations must either be both bigints or both numbers. Got `bigint` + `number`.

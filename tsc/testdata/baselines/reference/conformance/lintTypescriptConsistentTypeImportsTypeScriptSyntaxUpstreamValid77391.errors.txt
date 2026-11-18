@@ -1,5 +1,3 @@
-/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(3,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 /tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
 
 
@@ -29,12 +27,8 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (0 errors) ====
     
     let foo: import('foo');
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     let bar: import('foo').Bar;
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
               

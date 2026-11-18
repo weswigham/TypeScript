@@ -1,4 +1,3 @@
-/input.ts(1,10): error TS2304: Cannot find name 'Bad'.
 /input.ts(1,10): error TS20482: Don't use `Bad<string>` as a type.
 
 
@@ -24,9 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     type T = Bad<string>;
-             ~~~
-!!! error TS2304: Cannot find name 'Bad'.
              ~~~~~~~~~~~
 !!! error TS20482: Don't use `Bad<string>` as a type.

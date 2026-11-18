@@ -1,6 +1,4 @@
-/input.tsx(1,1): error TS2304: Cannot find name 'call'.
 /input.tsx(2,1): error TS19666: 'unused:' is defined but never used.
-/input.tsx(2,21): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,12 +17,8 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     call();
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
     unused: [1].forEach(work);
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-                        ~~~~
-!!! error TS2304: Cannot find name 'work'.

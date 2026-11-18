@@ -3,13 +3,12 @@ input.ts(2,1): error TS20909: Passing a number to Number() does not change the t
 input.ts(3,1): error TS20909: Passing a boolean to Boolean() does not change the type or value of the boolean.
 input.ts(4,1): error TS20909: Passing a bigint to BigInt() does not change the type or value of the bigint.
 input.ts(5,1): error TS20909: Using !! on a boolean does not change the type or value of the boolean.
-input.ts(6,3): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 input.ts(7,1): error TS20909: Using ~~ on an integer does not change the type or value of the number.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"strict":true,"target":"esnext"},"lint":{"rules":{"@typescript-eslint/no-unnecessary-type-conversion":"error"}}}
-==== input.ts (7 errors) ====
+==== input.ts (6 errors) ====
     String("value");
     ~~~~~~
 !!! error TS20909: Passing a string to String() does not change the type or value of the string.
@@ -26,8 +25,6 @@ input.ts(7,1): error TS20909: Using ~~ on an integer does not change the type or
     ~~
 !!! error TS20909: Using !! on a boolean does not change the type or value of the boolean.
     ++2;
-      ~
-!!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     ~~2;
     ~~
 !!! error TS20909: Using ~~ on an integer does not change the type or value of the number.

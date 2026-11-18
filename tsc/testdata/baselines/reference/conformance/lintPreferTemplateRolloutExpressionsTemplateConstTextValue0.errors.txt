@@ -1,4 +1,3 @@
-/input.ts(1,14): error TS2304: Cannot find name 'value'.
 /input.ts(1,14): error TS24335: Unexpected string concatenation.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const text = value + '\0';
-                 ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                  ~~~~~~~~~~~~
 !!! error TS24335: Unexpected string concatenation.

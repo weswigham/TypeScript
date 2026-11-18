@@ -1,23 +1,18 @@
 input.ts(1,1): error TS22043: Unexpected labeled statement.
-input.ts(1,15): error TS2304: Cannot find name 'ready'.
 input.ts(1,24): error TS22042: Unexpected label in continue statement.
 input.ts(1,40): error TS19368: Unexpected label in break statement.
 input.ts(2,1): error TS22043: Unexpected labeled statement.
 input.ts(2,10): error TS19368: Unexpected label in break statement.
 input.ts(3,1): error TS22043: Unexpected labeled statement.
-input.ts(3,20): error TS2304: Cannot find name 'value'.
 input.ts(3,38): error TS19368: Unexpected label in break statement.
-input.ts(4,8): error TS2304: Cannot find name 'ready'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"lint":{"rules":{"no-labels":"error"}},"files":["input.ts"]}
-==== input.ts (10 errors) ====
+==== input.ts (7 errors) ====
     outer: while (ready) { continue outer; break outer; }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22043: Unexpected labeled statement.
-                  ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                            ~~~~~~~~~~~~~~~
 !!! error TS22042: Unexpected label in continue statement.
                                            ~~~~~~~~~~~~
@@ -30,10 +25,6 @@ input.ts(4,8): error TS2304: Cannot find name 'ready'.
     selection: switch (value) { default: break selection; }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22043: Unexpected labeled statement.
-                       ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                          ~~~~~~~~~~~~~~~~
 !!! error TS19368: Unexpected label in break statement.
     while (ready) { continue; break; }
-           ~~~~~
-!!! error TS2304: Cannot find name 'ready'.

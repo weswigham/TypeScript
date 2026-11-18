@@ -878,7 +878,7 @@ func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*
 }
 
 func (p *Program) SkipTypeChecking(sourceFile *ast.SourceFile, ignoreNoCheck bool) bool {
-	return (!ignoreNoCheck && p.Options().NoCheck.IsTrue()) ||
+	return (!ignoreNoCheck && p.Options().GetNoCheck()) ||
 		p.Options().SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		p.Options().SkipDefaultLibCheck.IsTrue() && p.IsSourceFileDefaultLibrary(sourceFile.PathKey()) ||
 		p.IsSourceFromProjectReference(sourceFile.PathKey()) ||

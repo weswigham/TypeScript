@@ -1,6 +1,4 @@
 /input.ts(2,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(4,4): error TS2304: Cannot find name 'deco'.
 /tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
 
 
@@ -25,17 +23,13 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     
     import Foo from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     class A {
       @deco
-       ~~~~
-!!! error TS2304: Cannot find name 'deco'.
       set foo(value: Foo) {}
     }
               

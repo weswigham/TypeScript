@@ -1,6 +1,5 @@
 /input.ts(1,36): error TS20258: Expected the Promise rejection reason to be an Error.
 /input.ts(1,58): error TS20258: Expected the Promise rejection reason to be an Error.
-/input.ts(1,83): error TS7006: Parameter 'reject' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     new Promise((resolve, reject) => { reject('bad'); (() => reject(0))(); function f(reject) { reject('ok'); } });
                                        ~~~~~~~~~~~~~
 !!! error TS20258: Expected the Promise rejection reason to be an Error.
                                                              ~~~~~~~~~
 !!! error TS20258: Expected the Promise rejection reason to be an Error.
-                                                                                      ~~~~~~
-!!! error TS7006: Parameter 'reject' implicitly has an 'any' type.

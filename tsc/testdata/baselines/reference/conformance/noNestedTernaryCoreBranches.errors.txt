@@ -1,31 +1,6 @@
-input.ts(1,1): error TS2304: Cannot find name 'foo'.
 input.ts(1,1): error TS19500: Do not nest ternary expressions.
-input.ts(1,7): error TS2304: Cannot find name 'bar'.
-input.ts(1,13): error TS2304: Cannot find name 'baz'.
-input.ts(1,21): error TS2304: Cannot find name 'qux'.
-input.ts(1,27): error TS2304: Cannot find name 'quxx'.
-input.ts(1,34): error TS2304: Cannot find name 'foobar'.
-input.ts(2,1): error TS2304: Cannot find name 'foo'.
 input.ts(2,1): error TS19500: Do not nest ternary expressions.
-input.ts(2,7): error TS2304: Cannot find name 'baz'.
-input.ts(2,15): error TS2304: Cannot find name 'qux'.
-input.ts(2,21): error TS2304: Cannot find name 'quxx'.
-input.ts(2,28): error TS2304: Cannot find name 'foobar'.
-input.ts(2,37): error TS2304: Cannot find name 'bar'.
-input.ts(3,1): error TS2304: Cannot find name 'foo'.
 input.ts(3,1): error TS19500: Do not nest ternary expressions.
-input.ts(3,8): error TS2304: Cannot find name 'bar'.
-input.ts(3,14): error TS2304: Cannot find name 'baz'.
-input.ts(3,20): error TS2304: Cannot find name 'qux'.
-input.ts(3,27): error TS2304: Cannot find name 'quux'.
-input.ts(4,2): error TS2304: Cannot find name 'foo'.
-input.ts(4,8): error TS2304: Cannot find name 'bar'.
-input.ts(4,14): error TS2304: Cannot find name 'baz'.
-input.ts(4,21): error TS2304: Cannot find name 'qux'.
-input.ts(4,27): error TS2304: Cannot find name 'quux'.
-input.ts(5,1): error TS2304: Cannot find name 'foo'.
-input.ts(5,7): error TS2304: Cannot find name 'bar'.
-input.ts(5,13): error TS2304: Cannot find name 'baz'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -35,65 +10,15 @@ input.ts(5,13): error TS2304: Cannot find name 'baz'.
         "files": ["input.ts"]
     }
     
-==== input.ts (28 errors) ====
+==== input.ts (3 errors) ====
     foo ? bar : baz === qux ? quxx : foobar;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19500: Do not nest ternary expressions.
-          ~~~
-!!! error TS2304: Cannot find name 'bar'.
-                ~~~
-!!! error TS2304: Cannot find name 'baz'.
-                        ~~~
-!!! error TS2304: Cannot find name 'qux'.
-                              ~~~~
-!!! error TS2304: Cannot find name 'quxx'.
-                                     ~~~~~~
-!!! error TS2304: Cannot find name 'foobar'.
     foo ? baz === qux ? quxx : foobar : bar;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19500: Do not nest ternary expressions.
-          ~~~
-!!! error TS2304: Cannot find name 'baz'.
-                  ~~~
-!!! error TS2304: Cannot find name 'qux'.
-                        ~~~~
-!!! error TS2304: Cannot find name 'quxx'.
-                               ~~~~~~
-!!! error TS2304: Cannot find name 'foobar'.
-                                        ~~~
-!!! error TS2304: Cannot find name 'bar'.
     foo ? (bar ? baz : qux) : quux;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19500: Do not nest ternary expressions.
-           ~~~
-!!! error TS2304: Cannot find name 'bar'.
-                 ~~~
-!!! error TS2304: Cannot find name 'baz'.
-                       ~~~
-!!! error TS2304: Cannot find name 'qux'.
-                              ~~~~
-!!! error TS2304: Cannot find name 'quux'.
     (foo ? bar : baz) ? qux : quux;
-     ~~~
-!!! error TS2304: Cannot find name 'foo'.
-           ~~~
-!!! error TS2304: Cannot find name 'bar'.
-                 ~~~
-!!! error TS2304: Cannot find name 'baz'.
-                        ~~~
-!!! error TS2304: Cannot find name 'qux'.
-                              ~~~~
-!!! error TS2304: Cannot find name 'quux'.
     foo ? bar : baz;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
-          ~~~
-!!! error TS2304: Cannot find name 'bar'.
-                ~~~
-!!! error TS2304: Cannot find name 'baz'.

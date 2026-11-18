@@ -1,4 +1,3 @@
-/input.ts(1,37): error TS2469: The '+' operator cannot be applied to type 'symbol'.
 /input.ts(1,37): error TS21083: Invalid operand for a '+' operation. Operands must each be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `unique symbol`.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare const value: unique symbol; value + '';
-                                        ~~~~~
-!!! error TS2469: The '+' operator cannot be applied to type 'symbol'.
                                         ~~~~~
 !!! error TS21083: Invalid operand for a '+' operation. Operands must each be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `unique symbol`.

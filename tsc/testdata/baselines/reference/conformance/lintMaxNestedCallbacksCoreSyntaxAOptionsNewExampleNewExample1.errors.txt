@@ -1,5 +1,3 @@
-/input.ts(1,5): error TS2304: Cannot find name 'Example'.
-/input.ts(1,25): error TS2304: Cannot find name 'Example'.
 /input.ts(1,33): error TS19320: Too many nested callbacks (2). Maximum allowed is 1.
 
 
@@ -24,11 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     new Example(() => { new Example(() => 1); });
-        ~~~~~~~
-!!! error TS2304: Cannot find name 'Example'.
-                            ~~~~~~~
-!!! error TS2304: Cannot find name 'Example'.
                                     ~~~~~~~
 !!! error TS19320: Too many nested callbacks (2). Maximum allowed is 1.

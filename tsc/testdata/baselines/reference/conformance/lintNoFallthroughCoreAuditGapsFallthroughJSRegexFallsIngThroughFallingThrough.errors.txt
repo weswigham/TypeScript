@@ -1,5 +1,3 @@
-/input.ts(1,9): error TS2304: Cannot find name 'value'.
-/input.ts(1,26): error TS2304: Cannot find name 'work'.
 /input.ts(1,56): error TS24229: Expected a 'break' statement before 'case'.
 
 
@@ -24,11 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     switch (value) { case 0: work(); /* falling through */ case 1: break; }
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                             ~~~~
-!!! error TS2304: Cannot find name 'work'.
                                                            ~~~~~~~~~~~~~~
 !!! error TS24229: Expected a 'break' statement before 'case'.

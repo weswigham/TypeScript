@@ -1,25 +1,10 @@
-input.ts(1,1): error TS2304: Cannot find name 'i'.
 input.ts(1,1): error TS19504: Unary operator '++' used.
 input.ts(2,1): error TS19504: Unary operator '--' used.
-input.ts(2,3): error TS2304: Cannot find name 'j'.
-input.ts(3,9): error TS2304: Cannot find name 'i'.
-input.ts(3,17): error TS2304: Cannot find name 'j'.
-input.ts(3,20): error TS2304: Cannot find name 'k'.
-input.ts(4,6): error TS2304: Cannot find name 'i'.
 input.ts(4,6): error TS19504: Unary operator '++' used.
 input.ts(5,7): error TS19504: Unary operator '--' used.
-input.ts(5,9): error TS2304: Cannot find name 'i'.
-input.ts(6,9): error TS2304: Cannot find name 'i'.
-input.ts(6,13): error TS2304: Cannot find name 'j'.
 input.ts(6,13): error TS19504: Unary operator '++' used.
-input.ts(7,9): error TS2304: Cannot find name 'i'.
-input.ts(7,14): error TS2304: Cannot find name 'f'.
 input.ts(7,16): error TS19504: Unary operator '--' used.
-input.ts(7,18): error TS2304: Cannot find name 'j'.
-input.ts(8,9): error TS2304: Cannot find name 'foo'.
-input.ts(8,16): error TS2304: Cannot find name 'i'.
 input.ts(8,16): error TS19504: Unary operator '++' used.
-input.ts(8,21): error TS2304: Cannot find name 'bar'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -29,56 +14,26 @@ input.ts(8,21): error TS2304: Cannot find name 'bar'.
         "files": ["input.ts"]
     }
     
-==== input.ts (22 errors) ====
+==== input.ts (7 errors) ====
     i++;
-    ~
-!!! error TS2304: Cannot find name 'i'.
     ~~~
 !!! error TS19504: Unary operator '++' used.
     --j;
     ~~~
 !!! error TS19504: Unary operator '--' used.
-      ~
-!!! error TS2304: Cannot find name 'j'.
     for (;; i++, (++j, k--)) {}
-            ~
-!!! error TS2304: Cannot find name 'i'.
-                    ~
-!!! error TS2304: Cannot find name 'j'.
-                       ~
-!!! error TS2304: Cannot find name 'k'.
     for (i++;;) {}
-         ~
-!!! error TS2304: Cannot find name 'i'.
          ~~~
 !!! error TS19504: Unary operator '++' used.
     for (;--i;) {}
           ~~~
 !!! error TS19504: Unary operator '--' used.
-            ~
-!!! error TS2304: Cannot find name 'i'.
     for (;; i = j++) {}
-            ~
-!!! error TS2304: Cannot find name 'i'.
-                ~
-!!! error TS2304: Cannot find name 'j'.
                 ~~~
 !!! error TS19504: Unary operator '++' used.
     for (;; i++, f(--j)) {}
-            ~
-!!! error TS2304: Cannot find name 'i'.
-                 ~
-!!! error TS2304: Cannot find name 'f'.
                    ~~~
 !!! error TS19504: Unary operator '--' used.
-                     ~
-!!! error TS2304: Cannot find name 'j'.
     for (;; foo + (i++, bar)) {}
-            ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                   ~
-!!! error TS2304: Cannot find name 'i'.
                    ~~~
 !!! error TS19504: Unary operator '++' used.
-                        ~~~
-!!! error TS2304: Cannot find name 'bar'.

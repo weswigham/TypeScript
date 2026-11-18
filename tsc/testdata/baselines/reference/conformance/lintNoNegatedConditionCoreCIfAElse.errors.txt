@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19501: Unexpected negated condition.
-/input.ts(1,6): error TS2304: Cannot find name 'a'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     if (!a) {} else {}
     ~~~~~~~~~~~~~~~~~~
 !!! error TS19501: Unexpected negated condition.
-         ~
-!!! error TS2304: Cannot find name 'a'.

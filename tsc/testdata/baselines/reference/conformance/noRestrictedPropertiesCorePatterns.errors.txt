@@ -1,29 +1,13 @@
-input.ts(1,1): error TS2304: Cannot find name 'foo'.
 input.ts(1,1): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(2,1): error TS2304: Cannot find name 'foo'.
 input.ts(2,1): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(3,1): error TS2304: Cannot find name 'foo'.
 input.ts(3,1): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(4,1): error TS2304: Cannot find name 'foo'.
-input.ts(4,5): error TS2304: Cannot find name 'dynamic'.
-input.ts(5,1): error TS2304: Cannot find name 'other'.
 input.ts(6,7): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(6,20): error TS2304: Cannot find name 'foo'.
 input.ts(7,2): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(7,8): error TS2588: Cannot assign to 'baz' because it is a constant.
-input.ts(7,19): error TS2304: Cannot find name 'foo'.
 input.ts(8,16): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-input.ts(8,24): error TS2304: Cannot find name 'foo'.
 input.ts(9,7): error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
 input.ts(9,13): error TS19520: 'bad' is restricted from being used.
-input.ts(9,14): error TS2451: Cannot redeclare block-scoped variable 'bad'.
-input.ts(9,27): error TS2304: Cannot find name 'foo'.
 input.ts(10,2): error TS19520: 'bad' is restricted from being used.
-input.ts(10,3): error TS7031: Binding element 'bad' implicitly has an 'any' type.
 input.ts(11,8): error TS19520: 'bad' is restricted from being used.
-input.ts(11,9): error TS2451: Cannot redeclare block-scoped variable 'bad'.
-input.ts(11,17): error TS2304: Cannot find name 'source'.
-input.ts(12,17): error TS7008: Member '#bad' implicitly has an 'any' type.
 input.ts(12,54): error TS19520: 'bad' is restricted from being used.
 
 
@@ -34,70 +18,38 @@ input.ts(12,54): error TS19520: 'bad' is restricted from being used.
         "files": ["input.ts"]
     }
     
-==== input.ts (27 errors) ====
+==== input.ts (11 errors) ====
     foo.bar;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
     foo['bar'];
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
     foo?.bar;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ~~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
     foo[dynamic];
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
-        ~~~~~~~
-!!! error TS2304: Cannot find name 'dynamic'.
     other.bar;
-    ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     const {bar: baz} = foo;
           ~~~~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-                       ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ({bar: baz = 1} = foo);
      ~~~~~~~~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-           ~~~
-!!! error TS2588: Cannot assign to 'baz' because it is a constant.
-                      ~~~
-!!! error TS2304: Cannot find name 'foo'.
     function value({bar} = foo) {}
                    ~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
-                           ~~~
-!!! error TS2304: Cannot find name 'foo'.
     const {bar: {bad} = {}} = foo;
           ~~~~~~~~~~~~~~~~~
 !!! error TS19519: 'foo.bar' is restricted from being used. Use baz instead.
                 ~~~~~
 !!! error TS19520: 'bad' is restricted from being used.
-                 ~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'bad'.
-                              ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ({bad}) => {};
      ~~~~~
 !!! error TS19520: 'bad' is restricted from being used.
-      ~~~
-!!! error TS7031: Binding element 'bad' implicitly has an 'any' type.
     const [{bad}] = source;
            ~~~~~
 !!! error TS19520: 'bad' is restricted from being used.
-            ~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'bad'.
-                    ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     class Example { #bad; bad = 0; method() { this.#bad; this['bad']; } }
-                    ~~~~
-!!! error TS7008: Member '#bad' implicitly has an 'any' type.
                                                          ~~~~~~~~~~~
 !!! error TS19520: 'bad' is restricted from being used.

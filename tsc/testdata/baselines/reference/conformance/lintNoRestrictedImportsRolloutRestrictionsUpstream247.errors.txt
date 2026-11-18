@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24258: 'import1/private/bar' import is restricted from being used by a pattern. usage of import1 private modules not allowed.
-/input.tsx(1,21): error TS2307: Cannot find module 'import1/private/bar' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,9 +29,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     export { foo } from 'import1/private/bar';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24258: 'import1/private/bar' import is restricted from being used by a pattern. usage of import1 private modules not allowed.
-                        ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'import1/private/bar' or its corresponding type declarations.

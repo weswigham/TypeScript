@@ -1,47 +1,26 @@
 input.ts(1,5): error TS20012: 'read' is always 'undefined' because it's never assigned.
-input.ts(2,1): error TS2304: Cannot find name 'use'.
-input.ts(6,1): error TS2304: Cannot find name 'use'.
-input.ts(8,18): error TS2304: Cannot find name 'values'.
-input.ts(8,26): error TS2304: Cannot find name 'use'.
-input.ts(10,1): error TS18048: 'updated' is possibly 'undefined'.
 input.ts(11,5): error TS20012: 'shorthand' is always 'undefined' because it's never assigned.
-input.ts(13,13): error TS7005: Variable 'ambient' implicitly has an 'any' type.
-input.ts(14,1): error TS2304: Cannot find name 'use'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-unassigned-vars":"error"}},"files":["input.ts"]}
-==== input.ts (9 errors) ====
+==== input.ts (2 errors) ====
     let read;
         ~~~~
 !!! error TS20012: 'read' is always 'undefined' because it's never assigned.
     use(read);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
     let unused;
     let written;
     written = 1;
     use(written);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
     let iterated;
     for (iterated of values) use(iterated);
-                     ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                             ~~~
-!!! error TS2304: Cannot find name 'use'.
     let updated;
     updated++;
-    ~~~~~~~
-!!! error TS18048: 'updated' is possibly 'undefined'.
     let shorthand;
         ~~~~~~~~~
 !!! error TS20012: 'shorthand' is always 'undefined' because it's never assigned.
     const object = { shorthand };
     declare let ambient;
-                ~~~~~~~
-!!! error TS7005: Variable 'ambient' implicitly has an 'any' type.
     use(ambient);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
     declare namespace Ambient { let value: string; }

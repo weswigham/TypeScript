@@ -1,7 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'call'.
 /input.ts(1,9): error TS19661: All 'var' declarations must be at the top of the function scope.
-/input.ts(1,13): error TS7034: Variable 'first' implicitly has type 'any' in some locations where its type cannot be determined.
-/input.ts(1,41): error TS7005: Variable 'first' implicitly has an 'any' type.
 /input.ts(1,50): error TS19661: All 'var' declarations must be at the top of the function scope.
 /input.ts(1,69): error TS19661: All 'var' declarations must be at the top of the function scope.
 
@@ -21,16 +18,10 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     call(); var first; function foo() { if (first) { var second; } for (var index = 0;;) {} }
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
             ~~~~~~~~~~
 !!! error TS19661: All 'var' declarations must be at the top of the function scope.
-                ~~~~~
-!!! error TS7034: Variable 'first' implicitly has type 'any' in some locations where its type cannot be determined.
-                                            ~~~~~
-!!! error TS7005: Variable 'first' implicitly has an 'any' type.
                                                      ~~~~~~~~~~~
 !!! error TS19661: All 'var' declarations must be at the top of the function scope.
                                                                         ~~~~~~~~~~~~~

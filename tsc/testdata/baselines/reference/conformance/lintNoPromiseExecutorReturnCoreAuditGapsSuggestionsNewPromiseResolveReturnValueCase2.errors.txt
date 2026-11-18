@@ -1,5 +1,4 @@
 /input.ts(1,26): error TS20008: Return values from promise executor functions cannot be read.
-/input.ts(1,33): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,9 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     new Promise(resolve => { return(value); });
                              ~~~~~~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.
-                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.

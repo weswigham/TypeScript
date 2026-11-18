@@ -1,0 +1,32 @@
+input.ts(4,5): error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+input.ts(5,11): error TS20907: This is the default value for this type parameter, so it can be omitted.
+input.ts(6,5): error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext", "strict": true },
+        "lint": {
+            "rules": {
+                "@typescript-eslint/await-thenable": "error",
+                "@typescript-eslint/no-floating-promises": "error",
+                "@typescript-eslint/no-unnecessary-type-arguments": "error"
+            }
+        },
+        "files": ["input.ts"]
+    }
+==== input.ts (3 errors) ====
+    declare function value<T = string>(): T;
+    async function check() {
+        const invalid: number = "text";
+        await 123;
+        ~~~~~~~~~
+!!! error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
+        value<string>();
+              ~~~~~~
+!!! error TS20907: This is the default value for this type parameter, so it can be omitted.
+        Promise.resolve();
+        ~~~~~~~~~~~~~~~~~~
+!!! error TS24042: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.
+    }
+    

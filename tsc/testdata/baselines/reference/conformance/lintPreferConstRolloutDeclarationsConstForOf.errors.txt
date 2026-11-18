@@ -1,6 +1,4 @@
 /input.ts(1,10): error TS24322: 'x' is never reassigned. Use 'const' instead.
-/input.ts(1,15): error TS2304: Cannot find name 'values'.
-/input.ts(1,23): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     for (let x of values) consume(x);
              ~
 !!! error TS24322: 'x' is never reassigned. Use 'const' instead.
-                  ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                          ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

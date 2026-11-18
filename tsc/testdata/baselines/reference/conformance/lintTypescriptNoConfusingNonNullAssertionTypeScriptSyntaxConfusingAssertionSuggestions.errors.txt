@@ -1,11 +1,5 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS22009: Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`.
-/input.ts(1,12): error TS2304: Cannot find name 'other'.
-/input.ts(1,19): error TS2304: Cannot find name 'value'.
 /input.ts(1,19): error TS20322: Confusing combination of non-null assertion and `in` operator like `a! in b`, which might be misinterpreted as `!(a in b)`.
-/input.ts(1,29): error TS2304: Cannot find name 'other'.
-/input.ts(1,37): error TS2304: Cannot find name 'value'.
-/input.ts(1,49): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,21 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (2 errors) ====
     value! === other; value! in other; (value!) === other;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~
 !!! error TS22009: Confusing combination of non-null assertion and equality test like `a! == b`, which looks very similar to `a !== b`.
-               ~~~~~
-!!! error TS2304: Cannot find name 'other'.
-                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                       ~~~~~~~~~~~~~~~
 !!! error TS20322: Confusing combination of non-null assertion and `in` operator like `a! in b`, which might be misinterpreted as `!(a in b)`.
-                                ~~~~~
-!!! error TS2304: Cannot find name 'other'.
-                                        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                    ~~~~~
-!!! error TS2304: Cannot find name 'other'.

@@ -1,4 +1,3 @@
-/input.ts(1,16): error TS2454: Variable 'x' is used before being assigned.
 /input.ts(1,19): error TS24305: Unexpected var, use let or const instead.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function f() { x; var x = 1; }
-                   ~
-!!! error TS2454: Variable 'x' is used before being assigned.
                       ~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.

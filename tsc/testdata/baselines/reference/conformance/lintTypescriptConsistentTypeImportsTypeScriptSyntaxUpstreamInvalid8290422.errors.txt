@@ -1,5 +1,4 @@
 /input.ts(2,1): error TS21281: Use an `import` instead of an `import type`.
-/input.ts(2,39): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,13 +25,11 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     import type /*comment*/ { Type } from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21281: Use an `import` instead of an `import type`.
-                                          ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     
     type T = { c: Type };
               

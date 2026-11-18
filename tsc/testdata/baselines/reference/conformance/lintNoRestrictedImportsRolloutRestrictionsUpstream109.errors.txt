@@ -1,5 +1,4 @@
 /input.tsx(1,23): error TS24266: * import is invalid because 'DisallowedObject' and 'DisallowedObjectTwo' from 'foo' are restricted. Please import 'DisallowedObject' and 'DisallowedObjectTwo' from /bar/ instead.
-/input.tsx(1,50): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -31,9 +30,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import AllowedObject, * as AllowedObjectTwo from "foo";
                           ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24266: * import is invalid because 'DisallowedObject' and 'DisallowedObjectTwo' from 'foo' are restricted. Please import 'DisallowedObject' and 'DisallowedObjectTwo' from /bar/ instead.
-                                                     ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

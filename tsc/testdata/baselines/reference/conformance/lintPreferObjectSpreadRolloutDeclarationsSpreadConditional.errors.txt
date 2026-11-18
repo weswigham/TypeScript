@@ -1,7 +1,4 @@
 /input.ts(1,11): error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-/input.ts(1,29): error TS2304: Cannot find name 'ok'.
-/input.ts(1,34): error TS2304: Cannot find name 'a'.
-/input.ts(1,38): error TS2304: Cannot find name 'b'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     const o = Object.assign({}, ok ? a : b);
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-                                ~~
-!!! error TS2304: Cannot find name 'ok'.
-                                     ~
-!!! error TS2304: Cannot find name 'a'.
-                                         ~
-!!! error TS2304: Cannot find name 'b'.

@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19326: Function 'fn' has too many parameters (2). Maximum allowed is 1.
-/input.ts(1,25): error TS7006: Parameter 'value' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,9 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function fn(this: void, value) {}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19326: Function 'fn' has too many parameters (2). Maximum allowed is 1.
-                            ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.

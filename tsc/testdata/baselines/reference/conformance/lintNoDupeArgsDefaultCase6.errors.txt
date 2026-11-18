@@ -1,8 +1,4 @@
 /input.ts(1,21): error TS22013: Duplicate param 'first'.
-/input.ts(1,22): error TS2300: Duplicate identifier 'first'.
-/input.ts(1,22): error TS7006: Parameter 'first' implicitly has an 'any' type.
-/input.ts(1,29): error TS2300: Duplicate identifier 'first'.
-/input.ts(1,29): error TS7006: Parameter 'first' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     const obj = { method(first, first) {} };
                         ~~~~~~~~~~~~~~
 !!! error TS22013: Duplicate param 'first'.
-                         ~~~~~
-!!! error TS2300: Duplicate identifier 'first'.
-                         ~~~~~
-!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
-                                ~~~~~
-!!! error TS2300: Duplicate identifier 'first'.
-                                ~~~~~
-!!! error TS7006: Parameter 'first' implicitly has an 'any' type.

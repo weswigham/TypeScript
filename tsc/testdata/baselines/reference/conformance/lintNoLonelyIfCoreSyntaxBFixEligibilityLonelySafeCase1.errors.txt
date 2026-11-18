@@ -1,6 +1,4 @@
-/input.ts(1,5): error TS2304: Cannot find name 'first'.
 /input.ts(1,22): error TS19369: Unexpected if as the only statement in an else block.
-/input.ts(1,26): error TS2304: Cannot find name 'second'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     if (first) {} else { if (second) {} }
-        ~~~~~
-!!! error TS2304: Cannot find name 'first'.
                          ~~~~~~~~~~~~~~
 !!! error TS19369: Unexpected if as the only statement in an else block.
-                             ~~~~~~
-!!! error TS2304: Cannot find name 'second'.

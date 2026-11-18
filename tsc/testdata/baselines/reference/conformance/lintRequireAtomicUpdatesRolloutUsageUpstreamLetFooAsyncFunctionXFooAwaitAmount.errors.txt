@@ -1,7 +1,4 @@
-/input.ts(1,5): error TS7034: Variable 'foo' implicitly has type 'any' in some locations where its type cannot be determined.
-/input.ts(1,31): error TS7005: Variable 'foo' implicitly has an 'any' type.
 /input.ts(1,31): error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
-/input.ts(1,44): error TS2304: Cannot find name 'amount'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,13 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     let foo; async function x() { foo += await amount; }
-        ~~~
-!!! error TS7034: Variable 'foo' implicitly has type 'any' in some locations where its type cannot be determined.
-                                  ~~~
-!!! error TS7005: Variable 'foo' implicitly has an 'any' type.
                                   ~~~~~~~~~~~~~~~~~~~
 !!! error TS24336: Possible race condition: `foo` might be reassigned based on an outdated value of `foo`.
-                                               ~~~~~~
-!!! error TS2304: Cannot find name 'amount'.

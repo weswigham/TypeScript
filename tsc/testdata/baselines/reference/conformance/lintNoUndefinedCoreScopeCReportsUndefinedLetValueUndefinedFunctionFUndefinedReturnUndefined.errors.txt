@@ -1,6 +1,5 @@
 /input.ts(1,1): error TS20162: Unexpected use of undefined.
 /input.ts(1,24): error TS20162: Unexpected use of undefined.
-/input.ts(1,46): error TS7006: Parameter 'undefined' implicitly has an 'any' type.
 /input.ts(1,46): error TS20162: Unexpected use of undefined.
 /input.ts(1,66): error TS20162: Unexpected use of undefined.
 
@@ -20,14 +19,12 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (4 errors) ====
     undefined; let value = undefined; function f(undefined) { return undefined; }
     ~~~~~~~~~
 !!! error TS20162: Unexpected use of undefined.
                            ~~~~~~~~~
 !!! error TS20162: Unexpected use of undefined.
-                                                 ~~~~~~~~~
-!!! error TS7006: Parameter 'undefined' implicitly has an 'any' type.
                                                  ~~~~~~~~~
 !!! error TS20162: Unexpected use of undefined.
                                                                      ~~~~~~~~~

@@ -1,4 +1,3 @@
-/input.ts(1,7): error TS2451: Cannot redeclare block-scoped variable 'self'.
 /input.ts(1,7): error TS20465: Unexpected aliasing of 'this' to local variable.
 
 
@@ -17,10 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const self = this;
-          ~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'self'.
-!!! related TS6203 lib.dom.d.ts:--:--: 'self' was also declared here.
           ~~~~
 !!! error TS20465: Unexpected aliasing of 'this' to local variable.

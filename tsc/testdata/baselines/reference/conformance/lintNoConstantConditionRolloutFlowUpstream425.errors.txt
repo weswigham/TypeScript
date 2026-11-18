@@ -1,6 +1,4 @@
-/input.ts(1,47): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
 /input.ts(1,55): error TS24224: Unexpected constant condition.
-/input.ts(1,61): error TS2304: Cannot find name 'baz'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function* foo() { for (let foo = 1 + 2 + 3 + (yield); true; baz) {}}
-                                                  ~~~~~
-!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
                                                           ~~~~
 !!! error TS24224: Unexpected constant condition.
-                                                                ~~~
-!!! error TS2304: Cannot find name 'baz'.

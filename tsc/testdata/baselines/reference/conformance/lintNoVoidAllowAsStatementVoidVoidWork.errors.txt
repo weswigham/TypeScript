@@ -1,5 +1,4 @@
 /input.ts(1,6): error TS19006: Expected 'undefined' and instead saw 'void'.
-/input.ts(1,11): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     void void work();
          ~~~~~~~~~~~
 !!! error TS19006: Expected 'undefined' and instead saw 'void'.
-              ~~~~
-!!! error TS2304: Cannot find name 'work'.

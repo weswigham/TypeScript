@@ -1,10 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'obj'.
-/input.ts(1,10): error TS2304: Cannot find name 'obj'.
-/input.ts(1,21): error TS2304: Cannot find name 'obj'.
 /input.ts(1,25): error TS24212: Identifier 'bad' is restricted.
-/input.ts(1,34): error TS2304: Cannot find name 'obj'.
-/input.ts(1,50): error TS2304: Cannot find name 'obj'.
-/input.ts(1,61): error TS2304: Cannot find name 'values'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,19 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (1 errors) ====
     obj.bad; obj.bad(); obj.bad = 1; obj.bad++; for (obj.bad of values) {}
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
-             ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                        ~~~
-!!! error TS2304: Cannot find name 'obj'.
                             ~~~
 !!! error TS24212: Identifier 'bad' is restricted.
-                                     ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                                                     ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                                                                ~~~~~~
-!!! error TS2304: Cannot find name 'values'.

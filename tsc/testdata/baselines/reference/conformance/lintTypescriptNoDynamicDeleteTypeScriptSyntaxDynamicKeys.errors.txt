@@ -1,9 +1,4 @@
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
-/input.ts(1,14): error TS2304: Cannot find name 'key'.
 /input.ts(1,14): error TS20324: Do not delete dynamically computed property keys.
-/input.ts(1,27): error TS2304: Cannot find name 'value'.
-/input.ts(1,48): error TS2304: Cannot find name 'value'.
-/input.ts(1,66): error TS2304: Cannot find name 'value'.
 /input.ts(1,72): error TS20324: Do not delete dynamically computed property keys.
 
 
@@ -22,19 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (2 errors) ====
     delete value[key]; delete value['key']; delete value[-1]; delete value[`key`];
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                 ~~~
-!!! error TS2304: Cannot find name 'key'.
                  ~~~
 !!! error TS20324: Do not delete dynamically computed property keys.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                                     ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                                            ~~~~~
 !!! error TS20324: Do not delete dynamically computed property keys.

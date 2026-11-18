@@ -75,7 +75,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		IsCommandLineOnly:        true,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Command_line_Options,
-		Description:              diagnostics.Lint_input_files_without_emitting_JavaScript_or_declarations,
+		Description:              diagnostics.Lint_input_files_without_checking_or_emitting_JavaScript_or_declarations,
 		DefaultValueDescription:  false,
 	},
 	{

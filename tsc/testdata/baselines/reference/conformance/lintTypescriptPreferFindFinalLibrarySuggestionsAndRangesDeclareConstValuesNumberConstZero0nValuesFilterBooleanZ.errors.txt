@@ -1,5 +1,4 @@
 /input.ts(1,51): error TS24133: Prefer .find(...) instead of .filter(...)[0].
-/input.ts(1,74): error TS2538: Type '0n' cannot be used as an index type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare const values: number[]; const zero = -0n; values.filter(Boolean)[zero];
                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
-                                                                             ~~~~
-!!! error TS2538: Type '0n' cannot be used as an index type.

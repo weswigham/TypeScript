@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24257: '@typescript-eslint/utils/dist/ts-eslint' import is restricted from being used by a pattern.
-/input.tsx(1,38): error TS2307: Cannot find module '@typescript-eslint/utils/dist/ts-eslint' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,9 +23,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import type { InvalidTestCase } from '@typescript-eslint/utils/dist/ts-eslint';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24257: '@typescript-eslint/utils/dist/ts-eslint' import is restricted from being used by a pattern.
-                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '@typescript-eslint/utils/dist/ts-eslint' or its corresponding type declarations.

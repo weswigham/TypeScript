@@ -1,61 +1,31 @@
 input.ts(1,5): error TS22029: Redundant double negation.
-input.ts(1,7): error TS2304: Cannot find name 'value'.
 input.ts(2,8): error TS19363: Redundant Boolean call.
-input.ts(2,16): error TS2304: Cannot find name 'value'.
 input.ts(3,9): error TS22029: Redundant double negation.
-input.ts(3,11): error TS2304: Cannot find name 'value'.
 input.ts(4,6): error TS19363: Redundant Boolean call.
 input.ts(5,5): error TS19363: Redundant Boolean call.
-input.ts(5,24): error TS2304: Cannot find name 'value'.
 input.ts(6,5): error TS19363: Redundant Boolean call.
-input.ts(6,13): error TS2304: Cannot find name 'value'.
-input.ts(6,20): error TS2304: Cannot find name 'sideEffect'.
-input.ts(6,20): error TS2554: Expected 0-1 arguments, but got 2.
-input.ts(7,16): error TS2304: Cannot find name 'value'.
-input.ts(8,17): error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
-input.ts(8,40): error TS2304: Cannot find name 'value'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-extra-boolean-cast":"error"}},"files":["input.ts"]}
-==== input.ts (16 errors) ====
+==== input.ts (6 errors) ====
     if (!!value) {}
         ~~~~~~~
 !!! error TS22029: Redundant double negation.
-          ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     while (Boolean(value)) {}
            ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     Boolean(!!value);
             ~~~~~~~
 !!! error TS22029: Redundant double negation.
-              ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     if (!Boolean()) {}
          ~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
     if (Boolean(/* keep */ value)) {}
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     if (Boolean(value, sideEffect())) {}
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                       ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'sideEffect'.
-                       ~~~~~~~~~~~~
-!!! error TS2554: Expected 0-1 arguments, but got 2.
     const keep = !!value;
-                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     function shadow(Boolean) { if (Boolean(value)) {} }
-                    ~~~~~~~
-!!! error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
-                                           ~~~~~
-!!! error TS2304: Cannot find name 'value'.

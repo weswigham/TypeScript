@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 /input.ts(1,8): error TS20014: Do not access Object.prototype method 'hasOwnProperty' from target object.
 
 
@@ -17,10 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     object.hasOwnProperty('key');
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~~~~~~~~~
 !!! error TS20014: Do not access Object.prototype method 'hasOwnProperty' from target object.

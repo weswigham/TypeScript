@@ -1,54 +1,4 @@
 /input.ts(1,1): error TS19308: Function 'long' has too many lines (52). Maximum allowed is 50.
-/input.ts(2,1): error TS2304: Cannot find name 'work'.
-/input.ts(3,1): error TS2304: Cannot find name 'work'.
-/input.ts(4,1): error TS2304: Cannot find name 'work'.
-/input.ts(5,1): error TS2304: Cannot find name 'work'.
-/input.ts(6,1): error TS2304: Cannot find name 'work'.
-/input.ts(7,1): error TS2304: Cannot find name 'work'.
-/input.ts(8,1): error TS2304: Cannot find name 'work'.
-/input.ts(9,1): error TS2304: Cannot find name 'work'.
-/input.ts(10,1): error TS2304: Cannot find name 'work'.
-/input.ts(11,1): error TS2304: Cannot find name 'work'.
-/input.ts(12,1): error TS2304: Cannot find name 'work'.
-/input.ts(13,1): error TS2304: Cannot find name 'work'.
-/input.ts(14,1): error TS2304: Cannot find name 'work'.
-/input.ts(15,1): error TS2304: Cannot find name 'work'.
-/input.ts(16,1): error TS2304: Cannot find name 'work'.
-/input.ts(17,1): error TS2304: Cannot find name 'work'.
-/input.ts(18,1): error TS2304: Cannot find name 'work'.
-/input.ts(19,1): error TS2304: Cannot find name 'work'.
-/input.ts(20,1): error TS2304: Cannot find name 'work'.
-/input.ts(21,1): error TS2304: Cannot find name 'work'.
-/input.ts(22,1): error TS2304: Cannot find name 'work'.
-/input.ts(23,1): error TS2304: Cannot find name 'work'.
-/input.ts(24,1): error TS2304: Cannot find name 'work'.
-/input.ts(25,1): error TS2304: Cannot find name 'work'.
-/input.ts(26,1): error TS2304: Cannot find name 'work'.
-/input.ts(27,1): error TS2304: Cannot find name 'work'.
-/input.ts(28,1): error TS2304: Cannot find name 'work'.
-/input.ts(29,1): error TS2304: Cannot find name 'work'.
-/input.ts(30,1): error TS2304: Cannot find name 'work'.
-/input.ts(31,1): error TS2304: Cannot find name 'work'.
-/input.ts(32,1): error TS2304: Cannot find name 'work'.
-/input.ts(33,1): error TS2304: Cannot find name 'work'.
-/input.ts(34,1): error TS2304: Cannot find name 'work'.
-/input.ts(35,1): error TS2304: Cannot find name 'work'.
-/input.ts(36,1): error TS2304: Cannot find name 'work'.
-/input.ts(37,1): error TS2304: Cannot find name 'work'.
-/input.ts(38,1): error TS2304: Cannot find name 'work'.
-/input.ts(39,1): error TS2304: Cannot find name 'work'.
-/input.ts(40,1): error TS2304: Cannot find name 'work'.
-/input.ts(41,1): error TS2304: Cannot find name 'work'.
-/input.ts(42,1): error TS2304: Cannot find name 'work'.
-/input.ts(43,1): error TS2304: Cannot find name 'work'.
-/input.ts(44,1): error TS2304: Cannot find name 'work'.
-/input.ts(45,1): error TS2304: Cannot find name 'work'.
-/input.ts(46,1): error TS2304: Cannot find name 'work'.
-/input.ts(47,1): error TS2304: Cannot find name 'work'.
-/input.ts(48,1): error TS2304: Cannot find name 'work'.
-/input.ts(49,1): error TS2304: Cannot find name 'work'.
-/input.ts(50,1): error TS2304: Cannot find name 'work'.
-/input.ts(51,1): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -66,209 +16,109 @@
             "input.ts"
         ]
     }
-==== /input.ts (51 errors) ====
+==== /input.ts (1 errors) ====
     function long() {
     ~~~~~~~~~~~~~~~~~
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
     ~~~~~~~
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     }
     ~
 !!! error TS19308: Function 'long' has too many lines (52). Maximum allowed is 50.

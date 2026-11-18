@@ -1,8 +1,5 @@
-/input.ts(1,27): error TS1117: An object literal cannot have multiple properties with the same name.
 /input.ts(1,27): error TS19356: Duplicate key '16'.
-/input.ts(1,34): error TS1539: A 'bigint' literal cannot be used as a property name.
 /input.ts(1,41): error TS19356: Duplicate key '1'.
-/input.ts(1,47): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
 /input.ts(1,58): error TS19356: Duplicate key 'null'.
 
 
@@ -21,17 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     const object = { 0x10: 1, 16: 2, 1n: 1, 1: 2, [null]: 1, null: 2 };
                               ~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
-                              ~~
 !!! error TS19356: Duplicate key '16'.
-                                     ~~
-!!! error TS1539: A 'bigint' literal cannot be used as a property name.
                                             ~
 !!! error TS19356: Duplicate key '1'.
-                                                  ~~~~~~
-!!! error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
                                                              ~~~~
 !!! error TS19356: Duplicate key 'null'.

@@ -1,7 +1,4 @@
 /input.ts(1,10): error TS24290: 'foo' is defined but never used.
-/input.ts(1,14): error TS7006: Parameter 'first' implicitly has an 'any' type.
-/input.ts(1,21): error TS7006: Parameter 'second' implicitly has an 'any' type.
-/input.ts(2,1): error TS2304: Cannot find name 'doStuff'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,15 +21,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     function foo(first, second) {
              ~~~
 !!! error TS24290: 'foo' is defined but never used.
-                 ~~~~~
-!!! error TS7006: Parameter 'first' implicitly has an 'any' type.
-                        ~~~~~~
-!!! error TS7006: Parameter 'second' implicitly has an 'any' type.
     doStuff(function() {
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'doStuff'.
     console.log(second);});}

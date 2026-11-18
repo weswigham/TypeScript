@@ -1,4 +1,3 @@
-/input.ts(1,15): error TS2571: Object is of type 'unknown'.
 /input.ts(1,15): error TS22041: Unexpected empty object pattern.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch ({}) {}
-                  ~~
-!!! error TS2571: Object is of type 'unknown'.
                   ~~
 !!! error TS22041: Unexpected empty object pattern.

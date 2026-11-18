@@ -1,7 +1,6 @@
 input.ts(1,15): error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
 input.ts(2,16): error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
 input.ts(3,15): error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
-input.ts(4,24): error TS2304: Cannot find name 'pattern'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -11,7 +10,7 @@ input.ts(4,24): error TS2304: Cannot find name 'pattern'.
         "files": ["input.ts"]
     }
     
-==== input.ts (4 errors) ====
+==== input.ts (3 errors) ====
     const first = new RegExp("abc", "u");
                   ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
@@ -22,6 +21,4 @@ input.ts(4,24): error TS2304: Cannot find name 'pattern'.
                   ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24329: Use a regular expression literal instead of the 'RegExp' constructor.
     const dynamic = RegExp(pattern);
-                           ~~~~~~~
-!!! error TS2304: Cannot find name 'pattern'.
     function shadowed(RegExp: Function) { return RegExp("abc"); }

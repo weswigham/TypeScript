@@ -1,13 +1,6 @@
-/input.ts(1,1): error TS2304: Cannot find name 'a'.
 /input.ts(1,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-/input.ts(1,6): error TS2304: Cannot find name 'call'.
-/input.ts(1,14): error TS2304: Cannot find name 'a'.
 /input.ts(1,14): error TS19656: Expected an assignment or function call and instead saw an expression.
-/input.ts(1,18): error TS2304: Cannot find name 'call'.
-/input.ts(1,27): error TS2304: Cannot find name 'other'.
-/input.ts(1,36): error TS2304: Cannot find name 'a'.
 /input.ts(1,36): error TS19656: Expected an assignment or function call and instead saw an expression.
-/input.ts(1,42): error TS2304: Cannot find name 'tag'.
 /input.ts(1,42): error TS19656: Expected an assignment or function call and instead saw an expression.
 
 
@@ -26,27 +19,13 @@
             "input.ts"
         ]
     }
-==== /input.ts (11 errors) ====
+==== /input.ts (4 errors) ====
     a && call(); a ? call() : other(); a?.b; tag`template`;
-    ~
-!!! error TS2304: Cannot find name 'a'.
     ~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-         ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                 ~
-!!! error TS2304: Cannot find name 'a'.
                  ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-                     ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'other'.
-                                       ~
-!!! error TS2304: Cannot find name 'a'.
                                        ~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-                                             ~~~
-!!! error TS2304: Cannot find name 'tag'.
                                              ~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.

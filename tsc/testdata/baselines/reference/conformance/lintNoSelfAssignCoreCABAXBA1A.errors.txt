@@ -1,11 +1,4 @@
-/input.ts(1,3): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-/input.ts(1,6): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-/input.ts(1,12): error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-/input.ts(1,18): error TS2304: Cannot find name 'x'.
-/input.ts(1,21): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
 /input.ts(1,21): error TS19515: 'b' is assigned to itself.
-/input.ts(1,27): error TS2304: Cannot find name 'a'.
-/input.ts(1,37): error TS2304: Cannot find name 'a'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,21 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (1 errors) ====
     ({a, b} = {a, ...x, b}); [a = 1] = [a];
-      ~
-!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-         ~
-!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-               ~
-!!! error TS18004: No value exists in scope for the shorthand property 'a'. Either declare one or provide an initializer.
-                     ~
-!!! error TS2304: Cannot find name 'x'.
-                        ~
-!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
                         ~
 !!! error TS19515: 'b' is assigned to itself.
-                              ~
-!!! error TS2304: Cannot find name 'a'.
-                                        ~
-!!! error TS2304: Cannot find name 'a'.

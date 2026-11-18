@@ -1,5 +1,4 @@
 /input.ts(1,30): error TS24133: Prefer .find(...) instead of .filter(...)[0].
-/input.ts(1,50): error TS2538: Type 'bigint' cannot be used as an index type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare const arr: number[]; arr.filter(Boolean)[0n];
                                  ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24133: Prefer .find(...) instead of .filter(...)[0].
-                                                     ~~
-!!! error TS2538: Type 'bigint' cannot be used as an index type.

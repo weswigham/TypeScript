@@ -1,11 +1,7 @@
-/input.ts(1,1): error TS2304: Cannot find name 'arguments'.
 /input.ts(1,1): error TS19001: Avoid arguments.callee.
-/input.ts(1,19): error TS2304: Cannot find name 'arguments'.
 /input.ts(1,19): error TS19001: Avoid arguments.caller.
-/input.ts(1,37): error TS2304: Cannot find name 'arguments'.
 /input.ts(1,37): error TS19001: Avoid arguments.callee.
 /input.ts(1,56): error TS19001: Avoid arguments.caller.
-/input.ts(1,57): error TS2304: Cannot find name 'arguments'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,23 +19,15 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (4 errors) ====
     arguments.callee; arguments.caller; arguments?.callee; (arguments).caller;
-    ~~~~~~~~~
-!!! error TS2304: Cannot find name 'arguments'.
     ~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.callee.
-                      ~~~~~~~~~
-!!! error TS2304: Cannot find name 'arguments'.
                       ~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.caller.
-                                        ~~~~~~~~~
-!!! error TS2304: Cannot find name 'arguments'.
                                         ~~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.callee.
                                                            ~~~~~~~~~~~~~~~~~~
 !!! error TS19001: Avoid arguments.caller.
-                                                            ~~~~~~~~~
-!!! error TS2304: Cannot find name 'arguments'.
 ==== /custom.ts (0 errors) ====
     export default class Custom {}

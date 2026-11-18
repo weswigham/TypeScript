@@ -63,6 +63,31 @@ func TestTscLintOnlyJavaScriptDoesNotValidateEmitPaths(t *testing.T) {
 	assert.Equal(t, sys.readFileNoError("/app/input.js"), source)
 }
 
+func TestTscLintOnlySkipsSemanticDiagnostics(t *testing.T) {
+	t.Parallel()
+	for _, build := range []bool{false, true} {
+		t.Run(fmt.Sprintf("build=%v", build), func(t *testing.T) {
+			t.Parallel()
+			sys := newTestSys(&tscInput{cwd: "/app", files: FileMap{
+				"/app/tsconfig.json": `{"compilerOptions":{"target":"esnext","strict":true,"noCheck":false},"lint":{"rules":{"@typescript-eslint/await-thenable":"error"}},"files":["input.ts"]}`,
+				"/app/input.ts":      `export async function inspect() { const value: number = "text"; await 123; }`,
+			}}, false)
+			for _, flags := range [][]string{{"--lintOnly"}, {"--lint"}, {"--lintOnly", "--noCheck", "false"}} {
+				sys.clearOutput()
+				args := []string{"-p", ".", "--pretty", "false"}
+				if build {
+					args[0] = "-b"
+				}
+				result := execute.CommandLine(t.Context(), sys, append(args, flags...), sys)
+				output := sys.getOutput(false)
+				assert.Assert(t, result.Status != tsc.ExitStatusSuccess)
+				assert.Equal(t, strings.Count(output, "Unexpected `await` of a non-Promise"), 1)
+				assert.Equal(t, strings.Contains(output, "error TS2322:"), flags[0] == "--lint", "%s", output)
+			}
+		})
+	}
+}
+
 func TestTscLintWatch(t *testing.T) {
 	t.Parallel()
 	for _, build := range []bool{false, true} {
@@ -89,20 +114,22 @@ func TestTscLintWatch(t *testing.T) {
 				assert.Assert(t, result.Watcher != nil)
 				assert.Equal(t, strings.Count(sys.getOutput(false), "Unexpected 'debugger' statement."), 2)
 				for _, edit := range []struct {
-					path    string
-					text    string
-					reports int
+					path       string
+					text       string
+					reports    int
+					typeErrors bool
 				}{
-					{"/app/input.ts", "import './other';", 1},
-					{"/app/base.json", `{"lint":{"rules":{"no-debugger":"off"}}}`, 0},
-					{"/app/base.json", `{"lint":{"rules":{"no-debugger":"error"}}}`, 1},
-					{"/app/other.ts", "export {};", 0},
+					{"/app/input.ts", "import './other';", 1, false},
+					{"/app/base.json", `{"lint":{"rules":{"no-debugger":"off"}}}`, 0, false},
+					{"/app/base.json", `{"lint":{"rules":{"no-debugger":"error"}}}`, 1, false},
+					{"/app/other.ts", `export const value: number = "text";`, 0, true},
 				} {
 					sys.clearOutput()
 					sys.writeFileNoError(edit.path, edit.text)
 					sys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: edit.path}})
 					result.Watcher.DoCycle(t.Context())
 					assert.Equal(t, strings.Count(sys.getOutput(false), "Unexpected 'debugger' statement."), edit.reports)
+					assert.Equal(t, strings.Contains(sys.getOutput(false), "TS2322"), edit.typeErrors && !only, "%s", sys.getOutput(false))
 					assert.Equal(t, sys.FS().FileExists("/app/input.js"), !only)
 				}
 			})

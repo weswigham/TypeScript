@@ -1,5 +1,4 @@
 /input.ts(1,15): error TS24006: Expected to return a value at the end of method 'value'.
-/input.ts(1,32): error TS2304: Cannot find name 'ready'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Item { ['value']() { if (ready) return 1; } }
                   ~~~~~~~
 !!! error TS24006: Expected to return a value at the end of method 'value'.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'ready'.

@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS24366: Expected literal to be on the right side of <.
-/input.ts(1,8): error TS2339: Property 'value' does not exist on type '{}'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     1 < {}.value;
     ~~~~~~~~~~~~
 !!! error TS24366: Expected literal to be on the right side of <.
-           ~~~~~
-!!! error TS2339: Property 'value' does not exist on type '{}'.

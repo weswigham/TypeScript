@@ -1,60 +1,26 @@
-input.ts(2,1): error TS2630: Cannot assign to 'task' because it is a function.
 input.ts(2,1): error TS20000: 'task' is a function.
-input.ts(2,8): error TS2304: Cannot find name 'replacement'.
-input.ts(3,2): error TS2630: Cannot assign to 'task' because it is a function.
 input.ts(3,2): error TS20000: 'task' is a function.
-input.ts(3,10): error TS2552: Cannot find name 'tasks'. Did you mean 'task'?
-input.ts(4,4): error TS2630: Cannot assign to 'task' because it is a function.
 input.ts(4,4): error TS20000: 'task' is a function.
-input.ts(4,13): error TS2304: Cannot find name 'source'.
-input.ts(5,37): error TS2630: Cannot assign to 'named' because it is a function.
 input.ts(5,37): error TS20000: 'named' is a function.
-input.ts(6,17): error TS7006: Parameter 'task' implicitly has an 'any' type.
-input.ts(6,32): error TS2304: Cannot find name 'replacement'.
-input.ts(7,39): error TS2304: Cannot find name 'replacement'.
-input.ts(9,14): error TS2304: Cannot find name 'replacement'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-func-assign":"error"}},"files":["input.ts"]}
-==== input.ts (15 errors) ====
+==== input.ts (4 errors) ====
     function task() {}
     task = replacement;
     ~~~~
-!!! error TS2630: Cannot assign to 'task' because it is a function.
-    ~~~~
 !!! error TS20000: 'task' is a function.
-           ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'replacement'.
     [task] = tasks;
      ~~~~
-!!! error TS2630: Cannot assign to 'task' because it is a function.
-     ~~~~
 !!! error TS20000: 'task' is a function.
-             ~~~~~
-!!! error TS2552: Cannot find name 'tasks'. Did you mean 'task'?
-!!! related TS2728 input.ts:1:10: 'task' is declared here.
     ({ task } = source);
        ~~~~
-!!! error TS2630: Cannot assign to 'task' because it is a function.
-       ~~~~
 !!! error TS20000: 'task' is a function.
-                ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     const callback = function named() { named++; };
-                                        ~~~~~
-!!! error TS2630: Cannot assign to 'named' because it is a function.
                                         ~~~~~
 !!! error TS20000: 'named' is a function.
     function shadow(task) { task = replacement; }
-                    ~~~~
-!!! error TS7006: Parameter 'task' implicitly has an 'any' type.
-                                   ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'replacement'.
     function local() { var local; local = replacement; }
-                                          ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'replacement'.
     let expression = function() {};
     expression = replacement;
-                 ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'replacement'.

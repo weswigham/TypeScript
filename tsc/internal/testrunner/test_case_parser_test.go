@@ -182,10 +182,16 @@ debugger; missing;`
 			payload := makeUnitsFromTest(code, "lintDiagnostics.ts")
 			config := &harnessutil.NamedTestConfiguration{Config: harnessutil.TestConfiguration{option: "true"}}
 			result := newCompilerTest(t, "lintDiagnostics.ts", "lintDiagnostics.ts", &payload, config).result
-			assert.Equal(t, len(result.Diagnostics), 2)
+			expected := 1
+			if option == "lint" {
+				expected++
+			}
+			assert.Equal(t, len(result.Diagnostics), expected)
 			report := result.Diagnostics[0]
 			assert.Equal(t, report.Code(), diagnostics.Unexpected_debugger_statement.Code())
-			assert.Equal(t, result.Diagnostics[1].Code(), diagnostics.Cannot_find_name_0.Code())
+			if option == "lint" {
+				assert.Equal(t, result.Diagnostics[1].Code(), diagnostics.Cannot_find_name_0.Code())
+			}
 			assert.Equal(t, report.File(), result.Program.GetSourceFile(report.File().FileName()))
 			assert.Equal(t, report.Pos(), 0)
 			assert.Equal(t, report.Len(), len("debugger;"))

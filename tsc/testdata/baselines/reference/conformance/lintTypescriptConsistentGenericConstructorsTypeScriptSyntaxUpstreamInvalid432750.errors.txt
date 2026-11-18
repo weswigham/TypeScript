@@ -1,6 +1,4 @@
 /input.ts(1,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-/input.ts(1,10): error TS2304: Cannot find name 'Foo'.
-/input.ts(1,28): error TS2304: Cannot find name 'Foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,11 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const a: Foo<number> = new Foo;
           ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-             ~~~
-!!! error TS2304: Cannot find name 'Foo'.
-                               ~~~
-!!! error TS2304: Cannot find name 'Foo'.

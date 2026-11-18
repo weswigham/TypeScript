@@ -1,8 +1,4 @@
-/input.ts(1,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
-/input.ts(1,15): error TS7006: Parameter 'y' implicitly has an 'any' type.
-/input.ts(1,18): error TS7006: Parameter 'z' implicitly has an 'any' type.
 /input.ts(1,18): error TS24290: 'z' is defined but never used.
-/input.ts(1,35): error TS2554: Expected 3 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,16 +24,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function a(x, y, z){ return y; }; a();
-               ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
-                  ~
-!!! error TS7006: Parameter 'y' implicitly has an 'any' type.
-                     ~
-!!! error TS7006: Parameter 'z' implicitly has an 'any' type.
                      ~
 !!! error TS24290: 'z' is defined but never used.
-                                      ~
-!!! error TS2554: Expected 3 arguments, but got 0.
-!!! related TS6210 /input.ts:1:12: An argument for 'x' was not provided.

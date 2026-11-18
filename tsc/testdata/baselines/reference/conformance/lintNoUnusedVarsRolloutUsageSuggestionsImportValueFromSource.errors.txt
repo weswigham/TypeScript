@@ -1,5 +1,4 @@
 /input.ts(1,8): error TS24290: 'value' is defined but never used.
-/input.ts(1,19): error TS2307: Cannot find module 'source' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     import value from 'source';
            ~~~~~
 !!! error TS24290: 'value' is defined but never used.
-                      ~~~~~~~~
-!!! error TS2307: Cannot find module 'source' or its corresponding type declarations.

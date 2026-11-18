@@ -1,5 +1,4 @@
 /input.tsx(1,9): error TS24267: 'bad' import from 'pkg' is restricted.
-/input.tsx(1,33): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,9 +24,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import {bad as good, safe} from 'pkg';
             ~~~~~~~~~~~
 !!! error TS24267: 'bad' import from 'pkg' is restricted.
-                                    ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

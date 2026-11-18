@@ -1,5 +1,4 @@
 /input.ts(1,12): error TS24291: '_b' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
-/input.ts(1,19): error TS2304: Cannot find name 'items'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,10 +27,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const [ a, _b ] = items;
                ~~
 !!! error TS24291: '_b' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
-                      ~~~~~
-!!! error TS2304: Cannot find name 'items'.
     console.log(a+_b);

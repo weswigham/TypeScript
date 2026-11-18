@@ -1,6 +1,4 @@
 /input.ts(1,1): error TS24366: Expected literal to be on the right side of <=.
-/input.ts(1,6): error TS2304: Cannot find name 'value'.
-/input.ts(1,15): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,11 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     0 <= value && value < 1;
     ~~~~~~~~~~
 !!! error TS24366: Expected literal to be on the right side of <=.
-         ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                  ~~~~~
-!!! error TS2304: Cannot find name 'value'.

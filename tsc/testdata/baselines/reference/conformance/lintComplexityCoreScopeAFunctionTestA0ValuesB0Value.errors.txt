@@ -1,8 +1,4 @@
 /input.ts(1,1): error TS19856: Function 'test' has a complexity of 3. Maximum allowed is 2.
-/input.ts(1,20): error TS2304: Cannot find name 'a'.
-/input.ts(1,29): error TS2304: Cannot find name 'values'.
-/input.ts(1,40): error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-/input.ts(1,50): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,15 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function test() { [a = 0] = values; ({ b = 0 } = value); }
     ~~~~~~~~~~~~~
 !!! error TS19856: Function 'test' has a complexity of 3. Maximum allowed is 2.
-                       ~
-!!! error TS2304: Cannot find name 'a'.
-                                ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                                           ~
-!!! error TS18004: No value exists in scope for the shorthand property 'b'. Either declare one or provide an initializer.
-                                                     ~~~~~
-!!! error TS2304: Cannot find name 'value'.

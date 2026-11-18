@@ -1,4 +1,3 @@
-/input.tsx(4,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 /input.tsx(4,16): error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
 
 
@@ -19,13 +18,11 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     declare const map: Map<string, number>;
     
     const o = <div {...map} />;
-              ~~~~~~~~~~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
                    ~~~~~~~~
 !!! error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
           

@@ -1,5 +1,4 @@
 /input.ts(1,6): error TS24322: 'x' is never reassigned. Use 'const' instead.
-/input.ts(1,18): error TS2304: Cannot find name 'values'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let [x = 0, y] = values; y++;
          ~
 !!! error TS24322: 'x' is never reassigned. Use 'const' instead.
-                     ~~~~~~
-!!! error TS2304: Cannot find name 'values'.

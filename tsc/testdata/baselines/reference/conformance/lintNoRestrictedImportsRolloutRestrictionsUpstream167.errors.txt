@@ -1,5 +1,4 @@
 /input.tsx(1,21): error TS24270: 'SomethingBad' import from 'foo' is restricted because only 'GoodThing' and 'AlsoGood' are allowed. Only good stuff allowed.
-/input.tsx(1,41): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -31,9 +30,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import { GoodThing, SomethingBad } from "foo";
                         ~~~~~~~~~~~~
 !!! error TS24270: 'SomethingBad' import from 'foo' is restricted because only 'GoodThing' and 'AlsoGood' are allowed. Only good stuff allowed.
-                                            ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

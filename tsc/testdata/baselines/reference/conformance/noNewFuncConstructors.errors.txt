@@ -9,14 +9,6 @@ input.ts(8,1): error TS19003: The Function constructor is eval.
 input.ts(9,1): error TS19003: The Function constructor is eval.
 input.ts(10,1): error TS19003: The Function constructor is eval.
 input.ts(11,1): error TS19003: The Function constructor is eval.
-input.ts(13,1): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'FunctionConstructor'.
-input.ts(13,10): error TS2304: Cannot find name 'call'.
-input.ts(14,1): error TS2304: Cannot find name 'use'.
-input.ts(15,5): error TS2552: Cannot find name 'Class'. Did you mean 'CSS'?
-input.ts(16,1): error TS2304: Cannot find name 'use'.
-input.ts(17,1): error TS2555: Expected at least 1 arguments, but got 0.
-input.ts(17,1): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-input.ts(19,16): error TS7006: Parameter 'Function' implicitly has an 'any' type.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -26,7 +18,7 @@ input.ts(19,16): error TS7006: Parameter 'Function' implicitly has an 'any' type
         "files": ["input.ts", "shadowed.ts"]
     }
     
-==== input.ts (19 errors) ====
+==== input.ts (11 errors) ====
     new Function("return 1");
     ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19003: The Function constructor is eval.
@@ -62,30 +54,12 @@ input.ts(19,16): error TS7006: Parameter 'Function' implicitly has an 'any' type
 !!! error TS19003: The Function constructor is eval.
     Function.toString();
     Function[call]();
-    ~~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'FunctionConstructor'.
-             ~~~~
-!!! error TS2304: Cannot find name 'call'.
     use(Function);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
     new Class(Function);
-        ~~~~~
-!!! error TS2552: Cannot find name 'Class'. Did you mean 'CSS'?
-!!! related TS2728 lib.dom.d.ts:--:--: 'CSS' is declared here.
     use(Function.bind);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
     new Function.call();
-    ~~~~~~~~~~~~~~~~~~~
-!!! error TS2555: Expected at least 1 arguments, but got 0.
-!!! related TS6210 lib.es5.d.ts:--:--: An argument for 'thisArg' was not provided.
-    ~~~~~~~~~~~~~~~~~~~
-!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     window.Function("return 1");
     function local(Function) {
-                   ~~~~~~~~
-!!! error TS7006: Parameter 'Function' implicitly has an 'any' type.
         new Function();
         Function();
         Function.call(null);

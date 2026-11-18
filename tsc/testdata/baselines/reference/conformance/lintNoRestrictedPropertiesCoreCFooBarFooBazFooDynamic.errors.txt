@@ -1,8 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'foo'.
-/input.ts(1,10): error TS2304: Cannot find name 'foo'.
 /input.ts(1,10): error TS19519: 'foo.baz' is restricted from being used. Only these properties are allowed: bar.
-/input.ts(1,19): error TS2304: Cannot find name 'foo'.
-/input.ts(1,23): error TS2304: Cannot find name 'dynamic'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,15 +24,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     foo.bar; foo.baz; foo[dynamic];
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
-             ~~~
-!!! error TS2304: Cannot find name 'foo'.
              ~~~~~~~
 !!! error TS19519: 'foo.baz' is restricted from being used. Only these properties are allowed: bar.
-                      ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                          ~~~~~~~
-!!! error TS2304: Cannot find name 'dynamic'.

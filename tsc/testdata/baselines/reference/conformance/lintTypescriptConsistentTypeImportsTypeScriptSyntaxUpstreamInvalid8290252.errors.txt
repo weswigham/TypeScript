@@ -1,5 +1,4 @@
 /input.ts(2,10): error TS21280: `import()` type annotations are forbidden.
-/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,11 +25,9 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     
     let foo: import('foo');
              ~~~~~~~~~~~~~
 !!! error TS21280: `import()` type annotations are forbidden.
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
               

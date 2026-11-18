@@ -1,7 +1,4 @@
-/input.ts(1,5): error TS7034: Variable 'x' implicitly has type 'any[]' in some locations where its type cannot be determined.
 /input.ts(2,1): error TS24290: 'x' is assigned a value but never used.
-/input.ts(2,5): error TS7005: Variable 'x' implicitly has an 'any[]' type.
-/input.ts(2,14): error TS7005: Variable 'x' implicitly has an 'any[]' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,14 +21,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     let x = [];
-        ~
-!!! error TS7034: Variable 'x' implicitly has type 'any[]' in some locations where its type cannot be determined.
     x = x.concat(x);
     ~
 !!! error TS24290: 'x' is assigned a value but never used.
-        ~
-!!! error TS7005: Variable 'x' implicitly has an 'any[]' type.
-                 ~
-!!! error TS7005: Variable 'x' implicitly has an 'any[]' type.

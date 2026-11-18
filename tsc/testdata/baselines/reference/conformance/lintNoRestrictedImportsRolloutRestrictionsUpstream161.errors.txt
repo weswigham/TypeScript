@@ -1,5 +1,4 @@
 /input.tsx(1,8): error TS24262: * import is invalid because import name matching '/^Foo/u' pattern from 'foo' is restricted from being used.
-/input.tsx(1,15): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,9 +28,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     export * from 'foo';
            ~
 !!! error TS24262: * import is invalid because import name matching '/^Foo/u' pattern from 'foo' is restricted from being used.
-                  ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

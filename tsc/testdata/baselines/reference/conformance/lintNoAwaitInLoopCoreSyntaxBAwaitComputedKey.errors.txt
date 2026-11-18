@@ -1,6 +1,4 @@
-/input.ts(1,31): error TS2304: Cannot find name 'ready'.
 /input.ts(1,54): error TS19350: Unexpected `await` inside a loop.
-/input.ts(1,60): error TS2304: Cannot find name 'key'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     async function run() { while (ready) { class Item { [await key]() {} } } }
-                                  ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                                                          ~~~~~~~~~
 !!! error TS19350: Unexpected `await` inside a loop.
-                                                               ~~~
-!!! error TS2304: Cannot find name 'key'.

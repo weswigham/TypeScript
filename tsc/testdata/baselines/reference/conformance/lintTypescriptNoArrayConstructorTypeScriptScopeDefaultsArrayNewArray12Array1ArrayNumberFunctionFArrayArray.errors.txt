@@ -1,6 +1,5 @@
 /input.ts(1,1): error TS19859: The array literal notation [] is preferable.
 /input.ts(1,10): error TS19859: The array literal notation [] is preferable.
-/input.ts(1,65): error TS7006: Parameter 'Array' implicitly has an 'any' type.
 /input.ts(1,74): error TS19859: The array literal notation [] is preferable.
 
 
@@ -20,13 +19,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (3 errors) ====
     Array(); new Array(1, 2); Array(1); Array<number>(); function f(Array) { Array(); }
     ~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
              ~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
-                                                                    ~~~~~
-!!! error TS7006: Parameter 'Array' implicitly has an 'any' type.
                                                                              ~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.

@@ -1,6 +1,4 @@
 /input.ts(1,5): error TS24293: The value assigned to 'value' is not used in subsequent statements.
-/input.ts(1,20): error TS2304: Cannot find name 'condition'.
-/input.ts(1,58): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     let value = 0; if (condition) value = 1; else value = 2; consume(value);
         ~~~~~
 !!! error TS24293: The value assigned to 'value' is not used in subsequent statements.
-                       ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
-                                                             ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

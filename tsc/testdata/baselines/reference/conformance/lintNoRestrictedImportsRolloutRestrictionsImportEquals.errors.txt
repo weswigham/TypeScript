@@ -1,7 +1,4 @@
-/input.tsx(1,1): error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
 /input.tsx(1,1): error TS24255: 'pkg' import is restricted from being used.
-/input.tsx(1,22): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-/input.tsx(1,57): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,13 +22,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (4 errors) ====
+==== /input.tsx (1 errors) ====
     import bad = require('pkg'); import type good = require('pkg');
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24255: 'pkg' import is restricted from being used.
-                         ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-                                                            ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

@@ -1,5 +1,4 @@
 /input.ts(1,15): error TS19860: Unexpected unnamed function.
-/input.ts(1,30): error TS2304: Cannot find name 'use'.
 /input.ts(1,34): error TS19860: Unexpected unnamed function.
 
 
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     const value = function() {}; use(function() {});
                   ~~~~~~~~
 !!! error TS19860: Unexpected unnamed function.
-                                 ~~~
-!!! error TS2304: Cannot find name 'use'.
                                      ~~~~~~~~
 !!! error TS19860: Unexpected unnamed function.

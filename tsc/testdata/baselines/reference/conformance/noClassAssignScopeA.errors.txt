@@ -1,12 +1,6 @@
-input.ts(2,1): error TS2629: Cannot assign to 'Example' because it is a class.
 input.ts(2,1): error TS19851: 'Example' is a class.
-input.ts(3,4): error TS2629: Cannot assign to 'Example' because it is a class.
 input.ts(3,4): error TS19851: 'Example' is a class.
-input.ts(3,16): error TS2304: Cannot find name 'value'.
-input.ts(4,9): error TS2629: Cannot assign to 'Example' because it is a class.
 input.ts(4,9): error TS19851: 'Example' is a class.
-input.ts(4,25): error TS2304: Cannot find name 'value'.
-input.ts(6,16): error TS2629: Cannot assign to 'Named' because it is a class.
 input.ts(6,16): error TS19851: 'Named' is a class.
 
 
@@ -16,31 +10,19 @@ input.ts(6,16): error TS19851: 'Named' is a class.
         "lint": { "rules": { "no-class-assign": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (10 errors) ====
+==== input.ts (4 errors) ====
     class Example {}
     Example = 0;
-    ~~~~~~~
-!!! error TS2629: Cannot assign to 'Example' because it is a class.
     ~~~~~~~
 !!! error TS19851: 'Example' is a class.
     ({ Example } = value);
        ~~~~~~~
-!!! error TS2629: Cannot assign to 'Example' because it is a class.
-       ~~~~~~~
 !!! error TS19851: 'Example' is a class.
-                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ({ key: Example = 0 } = value);
             ~~~~~~~
-!!! error TS2629: Cannot assign to 'Example' because it is a class.
-            ~~~~~~~
 !!! error TS19851: 'Example' is a class.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     const Expression = class Named {
         method() { Named = 1; }
-                   ~~~~~
-!!! error TS2629: Cannot assign to 'Named' because it is a class.
                    ~~~~~
 !!! error TS19851: 'Named' is a class.
     };

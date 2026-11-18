@@ -1,4 +1,3 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
 /input.ts(1,21): error TS24206: Expected to call 'super()'.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class A extends B { constructor() { return; super(); } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24206: Expected to call 'super()'.

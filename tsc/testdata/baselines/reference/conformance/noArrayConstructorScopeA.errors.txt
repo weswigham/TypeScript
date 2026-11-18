@@ -1,16 +1,9 @@
 input.ts(1,15): error TS19859: The array literal notation [] is preferable.
 input.ts(2,16): error TS19859: The array literal notation [] is preferable.
-input.ts(2,22): error TS2304: Cannot find name 'first'.
-input.ts(2,29): error TS2304: Cannot find name 'second'.
-input.ts(3,7): error TS2451: Cannot redeclare block-scoped variable 'length'.
 input.ts(5,18): error TS19859: The array literal notation [] is preferable.
 input.ts(6,16): error TS19859: The array literal notation [] is preferable.
-input.ts(6,25): error TS2304: Cannot find name 'items'.
 input.ts(7,16): error TS19859: The array literal notation [] is preferable.
 input.ts(8,19): error TS19859: The array literal notation [] is preferable.
-input.ts(8,36): error TS2304: Cannot find name 'first'.
-input.ts(8,43): error TS2304: Cannot find name 'second'.
-input.ts(10,1): error TS2304: Cannot find name 'work'.
 input.ts(11,1): error TS19859: The array literal notation [] is preferable.
 
 
@@ -20,21 +13,14 @@ input.ts(11,1): error TS19859: The array literal notation [] is preferable.
         "lint": { "rules": { "no-array-constructor": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (14 errors) ====
+==== input.ts (7 errors) ====
     const empty = new Array();
                   ~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
     const values = Array(first, second);
                    ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
-                         ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
     const length = Array(3);
-          ~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'length'.
-!!! related TS6203 lib.dom.d.ts:--:--: 'length' was also declared here.
     const typed = Array<number>();
     const optional = Array?.();
                      ~~~~~~~~~
@@ -42,22 +28,14 @@ input.ts(11,1): error TS19859: The array literal notation [] is preferable.
     const spread = Array(...items);
                    ~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
-                            ~~~~~
-!!! error TS2304: Cannot find name 'items'.
     const header = new /* keep */ Array();
                    ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
     const commented = Array(/* keep */ first, second);
                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.
-                                       ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                              ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
     function shadow(Array: any) { return Array(); }
     work()
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     Array();
     ~~~~~~~
 !!! error TS19859: The array literal notation [] is preferable.

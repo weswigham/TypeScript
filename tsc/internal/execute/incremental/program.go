@@ -187,7 +187,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 // GetSemanticDiagnostics implements compiler.AnyProgram interface.
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 	p.panicIfNoProgram("GetSemanticDiagnostics")
-	if p.snapshot.options.NoCheck.IsTrue() {
+	if p.snapshot.options.GetNoCheck() {
 		return nil
 	}
 
@@ -312,7 +312,7 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 	for file, diagnostics := range diagnosticsPerFile {
 		p.snapshot.semanticDiagnosticsPerFile.Store(file.PathKey(), &DiagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics})
 	}
-	if p.snapshot.semanticDiagnosticsPerFile.Size() == len(p.program.GetSourceFiles()) && p.snapshot.checkPending && !p.snapshot.options.NoCheck.IsTrue() {
+	if p.snapshot.semanticDiagnosticsPerFile.Size() == len(p.program.GetSourceFiles()) && p.snapshot.checkPending && !p.snapshot.options.GetNoCheck() {
 		p.snapshot.checkPending = false
 	}
 	p.snapshot.buildInfoEmitPending.Store(true)

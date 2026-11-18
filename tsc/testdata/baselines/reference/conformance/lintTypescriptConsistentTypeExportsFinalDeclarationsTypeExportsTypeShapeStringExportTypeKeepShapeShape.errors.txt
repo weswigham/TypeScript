@@ -1,6 +1,4 @@
 /input.ts(1,22): error TS24011: All exports in the declaration are only used as types. Use `export type`.
-/input.ts(1,47): error TS2300: Duplicate identifier 'Shape'.
-/input.ts(1,54): error TS2300: Duplicate identifier 'Shape'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,11 +25,7 @@
     }
 ==== /module.ts (0 errors) ====
     export interface Shape {} export type Alias = string; export const value = 1; export class Both {}
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     type Shape = string; export { type /* keep */ Shape, Shape };
                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24011: All exports in the declaration are only used as types. Use `export type`.
-                                                  ~~~~~
-!!! error TS2300: Duplicate identifier 'Shape'.
-                                                         ~~~~~
-!!! error TS2300: Duplicate identifier 'Shape'.

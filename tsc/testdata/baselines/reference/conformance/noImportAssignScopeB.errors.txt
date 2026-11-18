@@ -1,47 +1,22 @@
-input.ts(1,31): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-input.ts(2,32): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-input.ts(3,1): error TS2632: Cannot assign to 'value' because it is an import.
 input.ts(3,1): error TS20001: 'value' is read-only.
-input.ts(3,9): error TS2304: Cannot find name 'replacement'.
-input.ts(4,2): error TS2632: Cannot assign to 'alias' because it is an import.
 input.ts(4,2): error TS20001: 'alias' is read-only.
-input.ts(4,10): error TS2304: Cannot find name 'fallback'.
-input.ts(4,22): error TS2552: Cannot find name 'values'. Did you mean 'value'?
 input.ts(5,1): error TS20002: The members of 'space' are read-only.
 input.ts(6,1): error TS20002: The members of 'space' are read-only.
 input.ts(7,1): error TS20002: The members of 'space' are read-only.
-input.ts(7,22): error TS2304: Cannot find name 'source'.
 input.ts(8,1): error TS20002: The members of 'space' are read-only.
-input.ts(11,17): error TS7006: Parameter 'space' implicitly has an 'any' type.
-input.ts(11,24): error TS7006: Parameter 'Object' implicitly has an 'any' type.
-input.ts(13,26): error TS2304: Cannot find name 'source'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-import-assign":"error"}},"files":["input.ts"]}
-==== input.ts (17 errors) ====
+==== input.ts (6 errors) ====
     import value, * as space from "pkg";
-                                  ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
     import { named as alias } from "pkg";
-                                   ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
     value = replacement;
-    ~~~~~
-!!! error TS2632: Cannot assign to 'value' because it is an import.
     ~~~~~~~~~~~~~~~~~~~
 !!! error TS20001: 'value' is read-only.
-            ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'replacement'.
     [alias = fallback] = values;
-     ~~~~~
-!!! error TS2632: Cannot assign to 'alias' because it is an import.
      ~~~~~~~~~~~~~~~~
 !!! error TS20001: 'alias' is read-only.
-             ~~~~~~~~
-!!! error TS2304: Cannot find name 'fallback'.
-                         ~~~~~~
-!!! error TS2552: Cannot find name 'values'. Did you mean 'value'?
     space.key++;
     ~~~~~~~~~~~
 !!! error TS20002: The members of 'space' are read-only.
@@ -51,20 +26,12 @@ input.ts(13,26): error TS2304: Cannot find name 'source'.
     Object.assign(space, source);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20002: The members of 'space' are read-only.
-                         ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     Reflect.set(space, "key", value);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20002: The members of 'space' are read-only.
     space.key.deep = value;
     value.key = value;
     function shadow(space, Object) {
-                    ~~~~~
-!!! error TS7006: Parameter 'space' implicitly has an 'any' type.
-                           ~~~~~~
-!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
         space.key++;
         Object.assign(space, source);
-                             ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     }

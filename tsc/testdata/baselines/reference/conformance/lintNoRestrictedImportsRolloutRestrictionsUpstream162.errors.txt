@@ -1,5 +1,4 @@
 /input.tsx(1,10): error TS24273: 'Bar' import from 'foo' is restricted because only imports that match the pattern '/^Foo/u' are allowed from 'foo'.
-/input.tsx(1,21): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,9 +28,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     export { Bar } from 'foo';
              ~~~
 !!! error TS24273: 'Bar' import from 'foo' is restricted because only imports that match the pattern '/^Foo/u' are allowed from 'foo'.
-                        ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

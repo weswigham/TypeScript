@@ -1,6 +1,4 @@
 /input.ts(1,11): error TS20314: Use a `type` instead of an `interface`.
-/input.ts(1,27): error TS2304: Cannot find name 'Base'.
-/input.ts(1,36): error TS2304: Cannot find name 'Other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,11 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     interface Item<T> extends Base<T>, Other {}
               ~~~~
 !!! error TS20314: Use a `type` instead of an `interface`.
-                              ~~~~
-!!! error TS2304: Cannot find name 'Base'.
-                                       ~~~~~
-!!! error TS2304: Cannot find name 'Other'.

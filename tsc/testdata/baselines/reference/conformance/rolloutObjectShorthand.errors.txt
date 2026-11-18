@@ -1,5 +1,4 @@
 input.ts(4,5): error TS24308: Expected property shorthand.
-input.ts(5,5): error TS1117: An object literal cannot have multiple properties with the same name.
 input.ts(5,5): error TS24308: Expected property shorthand.
 input.ts(6,5): error TS24310: Expected method shorthand.
 input.ts(7,5): error TS24310: Expected method shorthand.
@@ -11,7 +10,7 @@ input.ts(9,5): error TS24310: Expected method shorthand.
     {
         "lint": { "rules": { "object-shorthand": "error" } }
     }
-==== input.ts (7 errors) ====
+==== input.ts (6 errors) ====
     export {};
     const value = 1;
     const object = {
@@ -19,8 +18,6 @@ input.ts(9,5): error TS24310: Expected method shorthand.
         ~~~~~~~~~~~~
 !!! error TS24308: Expected property shorthand.
         'value': value,
-        ~~~~~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
         ~~~~~~~~~~~~~~
 !!! error TS24308: Expected property shorthand.
         method: function() {},

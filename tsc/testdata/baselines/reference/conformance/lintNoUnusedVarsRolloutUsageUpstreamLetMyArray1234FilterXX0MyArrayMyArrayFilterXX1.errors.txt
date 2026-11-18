@@ -1,5 +1,4 @@
 /input.ts(2,1): error TS24290: 'myArray' is assigned a value but never used.
-/input.ts(2,33): error TS2367: This comparison appears to be unintentional because the types '0' and '1' have no overlap.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let myArray = [1,2,3,4].filter((x) => x == 0);
     myArray = myArray.filter((x) => x == 1);
     ~~~~~~~
 !!! error TS24290: 'myArray' is assigned a value but never used.
-                                    ~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '0' and '1' have no overlap.

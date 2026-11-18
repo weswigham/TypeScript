@@ -2,7 +2,6 @@ input.ts(2,7): error TS19102: The generic type arguments should be specified as 
 input.ts(3,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
 input.ts(4,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
 input.ts(5,7): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
-input.ts(7,18): error TS2304: Cannot find name 'Other'.
 input.ts(11,11): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
 input.ts(13,19): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
 input.ts(16,5): error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
@@ -18,7 +17,7 @@ input.ts(20,12): error TS19102: The generic type arguments should be specified a
         "files": ["input.ts"]
     }
     
-==== input.ts (11 errors) ====
+==== input.ts (10 errors) ====
     class Box<T> {}
     const plain: Box<string> = new Box();
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,8 +33,6 @@ input.ts(20,12): error TS19102: The generic type arguments should be specified a
 !!! error TS19102: The generic type arguments should be specified as part of the constructor type arguments.
     const existing: Box<string> = new Box<string>();
     const different: Other<string> = new Box();
-                     ~~~~~
-!!! error TS2304: Cannot find name 'Other'.
     const builtin: Uint8Array<ArrayBufferLike> = new Uint8Array();
     function shadowed() {
         class Uint8Array<T> {}

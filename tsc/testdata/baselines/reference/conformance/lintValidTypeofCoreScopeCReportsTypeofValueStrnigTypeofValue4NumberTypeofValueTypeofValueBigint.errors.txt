@@ -1,11 +1,5 @@
-/input.ts(1,1): error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"strnig"' have no overlap.
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 /input.ts(1,18): error TS20296: Invalid typeof comparison value.
-/input.ts(1,28): error TS2367: This comparison appears to be unintentional because the types 'string' and 'number' have no overlap.
-/input.ts(1,35): error TS2304: Cannot find name 'value'.
 /input.ts(1,44): error TS20296: Invalid typeof comparison value.
-/input.ts(1,67): error TS2304: Cannot find name 'value'.
-/input.ts(1,81): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,21 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (2 errors) ====
     typeof value === 'strnig'; typeof value == 4; 'number' !== typeof value; typeof value == `bigint`;
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"' and '"strnig"' have no overlap.
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~~~~~~~~
 !!! error TS20296: Invalid typeof comparison value.
-                               ~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'string' and 'number' have no overlap.
-                                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                ~
 !!! error TS20296: Invalid typeof comparison value.
-                                                                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.

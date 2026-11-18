@@ -1,46 +1,28 @@
 input.ts(2,16): error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-input.ts(2,34): error TS2304: Cannot find name 'source'.
 input.ts(3,17): error TS24328: Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`.
 input.ts(4,16): error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-input.ts(4,75): error TS2304: Cannot find name 'source'.
-input.ts(6,50): error TS2304: Cannot find name 'source'.
-input.ts(7,1): error TS2304: Cannot find name 'consume'.
 input.ts(8,1): error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-input.ts(8,19): error TS2304: Cannot find name 'source'.
-input.ts(9,59): error TS2304: Cannot find name 'source'.
 
 
 ==== tsconfig.json (0 errors) ====
     {
     	"lint": { "rules": { "prefer-object-spread": "error" } }
     }
-==== input.ts (10 errors) ====
+==== input.ts (4 errors) ====
     export {};
     const spread = Object.assign({}, source);
                    ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-                                     ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     const literal = Object.assign({ value: 1 });
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24328: Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`.
     const merged = Object.assign({ first: 1 }, { second: 2, /* preserve */ }, source);
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-                                                                              ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     const getter = Object.assign({}, { get value() { return 1; } });
     const prototype = Object.assign({}, { __proto__: source });
-                                                     ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     consume()
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
     Object.assign({}, source);
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24327: Use an object spread instead of `Object.assign` eg: `{ ...foo }`.
-                      ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     function shadowed(Object: any) { return Object.assign({}, source); }
-                                                              ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

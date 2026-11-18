@@ -1,31 +1,21 @@
 input.ts(2,1): error TS21310: Unexpected 'this'.
-input.ts(3,27): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 input.ts(3,27): error TS21310: Unexpected 'this'.
-input.ts(4,26): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-input.ts(10,6): error TS2465: 'this' cannot be referenced in a computed property name.
 input.ts(10,6): error TS21310: Unexpected 'this'.
-input.ts(10,11): error TS2339: Property 'key' does not exist on type 'C'.
 
 
 ==== tsconfig.json (0 errors) ====
     {
         "lint": { "rules": { "no-invalid-this": "error" } }
     }
-==== input.ts (7 errors) ====
+==== input.ts (3 errors) ====
     export {};
     this;
     ~~~~
 !!! error TS21310: Unexpected 'this'.
     function plain() { return this; }
                               ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-!!! related TS2738 input.ts:3:10: An outer value of 'this' is shadowed by this container.
-                              ~~~~
 !!! error TS21310: Unexpected 'this'.
     function Constructor() { this.value = 1; }
-                             ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-!!! related TS2738 input.ts:4:10: An outer value of 'this' is shadowed by this container.
     function explicit(this: object) { return this; }
     const object = { method() { return this; } };
     class C {
@@ -33,9 +23,5 @@ input.ts(10,11): error TS2339: Property 'key' does not exist on type 'C'.
         static { this; }
         [this.key]() { return this; }
          ~~~~
-!!! error TS2465: 'this' cannot be referenced in a computed property name.
-         ~~~~
 !!! error TS21310: Unexpected 'this'.
-              ~~~
-!!! error TS2339: Property 'key' does not exist on type 'C'.
     }

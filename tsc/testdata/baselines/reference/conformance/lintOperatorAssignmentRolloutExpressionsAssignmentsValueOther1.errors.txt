@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS24320: Unexpected operator assignment (*=) shorthand.
-/input.ts(1,10): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,11 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     value *= other + 1;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~
 !!! error TS24320: Unexpected operator assignment (*=) shorthand.
-             ~~~~~
-!!! error TS2304: Cannot find name 'other'.

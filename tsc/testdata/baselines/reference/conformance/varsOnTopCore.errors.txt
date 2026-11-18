@@ -1,6 +1,3 @@
-input.ts(1,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-input.ts(4,12): error TS7005: Variable 'second' implicitly has an 'any' type.
-input.ts(5,1): error TS2304: Cannot find name 'work'.
 input.ts(6,1): error TS19661: All 'var' declarations must be at the top of the function scope.
 input.ts(11,18): error TS19661: All 'var' declarations must be at the top of the function scope.
 input.ts(12,10): error TS19661: All 'var' declarations must be at the top of the function scope.
@@ -14,18 +11,12 @@ input.ts(14,43): error TS19661: All 'var' declarations must be at the top of the
         "files": ["input.ts"]
     }
     
-==== input.ts (7 errors) ====
+==== input.ts (4 errors) ====
     import foo from "foo";
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     "directive";
     var first;
     export var second;
-               ~~~~~~
-!!! error TS7005: Variable 'second' implicitly has an 'any' type.
     work();
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     var late;
     ~~~~~~~~~
 !!! error TS19661: All 'var' declarations must be at the top of the function scope.

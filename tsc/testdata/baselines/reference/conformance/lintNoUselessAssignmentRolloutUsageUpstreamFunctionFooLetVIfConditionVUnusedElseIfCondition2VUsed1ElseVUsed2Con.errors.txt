@@ -1,6 +1,4 @@
-/input.ts(3,21): error TS2304: Cannot find name 'condition'.
 /input.ts(4,21): error TS24293: The value assigned to 'v' is not used in subsequent statements.
-/input.ts(8,21): error TS2304: Cannot find name 'condition2'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,12 +21,10 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function foo() {
                     let v;
                     if (condition) {
-                        ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
                         v = 'unused';
                         ~
 !!! error TS24293: The value assigned to 'v' is not used in subsequent statements.
@@ -36,8 +32,6 @@
                         //
                     }
                     if (condition2) {
-                        ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition2'.
                         v = 'used-1';
                     } else {
                         v = 'used-2';

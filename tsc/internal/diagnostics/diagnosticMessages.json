@@ -9152,7 +9152,7 @@
         "category": "Message",
         "code": 18173
     },
-    "Lint input files without emitting JavaScript or declarations.": {
+    "Lint input files without checking or emitting JavaScript or declarations.": {
         "category": "Message",
         "code": 18174
     },

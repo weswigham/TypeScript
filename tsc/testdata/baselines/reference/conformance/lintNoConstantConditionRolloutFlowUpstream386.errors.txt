@@ -1,5 +1,4 @@
 /input.ts(1,7): error TS24224: Unexpected constant condition.
-/input.ts(1,14): error TS2304: Cannot find name 'x'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     while(typeof x){}
           ~~~~~~~~
 !!! error TS24224: Unexpected constant condition.
-                 ~
-!!! error TS2304: Cannot find name 'x'.

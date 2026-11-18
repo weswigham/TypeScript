@@ -1,4 +1,3 @@
-/input.ts(1,12): error TS2532: Object is possibly 'undefined'.
 /input.ts(1,26): error TS19000: Unexpected alert.
 
 
@@ -17,10 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     export {}; this.alert(); window.alert();
-               ~~~~
-!!! error TS2532: Object is possibly 'undefined'.
                              ~~~~~~~~~~~~~~
 !!! error TS19000: Unexpected alert.
 ==== /custom.ts (0 errors) ====

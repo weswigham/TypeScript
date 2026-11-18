@@ -1,4 +1,3 @@
-/input.tsx(2,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 /input.tsx(2,16): error TS24056: Using the spread operator on class instances will lose their class prototype.
 
 
@@ -19,11 +18,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     const o = <div {...new Date()} />;
-              ~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
                    ~~~~~~~~~~~~~~~
 !!! error TS24056: Using the spread operator on class instances will lose their class prototype.
           

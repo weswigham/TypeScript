@@ -1,6 +1,4 @@
 /input.ts(1,24): error TS24304: Unnecessary return statement.
-/input.ts(1,50): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-/input.ts(1,59): error TS2304: Cannot find name 'after'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,12 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function run() { try { return; } finally { throw error; } after(); }
                            ~~~~~~~
 !!! error TS24304: Unnecessary return statement.
-                                                     ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
-                                                              ~~~~~
-!!! error TS2304: Cannot find name 'after'.

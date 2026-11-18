@@ -1,11 +1,6 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS19367: Reserved name '__iterator__'.
-/input.ts(1,21): error TS2304: Cannot find name 'value'.
 /input.ts(1,21): error TS19367: Reserved name '__iterator__'.
-/input.ts(1,44): error TS2304: Cannot find name 'value'.
 /input.ts(1,44): error TS19367: Reserved name '__iterator__'.
-/input.ts(1,67): error TS2304: Cannot find name 'value'.
-/input.ts(1,73): error TS2552: Cannot find name 'iterator'. Did you mean 'Iterator'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,22 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (8 errors) ====
+==== /input.ts (3 errors) ====
     value.__iterator__; value['__iterator__']; value[`__iterator__`]; value[iterator];
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~
 !!! error TS19367: Reserved name '__iterator__'.
-                        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                         ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19367: Reserved name '__iterator__'.
-                                               ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19367: Reserved name '__iterator__'.
-                                                                      ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                                            ~~~~~~~~
-!!! error TS2552: Cannot find name 'iterator'. Did you mean 'Iterator'?
-!!! related TS2728 lib.es2025.iterator.d.ts:--:--: 'Iterator' is declared here.

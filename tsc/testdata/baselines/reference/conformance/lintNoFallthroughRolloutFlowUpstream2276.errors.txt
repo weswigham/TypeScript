@@ -1,6 +1,3 @@
-/input.ts(3,12): error TS2304: Cannot find name 'foo'.
-/input.ts(5,17): error TS2304: Cannot find name 'a'.
-/input.ts(7,24): error TS2304: Cannot find name 'b'.
 /input.ts(12,9): error TS24228: Found a comment that would permit fallthrough, but case cannot fall through.
 
 
@@ -24,20 +21,14 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     
     function f() {
         switch(foo){
-               ~~~
-!!! error TS2304: Cannot find name 'foo'.
             case 1:
                 if (a) {
-                    ~
-!!! error TS2304: Cannot find name 'a'.
                     throw new Error();
                 } else if (b) {
-                           ~
-!!! error TS2304: Cannot find name 'b'.
                     break;
                 } else {
                     return;

@@ -1,8 +1,5 @@
-/input.ts(1,26): error TS2304: Cannot find name 'source'.
-/input.ts(1,49): error TS7006: Parameter 'Object' implicitly has an 'any' type.
 /input.ts(1,49): error TS24214: Identifier 'Object' does not match the pattern '^[a-z]+$'.
 /input.ts(1,59): error TS24214: Identifier 'Object' does not match the pattern '^[a-z]+$'.
-/input.ts(1,71): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,15 +23,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     const good = Object.keys(source); function task(Object) { Object.keys(source); }
-                             ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
-                                                    ~~~~~~
-!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
                                                     ~~~~~~
 !!! error TS24214: Identifier 'Object' does not match the pattern '^[a-z]+$'.
                                                               ~~~~~~
 !!! error TS24214: Identifier 'Object' does not match the pattern '^[a-z]+$'.
-                                                                          ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

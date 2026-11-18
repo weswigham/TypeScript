@@ -1,7 +1,6 @@
 input.ts(2,51): warning TS24226: Unnecessary 'else' after 'return'.
 input.ts(3,72): warning TS24226: Unnecessary 'else' after 'return'.
 input.ts(4,67): warning TS24226: Unnecessary 'else' after 'return'.
-input.ts(5,34): error TS2304: Cannot find name 'value'.
 input.ts(5,68): warning TS24226: Unnecessary 'else' after 'return'.
 
 
@@ -11,7 +10,7 @@ input.ts(5,68): warning TS24226: Unnecessary 'else' after 'return'.
         "lint": { "rules": { "no-else-return": "warn" } },
         "files": ["input.ts"]
     }
-==== input.ts (5 errors) ====
+==== input.ts (4 errors) ====
     declare const ready: boolean, other: boolean;
     function simple() { if (ready) { return 1; } else { console.log(ready); } }
                                                       ~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,8 +22,6 @@ input.ts(5,68): warning TS24226: Unnecessary 'else' after 'return'.
                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! warning TS24226: Unnecessary 'else' after 'return'.
     function through() { console.log(value); if (ready) return 1; else { let value = 2; } }
-                                     ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                                        ~~~~~~~~~~~~~~~~~~
 !!! warning TS24226: Unnecessary 'else' after 'return'.
     function singleStatement() { while (ready) if (other) return 1; else console.log(ready); }

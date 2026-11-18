@@ -1,6 +1,4 @@
-/input.ts(1,24): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
 /input.ts(1,24): error TS20008: Return values from promise executor functions cannot be read.
-/input.ts(1,72): error TS2304: Cannot find name 'ready'.
 /input.ts(1,79): error TS20008: Return values from promise executor functions cannot be read.
 
 
@@ -19,14 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     new Promise(resolve => resolve()); new Promise(function(resolve) { if (ready) return 1; function nested() { return 2; } return; });
-                           ~~~~~~~
-!!! error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
-!!! related TS6210 lib.es2015.promise.d.ts:--:--: An argument for 'value' was not provided.
                            ~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.
-                                                                           ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                                                                                   ~~~~~~~~~
 !!! error TS20008: Return values from promise executor functions cannot be read.

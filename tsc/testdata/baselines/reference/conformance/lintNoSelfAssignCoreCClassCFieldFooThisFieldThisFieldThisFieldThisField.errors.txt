@@ -1,7 +1,4 @@
-/input.ts(1,11): error TS7008: Member '#field' implicitly has an 'any' type.
 /input.ts(1,41): error TS19515: 'this.#field' is assigned to itself.
-/input.ts(1,68): error TS7053: Element implicitly has an 'any' type because expression of type '"#field"' can't be used to index type 'C'.
-  Property '#field' does not exist on type 'C'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,12 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     class C { #field; foo() { this.#field = this.#field; this.#field = this['#field']; } }
-              ~~~~~~
-!!! error TS7008: Member '#field' implicitly has an 'any' type.
                                             ~~~~~~~~~~~
 !!! error TS19515: 'this.#field' is assigned to itself.
-                                                                       ~~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '"#field"' can't be used to index type 'C'.
-!!! error TS7053:   Property '#field' does not exist on type 'C'.

@@ -1,5 +1,4 @@
 /input.ts(1,5): error TS22029: Redundant double negation.
-/input.ts(1,7): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     if (!!value) {}
         ~~~~~~~
 !!! error TS22029: Redundant double negation.
-          ~~~~~
-!!! error TS2304: Cannot find name 'value'.

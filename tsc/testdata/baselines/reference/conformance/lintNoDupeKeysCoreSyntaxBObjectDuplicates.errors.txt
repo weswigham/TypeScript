@@ -1,11 +1,4 @@
-/input.ts(1,24): error TS1117: An object literal cannot have multiple properties with the same name.
 /input.ts(1,25): error TS19356: Duplicate key 'a'.
-/input.ts(1,38): error TS2300: Duplicate identifier 'pair'.
-/input.ts(1,38): error TS2378: A 'get' accessor must return a value.
-/input.ts(1,53): error TS2300: Duplicate identifier 'pair'.
-/input.ts(1,73): error TS1118: An object literal cannot have multiple get/set accessors with the same name.
-/input.ts(1,73): error TS2300: Duplicate identifier 'pair'.
-/input.ts(1,73): error TS2378: A 'get' accessor must return a value.
 /input.ts(1,73): error TS19356: Duplicate key 'pair'.
 
 
@@ -24,23 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (9 errors) ====
+==== /input.ts (2 errors) ====
     const object = { a: 1, ['a']: 2, get pair() {}, set pair(value) {}, get pair() {}, __proto__: null, ['__proto__']: 1 };
-                           ~~~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
                             ~~~
 !!! error TS19356: Duplicate key 'a'.
-                                         ~~~~
-!!! error TS2300: Duplicate identifier 'pair'.
-                                         ~~~~
-!!! error TS2378: A 'get' accessor must return a value.
-                                                        ~~~~
-!!! error TS2300: Duplicate identifier 'pair'.
-                                                                            ~~~~
-!!! error TS1118: An object literal cannot have multiple get/set accessors with the same name.
-                                                                            ~~~~
-!!! error TS2300: Duplicate identifier 'pair'.
-                                                                            ~~~~
-!!! error TS2378: A 'get' accessor must return a value.
                                                                             ~~~~
 !!! error TS19356: Duplicate key 'pair'.

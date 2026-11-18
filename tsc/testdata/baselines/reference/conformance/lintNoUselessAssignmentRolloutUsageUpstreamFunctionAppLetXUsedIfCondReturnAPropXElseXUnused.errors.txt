@@ -1,5 +1,3 @@
-/input.tsx(3,17): error TS2304: Cannot find name 'cond'.
-/input.tsx(4,23): error TS2304: Cannot find name 'A'.
 /input.tsx(6,15): error TS24293: The value assigned to 'x' is not used in subsequent statements.
 
 
@@ -23,15 +21,11 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     function App() {
                 let x = "used";
                 if (cond) {
-                    ~~~~
-!!! error TS2304: Cannot find name 'cond'.
                   return <A prop={x} />;
-                          ~
-!!! error TS2304: Cannot find name 'A'.
                 } else {
                   x = "unused";
                   ~

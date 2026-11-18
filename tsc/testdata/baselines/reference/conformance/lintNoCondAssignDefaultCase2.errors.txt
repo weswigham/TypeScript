@@ -1,4 +1,3 @@
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 /input.ts(1,8): error TS22016: Expected a conditional expression and instead saw an assignment.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     while (value += 1) {}
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.
            ~~~~~~~~~~
 !!! error TS22016: Expected a conditional expression and instead saw an assignment.

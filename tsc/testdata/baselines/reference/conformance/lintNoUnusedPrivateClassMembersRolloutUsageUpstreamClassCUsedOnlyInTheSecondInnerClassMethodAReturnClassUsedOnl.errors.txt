@@ -1,11 +1,4 @@
-/input.ts(2,5): error TS7008: Member '#usedOnlyInTheSecondInnerClass' implicitly has an 'any' type.
 /input.ts(2,5): error TS24288: '#usedOnlyInTheSecondInnerClass' is defined but never used.
-/input.ts(4,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
-/input.ts(6,13): error TS7008: Member '#usedOnlyInTheSecondInnerClass' implicitly has an 'any' type.
-/input.ts(8,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
-/input.ts(9,17): error TS2304: Cannot find name 'foo'.
-/input.ts(12,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
-/input.ts(13,17): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,36 +21,22 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (8 errors) ====
+==== /input.ts (1 errors) ====
     class C {
         #usedOnlyInTheSecondInnerClass;
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7008: Member '#usedOnlyInTheSecondInnerClass' implicitly has an 'any' type.
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24288: '#usedOnlyInTheSecondInnerClass' is defined but never used.
     
         method(a) {
-               ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
             return class {
                 #usedOnlyInTheSecondInnerClass;
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7008: Member '#usedOnlyInTheSecondInnerClass' implicitly has an 'any' type.
     
                 method2(b) {
-                        ~
-!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
                     foo = b.#usedOnlyInTheSecondInnerClass;
-                    ~~~
-!!! error TS2304: Cannot find name 'foo'.
                 }
     
                 method3(b) {
-                        ~
-!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
                     foo = b.#usedOnlyInTheSecondInnerClass;
-                    ~~~
-!!! error TS2304: Cannot find name 'foo'.
                 }
             }
         }

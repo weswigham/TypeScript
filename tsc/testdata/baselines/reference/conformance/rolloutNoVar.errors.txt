@@ -1,13 +1,8 @@
 input.ts(2,1): error TS24305: Unexpected var, use let or const instead.
 input.ts(4,5): error TS24305: Unexpected var, use let or const instead.
 input.ts(5,5): error TS24305: Unexpected var, use let or const instead.
-input.ts(5,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'parameter' must be of type 'number', but here has type 'any'.
-input.ts(6,5): error TS2304: Cannot find name 'consume'.
-input.ts(6,13): error TS2454: Variable 'hoisted' is used before being assigned.
 input.ts(7,5): error TS24305: Unexpected var, use let or const instead.
 input.ts(8,10): error TS24305: Unexpected var, use let or const instead.
-input.ts(8,22): error TS2552: Cannot find name 'values'. Did you mean 'value'?
-input.ts(8,30): error TS2304: Cannot find name 'callbacks'.
 input.ts(9,28): error TS24305: Unexpected var, use let or const instead.
 
 
@@ -15,7 +10,7 @@ input.ts(9,28): error TS24305: Unexpected var, use let or const instead.
     {
         "lint": { "rules": { "no-var": "error" } }
     }
-==== input.ts (11 errors) ====
+==== input.ts (6 errors) ====
     export {};
     var moduleValue = 1;
     ~~~~~~~~~~~~~~~~~~~~
@@ -27,25 +22,13 @@ input.ts(9,28): error TS24305: Unexpected var, use let or const instead.
         var parameter;
         ~~~~~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
-            ~~~~~~~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'parameter' must be of type 'number', but here has type 'any'.
-!!! related TS6203 input.ts:3:23: 'parameter' was also declared here.
         consume(hoisted);
-        ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
-                ~~~~~~~
-!!! error TS2454: Variable 'hoisted' is used before being assigned.
         var hoisted = 2;
         ~~~~~~~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
         for (var item of values) callbacks.push(() => item);
              ~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
-                         ~~~~~~
-!!! error TS2552: Cannot find name 'values'. Did you mean 'value'?
-!!! related TS2728 input.ts:4:24: 'value' is declared here.
-                                 ~~~~~~~~~
-!!! error TS2304: Cannot find name 'callbacks'.
         try {} catch (error) { var error = 1; }
                                ~~~~~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.

@@ -1,8 +1,4 @@
-/input.ts(1,17): error TS2304: Cannot find name 'D'.
-/input.ts(3,17): error TS2377: Constructors for derived classes must contain a 'super' call.
 /input.ts(3,17): error TS24206: Expected to call 'super()'.
-/input.ts(5,25): error TS2304: Cannot find name 'something'.
-/input.ts(6,30): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,25 +16,17 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     class C extends D {
-                    ~
-!!! error TS2304: Cannot find name 'D'.
     
                     constructor() {
-                    ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
                     ~~~~~~~~~~~~~~~
                         do {
     ~~~~~~~~~~~~~~~~~~~~~~~~
                             something();
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                            ~~~~~~~~~
-!!! error TS2304: Cannot find name 'something'.
                         } while (foo);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                 ~~~
-!!! error TS2304: Cannot find name 'foo'.
                     }
     ~~~~~~~~~~~~~~~~~
 !!! error TS24206: Expected to call 'super()'.

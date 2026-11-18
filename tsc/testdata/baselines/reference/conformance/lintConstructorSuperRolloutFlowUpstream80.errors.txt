@@ -1,6 +1,4 @@
-/input.ts(1,17): error TS2304: Cannot find name 'D'.
 /input.ts(5,25): error TS24207: Unexpected duplicate 'super()'.
-/input.ts(6,30): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,10 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     class C extends D {
-                    ~
-!!! error TS2304: Cannot find name 'D'.
     
                     constructor() {
                         do {
@@ -29,8 +25,6 @@
                             ~~~~~~~
 !!! error TS24207: Unexpected duplicate 'super()'.
                         } while (foo);
-                                 ~~~
-!!! error TS2304: Cannot find name 'foo'.
                     }
     
                 }

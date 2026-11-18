@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
-/input.ts(1,49): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function test(a = 0) { const [{ b = 0 } = {}] = value; }
     ~~~~~~~~~~~~~
 !!! error TS19856: Function 'test' has a complexity of 4. Maximum allowed is 3.
-                                                    ~~~~~
-!!! error TS2304: Cannot find name 'value'.

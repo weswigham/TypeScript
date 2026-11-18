@@ -1,7 +1,4 @@
-/input.ts(1,56): error TS2304: Cannot find name 'custom'.
 /input.ts(1,56): error TS24231: Read-only global 'custom' should not be modified.
-/input.ts(1,68): error TS2304: Cannot find name 'writable'.
-/input.ts(1,80): error TS2304: Cannot find name 'disabled'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     /* global custom:false, writable:true, disabled:off */ custom = 1; writable++; disabled = 1;
                                                            ~~~~~~
-!!! error TS2304: Cannot find name 'custom'.
-                                                           ~~~~~~
 !!! error TS24231: Read-only global 'custom' should not be modified.
-                                                                       ~~~~~~~~
-!!! error TS2304: Cannot find name 'writable'.
-                                                                                   ~~~~~~~~
-!!! error TS2304: Cannot find name 'disabled'.

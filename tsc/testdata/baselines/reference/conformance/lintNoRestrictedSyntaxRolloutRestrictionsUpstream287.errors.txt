@@ -1,7 +1,4 @@
 /input.tsx(1,1): error TS24277: custom message with {{selector}}
-/input.tsx(1,14): error TS7006: Parameter 'bar' implicitly has an 'any' type.
-/input.tsx(1,19): error TS7006: Parameter 'baz' implicitly has an 'any' type.
-/input.tsx(1,24): error TS7006: Parameter 'qux' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,13 +22,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (4 errors) ====
+==== /input.tsx (1 errors) ====
     function foo(bar, baz, qux) {}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24277: custom message with {{selector}}
-                 ~~~
-!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.
-                      ~~~
-!!! error TS7006: Parameter 'baz' implicitly has an 'any' type.
-                           ~~~
-!!! error TS7006: Parameter 'qux' implicitly has an 'any' type.

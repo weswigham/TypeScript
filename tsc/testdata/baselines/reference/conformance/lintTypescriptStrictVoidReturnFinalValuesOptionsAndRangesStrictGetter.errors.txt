@@ -1,4 +1,3 @@
-/input.ts(1,57): error TS2423: Class 'Base' defines instance member function 'fn', but extended class 'Derived' defines it as instance member accessor.
 /input.ts(1,64): error TS24186: Value returned in a context where a void return is expected.
 
 
@@ -19,9 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Base { fn() {} } class Derived extends Base { get fn() { return () => 1; } }
-                                                            ~~
-!!! error TS2423: Class 'Base' defines instance member function 'fn', but extended class 'Derived' defines it as instance member accessor.
                                                                    ~~~~~~
 !!! error TS24186: Value returned in a context where a void return is expected.

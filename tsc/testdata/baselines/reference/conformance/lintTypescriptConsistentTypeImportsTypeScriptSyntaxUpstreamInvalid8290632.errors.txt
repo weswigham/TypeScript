@@ -1,6 +1,4 @@
 /input.ts(2,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(2,19): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,14 +26,10 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     
     import { A } from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                      ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     export = {} as A;
-    ~~~~~~~~~~~~~~~~~
-!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
               

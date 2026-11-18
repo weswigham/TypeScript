@@ -1,6 +1,5 @@
 /input.ts(1,16): error TS24305: Unexpected var, use let or const instead.
 /input.ts(1,27): error TS24305: Unexpected var, use let or const instead.
-/input.ts(1,31): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'number', but here has type 'any'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,12 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     function f() { var x = 1; var x; }
                    ~~~~~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
                               ~~~~~~
 !!! error TS24305: Unexpected var, use let or const instead.
-                                  ~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'number', but here has type 'any'.
-!!! related TS6203 /input.ts:1:20: 'x' was also declared here.

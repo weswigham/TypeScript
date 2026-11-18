@@ -1,4 +1,3 @@
-/input.ts(1,5): error TS2304: Cannot find name 'ready'.
 /input.ts(1,14): error TS20010: Move function declaration to program root.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     if (ready) { function nested() {} var item; } function run() { function root() {} }
-        ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                  ~~~~~~~~~~~~~~~~~~~~
 !!! error TS20010: Move function declaration to program root.

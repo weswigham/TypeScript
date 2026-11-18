@@ -1,5 +1,4 @@
 /input.ts(1,39): error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.
-/input.ts(1,54): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let value = 0; async function run() { value += await work(); }
                                           ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24336: Possible race condition: `value` might be reassigned based on an outdated value of `value`.
-                                                         ~~~~
-!!! error TS2304: Cannot find name 'work'.

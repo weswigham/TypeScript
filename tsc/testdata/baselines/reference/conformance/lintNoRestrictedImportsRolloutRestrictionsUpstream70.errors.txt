@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24255: 'fs' import is restricted from being used.
-/input.tsx(1,8): error TS2882: Cannot find module or type declarations for side-effect import of 'fs'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import "fs"
     ~~~~~~~~~~~
 !!! error TS24255: 'fs' import is restricted from being used.
-           ~~~~
-!!! error TS2882: Cannot find module or type declarations for side-effect import of 'fs'.

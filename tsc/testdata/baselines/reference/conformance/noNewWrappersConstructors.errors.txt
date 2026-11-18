@@ -3,12 +3,6 @@ input.ts(2,1): error TS19004: Do not use Number as a constructor.
 input.ts(3,1): error TS19004: Do not use Boolean as a constructor.
 input.ts(4,1): error TS19004: Do not use String as a constructor.
 input.ts(5,1): error TS19004: Do not use Boolean as a constructor.
-input.ts(12,16): error TS7006: Parameter 'String' implicitly has an 'any' type.
-input.ts(12,24): error TS7006: Parameter 'Number' implicitly has an 'any' type.
-input.ts(12,32): error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
-input.ts(18,20): error TS2304: Cannot find name 'Custom'.
-shadowed.ts(2,5): error TS2304: Cannot find name 'condition'.
-shadowed.ts(5,19): error TS2304: Cannot find name 'Custom'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -18,7 +12,7 @@ shadowed.ts(5,19): error TS2304: Cannot find name 'Custom'.
         "files": ["input.ts", "shadowed.ts", "imported.ts", "custom.ts"]
     }
     
-==== input.ts (9 errors) ====
+==== input.ts (5 errors) ====
     new String("value");
     ~~~~~~~~~~~~~~~~~~~
 !!! error TS19004: Do not use String as a constructor.
@@ -41,33 +35,21 @@ shadowed.ts(5,19): error TS2304: Cannot find name 'Custom'.
     new window.String("value");
     String.fromCharCode(32);
     function local(String, Number, Boolean) {
-                   ~~~~~~
-!!! error TS7006: Parameter 'String' implicitly has an 'any' type.
-                           ~~~~~~
-!!! error TS7006: Parameter 'Number' implicitly has an 'any' type.
-                                   ~~~~~~~
-!!! error TS7006: Parameter 'Boolean' implicitly has an 'any' type.
         new String();
         new Number();
         new Boolean();
     }
     {
         const String = Custom;
-                       ~~~~~~
-!!! error TS2304: Cannot find name 'Custom'.
         new String();
     }
     
-==== shadowed.ts (2 errors) ====
+==== shadowed.ts (0 errors) ====
     export {};
     if (condition) {
-        ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
         new Boolean();
     } else {
         var Boolean = Custom;
-                      ~~~~~~
-!!! error TS2304: Cannot find name 'Custom'.
     }
     
 ==== imported.ts (0 errors) ====

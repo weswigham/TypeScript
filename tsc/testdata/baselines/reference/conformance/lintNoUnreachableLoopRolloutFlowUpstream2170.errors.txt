@@ -1,7 +1,4 @@
 /input.ts(1,24): error TS24284: Invalid loop. Its body allows only one iteration.
-/input.ts(1,46): error TS2304: Cannot find name 'b'.
-/input.ts(1,56): error TS2588: Cannot assign to 'a' because it is a constant.
-/input.ts(1,61): error TS2304: Cannot find name 'b'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     async function foo() { for await (const a of b) { for (a in b); break; } }
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24284: Invalid loop. Its body allows only one iteration.
-                                                 ~
-!!! error TS2304: Cannot find name 'b'.
-                                                           ~
-!!! error TS2588: Cannot assign to 'a' because it is a constant.
-                                                                ~
-!!! error TS2304: Cannot find name 'b'.

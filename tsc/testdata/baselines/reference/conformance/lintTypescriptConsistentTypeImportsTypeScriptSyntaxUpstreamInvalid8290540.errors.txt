@@ -1,7 +1,5 @@
 /input.ts(2,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(2,19): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 /input.ts(3,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.ts(3,15): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,18 +27,14 @@
             "/input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     
     import { A } from 'foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                      ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     import B from 'foo';
     ~~~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                  ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     type T = A;
     type U = B;
               

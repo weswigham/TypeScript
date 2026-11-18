@@ -1,5 +1,4 @@
 /input.tsx(1,8): error TS24261: * import is invalid because 'Foo' and 'Bar' from 'foo-bar-baz' are restricted from being used by a pattern.
-/input.tsx(1,22): error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -32,9 +31,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import * as All from 'foo-bar-baz';
            ~~~~~~~~
 !!! error TS24261: * import is invalid because 'Foo' and 'Bar' from 'foo-bar-baz' are restricted from being used by a pattern.
-                         ~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.

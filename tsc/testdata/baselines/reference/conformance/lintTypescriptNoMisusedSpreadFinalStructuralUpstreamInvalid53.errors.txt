@@ -1,5 +1,4 @@
 /input.tsx(3,13): error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
-/input.tsx(3,16): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +18,10 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     declare function getPromise<T extends Promise<number>>(arg: T): T;
     const o = { ...getPromise() };
                 ~~~~~~~~~~~~~~~
 !!! error TS24060: Using the spread operator on Promise in an object can cause unexpected behavior. Did you forget to await the promise?
-                   ~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.tsx:2:56: An argument for 'arg' was not provided.
           

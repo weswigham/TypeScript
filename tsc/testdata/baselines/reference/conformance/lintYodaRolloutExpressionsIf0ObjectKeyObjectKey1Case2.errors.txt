@@ -1,7 +1,4 @@
 /input.ts(1,5): error TS24366: Expected literal to be on the right side of <=.
-/input.ts(1,10): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(1,17): error TS2304: Cannot find name 'key'.
-/input.ts(1,25): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,15 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     if (0 <= object[key] && object['key'] <= 1) {}
         ~~~~~~~~~~~~~~~~
 !!! error TS24366: Expected literal to be on the right side of <=.
-             ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                    ~~~
-!!! error TS2304: Cannot find name 'key'.
-                            ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

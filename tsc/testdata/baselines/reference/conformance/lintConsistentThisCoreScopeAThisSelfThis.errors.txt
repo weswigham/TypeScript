@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2365: Operator '+=' cannot be applied to types 'Window & typeof globalThis' and 'typeof globalThis'.
 /input.ts(1,1): error TS19857: Designated alias 'self' is not assigned to 'this'.
 
 
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     self += this;
-    ~~~~~~~~~~~~
-!!! error TS2365: Operator '+=' cannot be applied to types 'Window & typeof globalThis' and 'typeof globalThis'.
     ~~~~~~~~~~~~
 !!! error TS19857: Designated alias 'self' is not assigned to 'this'.

@@ -1,6 +1,4 @@
 /input.ts(1,7): error TS20168: Unexpected dangling '_' in '_value'.
-/input.ts(1,38): error TS2304: Cannot find name 'source'.
-/input.ts(1,46): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,12 +24,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     const { _allowed, nested: _value } = source; object._allowed;
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_value'.
-                                         ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
-                                                 ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

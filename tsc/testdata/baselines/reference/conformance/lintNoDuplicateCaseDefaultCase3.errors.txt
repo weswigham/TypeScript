@@ -1,7 +1,4 @@
-/input.ts(1,9): error TS2304: Cannot find name 'value'.
-/input.ts(1,23): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 /input.ts(1,47): error TS22012: Duplicate case label.
-/input.ts(1,52): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     switch (value) { case object.property: break; case object /* keep */ . property: break; }
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                          ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22012: Duplicate case label.
-                                                       ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

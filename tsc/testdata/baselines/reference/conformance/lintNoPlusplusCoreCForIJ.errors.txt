@@ -1,5 +1,3 @@
-/input.ts(1,9): error TS2304: Cannot find name 'i'.
-/input.ts(1,13): error TS2304: Cannot find name 'j'.
 /input.ts(1,13): error TS19504: Unary operator '++' used.
 
 
@@ -23,11 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     for (;; i = j++) {}
-            ~
-!!! error TS2304: Cannot find name 'i'.
-                ~
-!!! error TS2304: Cannot find name 'j'.
                 ~~~
 !!! error TS19504: Unary operator '++' used.

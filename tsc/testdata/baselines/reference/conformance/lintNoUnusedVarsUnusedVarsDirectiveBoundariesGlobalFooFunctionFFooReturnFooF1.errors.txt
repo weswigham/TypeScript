@@ -1,5 +1,4 @@
 /input.ts(1,11): error TS24290: 'foo' is defined but never used.
-/input.ts(1,29): error TS7006: Parameter 'foo' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /* global foo */ function f(foo) { return foo; } f(1);
               ~~~
 !!! error TS24290: 'foo' is defined but never used.
-                                ~~~
-!!! error TS7006: Parameter 'foo' implicitly has an 'any' type.

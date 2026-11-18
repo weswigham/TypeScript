@@ -1,5 +1,4 @@
 /input.ts(1,8): error TS19659: Unnecessary catch clause.
-/input.ts(1,39): error TS2304: Cannot find name 'unreachable'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw (error); unreachable(); } finally {}
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19659: Unnecessary catch clause.
-                                          ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'unreachable'.

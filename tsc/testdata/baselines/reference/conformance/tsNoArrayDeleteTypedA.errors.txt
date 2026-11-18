@@ -1,6 +1,5 @@
 input.ts(2,1): error TS20722: Using the `delete` operator with an array expression is unsafe.
 input.ts(4,1): error TS20722: Using the `delete` operator with an array expression is unsafe.
-input.ts(4,8): error TS2790: The operand of a 'delete' operator must be optional.
 input.ts(8,1): error TS20722: Using the `delete` operator with an array expression is unsafe.
 input.ts(10,5): error TS20722: Using the `delete` operator with an array expression is unsafe.
 
@@ -9,7 +8,7 @@ input.ts(10,5): error TS20722: Using the `delete` operator with an array express
     {
         "lint": { "rules": { "@typescript-eslint/no-array-delete": "error" } }
     }
-==== input.ts (5 errors) ====
+==== input.ts (4 errors) ====
     declare const array: number[];
     delete array[0];
     ~~~~~~~~~~~~~~~
@@ -18,8 +17,6 @@ input.ts(10,5): error TS20722: Using the `delete` operator with an array express
     delete tuple[0];
     ~~~~~~~~~~~~~~~
 !!! error TS20722: Using the `delete` operator with an array expression is unsafe.
-           ~~~~~~~~
-!!! error TS2790: The operand of a 'delete' operator must be optional.
     declare const mixed: number[] | { [key: number]: number };
     delete mixed[0];
     declare const intersected: string & number[];

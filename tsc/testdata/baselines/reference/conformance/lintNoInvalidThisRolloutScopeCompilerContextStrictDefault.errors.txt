@@ -1,4 +1,3 @@
-/input.ts(1,22): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 /input.ts(1,22): error TS21310: Unexpected 'this'.
 
 
@@ -25,9 +24,7 @@
     interface Function {}
     interface Array<T> {}
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     this; function f() { this; }
-                         ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
                          ~~~~
 !!! error TS21310: Unexpected 'this'.

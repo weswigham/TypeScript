@@ -1,6 +1,4 @@
-/input.ts(1,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
 /input.ts(1,45): error TS24249: Assignment to function parameter 'value'.
-/input.ts(1,74): error TS7006: Parameter 'value' implicitly has an 'any' type.
 /input.ts(1,83): error TS24249: Assignment to function parameter 'value'.
 
 
@@ -19,13 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     function task(value) { function closure() { value = 1; } function shadow(value) { value = 1; } { let value; value = 1; } }
-                  ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
                                                 ~~~~~
 !!! error TS24249: Assignment to function parameter 'value'.
-                                                                             ~~~~~
-!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
                                                                                       ~~~~~
 !!! error TS24249: Assignment to function parameter 'value'.

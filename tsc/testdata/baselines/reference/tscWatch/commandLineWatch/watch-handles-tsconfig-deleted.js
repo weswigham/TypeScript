@@ -119,7 +119,7 @@ Diff:: incremental reports config read error while clean build without tsconfig 
 -Lint input files after checking.
 -
 -[94m--lintOnly[39m
--Lint input files without emitting JavaScript or declarations.
+-Lint input files without checking or emitting JavaScript or declarations.
 -
 -[94m--fix[39m
 -Apply available lint fixes to input files.

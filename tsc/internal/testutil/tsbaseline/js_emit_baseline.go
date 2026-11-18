@@ -104,7 +104,7 @@ func DoJSEmitBaseline(
 		))
 	}
 
-	if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() && !options.LintOnly.IsTrue() {
+	if !options.GetNoCheck() && !options.NoEmit.IsTrue() && !options.LintOnly.IsTrue() {
 		testConfig := make(map[string]string)
 		testConfig["noCheck"] = "true"
 		withoutChecking := result.Repeat(testConfig)

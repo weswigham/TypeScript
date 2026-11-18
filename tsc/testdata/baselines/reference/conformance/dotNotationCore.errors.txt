@@ -1,16 +1,8 @@
-input.ts(1,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(1,8): error TS22050: ["name"] is better written in dot notation.
-input.ts(2,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(2,8): error TS22050: [`value`] is better written in dot notation.
-input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(3,10): error TS22050: ["optional"] is better written in dot notation.
-input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(4,19): error TS22050: ["commented"] is better written in dot notation.
-input.ts(5,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(6,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(7,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(7,8): error TS22050: [true] is better written in dot notation.
-input.ts(8,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(8,8): error TS22050: [null] is better written in dot notation.
 
 
@@ -20,48 +12,24 @@ input.ts(8,8): error TS22050: [null] is better written in dot notation.
         "lint": { "rules": { "dot-notation": ["error", { "allowPattern": "^allowed$" }] } },
         "files": ["input.ts"]
     }
-==== input.ts (14 errors) ====
+==== input.ts (6 errors) ====
     object["name"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~
 !!! error TS22050: ["name"] is better written in dot notation.
     object[`value`];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~~
 !!! error TS22050: [`value`] is better written in dot notation.
     object?.["optional"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
              ~~~~~~~~~~
 !!! error TS22050: ["optional"] is better written in dot notation.
     object[/* Keep */ "commented"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
                       ~~~~~~~~~~~
 !!! error TS22050: ["commented"] is better written in dot notation.
     object["allowed"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object["with space"];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object[true];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~
 !!! error TS22050: [true] is better written in dot notation.
     object[null];
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~
 !!! error TS22050: [null] is better written in dot notation.

@@ -1,4 +1,3 @@
-/input.ts(1,8): error TS2304: Cannot find name 'a'.
 /input.ts(1,15): error TS24290: 'foo' is defined but never used.
 
 
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     while (a) var foo;
-           ~
-!!! error TS2304: Cannot find name 'a'.
                   ~~~
 !!! error TS24290: 'foo' is defined but never used.

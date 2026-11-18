@@ -1,7 +1,5 @@
 /input.ts(1,6): error TS24293: The value assigned to 'first' is not used in subsequent statements.
 /input.ts(1,23): error TS24293: The value assigned to 'first' is not used in subsequent statements.
-/input.ts(1,37): error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
-/input.ts(1,55): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,14 +22,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     let {first, second = (first = 1)} = input; first = 2; consume(first, second);
          ~~~~~
 !!! error TS24293: The value assigned to 'first' is not used in subsequent statements.
                           ~~~~~
 !!! error TS24293: The value assigned to 'first' is not used in subsequent statements.
-                                        ~~~~~
-!!! error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
-!!! related TS2728 lib.dom.d.ts:--:--: 'oninput' is declared here.
-                                                          ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

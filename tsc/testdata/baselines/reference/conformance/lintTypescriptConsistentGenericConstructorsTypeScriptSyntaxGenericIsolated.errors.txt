@@ -1,5 +1,3 @@
-/input.ts(1,14): error TS2304: Cannot find name 'Box'.
-/input.ts(1,32): error TS2304: Cannot find name 'Box'.
 /tsconfig.json(5,9): error TS5069: Option 'isolatedDeclarations' cannot be specified without specifying option 'declaration' or option 'composite'.
 
 
@@ -21,9 +19,5 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (0 errors) ====
     const value: Box<string> = new Box();
-                 ~~~
-!!! error TS2304: Cannot find name 'Box'.
-                                   ~~~
-!!! error TS2304: Cannot find name 'Box'.

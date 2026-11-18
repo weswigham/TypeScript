@@ -1,5 +1,4 @@
 /input.ts(1,11): error TS24328: Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`.
-/input.ts(1,30): error TS2378: A 'get' accessor must return a value.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const o = Object.assign({get x() {}});
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24328: Use an object literal instead of `Object.assign`. eg: `{ foo: bar }`.
-                                 ~
-!!! error TS2378: A 'get' accessor must return a value.

@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS24317: Split requires to be separated into a single block.
-/input.ts(1,9): error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const a=require('a'), b=1;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24317: Split requires to be separated into a single block.
-            ~~~~~~~
-!!! error TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.

@@ -1,5 +1,4 @@
 /input.ts(3,1): error TS24290: 'foo' is assigned a value but never used.
-/input.ts(3,7): error TS18048: 'foo' is possibly 'undefined'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,12 +21,10 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let foo;
     init();
     foo = foo + 2;
     ~~~
 !!! error TS24290: 'foo' is assigned a value but never used.
-          ~~~
-!!! error TS18048: 'foo' is possibly 'undefined'.
     function init() {foo = 1;}

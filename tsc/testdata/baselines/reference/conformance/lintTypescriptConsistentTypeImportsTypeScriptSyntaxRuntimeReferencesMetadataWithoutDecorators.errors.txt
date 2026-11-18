@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS21282: All imports in the declaration are only used as types. Use `import type`.
-/input.tsx(1,15): error TS2307: Cannot find module 'x' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,9 +20,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import A from 'x'; type T = A;
     ~~~~~~~~~~~~~~~~~~
 !!! error TS21282: All imports in the declaration are only used as types. Use `import type`.
-                  ~~~
-!!! error TS2307: Cannot find module 'x' or its corresponding type declarations.

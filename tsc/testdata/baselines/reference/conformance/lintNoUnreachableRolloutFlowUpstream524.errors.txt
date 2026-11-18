@@ -1,4 +1,3 @@
-/input.ts(1,36): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 /input.ts(1,43): error TS24283: Unreachable code.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     throw new Error(); import foo from 'foo'; foo();
-                                       ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
                                               ~~~~~~
 !!! error TS24283: Unreachable code.

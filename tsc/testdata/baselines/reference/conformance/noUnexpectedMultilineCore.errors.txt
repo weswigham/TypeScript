@@ -1,24 +1,7 @@
-input.ts(1,7): error TS7022: 'value' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-input.ts(1,16): error TS2304: Cannot find name 'foo'.
-input.ts(1,23): error TS2304: Cannot find name 'bar'.
 input.ts(2,1): error TS19662: Unexpected newline between function and ( of function call.
-input.ts(2,2): error TS2448: Block-scoped variable 'value' used before its declaration.
-input.ts(3,18): error TS2304: Cannot find name 'foo'.
 input.ts(4,1): error TS19663: Unexpected newline between object and [ of property access.
-input.ts(4,2): error TS2304: Cannot find name 'key'.
-input.ts(5,1): error TS2304: Cannot find name 'tag'.
 input.ts(6,1): error TS19664: Unexpected newline between template tag and template literal.
-input.ts(7,1): error TS2304: Cannot find name 'foo'.
 input.ts(8,1): error TS19665: Unexpected newline between numerator and division operator.
-input.ts(8,2): error TS2304: Cannot find name 'bar'.
-input.ts(8,6): error TS2304: Cannot find name 'g'.
-input.ts(9,1): error TS2304: Cannot find name 'foo'.
-input.ts(11,1): error TS2304: Cannot find name 'foo'.
-input.ts(13,1): error TS2304: Cannot find name 'foo'.
-input.ts(14,2): error TS2304: Cannot find name 'key'.
-input.ts(15,1): error TS2304: Cannot find name 'foo'.
-input.ts(15,6): error TS2304: Cannot find name 'bar'.
-input.ts(15,10): error TS2304: Cannot find name 'g'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -28,62 +11,27 @@ input.ts(15,10): error TS2304: Cannot find name 'g'.
         "files": ["input.ts"]
     }
     
-==== input.ts (21 errors) ====
+==== input.ts (4 errors) ====
     const value = (foo || bar)
-          ~~~~~
-!!! error TS7022: 'value' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-                   ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                          ~~~
-!!! error TS2304: Cannot find name 'bar'.
     (value).method();
     ~
 !!! error TS19662: Unexpected newline between function and ( of function call.
-     ~~~~~
-!!! error TS2448: Block-scoped variable 'value' used before its declaration.
-!!! related TS2728 input.ts:1:7: 'value' is declared here.
     const property = foo
-                     ~~~
-!!! error TS2304: Cannot find name 'foo'.
     [key];
     ~
 !!! error TS19663: Unexpected newline between object and [ of property access.
-     ~~~
-!!! error TS2304: Cannot find name 'key'.
     tag
-    ~~~
-!!! error TS2304: Cannot find name 'tag'.
     `template`;
     ~
 !!! error TS19664: Unexpected newline between template tag and template literal.
     foo
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     /bar/g.test(value);
     ~
 !!! error TS19665: Unexpected newline between numerator and division operator.
-     ~~~
-!!! error TS2304: Cannot find name 'bar'.
-         ~
-!!! error TS2304: Cannot find name 'g'.
     foo
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ();
     foo
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     ?.(value);
     foo?.
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
     [key];
-     ~~~
-!!! error TS2304: Cannot find name 'key'.
     foo /bar/g;
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
-         ~~~
-!!! error TS2304: Cannot find name 'bar'.
-             ~
-!!! error TS2304: Cannot find name 'g'.

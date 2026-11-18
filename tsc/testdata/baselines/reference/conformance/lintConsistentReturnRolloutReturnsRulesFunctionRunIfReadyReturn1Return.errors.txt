@@ -1,4 +1,3 @@
-/input.ts(1,22): error TS2304: Cannot find name 'ready'.
 /input.ts(1,39): error TS24007: Function 'run' expected a return value.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function run() { if (ready) return 1; return; }
-                         ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                                           ~~~~~~~
 !!! error TS24007: Function 'run' expected a return value.

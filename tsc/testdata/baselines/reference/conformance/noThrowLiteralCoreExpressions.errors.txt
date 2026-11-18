@@ -5,21 +5,10 @@ input.ts(4,1): error TS19516: Expected an error object to be thrown.
 input.ts(5,1): error TS19516: Expected an error object to be thrown.
 input.ts(6,1): error TS19517: Do not throw undefined.
 input.ts(7,1): error TS19516: Expected an error object to be thrown.
-input.ts(7,13): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
 input.ts(8,1): error TS19516: Expected an error object to be thrown.
-input.ts(8,7): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
 input.ts(9,1): error TS19516: Expected an error object to be thrown.
-input.ts(9,7): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
 input.ts(10,1): error TS19516: Expected an error object to be thrown.
-input.ts(10,7): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
 input.ts(11,1): error TS19516: Expected an error object to be thrown.
-input.ts(11,10): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-input.ts(13,7): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-input.ts(14,7): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-input.ts(15,7): error TS2304: Cannot find name 'foo'.
-input.ts(16,7): error TS2304: Cannot find name 'tag'.
-input.ts(16,13): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-input.ts(17,19): error TS7006: Parameter 'undefined' implicitly has an 'any' type.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -29,7 +18,7 @@ input.ts(17,19): error TS7006: Parameter 'undefined' implicitly has an 'any' typ
         "files": ["input.ts"]
     }
     
-==== input.ts (22 errors) ====
+==== input.ts (11 errors) ====
     throw 'error';
     ~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
@@ -51,51 +40,21 @@ input.ts(17,19): error TS7006: Parameter 'undefined' implicitly has an 'any' typ
     throw 'a' + error;
     ~~~~~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
-                ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw error += new Error();
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
-          ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw error &&= 'literal';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
-          ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw error && 'literal';
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
-          ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw `${error}`;
     ~~~~~~~~~~~~~~~~~
 !!! error TS19516: Expected an error object to be thrown.
-             ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw new Error();
     throw error ||= 'literal';
-          ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw error ??= 'literal';
-          ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     throw foo ? new Error() : 'literal';
-          ~~~
-!!! error TS2304: Cannot find name 'foo'.
     throw tag`${error}`;
-          ~~~
-!!! error TS2304: Cannot find name 'tag'.
-                ~~~~~
-!!! error TS2552: Cannot find name 'error'. Did you mean 'Error'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
     function shadowed(undefined) { throw undefined; }
-                      ~~~~~~~~~
-!!! error TS7006: Parameter 'undefined' implicitly has an 'any' type.

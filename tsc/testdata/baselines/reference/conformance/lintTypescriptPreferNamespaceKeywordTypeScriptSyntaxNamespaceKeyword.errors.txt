@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS20469: Use 'namespace' instead of 'module' to declare custom TypeScript modules.
-/input.ts(1,16): error TS1540: A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare module Value {}
     ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20469: Use 'namespace' instead of 'module' to declare custom TypeScript modules.
-                   ~~~~~
-!!! error TS1540: A 'namespace' declaration should not be declared using the 'module' keyword. Please use the 'namespace' keyword instead.

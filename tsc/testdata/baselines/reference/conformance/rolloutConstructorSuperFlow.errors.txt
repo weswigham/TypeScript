@@ -1,8 +1,6 @@
-input.ts(3,30): error TS2377: Constructors for derived classes must contain a 'super' call.
 input.ts(3,30): error TS24206: Expected to call 'super()'.
 input.ts(4,34): error TS24205: Lacked a call of 'super()' in some code paths.
 input.ts(5,57): error TS24207: Unexpected duplicate 'super()'.
-input.ts(7,31): error TS2377: Constructors for derived classes must contain a 'super' call.
 input.ts(8,48): error TS24207: Unexpected duplicate 'super()'.
 
 
@@ -12,12 +10,10 @@ input.ts(8,48): error TS24207: Unexpected duplicate 'super()'.
         "files": ["input.ts"]
     }
     
-==== input.ts (6 errors) ====
+==== input.ts (4 errors) ====
     declare class Base {}
     declare const flag: boolean;
     class Missing extends Base { constructor() {} }
-                                 ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
                                  ~~~~~~~~~~~~~~~~
 !!! error TS24206: Expected to call 'super()'.
     class Conditional extends Base { constructor() { flag && super(); } }
@@ -28,8 +24,6 @@ input.ts(8,48): error TS24207: Unexpected duplicate 'super()'.
 !!! error TS24207: Unexpected duplicate 'super()'.
     class Finalized extends Base { constructor() { try { return; } finally { super(); } } }
     class Returned extends Base { constructor() { return {}; } }
-                                  ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
     class Loop extends Base { constructor() { do { super(); } while (flag); } }
                                                    ~~~~~~~
 !!! error TS24207: Unexpected duplicate 'super()'.

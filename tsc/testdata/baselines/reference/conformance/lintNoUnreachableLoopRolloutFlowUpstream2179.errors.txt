@@ -1,7 +1,5 @@
 /input.ts(1,6): error TS24284: Invalid loop. Its body allows only one iteration.
-/input.ts(1,12): error TS2304: Cannot find name 'foo'.
 /input.ts(1,19): error TS24284: Invalid loop. Its body allows only one iteration.
-/input.ts(1,43): error TS2304: Cannot find name 'baz'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     lbl: while(foo) { do { break lbl; } while(baz) }
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24284: Invalid loop. Its body allows only one iteration.
-               ~~~
-!!! error TS2304: Cannot find name 'foo'.
                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24284: Invalid loop. Its body allows only one iteration.
-                                              ~~~
-!!! error TS2304: Cannot find name 'baz'.

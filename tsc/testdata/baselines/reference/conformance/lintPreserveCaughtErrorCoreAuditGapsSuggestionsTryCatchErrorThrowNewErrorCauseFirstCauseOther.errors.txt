@@ -1,6 +1,3 @@
-/input.ts(1,52): error TS2304: Cannot find name 'first'.
-/input.ts(1,59): error TS1117: An object literal cannot have multiple properties with the same name.
-/input.ts(1,66): error TS2304: Cannot find name 'other'.
 /input.ts(1,66): error TS20271: The symptom error is being thrown with an incorrect `cause`.
 
 
@@ -20,13 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new Error('', {cause: first, cause: other}); }
-                                                       ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                                              ~~~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
-                                                                     ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                                                                      ~~~~~
 !!! error TS20271: The symptom error is being thrown with an incorrect `cause`.

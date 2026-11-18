@@ -1,6 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter '_a' implicitly has an 'any' type.
 /input.ts(1,14): error TS24290: '_a' is defined but never used. Allowed unused args must match /[iI]gnored/u.
-/input.ts(1,22): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,12 +27,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function foo(_a) { } foo();
                  ~~
-!!! error TS7006: Parameter '_a' implicitly has an 'any' type.
-                 ~~
 !!! error TS24290: '_a' is defined but never used. Allowed unused args must match /[iI]gnored/u.
-                         ~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.ts:1:14: An argument for '_a' was not provided.

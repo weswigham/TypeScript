@@ -1,8 +1,4 @@
-/input.ts(1,11): error TS2391: Function implementation is missing or not immediately following the declaration.
-/input.ts(1,23): error TS2391: Function implementation is missing or not immediately following the declaration.
-/input.ts(1,37): error TS2391: Function implementation is missing or not immediately following the declaration.
 /input.ts(1,37): error TS19100: All #f signatures should be adjacent.
-/input.ts(1,58): error TS2391: Function implementation is missing or not immediately following the declaration.
 /input.ts(1,58): error TS19100: All "#f" signatures should be adjacent.
 
 
@@ -21,17 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     class C { #f(): void; '#f'(): void; #f(a: number): void; '#f'(a: number): void; }
-              ~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
-                          ~~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
-                                        ~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
                                         ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19100: All #f signatures should be adjacent.
-                                                             ~~~~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
                                                              ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19100: All "#f" signatures should be adjacent.

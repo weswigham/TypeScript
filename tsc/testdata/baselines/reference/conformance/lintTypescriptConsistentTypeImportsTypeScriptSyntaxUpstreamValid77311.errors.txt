@@ -1,5 +1,3 @@
-/input.ts(2,17): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
-/input.ts(3,22): error TS2448: Block-scoped variable 'foo' used before its declaration.
 /tsconfig.json(3,9): error TS5052: Option 'emitDecoratorMetadata' cannot be specified without specifying option 'experimentalDecorators'.
 
 
@@ -24,13 +22,8 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (0 errors) ====
     
     import foo from 'foo';
-                    ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.
     const foo: foo.Foo = foo.fn();
-                         ~~~
-!!! error TS2448: Block-scoped variable 'foo' used before its declaration.
-!!! related TS2728 /input.ts:3:7: 'foo' is declared here.
             

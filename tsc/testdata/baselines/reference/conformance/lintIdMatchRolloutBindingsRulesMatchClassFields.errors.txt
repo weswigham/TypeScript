@@ -1,6 +1,4 @@
-/input.ts(1,14): error TS7008: Member 'bad_name' implicitly has an 'any' type.
 /input.ts(1,14): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-/input.ts(1,24): error TS7008: Member '#bad_name' implicitly has an 'any' type.
 /input.ts(1,24): error TS24215: Identifier '#bad_name' does not match the pattern '^[a-z]+$'.
 
 
@@ -25,13 +23,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     class good { bad_name; #bad_name; }
                  ~~~~~~~~
-!!! error TS7008: Member 'bad_name' implicitly has an 'any' type.
-                 ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-                           ~~~~~~~~~
-!!! error TS7008: Member '#bad_name' implicitly has an 'any' type.
                            ~~~~~~~~~
 !!! error TS24215: Identifier '#bad_name' does not match the pattern '^[a-z]+$'.

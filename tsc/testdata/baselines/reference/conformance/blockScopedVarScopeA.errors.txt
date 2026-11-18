@@ -1,11 +1,7 @@
-input.ts(1,37): error TS2304: Cannot find name 'use'.
 input.ts(1,41): error TS19862: 'value' declared on line 1 column 28 is used outside of binding context.
 input.ts(3,26): error TS19862: 'value' declared on line 3 column 50 is used outside of binding context.
 input.ts(3,50): error TS19862: 'value' declared on line 3 column 26 is used outside of binding context.
-input.ts(6,1): error TS2304: Cannot find name 'use'.
 input.ts(6,5): error TS19862: 'index' declared on line 5 column 10 is used outside of binding context.
-input.ts(7,30): error TS2304: Cannot find name 'condition'.
-input.ts(7,56): error TS2304: Cannot find name 'use'.
 input.ts(7,60): error TS19862: 'local' declared on line 7 column 47 is used outside of binding context.
 
 
@@ -15,10 +11,8 @@ input.ts(7,60): error TS19862: 'local' declared on line 7 column 47 is used outs
         "lint": { "rules": { "block-scoped-var": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (9 errors) ====
+==== input.ts (5 errors) ====
     function outside() { { var value; } use(value); }
-                                        ~~~
-!!! error TS2304: Cannot find name 'use'.
                                             ~~~~~
 !!! error TS19862: 'value' declared on line 1 column 28 is used outside of binding context.
     function branches(condition: boolean) {
@@ -30,14 +24,8 @@ input.ts(7,60): error TS19862: 'local' declared on line 7 column 47 is used outs
     }
     for (var index = 0; index < 3; index++) {}
     use(index);
-    ~~~
-!!! error TS2304: Cannot find name 'use'.
         ~~~~~
 !!! error TS19862: 'index' declared on line 5 column 10 is used outside of binding context.
     class Example { static { if (condition) { var local; } use(local); } }
-                                 ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
-                                                           ~~~
-!!! error TS2304: Cannot find name 'use'.
                                                                ~~~~~
 !!! error TS19862: 'local' declared on line 7 column 47 is used outside of binding context.

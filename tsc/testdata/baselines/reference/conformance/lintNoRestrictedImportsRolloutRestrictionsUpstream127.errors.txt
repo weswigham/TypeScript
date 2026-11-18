@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24255: '../foo' import is restricted from being used.
-/input.tsx(1,22): error TS2307: Cannot find module '../foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import relative from '../foo';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24255: '../foo' import is restricted from being used.
-                         ~~~~~~~~
-!!! error TS2307: Cannot find module '../foo' or its corresponding type declarations.

@@ -1,7 +1,4 @@
-/input.ts(1,19): error TS2588: Cannot assign to 'x' because it is a constant.
 /input.ts(1,19): error TS19852: 'x' is constant.
-/input.ts(1,24): error TS2304: Cannot find name 'values'.
-/input.ts(1,55): error TS2588: Cannot assign to 'x' because it is a constant.
 /input.ts(1,55): error TS19852: 'x' is constant.
 
 
@@ -20,15 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     const x = 0; for (x of values) {} function nested() { x = 1; }
                       ~
-!!! error TS2588: Cannot assign to 'x' because it is a constant.
-                      ~
 !!! error TS19852: 'x' is constant.
-                           ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
-                                                          ~
-!!! error TS2588: Cannot assign to 'x' because it is a constant.
                                                           ~
 !!! error TS19852: 'x' is constant.

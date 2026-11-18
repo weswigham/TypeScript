@@ -1,9 +1,5 @@
-/input.ts(1,20): error TS2588: Cannot assign to 'x' because it is a constant.
 /input.ts(1,20): error TS19852: 'x' is constant.
-/input.ts(1,26): error TS2304: Cannot find name 'value'.
-/input.ts(1,38): error TS2588: Cannot assign to 'x' because it is a constant.
 /input.ts(1,38): error TS19852: 'x' is constant.
-/input.ts(1,43): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -21,17 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (2 errors) ====
     const x = 0; ({ ...x } = value); [...x] = value;
                        ~
-!!! error TS2588: Cannot assign to 'x' because it is a constant.
-                       ~
 !!! error TS19852: 'x' is constant.
-                             ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                         ~
-!!! error TS2588: Cannot assign to 'x' because it is a constant.
                                          ~
 !!! error TS19852: 'x' is constant.
-                                              ~~~~~
-!!! error TS2304: Cannot find name 'value'.

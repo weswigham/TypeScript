@@ -3,7 +3,6 @@ input.ts(2,13): error TS22027: Promise executor functions should not be async.
 input.ts(3,17): error TS22027: Promise executor functions should not be async.
 input.ts(4,15): error TS22027: Promise executor functions should not be async.
 input.ts(5,26): error TS22027: Promise executor functions should not be async.
-input.ts(7,23): error TS2554: Expected 1 arguments, but got 2.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -13,7 +12,7 @@ input.ts(7,23): error TS2554: Expected 1 arguments, but got 2.
         "files": ["input.ts"]
     }
     
-==== input.ts (6 errors) ====
+==== input.ts (5 errors) ====
     new Promise(async function executor(resolve, reject) {});
                 ~~~~~
 !!! error TS22027: Promise executor functions should not be async.
@@ -31,8 +30,6 @@ input.ts(7,23): error TS2554: Expected 1 arguments, but got 2.
 !!! error TS22027: Promise executor functions should not be async.
     new Promise((resolve, reject) => {});
     new Promise(() => {}, async function unrelated() {});
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 2.
     declare const Other: any;
     new Other(async () => {});
     new globalThis.Promise(async () => {});

@@ -2,8 +2,6 @@ input.ts(1,23): error TS22034: Unexpected block statement surrounding arrow body
 input.ts(2,22): error TS22035: Unexpected block statement surrounding arrow body; parenthesize the returned value and move it immediately after the `=>`.
 input.ts(3,25): error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.
 input.ts(4,24): error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.
-input.ts(4,34): error TS2304: Cannot find name 'first'.
-input.ts(4,43): error TS2304: Cannot find name 'second'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -12,7 +10,7 @@ input.ts(4,43): error TS2304: Cannot find name 'second'.
         "lint": { "rules": { "arrow-body-style": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (6 errors) ====
+==== input.ts (4 errors) ====
     const numeric = () => { return 1; };
                           ~~~~~~~~~~~~~
 !!! error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.
@@ -25,9 +23,5 @@ input.ts(4,43): error TS2304: Cannot find name 'second'.
     const sequence = () => { return (first(), second()); };
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22034: Unexpected block statement surrounding arrow body; move the returned value immediately after the `=>`.
-                                     ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-                                              ~~~~~~
-!!! error TS2304: Cannot find name 'second'.
     const empty = () => {};
     const valid = () => 1;

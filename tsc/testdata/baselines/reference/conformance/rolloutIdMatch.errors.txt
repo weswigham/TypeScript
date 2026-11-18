@@ -1,20 +1,15 @@
 input.ts(1,5): error TS24214: Identifier 'forbidden' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
 input.ts(2,5): error TS24214: Identifier 'bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
-input.ts(3,1): error TS2722: Cannot invoke an object which is possibly 'undefined'.
-input.ts(4,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 input.ts(4,8): error TS24214: Identifier 'bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
 input.ts(5,29): error TS24214: Identifier 'alias_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
 input.ts(5,44): error TS24214: Identifier 'rest_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
-input.ts(5,58): error TS2304: Cannot find name 'source'.
-input.ts(6,17): error TS7008: Member '#bad_name' implicitly has an 'any' type.
 input.ts(6,17): error TS24215: Identifier '#bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
 input.ts(6,28): error TS24214: Identifier 'bad_method' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
-input.ts(7,13): error TS2304: Cannot find name 'source'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"id-match":["error","^(?!forbidden$)[a-zA-Z]+$",{"properties":true,"classFields":true,"ignoreDestructuring":true}]}},"files":["input.ts"]}
-==== input.ts (12 errors) ====
+==== input.ts (7 errors) ====
     let forbidden;
         ~~~~~~~~~
 !!! error TS24214: Identifier 'forbidden' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
@@ -22,12 +17,7 @@ input.ts(7,13): error TS2304: Cannot find name 'source'.
         ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
     bad_name();
-    ~~~~~~~~
-!!! error TS2722: Cannot invoke an object which is possibly 'undefined'.
     object.bad_name = 1;
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
            ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
     const { original_name, key: alias_name, ...rest_name } = source;
@@ -35,15 +25,9 @@ input.ts(7,13): error TS2304: Cannot find name 'source'.
 !!! error TS24214: Identifier 'alias_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
                                                ~~~~~~~~~
 !!! error TS24214: Identifier 'rest_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
-                                                             ~~~~~~
-!!! error TS2304: Cannot find name 'source'.
     class Example { #bad_name; bad_method() {} }
-                    ~~~~~~~~~
-!!! error TS7008: Member '#bad_name' implicitly has an 'any' type.
                     ~~~~~~~~~
 !!! error TS24215: Identifier '#bad_name' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
                                ~~~~~~~~~~
 !!! error TS24214: Identifier 'bad_method' does not match the pattern '^(?!forbidden$)[a-zA-Z]+$'.
     Object.keys(source);
-                ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

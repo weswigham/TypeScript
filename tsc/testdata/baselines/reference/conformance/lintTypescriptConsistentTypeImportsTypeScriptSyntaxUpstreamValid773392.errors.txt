@@ -1,5 +1,3 @@
-/input.tsx(2,26): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-/input.tsx(5,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
 /tsconfig.json(6,9): error TS5052: Option 'jsxFragmentFactory' cannot be specified without specifying option 'jsxFactory'.
 
 
@@ -25,15 +23,11 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (0 errors) ====
     
     import { Fragment } from 'react';
-                             ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     export const ComponentFoo: Fragment = () => {
       return <>Foo Foo</>;
-             ~~
-!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
     };
               

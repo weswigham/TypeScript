@@ -1,5 +1,4 @@
 /input.ts(1,5): error TS24290: 'a' is defined but never used.
-/input.ts(1,20): error TS2304: Cannot find name 'b'.
 /input.ts(1,22): error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
 
 
@@ -23,11 +22,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     var a;'use strict';b(00);
         ~
 !!! error TS24290: 'a' is defined but never used.
-                       ~
-!!! error TS2304: Cannot find name 'b'.
                          ~~
 !!! error TS1121: Octal literals are not allowed. Use the syntax '0o0'.

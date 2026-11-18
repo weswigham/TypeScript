@@ -1,5 +1,4 @@
 /input.ts(1,5): error TS24293: The value assigned to 'message' is not used in subsequent statements.
-/input.ts(3,32): error TS2304: Cannot find name 'call'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,14 +21,12 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let message = 'unused';
         ~~~~~~~
 !!! error TS24293: The value assigned to 'message' is not used in subsequent statements.
                 try {
                     const result = call();
-                                   ~~~~
-!!! error TS2304: Cannot find name 'call'.
                     message = result.message;
                 } catch (e) {
                     message = 'used';

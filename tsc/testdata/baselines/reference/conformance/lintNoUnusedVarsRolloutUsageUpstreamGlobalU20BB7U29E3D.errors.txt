@@ -1,5 +1,4 @@
 /input.ts(1,16): error TS24290: '𠮷' is defined but never used.
-/input.ts(2,1): error TS2304: Cannot find name '\u{20BB7}\u{29E3D}'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,10 +21,8 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /*global 𠮷𩸽, 𠮷*/
                  ~
 !!! error TS24290: '𠮷' is defined but never used.
     \u{20BB7}\u{29E3D};
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name '\u{20BB7}\u{29E3D}'.

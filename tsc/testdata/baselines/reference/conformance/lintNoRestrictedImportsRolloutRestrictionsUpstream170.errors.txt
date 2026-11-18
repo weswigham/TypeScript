@@ -1,5 +1,4 @@
 /input.tsx(1,25): error TS24269: 'qux' import from 'foo-bar-baz' is restricted because only 'foo', 'bar', and 'baz' are allowed.
-/input.tsx(1,36): error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -33,9 +32,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import { foo, bar, baz, qux } from "foo-bar-baz";
                             ~~~
 !!! error TS24269: 'qux' import from 'foo-bar-baz' is restricted because only 'foo', 'bar', and 'baz' are allowed.
-                                       ~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'foo-bar-baz' or its corresponding type declarations.

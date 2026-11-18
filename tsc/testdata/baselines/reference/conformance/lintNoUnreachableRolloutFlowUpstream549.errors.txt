@@ -1,9 +1,4 @@
-/input.ts(3,25): error TS2304: Cannot find name 'a'.
-/input.ts(5,25): error TS2304: Cannot find name 'b'.
 /input.ts(5,25): error TS24283: Unreachable code.
-/input.ts(6,25): error TS2304: Cannot find name 'c'.
-/input.ts(8,31): error TS2304: Cannot find name 'err'.
-/input.ts(9,25): error TS2304: Cannot find name 'd'.
 /input.ts(9,25): error TS24283: Unreachable code.
 
 
@@ -22,29 +17,19 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (2 errors) ====
     
                     function foo() {
                         if (a) {
-                            ~
-!!! error TS2304: Cannot find name 'a'.
                             return
                             b();
-                            ~
-!!! error TS2304: Cannot find name 'b'.
                             ~~~~
                             c();
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24283: Unreachable code.
-                            ~
-!!! error TS2304: Cannot find name 'c'.
                         } else {
                             throw err
-                                  ~~~
-!!! error TS2304: Cannot find name 'err'.
                             d();
-                            ~
-!!! error TS2304: Cannot find name 'd'.
                             ~~~~
 !!! error TS24283: Unreachable code.
                         }

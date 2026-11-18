@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS22011: Do not use the '!==' operator to compare against -0.
-/input.ts(1,8): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     -0 !== value
     ~~~~~~~~~~~~
 !!! error TS22011: Do not use the '!==' operator to compare against -0.
-           ~~~~~
-!!! error TS2304: Cannot find name 'value'.

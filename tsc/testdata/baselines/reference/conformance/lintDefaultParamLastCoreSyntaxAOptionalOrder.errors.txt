@@ -1,5 +1,4 @@
 /input.ts(1,15): error TS19242: Default parameters should be last.
-/input.ts(1,31): error TS1016: A required parameter cannot follow an optional parameter.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function test(first?: number, second: number) {}
                   ~~~~~~~~~~~~~~
 !!! error TS19242: Default parameters should be last.
-                                  ~~~~~~
-!!! error TS1016: A required parameter cannot follow an optional parameter.

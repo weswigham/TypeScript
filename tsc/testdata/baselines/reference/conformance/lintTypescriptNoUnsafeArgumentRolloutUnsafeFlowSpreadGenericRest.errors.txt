@@ -1,4 +1,3 @@
-/input.ts(1,104): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
 /input.ts(1,115): error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.
 
 
@@ -18,9 +17,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     declare function take(...x: [string, string]): void; declare const values: [string, ...string[]]; take(...values, 1 as any);
-                                                                                                           ~~~~~~~~~
-!!! error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
                                                                                                                       ~~~~~~~~
 !!! error TS24093: Unsafe argument of type `any` assigned to a parameter of type `string`.

@@ -1,5 +1,4 @@
 /input.ts(1,17): error TS20621: Empty class.
-/input.ts(1,21): error TS1514: Expected a capturing group name.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const pattern = /\k<[]>/;
                     ~~~~~~~~
 !!! error TS20621: Empty class.
-                        
-!!! error TS1514: Expected a capturing group name.

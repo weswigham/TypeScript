@@ -1,10 +1,6 @@
 /input.ts(1,5): error TS22029: Redundant double negation.
-/input.ts(1,7): error TS2304: Cannot find name 'value'.
 /input.ts(1,24): error TS19363: Redundant Boolean call.
-/input.ts(1,32): error TS2304: Cannot find name 'value'.
 /input.ts(1,51): error TS22029: Redundant double negation.
-/input.ts(1,53): error TS2304: Cannot find name 'value'.
-/input.ts(1,77): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,19 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (7 errors) ====
+==== /input.ts (3 errors) ====
     if (!!value) {} while (Boolean(value)) {} Boolean(!!value); const valid = !!value;
         ~~~~~~~
 !!! error TS22029: Redundant double negation.
-          ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                            ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                                                       ~~~~~~~
 !!! error TS22029: Redundant double negation.
-                                                        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                                                                ~~~~~
-!!! error TS2304: Cannot find name 'value'.

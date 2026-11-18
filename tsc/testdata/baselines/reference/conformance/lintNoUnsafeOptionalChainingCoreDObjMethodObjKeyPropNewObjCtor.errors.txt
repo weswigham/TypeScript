@@ -1,8 +1,5 @@
-/input.ts(1,2): error TS2304: Cannot find name 'obj'.
 /input.ts(1,2): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-/input.ts(1,19): error TS2304: Cannot find name 'obj'.
 /input.ts(1,19): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-/input.ts(1,40): error TS2304: Cannot find name 'obj'.
 /input.ts(1,40): error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
 
 
@@ -21,17 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     (obj?.method)(); (obj?.key).prop; new (obj?.ctor)();
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
      ~~~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-                      ~~~
-!!! error TS2304: Cannot find name 'obj'.
                       ~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.
-                                           ~~~
-!!! error TS2304: Cannot find name 'obj'.
                                            ~~~~~~~~~
 !!! error TS19657: Unsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.

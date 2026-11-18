@@ -1,4 +1,3 @@
-/input.ts(1,5): error TS2304: Cannot find name 'value'.
 /input.ts(1,13): error TS19651: Unexpected string concatenation of literals.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     `a${value}` + 'b';
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                 ~
 !!! error TS19651: Unexpected string concatenation of literals.

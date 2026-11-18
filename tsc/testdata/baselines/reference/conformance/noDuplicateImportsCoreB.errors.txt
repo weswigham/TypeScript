@@ -1,43 +1,19 @@
-input.ts(1,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-input.ts(2,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 input.ts(3,1): error TS22002: 'pkg' import is duplicated.
-input.ts(3,24): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
-input.ts(4,8): error TS2882: Cannot find module or type declarations for side-effect import of 'side'.
 input.ts(5,1): error TS22002: 'side' import is duplicated.
-input.ts(5,8): error TS2882: Cannot find module or type declarations for side-effect import of 'side'.
-input.ts(6,26): error TS2307: Cannot find module 'types' or its corresponding type declarations.
-input.ts(7,28): error TS2307: Cannot find module 'types' or its corresponding type declarations.
-input.ts(8,23): error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-duplicate-imports":"error"}},"files":["input.ts"]}
-==== input.ts (10 errors) ====
+==== input.ts (2 errors) ====
     import * as space from 'pkg';
-                           ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
     import { first } from 'pkg';
-                          ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
     import { second } from 'pkg';
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22002: 'pkg' import is duplicated.
-                           ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.
     import 'side';
-           ~~~~~~
-!!! error TS2882: Cannot find module or type declarations for side-effect import of 'side'.
     import 'side';
     ~~~~~~~~~~~~~~
 !!! error TS22002: 'side' import is duplicated.
-           ~~~~~~
-!!! error TS2882: Cannot find module or type declarations for side-effect import of 'side'.
     import type Default from 'types';
-                             ~~~~~~~
-!!! error TS2307: Cannot find module 'types' or its corresponding type declarations.
     import type { Other } from 'types';
-                               ~~~~~~~
-!!! error TS2307: Cannot find module 'types' or its corresponding type declarations.
     export { first } from 'pkg';
-                          ~~~~~
-!!! error TS2307: Cannot find module 'pkg' or its corresponding type declarations.

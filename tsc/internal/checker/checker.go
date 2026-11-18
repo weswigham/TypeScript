@@ -5476,7 +5476,7 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 				c.error(moduleSpecifier, diagnostics.Importing_a_JSON_file_into_an_ECMAScript_module_requires_a_type_Colon_json_import_attribute_when_module_is_set_to_0, c.moduleKind.String())
 			}
 		} else if c.compilerOptions.NoUncheckedSideEffectImports.IsTrueOrUnknown() && importClause == nil {
-			ignoreErrors := c.compilerOptions.NoCheck.IsTrue()
+			ignoreErrors := c.compilerOptions.GetNoCheck()
 			var errorMessage *diagnostics.Message
 			if !ignoreErrors {
 				errorMessage = diagnostics.Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
@@ -15189,7 +15189,7 @@ func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) cor
 }
 
 func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *ast.Symbol, targetSymbol *ast.Symbol, node *ast.Node, name *ast.Node) {
-	if c.compilerOptions.NoCheck.IsTrue() {
+	if c.compilerOptions.GetNoCheck() {
 		return
 	}
 	moduleName := c.getFullyQualifiedName(moduleSymbol, node)
@@ -15414,7 +15414,7 @@ func (c *Checker) resolveExternalModuleName(location *ast.Node, moduleReferenceE
 	if errorMessage == nil {
 		errorMessage = diagnostics.Cannot_find_module_0_or_its_corresponding_type_declarations
 	}
-	ignoreErrors = ignoreErrors || c.compilerOptions.NoCheck.IsTrue()
+	ignoreErrors = ignoreErrors || c.compilerOptions.GetNoCheck()
 	return c.resolveExternalModuleNameWorker(location, moduleReferenceExpression, core.IfElse(ignoreErrors, nil, errorMessage), ignoreErrors, false /*isForAugmentation*/, importAttributesType)
 }
 

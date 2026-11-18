@@ -1,7 +1,4 @@
-/input.ts(1,13): error TS7006: Parameter 'baz' implicitly has an 'any' type.
-/input.ts(1,18): error TS7006: Parameter 'bar' implicitly has an 'any' type.
 /input.ts(1,18): error TS24290: 'bar' is defined but never used.
-/input.ts(1,40): error TS2554: Expected 2 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,14 +26,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     function gg(baz, bar) { return baz; }; gg();
-                ~~~
-!!! error TS7006: Parameter 'baz' implicitly has an 'any' type.
-                     ~~~
-!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.
                      ~~~
 !!! error TS24290: 'bar' is defined but never used.
-                                           ~~
-!!! error TS2554: Expected 2 arguments, but got 0.
-!!! related TS6210 /input.ts:1:13: An argument for 'baz' was not provided.

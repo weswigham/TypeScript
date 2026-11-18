@@ -1,5 +1,4 @@
 /input.ts(1,16): error TS19505: Return statement should not contain assignment.
-/input.ts(1,24): error TS2304: Cannot find name 'x'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function f() { return (x = 1); }
                    ~~~~~~~~~~~~~~~
 !!! error TS19505: Return statement should not contain assignment.
-                           ~
-!!! error TS2304: Cannot find name 'x'.

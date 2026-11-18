@@ -1,56 +1,27 @@
-input.ts(1,1): error TS2349: This expression is not callable.
-  Type 'Math' has no call signatures.
 input.ts(1,1): error TS24247: 'Math' is not a function.
 input.ts(2,1): error TS24247: 'JSON' is not a function.
-input.ts(2,5): error TS2351: This expression is not constructable.
-  Type 'JSON' has no construct signatures.
-input.ts(3,1): error TS2349: This expression is not callable.
-  Type 'typeof Intl' has no call signatures.
 input.ts(3,1): error TS24247: 'Intl' is not a function.
 input.ts(4,1): error TS24247: 'Math' is not a function.
-input.ts(4,12): error TS2349: This expression is not callable.
-  Type 'Math' has no call signatures.
-input.ts(5,15): error TS2304: Cannot find name 'condition'.
-input.ts(5,27): error TS2304: Cannot find name 'other'.
 input.ts(6,1): error TS24248: 'alias' is reference to 'Reflect', which is not a function.
 input.ts(8,1): error TS24248: 'json' is reference to 'JSON', which is not a function.
-input.ts(8,5): error TS2351: This expression is not constructable.
-  Type 'JSON' has no construct signatures.
-input.ts(10,17): error TS7006: Parameter 'Math' implicitly has an 'any' type.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-obj-calls":"error"}},"files":["input.ts"]}
-==== input.ts (14 errors) ====
+==== input.ts (6 errors) ====
     Math();
-    ~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Math' has no call signatures.
     ~~~~~~
 !!! error TS24247: 'Math' is not a function.
     new JSON();
     ~~~~~~~~~~
 !!! error TS24247: 'JSON' is not a function.
-        ~~~~
-!!! error TS2351: This expression is not constructable.
-!!! error TS2351:   Type 'JSON' has no construct signatures.
     Intl?.();
-    ~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'typeof Intl' has no call signatures.
     ~~~~~~~~
 !!! error TS24247: 'Intl' is not a function.
     globalThis.Math();
     ~~~~~~~~~~~~~~~~~
 !!! error TS24247: 'Math' is not a function.
-               ~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Math' has no call signatures.
     const alias = condition ? other : Reflect;
-                  ~~~~~~~~~
-!!! error TS2304: Cannot find name 'condition'.
-                              ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     alias();
     ~~~~~~~
 !!! error TS24248: 'alias' is reference to 'Reflect', which is not a function.
@@ -58,10 +29,5 @@ input.ts(10,17): error TS7006: Parameter 'Math' implicitly has an 'any' type.
     new json();
     ~~~~~~~~~~
 !!! error TS24248: 'json' is reference to 'JSON', which is not a function.
-        ~~~~
-!!! error TS2351: This expression is not constructable.
-!!! error TS2351:   Type 'JSON' has no construct signatures.
     Math.random();
     function shadow(Math) { Math(); }
-                    ~~~~
-!!! error TS7006: Parameter 'Math' implicitly has an 'any' type.

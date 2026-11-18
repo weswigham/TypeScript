@@ -1,4 +1,3 @@
-/input.ts(1,40): error TS2304: Cannot find name 'custom'.
 /input.ts(1,40): error TS24231: Read-only global 'custom' should not be modified.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     /* globals custom */ function task() { custom++; }
-                                           ~~~~~~
-!!! error TS2304: Cannot find name 'custom'.
                                            ~~~~~~
 !!! error TS24231: Read-only global 'custom' should not be modified.

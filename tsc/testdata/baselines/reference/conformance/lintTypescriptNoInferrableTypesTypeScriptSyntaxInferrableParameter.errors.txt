@@ -1,4 +1,3 @@
-/input.ts(1,13): error TS1015: Parameter cannot have question mark and initializer.
 /input.ts(1,13): error TS19107: Type number trivially inferred from a number literal, remove type annotation.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const fn = (value?: number = 1) => value;
-                ~~~~~
-!!! error TS1015: Parameter cannot have question mark and initializer.
                 ~~~~~~~~~~~~~~~~~~
 !!! error TS19107: Type number trivially inferred from a number literal, remove type annotation.

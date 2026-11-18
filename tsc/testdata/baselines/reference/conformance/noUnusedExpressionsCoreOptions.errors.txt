@@ -1,18 +1,6 @@
-input.tsx(2,1): error TS2304: Cannot find name 'value'.
-input.tsx(2,10): error TS2304: Cannot find name 'call'.
-input.tsx(3,1): error TS2304: Cannot find name 'value'.
-input.tsx(3,9): error TS2304: Cannot find name 'call'.
-input.tsx(3,18): error TS2304: Cannot find name 'other'.
-input.tsx(4,1): error TS2304: Cannot find name 'value'.
 input.tsx(4,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(4,10): error TS2304: Cannot find name 'obj'.
-input.tsx(5,1): error TS2304: Cannot find name 'value'.
 input.tsx(5,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(5,9): error TS2304: Cannot find name 'call'.
-input.tsx(5,18): error TS2304: Cannot find name 'obj'.
-input.tsx(6,1): error TS2304: Cannot find name 'tag'.
 input.tsx(7,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(8,1): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 input.tsx(8,1): error TS19656: Expected an assignment or function call and instead saw an expression.
 input.tsx(9,1): error TS19656: Expected an assignment or function call and instead saw an expression.
 
@@ -24,45 +12,21 @@ input.tsx(9,1): error TS19656: Expected an assignment or function call and inste
         "files": ["input.tsx"]
     }
     
-==== input.tsx (17 errors) ====
+==== input.tsx (5 errors) ====
     "directive";
     value && call();
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-             ~~~~
-!!! error TS2304: Cannot find name 'call'.
     value ? call() : other();
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-            ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                     ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     value && obj?.key;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-             ~~~
-!!! error TS2304: Cannot find name 'obj'.
     value ? call() : obj.key;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-            ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                     ~~~
-!!! error TS2304: Cannot find name 'obj'.
     tag`template`;
-    ~~~
-!!! error TS2304: Cannot find name 'tag'.
     `template`;
     ~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     <div />;
-    ~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
     ~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     <></>;

@@ -1,8 +1,4 @@
-/input.ts(1,10): error TS2391: Function implementation is missing or not immediately following the declaration.
-/input.ts(1,10): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
 /input.ts(1,39): error TS19100: All f signatures should be adjacent.
-/input.ts(1,48): error TS2391: Function implementation is missing or not immediately following the declaration.
-/input.ts(1,48): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function f(a: string); const gap = 1; function f(a: number);
-             ~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
-             ~
-!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
                                           ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19100: All f signatures should be adjacent.
-                                                   ~
-!!! error TS2391: Function implementation is missing or not immediately following the declaration.
-                                                   ~
-!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.

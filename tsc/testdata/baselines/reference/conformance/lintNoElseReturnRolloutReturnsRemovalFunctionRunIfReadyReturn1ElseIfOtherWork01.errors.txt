@@ -1,7 +1,4 @@
-/input.ts(1,22): error TS2304: Cannot find name 'ready'.
 /input.ts(1,44): error TS24226: Unnecessary 'else' after 'return'.
-/input.ts(1,48): error TS2304: Cannot find name 'other'.
-/input.ts(1,55): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,13 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     function run() { if (ready) return 1; else if (other) work(); }
-                         ~~~~~
-!!! error TS2304: Cannot find name 'ready'.
                                                ~~~~~~~~~~~~~~~~~~
 !!! error TS24226: Unnecessary 'else' after 'return'.
-                                                   ~~~~~
-!!! error TS2304: Cannot find name 'other'.
-                                                          ~~~~
-!!! error TS2304: Cannot find name 'work'.

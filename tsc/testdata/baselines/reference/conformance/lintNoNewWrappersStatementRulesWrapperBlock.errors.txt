@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS19004: Do not use String as a constructor.
-/input.ts(1,32): error TS2304: Cannot find name 'Custom'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,11 +16,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     new String(); { const String = Custom; new String(); }
     ~~~~~~~~~~~~
 !!! error TS19004: Do not use String as a constructor.
-                                   ~~~~~~
-!!! error TS2304: Cannot find name 'Custom'.
 ==== /custom.ts (0 errors) ====
     export default class Custom {}

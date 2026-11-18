@@ -1,5 +1,4 @@
 /input.ts(1,16): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-/input.ts(1,26): error TS2304: Cannot find name 'good_name'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,9 +23,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const value = {bad_name: good_name};
                    ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-                             ~~~~~~~~~
-!!! error TS2304: Cannot find name 'good_name'.

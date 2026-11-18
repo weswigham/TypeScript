@@ -1,4 +1,3 @@
-/input.ts(1,10): error TS2300: Duplicate identifier 'Array'.
 /input.ts(1,21): error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.
 
 
@@ -17,14 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function Array() {} Array();
-             ~~~~~
-!!! error TS2300: Duplicate identifier 'Array'.
-!!! related TS6203 lib.es5.d.ts:--:--: 'Array' was also declared here.
-!!! related TS6204 lib.es5.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.core.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.iterable.d.ts:--:--: and here.
-!!! related TS6204 lib.es2015.symbol.wellknown.d.ts:--:--: and here.
                         ~~~~~
 !!! error TS22003: A function with a name starting with an uppercase letter should only be used as a constructor.

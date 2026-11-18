@@ -1,5 +1,3 @@
-/input.ts(2,34): error TS7006: Parameter 'foo' implicitly has an 'any' type.
-/input.ts(3,37): error TS2304: Cannot find name 'get'.
 /input.ts(4,21): error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
 
 
@@ -23,14 +21,10 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     
                     async function f(foo) {
-                                     ~~~
-!!! error TS7006: Parameter 'foo' implicitly has an 'any' type.
                         let buz = await get(foo.id);
-                                        ~~~
-!!! error TS2304: Cannot find name 'get'.
                         foo.bar = buz.bar;
                         ~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.

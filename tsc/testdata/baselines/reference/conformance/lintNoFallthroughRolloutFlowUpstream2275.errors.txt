@@ -1,7 +1,4 @@
-/input.ts(2,8): error TS2304: Cannot find name 'foo'.
-/input.ts(4,9): error TS2304: Cannot find name 'doSomething'.
 /input.ts(6,5): error TS24228: Found a comment that would permit fallthrough, but case cannot fall through.
-/input.ts(7,13): error TS2304: Cannot find name 'doSomething'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,20 +21,14 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     
     switch(foo){
-           ~~~
-!!! error TS2304: Cannot find name 'foo'.
         case 1:
             doSomething();
-            ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
             break;
         // falls through
         ~~~~~~~~~~~~~~~~
 !!! error TS24228: Found a comment that would permit fallthrough, but case cannot fall through.
         case 2: doSomething();
-                ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
     }

@@ -1,7 +1,4 @@
-/input.ts(1,14): error TS2339: Property 'a' does not exist on type 'undefined'.
 /input.ts(1,14): error TS24290: 'a' is defined but never used.
-/input.ts(1,21): error TS2339: Property 'b' does not exist on type 'undefined'.
-/input.ts(1,24): error TS2339: Property 'c' does not exist on type 'undefined'.
 /input.ts(1,24): error TS24290: 'c' is defined but never used.
 
 
@@ -25,15 +22,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     (function ({ a }, { b, c } ) { return b; })();
                  ~
-!!! error TS2339: Property 'a' does not exist on type 'undefined'.
-                 ~
 !!! error TS24290: 'a' is defined but never used.
-                        ~
-!!! error TS2339: Property 'b' does not exist on type 'undefined'.
-                           ~
-!!! error TS2339: Property 'c' does not exist on type 'undefined'.
                            ~
 !!! error TS24290: 'c' is defined but never used.

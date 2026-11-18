@@ -1,19 +1,7 @@
-input.ts(1,1): error TS2304: Cannot find name 'obj'.
 input.ts(1,1): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-input.ts(1,14): error TS2304: Cannot find name 'other'.
-input.ts(2,1): error TS2304: Cannot find name 'value'.
-input.ts(2,10): error TS2304: Cannot find name 'obj'.
 input.ts(2,10): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-input.ts(3,2): error TS2304: Cannot find name 'obj'.
 input.ts(3,2): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-input.ts(4,31): error TS2304: Cannot find name 'obj'.
 input.ts(4,31): error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-input.ts(4,45): error TS2304: Cannot find name 'other'.
-input.ts(5,2): error TS2304: Cannot find name 'obj'.
-input.ts(5,16): error TS2304: Cannot find name 'fallback'.
-input.ts(5,28): error TS2304: Cannot find name 'other'.
-input.ts(6,1): error TS2304: Cannot find name 'value'.
-input.ts(6,10): error TS2304: Cannot find name 'obj'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -23,42 +11,18 @@ input.ts(6,10): error TS2304: Cannot find name 'obj'.
         "files": ["input.ts"]
     }
     
-==== input.ts (16 errors) ====
+==== input.ts (4 errors) ====
     obj?.value + other;
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
     ~~~~~~~~~~
 !!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-                 ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     value += obj?.value;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-             ~~~
-!!! error TS2304: Cannot find name 'obj'.
              ~~~~~~~~~~
 !!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
     +obj?.value;
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
      ~~~~~~~~~~
 !!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
     async function foo() { (await obj?.value) * other; }
-                                  ~~~
-!!! error TS2304: Cannot find name 'obj'.
                                   ~~~~~~~~~~
 !!! error TS19658: Unsafe arithmetic operation on optional chaining. It can result in NaN.
-                                                ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     (obj?.value ?? fallback) + other;
-     ~~~
-!!! error TS2304: Cannot find name 'obj'.
-                   ~~~~~~~~
-!!! error TS2304: Cannot find name 'fallback'.
-                               ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     value |= obj?.value;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-             ~~~
-!!! error TS2304: Cannot find name 'obj'.

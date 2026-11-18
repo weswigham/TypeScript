@@ -54,7 +54,7 @@ Initializes a TypeScript project and creates a tsconfig.json file.
 Lint input files after checking.
 
 [94m--lintOnly[39m
-Lint input files without emitting JavaScript or declarations.
+Lint input files without checking or emitting JavaScript or declarations.
 
 [94m--listFilesOnly[39m
 Print names of files that are part of the compilation and then stop processing.

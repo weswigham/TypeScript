@@ -20,7 +20,7 @@ func programToSnapshot(program *compiler.Program, oldProgram *Program, hashWithT
 	snapshot := &snapshot{
 		options:      program.Options(),
 		hashWithText: hashWithText,
-		checkPending: program.Options().NoCheck.IsTrue(),
+		checkPending: program.Options().GetNoCheck(),
 	}
 	to := &toProgramSnapshot{
 		program:    program,

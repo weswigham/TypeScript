@@ -1,8 +1,4 @@
-/input.ts(1,16): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Math'.
-  No index signature with a parameter of type 'string' was found on type 'Math'.
 /input.ts(1,16): error TS24323: Use the '**' operator instead of 'Math.pow'.
-/input.ts(1,33): error TS2304: Cannot find name 'base'.
-/input.ts(1,39): error TS2304: Cannot find name 'exponent'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,14 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     const result = Math['p' + 'ow'](base, exponent);
-                   ~~~~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Math'.
-!!! error TS7053:   No index signature with a parameter of type 'string' was found on type 'Math'.
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24323: Use the '**' operator instead of 'Math.pow'.
-                                    ~~~~
-!!! error TS2304: Cannot find name 'base'.
-                                          ~~~~~~~~
-!!! error TS2304: Cannot find name 'exponent'.

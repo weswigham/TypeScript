@@ -1,6 +1,4 @@
 /input.ts(1,10): error TS24290: 'f' is defined but never used.
-/input.ts(1,18): error TS7034: Variable 'a' implicitly has type 'any[]' in some locations where its type cannot be determined.
-/input.ts(1,30): error TS7005: Variable 'a' implicitly has an 'any[]' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,11 +24,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function f(){var a=[];return a.map(function g(){});}
              ~
 !!! error TS24290: 'f' is defined but never used.
-                     ~
-!!! error TS7034: Variable 'a' implicitly has type 'any[]' in some locations where its type cannot be determined.
-                                 ~
-!!! error TS7005: Variable 'a' implicitly has an 'any[]' type.

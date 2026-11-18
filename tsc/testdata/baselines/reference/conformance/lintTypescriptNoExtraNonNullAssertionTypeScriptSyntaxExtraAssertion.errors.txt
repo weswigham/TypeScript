@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS20327: Forbidden extra non-null assertion.
-/input.ts(1,11): error TS2304: Cannot find name 'value'.
 /input.ts(1,11): error TS20327: Forbidden extra non-null assertion.
 
 
@@ -19,13 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     value!!; (value!)?.key;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~
 !!! error TS20327: Forbidden extra non-null assertion.
-              ~~~~~
-!!! error TS2304: Cannot find name 'value'.
               ~~~~~~
 !!! error TS20327: Forbidden extra non-null assertion.

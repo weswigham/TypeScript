@@ -1,5 +1,4 @@
 /input.ts(1,40): error TS24283: Unreachable code.
-/input.ts(1,42): error TS2304: Cannot find name 'work'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function f() { try { return 1; } catch { work(); } }
                                            ~~~~~~~~~~~
 !!! error TS24283: Unreachable code.
-                                             ~~~~
-!!! error TS2304: Cannot find name 'work'.

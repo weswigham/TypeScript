@@ -1,6 +1,4 @@
-/input.ts(1,33): error TS2304: Cannot find name 'consume'.
 /input.ts(1,60): error TS24293: The value assigned to 'value' is not used in subsequent statements.
-/input.ts(1,78): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function run() { let value = 0; consume(value); for (;;) { value = 1; break; consume(value); } }
-                                    ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.
                                                                ~~~~~
 !!! error TS24293: The value assigned to 'value' is not used in subsequent statements.
-                                                                                 ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

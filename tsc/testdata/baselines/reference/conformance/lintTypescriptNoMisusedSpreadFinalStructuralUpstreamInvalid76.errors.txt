@@ -1,5 +1,4 @@
 /input.tsx(8,13): error TS24056: Using the spread operator on class instances will lose their class prototype.
-/input.tsx(8,16): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,7 +18,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     class A {
       a = 1;
@@ -30,7 +29,4 @@
     const o = { ...getA() };
                 ~~~~~~~~~
 !!! error TS24056: Using the spread operator on class instances will lose their class prototype.
-                   ~~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.tsx:6:36: An argument for 'arg' was not provided.
           

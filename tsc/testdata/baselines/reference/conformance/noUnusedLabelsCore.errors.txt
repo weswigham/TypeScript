@@ -1,14 +1,8 @@
 input.ts(1,1): error TS19666: 'unused:' is defined but never used.
-input.ts(1,11): error TS2304: Cannot find name 'work'.
 input.ts(3,1): error TS19666: 'unused:' is defined but never used.
-input.ts(3,20): error TS2304: Cannot find name 'work'.
 input.ts(4,1): error TS19666: 'unused:' is defined but never used.
-input.ts(5,1): error TS2304: Cannot find name 'work'.
 input.ts(6,1): error TS19666: 'unused:' is defined but never used.
-input.ts(6,21): error TS2304: Cannot find name 'work'.
-input.ts(7,1): error TS2304: Cannot find name 'work'.
 input.ts(8,1): error TS19666: 'unused:' is defined but never used.
-input.ts(8,21): error TS2304: Cannot find name 'work'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -18,34 +12,22 @@ input.ts(8,21): error TS2304: Cannot find name 'work'.
         "files": ["input.ts"]
     }
     
-==== input.ts (11 errors) ====
+==== input.ts (5 errors) ====
     unused: { work(); }
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-              ~~~~
-!!! error TS2304: Cannot find name 'work'.
     used: { break used; }
     unused: /* keep */ work();
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-                       ~~~~
-!!! error TS2304: Cannot find name 'work'.
     unused: ("potential directive");
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
     work()
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     unused: [1].forEach(work);
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-                        ~~~~
-!!! error TS2304: Cannot find name 'work'.
     work();
-    ~~~~
-!!! error TS2304: Cannot find name 'work'.
     unused: [1].forEach(work);
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-                        ~~~~
-!!! error TS2304: Cannot find name 'work'.

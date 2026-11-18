@@ -2,17 +2,14 @@ input.ts(1,5): error TS24232: Unexpected 'var' declaration in the global scope, 
 input.ts(2,5): error TS24233: Unexpected 'let' declaration in the global scope, wrap in a block or in an IIFE.
 input.ts(3,1): error TS24233: Unexpected class declaration in the global scope, wrap in a block or in an IIFE.
 input.ts(4,1): error TS24232: Unexpected function declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.
-input.ts(6,5): error TS2304: Cannot find name 'leaked'.
 input.ts(8,7): error TS24232: Unexpected 'var' declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.
-input.ts(9,6): error TS2304: Cannot find name 'otherLeak'.
-input.ts(9,19): error TS2304: Cannot find name 'values'.
 
 
 ==== tsconfig.json (0 errors) ====
     {
         "lint": { "rules": { "no-implicit-globals": ["error", { "lexicalBindings": true }] } }
     }
-==== input.ts (8 errors) ====
+==== input.ts (5 errors) ====
     var globalVariable;
         ~~~~~~~~~~~~~~
 !!! error TS24232: Unexpected 'var' declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.
@@ -28,8 +25,6 @@ input.ts(9,19): error TS2304: Cannot find name 'values'.
     ~~~~~~~~~~~~~~
         leaked = 1;
     ~~~~~~~~~~~~~~~
-        ~~~~~~
-!!! error TS2304: Cannot find name 'leaked'.
     }
     ~
 !!! error TS24232: Unexpected function declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.
@@ -37,7 +32,3 @@ input.ts(9,19): error TS2304: Cannot find name 'values'.
           ~~~~~~~
 !!! error TS24232: Unexpected 'var' declaration in the global scope, wrap in an IIFE for a local variable, assign as global property for a global variable.
     for (otherLeak of values) {}
-         ~~~~~~~~~
-!!! error TS2304: Cannot find name 'otherLeak'.
-                      ~~~~~~
-!!! error TS2304: Cannot find name 'values'.

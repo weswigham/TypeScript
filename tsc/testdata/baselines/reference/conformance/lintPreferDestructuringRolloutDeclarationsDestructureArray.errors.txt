@@ -1,5 +1,4 @@
 /input.ts(1,7): error TS24132: Use array destructuring.
-/input.ts(1,11): error TS2304: Cannot find name 'values'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const x = values[0];
           ~~~~~~~~~~~~~
 !!! error TS24132: Use array destructuring.
-              ~~~~~~
-!!! error TS2304: Cannot find name 'values'.

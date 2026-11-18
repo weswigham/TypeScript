@@ -1,4 +1,3 @@
-/input.tsx(2,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 /input.tsx(2,16): error TS24054: Using the spread operator on an array in an object will result in a list of indices.
 
 
@@ -19,11 +18,9 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     const o = <div {...[1, 2, 3]} />;
-              ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
                    ~~~~~~~~~~~~~~
 !!! error TS24054: Using the spread operator on an array in an object will result in a list of indices.
           

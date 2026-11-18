@@ -4,9 +4,7 @@ input.ts(6,16): error TS20621: Empty class.
 input.ts(7,22): error TS20621: Empty class.
 input.ts(8,21): error TS20621: Empty class.
 input.ts(10,22): error TS20621: Empty class.
-input.ts(10,24): error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.
 input.ts(11,24): error TS20621: Empty class.
-input.ts(11,28): error TS1514: Expected a capturing group name.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -16,7 +14,7 @@ input.ts(11,28): error TS1514: Expected a capturing group name.
         "files": ["input.ts"]
     }
     
-==== input.ts (9 errors) ====
+==== input.ts (7 errors) ====
     const empty = /^abc[]/;
                   ~~~~~~~~
 !!! error TS20621: Empty class.
@@ -39,11 +37,7 @@ input.ts(11,28): error TS1514: Expected a capturing group name.
     const legacyEscape = /\1[]/;
                          ~~~~~~
 !!! error TS20621: Empty class.
-                           ~
-!!! error TS1534: This backreference refers to a group that does not exist. There are no capturing groups in this regular expression.
     const identityEscape = /\k<[]>/;
                            ~~~~~~~~
 !!! error TS20621: Empty class.
-                               
-!!! error TS1514: Expected a capturing group name.
     const constructor = new RegExp("[]");

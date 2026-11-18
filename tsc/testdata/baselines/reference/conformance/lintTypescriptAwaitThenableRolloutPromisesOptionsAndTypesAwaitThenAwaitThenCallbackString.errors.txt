@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS1320: Type of 'await' operand must either be a valid promise or must not contain a callable 'then' member.
 /input.ts(1,1): error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
-/input.ts(1,22): error TS1320: Type of 'await' operand must either be a valid promise or must not contain a callable 'then' member.
 /input.ts(1,22): error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
 
 
@@ -25,14 +23,10 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     await { then() {} }; await { then(callback: string) {} };
     ~~~~~~~~~~~~~~~~~~~
-!!! error TS1320: Type of 'await' operand must either be a valid promise or must not contain a callable 'then' member.
-    ~~~~~~~~~~~~~~~~~~~
 !!! error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
-                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS1320: Type of 'await' operand must either be a valid promise or must not contain a callable 'then' member.
                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24000: Unexpected `await` of a non-Promise (non-"Thenable") value.
     export {};

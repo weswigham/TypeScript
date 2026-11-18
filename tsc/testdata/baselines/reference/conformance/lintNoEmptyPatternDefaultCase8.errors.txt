@@ -1,5 +1,4 @@
 /input.ts(1,2): error TS22041: Unexpected empty object pattern.
-/input.ts(1,7): error TS2304: Cannot find name 'source'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     ({} = source);
      ~~
 !!! error TS22041: Unexpected empty object pattern.
-          ~~~~~~
-!!! error TS2304: Cannot find name 'source'.

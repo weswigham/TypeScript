@@ -1,61 +1,25 @@
-input.ts(1,5): error TS2304: Cannot find name 'value'.
 input.ts(1,14): error TS19363: Redundant Boolean call.
-input.ts(1,22): error TS2304: Cannot find name 'other'.
-input.ts(2,5): error TS2304: Cannot find name 'value'.
 input.ts(2,14): error TS19363: Redundant Boolean call.
-input.ts(2,22): error TS2304: Cannot find name 'other'.
-input.ts(3,6): error TS2304: Cannot find name 'value'.
-input.ts(3,6): error TS2695: Left side of comma operator is unused and has no side effects.
 input.ts(3,13): error TS19363: Redundant Boolean call.
-input.ts(3,21): error TS2304: Cannot find name 'other'.
-input.ts(4,5): error TS2304: Cannot find name 'value'.
 input.ts(4,13): error TS19363: Redundant Boolean call.
-input.ts(4,21): error TS2304: Cannot find name 'other'.
 input.ts(4,30): error TS22029: Redundant double negation.
-input.ts(4,32): error TS2304: Cannot find name 'third'.
-input.ts(5,14): error TS2304: Cannot find name 'value'.
-input.ts(5,31): error TS2304: Cannot find name 'other'.
 
 
 ==== tsconfig.json (0 errors) ====
     {"compilerOptions":{"target":"esnext"},"lint":{"rules":{"no-extra-boolean-cast":["error",{"enforceForInnerExpressions":true}]}},"files":["input.ts"]}
-==== input.ts (17 errors) ====
+==== input.ts (5 errors) ====
     if (value && Boolean(other)) {}
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                  ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                         ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     if (value ?? Boolean(other)) {}
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                  ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                         ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     if ((value, Boolean(other))) {}
-         ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-         ~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
                 ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                        ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     if (value ? Boolean(other) : !!third) {}
-        ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                 ~~~~~~~~~~~~~~
 !!! error TS19363: Redundant Boolean call.
-                        ~~~~~
-!!! error TS2304: Cannot find name 'other'.
                                  ~~~~~~~
 !!! error TS22029: Redundant double negation.
-                                   ~~~~~
-!!! error TS2304: Cannot find name 'third'.
     const keep = value || Boolean(other);
-                 ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-                                  ~~~~~
-!!! error TS2304: Cannot find name 'other'.

@@ -1,10 +1,5 @@
-/input.ts(1,36): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
 /input.ts(1,36): error TS24337: Possible race condition: `foo[bar].baz` might be assigned based on an outdated state of `foo`.
-/input.ts(1,40): error TS2304: Cannot find name 'bar'.
 /input.ts(1,58): error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
-/input.ts(1,62): error TS2339: Property 'bar' does not exist on type '{}'.
-/input.ts(1,75): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
-/input.ts(1,79): error TS2304: Cannot find name 'bar'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,19 +22,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (7 errors) ====
+==== /input.ts (2 errors) ====
     let foo = {}; async function x() { foo[bar].baz = await (foo.bar += await foo[bar].baz) }
-                                       ~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `foo[bar].baz` might be assigned based on an outdated state of `foo`.
-                                           ~~~
-!!! error TS2304: Cannot find name 'bar'.
                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `foo.bar` might be assigned based on an outdated state of `foo`.
-                                                                 ~~~
-!!! error TS2339: Property 'bar' does not exist on type '{}'.
-                                                                              ~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
-                                                                                  ~~~
-!!! error TS2304: Cannot find name 'bar'.

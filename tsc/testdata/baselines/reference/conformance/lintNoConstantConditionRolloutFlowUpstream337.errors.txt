@@ -1,6 +1,4 @@
 /input.ts(1,4): error TS24224: Unexpected constant condition.
-/input.ts(1,11): error TS2304: Cannot find name 'a'.
-/input.ts(1,22): error TS1313: The body of an 'if' statement cannot be the empty statement.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     if(0 || !(a && null));
        ~~~~~~~~~~~~~~~~~
 !!! error TS24224: Unexpected constant condition.
-              ~
-!!! error TS2304: Cannot find name 'a'.
-                         ~
-!!! error TS1313: The body of an 'if' statement cannot be the empty statement.

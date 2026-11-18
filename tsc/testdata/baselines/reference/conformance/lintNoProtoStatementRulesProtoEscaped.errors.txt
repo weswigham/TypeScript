@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS19005: The '__proto__' property is deprecated.
 
 
@@ -17,10 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     value['__pro\u0074o__'];
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19005: The '__proto__' property is deprecated.
 ==== /custom.ts (0 errors) ====

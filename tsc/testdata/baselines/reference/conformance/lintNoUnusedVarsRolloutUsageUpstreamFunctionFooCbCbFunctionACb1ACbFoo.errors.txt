@@ -1,8 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter 'cb' implicitly has an 'any' type.
 /input.ts(1,20): error TS24290: 'cb' is assigned a value but never used.
-/input.ts(1,26): error TS2695: Left side of comma operator is unused and has no side effects.
-/input.ts(1,35): error TS7006: Parameter 'a' implicitly has an 'any' type.
-/input.ts(1,61): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -25,16 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function foo(cb) { cb = (function(a) { cb(1 + a); }, cb); } foo();
-                 ~~
-!!! error TS7006: Parameter 'cb' implicitly has an 'any' type.
                        ~~
 !!! error TS24290: 'cb' is assigned a value but never used.
-                             ~~~~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-                                      ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
-                                                                ~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.ts:1:14: An argument for 'cb' was not provided.

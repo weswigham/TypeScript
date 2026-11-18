@@ -1,7 +1,5 @@
-/input.ts(1,15): error TS7006: Parameter 'Object' implicitly has an 'any' type.
 /input.ts(1,15): error TS24212: Identifier 'Object' is restricted.
 /input.ts(1,25): error TS24212: Identifier 'Object' is restricted.
-/input.ts(1,37): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -22,13 +20,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     function task(Object) { Object.keys(value); }
-                  ~~~~~~
-!!! error TS7006: Parameter 'Object' implicitly has an 'any' type.
                   ~~~~~~
 !!! error TS24212: Identifier 'Object' is restricted.
                             ~~~~~~
 !!! error TS24212: Identifier 'Object' is restricted.
-                                        ~~~~~
-!!! error TS2304: Cannot find name 'value'.

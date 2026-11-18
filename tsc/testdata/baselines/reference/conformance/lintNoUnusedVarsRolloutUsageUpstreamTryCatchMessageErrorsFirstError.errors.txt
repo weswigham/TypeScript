@@ -1,6 +1,4 @@
-/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
 /input.ts(1,17): error TS24290: 'message' is defined but never used. Allowed unused caught errors must match /foo/u.
-/input.ts(1,26): error TS2339: Property 'errors' does not exist on type 'unknown'.
 /input.ts(1,35): error TS24290: 'firstError' is defined but never used. Allowed unused caught errors must match /foo/u.
 
 
@@ -29,13 +27,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     try {} catch ({ message, errors: [firstError] }) {}
                     ~~~~~~~
-!!! error TS2339: Property 'message' does not exist on type 'unknown'.
-                    ~~~~~~~
 !!! error TS24290: 'message' is defined but never used. Allowed unused caught errors must match /foo/u.
-                             ~~~~~~
-!!! error TS2339: Property 'errors' does not exist on type 'unknown'.
                                       ~~~~~~~~~~
 !!! error TS24290: 'firstError' is defined but never used. Allowed unused caught errors must match /foo/u.

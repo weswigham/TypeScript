@@ -1,5 +1,4 @@
 /input.ts(1,7): error TS24291: '_ignored' is marked as ignored but is used. Used vars must not match /^_/u.
-/input.ts(1,21): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,9 +27,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const _ignored = 1; consume(_ignored);
           ~~~~~~~~
 !!! error TS24291: '_ignored' is marked as ignored but is used. Used vars must not match /^_/u.
-                        ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

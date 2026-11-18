@@ -1,5 +1,4 @@
 /input.ts(1,24): error TS20270: There is no `cause` attached to the symptom error being thrown.
-/input.ts(1,41): error TS2552: Cannot find name 'message'. Did you mean 'onmessage'?
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,10 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new Error((message),); }
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20270: There is no `cause` attached to the symptom error being thrown.
-                                            ~~~~~~~
-!!! error TS2552: Cannot find name 'message'. Did you mean 'onmessage'?
-!!! related TS2728 lib.dom.d.ts:--:--: 'onmessage' is declared here.

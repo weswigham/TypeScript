@@ -1,6 +1,4 @@
-/input.ts(1,10): error TS7023: 'foo' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
 /input.ts(1,10): error TS24290: 'foo' is defined but never used.
-/input.ts(1,14): error TS7006: Parameter 'n' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,13 +21,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function foo(n) {
              ~~~
-!!! error TS7023: 'foo' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
-             ~~~
 !!! error TS24290: 'foo' is defined but never used.
-                 ~
-!!! error TS7006: Parameter 'n' implicitly has an 'any' type.
     if (n < 2) return 1;
     return n * foo(n - 1);}

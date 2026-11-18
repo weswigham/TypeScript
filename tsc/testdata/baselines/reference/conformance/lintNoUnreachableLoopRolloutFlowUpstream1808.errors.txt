@@ -1,8 +1,4 @@
 /input.ts(1,23): error TS24284: Invalid loop. Its body allows only one iteration.
-/input.ts(1,30): error TS2304: Cannot find name 'b'.
-/input.ts(1,34): error TS2304: Cannot find name 'foo'.
-/input.ts(1,47): error TS2304: Cannot find name 'foo'.
-/input.ts(1,70): error TS2304: Cannot find name 'err'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (1 errors) ====
     function someFunc() { for (; b < foo; ) { if (foo) { return; } throw err; } }
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24284: Invalid loop. Its body allows only one iteration.
-                                 ~
-!!! error TS2304: Cannot find name 'b'.
-                                     ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                                                  ~~~
-!!! error TS2304: Cannot find name 'foo'.
-                                                                         ~~~
-!!! error TS2304: Cannot find name 'err'.

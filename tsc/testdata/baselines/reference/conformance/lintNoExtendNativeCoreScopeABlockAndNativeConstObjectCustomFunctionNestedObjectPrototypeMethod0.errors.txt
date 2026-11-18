@@ -1,7 +1,4 @@
-/input.ts(1,7): error TS2451: Cannot redeclare block-scoped variable 'Object'.
-/input.ts(1,16): error TS2304: Cannot find name 'custom'.
 /input.ts(1,44): error TS19863: Object prototype is read only, properties should not be added.
-/input.ts(1,61): error TS2339: Property 'method' does not exist on type 'Object'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,15 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     const Object = custom; function nested() { Object.prototype.method = 0; }
-          ~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'Object'.
-!!! related TS6203 lib.es5.d.ts:--:--: 'Object' was also declared here.
-!!! related TS6204 lib.es5.d.ts:--:--: and here.
-                   ~~~~~~
-!!! error TS2304: Cannot find name 'custom'.
                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19863: Object prototype is read only, properties should not be added.
-                                                                ~~~~~~
-!!! error TS2339: Property 'method' does not exist on type 'Object'.

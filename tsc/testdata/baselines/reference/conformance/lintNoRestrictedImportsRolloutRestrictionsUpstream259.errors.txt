@@ -1,6 +1,4 @@
-/input.tsx(1,1): error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
 /input.tsx(1,1): error TS24257: 'fs' import is restricted from being used by a pattern.
-/input.tsx(1,21): error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -29,11 +27,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (1 errors) ====
     import fs = require("fs");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS1202: Import assignment cannot be used when targeting ECMAScript modules. Consider using 'import * as ns from "mod"', 'import {a} from "mod"', 'import d from "mod"', or another module format instead.
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24257: 'fs' import is restricted from being used by a pattern.
-                        ~~~~
-!!! error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.

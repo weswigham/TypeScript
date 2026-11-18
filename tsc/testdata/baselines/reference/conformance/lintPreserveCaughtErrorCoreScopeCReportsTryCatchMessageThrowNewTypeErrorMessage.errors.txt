@@ -1,5 +1,4 @@
 /input.ts(1,8): error TS20272: Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring.
-/input.ts(1,17): error TS2339: Property 'message' does not exist on type 'unknown'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch ({ message }) { throw new TypeError(message); }
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20272: Re-throws cannot preserve the caught error as a part of it is being lost due to destructuring.
-                    ~~~~~~~
-!!! error TS2339: Property 'message' does not exist on type 'unknown'.

@@ -1,6 +1,5 @@
 /input.ts(1,28): error TS24249: Assignment to function parameter 'value'.
 /input.ts(1,39): error TS24249: Assignment to function parameter 'value'.
-/input.ts(1,54): error TS2339: Property 'prop' does not exist on type 'number'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,11 +17,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     function task(value = 1) { value = 2; value++; value.prop = 3; }
                                ~~~~~
 !!! error TS24249: Assignment to function parameter 'value'.
                                           ~~~~~
 !!! error TS24249: Assignment to function parameter 'value'.
-                                                         ~~~~
-!!! error TS2339: Property 'prop' does not exist on type 'number'.

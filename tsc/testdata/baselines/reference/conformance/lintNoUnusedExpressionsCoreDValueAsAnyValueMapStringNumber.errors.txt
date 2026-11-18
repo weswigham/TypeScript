@@ -1,6 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'value'.
 /input.ts(1,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-/input.ts(1,15): error TS2304: Cannot find name 'value'.
 /input.ts(1,15): error TS19656: Expected an assignment or function call and instead saw an expression.
 /input.ts(1,23): error TS19656: Expected an assignment or function call and instead saw an expression.
 
@@ -20,14 +18,10 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (3 errors) ====
     value as any; value!; Map<string, number>;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-                  ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                   ~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
                           ~~~~~~~~~~~~~~~~~~~~

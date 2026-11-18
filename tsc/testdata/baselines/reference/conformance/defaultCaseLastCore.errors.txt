@@ -1,6 +1,4 @@
-input.ts(1,9): error TS2304: Cannot find name 'value'.
 input.ts(1,18): error TS19230: Default clause should be the last clause.
-input.ts(2,9): error TS2304: Cannot find name 'value'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -9,12 +7,8 @@ input.ts(2,9): error TS2304: Cannot find name 'value'.
         "lint": { "rules": { "default-case-last": "error" } },
         "files": ["input.ts"]
     }
-==== input.ts (3 errors) ====
+==== input.ts (1 errors) ====
     switch (value) { default: break; case 1: break; }
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.
                      ~~~~~~~~~~~~~~~
 !!! error TS19230: Default clause should be the last clause.
     switch (value) { case 1: break; default: break; }
-            ~~~~~
-!!! error TS2304: Cannot find name 'value'.

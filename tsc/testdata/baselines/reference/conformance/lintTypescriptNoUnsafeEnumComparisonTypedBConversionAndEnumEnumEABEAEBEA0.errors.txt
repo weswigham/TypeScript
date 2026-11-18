@@ -1,4 +1,3 @@
-/input.ts(1,17): error TS2367: This comparison appears to be unintentional because the types 'E.A' and 'E.B' have no overlap.
 /input.ts(1,30): error TS20910: The two values in this comparison do not have a shared enum type.
 
 
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     enum E { A, B } E.A === E.B; E.A === 0;
-                    ~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'E.A' and 'E.B' have no overlap.
                                  ~~~~~~~~~
 !!! error TS20910: The two values in this comparison do not have a shared enum type.

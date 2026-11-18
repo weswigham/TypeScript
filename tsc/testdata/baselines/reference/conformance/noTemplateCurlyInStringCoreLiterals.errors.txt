@@ -2,7 +2,6 @@ input.ts(1,1): error TS19509: Unexpected template string expression.
 input.ts(2,1): error TS19509: Unexpected template string expression.
 input.ts(3,1): error TS19509: Unexpected template string expression.
 input.ts(4,1): error TS19509: Unexpected template string expression.
-input.ts(8,1): error TS2304: Cannot find name 'tag'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -12,7 +11,7 @@ input.ts(8,1): error TS2304: Cannot find name 'tag'.
         "files": ["input.ts"]
     }
     
-==== input.ts (5 errors) ====
+==== input.ts (4 errors) ====
     'Hello, ${name}';
     ~~~~~~~~~~~~~~~~
 !!! error TS19509: Unexpected template string expression.
@@ -29,5 +28,3 @@ input.ts(8,1): error TS2304: Cannot find name 'tag'.
     '${';
     `Hello, ${name}`;
     tag`Hello, ${name}`;
-    ~~~
-!!! error TS2304: Cannot find name 'tag'.

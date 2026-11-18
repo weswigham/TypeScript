@@ -1,11 +1,9 @@
 input.ts(1,16): error TS19508: Unexpected comma in middle of array.
 input.ts(2,19): error TS19508: Unexpected comma in middle of array.
-input.ts(3,20): error TS2304: Cannot find name 'a'.
 input.ts(3,27): error TS19508: Unexpected comma in middle of array.
 input.ts(3,28): error TS19508: Unexpected comma in middle of array.
 input.ts(5,15): error TS19508: Unexpected comma in middle of array.
 input.ts(6,5): error TS19508: Unexpected comma in middle of array.
-input.ts(10,4): error TS2304: Cannot find name 'other'.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -15,7 +13,7 @@ input.ts(10,4): error TS2304: Cannot find name 'other'.
         "files": ["input.ts"]
     }
     
-==== input.ts (8 errors) ====
+==== input.ts (6 errors) ====
     const first = [,];
                    ~
 !!! error TS19508: Unexpected comma in middle of array.
@@ -23,8 +21,6 @@ input.ts(10,4): error TS2304: Cannot find name 'other'.
                       ~
 !!! error TS19508: Unexpected comma in middle of array.
     const third = [(( [a,] )),,,];
-                       ~
-!!! error TS2304: Cannot find name 'a'.
                               ~
 !!! error TS19508: Unexpected comma in middle of array.
                                ~
@@ -40,5 +36,3 @@ input.ts(10,4): error TS2304: Cannot find name 'other'.
     const dense = [1, 2,];
     const [, value] = dense;
     [, other] = dense;
-       ~~~~~
-!!! error TS2304: Cannot find name 'other'.

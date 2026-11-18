@@ -1,75 +1,38 @@
-input.tsx(2,1): error TS2872: This kind of expression is always truthy.
 input.tsx(2,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
-input.tsx(3,1): error TS2872: This kind of expression is always truthy.
 input.tsx(3,2): error TS22040: Unexpected constant truthiness on the left-hand side of a `||` expression.
 input.tsx(4,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(5,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(6,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
-input.tsx(7,1): error TS2873: This kind of expression is always falsy.
 input.tsx(7,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(8,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
-input.tsx(9,2): error TS2695: Left side of comma operator is unused and has no side effects.
 input.tsx(9,2): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(10,2): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(11,2): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(12,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(13,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
 input.tsx(14,1): error TS22040: Unexpected constant truthiness on the left-hand side of a `||` expression.
-input.tsx(15,2): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
 input.tsx(15,2): error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
-input.tsx(16,1): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
 input.tsx(16,1): error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
-input.tsx(17,2): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
 input.tsx(17,2): error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
 input.tsx(18,1): error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
-input.tsx(19,1): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
 input.tsx(19,1): error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
-input.tsx(20,1): error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'never[]' have no overlap.
-input.tsx(20,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(20,9): error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `==`.
 input.tsx(21,1): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-input.tsx(21,1): error TS2367: This comparison appears to be unintentional because the types 'never[]' and 'boolean' have no overlap.
-input.tsx(21,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(22,1): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `===`.
-input.tsx(22,1): error TS2367: This comparison appears to be unintentional because the types 'never[]' and 'boolean' have no overlap.
-input.tsx(22,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(23,2): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
 input.tsx(24,15): error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `==`.
 input.tsx(25,1): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-input.tsx(25,1): error TS2367: This comparison appears to be unintentional because the types 'string' and 'boolean' have no overlap.
 input.tsx(26,1): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-input.tsx(26,1): error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-input.tsx(26,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
-input.tsx(27,1): error TS2367: This comparison appears to be unintentional because the types '{}' and 'boolean' have no overlap.
 input.tsx(27,2): error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `===`.
-input.tsx(28,1): error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'number' have no overlap.
 input.tsx(28,10): error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `===`.
 input.tsx(29,16): error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `===`.
-input.tsx(30,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(30,11): error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
-input.tsx(31,1): error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
 input.tsx(31,11): error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
 input.tsx(32,11): error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
-input.tsx(33,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(33,11): error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
 input.tsx(34,12): error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
-input.tsx(35,1): error TS2367: This comparison appears to be unintentional because the types '{}' and 'never[]' have no overlap.
-input.tsx(35,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
 input.tsx(35,2): error TS22037: Unexpected comparison of two newly constructed objects. These two values can never be equal.
 input.tsx(36,1): error TS22037: Unexpected comparison of two newly constructed objects. These two values can never be equal.
-input.tsx(36,1): error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
-input.tsx(41,1): error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-input.tsx(41,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
-input.tsx(42,1): error TS2367: This comparison appears to be unintentional because the types 'undefined[]' and 'boolean' have no overlap.
-input.tsx(42,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
-input.tsx(43,1): error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-input.tsx(43,1): error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
-input.tsx(44,1): error TS2367: This comparison appears to be unintentional because the types 'string' and 'boolean' have no overlap.
-input.tsx(45,5): error TS2304: Cannot find name 'Custom'.
-input.tsx(46,5): error TS2304: Cannot find name 'Custom'.
-input.tsx(50,1): error TS2872: This kind of expression is always truthy.
-input.tsx(50,1): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
-input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -79,16 +42,12 @@ input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the le
         "files": ["input.tsx"]
     }
     
-==== input.tsx (72 errors) ====
+==== input.tsx (35 errors) ====
     declare let value: any, other: any, result: any;
     [] && value;
     ~~
-!!! error TS2872: This kind of expression is always truthy.
-    ~~
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
     ({}) || value;
-    ~~~~
-!!! error TS2872: This kind of expression is always truthy.
      ~~
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `||` expression.
     new Boolean(value) && other;
@@ -102,15 +61,11 @@ input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the le
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
     void value && other;
     ~~~~~~~~~~
-!!! error TS2873: This kind of expression is always falsy.
-    ~~~~~~~~~~
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
     typeof value && other;
     ~~~~~~~~~~~~
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
     (value, true) && other;
-     ~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
      ~~~~~~~~~~~
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `&&` expression.
     (result = false) && value;
@@ -130,17 +85,11 @@ input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the le
 !!! error TS22040: Unexpected constant truthiness on the left-hand side of a `||` expression.
     ({}) ?? value;
      ~~
-!!! error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
-     ~~
 !!! error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
     !value ?? other;
     ~~~~~~
-!!! error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
-    ~~~~~~
 !!! error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
     (value + other) ?? result;
-     ~~~~~~~~~~~~~
-!!! error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
      ~~~~~~~~~~~~~
 !!! error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
     String(value) ?? other;
@@ -148,30 +97,16 @@ input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the le
 !!! error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
     value ?? "fallback" ?? other;
     ~~~~~~~~~~~~~~~~~~~
-!!! error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
-    ~~~~~~~~~~~~~~~~~~~
 !!! error TS22040: Unexpected constant nullishness on the left-hand side of a `??` expression.
     true == [];
-    ~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'never[]' have no overlap.
-    ~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
             ~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `==`.
     [] == true;
     ~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-    ~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'never[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     [] === true;
     ~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `===`.
-    ~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'never[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     ({}) == null;
      ~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
@@ -181,100 +116,54 @@ input.tsx(51,1): error TS2869: Right operand of ?? is unreachable because the le
     typeof value == true;
     ~~~~~~~~~~~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'string' and 'boolean' have no overlap.
     [value, other] == true;
     ~~~~~~~~~~~~~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `==`.
-    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     ({}) === Boolean();
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '{}' and 'boolean' have no overlap.
      ~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the right-hand side of the `===`.
     true === Number(value);
-    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'number' have no overlap.
              ~~~~~~~~~~~~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `===`.
     Boolean(0) === Boolean(1);
                    ~~~~~~~~~~
 !!! error TS22039: Unexpected constant binary expression. Compares constantly with the left-hand side of the `===`.
     value === {};
-    ~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
               ~~
 !!! error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
     value !== [];
-    ~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
               ~~
 !!! error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
     value === new Promise(() => {});
               ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
     value === /pattern/;
-    ~~~~~~~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
               ~~~~~~~~~
 !!! error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
     value === (result ? {} : []);
                ~~~~~~~~~~~~~~~~
 !!! error TS22038: Unexpected comparison to newly constructed object. These two values can never be equal.
     ({}) == [];
-    ~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types '{}' and 'never[]' have no overlap.
-    ~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
      ~~
 !!! error TS22037: Unexpected comparison of two newly constructed objects. These two values can never be equal.
     [value] != [value];
     ~~~~~~~
 !!! error TS22037: Unexpected comparison of two newly constructed objects. These two values can never be equal.
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'true' since JavaScript compares objects by reference, not value.
     value && other;
     `${value}` && other;
     (result += 1) && value;
     delete value.property && other;
     [value] == true;
-    ~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     [,,,] == true;
-    ~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'undefined[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     [...value, 1] == true;
-    ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'any[]' and 'boolean' have no overlap.
-    ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2839: This condition will always return 'false' since JavaScript compares objects by reference, not value.
     `${value}` == true;
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2367: This comparison appears to be unintentional because the types 'string' and 'boolean' have no overlap.
     new Custom() == true;
-        ~~~~~~
-!!! error TS2304: Cannot find name 'Custom'.
     new Custom() === value;
-        ~~~~~~
-!!! error TS2304: Cannot find name 'Custom'.
     value ?? null ?? other;
     value && true && other;
     5 < 10;
     <div /> && value;
-    ~~~~~~~
-!!! error TS2872: This kind of expression is always truthy.
-    ~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
     <></> ?? value;
-    ~~~~~
-!!! error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
     function shadowed(Boolean: any, String: any, undefined: any, Promise: any) {
         Boolean([]) && value;
         String(value) ?? other;

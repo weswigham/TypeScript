@@ -1,4 +1,3 @@
-/input.ts(1,80): error TS2322: Type 'undefined' is not assignable to type 'Promise<void>'.
 /input.ts(1,80): error TS24007: Function 'f' expected a return value.
 
 
@@ -23,9 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function f(flag: boolean): Promise<void> { if (flag) return Promise.resolve(); return; }
-                                                                                   ~~~~~~
-!!! error TS2322: Type 'undefined' is not assignable to type 'Promise<void>'.
                                                                                    ~~~~~~~
 !!! error TS24007: Function 'f' expected a return value.

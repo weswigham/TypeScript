@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS19666: 'unused:' is defined but never used.
-/input.tsx(1,11): error TS2304: Cannot find name 'call'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     unused: { call(); }
     ~~~~~~
 !!! error TS19666: 'unused:' is defined but never used.
-              ~~~~
-!!! error TS2304: Cannot find name 'call'.

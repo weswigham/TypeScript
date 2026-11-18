@@ -1,7 +1,6 @@
 /input.tsx(1,10): error TS24268: 'Image' import from 'react-native' is restricted. import Image from ui/_components instead
 /input.tsx(1,17): error TS24268: 'Text' import from 'react-native' is restricted. import Text from ui/_components instead
 /input.tsx(1,23): error TS24268: 'ScrollView' import from 'react-native' is restricted. import ScrollView from ui/_components instead
-/input.tsx(1,41): error TS2307: Cannot find module 'react-native' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -74,7 +73,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (4 errors) ====
+==== /input.tsx (3 errors) ====
     import { Image, Text, ScrollView } from 'react-native'
              ~~~~~
 !!! error TS24268: 'Image' import from 'react-native' is restricted. import Image from ui/_components instead
@@ -82,5 +81,3 @@
 !!! error TS24268: 'Text' import from 'react-native' is restricted. import Text from ui/_components instead
                           ~~~~~~~~~~
 !!! error TS24268: 'ScrollView' import from 'react-native' is restricted. import ScrollView from ui/_components instead
-                                            ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'react-native' or its corresponding type declarations.

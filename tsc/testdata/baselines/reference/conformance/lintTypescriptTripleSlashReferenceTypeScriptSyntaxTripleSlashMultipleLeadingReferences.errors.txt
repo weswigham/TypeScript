@@ -1,7 +1,5 @@
 /input.ts(1,1): error TS20490: Do not use a triple slash reference for first, use `import` style instead.
-/input.ts(1,22): error TS6231: Could not resolve the path 'first' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
 /input.ts(2,1): error TS20490: Do not use a triple slash reference for second, use `import` style instead.
-/input.ts(2,22): error TS6231: Could not resolve the path 'second' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,14 +17,10 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (2 errors) ====
     /// <reference path="first" />
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20490: Do not use a triple slash reference for first, use `import` style instead.
-                         ~~~~~
-!!! error TS6231: Could not resolve the path 'first' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
     /// <reference path="second" />
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20490: Do not use a triple slash reference for second, use `import` style instead.
-                         ~~~~~~
-!!! error TS6231: Could not resolve the path 'second' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.

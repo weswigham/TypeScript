@@ -1,24 +1,6 @@
-input.ts(1,1): error TS2695: Left side of comma operator is unused and has no side effects.
-input.ts(1,1): error TS2695: Left side of comma operator is unused and has no side effects.
 input.ts(1,2): error TS19507: Unexpected use of comma operator.
-input.ts(2,5): error TS2304: Cannot find name 'doSomething'.
 input.ts(2,18): error TS19507: Unexpected use of comma operator.
-input.ts(2,20): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
-input.ts(3,6): error TS2304: Cannot find name 'doSomething'.
-input.ts(3,21): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
-input.ts(4,6): error TS2304: Cannot find name 'i'.
-input.ts(4,13): error TS2304: Cannot find name 'j'.
-input.ts(4,20): error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
-input.ts(4,26): error TS2304: Cannot find name 'i'.
-input.ts(4,31): error TS2304: Cannot find name 'j'.
-input.ts(5,15): error TS7006: Parameter 'a' implicitly has an 'any' type.
-input.ts(5,21): error TS2304: Cannot find name 'doSomething'.
 input.ts(5,34): error TS19507: Unexpected use of comma operator.
-input.ts(6,17): error TS7006: Parameter 'a' implicitly has an 'any' type.
-input.ts(6,24): error TS2304: Cannot find name 'doSomething'.
-input.ts(7,16): error TS2695: Left side of comma operator is unused and has no side effects.
-input.ts(8,17): error TS2695: Left side of comma operator is unused and has no side effects.
-input.ts(8,21): error TS2695: Left side of comma operator is unused and has no side effects.
 
 
 ==== tsconfig.json (0 errors) ====
@@ -28,54 +10,18 @@ input.ts(8,21): error TS2695: Left side of comma operator is unused and has no s
         "files": ["input.ts"]
     }
     
-==== input.ts (21 errors) ====
+==== input.ts (3 errors) ====
     1, 2, 3;
-    ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-    ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
      ~
 !!! error TS19507: Unexpected use of comma operator.
     if (doSomething(), test) {}
-        ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
                      ~
 !!! error TS19507: Unexpected use of comma operator.
-                       ~~~~
-!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
     if ((doSomething(), test)) {}
-         ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
-                        ~~~~
-!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
     for (i = 0, j = 0; test; i++, j++) {}
-         ~
-!!! error TS2304: Cannot find name 'i'.
-                ~
-!!! error TS2304: Cannot find name 'j'.
-                       ~~~~
-!!! error TS2593: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
-                             ~
-!!! error TS2304: Cannot find name 'i'.
-                                  ~
-!!! error TS2304: Cannot find name 'j'.
     const arrow = a => (doSomething(), a);
-                  ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
-                        ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
                                      ~
 !!! error TS19507: Unexpected use of comma operator.
     const allowed = a => ((doSomething(), a));
-                    ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
-                           ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'doSomething'.
     const value = (1, 2);
-                   ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
     const nested = (1, (2, 3));
-                    ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-                        ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.

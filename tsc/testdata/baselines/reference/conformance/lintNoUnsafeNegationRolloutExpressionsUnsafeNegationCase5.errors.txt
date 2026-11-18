@@ -1,6 +1,4 @@
 /input.ts(1,1): error TS24285: Unexpected negating the left operand of '>=' operator.
-/input.ts(1,2): error TS2304: Cannot find name 'value'.
-/input.ts(1,11): error TS2304: Cannot find name 'other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,11 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     !value >= other;
     ~~~~~~
 !!! error TS24285: Unexpected negating the left operand of '>=' operator.
-     ~~~~~
-!!! error TS2304: Cannot find name 'value'.
-              ~~~~~
-!!! error TS2304: Cannot find name 'other'.

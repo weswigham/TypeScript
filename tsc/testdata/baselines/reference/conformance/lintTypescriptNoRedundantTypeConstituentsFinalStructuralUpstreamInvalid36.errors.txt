@@ -1,4 +1,3 @@
-/input.ts(1,19): error TS2304: Cannot find name 'NotKnown'.
 /input.ts(1,19): error TS24064: 'NotKnown' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.
 
 
@@ -19,9 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     type ErrorTypes = NotKnown & 0;
-                      ~~~~~~~~
-!!! error TS2304: Cannot find name 'NotKnown'.
                       ~~~~~~~~
 !!! error TS24064: 'NotKnown' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.

@@ -1,4 +1,3 @@
-/input.ts(1,13): error TS7008: Member '#value' implicitly has an 'any' type.
 /input.ts(1,13): error TS24288: '#value' is defined but never used.
 
 
@@ -22,9 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Box { #value; read() { this.#value += 1; } }
-                ~~~~~~
-!!! error TS7008: Member '#value' implicitly has an 'any' type.
                 ~~~~~~
 !!! error TS24288: '#value' is defined but never used.

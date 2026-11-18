@@ -1,4 +1,3 @@
-/input.ts(1,61): error TS2304: Cannot find name 'e'.
 /input.ts(1,66): error TS24283: Unreachable code.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function foo() { var x = 1; if (x) { return; } else { throw e; } x = 2; }
-                                                                ~
-!!! error TS2304: Cannot find name 'e'.
                                                                      ~~~~~~
 !!! error TS24283: Unreachable code.

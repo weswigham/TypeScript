@@ -1,5 +1,4 @@
 /input.ts(1,24): error TS20270: There is no `cause` attached to the symptom error being thrown.
-/input.ts(1,30): error TS2554: Expected 1-3 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,10 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new AggregateError(); }
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20270: There is no `cause` attached to the symptom error being thrown.
-                                 ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 1-3 arguments, but got 0.
-!!! related TS6210 lib.es2021.promise.d.ts:--:--: An argument for 'errors' was not provided.

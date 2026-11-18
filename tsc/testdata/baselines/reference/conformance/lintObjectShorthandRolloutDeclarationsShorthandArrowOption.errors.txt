@@ -1,5 +1,4 @@
 /input.ts(1,12): error TS24310: Expected method shorthand.
-/input.ts(1,15): error TS7006: Parameter 'x' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,9 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const o = {f: x => {}};
                ~~~~~~~~~~
 !!! error TS24310: Expected method shorthand.
-                  ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.

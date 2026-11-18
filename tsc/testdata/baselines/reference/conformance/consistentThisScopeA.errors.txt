@@ -1,11 +1,5 @@
-input.ts(1,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
-input.ts(2,1): error TS2322: Type 'typeof globalThis' is not assignable to type 'Window & typeof globalThis'.
-  Property 'name' is missing in type 'typeof globalThis' but required in type 'Window'.
 input.ts(4,5): error TS19858: Unexpected alias 'context' for 'this'.
 input.ts(6,9): error TS19857: Designated alias 'self' is not assigned to 'this'.
-input.ts(7,21): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-input.ts(11,10): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-input.ts(13,1): error TS2365: Operator '+=' cannot be applied to types 'typeof globalThis' and 'typeof globalThis'.
 input.ts(13,1): error TS19857: Designated alias 'vm' is not assigned to 'this'.
 
 
@@ -15,16 +9,9 @@ input.ts(13,1): error TS19857: Designated alias 'vm' is not assigned to 'this'.
         "lint": { "rules": { "consistent-this": ["error", "self", "vm"] } },
         "files": ["input.ts"]
     }
-==== input.ts (8 errors) ====
+==== input.ts (3 errors) ====
     var self;
-        ~~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'self' must be of type 'Window & typeof globalThis', but here has type 'any'.
-!!! related TS6203 lib.dom.d.ts:--:--: 'self' was also declared here.
     self = this;
-    ~~~~
-!!! error TS2322: Type 'typeof globalThis' is not assignable to type 'Window & typeof globalThis'.
-!!! error TS2322:   Property 'name' is missing in type 'typeof globalThis' but required in type 'Window'.
-!!! related TS2728 lib.dom.d.ts:--:--: 'name' is declared here.
     var vm = this;
     var context = this;
         ~~~~~~~~~~~~~~
@@ -34,17 +21,11 @@ input.ts(13,1): error TS19857: Designated alias 'vm' is not assigned to 'this'.
             ~~~~
 !!! error TS19857: Designated alias 'self' is not assigned to 'this'.
         (() => { self = this; })();
-                        ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     }
     function assigned() {
         let vm;
         vm = this;
-             ~~~~
-!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     }
     vm += this;
-    ~~~~~~~~~~
-!!! error TS2365: Operator '+=' cannot be applied to types 'typeof globalThis' and 'typeof globalThis'.
     ~~~~~~~~~~
 !!! error TS19857: Designated alias 'vm' is not assigned to 'this'.

@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'values'.
 /input.ts(1,1): error TS24362: Array prototype method 'indexOf' cannot find NaN.
 
 
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     values.indexOf(NaN, 1);
-    ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
     ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24362: Array prototype method 'indexOf' cannot find NaN.

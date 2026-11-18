@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'f'.
 /input.ts(1,28): error TS24034: Explicit undefined is unnecessary on an optional parameter.
 
 
@@ -19,9 +18,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     f = function (a?: string | undefined) {};
-    ~
-!!! error TS2304: Cannot find name 'f'.
                                ~~~~~~~~~
 !!! error TS24034: Explicit undefined is unnecessary on an optional parameter.

@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'values'.
 /input.ts(1,36): error TS24199: Array.prototype.filter() expects a return value from function.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     values.filter((function() { return function() {}; })());
-    ~~~~~~
-!!! error TS2304: Cannot find name 'values'.
                                        ~~~~~~~~
 !!! error TS24199: Array.prototype.filter() expects a return value from function.

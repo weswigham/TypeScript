@@ -1,7 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'foo'.
 /input.ts(1,5): error TS24321: Unexpected function expression.
-/input.ts(1,22): error TS1100: Invalid use of 'arguments' in strict mode.
-/input.ts(1,33): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     foo(function() { var arguments; consume(arguments); });
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24321: Unexpected function expression.
-                         ~~~~~~~~~
-!!! error TS1100: Invalid use of 'arguments' in strict mode.
-                                    ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

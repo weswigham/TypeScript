@@ -1,6 +1,5 @@
 /input.ts(1,10): error TS24290: 'f' is defined but never used.
 /input.ts(1,20): error TS24290: 'a' is assigned a value but never used.
-/input.ts(1,48): error TS2554: Expected 0 arguments, but got 1.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -26,11 +25,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (2 errors) ====
     function f() { var a = 1; return function(){ f(a = 2); }; }
              ~
 !!! error TS24290: 'f' is defined but never used.
                        ~
 !!! error TS24290: 'a' is assigned a value but never used.
-                                                   ~~~~~
-!!! error TS2554: Expected 0 arguments, but got 1.

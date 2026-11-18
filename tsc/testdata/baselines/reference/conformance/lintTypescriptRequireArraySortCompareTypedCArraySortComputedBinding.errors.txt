@@ -1,5 +1,4 @@
 /input.ts(1,22): error TS21080: Require 'compare' argument.
-/input.ts(1,29): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let method = 'sort'; [1, 2][method]();
                          ~~~~~~~~~~~~~~~~
 !!! error TS21080: Require 'compare' argument.
-                                ~~~~~~
-!!! error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.

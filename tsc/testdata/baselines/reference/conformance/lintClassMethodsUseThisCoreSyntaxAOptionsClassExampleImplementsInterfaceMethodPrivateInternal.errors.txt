@@ -1,4 +1,3 @@
-/input.ts(1,26): error TS2304: Cannot find name 'Interface'.
 /input.ts(1,50): error TS19218: Expected 'this' to be used by class method 'internal'.
 
 
@@ -22,9 +21,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     class Example implements Interface { method() {} private internal() {} }
-                             ~~~~~~~~~
-!!! error TS2304: Cannot find name 'Interface'.
                                                      ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19218: Expected 'this' to be used by class method 'internal'.

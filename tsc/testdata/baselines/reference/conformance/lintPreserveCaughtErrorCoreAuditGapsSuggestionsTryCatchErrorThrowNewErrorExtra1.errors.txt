@@ -1,5 +1,4 @@
 /input.ts(1,24): error TS20270: There is no `cause` attached to the symptom error being thrown.
-/input.ts(1,45): error TS2353: Object literal may only specify known properties, and 'extra' does not exist in type 'ErrorOptions'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -18,9 +17,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (error) { throw new Error('', {extra: 1,}); }
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20270: There is no `cause` attached to the symptom error being thrown.
-                                                ~~~~~
-!!! error TS2353: Object literal may only specify known properties, and 'extra' does not exist in type 'ErrorOptions'.

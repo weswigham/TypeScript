@@ -1,5 +1,3 @@
-/input.ts(1,14): error TS1346: This parameter is not allowed with 'use strict' directive.
-/input.ts(1,27): error TS1347: 'use strict' directive cannot be used with non-simple parameter list.
 /input.ts(1,27): error TS24355: 'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016.
 
 
@@ -15,13 +13,7 @@
             "/input.ts"
         ]
     }
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     function foo(value = 0) { 'use strict'; }
-                 ~~~~~~~~~
-!!! error TS1346: This parameter is not allowed with 'use strict' directive.
-!!! related TS1349 /input.ts:1:27: 'use strict' directive used here.
-                              ~~~~~~~~~~~~~
-!!! error TS1347: 'use strict' directive cannot be used with non-simple parameter list.
-!!! related TS1348 /input.ts:1:14: Non-simple parameter declared here.
                               ~~~~~~~~~~~~~
 !!! error TS24355: 'use strict' directive inside a function with non-simple parameter list throws a syntax error since ES2016.

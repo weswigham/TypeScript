@@ -1,6 +1,4 @@
 /input.ts(1,5): error TS24293: The value assigned to 'v' is not used in subsequent statements.
-/input.ts(3,21): error TS2304: Cannot find name 'callA'.
-/input.ts(5,25): error TS2304: Cannot find name 'callB'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -23,18 +21,14 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     let v = 'unused';
         ~
 !!! error TS24293: The value assigned to 'v' is not used in subsequent statements.
                 try {
                     v = callA();
-                        ~~~~~
-!!! error TS2304: Cannot find name 'callA'.
                     try {
                         v = callB();
-                            ~~~~~
-!!! error TS2304: Cannot find name 'callB'.
                     } catch (e) {
                         // ignore
                     }

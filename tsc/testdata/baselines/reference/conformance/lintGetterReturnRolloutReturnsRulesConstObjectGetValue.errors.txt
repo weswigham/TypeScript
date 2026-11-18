@@ -1,5 +1,4 @@
 /input.ts(1,18): error TS24210: Expected to return a value in getter 'value'.
-/input.ts(1,22): error TS2378: A 'get' accessor must return a value.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const object = { get value() {} };
                      ~~~~~~~~~
 !!! error TS24210: Expected to return a value in getter 'value'.
-                         ~~~~~
-!!! error TS2378: A 'get' accessor must return a value.

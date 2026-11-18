@@ -1,7 +1,5 @@
 /input.ts(1,12): error TS20168: Unexpected dangling '_' in '_param'.
-/input.ts(1,24): error TS7019: Rest parameter '_rest' implicitly has an 'any[]' type.
 /input.ts(1,24): error TS20168: Unexpected dangling '_' in '_rest'.
-/input.ts(1,52): error TS7006: Parameter '_arg' implicitly has an 'any' type.
 /input.ts(1,52): error TS20168: Unexpected dangling '_' in '_arg'.
 
 
@@ -25,15 +23,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (3 errors) ====
     function f(_param = 0, ..._rest) {} const arrow = (_arg) => 0;
                ~~~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_param'.
                            ~~~~~~~~
-!!! error TS7019: Rest parameter '_rest' implicitly has an 'any[]' type.
-                           ~~~~~~~~
 !!! error TS20168: Unexpected dangling '_' in '_rest'.
-                                                       ~~~~
-!!! error TS7006: Parameter '_arg' implicitly has an 'any' type.
                                                        ~~~~
 !!! error TS20168: Unexpected dangling '_' in '_arg'.

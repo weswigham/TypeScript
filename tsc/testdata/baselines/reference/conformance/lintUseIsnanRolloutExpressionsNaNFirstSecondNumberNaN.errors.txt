@@ -1,7 +1,4 @@
 /input.ts(1,1): error TS24359: Use the isNaN function to compare with NaN.
-/input.ts(1,2): error TS2304: Cannot find name 'first'.
-/input.ts(1,2): error TS2695: Left side of comma operator is unused and has no side effects.
-/input.ts(1,9): error TS2304: Cannot find name 'second'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     (first, second) === Number['NaN'];
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24359: Use the isNaN function to compare with NaN.
-     ~~~~~
-!!! error TS2304: Cannot find name 'first'.
-     ~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
-            ~~~~~~
-!!! error TS2304: Cannot find name 'second'.

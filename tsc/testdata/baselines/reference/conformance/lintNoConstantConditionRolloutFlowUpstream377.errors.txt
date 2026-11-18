@@ -1,4 +1,3 @@
-/input.ts(1,7): error TS2872: This kind of expression is always truthy.
 /input.ts(1,7): error TS24224: Unexpected constant condition.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     while(`foo`);
-          ~~~~~
-!!! error TS2872: This kind of expression is always truthy.
           ~~~~~
 !!! error TS24224: Unexpected constant condition.

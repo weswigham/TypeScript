@@ -1,11 +1,5 @@
-/input.ts(1,43): error TS2349: This expression is not callable.
-  Type 'Math' has no call signatures.
 /input.ts(1,43): error TS24248: 'alias' is reference to 'Math', which is not a function.
 /input.ts(1,52): error TS24248: 'second' is reference to 'Math', which is not a function.
-/input.ts(1,56): error TS2351: This expression is not constructable.
-  Type 'Math' has no construct signatures.
-/input.ts(1,97): error TS2349: This expression is not callable.
-  Type 'JSON' has no call signatures.
 /input.ts(1,97): error TS24248: 'json' is reference to 'JSON', which is not a function.
 
 
@@ -24,20 +18,11 @@
             "input.ts"
         ]
     }
-==== /input.ts (6 errors) ====
+==== /input.ts (3 errors) ====
     const alias = Math; const second = alias; alias(); new second; const {JSON: json} = globalThis; json();
-                                              ~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Math' has no call signatures.
                                               ~~~~~~~
 !!! error TS24248: 'alias' is reference to 'Math', which is not a function.
                                                        ~~~~~~~~~~
 !!! error TS24248: 'second' is reference to 'Math', which is not a function.
-                                                           ~~~~~~
-!!! error TS2351: This expression is not constructable.
-!!! error TS2351:   Type 'Math' has no construct signatures.
-                                                                                                    ~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'JSON' has no call signatures.
                                                                                                     ~~~~~~
 !!! error TS24248: 'json' is reference to 'JSON', which is not a function.

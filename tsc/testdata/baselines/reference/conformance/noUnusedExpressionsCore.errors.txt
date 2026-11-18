@@ -1,25 +1,11 @@
-input.tsx(2,1): error TS2304: Cannot find name 'call'.
 input.tsx(3,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(4,1): error TS2304: Cannot find name 'value'.
 input.tsx(4,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(5,1): error TS2304: Cannot find name 'value'.
 input.tsx(5,1): error TS19656: Expected an assignment or function call and instead saw an expression.
 input.tsx(6,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(7,1): error TS2304: Cannot find name 'value'.
 input.tsx(7,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(7,10): error TS2304: Cannot find name 'call'.
-input.tsx(8,1): error TS2304: Cannot find name 'value'.
 input.tsx(8,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(8,9): error TS2304: Cannot find name 'call'.
-input.tsx(8,18): error TS2304: Cannot find name 'other'.
-input.tsx(9,1): error TS2304: Cannot find name 'obj'.
 input.tsx(9,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(10,1): error TS2304: Cannot find name 'obj'.
-input.tsx(11,6): error TS2304: Cannot find name 'call'.
-input.tsx(12,8): error TS2304: Cannot find name 'obj'.
-input.tsx(13,1): error TS2304: Cannot find name 'tag'.
 input.tsx(13,1): error TS19656: Expected an assignment or function call and instead saw an expression.
-input.tsx(14,1): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 input.tsx(16,26): error TS19656: Expected an assignment or function call and instead saw an expression.
 
 
@@ -30,65 +16,37 @@ input.tsx(16,26): error TS19656: Expected an assignment or function call and ins
         "files": ["input.tsx"]
     }
     
-==== input.tsx (23 errors) ====
+==== input.tsx (9 errors) ====
     "directive";
     call();
-    ~~~~
-!!! error TS2304: Cannot find name 'call'.
     "not directive";
     ~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     value as any;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     value!;
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     Map<string, number>;
     ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     value && call();
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-             ~~~~
-!!! error TS2304: Cannot find name 'call'.
     value ? call() : other();
-    ~~~~~
-!!! error TS2304: Cannot find name 'value'.
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
-            ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                     ~~~~~
-!!! error TS2304: Cannot find name 'other'.
     obj?.key;
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
     ~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     obj?.method();
-    ~~~
-!!! error TS2304: Cannot find name 'obj'.
     void call();
-         ~~~~
-!!! error TS2304: Cannot find name 'call'.
     delete obj.key;
-           ~~~
-!!! error TS2304: Cannot find name 'obj'.
     tag`template`;
-    ~~~
-!!! error TS2304: Cannot find name 'tag'.
     ~~~~~~~~~~~~~~
 !!! error TS19656: Expected an assignment or function call and instead saw an expression.
     <div />;
-    ~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
     namespace Foo { "directive"; }
     class Example { static { "not directive"; } }
                              ~~~~~~~~~~~~~~~~

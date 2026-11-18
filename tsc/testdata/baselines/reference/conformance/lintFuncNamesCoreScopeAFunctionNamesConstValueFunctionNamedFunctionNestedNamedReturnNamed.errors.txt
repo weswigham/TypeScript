@@ -1,5 +1,4 @@
 /input.ts(1,15): error TS19861: Unexpected named function 'named'.
-/input.ts(1,50): error TS7006: Parameter 'named' implicitly has an 'any' type.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -20,9 +19,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const value = function named() { function nested(named) { return named(); } };
                   ~~~~~~~~~~~~~~
 !!! error TS19861: Unexpected named function 'named'.
-                                                     ~~~~~
-!!! error TS7006: Parameter 'named' implicitly has an 'any' type.

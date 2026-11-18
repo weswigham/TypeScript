@@ -1,4 +1,3 @@
-/input.ts(1,1): error TS2304: Cannot find name 'run'.
 /input.ts(2,2): error TS19101: tslint comment detected: "/* tslint:disable */"
 
 
@@ -17,10 +16,8 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     run(
-    ~~~
-!!! error TS2304: Cannot find name 'run'.
      /* tslint:disable */
      ~~~~~~~~~~~~~~~~~~~~
 !!! error TS19101: tslint comment detected: "/* tslint:disable */"

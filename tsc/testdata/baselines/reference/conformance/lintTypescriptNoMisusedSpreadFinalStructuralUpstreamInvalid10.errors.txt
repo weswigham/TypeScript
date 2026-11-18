@@ -1,4 +1,3 @@
-/input.tsx(2,18): error TS7010: 'textIdentity', which lacks return-type annotation, implicitly has an 'any' return type.
 /input.tsx(6,14): error TS24061: Using the spread operator on a string can mishandle special characters, as can `.split("")`.
 - `...` produces Unicode code points, which will decompose complex emojis into individual emojis
 - .split("") produces UTF-16 code units, which breaks rich characters in many languages
@@ -28,11 +27,9 @@ Otherwise, if you don't need to preserve emojis or other non-Ascii characters, d
             "/input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     
     declare function textIdentity(...args: string[]);
-                     ~~~~~~~~~~~~
-!!! error TS7010: 'textIdentity', which lacks return-type annotation, implicitly has an 'any' return type.
     
     declare const text: string;
     

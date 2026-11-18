@@ -1,7 +1,4 @@
-/input.ts(1,14): error TS7006: Parameter 'cb' implicitly has an 'any' type.
 /input.ts(1,20): error TS24290: 'cb' is assigned a value but never used.
-/input.ts(1,53): error TS18048: 'a' is possibly 'undefined'.
-/input.ts(1,64): error TS2554: Expected 1 arguments, but got 0.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,14 +21,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     function foo(cb) { cb = function(a) { return cb(1 + a); }(); } foo();
-                 ~~
-!!! error TS7006: Parameter 'cb' implicitly has an 'any' type.
                        ~~
 !!! error TS24290: 'cb' is assigned a value but never used.
-                                                        ~
-!!! error TS18048: 'a' is possibly 'undefined'.
-                                                                   ~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 /input.ts:1:14: An argument for 'cb' was not provided.

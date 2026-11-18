@@ -1,6 +1,3 @@
-/input.ts(3,21): error TS2304: Cannot find name 'opts'.
-/input.ts(5,53): error TS2304: Cannot find name 'run'.
-/input.ts(5,57): error TS2304: Cannot find name 'opts'.
 /input.ts(6,25): error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
 /input.ts(8,25): error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.
 
@@ -26,18 +23,12 @@
 ==== /globals.d.ts (0 errors) ====
     declare var process: any;
     
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     
                     async () => {
                         opts.spec = process.stdin;
-                        ~~~~
-!!! error TS2304: Cannot find name 'opts'.
                         try {
                             const { exit_code } = await run(opts);
-                                                        ~~~
-!!! error TS2304: Cannot find name 'run'.
-                                                            ~~~~
-!!! error TS2304: Cannot find name 'opts'.
                             process.exitCode = exit_code;
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24337: Possible race condition: `process.exitCode` might be assigned based on an outdated state of `process`.

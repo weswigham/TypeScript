@@ -1,7 +1,4 @@
-/input.ts(1,1): error TS2304: Cannot find name 'bad_name'.
 /input.ts(1,1): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-/input.ts(1,16): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-/input.ts(1,33): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 /input.ts(1,40): error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
 
 
@@ -26,17 +23,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     bad_name.good; object.bad_name; object.bad_name = 1;
     ~~~~~~~~
-!!! error TS2304: Cannot find name 'bad_name'.
-    ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.
-                   ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
-                                    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
                                            ~~~~~~~~
 !!! error TS24214: Identifier 'bad_name' does not match the pattern '^[a-z]+$'.

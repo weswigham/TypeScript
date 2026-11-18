@@ -1,5 +1,4 @@
 /input.tsx(1,1): error TS24256: 'foo' import is restricted from being used. Please import from 'bar' instead.
-/input.tsx(1,28): error TS2307: Cannot find module 'foo' or its corresponding type declarations.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -27,9 +26,7 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     import withGitignores from "foo";
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24256: 'foo' import is restricted from being used. Please import from 'bar' instead.
-                               ~~~~~
-!!! error TS2307: Cannot find module 'foo' or its corresponding type declarations.

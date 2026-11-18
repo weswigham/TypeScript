@@ -1,5 +1,4 @@
 /input.tsx(1,10): error TS19668: Import foo unnecessarily renamed.
-/input.tsx(1,33): error TS2307: Cannot find module 'mod' or its corresponding type declarations.
 /input.tsx(1,49): error TS19668: Export foo unnecessarily renamed.
 
 
@@ -19,11 +18,9 @@
             "input.tsx"
         ]
     }
-==== /input.tsx (3 errors) ====
+==== /input.tsx (2 errors) ====
     import { type foo as foo } from 'mod'; export { type foo as foo };
              ~~~~~~~~~~~~~~~
 !!! error TS19668: Import foo unnecessarily renamed.
-                                    ~~~~~
-!!! error TS2307: Cannot find module 'mod' or its corresponding type declarations.
                                                     ~~~~~~~~~~~~~~~
 !!! error TS19668: Export foo unnecessarily renamed.

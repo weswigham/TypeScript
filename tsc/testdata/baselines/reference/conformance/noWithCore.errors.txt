@@ -1,12 +1,5 @@
-input.ts(1,1): error TS1101: 'with' statements are not allowed in strict mode.
 input.ts(1,1): error TS19650: Unexpected use of 'with' statement.
-input.ts(1,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
-input.ts(1,7): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(2,1): error TS1101: 'with' statements are not allowed in strict mode.
 input.ts(2,1): error TS19650: Unexpected use of 'with' statement.
-input.ts(2,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
-input.ts(2,18): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
 
 
 ==== tsconfig.json (0 errors) ====
@@ -16,28 +9,11 @@ input.ts(3,1): error TS2552: Cannot find name 'object'. Did you mean 'Object'?
         "files": ["input.ts"]
     }
     
-==== input.ts (9 errors) ====
+==== input.ts (2 errors) ====
     with (object) { work(); }
     ~~~~
-!!! error TS1101: 'with' statements are not allowed in strict mode.
-    ~~~~
 !!! error TS19650: Unexpected use of 'with' statement.
-    ~~~~~~~~~~~~~
-!!! error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
-          ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     with /* keep */ (object) work();
     ~~~~
-!!! error TS1101: 'with' statements are not allowed in strict mode.
-    ~~~~
 !!! error TS19650: Unexpected use of 'with' statement.
-    ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
-                     ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.
     object.work();
-    ~~~~~~
-!!! error TS2552: Cannot find name 'object'. Did you mean 'Object'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Object' is declared here.

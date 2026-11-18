@@ -1,4 +1,3 @@
-/input.ts(1,33): error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
 /input.ts(1,40): error TS24224: Unexpected constant condition.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     function* foo() {for (let foo = yield; true;) {}}
-                                    ~~~~~
-!!! error TS7057: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
                                            ~~~~
 !!! error TS24224: Unexpected constant condition.

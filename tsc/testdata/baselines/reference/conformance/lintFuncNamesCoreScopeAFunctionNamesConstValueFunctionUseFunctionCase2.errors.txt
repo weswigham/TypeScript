@@ -1,4 +1,3 @@
-/input.ts(1,31): error TS2304: Cannot find name 'use'.
 /input.ts(1,35): error TS19860: Unexpected unnamed generator function.
 
 
@@ -23,9 +22,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     const value = function*() {}; use(function*() {});
-                                  ~~~
-!!! error TS2304: Cannot find name 'use'.
                                       ~~~~~~~~~
 !!! error TS19860: Unexpected unnamed generator function.

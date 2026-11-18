@@ -1,6 +1,4 @@
 /input.ts(1,5): error TS24291: '_x' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
-/input.ts(2,8): error TS2304: Cannot find name 'arr'.
-/input.ts(3,1): error TS2304: Cannot find name 'foo'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -30,13 +28,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (3 errors) ====
+==== /input.ts (1 errors) ====
     let _x;
         ~~
 !!! error TS24291: '_x' is marked as ignored but is used. Used elements of array destructuring must not match /^_/u.
     [_x] = arr;
-           ~~~
-!!! error TS2304: Cannot find name 'arr'.
     foo(_x);
-    ~~~
-!!! error TS2304: Cannot find name 'foo'.

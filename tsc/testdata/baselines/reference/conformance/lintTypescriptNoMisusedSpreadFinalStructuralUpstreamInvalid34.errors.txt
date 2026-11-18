@@ -1,5 +1,4 @@
 /input.tsx(3,13): error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
-/input.tsx(3,17): error TS2695: Left side of comma operator is unused and has no side effects.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,12 +18,10 @@
             "/input.tsx"
         ]
     }
-==== /input.tsx (2 errors) ====
+==== /input.tsx (1 errors) ====
     
     declare const map: Map<string, number>;
     const o = { ...(map, map) };
                 ~~~~~~~~~~~~~
 !!! error TS24059: Using the spread operator on a Map in an object will result in an empty object. Did you mean to use `Object.fromEntries(map)` instead?
-                    ~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
           

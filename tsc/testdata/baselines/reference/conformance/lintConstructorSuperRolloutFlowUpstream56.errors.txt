@@ -1,7 +1,4 @@
-/input.ts(1,17): error TS2304: Cannot find name 'B'.
-/input.ts(1,21): error TS2377: Constructors for derived classes must contain a 'super' call.
 /input.ts(1,21): error TS24206: Expected to call 'super()'.
-/input.ts(1,66): error TS17011: 'super' must be called before accessing a property of 'super' in the constructor of a derived class.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -19,13 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (4 errors) ====
+==== /input.ts (1 errors) ====
     class A extends B { constructor() { for (var i = 1; i < 10; i++) super.foo(); } }
-                    ~
-!!! error TS2304: Cannot find name 'B'.
-                        ~~~~~~~~~~~
-!!! error TS2377: Constructors for derived classes must contain a 'super' call.
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS24206: Expected to call 'super()'.
-                                                                     ~~~~~
-!!! error TS17011: 'super' must be called before accessing a property of 'super' in the constructor of a derived class.

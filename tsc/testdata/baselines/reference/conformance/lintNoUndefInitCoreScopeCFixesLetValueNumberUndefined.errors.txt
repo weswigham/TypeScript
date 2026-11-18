@@ -1,4 +1,3 @@
-/input.ts(1,5): error TS2322: Type 'undefined' is not assignable to type 'number'.
 /input.ts(1,5): error TS20150: It's not necessary to initialize 'value' to undefined.
 
 
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     let value: number = undefined;
-        ~~~~~
-!!! error TS2322: Type 'undefined' is not assignable to type 'number'.
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS20150: It's not necessary to initialize 'value' to undefined.

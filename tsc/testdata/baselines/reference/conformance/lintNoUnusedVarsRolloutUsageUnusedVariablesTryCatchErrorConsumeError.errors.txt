@@ -1,5 +1,4 @@
 /input.ts(1,15): error TS24291: '_error' is marked as ignored but is used. Used caught errors must not match /^_/u.
-/input.ts(1,25): error TS2304: Cannot find name 'consume'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -28,9 +27,7 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     try {} catch (_error) { consume(_error); }
                   ~~~~~~
 !!! error TS24291: '_error' is marked as ignored but is used. Used caught errors must not match /^_/u.
-                            ~~~~~~~
-!!! error TS2304: Cannot find name 'consume'.

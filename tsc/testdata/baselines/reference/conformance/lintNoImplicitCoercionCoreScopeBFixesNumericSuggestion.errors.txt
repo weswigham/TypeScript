@@ -1,5 +1,4 @@
 /input.ts(1,1): error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
-/input.ts(1,2): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     +value;
     ~~~~~~
 !!! error TS20013: Unexpected implicit coercion encountered. Use `Number(value)` instead.
-     ~~~~~
-!!! error TS2304: Cannot find name 'value'.

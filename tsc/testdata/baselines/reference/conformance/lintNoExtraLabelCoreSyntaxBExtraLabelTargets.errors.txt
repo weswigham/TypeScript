@@ -1,5 +1,4 @@
 /input.ts(1,32): error TS19364: This label 'outer' is unnecessary.
-/input.ts(1,47): error TS2304: Cannot find name 'value'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -17,9 +16,7 @@
             "input.ts"
         ]
     }
-==== /input.ts (2 errors) ====
+==== /input.ts (1 errors) ====
     outer: while (true) { continue outer; switch (value) { default: continue outer; } inner: { break inner; } }
                                    ~~~~~
 !!! error TS19364: This label 'outer' is unnecessary.
-                                                  ~~~~~
-!!! error TS2304: Cannot find name 'value'.

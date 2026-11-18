@@ -1,7 +1,5 @@
 /input.tsx(1,8): error TS24290: 'Card' is defined but never used.
-/input.tsx(1,18): error TS2307: Cannot find module './Card' or its corresponding type declarations.
 /input.tsx(1,34): error TS24290: 'Button' is assigned a value but never used.
-/input.tsx(1,49): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -24,13 +22,9 @@
     }
 ==== /globals.d.ts (0 errors) ====
     
-==== /input.tsx (4 errors) ====
+==== /input.tsx (2 errors) ====
     import Card from './Card'; const Button = () => <button />;
            ~~~~
 !!! error TS24290: 'Card' is defined but never used.
-                     ~~~~~~~~
-!!! error TS2307: Cannot find module './Card' or its corresponding type declarations.
                                      ~~~~~~
 !!! error TS24290: 'Button' is assigned a value but never used.
-                                                    ~~~~~~~~~~
-!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.

@@ -1,8 +1,5 @@
 /input.ts(1,16): error TS20483: Number constants declarations must use 'const'.
 /input.ts(1,43): error TS19371: No magic number: 4.
-/input.ts(1,48): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-/input.ts(1,58): error TS2304: Cannot find name 'call'.
-/input.ts(1,122): error TS2304: Cannot find name 'Other'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -33,16 +30,9 @@
             "input.ts"
         ]
     }
-==== /input.ts (5 errors) ====
+==== /input.ts (2 errors) ====
     let declared = 3; const object = { value: 4 }; array[0]; call(-1, 100n); class Item { readonly value = 5; } type Index = Other[1 | 2];
                    ~
 !!! error TS20483: Number constants declarations must use 'const'.
                                               ~
 !!! error TS19371: No magic number: 4.
-                                                   ~~~~~
-!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
-!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.
-                                                             ~~~~
-!!! error TS2304: Cannot find name 'call'.
-                                                                                                                             ~~~~~
-!!! error TS2304: Cannot find name 'Other'.
