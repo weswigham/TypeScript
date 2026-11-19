@@ -18,6 +18,16 @@ type typescriptNoUnnecessaryTypeConversionRule struct {
 	context Context
 }
 
+func newTypeScriptNoUnnecessaryTypeConversion(context Context) Rule {
+	rule := &typescriptNoUnnecessaryTypeConversionRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression, ast.KindBinaryExpression, ast.KindPrefixUnaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoUnnecessaryTypeConversionRule) OnEnterNode(node *ast.Node) bool {
 	c := rule.context.GetChecker()
 	switch node.Kind {
@@ -81,8 +91,6 @@ func (rule *typescriptNoUnnecessaryTypeConversionRule) OnEnterNode(node *ast.Nod
 	return true
 }
 
-func (rule *typescriptNoUnnecessaryTypeConversionRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptNoUnnecessaryTypeConversionRule) report(node, inner, reporting *ast.Node, typeName, violation string, start, end int) {
 	diagnosticLocation := rule.context.Range(reporting)
 	if start >= 0 {
@@ -128,8 +136,4 @@ func typeSafetyAssertionAll(typeValue *checker.Type, flags checker.TypeFlags) bo
 
 func typeSafetyAssertionText(context Context, node *ast.Node) string {
 	return context.File.Text()[scanner.GetTokenPosOfNode(node, context.File, false):node.End()]
-}
-
-func newTypeScriptNoUnnecessaryTypeConversion(context Context) Rule {
-	return &typescriptNoUnnecessaryTypeConversionRule{context: context}
 }

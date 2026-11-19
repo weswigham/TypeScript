@@ -16,16 +16,19 @@ type preferTemplateRule struct {
 	context Context
 }
 
+func newPreferTemplate(context Context) Rule {
+	rule := &preferTemplateRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *preferTemplateRule) OnEnterNode(node *ast.Node) bool {
 	rule.template(node)
 
 	return true
-}
-
-func (rule *preferTemplateRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferTemplateRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferTemplateRule) replace(diagnostic *ast.Diagnostic, old *ast.Node, build func(*change.Tracker) *ast.Node) {
@@ -194,5 +197,3 @@ func expressionTemplateCurly(node *ast.Node, end bool) bool {
 	}
 	return !expressionString(node)
 }
-
-func newPreferTemplate(context Context) Rule { return &preferTemplateRule{context: context} }

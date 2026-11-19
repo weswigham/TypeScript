@@ -9,7 +9,12 @@ import (
 type noPrototypeBuiltinsRule struct{ context Context }
 
 func newNoPrototypeBuiltinsRule(context Context) Rule {
-	return &noPrototypeBuiltinsRule{context: context}
+	rule := &noPrototypeBuiltinsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
 }
 
 func (rule *noPrototypeBuiltinsRule) OnEnterNode(node *ast.Node) bool {
@@ -26,5 +31,3 @@ func (rule *noPrototypeBuiltinsRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noPrototypeBuiltinsRule) OnExitNode(node *ast.Node) {}

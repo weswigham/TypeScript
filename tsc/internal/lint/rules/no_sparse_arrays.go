@@ -11,6 +11,15 @@ type noSparseArrays struct {
 	context Context
 }
 
+func newNoSparseArrays(context Context) Rule {
+	rule := &noSparseArrays{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindArrayLiteralExpression},
+	}
+}
+
 func (rule *noSparseArrays) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindArrayLiteralExpression && !helpers.IsDestructuringAssignmentPattern(node) {
 		for _, element := range node.AsArrayLiteralExpression().Elements.Nodes {
@@ -24,7 +33,3 @@ func (rule *noSparseArrays) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noSparseArrays) OnExitNode(node *ast.Node) {}
-
-func newNoSparseArrays(context Context) Rule { return &noSparseArrays{context: context} }

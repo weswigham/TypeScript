@@ -10,6 +10,15 @@ type maxLinesRule struct {
 	context Context
 }
 
+func newMaxLines(context Context) Rule {
+	rule := &maxLinesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *maxLinesRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return true
@@ -19,11 +28,4 @@ func (rule *maxLinesRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.File_has_too_many_lines_0_Maximum_allowed_is_1, count, maximum)
 	}
 	return true
-}
-
-func (rule *maxLinesRule) OnExitNode(node *ast.Node) {
-}
-
-func newMaxLines(context Context) Rule {
-	return &maxLinesRule{context: context}
 }

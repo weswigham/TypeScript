@@ -16,11 +16,13 @@ type typeScriptNoDuplicateTypeConstituents struct {
 }
 
 func newTypeScriptNoDuplicateTypeConstituents(context Context) Rule {
-	return &typeScriptNoDuplicateTypeConstituents{context: context}
-}
+	rule := &typeScriptNoDuplicateTypeConstituents{context: context}
 
-func (rule *typeScriptNoDuplicateTypeConstituents) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindUnionType, ast.KindIntersectionType},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptNoDuplicateTypeConstituents) OnEnterNode(node *ast.Node) bool {
@@ -30,7 +32,9 @@ func (rule *typeScriptNoDuplicateTypeConstituents) OnEnterNode(node *ast.Node) b
 	return true
 }
 
-func (rule *typeScriptNoDuplicateTypeConstituents) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptNoDuplicateTypeConstituents) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func typeScriptNoDuplicateTypeConstituentsSameSyntax(left, right *ast.Node) bool {
 	left, right = ast.SkipTypeParentheses(left), ast.SkipTypeParentheses(right)

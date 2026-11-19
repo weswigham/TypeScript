@@ -15,36 +15,6 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsutil"
 )
 
-func Walk(node *ast.Node, visitors []rules.Rule) {
-	stack := make([]int, 0, len(visitors))
-	for index := range visitors {
-		stack = append(stack, index)
-	}
-	var visit func(*ast.Node, []int)
-	visit = func(node *ast.Node, active []int) {
-		base := len(stack)
-		for _, index := range active {
-			if visitors[index].OnEnterNode(node) {
-				stack = append(stack, index)
-			}
-		}
-		entered := stack[base:]
-		if len(entered) > 0 {
-			node.ForEachChild(func(child *ast.Node) bool {
-				visit(child, entered)
-				return false
-			})
-			for _, index := range entered {
-				visitors[index].OnExitNode(node)
-			}
-		}
-		stack = stack[:base]
-	}
-	if node != nil && len(visitors) > 0 {
-		visit(node, stack)
-	}
-}
-
 func GetDiagnostics(ctx context.Context, program *compiler.Program) []*ast.Diagnostic {
 	options := program.Options()
 	if (!options.Lint.IsTrue() && !options.LintOnly.IsTrue()) || options.ListFilesOnly.IsTrue() {
@@ -88,7 +58,10 @@ func getDiagnostics(ctx context.Context, program *compiler.Program, files []*ast
 		group.Queue(func() {
 			directives, directiveErrors := parseDirectives(file)
 			outputs[index] = append(outputs[index], directiveErrors...)
-			reportRules := make(map[*ast.Diagnostic]string)
+			var reportRules map[*ast.Diagnostic]string
+			if len(directives) != 0 {
+				reportRules = make(map[*ast.Diagnostic]string)
+			}
 			var typeChecker *checker.Checker
 			var release func()
 			defer func() {
@@ -119,18 +92,22 @@ func getDiagnostics(ctx context.Context, program *compiler.Program, files []*ast
 							diagnostic.SetCategory(diagnostics.CategoryWarning)
 						}
 						outputs[index] = append(outputs[index], diagnostic)
-						reportRules[diagnostic] = name
+						if reportRules != nil {
+							reportRules[diagnostic] = name
+						}
 						return diagnostic
 					},
 				}))
 			}
 			Walk(file.AsNode(), visitors)
 			for _, visitor := range visitors {
-				if provider, ok := visitor.(rules.SuggestionProvider); ok {
-					for diagnostic, suggestions := range provider.Suggestions() {
+				if visitor.GetSuggestions != nil {
+					for diagnostic, suggestions := range visitor.GetSuggestions() {
 						diagnostic.SetCodeFixSuggestions(suggestions...)
 					}
 				}
+			}
+			if reportRules != nil {
 				outputs[index] = core.Filter(outputs[index], func(diagnostic *ast.Diagnostic) bool {
 					name := reportRules[diagnostic]
 					return name == "" || !isSuppressed(file, directives, name, diagnostic.Loc())

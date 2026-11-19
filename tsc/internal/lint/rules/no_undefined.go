@@ -9,15 +9,18 @@ import (
 type noUndefinedRule struct{ context Context }
 
 func newNoUndefinedRule(context Context) Rule {
-	return &noUndefinedRule{context: context}
+	rule := &noUndefinedRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *noUndefinedRule) OnEnterNode(node *ast.Node) bool {
 	rule.undefinedIdentifier(node)
 	return true
 }
-
-func (rule *noUndefinedRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUndefinedRule) undefinedIdentifier(node *ast.Node) {
 	if node.Kind != ast.KindIdentifier || node.Text() != "undefined" {

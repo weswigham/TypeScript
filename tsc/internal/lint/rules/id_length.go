@@ -13,6 +13,15 @@ type idLengthRule struct {
 	context Context
 }
 
+func newIdLength(context Context) Rule {
+	rule := &idLengthRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier, ast.KindPrivateIdentifier},
+	}
+}
+
 func (rule *idLengthRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindIdentifier && node.Kind != ast.KindPrivateIdentifier {
 		return true
@@ -87,11 +96,4 @@ func (rule *idLengthRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.Identifier_name_0_is_too_long_1, display, maximum)
 	}
 	return true
-}
-
-func (rule *idLengthRule) OnExitNode(node *ast.Node) {
-}
-
-func newIdLength(context Context) Rule {
-	return &idLengthRule{context: context}
 }

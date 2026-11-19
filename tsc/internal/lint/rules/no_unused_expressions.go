@@ -14,6 +14,20 @@ type noUnusedExpressionsCoreRule struct {
 	enforceForJSX        bool
 }
 
+func newNoUnusedExpressionsCore(context Context) Rule {
+	rule := newNoUnusedExpressionsCoreRule(context)
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindExpressionStatement},
+	}
+}
+
+func (rule *noUnusedExpressionsCoreRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkUnused(node)
+	return true
+}
+
 func newNoUnusedExpressionsCoreRule(context Context) *noUnusedExpressionsCoreRule {
 	return &noUnusedExpressionsCoreRule{
 		context:              context,
@@ -23,13 +37,6 @@ func newNoUnusedExpressionsCoreRule(context Context) *noUnusedExpressionsCoreRul
 		enforceForJSX:        helpers.ExpressionBooleanOption(context, "enforceForJSX", false),
 	}
 }
-
-func (rule *noUnusedExpressionsCoreRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkUnused(node)
-	return true
-}
-
-func (rule *noUnusedExpressionsCoreRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUnusedExpressionsCoreRule) checkUnused(node *ast.Node) {
 	if node.Kind == ast.KindExpressionStatement && rule.unusedExpression(node.Expression()) && !helpers.IsDirectivePrologueStatement(node) {
@@ -72,5 +79,3 @@ func (rule *noUnusedExpressionsCoreRule) unusedExpression(node *ast.Node) bool {
 	}
 	return false
 }
-
-func newNoUnusedExpressionsCore(context Context) Rule { return newNoUnusedExpressionsCoreRule(context) }

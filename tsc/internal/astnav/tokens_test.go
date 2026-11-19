@@ -23,6 +23,68 @@ var testFiles = []string{
 	filepath.Join(repo.TestDataPath(), "fixtures/services/mapCode.ts"),
 }
 
+type navigationQuery struct {
+	name string
+	run  func() *ast.Node
+	kind ast.Kind
+}
+
+func navigationQueries(file *ast.SourceFile) []navigationQuery {
+	targetPosition := strings.Index(file.Text(), "target")
+	memberPosition := strings.Index(file.Text(), "member")
+	previous := astnav.GetTokenAtPosition(file, targetPosition)
+	return []navigationQuery{
+		{"token", func() *ast.Node { return astnav.GetTokenAtPosition(file, targetPosition+1) }, ast.KindIdentifier},
+		{"touching", func() *ast.Node { return astnav.GetTouchingToken(file, targetPosition+1) }, ast.KindIdentifier},
+		{"property-end", func() *ast.Node { return astnav.GetTouchingPropertyName(file, len(file.Text())) }, ast.KindIdentifier},
+		{"preceding-end", func() *ast.Node { return astnav.FindPrecedingToken(file, len(file.Text())) }, ast.KindIdentifier},
+		{"preceding-name", func() *ast.Node { return astnav.FindPrecedingToken(file, memberPosition) }, ast.KindDotToken},
+		{"next", func() *ast.Node { return astnav.FindNextToken(previous, file.AsNode(), file) }, ast.KindDotToken},
+	}
+}
+
+func TestNavigationAllocationDepth(t *testing.T) { //nolint:paralleltest // AllocsPerRun changes GOMAXPROCS.
+	shallow := make(map[string]float64)
+	for _, depth := range []int{0, 64} {
+		file := parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: "/navigation.ts", PathKey: "/navigation.ts"}, strings.Repeat("!", depth)+"target.member", core.ScriptKindTS)
+		for _, query := range navigationQueries(file) {
+			expected := query.run()
+			assert.Assert(t, expected != nil)
+			assert.Equal(t, expected.Kind, query.kind)
+			var actual *ast.Node
+			allocations := testing.AllocsPerRun(25, func() { actual = query.run() })
+			assert.Equal(t, actual, expected)
+			if depth == 0 {
+				shallow[query.name] = allocations
+			} else {
+				assert.Assert(t, allocations <= shallow[query.name]+4,
+					"%s allocations grew with depth: shallow %v; depth %d: %v", query.name, shallow[query.name], depth, allocations)
+			}
+		}
+	}
+}
+
+func BenchmarkTokenNavigation(b *testing.B) {
+	for _, depth := range []int{0, 16, 64} {
+		b.Run(strconv.Itoa(depth), func(b *testing.B) {
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: "/navigation.ts", PathKey: "/navigation.ts"}, strings.Repeat("!", depth)+"target.member", core.ScriptKindTS)
+			for _, query := range navigationQueries(file) {
+				b.Run(query.name, func(b *testing.B) {
+					expected := query.run()
+					assert.Assert(b, expected != nil)
+					assert.Equal(b, expected.Kind, query.kind)
+					var actual *ast.Node
+					b.ReportAllocs()
+					for b.Loop() {
+						actual = query.run()
+					}
+					assert.Equal(b, actual, expected)
+				})
+			}
+		})
+	}
+}
+
 func TestGetTokenAtPosition(t *testing.T) {
 	t.Parallel()
 	jstest.SkipIfNoNodeJS(t)

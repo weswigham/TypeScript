@@ -15,7 +15,14 @@ type noLonelyIf struct {
 	context Context
 }
 
-func newNoLonelyIf(context Context) Rule { return &noLonelyIf{context: context} }
+func newNoLonelyIf(context Context) Rule {
+	rule := &noLonelyIf{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIfStatement},
+	}
+}
 
 func (rule *noLonelyIf) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindIfStatement {
@@ -23,9 +30,6 @@ func (rule *noLonelyIf) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noLonelyIf) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noLonelyIf) lonelyIf(node *ast.Node) {

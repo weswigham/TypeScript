@@ -12,6 +12,15 @@ type defaultCaseRule struct {
 	context Context
 }
 
+func newDefaultCase(context Context) Rule {
+	rule := &defaultCaseRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSwitchStatement},
+	}
+}
+
 func (rule *defaultCaseRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSwitchStatement {
 		return true
@@ -36,11 +45,4 @@ func (rule *defaultCaseRule) OnEnterNode(node *ast.Node) bool {
 	}
 	rule.context.Report(rule.context.Range(node), diagnostics.Expected_a_default_case)
 	return true
-}
-
-func (rule *defaultCaseRule) OnExitNode(node *ast.Node) {
-}
-
-func newDefaultCase(context Context) Rule {
-	return &defaultCaseRule{context: context}
 }

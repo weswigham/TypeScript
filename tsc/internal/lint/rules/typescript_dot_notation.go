@@ -17,10 +17,14 @@ type typeScriptDotNotation struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
-func newTypeScriptDotNotation(context Context) Rule { return &typeScriptDotNotation{context: context} }
+func newTypeScriptDotNotation(context Context) Rule {
+	rule := &typeScriptDotNotation{context: context}
 
-func (rule *typeScriptDotNotation) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptDotNotation) OnEnterNode(node *ast.Node) bool {
@@ -28,7 +32,9 @@ func (rule *typeScriptDotNotation) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptDotNotation) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptDotNotation) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptDotNotation) fix(diagnostic *ast.Diagnostic, tracker *change.Tracker, description *ast.Diagnostic) {
 	name := "@typescript-eslint/" + "dot-notation"

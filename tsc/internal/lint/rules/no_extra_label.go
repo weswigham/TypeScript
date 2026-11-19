@@ -13,7 +13,14 @@ type noExtraLabel struct {
 	context Context
 }
 
-func newNoExtraLabel(context Context) Rule { return &noExtraLabel{context: context} }
+func newNoExtraLabel(context Context) Rule {
+	rule := &noExtraLabel{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBreakStatement, ast.KindContinueStatement},
+	}
+}
 
 func (rule *noExtraLabel) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBreakStatement || node.Kind == ast.KindContinueStatement {
@@ -21,9 +28,6 @@ func (rule *noExtraLabel) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noExtraLabel) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noExtraLabel) extraLabel(node *ast.Node) {

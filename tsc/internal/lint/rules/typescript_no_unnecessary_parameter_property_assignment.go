@@ -10,14 +10,22 @@ type typescriptNoUnnecessaryParameterPropertyAssignmentRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoUnnecessaryParameterPropertyAssignment(context Context) Rule {
+	rule := &typescriptNoUnnecessaryParameterPropertyAssignmentRule{Context: context, Name: "no-unnecessary-parameter-property-assignment"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoUnnecessaryParameterPropertyAssignmentRule) OnEnterNode(node *ast.Node) bool {
 	if ast.IsClassLike(node) {
 		rule.parameterAssignments(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoUnnecessaryParameterPropertyAssignmentRule) OnExitNode(node *ast.Node) {}
 
 func tsScopeThisMember(node *ast.Node) string {
 	if node != nil && ast.IsAccessExpression(node) && ast.SkipParentheses(node.Expression()).Kind == ast.KindThisKeyword {
@@ -101,8 +109,4 @@ func (rule *typescriptNoUnnecessaryParameterPropertyAssignmentRule) parameterAss
 			return true
 		})
 	}
-}
-
-func newTypeScriptNoUnnecessaryParameterPropertyAssignment(context Context) Rule {
-	return &typescriptNoUnnecessaryParameterPropertyAssignmentRule{Context: context, Name: "no-unnecessary-parameter-property-assignment"}
 }

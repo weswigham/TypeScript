@@ -13,7 +13,43 @@ type noEvalRule struct {
 }
 
 func newNoEvalRule(context Context) Rule {
-	return &noEvalRule{LexicalScopeAnalysis: helpers.NewLexicalScopeAnalysis(context)}
+	rule := &noEvalRule{LexicalScopeAnalysis: helpers.NewLexicalScopeAnalysis(context)}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		Exit:  rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindSourceFile,
+			ast.KindBlock,
+			ast.KindModuleDeclaration,
+			ast.KindForStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+			ast.KindCatchClause,
+			ast.KindCaseBlock,
+			ast.KindTypeAliasDeclaration,
+			ast.KindInterfaceDeclaration,
+			ast.KindMappedType,
+			ast.KindEnumDeclaration,
+			ast.KindClassStaticBlockDeclaration,
+		},
+	}
 }
 
 func (rule *noEvalRule) OnEnterNode(node *ast.Node) bool {

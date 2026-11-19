@@ -12,12 +12,20 @@ type typescriptNoArrayConstructorRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoArrayConstructor(context Context) Rule {
+	rule := &typescriptNoArrayConstructorRule{Context: context, Name: "no-array-constructor"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoArrayConstructorRule) OnEnterNode(node *ast.Node) bool {
 	rule.arrayConstructor(node)
 	return true
 }
-
-func (rule *typescriptNoArrayConstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoArrayConstructorRule) arrayConstructor(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression && node.Kind != ast.KindNewExpression {
@@ -40,8 +48,4 @@ func (rule *typescriptNoArrayConstructorRule) arrayConstructor(node *ast.Node) {
 		}
 	}
 	rule.Replace(diagnostic, node, "["+arguments+"]", nil)
-}
-
-func newTypeScriptNoArrayConstructor(context Context) Rule {
-	return &typescriptNoArrayConstructorRule{Context: context, Name: "no-array-constructor"}
 }

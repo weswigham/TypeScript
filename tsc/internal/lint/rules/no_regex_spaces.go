@@ -12,6 +12,16 @@ import (
 
 type noRegexSpaces struct{ helpers.RegexSource }
 
+func newNoRegexSpaces(context Context) Rule {
+	rule := &noRegexSpaces{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noRegexSpaces) OnEnterNode(node *ast.Node) bool {
 	input := rule.DirectInput(node)
 	if input == nil || !input.KnownFlags || !input.KnownPattern {
@@ -64,8 +74,4 @@ func (rule *noRegexSpaces) spaces(input *helpers.RegexInput, parsed *scanner.Reg
 		}
 		return
 	}
-}
-
-func newNoRegexSpaces(context Context) Rule {
-	return &noRegexSpaces{RegexSource: helpers.NewRegexSource(context)}
 }

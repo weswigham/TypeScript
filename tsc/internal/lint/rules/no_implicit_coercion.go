@@ -12,6 +12,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
+type noImplicitCoercionRule struct{ context Context }
+
+func newNoImplicitCoercionRule(context Context) Rule {
+	rule := &noImplicitCoercionRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPrefixUnaryExpression, ast.KindBinaryExpression, ast.KindTemplateExpression},
+	}
+}
+
+func (rule *noImplicitCoercionRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkCoercion(node)
+	return true
+}
+
 func noImplicitCoercionNumeric(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	if node.Kind == ast.KindNumericLiteral {
@@ -36,19 +52,6 @@ func noImplicitCoercionEmptyString(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	return (node.Kind == ast.KindStringLiteral || node.Kind == ast.KindNoSubstitutionTemplateLiteral) && node.Text() == ""
 }
-
-type noImplicitCoercionRule struct{ context Context }
-
-func newNoImplicitCoercionRule(context Context) Rule {
-	return &noImplicitCoercionRule{context: context}
-}
-
-func (rule *noImplicitCoercionRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkCoercion(node)
-	return true
-}
-
-func (rule *noImplicitCoercionRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noImplicitCoercionRule) checkCoercion(node *ast.Node) {
 	option := helpers.SharedRuleOptions(rule.context.Options, 0)

@@ -17,7 +17,24 @@ type noIrregularWhitespace struct {
 	atoms   []irregularWhitespaceAtom
 }
 
-func newNoIrregularWhitespace(context Context) Rule { return &noIrregularWhitespace{context: context} }
+func newNoIrregularWhitespace(context Context) Rule {
+	rule := &noIrregularWhitespace{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindJsxText,
+			ast.KindNoSubstitutionTemplateLiteral,
+			ast.KindRegularExpressionLiteral,
+			ast.KindStringLiteral,
+			ast.KindTemplateHead,
+			ast.KindTemplateMiddle,
+			ast.KindTemplateTail,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
 
 func (rule *noIrregularWhitespace) OnEnterNode(node *ast.Node) bool {
 	rule.collectTextNode(node)

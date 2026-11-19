@@ -18,6 +18,46 @@ type typescriptPreferOptionalChainRule struct {
 	checked     map[*ast.Node]bool
 }
 
+func newTypeScriptPreferOptionalChain(context Context) Rule {
+	rule := &typescriptPreferOptionalChainRule{context: context, checked: map[*ast.Node]bool{}}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptPreferOptionalChainRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind != ast.KindBinaryExpression || rule.checked[node] {
+		return true
+	}
+	binary := node.AsBinaryExpression()
+	operator := binary.OperatorToken.Kind
+	if operator == ast.KindBarBarToken || operator == ast.KindQuestionQuestionToken {
+		right := ast.SkipParentheses(binary.Right)
+		parent := helpers.SemanticExpressionParent(node)
+		if right.Kind == ast.KindObjectLiteralExpression && len(right.AsObjectLiteralExpression().Properties.Nodes) == 0 && parent != nil && (parent.Kind == ast.KindPropertyAccessExpression || parent.Kind == ast.KindElementAccessExpression) && parent.QuestionDotToken() == nil && ast.SkipParentheses(parent.Expression()) == node {
+			operand := preferOptionalChainOperand{name: binary.Left}
+			if rule.requireNullish([]preferOptionalChainOperand{operand}) {
+				property := ""
+				if parent.Kind == ast.KindPropertyAccessExpression {
+					property = helpers.SemanticSourceText(rule.context, parent.Name())
+				} else {
+					property = "[" + helpers.SemanticSourceText(rule.context, parent.AsElementAccessExpression().ArgumentExpression) + "]"
+				}
+				report := rule.context.Report(rule.context.Range(parent), diagnostics.Prefer_using_an_optional_chain_expression_instead_as_it_s_more_concise_and_easier_to_read)
+				rule.suggest(report, parent, helpers.SemanticWrappedExpression(rule.context, binary.Left)+"?."+property, diagnostics.Change_to_an_optional_chain)
+			}
+			return true
+		}
+	}
+	if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
+		rule.logical(node)
+	}
+	return true
+}
+
 type preferOptionalChainOperand struct {
 	node, name, comparedValue             *ast.Node
 	operator                              ast.Kind
@@ -433,38 +473,6 @@ func preferOptionalChainBoolInt(value bool) int {
 	return 0
 }
 
-func (rule *typescriptPreferOptionalChainRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind != ast.KindBinaryExpression || rule.checked[node] {
-		return true
-	}
-	binary := node.AsBinaryExpression()
-	operator := binary.OperatorToken.Kind
-	if operator == ast.KindBarBarToken || operator == ast.KindQuestionQuestionToken {
-		right := ast.SkipParentheses(binary.Right)
-		parent := helpers.SemanticExpressionParent(node)
-		if right.Kind == ast.KindObjectLiteralExpression && len(right.AsObjectLiteralExpression().Properties.Nodes) == 0 && parent != nil && (parent.Kind == ast.KindPropertyAccessExpression || parent.Kind == ast.KindElementAccessExpression) && parent.QuestionDotToken() == nil && ast.SkipParentheses(parent.Expression()) == node {
-			operand := preferOptionalChainOperand{name: binary.Left}
-			if rule.requireNullish([]preferOptionalChainOperand{operand}) {
-				property := ""
-				if parent.Kind == ast.KindPropertyAccessExpression {
-					property = helpers.SemanticSourceText(rule.context, parent.Name())
-				} else {
-					property = "[" + helpers.SemanticSourceText(rule.context, parent.AsElementAccessExpression().ArgumentExpression) + "]"
-				}
-				report := rule.context.Report(rule.context.Range(parent), diagnostics.Prefer_using_an_optional_chain_expression_instead_as_it_s_more_concise_and_easier_to_read)
-				rule.suggest(report, parent, helpers.SemanticWrappedExpression(rule.context, binary.Left)+"?."+property, diagnostics.Change_to_an_optional_chain)
-			}
-			return true
-		}
-	}
-	if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
-		rule.logical(node)
-	}
-	return true
-}
-
-func (rule *typescriptPreferOptionalChainRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptPreferOptionalChainRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
@@ -476,8 +484,4 @@ func (rule *typescriptPreferOptionalChainRule) suggest(report *ast.Diagnostic, n
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[report] = append(rule.suggestions[report], codefix.CreateCodeFixAction("@typescript-eslint/prefer-optional-chain", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(message, args...), "", nil))
-}
-
-func newTypeScriptPreferOptionalChain(context Context) Rule {
-	return &typescriptPreferOptionalChainRule{context: context, checked: map[*ast.Node]bool{}}
 }

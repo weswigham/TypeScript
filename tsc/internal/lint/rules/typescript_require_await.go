@@ -18,6 +18,60 @@ type typescriptRequireAwaitRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptRequireAwait(context Context) Rule {
+	rule := &typescriptRequireAwaitRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindAwaitExpression,
+			ast.KindForOfStatement,
+			ast.KindVariableDeclarationList,
+			ast.KindReturnStatement,
+			ast.KindYieldExpression,
+		},
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptRequireAwaitRule) OnEnterNode(node *ast.Node) bool {
+	rule.enterAwaitFunction(node)
+	return true
+}
+
+func (rule *typescriptRequireAwaitRule) OnExitNode(node *ast.Node) { rule.exitAwaitFunction(node) }
+
 func (rule *typescriptRequireAwaitRule) enterAwaitFunction(node *ast.Node) {
 	if helpers.PromiseFunctionLike(node) {
 		rule.functions = append(rule.functions, helpers.PromiseFunctionScope{Node: node})
@@ -144,15 +198,4 @@ func (rule *typescriptRequireAwaitRule) action(diagnostic *ast.Diagnostic, descr
 
 func (rule *typescriptRequireAwaitRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
-}
-
-func (rule *typescriptRequireAwaitRule) OnEnterNode(node *ast.Node) bool {
-	rule.enterAwaitFunction(node)
-	return true
-}
-
-func (rule *typescriptRequireAwaitRule) OnExitNode(node *ast.Node) { rule.exitAwaitFunction(node) }
-
-func newTypeScriptRequireAwait(context Context) Rule {
-	return &typescriptRequireAwaitRule{context: context}
 }

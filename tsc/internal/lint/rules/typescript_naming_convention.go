@@ -25,35 +25,6 @@ type typescriptNamingConventionRule struct {
 	helpers.DiagnosticSuggestions
 }
 
-var namingConventionSelectors = map[string]int{
-	"variable": 1 << 0, "function": 1 << 1, "parameter": 1 << 2,
-	"parameterProperty": 1 << 3, "classicAccessor": 1 << 4, "enumMember": 1 << 5,
-	"classMethod": 1 << 6, "objectLiteralMethod": 1 << 7, "typeMethod": 1 << 8,
-	"classProperty": 1 << 9, "objectLiteralProperty": 1 << 10, "typeProperty": 1 << 11, "autoAccessor": 1 << 12,
-	"class": 1 << 13, "interface": 1 << 14, "typeAlias": 1 << 15, "enum": 1 << 16, "typeParameter": 1 << 17, "import": 1 << 18,
-	"default":      -1,
-	"variableLike": 1<<0 | 1<<1 | 1<<2,
-	"memberLike":   1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7 | 1<<8 | 1<<9 | 1<<10 | 1<<11 | 1<<12,
-	"typeLike":     1<<13 | 1<<14 | 1<<15 | 1<<16 | 1<<17,
-	"method":       1<<6 | 1<<7 | 1<<8,
-	"property":     1<<9 | 1<<10 | 1<<11,
-	"accessor":     1<<4 | 1<<12,
-}
-
-var namingConventionModifiers = map[string]int{
-	"const": 1 << 0, "readonly": 1 << 1, "static": 1 << 2, "public": 1 << 3, "protected": 1 << 4, "private": 1 << 5, "#private": 1 << 6,
-	"abstract": 1 << 7, "destructured": 1 << 8, "global": 1 << 9, "exported": 1 << 10, "unused": 1 << 11, "requiresQuotes": 1 << 12,
-	"override": 1 << 13, "async": 1 << 14, "default": 1 << 15, "namespace": 1 << 16,
-}
-
-type namingConventionConfig struct {
-	selector, weight, modifiers int
-	meta, methodProperty        bool
-	options                     map[string]any
-	filter, custom              *regex.Pattern
-	filterMatch, customMatch    bool
-}
-
 func newTypeScriptNamingConventionRule(context Context) Rule {
 	rule := &typescriptNamingConventionRule{context: context}
 	options := context.Options
@@ -104,7 +75,70 @@ func newTypeScriptNamingConventionRule(context Context) Rule {
 			rule.naming = append(rule.naming, entry)
 		}
 	}
-	return rule
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindEnumDeclaration,
+			ast.KindEnumMember,
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindGetAccessor,
+			ast.KindImportClause,
+			ast.KindImportSpecifier,
+			ast.KindInterfaceDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindMethodSignature,
+			ast.KindNamespaceImport,
+			ast.KindParameter,
+			ast.KindPropertyAssignment,
+			ast.KindPropertyDeclaration,
+			ast.KindPropertySignature,
+			ast.KindSetAccessor,
+			ast.KindShorthandPropertyAssignment,
+			ast.KindSourceFile,
+			ast.KindTypeAliasDeclaration,
+			ast.KindTypeParameter,
+			ast.KindVariableDeclaration,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNamingConventionRule) OnEnterNode(node *ast.Node) bool {
+	rule.namingConvention(node)
+	return true
+}
+
+var namingConventionSelectors = map[string]int{
+	"variable": 1 << 0, "function": 1 << 1, "parameter": 1 << 2,
+	"parameterProperty": 1 << 3, "classicAccessor": 1 << 4, "enumMember": 1 << 5,
+	"classMethod": 1 << 6, "objectLiteralMethod": 1 << 7, "typeMethod": 1 << 8,
+	"classProperty": 1 << 9, "objectLiteralProperty": 1 << 10, "typeProperty": 1 << 11, "autoAccessor": 1 << 12,
+	"class": 1 << 13, "interface": 1 << 14, "typeAlias": 1 << 15, "enum": 1 << 16, "typeParameter": 1 << 17, "import": 1 << 18,
+	"default":      -1,
+	"variableLike": 1<<0 | 1<<1 | 1<<2,
+	"memberLike":   1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7 | 1<<8 | 1<<9 | 1<<10 | 1<<11 | 1<<12,
+	"typeLike":     1<<13 | 1<<14 | 1<<15 | 1<<16 | 1<<17,
+	"method":       1<<6 | 1<<7 | 1<<8,
+	"property":     1<<9 | 1<<10 | 1<<11,
+	"accessor":     1<<4 | 1<<12,
+}
+
+var namingConventionModifiers = map[string]int{
+	"const": 1 << 0, "readonly": 1 << 1, "static": 1 << 2, "public": 1 << 3, "protected": 1 << 4, "private": 1 << 5, "#private": 1 << 6,
+	"abstract": 1 << 7, "destructured": 1 << 8, "global": 1 << 9, "exported": 1 << 10, "unused": 1 << 11, "requiresQuotes": 1 << 12,
+	"override": 1 << 13, "async": 1 << 14, "default": 1 << 15, "namespace": 1 << 16,
+}
+
+type namingConventionConfig struct {
+	selector, weight, modifiers int
+	meta, methodProperty        bool
+	options                     map[string]any
+	filter, custom              *regex.Pattern
+	filterMatch, customMatch    bool
 }
 
 func namingConventionCase(value string, upper bool) string {
@@ -637,10 +671,3 @@ func (rule *typescriptNamingConventionRule) namingConvention(node *ast.Node) {
 		rule.namingMember(node, selector, modifiers)
 	}
 }
-
-func (rule *typescriptNamingConventionRule) OnEnterNode(node *ast.Node) bool {
-	rule.namingConvention(node)
-	return true
-}
-
-func (rule *typescriptNamingConventionRule) OnExitNode(node *ast.Node) {}

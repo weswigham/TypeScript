@@ -11,6 +11,15 @@ import (
 
 type typescriptNoUnsafeEnumComparisonRule struct{ context Context }
 
+func newTypeScriptNoUnsafeEnumComparison(context Context) Rule {
+	rule := &typescriptNoUnsafeEnumComparisonRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindCaseClause},
+	}
+}
+
 func (rule *typescriptNoUnsafeEnumComparisonRule) OnEnterNode(node *ast.Node) bool {
 	c := rule.context.GetChecker()
 	if node.Kind == ast.KindBinaryExpression {
@@ -29,8 +38,6 @@ func (rule *typescriptNoUnsafeEnumComparisonRule) OnEnterNode(node *ast.Node) bo
 	}
 	return true
 }
-
-func (rule *typescriptNoUnsafeEnumComparisonRule) OnExitNode(node *ast.Node) {}
 
 func typeSafetyAssertionEnumMismatch(c *checker.Checker, left, right *checker.Type) bool {
 	leftEnums, rightEnums := typeSafetyAssertionEnumTypes(c, left), typeSafetyAssertionEnumTypes(c, right)
@@ -78,8 +85,4 @@ func typeSafetyAssertionEnumTypes(c *checker.Checker, typeValue *checker.Type) [
 		result = append(result, base)
 	}
 	return result
-}
-
-func newTypeScriptNoUnsafeEnumComparison(context Context) Rule {
-	return &typescriptNoUnsafeEnumComparisonRule{context: context}
 }

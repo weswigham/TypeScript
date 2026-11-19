@@ -13,11 +13,13 @@ type typeScriptNoMixedEnums struct {
 }
 
 func newTypeScriptNoMixedEnums(context Context) Rule {
-	return &typeScriptNoMixedEnums{context: context}
-}
+	rule := &typeScriptNoMixedEnums{context: context}
 
-func (rule *typeScriptNoMixedEnums) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindEnumDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptNoMixedEnums) OnEnterNode(node *ast.Node) bool {
@@ -27,7 +29,9 @@ func (rule *typeScriptNoMixedEnums) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptNoMixedEnums) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptNoMixedEnums) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptNoMixedEnums) enumMemberKind(member *ast.Node) int {
 	initializer := member.Initializer()

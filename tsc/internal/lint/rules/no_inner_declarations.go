@@ -9,15 +9,18 @@ import (
 type noInnerDeclarationsRule struct{ context Context }
 
 func newNoInnerDeclarationsRule(context Context) Rule {
-	return &noInnerDeclarationsRule{context: context}
+	rule := &noInnerDeclarationsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionDeclaration, ast.KindVariableDeclarationList},
+	}
 }
 
 func (rule *noInnerDeclarationsRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkInnerDeclaration(node)
 	return true
 }
-
-func (rule *noInnerDeclarationsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noInnerDeclarationsRule) checkInnerDeclaration(node *ast.Node) {
 	kind := "function"

@@ -10,6 +10,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type radixRule struct{ context Context }
+
+func newRadixRule(context Context) Rule {
+	rule := &radixRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
+}
+
+func (rule *radixRule) OnEnterNode(node *ast.Node) bool {
+	rule.radix(node)
+	return true
+}
+
 func radixNumeric(node *ast.Node) (float64, bool) {
 	node = ast.SkipParentheses(node)
 	sign := 1.0
@@ -34,19 +50,6 @@ func radixNumeric(node *ast.Node) (float64, bool) {
 	value, err := strconv.ParseFloat(text, 64)
 	return sign * value, err == nil
 }
-
-type radixRule struct{ context Context }
-
-func newRadixRule(context Context) Rule {
-	return &radixRule{context: context}
-}
-
-func (rule *radixRule) OnEnterNode(node *ast.Node) bool {
-	rule.radix(node)
-	return true
-}
-
-func (rule *radixRule) OnExitNode(node *ast.Node) {}
 
 func (rule *radixRule) radix(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression {

@@ -15,6 +15,15 @@ type newCapRule struct {
 	context Context
 }
 
+func newNewCap(context Context) Rule {
+	rule := &newCapRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
+}
+
 func (rule *newCapRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression && node.Kind != ast.KindNewExpression {
 		return true
@@ -73,9 +82,6 @@ func (rule *newCapRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *newCapRule) OnExitNode(node *ast.Node) {
-}
-
 func (rule *newCapRule) global(identifier *ast.Node) bool {
 	if identifier.Kind != ast.KindIdentifier {
 		return false
@@ -97,8 +103,4 @@ func (rule *newCapRule) globalBuiltin(expression *ast.Node, name string) bool {
 		return object.Kind == ast.KindIdentifier && (object.Text() == "global" || object.Text() == "globalThis" || object.Text() == "self" || object.Text() == "window") && rule.global(object)
 	}
 	return false
-}
-
-func newNewCap(context Context) Rule {
-	return &newCapRule{context: context}
 }

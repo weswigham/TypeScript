@@ -9,6 +9,15 @@ type noScriptUrl struct {
 	context Context
 }
 
+func newNoScriptUrl(context Context) Rule {
+	rule := &noScriptUrl{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral},
+	}
+}
+
 func (rule *noScriptUrl) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindStringLiteral || node.Kind == ast.KindNoSubstitutionTemplateLiteral && (node.Parent == nil || node.Parent.Kind != ast.KindTaggedTemplateExpression) {
 		text, prefix := node.Text(), "javascript:"
@@ -31,7 +40,3 @@ func (rule *noScriptUrl) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noScriptUrl) OnExitNode(node *ast.Node) {}
-
-func newNoScriptUrl(context Context) Rule { return &noScriptUrl{context: context} }

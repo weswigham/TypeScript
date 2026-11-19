@@ -10,7 +10,14 @@ type noEmptyStaticBlock struct {
 	context Context
 }
 
-func newNoEmptyStaticBlock(context Context) Rule { return &noEmptyStaticBlock{context: context} }
+func newNoEmptyStaticBlock(context Context) Rule {
+	rule := &noEmptyStaticBlock{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassStaticBlockDeclaration},
+	}
+}
 
 func (rule *noEmptyStaticBlock) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindClassStaticBlockDeclaration && helpers.IsEmptyCommentFreeBlock(rule.context, node.AsClassStaticBlockDeclaration().Body) {
@@ -18,7 +25,4 @@ func (rule *noEmptyStaticBlock) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noEmptyStaticBlock) OnExitNode(node *ast.Node) {
 }

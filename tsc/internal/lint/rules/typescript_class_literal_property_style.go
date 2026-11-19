@@ -13,12 +13,20 @@ type typescriptClassLiteralPropertyStyleRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptClassLiteralPropertyStyle(context Context) Rule {
+	rule := &typescriptClassLiteralPropertyStyleRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindGetAccessor, ast.KindPropertyDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptClassLiteralPropertyStyleRule) OnEnterNode(node *ast.Node) bool {
 	rule.literalProperty(node)
 	return true
 }
-
-func (rule *typescriptClassLiteralPropertyStyleRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptClassLiteralPropertyStyleRule) literalProperty(node *ast.Node) {
 	if node.Parent == nil || !ast.IsClassLike(node.Parent) || ast.HasSyntacticModifier(node, ast.ModifierFlagsOverride) {
@@ -131,8 +139,4 @@ func typescriptClassLiteralPropertyStyleSupportedLiteral(node *ast.Node) bool {
 		return node.AsTaggedTemplateExpression().Template.Kind == ast.KindNoSubstitutionTemplateLiteral
 	}
 	return false
-}
-
-func newTypeScriptClassLiteralPropertyStyle(context Context) Rule {
-	return &typescriptClassLiteralPropertyStyleRule{context: context}
 }

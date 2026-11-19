@@ -11,6 +11,20 @@ import (
 
 type typescriptPreferPromiseRejectErrorsRule struct{ context Context }
 
+func newTypeScriptPreferPromiseRejectErrors(context Context) Rule {
+	rule := &typescriptPreferPromiseRejectErrorsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
+}
+
+func (rule *typescriptPreferPromiseRejectErrorsRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkReject(node)
+	return true
+}
+
 func (rule *typescriptPreferPromiseRejectErrorsRule) errorLike(value *checker.Type) bool {
 	if value == nil {
 		return false
@@ -85,15 +99,4 @@ func (rule *typescriptPreferPromiseRejectErrorsRule) checkReject(node *ast.Node)
 		child.ForEachChild(func(next *ast.Node) bool { visit(next); return false })
 	}
 	visit(executor)
-}
-
-func (rule *typescriptPreferPromiseRejectErrorsRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkReject(node)
-	return true
-}
-
-func (rule *typescriptPreferPromiseRejectErrorsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptPreferPromiseRejectErrors(context Context) Rule {
-	return &typescriptPreferPromiseRejectErrorsRule{context: context}
 }

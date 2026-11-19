@@ -9,15 +9,18 @@ import (
 type preferRestParamsRule struct{ context Context }
 
 func newPreferRestParamsRule(context Context) Rule {
-	return &preferRestParamsRule{context: context}
+	rule := &preferRestParamsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *preferRestParamsRule) OnEnterNode(node *ast.Node) bool {
 	rule.restParameters(node)
 	return true
 }
-
-func (rule *preferRestParamsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *preferRestParamsRule) restParameters(node *ast.Node) {
 	if !helpers.SharedExpressionReference(node) || node.Text() != "arguments" {

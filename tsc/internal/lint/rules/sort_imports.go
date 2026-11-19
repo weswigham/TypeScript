@@ -17,19 +17,21 @@ type sortImportsRule struct {
 	previousImport *ast.Node
 }
 
+func newSortImports(context Context) Rule {
+	rule := &sortImportsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindImportDeclaration},
+	}
+}
+
 func (rule *sortImportsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindImportDeclaration {
 		rule.sortImports(node)
 	}
 
 	return true
-}
-
-func (rule *sortImportsRule) OnExitNode(node *ast.Node) {
-}
-
-func (rule *sortImportsRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *sortImportsRule) fix(diagnostic *ast.Diagnostic, start, end int, replacement string) {
@@ -164,5 +166,3 @@ func styleImportParts(node *ast.Node) (string, string, []*ast.Node, *ast.Node) {
 	}
 	return syntax, first, members, bindings
 }
-
-func newSortImports(context Context) Rule { return &sortImportsRule{context: context} }

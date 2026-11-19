@@ -22,11 +22,13 @@ type typeScriptSwitchExhaustivenessCheck struct {
 }
 
 func newTypeScriptSwitchExhaustivenessCheck(context Context) Rule {
-	return &typeScriptSwitchExhaustivenessCheck{context: context}
-}
+	rule := &typeScriptSwitchExhaustivenessCheck{context: context}
 
-func (rule *typeScriptSwitchExhaustivenessCheck) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindSwitchStatement},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptSwitchExhaustivenessCheck) OnEnterNode(node *ast.Node) bool {
@@ -36,7 +38,9 @@ func (rule *typeScriptSwitchExhaustivenessCheck) OnEnterNode(node *ast.Node) boo
 	return true
 }
 
-func (rule *typeScriptSwitchExhaustivenessCheck) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptSwitchExhaustivenessCheck) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptSwitchExhaustivenessCheck) suggest(diagnostic *ast.Diagnostic, tracker *change.Tracker, message *diagnostics.Message) {
 	if rule.suggestions == nil {

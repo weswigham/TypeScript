@@ -18,6 +18,23 @@ type typescriptNoArrayDeleteRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoArrayDelete(context Context) Rule {
+	rule := &typescriptNoArrayDeleteRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindDeleteExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNoArrayDeleteRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindDeleteExpression {
+		rule.arrayDelete(node)
+	}
+	return true
+}
+
 func (rule *typescriptNoArrayDeleteRule) arrayType(valueType *checker.Type) bool {
 	typeChecker := rule.context.GetChecker()
 	predicate := func(part *checker.Type) bool { return typeChecker.IsArrayType(part) || checker.IsTupleType(part) }
@@ -70,19 +87,6 @@ func (rule *typescriptNoArrayDeleteRule) arrayDelete(node *ast.Node) {
 	rule.AddSuggestion(diagnostic, "@typescript-eslint/"+"no-array-delete", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Use_array_splice_instead))
 }
 
-func (rule *typescriptNoArrayDeleteRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindDeleteExpression {
-		rule.arrayDelete(node)
-	}
-	return true
-}
-
-func (rule *typescriptNoArrayDeleteRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyNodeText(context Context, node *ast.Node) string {
 	return context.File.Text()[scanner.GetTokenPosOfNode(node, context.File, false):node.End()]
-}
-
-func newTypeScriptNoArrayDelete(context Context) Rule {
-	return &typescriptNoArrayDeleteRule{context: context}
 }

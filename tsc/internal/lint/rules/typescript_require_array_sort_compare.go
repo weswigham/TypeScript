@@ -11,6 +11,15 @@ import (
 
 type typescriptRequireArraySortCompareRule struct{ context Context }
 
+func newTypeScriptRequireArraySortCompare(context Context) Rule {
+	rule := &typescriptRequireArraySortCompareRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
+}
+
 func (rule *typescriptRequireArraySortCompareRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression || len(node.Arguments()) != 0 {
 		return true
@@ -43,8 +52,6 @@ func (rule *typescriptRequireArraySortCompareRule) OnEnterNode(node *ast.Node) b
 	return true
 }
 
-func (rule *typescriptRequireArraySortCompareRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyString(value *checker.Type) bool {
 	if value.Flags()&checker.TypeFlagsStringLike != 0 {
 		return true
@@ -61,8 +68,4 @@ func typeSafetyString(value *checker.Type) bool {
 		return slices.ContainsFunc(value.Types(), typeSafetyString)
 	}
 	return false
-}
-
-func newTypeScriptRequireArraySortCompare(context Context) Rule {
-	return &typescriptRequireArraySortCompareRule{context: context}
 }

@@ -9,6 +9,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type funcNamesRule struct{ context Context }
+
+func newFuncNamesRule(context Context) Rule {
+	rule := &funcNamesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionDeclaration, ast.KindFunctionExpression},
+	}
+}
+
+func (rule *funcNamesRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkFunctionNames(node)
+	return true
+}
+
 func funcNamesInferredFunctionName(node *ast.Node) bool {
 	outer := node
 	for outer.Parent != nil && outer.Parent.Kind == ast.KindParenthesizedExpression {
@@ -31,19 +47,6 @@ func funcNamesInferredFunctionName(node *ast.Node) bool {
 	}
 	return false
 }
-
-type funcNamesRule struct{ context Context }
-
-func newFuncNamesRule(context Context) Rule {
-	return &funcNamesRule{context: context}
-}
-
-func (rule *funcNamesRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkFunctionNames(node)
-	return true
-}
-
-func (rule *funcNamesRule) OnExitNode(node *ast.Node) {}
 
 func (rule *funcNamesRule) checkFunctionNames(node *ast.Node) {
 	if node.Kind != ast.KindFunctionExpression && !(node.Kind == ast.KindFunctionDeclaration && ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault)) {

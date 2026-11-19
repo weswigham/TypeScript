@@ -14,14 +14,22 @@ type typescriptNoConfusingNonNullAssertionRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoConfusingNonNullAssertion(context Context) Rule {
+	rule := &typescriptNoConfusingNonNullAssertionRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoConfusingNonNullAssertionRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBinaryExpression {
 		rule.confusingAssertion(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoConfusingNonNullAssertionRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoConfusingNonNullAssertionRule) confusingAssertion(node *ast.Node) {
 	binary := node.AsBinaryExpression()
@@ -69,8 +77,4 @@ func (rule *typescriptNoConfusingNonNullAssertionRule) suggest(diagnostic *ast.D
 
 func (rule *typescriptNoConfusingNonNullAssertionRule) replace(tracker *change.Tracker, node, replacement *ast.Node) {
 	tracker.ReplaceNodePreservingComments(rule.context.File, node, replacement)
-}
-
-func newTypeScriptNoConfusingNonNullAssertion(context Context) Rule {
-	return &typescriptNoConfusingNonNullAssertionRule{context: context}
 }

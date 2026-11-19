@@ -12,7 +12,16 @@ import (
 
 type noElseReturn struct{ helpers.ReturnRuleContext }
 
-func (rule *noElseReturn) OnEnterNode(node *ast.Node) bool { return true }
+func newNoElseReturn(context Context) Rule {
+	rule := &noElseReturn{Context: context}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindIfStatement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noElseReturn) OnExitNode(node *ast.Node) {
 	if node.Kind == ast.KindIfStatement {
 		rule.elseReturn(node)
@@ -184,8 +193,4 @@ func (rule *noElseReturn) elseReturn(node *ast.Node) {
 		}
 	}
 	rule.RetainedFix("no-else-return", report, node, rule.Start(elseToken), alternate.End(), rule.Context.File.Text()[start:end])
-}
-
-func newNoElseReturn(context Context) Rule {
-	return &noElseReturn{Context: context}
 }

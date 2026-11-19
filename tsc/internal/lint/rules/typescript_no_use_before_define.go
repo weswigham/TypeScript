@@ -10,8 +10,14 @@ type typescriptNoUseBeforeDefineRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
-func (rule *typescriptNoUseBeforeDefineRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptNoUseBeforeDefine(context Context) Rule {
+	rule := &typescriptNoUseBeforeDefineRule{Context: context, Name: "no-use-before-define"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoUseBeforeDefineRule) OnExitNode(node *ast.Node) {
@@ -79,8 +85,4 @@ func (rule *typescriptNoUseBeforeDefineRule) beforeDefine(binding *helpers.TsSco
 			rule.Context.Report(rule.Context.Range(node), diagnostics.X_0_was_used_before_it_was_defined, binding.Name)
 		}
 	}
-}
-
-func newTypeScriptNoUseBeforeDefine(context Context) Rule {
-	return &typescriptNoUseBeforeDefineRule{Context: context, Name: "no-use-before-define"}
 }

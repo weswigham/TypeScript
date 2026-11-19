@@ -19,6 +19,34 @@ type typescriptNoUnsafeEnumAssignmentRule struct {
 	mismatches map[[2]*checker.Type]bool
 }
 
+func newTypeScriptNoUnsafeEnumAssignment(context Context) Rule {
+	rule := &typescriptNoUnsafeEnumAssignmentRule{context: context, checked: make(map[*ast.Node]bool), generic: make(map[*checker.Type]bool), mismatches: make(map[[2]*checker.Type]bool)}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindVariableDeclaration,
+			ast.KindParameter,
+			ast.KindBindingElement,
+			ast.KindPropertyDeclaration,
+			ast.KindBinaryExpression,
+			ast.KindCallExpression,
+			ast.KindNewExpression,
+			ast.KindTaggedTemplateExpression,
+			ast.KindArrowFunction,
+			ast.KindReturnStatement,
+			ast.KindAsExpression,
+			ast.KindTypeAssertionExpression,
+			ast.KindPostfixUnaryExpression,
+			ast.KindPrefixUnaryExpression,
+			ast.KindElementAccessExpression,
+			ast.KindArrayLiteralExpression,
+			ast.KindObjectLiteralExpression,
+			ast.KindJsxExpression,
+		},
+	}
+}
+
 func (rule *typescriptNoUnsafeEnumAssignmentRule) OnEnterNode(node *ast.Node) bool {
 	typeChecker := rule.context.GetChecker()
 	message := diagnostics.The_value_assigned_here_does_not_have_a_shared_enum_type_with_the_expected_enum_0
@@ -90,8 +118,6 @@ func (rule *typescriptNoUnsafeEnumAssignmentRule) OnEnterNode(node *ast.Node) bo
 	}
 	return true
 }
-
-func (rule *typescriptNoUnsafeEnumAssignmentRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeEnumAssignmentRule) access(node *ast.Node) {
 	typeChecker := rule.context.GetChecker()
@@ -458,8 +484,4 @@ func typeSafetyEnums(typeChecker *checker.Checker, value *checker.Type) []*check
 		result = append(result, part)
 	}
 	return result
-}
-
-func newTypeScriptNoUnsafeEnumAssignment(context Context) Rule {
-	return &typescriptNoUnsafeEnumAssignmentRule{context: context, checked: make(map[*ast.Node]bool), generic: make(map[*checker.Type]bool), mismatches: make(map[[2]*checker.Type]bool)}
 }

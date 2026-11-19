@@ -9,6 +9,15 @@ type noReturnAssign struct {
 	context Context
 }
 
+func newNoReturnAssign(context Context) Rule {
+	rule := &noReturnAssign{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *noReturnAssign) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBinaryExpression && ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
 		always := len(rule.context.Options) > 0 && rule.context.Options[0] == "always"
@@ -34,7 +43,3 @@ func (rule *noReturnAssign) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noReturnAssign) OnExitNode(node *ast.Node) {}
-
-func newNoReturnAssign(context Context) Rule { return &noReturnAssign{context: context} }

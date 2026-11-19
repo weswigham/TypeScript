@@ -14,12 +14,20 @@ type typescriptPreferAsConstRule struct {
 	context Context
 }
 
+func newTypeScriptPreferAsConst(context Context) Rule {
+	rule := &typescriptPreferAsConstRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindAsExpression, ast.KindPropertyDeclaration, ast.KindTypeAssertionExpression, ast.KindVariableDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPreferAsConstRule) OnEnterNode(node *ast.Node) bool {
 	rule.asConst(node)
 	return true
 }
-
-func (rule *typescriptPreferAsConstRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptPreferAsConstRule) asConst(node *ast.Node) {
 	var value, annotation *ast.Node
@@ -69,8 +77,4 @@ func (rule *typescriptPreferAsConstRule) fix(diagnostic *ast.Diagnostic, start, 
 
 func (rule *typescriptPreferAsConstRule) Start(node *ast.Node) int {
 	return scanner.GetTokenPosOfNode(node, rule.context.File, false)
-}
-
-func newTypeScriptPreferAsConst(context Context) Rule {
-	return &typescriptPreferAsConstRule{context: context}
 }

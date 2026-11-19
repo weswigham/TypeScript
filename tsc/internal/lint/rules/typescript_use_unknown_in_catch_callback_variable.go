@@ -14,6 +14,16 @@ type typescriptUseUnknownInCatchCallbackVariableRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptUseUnknownInCatchCallbackVariable(context Context) Rule {
+	rule := &typescriptUseUnknownInCatchCallbackVariableRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptUseUnknownInCatchCallbackVariableRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression {
 		return true
@@ -38,8 +48,6 @@ func (rule *typescriptUseUnknownInCatchCallbackVariableRule) OnEnterNode(node *a
 	}
 	return true
 }
-
-func (rule *typescriptUseUnknownInCatchCallbackVariableRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptUseUnknownInCatchCallbackVariableRule) check(node *ast.Node, method, appendText string) {
 	node = ast.SkipParentheses(node)
@@ -132,8 +140,4 @@ func (rule *typescriptUseUnknownInCatchCallbackVariableRule) flagged(node *ast.N
 		}
 	}
 	return false
-}
-
-func newTypeScriptUseUnknownInCatchCallbackVariable(context Context) Rule {
-	return &typescriptUseUnknownInCatchCallbackVariableRule{context: context}
 }

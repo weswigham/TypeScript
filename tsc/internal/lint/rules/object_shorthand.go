@@ -19,16 +19,19 @@ type objectShorthandRule struct {
 	context Context
 }
 
+func newObjectShorthand(context Context) Rule {
+	rule := &objectShorthandRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindObjectLiteralExpression, ast.KindShorthandPropertyAssignment, ast.KindMethodDeclaration, ast.KindPropertyAssignment},
+	}
+}
+
 func (rule *objectShorthandRule) OnEnterNode(node *ast.Node) bool {
 	rule.objectShorthand(node)
 
 	return true
-}
-
-func (rule *objectShorthandRule) OnExitNode(node *ast.Node) {}
-
-func (rule *objectShorthandRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *objectShorthandRule) fix(report *ast.Diagnostic, tracker *change.Tracker) {
@@ -298,5 +301,3 @@ func (rule *objectShorthandRule) tokens(start, end int) []helpers.DeclarationTok
 	}
 	return result
 }
-
-func newObjectShorthand(context Context) Rule { return &objectShorthandRule{context: context} }

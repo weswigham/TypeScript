@@ -11,6 +11,16 @@ type noOctalEscape struct {
 	context Context
 }
 
+func newNoOctalEscape(context Context) Rule {
+	rule := &noOctalEscape{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindStringLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noOctalEscape) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindStringLiteral {
 		return true
@@ -40,7 +50,3 @@ func (rule *noOctalEscape) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noOctalEscape) OnExitNode(node *ast.Node) {}
-
-func newNoOctalEscape(context Context) Rule { return &noOctalEscape{context: context} }

@@ -12,6 +12,15 @@ type funcNameMatchingRule struct {
 	context Context
 }
 
+func newFuncNameMatching(context Context) Rule {
+	rule := &funcNameMatchingRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionExpression},
+	}
+}
+
 func (rule *funcNameMatchingRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindFunctionExpression || node.Name() == nil {
 		return true
@@ -102,9 +111,6 @@ func (rule *funcNameMatchingRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *funcNameMatchingRule) OnExitNode(node *ast.Node) {
-}
-
 func funcNameMatchingIdentifierName(name *ast.Node) (string, bool) {
 	if name == nil {
 		return "", false
@@ -120,8 +126,4 @@ func funcNameMatchingIdentifierName(name *ast.Node) (string, bool) {
 	}
 	text := name.Text()
 	return text, scanner.IsIdentifierText(text, core.LanguageVariantStandard) && !(scanner.StringToToken(text) >= ast.KindFirstKeyword && scanner.StringToToken(text) <= ast.KindLastReservedWord)
-}
-
-func newFuncNameMatching(context Context) Rule {
-	return &funcNameMatchingRule{context: context}
 }

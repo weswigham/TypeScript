@@ -13,6 +13,23 @@ import (
 
 type typescriptNoUnnecessaryTypeArgumentsRule struct{ context Context }
 
+func newTypeScriptNoUnnecessaryTypeArguments(context Context) Rule {
+	rule := &typescriptNoUnnecessaryTypeArgumentsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindCallExpression,
+			ast.KindNewExpression,
+			ast.KindTaggedTemplateExpression,
+			ast.KindJsxOpeningElement,
+			ast.KindJsxSelfClosingElement,
+			ast.KindTypeReference,
+			ast.KindExpressionWithTypeArguments,
+		},
+	}
+}
+
 func (rule *typescriptNoUnnecessaryTypeArgumentsRule) OnEnterNode(node *ast.Node) bool {
 	var declaration *ast.Node
 	c := rule.context.GetChecker()
@@ -119,10 +136,4 @@ func (rule *typescriptNoUnnecessaryTypeArgumentsRule) OnEnterNode(node *ast.Node
 	}
 	helpers.TypeSafetyAssertionFix(rule.context, diagnostic, "no-unnecessary-type-arguments", start, end, "")
 	return true
-}
-
-func (rule *typescriptNoUnnecessaryTypeArgumentsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoUnnecessaryTypeArguments(context Context) Rule {
-	return &typescriptNoUnnecessaryTypeArgumentsRule{context: context}
 }

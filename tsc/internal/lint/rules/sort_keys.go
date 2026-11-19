@@ -7,7 +7,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
-	"github.com/microsoft/TypeScript/tsc/internal/codefix"
+
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
@@ -17,19 +17,21 @@ type sortKeysRule struct {
 	context Context
 }
 
+func newSortKeys(context Context) Rule {
+	rule := &sortKeysRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindObjectLiteralExpression},
+	}
+}
+
 func (rule *sortKeysRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindObjectLiteralExpression {
 		rule.sortKeys(node)
 	}
 
 	return true
-}
-
-func (rule *sortKeysRule) OnExitNode(node *ast.Node) {
-}
-
-func (rule *sortKeysRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *sortKeysRule) blankBetween(start, end int) bool {
@@ -193,5 +195,3 @@ func styleNatural(left, right string) int {
 	}
 	return cmp.Compare(len(leftUnits)-leftIndex, len(rightUnits)-rightIndex)
 }
-
-func newSortKeys(context Context) Rule { return &sortKeysRule{context: context} }

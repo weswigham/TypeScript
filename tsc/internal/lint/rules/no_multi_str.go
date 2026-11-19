@@ -12,7 +12,14 @@ type noMultiStr struct {
 	context Context
 }
 
-func newNoMultiStr(context Context) Rule { return &noMultiStr{context: context} }
+func newNoMultiStr(context Context) Rule {
+	rule := &noMultiStr{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindStringLiteral},
+	}
+}
 
 func (rule *noMultiStr) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindStringLiteral && node.Parent.Kind != ast.KindJsxAttribute && strings.ContainsAny(helpers.SourceNodeText(rule.context, node), "\r\n\u2028\u2029") {
@@ -20,7 +27,4 @@ func (rule *noMultiStr) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noMultiStr) OnExitNode(node *ast.Node) {
 }

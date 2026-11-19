@@ -15,6 +15,62 @@ type oneVarRule struct {
 	blockScopes []map[string]*styleVarScope
 }
 
+func newOneVar(context Context) Rule {
+	rule := &oneVarRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+			ast.KindBlock,
+			ast.KindForStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+			ast.KindSwitchStatement,
+			ast.KindVariableDeclarationList,
+		},
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+			ast.KindBlock,
+			ast.KindForStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+			ast.KindSwitchStatement,
+		},
+	}
+}
+
 func (rule *oneVarRule) OnEnterNode(node *ast.Node) bool {
 	rule.oneVarEnter(node)
 
@@ -28,10 +84,6 @@ func (rule *oneVarRule) OnExitNode(node *ast.Node) {
 	} else if styleVarBlock(node) {
 		rule.blockScopes = rule.blockScopes[:len(rule.blockScopes)-1]
 	}
-}
-
-func (rule *oneVarRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *oneVarRule) oneVarEnter(node *ast.Node) {
@@ -303,5 +355,3 @@ func stylePreviousStatement(statement *ast.Node) *ast.Node {
 	}
 	return nil
 }
-
-func newOneVar(context Context) Rule { return &oneVarRule{context: context} }

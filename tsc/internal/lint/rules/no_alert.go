@@ -10,6 +10,15 @@ type noAlert struct {
 	context Context
 }
 
+func newNoAlert(context Context) Rule {
+	rule := &noAlert{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
+}
+
 func (rule *noAlert) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindCallExpression {
 		callee := ast.SkipParentheses(node.Expression())
@@ -25,8 +34,6 @@ func (rule *noAlert) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noAlert) OnExitNode(node *ast.Node) {}
 
 func (rule *noAlert) isGlobalObject(object *ast.Node, call *ast.Node) bool {
 	if object.Kind == ast.KindIdentifier {
@@ -51,5 +58,3 @@ func (rule *noAlert) isGlobalObject(object *ast.Node, call *ast.Node) bool {
 	}
 	return true
 }
-
-func newNoAlert(context Context) Rule { return &noAlert{context: context} }

@@ -9,6 +9,15 @@ import (
 
 type typescriptNoUnsafeUnaryMinusRule struct{ context Context }
 
+func newTypeScriptNoUnsafeUnaryMinus(context Context) Rule {
+	rule := &typescriptNoUnsafeUnaryMinusRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPrefixUnaryExpression},
+	}
+}
+
 func (rule *typescriptNoUnsafeUnaryMinusRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindPrefixUnaryExpression && node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
 		c := rule.context.GetChecker()
@@ -21,10 +30,4 @@ func (rule *typescriptNoUnsafeUnaryMinusRule) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *typescriptNoUnsafeUnaryMinusRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoUnsafeUnaryMinus(context Context) Rule {
-	return &typescriptNoUnsafeUnaryMinusRule{context: context}
 }

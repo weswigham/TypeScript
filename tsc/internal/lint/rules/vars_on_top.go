@@ -5,24 +5,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 )
 
-type varsOnTopCoreRule struct {
+type varsOnTopRule struct {
 	context Context
 }
 
-func newVarsOnTopCoreRule(context Context) *varsOnTopCoreRule {
-	return &varsOnTopCoreRule{
+func newVarsOnTop(context Context) Rule {
+	rule := &varsOnTopRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclarationList},
 	}
 }
 
-func (rule *varsOnTopCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *varsOnTopRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkVarsOnTop(node)
 	return true
 }
 
-func (rule *varsOnTopCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *varsOnTopCoreRule) checkVarsOnTop(node *ast.Node) {
+func (rule *varsOnTopRule) checkVarsOnTop(node *ast.Node) {
 	if node.Kind != ast.KindVariableDeclarationList || node.Flags&ast.NodeFlagsBlockScoped != 0 {
 		return
 	}
@@ -60,5 +63,3 @@ func (rule *varsOnTopCoreRule) checkVarsOnTop(node *ast.Node) {
 	}
 	rule.context.Report(rule.context.Range(declaration), diagnostics.All_var_declarations_must_be_at_the_top_of_the_function_scope)
 }
-
-func newVarsOnTopCore(context Context) Rule { return newVarsOnTopCoreRule(context) }

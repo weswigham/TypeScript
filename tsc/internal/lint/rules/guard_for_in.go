@@ -9,6 +9,15 @@ type guardForInRule struct {
 	context Context
 }
 
+func newGuardForIn(context Context) Rule {
+	rule := &guardForInRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindForInStatement},
+	}
+}
+
 func (rule *guardForInRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindForInStatement {
 		body := node.Statement()
@@ -30,11 +39,4 @@ func (rule *guardForInRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.The_body_of_a_for_in_should_be_wrapped_in_an_if_statement_to_filter_unwanted_properties_from_the_prototype)
 	}
 	return true
-}
-
-func (rule *guardForInRule) OnExitNode(node *ast.Node) {
-}
-
-func newGuardForIn(context Context) Rule {
-	return &guardForInRule{context: context}
 }

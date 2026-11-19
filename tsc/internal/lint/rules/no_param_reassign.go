@@ -15,13 +15,20 @@ type noParamReassignRule struct {
 	patterns map[string]*regex.Pattern
 }
 
+func newNoParamReassign(context Context) Rule {
+	rule := &noParamReassignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
+}
+
 func (rule *noParamReassignRule) OnEnterNode(node *ast.Node) bool {
 	rule.parameterWrite(node)
 
 	return true
 }
-
-func (rule *noParamReassignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noParamReassignRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -135,5 +142,3 @@ func bindingModifiesProperty(node *ast.Node) bool {
 	}
 	return false
 }
-
-func newNoParamReassign(context Context) Rule { return &noParamReassignRule{context: context} }

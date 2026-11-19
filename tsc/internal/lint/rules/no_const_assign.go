@@ -8,15 +8,18 @@ import (
 type noConstAssignRule struct{ context Context }
 
 func newNoConstAssignRule(context Context) Rule {
-	return &noConstAssignRule{context: context}
+	rule := &noConstAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *noConstAssignRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkBindingWrite(node)
 	return true
 }
-
-func (rule *noConstAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noConstAssignRule) checkBindingWrite(node *ast.Node) {
 	if node.Kind != ast.KindIdentifier || !ast.IsAssignmentTarget(node) {

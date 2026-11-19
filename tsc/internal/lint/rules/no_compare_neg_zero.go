@@ -7,10 +7,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var noCompareNegZeroMessage = diagnostics.Do_not_use_the_0_operator_to_compare_against_0
-
 type noCompareNegZero struct {
 	context Context
+}
+
+func newNoCompareNegZero(context Context) Rule {
+	rule := &noCompareNegZero{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
 }
 
 func (rule *noCompareNegZero) OnEnterNode(node *ast.Node) bool {
@@ -27,7 +34,7 @@ func (rule *noCompareNegZero) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noCompareNegZero) OnExitNode(node *ast.Node) {}
+var noCompareNegZeroMessage = diagnostics.Do_not_use_the_0_operator_to_compare_against_0
 
 func isNegativeZeroLiteral(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
@@ -37,5 +44,3 @@ func isNegativeZeroLiteral(node *ast.Node) bool {
 	operand := ast.SkipParentheses(node.AsPrefixUnaryExpression().Operand)
 	return operand.Kind == ast.KindNumericLiteral && jsnum.FromString(operand.Text()) == 0
 }
-
-func newNoCompareNegZero(context Context) Rule { return &noCompareNegZero{context: context} }

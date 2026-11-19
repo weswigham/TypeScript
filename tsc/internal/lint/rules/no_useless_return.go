@@ -9,7 +9,24 @@ import (
 
 type noUselessReturn struct{ helpers.ReturnRuleContext }
 
-func (rule *noUselessReturn) OnEnterNode(node *ast.Node) bool { return true }
+func newNoUselessReturn(context Context) Rule {
+	rule := &noUselessReturn{Context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUselessReturn) OnExitNode(node *ast.Node) {
 	if !helpers.ReturnFunction(node) {
 		return
@@ -146,8 +163,4 @@ func (rule *noUselessReturn) useless(owner *ast.Node, returns []*ast.Node, flow 
 			rule.RetainedFix("no-useless-return", report, statement, rule.Start(statement), statement.End(), "")
 		}
 	}
-}
-
-func newNoUselessReturn(context Context) Rule {
-	return &noUselessReturn{Context: context}
 }

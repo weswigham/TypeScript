@@ -9,6 +9,15 @@ import (
 
 type typescriptNoUnsafeReturnRule struct{ context Context }
 
+func newTypeScriptNoUnsafeReturn(context Context) Rule {
+	rule := &typescriptNoUnsafeReturnRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindReturnStatement, ast.KindArrowFunction},
+	}
+}
+
 func (rule *typescriptNoUnsafeReturnRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindReturnStatement && node.Expression() != nil {
 		rule.check(node.Expression(), node)
@@ -18,8 +27,6 @@ func (rule *typescriptNoUnsafeReturnRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *typescriptNoUnsafeReturnRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeReturnRule) check(expression, reportingNode *ast.Node) {
 	function := helpers.TypeSafetyParentFunction(expression)
@@ -121,8 +128,4 @@ func typeSafetyDiscriminate(typeChecker *checker.Checker, value *checker.Type, v
 		}
 	}
 	return 0
-}
-
-func newTypeScriptNoUnsafeReturn(context Context) Rule {
-	return &typescriptNoUnsafeReturnRule{context: context}
 }

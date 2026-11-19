@@ -18,11 +18,13 @@ type typeScriptPreferRegexpExec struct {
 }
 
 func newTypeScriptPreferRegexpExec(context Context) Rule {
-	return &typeScriptPreferRegexpExec{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
-}
+	rule := &typeScriptPreferRegexpExec{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
 
-func (rule *typeScriptPreferRegexpExec) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferRegexpExec) OnEnterNode(node *ast.Node) bool {
@@ -32,7 +34,9 @@ func (rule *typeScriptPreferRegexpExec) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptPreferRegexpExec) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferRegexpExec) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferRegexpExec) regexpType(value *checker.Type) bool {
 	if value == nil {

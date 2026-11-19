@@ -14,13 +14,27 @@ type noRestrictedExportsRule struct {
 	patterns map[string]*regex.Pattern
 }
 
+func newNoRestrictedExports(context Context) Rule {
+	rule := &noRestrictedExportsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindClassDeclaration,
+			ast.KindExportAssignment,
+			ast.KindExportSpecifier,
+			ast.KindFunctionDeclaration,
+			ast.KindNamespaceExport,
+			ast.KindVariableStatement,
+		},
+	}
+}
+
 func (rule *noRestrictedExportsRule) OnEnterNode(node *ast.Node) bool {
 	rule.restrictedExport(node)
 
 	return true
 }
-
-func (rule *noRestrictedExportsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noRestrictedExportsRule) exportedName(node *ast.Node, defaultMode string) {
 	if node == nil {
@@ -108,5 +122,3 @@ func (rule *noRestrictedExportsRule) restrictedExport(node *ast.Node) {
 		}
 	}
 }
-
-func newNoRestrictedExports(context Context) Rule { return &noRestrictedExportsRule{context: context} }

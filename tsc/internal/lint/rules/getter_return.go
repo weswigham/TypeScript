@@ -8,7 +8,24 @@ import (
 
 type getterReturn struct{ helpers.ReturnRuleContext }
 
-func (rule *getterReturn) OnEnterNode(node *ast.Node) bool { return true }
+func newGetterReturn(context Context) Rule {
+	rule := &getterReturn{Context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *getterReturn) OnExitNode(node *ast.Node) {
 	if !helpers.ReturnFunction(node) {
 		return
@@ -92,8 +109,4 @@ func (rule *getterReturn) getter(node *ast.Node, returns []*ast.Node, normal boo
 		}
 		rule.Context.Report(rule.Head(node, false), message, name)
 	}
-}
-
-func newGetterReturn(context Context) Rule {
-	return &getterReturn{Context: context}
 }

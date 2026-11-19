@@ -10,6 +10,15 @@ import (
 
 type noEmptyCharacterClass struct{ context Context }
 
+func newNoEmptyCharacterClass(context Context) Rule {
+	rule := &noEmptyCharacterClass{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindRegularExpressionLiteral},
+	}
+}
+
 func (rule *noEmptyCharacterClass) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindRegularExpressionLiteral {
 		return true
@@ -23,7 +32,3 @@ func (rule *noEmptyCharacterClass) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noEmptyCharacterClass) OnExitNode(node *ast.Node) {}
-
-func newNoEmptyCharacterClass(context Context) Rule { return &noEmptyCharacterClass{context: context} }

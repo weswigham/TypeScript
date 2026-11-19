@@ -10,7 +10,25 @@ import (
 
 type consistentReturn struct{ helpers.ReturnRuleContext }
 
-func (rule *consistentReturn) OnEnterNode(node *ast.Node) bool { return true }
+func newConsistentReturn(context Context) Rule {
+	rule := &consistentReturn{Context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindSourceFile,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *consistentReturn) OnExitNode(node *ast.Node) {
 	if !helpers.ReturnFunction(node) && node.Kind != ast.KindSourceFile {
 		return
@@ -49,8 +67,4 @@ func (rule *consistentReturn) consistent(node *ast.Node, returns []*ast.Node, no
 	if wantValue && normal && !constructor {
 		rule.Context.Report(rule.Head(node, true), diagnostics.Expected_to_return_a_value_at_the_end_of_0, helpers.ReturnName(node))
 	}
-}
-
-func newConsistentReturn(context Context) Rule {
-	return &consistentReturn{Context: context}
 }

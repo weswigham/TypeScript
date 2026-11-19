@@ -10,6 +10,23 @@ type maxLinesPerFunctionRule struct {
 	context Context
 }
 
+func newMaxLinesPerFunction(context Context) Rule {
+	rule := &maxLinesPerFunctionRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+	}
+}
+
 func (rule *maxLinesPerFunctionRule) OnEnterNode(node *ast.Node) bool {
 	if !helpers.FunctionHasBody(node) {
 		return true
@@ -26,11 +43,4 @@ func (rule *maxLinesPerFunctionRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.X_0_has_too_many_lines_1_Maximum_allowed_is_2, helpers.CapitalizeFirstRune(helpers.FunctionDiagnosticName(node)), count, maximum)
 	}
 	return true
-}
-
-func (rule *maxLinesPerFunctionRule) OnExitNode(node *ast.Node) {
-}
-
-func newMaxLinesPerFunction(context Context) Rule {
-	return &maxLinesPerFunctionRule{context: context}
 }

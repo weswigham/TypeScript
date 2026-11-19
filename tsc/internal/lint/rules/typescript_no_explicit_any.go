@@ -13,14 +13,22 @@ type typescriptNoExplicitAnyRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoExplicitAny(context Context) Rule {
+	rule := &typescriptNoExplicitAnyRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindAnyKeyword},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoExplicitAnyRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindAnyKeyword {
 		rule.explicitAny(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoExplicitAnyRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoExplicitAnyRule) explicitAny(node *ast.Node) {
 	if rule.Boolean("ignoreRestArgs", false) {
@@ -94,8 +102,4 @@ func (rule *typescriptNoExplicitAnyRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptNoExplicitAny(context Context) Rule {
-	return &typescriptNoExplicitAnyRule{context: context}
 }

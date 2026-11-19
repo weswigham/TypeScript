@@ -6,6 +6,40 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type consistentThisRule struct {
+	context    Context
+	thisWrites map[*ast.Symbol][]*ast.Node
+}
+
+func newConsistentThisRule(context Context) Rule {
+	rule := &consistentThisRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration, ast.KindBinaryExpression},
+		Exit:       rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindSourceFile,
+		},
+	}
+}
+
+func (rule *consistentThisRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkThisAssignment(node)
+	return true
+}
+
+func (rule *consistentThisRule) OnExitNode(node *ast.Node) {
+	rule.checkThisAliases(node)
+}
+
 func consistentThisLexicalScope(node *ast.Node) *ast.Node {
 	for parent := node.Parent; parent != nil; parent = parent.Parent {
 		if ast.IsFunctionLike(parent) || parent.Kind == ast.KindSourceFile || parent.Kind == ast.KindCatchClause || parent.Kind == ast.KindClassStaticBlockDeclaration || parent.Kind == ast.KindCaseBlock {
@@ -19,24 +53,6 @@ func consistentThisLexicalScope(node *ast.Node) *ast.Node {
 		}
 	}
 	return nil
-}
-
-type consistentThisRule struct {
-	context    Context
-	thisWrites map[*ast.Symbol][]*ast.Node
-}
-
-func newConsistentThisRule(context Context) Rule {
-	return &consistentThisRule{context: context}
-}
-
-func (rule *consistentThisRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkThisAssignment(node)
-	return true
-}
-
-func (rule *consistentThisRule) OnExitNode(node *ast.Node) {
-	rule.checkThisAliases(node)
 }
 
 func (rule *consistentThisRule) checkThisAssignment(node *ast.Node) {

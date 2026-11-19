@@ -15,7 +15,14 @@ type noLossOfPrecision struct {
 	context Context
 }
 
-func newNoLossOfPrecision(context Context) Rule { return &noLossOfPrecision{context: context} }
+func newNoLossOfPrecision(context Context) Rule {
+	rule := &noLossOfPrecision{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNumericLiteral},
+	}
+}
 
 func (rule *noLossOfPrecision) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindNumericLiteral && losesNumericPrecision(helpers.SourceNodeText(rule.context, node)) {
@@ -23,9 +30,6 @@ func (rule *noLossOfPrecision) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noLossOfPrecision) OnExitNode(node *ast.Node) {
 }
 
 type precisionScientific struct {

@@ -9,7 +9,14 @@ type noContinue struct {
 	context Context
 }
 
-func newNoContinue(context Context) Rule { return &noContinue{context: context} }
+func newNoContinue(context Context) Rule {
+	rule := &noContinue{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindContinueStatement},
+	}
+}
 
 func (rule *noContinue) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindContinueStatement {
@@ -17,7 +24,4 @@ func (rule *noContinue) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noContinue) OnExitNode(node *ast.Node) {
 }

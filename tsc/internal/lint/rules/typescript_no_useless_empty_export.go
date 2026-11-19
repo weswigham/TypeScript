@@ -12,12 +12,19 @@ type typescriptNoUselessEmptyExportRule struct {
 	context Context
 }
 
+func newTypeScriptNoUselessEmptyExport(context Context) Rule {
+	rule := &typescriptNoUselessEmptyExportRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *typescriptNoUselessEmptyExportRule) OnEnterNode(node *ast.Node) bool {
 	rule.emptyExport(node)
 	return true
 }
-
-func (rule *typescriptNoUselessEmptyExportRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUselessEmptyExportRule) emptyExport(node *ast.Node) {
 	if rule.context.File.IsDeclarationFile || node.Kind != ast.KindSourceFile {
@@ -59,8 +66,4 @@ func typescriptNoUselessEmptyExportIsEmpty(node *ast.Node) bool {
 	}
 	clause := node.AsExportDeclaration().ExportClause
 	return clause != nil && clause.Kind == ast.KindNamedExports && len(clause.AsNamedExports().Elements.Nodes) == 0
-}
-
-func newTypeScriptNoUselessEmptyExport(context Context) Rule {
-	return &typescriptNoUselessEmptyExportRule{context: context}
 }

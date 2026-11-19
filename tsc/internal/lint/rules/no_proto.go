@@ -10,13 +10,18 @@ type noProto struct {
 	context Context
 }
 
+func newNoProto(context Context) Rule {
+	rule := &noProto{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+	}
+}
+
 func (rule *noProto) OnEnterNode(node *ast.Node) bool {
 	if helpers.StatementPropertyName(node) == "__proto__" {
 		rule.context.Report(rule.context.Range(node), diagnostics.The_proto_property_is_deprecated)
 	}
 	return true
 }
-
-func (rule *noProto) OnExitNode(node *ast.Node) {}
-
-func newNoProto(context Context) Rule { return &noProto{context: context} }

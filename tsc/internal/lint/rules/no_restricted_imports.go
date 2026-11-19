@@ -12,57 +12,10 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type restrictedImport struct {
-	name, message                 string
-	pattern                       bool
-	allowType                     bool
-	importNames, allowNames       []string
-	hasImportNames, hasAllowNames bool
-	namePattern, allowPattern     string
-	matchName, matchAllowedName   func(string) bool
-	matchPath                     func(string) bool
-}
-
-type restrictedImportMessage struct {
-	plain, custom *diagnostics.Message
-	parameters    []string
-}
-
-var restrictedImportMessages = map[string]restrictedImportMessage{
-	"path":                 {diagnostics.X_0_import_is_restricted_from_being_used, diagnostics.X_0_import_is_restricted_from_being_used_1, []string{"importSource"}},
-	"patterns":             {diagnostics.X_0_import_is_restricted_from_being_used_by_a_pattern, diagnostics.X_0_import_is_restricted_from_being_used_by_a_pattern_1, []string{"importSource"}},
-	"importName":           {diagnostics.X_0_import_from_1_is_restricted, diagnostics.X_0_import_from_1_is_restricted_2, []string{"importName", "importSource"}},
-	"patternAndImportName": {diagnostics.X_0_import_from_1_is_restricted_from_being_used_by_a_pattern, diagnostics.X_0_import_from_1_is_restricted_from_being_used_by_a_pattern_2, []string{"importName", "importSource"}},
-	"everything":           {diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted, diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_3, []string{"importNames", "importSource", "isOrAre"}},
-	"patternAndEverything": {diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern, diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_3, []string{"importNames", "importSource", "isOrAre"}},
-	"patternAndEverythingWithRegexImportName": {diagnostics.Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used, diagnostics.Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used_2, []string{"importNames", "importSource"}},
-	"allowedImportName":                       {diagnostics.X_0_import_from_1_is_restricted_because_only_2_3_allowed, diagnostics.X_0_import_from_1_is_restricted_because_only_2_3_allowed_4, []string{"importName", "importSource", "allowedImportNames", "isOrAre"}},
-	"everythingWithAllowImportNames":          {diagnostics.Asterisk_import_is_invalid_because_only_0_from_1_2_allowed, diagnostics.Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_3, []string{"allowedImportNames", "importSource", "isOrAre"}},
-	"allowedImportNamePattern":                {diagnostics.X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1, diagnostics.X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_3, []string{"importName", "importSource", "allowedImportNamePattern"}},
-	"everythingWithAllowedImportNamePattern":  {diagnostics.Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed, diagnostics.Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_2, []string{"allowedImportNamePattern", "importSource"}},
-}
-
 type noRestrictedImports struct {
 	context Context
 	imports []restrictedImport
 }
-
-type restrictedImportSpecifier struct {
-	name     string
-	node     *ast.Node
-	typeOnly bool
-	star     bool
-}
-
-func (rule *noRestrictedImports) OnEnterNode(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindImportDeclaration, ast.KindExportDeclaration, ast.KindImportEqualsDeclaration:
-		rule.checkImport(node)
-	}
-	return true
-}
-
-func (rule *noRestrictedImports) OnExitNode(node *ast.Node) {}
 
 func newNoRestrictedImports(context Context) Rule {
 	rule := &noRestrictedImports{context: context}
@@ -112,7 +65,56 @@ func newNoRestrictedImports(context Context) Rule {
 		}
 		rule.imports = append(rule.imports, entry)
 	}
-	return rule
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindExportDeclaration, ast.KindImportDeclaration, ast.KindImportEqualsDeclaration},
+	}
+}
+
+func (rule *noRestrictedImports) OnEnterNode(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindImportDeclaration, ast.KindExportDeclaration, ast.KindImportEqualsDeclaration:
+		rule.checkImport(node)
+	}
+	return true
+}
+
+type restrictedImport struct {
+	name, message                 string
+	pattern                       bool
+	allowType                     bool
+	importNames, allowNames       []string
+	hasImportNames, hasAllowNames bool
+	namePattern, allowPattern     string
+	matchName, matchAllowedName   func(string) bool
+	matchPath                     func(string) bool
+}
+
+type restrictedImportMessage struct {
+	plain, custom *diagnostics.Message
+	parameters    []string
+}
+
+var restrictedImportMessages = map[string]restrictedImportMessage{
+	"path":                 {diagnostics.X_0_import_is_restricted_from_being_used, diagnostics.X_0_import_is_restricted_from_being_used_1, []string{"importSource"}},
+	"patterns":             {diagnostics.X_0_import_is_restricted_from_being_used_by_a_pattern, diagnostics.X_0_import_is_restricted_from_being_used_by_a_pattern_1, []string{"importSource"}},
+	"importName":           {diagnostics.X_0_import_from_1_is_restricted, diagnostics.X_0_import_from_1_is_restricted_2, []string{"importName", "importSource"}},
+	"patternAndImportName": {diagnostics.X_0_import_from_1_is_restricted_from_being_used_by_a_pattern, diagnostics.X_0_import_from_1_is_restricted_from_being_used_by_a_pattern_2, []string{"importName", "importSource"}},
+	"everything":           {diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted, diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_3, []string{"importNames", "importSource", "isOrAre"}},
+	"patternAndEverything": {diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern, diagnostics.Asterisk_import_is_invalid_because_0_from_1_2_restricted_from_being_used_by_a_pattern_3, []string{"importNames", "importSource", "isOrAre"}},
+	"patternAndEverythingWithRegexImportName": {diagnostics.Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used, diagnostics.Asterisk_import_is_invalid_because_import_name_matching_0_pattern_from_1_is_restricted_from_being_used_2, []string{"importNames", "importSource"}},
+	"allowedImportName":                       {diagnostics.X_0_import_from_1_is_restricted_because_only_2_3_allowed, diagnostics.X_0_import_from_1_is_restricted_because_only_2_3_allowed_4, []string{"importName", "importSource", "allowedImportNames", "isOrAre"}},
+	"everythingWithAllowImportNames":          {diagnostics.Asterisk_import_is_invalid_because_only_0_from_1_2_allowed, diagnostics.Asterisk_import_is_invalid_because_only_0_from_1_2_allowed_3, []string{"allowedImportNames", "importSource", "isOrAre"}},
+	"allowedImportNamePattern":                {diagnostics.X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1, diagnostics.X_0_import_from_1_is_restricted_because_only_imports_that_match_the_pattern_2_are_allowed_from_1_3, []string{"importName", "importSource", "allowedImportNamePattern"}},
+	"everythingWithAllowedImportNamePattern":  {diagnostics.Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed, diagnostics.Asterisk_import_is_invalid_because_only_imports_that_match_the_pattern_0_from_1_are_allowed_2, []string{"allowedImportNamePattern", "importSource"}},
+}
+
+type restrictedImportSpecifier struct {
+	name     string
+	node     *ast.Node
+	typeOnly bool
+	star     bool
 }
 
 func restrictedImportStrings(value any) []string {

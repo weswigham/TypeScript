@@ -8,15 +8,18 @@ import (
 type noExAssignRule struct{ context Context }
 
 func newNoExAssignRule(context Context) Rule {
-	return &noExAssignRule{context: context}
+	rule := &noExAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *noExAssignRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkBindingWrite(node)
 	return true
 }
-
-func (rule *noExAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noExAssignRule) checkBindingWrite(node *ast.Node) {
 	if node.Kind != ast.KindIdentifier || !ast.IsAssignmentTarget(node) {

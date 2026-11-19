@@ -8,6 +8,20 @@ import (
 
 type typescriptNoImpliedEvalRule struct{ context Context }
 
+func newTypeScriptNoImpliedEval(context Context) Rule {
+	rule := &typescriptNoImpliedEvalRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
+}
+
+func (rule *typescriptNoImpliedEvalRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkImpliedEval(node)
+	return true
+}
+
 func (rule *typescriptNoImpliedEvalRule) global(node *ast.Node, name string) bool {
 	symbol := rule.context.GetChecker().ResolveName(name, node, ast.SymbolFlagsValue, false)
 	return symbol == nil || helpers.PromiseLibrary(rule.context, symbol)
@@ -53,15 +67,4 @@ func (rule *typescriptNoImpliedEvalRule) checkImpliedEval(node *ast.Node) {
 		return
 	}
 	rule.context.Report(rule.context.Range(handler), diagnostics.Implied_eval_Consider_passing_a_function)
-}
-
-func (rule *typescriptNoImpliedEvalRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkImpliedEval(node)
-	return true
-}
-
-func (rule *typescriptNoImpliedEvalRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoImpliedEval(context Context) Rule {
-	return &typescriptNoImpliedEvalRule{context: context}
 }

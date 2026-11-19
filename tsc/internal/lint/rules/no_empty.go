@@ -10,7 +10,14 @@ type noEmpty struct {
 	context Context
 }
 
-func newNoEmpty(context Context) Rule { return &noEmpty{context: context} }
+func newNoEmpty(context Context) Rule {
+	rule := &noEmpty{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBlock, ast.KindCaseBlock},
+	}
+}
 
 func (rule *noEmpty) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBlock && helpers.IsEmptyCommentFreeBlock(rule.context, node) && !ast.IsFunctionLike(node.Parent) && node.Parent.Kind != ast.KindClassStaticBlockDeclaration && !(node.Parent.Kind == ast.KindCatchClause && rule.Boolean("allowEmptyCatch")) {
@@ -20,9 +27,6 @@ func (rule *noEmpty) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noEmpty) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noEmpty) Options() map[string]any {

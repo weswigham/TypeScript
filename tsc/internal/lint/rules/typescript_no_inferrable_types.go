@@ -9,11 +9,70 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var tsNoInferrableType = diagnostics.Type_0_trivially_inferred_from_a_0_literal_remove_type_annotation
-
 type typescriptNoInferrableTypesRule struct {
 	context Context
 }
+
+func newTypeScriptNoInferrableTypes(context Context) Rule {
+	rule := &typescriptNoInferrableTypesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindParameter, ast.KindPropertyDeclaration, ast.KindVariableDeclaration},
+	}
+}
+
+func (rule *typescriptNoInferrableTypesRule) OnEnterNode(node *ast.Node) bool {
+	var options map[string]any
+	if len(rule.context.Options) > 0 {
+		options, _ = rule.context.Options[0].(map[string]any)
+	}
+	switch node.Kind {
+	case ast.KindVariableDeclaration, ast.KindParameter:
+		if node.Kind == ast.KindParameter && (helpers.BooleanOptionValue(options, "ignoreParameters", false) || node.Parent.Body() == nil) {
+			return true
+		}
+	case ast.KindPropertyDeclaration:
+		if helpers.BooleanOptionValue(options, "ignoreProperties", false) || node.ModifierFlags()&(ast.ModifierFlagsReadonly|ast.ModifierFlagsAbstract) != 0 || node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
+			return true
+		}
+	default:
+		return true
+	}
+	if node.Type() == nil || node.Initializer() == nil {
+		return true
+	}
+	typeName := tsInferrableType(node.Type(), node.Initializer())
+	if typeName == "" {
+		return true
+	}
+	diagnosticLocation := rule.context.Range(node)
+	if node.Kind == ast.KindParameter {
+		diagnosticLocation = core.NewTextRange(scanner.GetTokenPosOfNode(node.Name(), rule.context.File, false), node.End())
+	}
+	diagnostic := rule.context.Report(diagnosticLocation, tsNoInferrableType, typeName)
+
+	colon := helpers.TsAnnotationColon(rule.context, node)
+	if colon < 0 {
+		return true
+	}
+	tracker := rule.context.NewTracker()
+	tracker.DeleteRange(rule.context.File, core.NewTextRange(colon, node.Type().End()))
+	var marker *ast.Node
+	if node.Kind == ast.KindParameter {
+		marker = node.AsParameterDeclaration().QuestionToken
+	} else if node.Kind == ast.KindPropertyDeclaration {
+		marker = node.AsPropertyDeclaration().PostfixToken
+	}
+	if marker != nil {
+		tracker.DeleteRange(rule.context.File, core.NewTextRange(scanner.GetTokenPosOfNode(marker, rule.context.File, false), marker.End()))
+	}
+	const name = "@typescript-eslint/no-inferrable-types"
+	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_type_annotation), name, ast.NewCompilerDiagnostic(diagnostics.Remove_inferrable_type_annotations)))
+	return true
+}
+
+var tsNoInferrableType = diagnostics.Type_0_trivially_inferred_from_a_0_literal_remove_type_annotation
 
 func tsIsNamedCall(node *ast.Node, name string) bool {
 	if node.Kind != ast.KindCallExpression {
@@ -75,60 +134,4 @@ func tsInferrableType(annotation *ast.Node, initializer *ast.Node) string {
 		}
 	}
 	return ""
-}
-
-func (rule *typescriptNoInferrableTypesRule) OnEnterNode(node *ast.Node) bool {
-	var options map[string]any
-	if len(rule.context.Options) > 0 {
-		options, _ = rule.context.Options[0].(map[string]any)
-	}
-	switch node.Kind {
-	case ast.KindVariableDeclaration, ast.KindParameter:
-		if node.Kind == ast.KindParameter && (helpers.BooleanOptionValue(options, "ignoreParameters", false) || node.Parent.Body() == nil) {
-			return true
-		}
-	case ast.KindPropertyDeclaration:
-		if helpers.BooleanOptionValue(options, "ignoreProperties", false) || node.ModifierFlags()&(ast.ModifierFlagsReadonly|ast.ModifierFlagsAbstract) != 0 || node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
-			return true
-		}
-	default:
-		return true
-	}
-	if node.Type() == nil || node.Initializer() == nil {
-		return true
-	}
-	typeName := tsInferrableType(node.Type(), node.Initializer())
-	if typeName == "" {
-		return true
-	}
-	diagnosticLocation := rule.context.Range(node)
-	if node.Kind == ast.KindParameter {
-		diagnosticLocation = core.NewTextRange(scanner.GetTokenPosOfNode(node.Name(), rule.context.File, false), node.End())
-	}
-	diagnostic := rule.context.Report(diagnosticLocation, tsNoInferrableType, typeName)
-
-	colon := helpers.TsAnnotationColon(rule.context, node)
-	if colon < 0 {
-		return true
-	}
-	tracker := rule.context.NewTracker()
-	tracker.DeleteRange(rule.context.File, core.NewTextRange(colon, node.Type().End()))
-	var marker *ast.Node
-	if node.Kind == ast.KindParameter {
-		marker = node.AsParameterDeclaration().QuestionToken
-	} else if node.Kind == ast.KindPropertyDeclaration {
-		marker = node.AsPropertyDeclaration().PostfixToken
-	}
-	if marker != nil {
-		tracker.DeleteRange(rule.context.File, core.NewTextRange(scanner.GetTokenPosOfNode(marker, rule.context.File, false), marker.End()))
-	}
-	const name = "@typescript-eslint/no-inferrable-types"
-	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_type_annotation), name, ast.NewCompilerDiagnostic(diagnostics.Remove_inferrable_type_annotations)))
-	return true
-}
-
-func (rule *typescriptNoInferrableTypesRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoInferrableTypes(context Context) Rule {
-	return &typescriptNoInferrableTypesRule{context: context}
 }

@@ -11,6 +11,16 @@ type noOctal struct {
 	context Context
 }
 
+func newNoOctal(context Context) Rule {
+	rule := &noOctal{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindNumericLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noOctal) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindNumericLiteral {
 		raw := rule.context.File.Text()[helpers.RuleTokenStart(rule.context, node):node.End()]
@@ -20,7 +30,3 @@ func (rule *noOctal) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noOctal) OnExitNode(node *ast.Node) {}
-
-func newNoOctal(context Context) Rule { return &noOctal{context: context} }

@@ -20,16 +20,19 @@ type yodaRule struct {
 	context Context
 }
 
+func newYoda(context Context) Rule {
+	rule := &yodaRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *yodaRule) OnEnterNode(node *ast.Node) bool {
 	rule.yoda(node)
 
 	return true
-}
-
-func (rule *yodaRule) OnExitNode(node *ast.Node) {}
-
-func (rule *yodaRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *yodaRule) boolean(index int, name string, fallback bool) bool {
@@ -237,5 +240,3 @@ func expressionRangeOperator(node *ast.Node) bool {
 	kind := node.AsBinaryExpression().OperatorToken.Kind
 	return kind == ast.KindLessThanToken || kind == ast.KindLessThanEqualsToken
 }
-
-func newYoda(context Context) Rule { return &yodaRule{context: context} }

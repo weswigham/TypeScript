@@ -6,26 +6,45 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-type noUnsafeOptionalChainingCoreRule struct {
+type noUnsafeOptionalChainingRule struct {
 	context                     Context
 	disallowArithmeticOperators bool
 }
 
-func newNoUnsafeOptionalChainingCoreRule(context Context) *noUnsafeOptionalChainingCoreRule {
-	return &noUnsafeOptionalChainingCoreRule{
+func newNoUnsafeOptionalChaining(context Context) Rule {
+	rule := &noUnsafeOptionalChainingRule{
 		context:                     context,
 		disallowArithmeticOperators: helpers.ExpressionBooleanOption(context, "disallowArithmeticOperators", false),
 	}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindBinaryExpression,
+			ast.KindBindingElement,
+			ast.KindCallExpression,
+			ast.KindElementAccessExpression,
+			ast.KindExpressionWithTypeArguments,
+			ast.KindForOfStatement,
+			ast.KindNewExpression,
+			ast.KindParameter,
+			ast.KindPrefixUnaryExpression,
+			ast.KindPropertyAccessExpression,
+			ast.KindSpreadElement,
+			ast.KindTaggedTemplateExpression,
+			ast.KindVariableDeclaration,
+			ast.KindWithStatement,
+			ast.KindYieldExpression,
+		},
+	}
 }
 
-func (rule *noUnsafeOptionalChainingCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUnsafeOptionalChainingRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkOptional(node)
 	return true
 }
 
-func (rule *noUnsafeOptionalChainingCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUnsafeOptionalChainingCoreRule) checkOptional(node *ast.Node) {
+func (rule *noUnsafeOptionalChainingRule) checkOptional(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindCallExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		if !ast.IsOptionalChain(node) {
@@ -74,7 +93,7 @@ func (rule *noUnsafeOptionalChainingCoreRule) checkOptional(node *ast.Node) {
 	}
 }
 
-func (rule *noUnsafeOptionalChainingCoreRule) optionalShortCircuit(node *ast.Node, arithmetic bool) {
+func (rule *noUnsafeOptionalChainingRule) optionalShortCircuit(node *ast.Node, arithmetic bool) {
 	if node == nil {
 		return
 	}
@@ -111,8 +130,4 @@ func optionalChainDestructuringPattern(node *ast.Node) bool {
 	}
 	node = ast.SkipParentheses(node)
 	return node.Kind == ast.KindArrayBindingPattern || node.Kind == ast.KindObjectBindingPattern || node.Kind == ast.KindArrayLiteralExpression || node.Kind == ast.KindObjectLiteralExpression
-}
-
-func newNoUnsafeOptionalChainingCore(context Context) Rule {
-	return newNoUnsafeOptionalChainingCoreRule(context)
 }

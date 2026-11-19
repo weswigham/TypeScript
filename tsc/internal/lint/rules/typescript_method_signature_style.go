@@ -14,12 +14,20 @@ type typescriptMethodSignatureStyleRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptMethodSignatureStyle(context Context) Rule {
+	rule := &typescriptMethodSignatureStyleRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindMethodSignature, ast.KindPropertySignature},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptMethodSignatureStyleRule) OnEnterNode(node *ast.Node) bool {
 	rule.methodSignatures(node)
 	return true
 }
-
-func (rule *typescriptMethodSignatureStyleRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptMethodSignatureStyleRule) methodSignatures(node *ast.Node) {
 	mode := helpers.StringOptionValue(rule.option(0), "property")
@@ -121,8 +129,4 @@ func typescriptMethodSignatureStyleThisType(node *ast.Node) bool {
 		return true
 	}
 	return node.ForEachChild(typescriptMethodSignatureStyleThisType)
-}
-
-func newTypeScriptMethodSignatureStyle(context Context) Rule {
-	return &typescriptMethodSignatureStyleRule{context: context}
 }

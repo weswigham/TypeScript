@@ -15,12 +15,20 @@ type typescriptNoUselessConstructorRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoUselessConstructor(context Context) Rule {
+	rule := &typescriptNoUselessConstructorRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindConstructor},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoUselessConstructorRule) OnEnterNode(node *ast.Node) bool {
 	rule.uselessConstructor(node)
 	return true
 }
-
-func (rule *typescriptNoUselessConstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUselessConstructorRule) uselessConstructor(node *ast.Node) {
 	if node.Kind != ast.KindConstructor || node.Body() == nil || ast.HasSyntacticModifier(node, ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) {
@@ -126,8 +134,4 @@ func typescriptNoUselessConstructorHasBase(node *ast.Node) bool {
 		}
 	}
 	return false
-}
-
-func newTypeScriptNoUselessConstructor(context Context) Rule {
-	return &typescriptNoUselessConstructorRule{context: context}
 }

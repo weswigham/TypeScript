@@ -12,12 +12,19 @@ type typescriptPreferNamespaceKeywordRule struct {
 	context Context
 }
 
+func newTypeScriptPreferNamespaceKeyword(context Context) Rule {
+	rule := &typescriptPreferNamespaceKeywordRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindModuleDeclaration},
+	}
+}
+
 func (rule *typescriptPreferNamespaceKeywordRule) OnEnterNode(node *ast.Node) bool {
 	rule.namespaceKeyword(node)
 	return true
 }
-
-func (rule *typescriptPreferNamespaceKeywordRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptPreferNamespaceKeywordRule) namespaceKeyword(node *ast.Node) {
 	if node.Kind != ast.KindModuleDeclaration || node.Name().Kind != ast.KindIdentifier {
@@ -42,8 +49,4 @@ func (rule *typescriptPreferNamespaceKeywordRule) fix(diagnostic *ast.Diagnostic
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), text)
 	const name = "@typescript-eslint/prefer-namespace-keyword"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Fix_0, "prefer-namespace-keyword"), name, ast.NewCompilerDiagnostic(diagnostics.Fix_all_0, "prefer-namespace-keyword")))
-}
-
-func newTypeScriptPreferNamespaceKeyword(context Context) Rule {
-	return &typescriptPreferNamespaceKeywordRule{context: context}
 }

@@ -19,13 +19,20 @@ type camelcaseRule struct {
 	patterns map[string]*regex.Pattern
 }
 
+func newCamelcase(context Context) Rule {
+	rule := &camelcaseRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier, ast.KindPrivateIdentifier},
+	}
+}
+
 func (rule *camelcaseRule) OnEnterNode(node *ast.Node) bool {
 	rule.identifier(node)
 
 	return true
 }
-
-func (rule *camelcaseRule) OnExitNode(node *ast.Node) {}
 
 func (rule *camelcaseRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -204,5 +211,3 @@ func (rule *camelcaseRule) options(index int) map[string]any {
 	}
 	return nil
 }
-
-func newCamelcase(context Context) Rule { return &camelcaseRule{context: context} }

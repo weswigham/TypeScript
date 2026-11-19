@@ -17,6 +17,16 @@ type noUselessConstructorRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newNoUselessConstructor(context Context) Rule {
+	rule := &noUselessConstructorRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindConstructor},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUselessConstructorRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindConstructor {
 		rule.uselessConstructor(node)
@@ -24,8 +34,6 @@ func (rule *noUselessConstructorRule) OnEnterNode(node *ast.Node) bool {
 
 	return true
 }
-
-func (rule *noUselessConstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUselessConstructorRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
@@ -144,8 +152,4 @@ func (rule *noUselessConstructorRule) uselessConstructor(node *ast.Node) {
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[report] = []*codefix.CodeFixAction{codefix.CreateCodeFixAction("no-useless-constructor", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_the_constructor), "", nil)}
-}
-
-func newNoUselessConstructor(context Context) Rule {
-	return &noUselessConstructorRule{context: context}
 }

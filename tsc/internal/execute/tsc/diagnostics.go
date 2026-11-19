@@ -40,14 +40,16 @@ func CreateDiagnosticReporter(sys System, w io.Writer, locale locale.Locale, opt
 		return QuietDiagnosticReporter
 	}
 	formatOpts := getFormatOptsOfSys(sys, locale)
-	if shouldBePretty(sys, options) {
-		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.FormatDiagnosticWithColorAndContext(w, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
-			fmt.Fprint(w, formatOpts.NewLine)
-		}
-	}
+	pretty := shouldBePretty(sys, options)
 	return func(diagnostic *ast.Diagnostic) {
-		diagnosticwriter.WriteFormatDiagnostic(w, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
+		var output strings.Builder
+		if pretty {
+			diagnosticwriter.FormatDiagnosticWithColorAndContext(&output, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
+			output.WriteString(formatOpts.NewLine)
+		} else {
+			diagnosticwriter.WriteFormatDiagnostic(&output, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
+		}
+		fmt.Fprint(w, output.String())
 	}
 }
 

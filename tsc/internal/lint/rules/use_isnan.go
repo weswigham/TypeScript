@@ -13,13 +13,21 @@ type useIsnanRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newUseIsnan(context Context) Rule {
+	rule := &useIsnanRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression, ast.KindCallExpression, ast.KindSwitchStatement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *useIsnanRule) OnEnterNode(node *ast.Node) bool {
 	rule.isnan(node)
 
 	return true
 }
-
-func (rule *useIsnanRule) OnExitNode(node *ast.Node) {}
 
 func (rule *useIsnanRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
@@ -163,5 +171,3 @@ func expressionCall(tracker *change.Tracker, callee *ast.Node, argument *ast.Nod
 func expressionNumberIsNaN(tracker *change.Tracker) *ast.Node {
 	return tracker.NewPropertyAccessExpression(tracker.NewIdentifier("Number"), nil, tracker.NewIdentifier("isNaN"), ast.NodeFlagsNone)
 }
-
-func newUseIsnan(context Context) Rule { return &useIsnanRule{context: context} }

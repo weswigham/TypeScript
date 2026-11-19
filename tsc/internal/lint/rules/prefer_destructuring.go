@@ -20,16 +20,19 @@ type preferDestructuringRule struct {
 	context Context
 }
 
+func newPreferDestructuring(context Context) Rule {
+	rule := &preferDestructuringRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindVariableDeclaration},
+	}
+}
+
 func (rule *preferDestructuringRule) OnEnterNode(node *ast.Node) bool {
 	rule.destructuring(node)
 
 	return true
-}
-
-func (rule *preferDestructuringRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferDestructuringRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferDestructuringRule) destructuring(node *ast.Node) {
@@ -141,5 +144,3 @@ func (rule *preferDestructuringRule) Start(node *ast.Node) int {
 func (rule *preferDestructuringRule) Text(node *ast.Node) string {
 	return rule.context.File.Text()[rule.Start(node):node.End()]
 }
-
-func newPreferDestructuring(context Context) Rule { return &preferDestructuringRule{context: context} }

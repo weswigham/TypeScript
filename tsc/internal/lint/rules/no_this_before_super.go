@@ -10,6 +10,34 @@ type noThisBeforeSuper struct {
 	helpers.SharedControlFlowContext
 }
 
+func newNoThisBeforeSuper(context Context) Rule {
+	rule := &noThisBeforeSuper{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *noThisBeforeSuper) OnEnterNode(node *ast.Node) bool {
 	return rule.EnterGraph(node, rule.transferState)
 }
@@ -44,8 +72,4 @@ func (rule *noThisBeforeSuper) checkGraph(graph *helpers.ControlFlowGraph) {
 			rule.ReportOnce(segment.Node, diagnostics.X_0_is_not_allowed_before_super, kind)
 		}
 	}
-}
-
-func newNoThisBeforeSuper(context Context) Rule {
-	return &noThisBeforeSuper{Context: context}
 }

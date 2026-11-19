@@ -19,13 +19,20 @@ type idMatchRule struct {
 	patterns map[string]*regex.Pattern
 }
 
+func newIdMatch(context Context) Rule {
+	rule := &idMatchRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier, ast.KindPrivateIdentifier},
+	}
+}
+
 func (rule *idMatchRule) OnEnterNode(node *ast.Node) bool {
 	rule.identifier(node)
 
 	return true
 }
-
-func (rule *idMatchRule) OnExitNode(node *ast.Node) {}
 
 func (rule *idMatchRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -240,5 +247,3 @@ func (rule *idMatchRule) options(index int) map[string]any {
 	}
 	return nil
 }
-
-func newIdMatch(context Context) Rule { return &idMatchRule{context: context} }

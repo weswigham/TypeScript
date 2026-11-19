@@ -11,7 +11,14 @@ type noDupeElseIf struct {
 	context Context
 }
 
-func newNoDupeElseIf(context Context) Rule { return &noDupeElseIf{context: context} }
+func newNoDupeElseIf(context Context) Rule {
+	rule := &noDupeElseIf{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIfStatement},
+	}
+}
 
 func (rule *noDupeElseIf) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindIfStatement {
@@ -19,9 +26,6 @@ func (rule *noDupeElseIf) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noDupeElseIf) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noDupeElseIf) equalCondition(left, right *ast.Node) bool {

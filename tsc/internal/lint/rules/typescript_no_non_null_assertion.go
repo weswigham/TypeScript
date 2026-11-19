@@ -8,26 +8,19 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var tsNoNonNull = diagnostics.Forbidden_non_null_assertion
-
 type typescriptNoNonNullAssertionRule struct {
 	helpers.DiagnosticSuggestions
 	context Context
 }
 
-func tsSyntaxIsAssignee(node *ast.Node) bool {
-	for node.Parent != nil {
-		parent := node.Parent
-		switch parent.Kind {
-		case ast.KindParenthesizedExpression, ast.KindAsExpression, ast.KindTypeAssertionExpression, ast.KindSatisfiesExpression, ast.KindNonNullExpression:
-			node = parent
-			continue
-		case ast.KindDeleteExpression:
-			return true
-		}
-		return ast.IsAssignmentTarget(node)
+func newTypeScriptNoNonNullAssertion(context Context) Rule {
+	rule := &typescriptNoNonNullAssertionRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindNonNullExpression},
+		GetSuggestions: rule.Suggestions,
 	}
-	return false
 }
 
 func (rule *typescriptNoNonNullAssertionRule) OnEnterNode(node *ast.Node) bool {
@@ -68,8 +61,19 @@ func (rule *typescriptNoNonNullAssertionRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typescriptNoNonNullAssertionRule) OnExitNode(node *ast.Node) {}
+var tsNoNonNull = diagnostics.Forbidden_non_null_assertion
 
-func newTypeScriptNoNonNullAssertion(context Context) Rule {
-	return &typescriptNoNonNullAssertionRule{context: context}
+func tsSyntaxIsAssignee(node *ast.Node) bool {
+	for node.Parent != nil {
+		parent := node.Parent
+		switch parent.Kind {
+		case ast.KindParenthesizedExpression, ast.KindAsExpression, ast.KindTypeAssertionExpression, ast.KindSatisfiesExpression, ast.KindNonNullExpression:
+			node = parent
+			continue
+		case ast.KindDeleteExpression:
+			return true
+		}
+		return ast.IsAssignmentTarget(node)
+	}
+	return false
 }

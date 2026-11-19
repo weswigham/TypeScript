@@ -16,6 +16,21 @@ type typescriptPreferFunctionTypeRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptPreferFunctionType(context Context) Rule {
+	rule := &typescriptPreferFunctionTypeRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindInterfaceDeclaration, ast.KindTypeLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptPreferFunctionTypeRule) OnEnterNode(node *ast.Node) bool {
+	rule.functionType(node)
+	return true
+}
+
 func (rule *typescriptPreferFunctionTypeRule) functionType(node *ast.Node) {
 	if node.Kind != ast.KindInterfaceDeclaration && node.Kind != ast.KindTypeLiteral {
 		return
@@ -142,15 +157,4 @@ func (rule *typescriptPreferFunctionTypeRule) fix(diagnostic *ast.Diagnostic, no
 	name := "@typescript-eslint/prefer-function-type"
 	description := ast.NewCompilerDiagnostic(diagnostics.Use_a_function_type)
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), description, name, description))
-}
-
-func (rule *typescriptPreferFunctionTypeRule) OnEnterNode(node *ast.Node) bool {
-	rule.functionType(node)
-	return true
-}
-
-func (rule *typescriptPreferFunctionTypeRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptPreferFunctionType(context Context) Rule {
-	return &typescriptPreferFunctionTypeRule{context: context}
 }

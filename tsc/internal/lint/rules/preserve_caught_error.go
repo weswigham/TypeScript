@@ -16,15 +16,19 @@ type preserveCaughtErrorRule struct {
 }
 
 func newPreserveCaughtErrorRule(context Context) Rule {
-	return &preserveCaughtErrorRule{context: context}
+	rule := &preserveCaughtErrorRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindThrowStatement},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *preserveCaughtErrorRule) OnEnterNode(node *ast.Node) bool {
 	rule.caughtError(node)
 	return true
 }
-
-func (rule *preserveCaughtErrorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *preserveCaughtErrorRule) caughtError(node *ast.Node) {
 	if node.Kind != ast.KindThrowStatement {

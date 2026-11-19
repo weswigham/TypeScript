@@ -5,10 +5,23 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 )
 
-var noCondAssignMessage = diagnostics.Expected_a_conditional_expression_and_instead_saw_an_assignment
-
 type noCondAssign struct {
 	context Context
+}
+
+func newNoCondAssign(context Context) Rule {
+	rule := &noCondAssign{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindIfStatement,
+			ast.KindConditionalExpression,
+			ast.KindWhileStatement,
+			ast.KindDoStatement,
+			ast.KindForStatement,
+		},
+	}
 }
 
 func (rule *noCondAssign) OnEnterNode(node *ast.Node) bool {
@@ -34,6 +47,4 @@ func (rule *noCondAssign) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noCondAssign) OnExitNode(node *ast.Node) {}
-
-func newNoCondAssign(context Context) Rule { return &noCondAssign{context: context} }
+var noCondAssignMessage = diagnostics.Expected_a_conditional_expression_and_instead_saw_an_assignment

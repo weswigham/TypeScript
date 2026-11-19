@@ -15,11 +15,13 @@ type typeScriptPreferIncludes struct {
 }
 
 func newTypeScriptPreferIncludes(context Context) Rule {
-	return &typeScriptPreferIncludes{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
-}
+	rule := &typeScriptPreferIncludes{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
 
-func (rule *typeScriptPreferIncludes) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression, ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferIncludes) OnEnterNode(node *ast.Node) bool {
@@ -29,7 +31,9 @@ func (rule *typeScriptPreferIncludes) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptPreferIncludes) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferIncludes) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferIncludes) action(diagnostic *ast.Diagnostic, description *ast.Diagnostic, suggestion bool, edits ...helpers.SemanticExpressionEdit) {
 	if rule.context.NewTracker == nil {

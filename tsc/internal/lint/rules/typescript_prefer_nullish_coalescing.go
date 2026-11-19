@@ -17,6 +17,108 @@ type typescriptPreferNullishCoalescingRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptPreferNullishCoalescing(context Context) Rule {
+	rule := &typescriptPreferNullishCoalescingRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindSourceFile, ast.KindBinaryExpression, ast.KindConditionalExpression, ast.KindIfStatement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptPreferNullishCoalescingRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindSourceFile {
+		helpers.SemanticRequireStrictNullChecks(rule.context)
+	}
+	if node.Kind == ast.KindBinaryExpression {
+		binary := node.AsBinaryExpression()
+		if binary.OperatorToken.Kind != ast.KindBarBarToken && binary.OperatorToken.Kind != ast.KindBarBarEqualsToken {
+			return true
+		}
+		if !rule.eligible(node, binary.Left) || helpers.SemanticBooleanOption(rule.context, "ignoreMixedLogicalExpressions", false) && preferNullishCoalescingMixed(node) {
+			return true
+		}
+		equals, description := "", "or"
+		if binary.OperatorToken.Kind == ast.KindBarBarEqualsToken {
+			equals, description = "=", "assignment"
+		}
+		report := rule.context.Report(rule.context.Range(binary.OperatorToken), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_a_logical_1_0_as_it_is_a_safer_operator, equals, description)
+		left, right := helpers.SemanticSourceText(rule.context, binary.Left), helpers.SemanticSourceText(rule.context, binary.Right)
+		if binary.Left.Kind == ast.KindBinaryExpression {
+			operator := binary.Left.AsBinaryExpression().OperatorToken.Kind
+			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
+				left = "(" + left + ")"
+			}
+		}
+		if binary.Right.Kind == ast.KindBinaryExpression {
+			operator := binary.Right.AsBinaryExpression().OperatorToken.Kind
+			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
+				right = "(" + right + ")"
+			}
+		}
+		replacement := left + " ??" + equals + " " + right
+		parent := helpers.SemanticExpressionParent(node)
+		if parent != nil && parent.Kind == ast.KindBinaryExpression {
+			operator := parent.AsBinaryExpression().OperatorToken.Kind
+			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
+				replacement = "(" + replacement + ")"
+			}
+		}
+		rule.suggest(report, node, replacement, diagnostics.Fix_to_nullish_coalescing_operator_0, equals)
+	}
+	if node.Kind == ast.KindConditionalExpression && !helpers.SemanticBooleanOption(rule.context, "ignoreTernaryTests", false) {
+		conditional := node.AsConditionalExpression()
+		test, ok := preferNullishCoalescingParseNullTest(rule.context, conditional.Condition)
+		if !ok {
+			return true
+		}
+		nonNullish, nullish := conditional.WhenTrue, conditional.WhenFalse
+		if !test.negative {
+			nonNullish, nullish = nullish, nonNullish
+		}
+		if !rule.testEligible(node, test, nonNullish) {
+			return true
+		}
+		report := rule.context.Report(rule.context.Range(node), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_a_ternary_expression_as_it_is_simpler_to_read, "")
+		rule.suggest(report, node, helpers.SemanticSourceText(rule.context, test.expression)+" ?? "+helpers.SemanticWrappedExpression(rule.context, nullish), diagnostics.Fix_to_nullish_coalescing_operator_0, "")
+	}
+	if node.Kind == ast.KindIfStatement && !helpers.SemanticBooleanOption(rule.context, "ignoreIfStatements", false) {
+		statement := node.AsIfStatement()
+		if statement.ElseStatement != nil {
+			return true
+		}
+		body := statement.ThenStatement
+		if body.Kind == ast.KindBlock {
+			statements := body.AsBlock().Statements.Nodes
+			if len(statements) != 1 {
+				return true
+			}
+			body = statements[0]
+		}
+		if body.Kind != ast.KindExpressionStatement || body.Expression().Kind != ast.KindBinaryExpression {
+			return true
+		}
+		assignment := body.Expression().AsBinaryExpression()
+		if assignment.OperatorToken.Kind != ast.KindEqualsToken {
+			return true
+		}
+		left := ast.SkipParentheses(assignment.Left)
+		if left.Kind != ast.KindIdentifier && left.Kind != ast.KindPropertyAccessExpression && left.Kind != ast.KindElementAccessExpression {
+			return true
+		}
+		test, ok := preferNullishCoalescingParseNullTest(rule.context, statement.Expression)
+		if !ok || test.negative || !rule.testEligible(node, test, left) {
+			return true
+		}
+		report := rule.context.Report(rule.context.Range(node), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_an_assignment_expression_as_it_is_simpler_to_read, "=")
+		before := rule.comments(statement.Expression.End(), scanner.GetTokenPosOfNode(body.Expression(), rule.context.File, false))
+		after := rule.comments(body.End(), node.End())
+		rule.suggest(report, node, before+helpers.SemanticSourceText(rule.context, assignment.Left)+" ??= "+helpers.SemanticSourceText(rule.context, assignment.Right)+";"+after, diagnostics.Fix_to_nullish_coalescing_operator_0, "=")
+	}
+	return true
+}
+
 func (rule *typescriptPreferNullishCoalescingRule) eligible(node, test *ast.Node) bool {
 	if helpers.SemanticBooleanOption(rule.context, "ignoreConditionalTests", true) && helpers.SemanticInCondition(node) {
 		return false
@@ -192,100 +294,6 @@ func (rule *typescriptPreferNullishCoalescingRule) comments(start, end int) stri
 	return result.String()
 }
 
-func (rule *typescriptPreferNullishCoalescingRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindSourceFile {
-		helpers.SemanticRequireStrictNullChecks(rule.context)
-	}
-	if node.Kind == ast.KindBinaryExpression {
-		binary := node.AsBinaryExpression()
-		if binary.OperatorToken.Kind != ast.KindBarBarToken && binary.OperatorToken.Kind != ast.KindBarBarEqualsToken {
-			return true
-		}
-		if !rule.eligible(node, binary.Left) || helpers.SemanticBooleanOption(rule.context, "ignoreMixedLogicalExpressions", false) && preferNullishCoalescingMixed(node) {
-			return true
-		}
-		equals, description := "", "or"
-		if binary.OperatorToken.Kind == ast.KindBarBarEqualsToken {
-			equals, description = "=", "assignment"
-		}
-		report := rule.context.Report(rule.context.Range(binary.OperatorToken), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_a_logical_1_0_as_it_is_a_safer_operator, equals, description)
-		left, right := helpers.SemanticSourceText(rule.context, binary.Left), helpers.SemanticSourceText(rule.context, binary.Right)
-		if binary.Left.Kind == ast.KindBinaryExpression {
-			operator := binary.Left.AsBinaryExpression().OperatorToken.Kind
-			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
-				left = "(" + left + ")"
-			}
-		}
-		if binary.Right.Kind == ast.KindBinaryExpression {
-			operator := binary.Right.AsBinaryExpression().OperatorToken.Kind
-			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
-				right = "(" + right + ")"
-			}
-		}
-		replacement := left + " ??" + equals + " " + right
-		parent := helpers.SemanticExpressionParent(node)
-		if parent != nil && parent.Kind == ast.KindBinaryExpression {
-			operator := parent.AsBinaryExpression().OperatorToken.Kind
-			if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
-				replacement = "(" + replacement + ")"
-			}
-		}
-		rule.suggest(report, node, replacement, diagnostics.Fix_to_nullish_coalescing_operator_0, equals)
-	}
-	if node.Kind == ast.KindConditionalExpression && !helpers.SemanticBooleanOption(rule.context, "ignoreTernaryTests", false) {
-		conditional := node.AsConditionalExpression()
-		test, ok := preferNullishCoalescingParseNullTest(rule.context, conditional.Condition)
-		if !ok {
-			return true
-		}
-		nonNullish, nullish := conditional.WhenTrue, conditional.WhenFalse
-		if !test.negative {
-			nonNullish, nullish = nullish, nonNullish
-		}
-		if !rule.testEligible(node, test, nonNullish) {
-			return true
-		}
-		report := rule.context.Report(rule.context.Range(node), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_a_ternary_expression_as_it_is_simpler_to_read, "")
-		rule.suggest(report, node, helpers.SemanticSourceText(rule.context, test.expression)+" ?? "+helpers.SemanticWrappedExpression(rule.context, nullish), diagnostics.Fix_to_nullish_coalescing_operator_0, "")
-	}
-	if node.Kind == ast.KindIfStatement && !helpers.SemanticBooleanOption(rule.context, "ignoreIfStatements", false) {
-		statement := node.AsIfStatement()
-		if statement.ElseStatement != nil {
-			return true
-		}
-		body := statement.ThenStatement
-		if body.Kind == ast.KindBlock {
-			statements := body.AsBlock().Statements.Nodes
-			if len(statements) != 1 {
-				return true
-			}
-			body = statements[0]
-		}
-		if body.Kind != ast.KindExpressionStatement || body.Expression().Kind != ast.KindBinaryExpression {
-			return true
-		}
-		assignment := body.Expression().AsBinaryExpression()
-		if assignment.OperatorToken.Kind != ast.KindEqualsToken {
-			return true
-		}
-		left := ast.SkipParentheses(assignment.Left)
-		if left.Kind != ast.KindIdentifier && left.Kind != ast.KindPropertyAccessExpression && left.Kind != ast.KindElementAccessExpression {
-			return true
-		}
-		test, ok := preferNullishCoalescingParseNullTest(rule.context, statement.Expression)
-		if !ok || test.negative || !rule.testEligible(node, test, left) {
-			return true
-		}
-		report := rule.context.Report(rule.context.Range(node), diagnostics.Prefer_using_nullish_coalescing_operator_0_instead_of_an_assignment_expression_as_it_is_simpler_to_read, "=")
-		before := rule.comments(statement.Expression.End(), scanner.GetTokenPosOfNode(body.Expression(), rule.context.File, false))
-		after := rule.comments(body.End(), node.End())
-		rule.suggest(report, node, before+helpers.SemanticSourceText(rule.context, assignment.Left)+" ??= "+helpers.SemanticSourceText(rule.context, assignment.Right)+";"+after, diagnostics.Fix_to_nullish_coalescing_operator_0, "=")
-	}
-	return true
-}
-
-func (rule *typescriptPreferNullishCoalescingRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptPreferNullishCoalescingRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
@@ -297,8 +305,4 @@ func (rule *typescriptPreferNullishCoalescingRule) suggest(report *ast.Diagnosti
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[report] = append(rule.suggestions[report], codefix.CreateCodeFixAction("@typescript-eslint/prefer-nullish-coalescing", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(message, args...), "", nil))
-}
-
-func newTypeScriptPreferNullishCoalescing(context Context) Rule {
-	return &typescriptPreferNullishCoalescingRule{context: context}
 }

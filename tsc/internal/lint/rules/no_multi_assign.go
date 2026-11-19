@@ -10,7 +10,14 @@ type noMultiAssign struct {
 	context Context
 }
 
-func newNoMultiAssign(context Context) Rule { return &noMultiAssign{context: context} }
+func newNoMultiAssign(context Context) Rule {
+	rule := &noMultiAssign{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
 
 func (rule *noMultiAssign) OnEnterNode(node *ast.Node) bool {
 	if helpers.SourceAssignment(node) {
@@ -21,9 +28,6 @@ func (rule *noMultiAssign) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noMultiAssign) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noMultiAssign) Options() map[string]any {

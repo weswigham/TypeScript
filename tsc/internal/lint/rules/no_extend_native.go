@@ -9,12 +9,15 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-var noExtendNativeNames = strings.Fields("Array Boolean Date Error EvalError Function Infinity Math NaN Number Object RangeError ReferenceError RegExp String SyntaxError TypeError URIError JSON ArrayBuffer DataView Float32Array Float64Array Int16Array Int32Array Int8Array Intl Map Promise Proxy Reflect Set Symbol Uint16Array Uint32Array Uint8Array Uint8ClampedArray WeakMap WeakSet Atomics SharedArrayBuffer BigInt BigInt64Array BigUint64Array AggregateError FinalizationRegistry WeakRef Float16Array Iterator AsyncDisposableStack DisposableStack SuppressedError Temporal")
-
 type noExtendNativeRule struct{ context Context }
 
 func newNoExtendNativeRule(context Context) Rule {
-	return &noExtendNativeRule{context: context}
+	rule := &noExtendNativeRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindCallExpression},
+	}
 }
 
 func (rule *noExtendNativeRule) OnEnterNode(node *ast.Node) bool {
@@ -22,7 +25,7 @@ func (rule *noExtendNativeRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noExtendNativeRule) OnExitNode(node *ast.Node) {}
+var noExtendNativeNames = strings.Fields("Array Boolean Date Error EvalError Function Infinity Math NaN Number Object RangeError ReferenceError RegExp String SyntaxError TypeError URIError JSON ArrayBuffer DataView Float32Array Float64Array Int16Array Int32Array Int8Array Intl Map Promise Proxy Reflect Set Symbol Uint16Array Uint32Array Uint8Array Uint8ClampedArray WeakMap WeakSet Atomics SharedArrayBuffer BigInt BigInt64Array BigUint64Array AggregateError FinalizationRegistry WeakRef Float16Array Iterator AsyncDisposableStack DisposableStack SuppressedError Temporal")
 
 func (rule *noExtendNativeRule) checkExtendNative(node *ast.Node) {
 	var prototype *ast.Node

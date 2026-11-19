@@ -7,10 +7,24 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var noDupeArgsMessage = diagnostics.Duplicate_param_0
-
 type noDupeArgs struct {
 	context Context
+}
+
+func newNoDupeArgs(context Context) Rule {
+	rule := &noDupeArgs{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindConstructor,
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindGetAccessor,
+			ast.KindMethodDeclaration,
+			ast.KindSetAccessor,
+		},
+	}
 }
 
 func (rule *noDupeArgs) OnEnterNode(node *ast.Node) bool {
@@ -59,6 +73,4 @@ func (rule *noDupeArgs) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noDupeArgs) OnExitNode(node *ast.Node) {}
-
-func newNoDupeArgs(context Context) Rule { return &noDupeArgs{context: context} }
+var noDupeArgsMessage = diagnostics.Duplicate_param_0

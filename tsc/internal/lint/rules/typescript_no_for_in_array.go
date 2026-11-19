@@ -13,6 +13,22 @@ import (
 
 type typescriptNoForInArrayRule struct{ context Context }
 
+func newTypeScriptNoForInArray(context Context) Rule {
+	rule := &typescriptNoForInArrayRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindForInStatement},
+	}
+}
+
+func (rule *typescriptNoForInArrayRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindForInStatement {
+		rule.forIn(node)
+	}
+	return true
+}
+
 func (rule *typescriptNoForInArrayRule) arrayLike(valueType *checker.Type) bool {
 	if valueType.Flags()&checker.TypeFlagsUnionOrIntersection != 0 {
 		return slices.ContainsFunc(valueType.Types(), rule.arrayLike)
@@ -37,17 +53,4 @@ func (rule *typescriptNoForInArrayRule) forIn(node *ast.Node) {
 		tokens.Scan()
 	}
 	rule.context.Report(core.NewTextRange(start, end), diagnostics.For_in_loops_over_arrays_skips_holes_returns_indices_as_strings_and_may_visit_the_prototype_chain_or_other_enumerable_properties_Use_a_more_robust_iteration_method_such_as_for_of_or_array_forEach_instead)
-}
-
-func (rule *typescriptNoForInArrayRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindForInStatement {
-		rule.forIn(node)
-	}
-	return true
-}
-
-func (rule *typescriptNoForInArrayRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoForInArray(context Context) Rule {
-	return &typescriptNoForInArrayRule{context: context}
 }

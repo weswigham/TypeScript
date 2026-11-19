@@ -17,12 +17,27 @@ type typescriptExplicitMemberAccessibilityRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptExplicitMemberAccessibility(context Context) Rule {
+	rule := &typescriptExplicitMemberAccessibilityRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindMethodDeclaration,
+			ast.KindParameter,
+			ast.KindPropertyDeclaration,
+			ast.KindSetAccessor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptExplicitMemberAccessibilityRule) OnEnterNode(node *ast.Node) bool {
 	rule.accessibility(node)
 	return true
 }
-
-func (rule *typescriptExplicitMemberAccessibilityRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptExplicitMemberAccessibilityRule) accessibility(node *ast.Node) {
 	group, kind := "", ""
@@ -141,8 +156,4 @@ func (rule *typescriptExplicitMemberAccessibilityRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptExplicitMemberAccessibility(context Context) Rule {
-	return &typescriptExplicitMemberAccessibilityRule{context: context}
 }

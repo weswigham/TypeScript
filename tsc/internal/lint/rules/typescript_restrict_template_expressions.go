@@ -5,12 +5,36 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/checker"
-	"github.com/microsoft/TypeScript/tsc/internal/codefix"
+
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
 type typescriptRestrictTemplateExpressionsRule struct{ context Context }
+
+func newTypeScriptRestrictTemplateExpressions(context Context) Rule {
+	rule := &typescriptRestrictTemplateExpressionsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindTemplateExpression},
+	}
+}
+
+func (rule *typescriptRestrictTemplateExpressionsRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindTemplateExpression && (node.Parent == nil || node.Parent.Kind != ast.KindTaggedTemplateExpression) {
+		for _, span := range node.AsTemplateExpression().TemplateSpans.Nodes {
+			expression := ast.SkipParentheses(span.Expression())
+			value := helpers.SemanticConstrainedType(rule.context,
+
+				rule.context.GetChecker().GetTypeAtLocation(expression))
+			if !rule.templateAllowed(value) {
+				rule.context.Report(rule.context.Range(expression), diagnostics.Invalid_type_0_of_template_literal_expression, rule.context.GetChecker().TypeToString(value))
+			}
+		}
+	}
+	return true
+}
 
 func (rule *typescriptRestrictTemplateExpressionsRule) templateAllowed(value *checker.Type) bool {
 	if value.IsUnion() {
@@ -68,29 +92,4 @@ func (rule *typescriptRestrictTemplateExpressionsRule) templateAllowed(value *ch
 		return element != nil && rule.templateAllowed(element)
 	}
 	return false
-}
-
-func (rule *typescriptRestrictTemplateExpressionsRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
-}
-
-func (rule *typescriptRestrictTemplateExpressionsRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindTemplateExpression && (node.Parent == nil || node.Parent.Kind != ast.KindTaggedTemplateExpression) {
-		for _, span := range node.AsTemplateExpression().TemplateSpans.Nodes {
-			expression := ast.SkipParentheses(span.Expression())
-			value := helpers.SemanticConstrainedType(rule.context,
-
-				rule.context.GetChecker().GetTypeAtLocation(expression))
-			if !rule.templateAllowed(value) {
-				rule.context.Report(rule.context.Range(expression), diagnostics.Invalid_type_0_of_template_literal_expression, rule.context.GetChecker().TypeToString(value))
-			}
-		}
-	}
-	return true
-}
-
-func (rule *typescriptRestrictTemplateExpressionsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptRestrictTemplateExpressions(context Context) Rule {
-	return &typescriptRestrictTemplateExpressionsRule{context: context}
 }

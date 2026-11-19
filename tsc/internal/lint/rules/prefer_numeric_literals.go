@@ -13,24 +13,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type preferNumericLiteralsCoreRule struct {
+type preferNumericLiteralsRule struct {
 	context Context
 }
 
-func newPreferNumericLiteralsCoreRule(context Context) *preferNumericLiteralsCoreRule {
-	return &preferNumericLiteralsCoreRule{
+func newPreferNumericLiterals(context Context) Rule {
+	rule := &preferNumericLiteralsRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
 	}
 }
 
-func (rule *preferNumericLiteralsCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *preferNumericLiteralsRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkNumeric(node)
 	return true
 }
 
-func (rule *preferNumericLiteralsCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferNumericLiteralsCoreRule) checkNumeric(node *ast.Node) {
+func (rule *preferNumericLiteralsRule) checkNumeric(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression || len(node.AsCallExpression().Arguments.Nodes) != 2 {
 		return
 	}
@@ -85,15 +88,11 @@ func (rule *preferNumericLiteralsCoreRule) checkNumeric(node *ast.Node) {
 	rule.fixRange(diagnostic, start, node.End(), replacement)
 }
 
-func (rule *preferNumericLiteralsCoreRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
+func (rule *preferNumericLiteralsRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
 	if rule.context.NewTracker == nil {
 		return
 	}
 	tracker := rule.context.NewTracker()
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), replacement)
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction("prefer-numeric-literals", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Fix_0, "prefer-numeric-literals"), "prefer-numeric-literals", ast.NewCompilerDiagnostic(diagnostics.Fix_all_0, "prefer-numeric-literals")))
-}
-
-func newPreferNumericLiteralsCore(context Context) Rule {
-	return newPreferNumericLiteralsCoreRule(context)
 }

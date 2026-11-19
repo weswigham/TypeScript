@@ -12,6 +12,15 @@ import (
 
 type noDivRegex struct{ context Context }
 
+func newNoDivRegex(context Context) Rule {
+	rule := &noDivRegex{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindRegularExpressionLiteral},
+	}
+}
+
 func (rule *noDivRegex) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindRegularExpressionLiteral {
 		return true
@@ -28,7 +37,3 @@ func (rule *noDivRegex) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noDivRegex) OnExitNode(node *ast.Node) {}
-
-func newNoDivRegex(context Context) Rule { return &noDivRegex{context: context} }

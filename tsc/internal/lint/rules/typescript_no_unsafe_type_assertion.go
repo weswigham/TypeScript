@@ -9,6 +9,15 @@ import (
 
 type typescriptNoUnsafeTypeAssertionRule struct{ context Context }
 
+func newTypeScriptNoUnsafeTypeAssertion(context Context) Rule {
+	rule := &typescriptNoUnsafeTypeAssertionRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindAsExpression, ast.KindTypeAssertionExpression},
+	}
+}
+
 func (rule *typescriptNoUnsafeTypeAssertionRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindAsExpression && node.Kind != ast.KindTypeAssertionExpression {
 		return true
@@ -46,10 +55,4 @@ func (rule *typescriptNoUnsafeTypeAssertionRule) OnEnterNode(node *ast.Node) boo
 		rule.context.Report(rule.context.Range(node), diagnostics.Unsafe_type_assertion_Colon_type_0_is_more_narrow_than_the_original_type, name)
 	}
 	return true
-}
-
-func (rule *typescriptNoUnsafeTypeAssertionRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoUnsafeTypeAssertion(context Context) Rule {
-	return &typescriptNoUnsafeTypeAssertionRule{context: context}
 }

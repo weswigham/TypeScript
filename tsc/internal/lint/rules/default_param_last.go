@@ -12,6 +12,23 @@ type defaultParamLastRule struct {
 	context Context
 }
 
+func newDefaultParamLast(context Context) Rule {
+	rule := &defaultParamLastRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+	}
+}
+
 func (rule *defaultParamLastRule) OnEnterNode(node *ast.Node) bool {
 	if helpers.FunctionHasBody(node) {
 		required := false
@@ -26,11 +43,4 @@ func (rule *defaultParamLastRule) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *defaultParamLastRule) OnExitNode(node *ast.Node) {
-}
-
-func newDefaultParamLast(context Context) Rule {
-	return &defaultParamLastRule{context: context}
 }

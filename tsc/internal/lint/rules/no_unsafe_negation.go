@@ -13,13 +13,21 @@ type noUnsafeNegationRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newNoUnsafeNegation(context Context) Rule {
+	rule := &noUnsafeNegationRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUnsafeNegationRule) OnEnterNode(node *ast.Node) bool {
 	rule.unsafeNegation(node)
 
 	return true
 }
-
-func (rule *noUnsafeNegationRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUnsafeNegationRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
@@ -76,5 +84,3 @@ func (rule *noUnsafeNegationRule) unsafeNegation(node *ast.Node) {
 		return tracker.NewParenthesizedExpression(tracker.DeepCloneReparse(left))
 	})
 }
-
-func newNoUnsafeNegation(context Context) Rule { return &noUnsafeNegationRule{context: context} }

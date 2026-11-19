@@ -10,6 +10,15 @@ type noSequences struct {
 	context Context
 }
 
+func newNoSequences(context Context) Rule {
+	rule := &noSequences{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *noSequences) OnEnterNode(node *ast.Node) bool {
 	if helpers.IsCommaSequenceExpression(node) && !(node.Parent != nil && helpers.IsCommaSequenceExpression(node.Parent)) {
 		outer := helpers.OuterParenthesizedExpression(node)
@@ -31,7 +40,3 @@ func (rule *noSequences) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noSequences) OnExitNode(node *ast.Node) {}
-
-func newNoSequences(context Context) Rule { return &noSequences{context: context} }

@@ -14,6 +14,21 @@ type typescriptNoFloatingPromisesRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptNoFloatingPromises(context Context) Rule {
+	rule := &typescriptNoFloatingPromisesRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindExpressionStatement, ast.KindArrowFunction},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNoFloatingPromisesRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkFloating(node)
+	return true
+}
+
 func (rule *typescriptNoFloatingPromisesRule) floatingPromise(node *ast.Node, value *checker.Type) bool {
 	if helpers.PromiseAllowed(rule.context, node, value, "allowForKnownSafePromises", false) {
 		return false
@@ -183,15 +198,4 @@ func (rule *typescriptNoFloatingPromisesRule) action(diagnostic *ast.Diagnostic,
 
 func (rule *typescriptNoFloatingPromisesRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
-}
-
-func (rule *typescriptNoFloatingPromisesRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkFloating(node)
-	return true
-}
-
-func (rule *typescriptNoFloatingPromisesRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoFloatingPromises(context Context) Rule {
-	return &typescriptNoFloatingPromisesRule{context: context}
 }

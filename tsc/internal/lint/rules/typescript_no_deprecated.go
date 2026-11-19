@@ -17,11 +17,23 @@ type typeScriptNoDeprecated struct {
 }
 
 func newTypeScriptNoDeprecated(context Context) Rule {
-	return &typeScriptNoDeprecated{context: context}
-}
+	rule := &typeScriptNoDeprecated{context: context}
 
-func (rule *typeScriptNoDeprecated) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindElementAccessExpression,
+			ast.KindIdentifier,
+			ast.KindPrivateIdentifier,
+			ast.KindSuperKeyword,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptNoDeprecated) OnEnterNode(node *ast.Node) bool {
@@ -29,7 +41,9 @@ func (rule *typeScriptNoDeprecated) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptNoDeprecated) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptNoDeprecated) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func typeScriptNoDeprecatedDeclarationDeprecation(declaration *ast.Node) (string, bool) {
 	if declaration == nil || declaration.Flags&ast.NodeFlagsJSDoc != 0 {

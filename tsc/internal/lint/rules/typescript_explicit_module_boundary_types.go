@@ -14,8 +14,14 @@ type typescriptExplicitModuleBoundaryTypesRule struct {
 	visited map[*ast.Node]bool
 }
 
-func (rule *typescriptExplicitModuleBoundaryTypesRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptExplicitModuleBoundaryTypes(context Context) Rule {
+	rule := &typescriptExplicitModuleBoundaryTypesRule{Context: context, Name: "explicit-module-boundary-types"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptExplicitModuleBoundaryTypesRule) OnExitNode(node *ast.Node) {
@@ -225,8 +231,4 @@ func (rule *typescriptExplicitModuleBoundaryTypesRule) boundaryFunction(node *as
 			rule.boundaryNode(expression)
 		}
 	}
-}
-
-func newTypeScriptExplicitModuleBoundaryTypes(context Context) Rule {
-	return &typescriptExplicitModuleBoundaryTypesRule{Context: context, Name: "explicit-module-boundary-types"}
 }

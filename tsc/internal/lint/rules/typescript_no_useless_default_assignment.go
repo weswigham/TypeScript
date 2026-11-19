@@ -17,14 +17,73 @@ type typeScriptNoUselessDefaultAssignment struct {
 }
 
 func newTypeScriptNoUselessDefaultAssignment(context Context) Rule {
-	return &typeScriptNoUselessDefaultAssignment{context: context}
+	rule := &typeScriptNoUselessDefaultAssignment{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindSourceFile, ast.KindParameter, ast.KindBindingElement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typeScriptNoUselessDefaultAssignment) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindSourceFile && !helpers.SemanticSyntaxStrict(rule.context) && !helpers.SemanticSyntaxBoolean(rule.context, "allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing") {
+		rule.context.Report(rule.context.Range(node), diagnostics.This_rule_requires_the_strictNullChecks_compiler_option_to_be_turned_on_to_function_correctly)
+	}
+	if node.Kind != ast.KindParameter && node.Kind != ast.KindBindingElement {
+		return true
+	}
+	initializer := node.Initializer()
+	if initializer == nil {
+		return true
+	}
+	c := rule.context.GetChecker()
+	kind := "property"
+	if node.Kind == ast.KindParameter {
+		kind = "parameter"
+	}
+	message := diagnostics.Default_value_is_useless_because_the_0_is_not_optional
+	suggestion := diagnostics.Remove_the_default_value
+	optional := false
+	if initializer.Kind == ast.KindIdentifier && initializer.Text() == "undefined" {
+		message = diagnostics.Default_value_is_useless_because_it_is_undefined_Optional_0_s_are_already_undefined_by_default
+		if node.Kind == ast.KindParameter && node.Type() != nil && typeScriptNoUselessDefaultAssignmentCanBeUndefined(c.GetTypeFromTypeNode(node.Type())) {
+			message = diagnostics.Using_undefined_to_make_a_parameter_optional_adds_unnecessary_runtime_logic
+			suggestion = diagnostics.Use_the_optional_syntax_instead
+			optional = true
+		}
+	} else {
+		var value *checker.Type
+		if node.Kind == ast.KindBindingElement {
+			value = rule.bindingType(node, true)
+		} else {
+			value = rule.contextualParameter(node)
+		}
+		if typeScriptNoUselessDefaultAssignmentCanBeUndefined(value) {
+			return true
+		}
+	}
+	var diagnostic *ast.Diagnostic
+	if optional {
+		diagnostic = rule.context.Report(rule.context.Range(initializer), message)
+	} else {
+		diagnostic = rule.context.Report(rule.context.Range(initializer), message, kind)
+	}
+	leftEnd := node.Name().End()
+	if node.Type() != nil {
+		leftEnd = node.Type().End()
+	}
+	edits := []core.TextChange{helpers.SemanticSyntaxEdit(leftEnd, initializer.End(), helpers.SemanticSyntaxComments(rule.context, leftEnd, initializer.End()))}
+	if optional && node.Name().Kind == ast.KindIdentifier && node.AsParameterDeclaration().QuestionToken == nil {
+		edits = append(edits, helpers.SemanticSyntaxEdit(node.Name().End(), node.Name().End(), "?"))
+	}
+	rule.fix(diagnostic, "no-useless-default-assignment", edits, suggestion)
+	return true
 }
 
 func (rule *typeScriptNoUselessDefaultAssignment) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
-
-func (rule *typeScriptNoUselessDefaultAssignment) OnExitNode(node *ast.Node) {}
 
 func (rule *typeScriptNoUselessDefaultAssignment) fix(diagnostic *ast.Diagnostic, name string, edits []core.TextChange, suggestion *diagnostics.Message) {
 	if rule.context.NewTracker == nil {
@@ -190,59 +249,4 @@ func (rule *typeScriptNoUselessDefaultAssignment) contextualParameter(node *ast.
 		result = value
 	}
 	return result
-}
-
-func (rule *typeScriptNoUselessDefaultAssignment) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindSourceFile && !helpers.SemanticSyntaxStrict(rule.context) && !helpers.SemanticSyntaxBoolean(rule.context, "allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing") {
-		rule.context.Report(rule.context.Range(node), diagnostics.This_rule_requires_the_strictNullChecks_compiler_option_to_be_turned_on_to_function_correctly)
-	}
-	if node.Kind != ast.KindParameter && node.Kind != ast.KindBindingElement {
-		return true
-	}
-	initializer := node.Initializer()
-	if initializer == nil {
-		return true
-	}
-	c := rule.context.GetChecker()
-	kind := "property"
-	if node.Kind == ast.KindParameter {
-		kind = "parameter"
-	}
-	message := diagnostics.Default_value_is_useless_because_the_0_is_not_optional
-	suggestion := diagnostics.Remove_the_default_value
-	optional := false
-	if initializer.Kind == ast.KindIdentifier && initializer.Text() == "undefined" {
-		message = diagnostics.Default_value_is_useless_because_it_is_undefined_Optional_0_s_are_already_undefined_by_default
-		if node.Kind == ast.KindParameter && node.Type() != nil && typeScriptNoUselessDefaultAssignmentCanBeUndefined(c.GetTypeFromTypeNode(node.Type())) {
-			message = diagnostics.Using_undefined_to_make_a_parameter_optional_adds_unnecessary_runtime_logic
-			suggestion = diagnostics.Use_the_optional_syntax_instead
-			optional = true
-		}
-	} else {
-		var value *checker.Type
-		if node.Kind == ast.KindBindingElement {
-			value = rule.bindingType(node, true)
-		} else {
-			value = rule.contextualParameter(node)
-		}
-		if typeScriptNoUselessDefaultAssignmentCanBeUndefined(value) {
-			return true
-		}
-	}
-	var diagnostic *ast.Diagnostic
-	if optional {
-		diagnostic = rule.context.Report(rule.context.Range(initializer), message)
-	} else {
-		diagnostic = rule.context.Report(rule.context.Range(initializer), message, kind)
-	}
-	leftEnd := node.Name().End()
-	if node.Type() != nil {
-		leftEnd = node.Type().End()
-	}
-	edits := []core.TextChange{helpers.SemanticSyntaxEdit(leftEnd, initializer.End(), helpers.SemanticSyntaxComments(rule.context, leftEnd, initializer.End()))}
-	if optional && node.Name().Kind == ast.KindIdentifier && node.AsParameterDeclaration().QuestionToken == nil {
-		edits = append(edits, helpers.SemanticSyntaxEdit(node.Name().End(), node.Name().End(), "?"))
-	}
-	rule.fix(diagnostic, "no-useless-default-assignment", edits, suggestion)
-	return true
 }

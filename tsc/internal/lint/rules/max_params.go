@@ -10,6 +10,24 @@ type maxParamsRule struct {
 	context Context
 }
 
+func newMaxParams(context Context) Rule {
+	rule := &maxParamsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindFunctionType,
+		},
+	}
+}
+
 func (rule *maxParamsRule) OnEnterNode(node *ast.Node) bool {
 	if !helpers.FunctionHasBody(node) && node.Kind != ast.KindFunctionType && node.Kind != ast.KindFunctionDeclaration {
 		return true
@@ -30,11 +48,4 @@ func (rule *maxParamsRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.X_0_has_too_many_parameters_1_Maximum_allowed_is_2, helpers.CapitalizeFirstRune(helpers.FunctionDiagnosticName(node)), count, maximum)
 	}
 	return true
-}
-
-func (rule *maxParamsRule) OnExitNode(node *ast.Node) {
-}
-
-func newMaxParams(context Context) Rule {
-	return &maxParamsRule{context: context}
 }

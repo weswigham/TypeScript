@@ -12,12 +12,27 @@ type typescriptDefaultParamLastRule struct {
 	context Context
 }
 
+func newTypeScriptDefaultParamLast(context Context) Rule {
+	rule := &typescriptDefaultParamLastRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+	}
+}
+
 func (rule *typescriptDefaultParamLastRule) OnEnterNode(node *ast.Node) bool {
 	rule.parameters(node)
 	return true
 }
-
-func (rule *typescriptDefaultParamLastRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptDefaultParamLastRule) parameters(node *ast.Node) {
 	if !helpers.TypescriptExecutableFunction(node) {
@@ -37,8 +52,4 @@ func (rule *typescriptDefaultParamLastRule) parameters(node *ast.Node) {
 			rule.context.Report(rule.context.Range(parameter), diagnostics.Default_parameters_should_be_last)
 		}
 	}
-}
-
-func newTypeScriptDefaultParamLast(context Context) Rule {
-	return &typescriptDefaultParamLastRule{context: context}
 }

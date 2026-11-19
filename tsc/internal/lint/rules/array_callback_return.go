@@ -10,7 +10,24 @@ import (
 
 type arrayCallbackReturn struct{ helpers.ReturnRuleContext }
 
-func (rule *arrayCallbackReturn) OnEnterNode(node *ast.Node) bool { return true }
+func newArrayCallbackReturn(context Context) Rule {
+	rule := &arrayCallbackReturn{Context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *arrayCallbackReturn) OnExitNode(node *ast.Node) {
 	if !helpers.ReturnFunction(node) {
 		return
@@ -149,8 +166,4 @@ func (rule *arrayCallbackReturn) arrayCallback(node *ast.Node, returns []*ast.No
 		}
 		rule.Context.Report(rule.Head(node, false), message, fullName, name)
 	}
-}
-
-func newArrayCallbackReturn(context Context) Rule {
-	return &arrayCallbackReturn{Context: context}
 }

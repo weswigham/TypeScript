@@ -13,6 +13,23 @@ import (
 
 type noUselessEscape struct{ helpers.RegexSource }
 
+func newNoUselessEscape(context Context) Rule {
+	rule := &noUselessEscape{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindRegularExpressionLiteral,
+			ast.KindStringLiteral,
+			ast.KindNoSubstitutionTemplateLiteral,
+			ast.KindTemplateHead,
+			ast.KindTemplateMiddle,
+			ast.KindTemplateTail,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUselessEscape) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindRegularExpressionLiteral {
 		rule.stringEscapes(node)
@@ -138,8 +155,4 @@ func (rule *noUselessEscape) stringEscapes(node *ast.Node) {
 		}
 		index += size
 	}
-}
-
-func newNoUselessEscape(context Context) Rule {
-	return &noUselessEscape{RegexSource: helpers.NewRegexSource(context)}
 }

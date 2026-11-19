@@ -8,24 +8,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-type noUselessCallCoreRule struct {
+type noUselessCallRule struct {
 	context Context
 }
 
-func newNoUselessCallCoreRule(context Context) *noUselessCallCoreRule {
-	return &noUselessCallCoreRule{
+func newNoUselessCall(context Context) Rule {
+	rule := &noUselessCallRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
 	}
 }
 
-func (rule *noUselessCallCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUselessCallRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkCall(node)
 	return true
 }
 
-func (rule *noUselessCallCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUselessCallCoreRule) checkCall(node *ast.Node) {
+func (rule *noUselessCallRule) checkCall(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression {
 		return
 	}
@@ -51,5 +54,3 @@ func (rule *noUselessCallCoreRule) checkCall(node *ast.Node) {
 		rule.context.Report(rule.context.Range(node), diagnostics.Unnecessary_0, name)
 	}
 }
-
-func newNoUselessCallCore(context Context) Rule { return newNoUselessCallCoreRule(context) }

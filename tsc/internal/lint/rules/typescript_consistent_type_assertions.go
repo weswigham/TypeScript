@@ -14,14 +14,22 @@ type typescriptConsistentTypeAssertionsRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptConsistentTypeAssertions(context Context) Rule {
+	rule := &typescriptConsistentTypeAssertionsRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindAsExpression, ast.KindTypeAssertionExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptConsistentTypeAssertionsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindAsExpression || node.Kind == ast.KindTypeAssertionExpression {
 		rule.typeAssertions(node)
 	}
 	return true
 }
-
-func (rule *typescriptConsistentTypeAssertionsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptConsistentTypeAssertionsRule) typeAssertions(node *ast.Node) {
 	mode := helpers.StringOptionValue(rule.Options()["assertionStyle"], "as")
@@ -124,8 +132,4 @@ func (rule *typescriptConsistentTypeAssertionsRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptConsistentTypeAssertions(context Context) Rule {
-	return &typescriptConsistentTypeAssertionsRule{context: context}
 }

@@ -8,6 +8,15 @@ import (
 
 type noUselessAssignment struct{ helpers.UsageRuleContext }
 
+func newNoUselessAssignment(context Context) Rule {
+	rule := &noUselessAssignment{Context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUselessAssignment) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return false
@@ -18,7 +27,6 @@ func (rule *noUselessAssignment) OnEnterNode(node *ast.Node) bool {
 	}
 	return false
 }
-func (rule *noUselessAssignment) OnExitNode(node *ast.Node) {}
 
 func (rule *noUselessAssignment) uselessAssignments(graph *helpers.UsageGraph) {
 	live := make(map[*helpers.UsageEvent]map[*helpers.UsageBinding]bool)
@@ -89,8 +97,4 @@ func (rule *noUselessAssignment) uselessAssignments(graph *helpers.UsageGraph) {
 			rule.Context.Report(rule.Context.Range(event.Node), diagnostics.The_value_assigned_to_0_is_not_used_in_subsequent_statements, binding.Name)
 		}
 	}
-}
-
-func newNoUselessAssignment(context Context) Rule {
-	return &noUselessAssignment{Context: context}
 }

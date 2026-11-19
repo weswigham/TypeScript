@@ -17,6 +17,21 @@ type typescriptConsistentTypeExportsRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptConsistentTypeExports(context Context) Rule {
+	rule := &typescriptConsistentTypeExportsRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindExportDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptConsistentTypeExportsRule) OnEnterNode(node *ast.Node) bool {
+	rule.typeExports(node)
+	return true
+}
+
 func (rule *typescriptConsistentTypeExportsRule) exportIsType(symbol *ast.Symbol, seen map[*ast.Symbol]bool) int {
 	typeChecker := rule.context.GetChecker()
 	if symbol == nil || typeChecker.IsUnknownSymbol(symbol) || seen[symbol] {
@@ -205,15 +220,4 @@ func (rule *typescriptConsistentTypeExportsRule) typeExports(node *ast.Node) {
 	}
 	name := "@typescript-eslint/consistent-type-exports"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Use_type_exports), name, ast.NewCompilerDiagnostic(diagnostics.Use_type_exports)))
-}
-
-func (rule *typescriptConsistentTypeExportsRule) OnEnterNode(node *ast.Node) bool {
-	rule.typeExports(node)
-	return true
-}
-
-func (rule *typescriptConsistentTypeExportsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptConsistentTypeExports(context Context) Rule {
-	return &typescriptConsistentTypeExportsRule{context: context}
 }

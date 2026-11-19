@@ -18,7 +18,16 @@ type noInlineComments struct {
 	jsxEmpty []*ast.Node
 }
 
-func newNoInlineComments(context Context) Rule { return &noInlineComments{context: context} }
+func newNoInlineComments(context Context) Rule {
+	rule := &noInlineComments{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindJsxExpression},
+		Exit:       rule.OnExitNode,
+		ExitKinds:  []ast.Kind{ast.KindSourceFile},
+	}
+}
 
 func (rule *noInlineComments) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindJsxExpression && node.Expression() == nil {

@@ -9,12 +9,6 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-type noRestrictedPropertyRestriction struct {
-	message string
-	allowed []string
-	hasList bool
-}
-
 type noRestrictedProperties struct {
 	context    Context
 	specific   map[string]map[string]noRestrictedPropertyRestriction
@@ -51,26 +45,11 @@ func newNoRestrictedProperties(context Context) Rule {
 			rule.properties[property] = restriction
 		}
 	}
-	return rule
-}
 
-func noRestrictedPropertiesStringList(option map[string]any, name string) ([]string, bool) {
-	value, exists := option[name]
-	if !exists {
-		return nil, false
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindObjectBindingPattern, ast.KindObjectLiteralExpression},
 	}
-	if list, ok := value.([]string); ok {
-		return list, true
-	}
-	var result []string
-	if list, ok := value.([]any); ok {
-		for _, item := range list {
-			if text, ok := item.(string); ok {
-				result = append(result, text)
-			}
-		}
-	}
-	return result, true
 }
 
 func (rule *noRestrictedProperties) OnEnterNode(node *ast.Node) bool {
@@ -122,7 +101,30 @@ func (rule *noRestrictedProperties) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noRestrictedProperties) OnExitNode(node *ast.Node) {}
+type noRestrictedPropertyRestriction struct {
+	message string
+	allowed []string
+	hasList bool
+}
+
+func noRestrictedPropertiesStringList(option map[string]any, name string) ([]string, bool) {
+	value, exists := option[name]
+	if !exists {
+		return nil, false
+	}
+	if list, ok := value.([]string); ok {
+		return list, true
+	}
+	var result []string
+	if list, ok := value.([]any); ok {
+		for _, item := range list {
+			if text, ok := item.(string); ok {
+				result = append(result, text)
+			}
+		}
+	}
+	return result, true
+}
 
 func (rule *noRestrictedProperties) check(node *ast.Node, object string, knownObject bool, property string) {
 	var restriction noRestrictedPropertyRestriction

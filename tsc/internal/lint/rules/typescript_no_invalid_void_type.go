@@ -14,12 +14,19 @@ type typescriptNoInvalidVoidTypeRule struct {
 	context Context
 }
 
+func newTypeScriptNoInvalidVoidType(context Context) Rule {
+	rule := &typescriptNoInvalidVoidTypeRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVoidKeyword},
+	}
+}
+
 func (rule *typescriptNoInvalidVoidTypeRule) OnEnterNode(node *ast.Node) bool {
 	rule.invalidVoid(node)
 	return true
 }
-
-func (rule *typescriptNoInvalidVoidTypeRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoInvalidVoidTypeRule) invalidVoid(node *ast.Node) {
 	if node.Kind != ast.KindVoidKeyword {
@@ -150,8 +157,4 @@ func typescriptNoInvalidVoidTypeUnwrap(node *ast.Node) *ast.Node {
 		node = node.Type()
 	}
 	return node
-}
-
-func newTypeScriptNoInvalidVoidType(context Context) Rule {
-	return &typescriptNoInvalidVoidTypeRule{context: context}
 }

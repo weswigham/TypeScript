@@ -14,12 +14,20 @@ type typescriptNoUnnecessaryTypeConstraintRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoUnnecessaryTypeConstraint(context Context) Rule {
+	rule := &typescriptNoUnnecessaryTypeConstraintRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindTypeParameter},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoUnnecessaryTypeConstraintRule) OnEnterNode(node *ast.Node) bool {
 	rule.constraint(node)
 	return true
 }
-
-func (rule *typescriptNoUnnecessaryTypeConstraintRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnnecessaryTypeConstraintRule) constraint(node *ast.Node) {
 	if node.Kind != ast.KindTypeParameter {
@@ -53,8 +61,4 @@ func (rule *typescriptNoUnnecessaryTypeConstraintRule) suggest(diagnostic *ast.D
 	tracker := rule.context.NewTracker()
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), text)
 	rule.AddSuggestion(diagnostic, "@typescript-eslint/no-unnecessary-type-constraint", tracker.GetTextChanges(), description)
-}
-
-func newTypeScriptNoUnnecessaryTypeConstraint(context Context) Rule {
-	return &typescriptNoUnnecessaryTypeConstraintRule{context: context}
 }

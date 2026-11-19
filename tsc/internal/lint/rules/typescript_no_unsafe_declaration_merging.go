@@ -10,12 +10,20 @@ type typescriptNoUnsafeDeclarationMergingRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoUnsafeDeclarationMerging(context Context) Rule {
+	rule := &typescriptNoUnsafeDeclarationMergingRule{Context: context, Name: "no-unsafe-declaration-merging"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindClassDeclaration, ast.KindInterfaceDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoUnsafeDeclarationMergingRule) OnEnterNode(node *ast.Node) bool {
 	rule.unsafeMerging(node)
 	return true
 }
-
-func (rule *typescriptNoUnsafeDeclarationMergingRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeDeclarationMergingRule) unsafeMerging(node *ast.Node) {
 	if node.Kind != ast.KindClassDeclaration && node.Kind != ast.KindInterfaceDeclaration || node.Name() == nil {
@@ -31,8 +39,4 @@ func (rule *typescriptNoUnsafeDeclarationMergingRule) unsafeMerging(node *ast.No
 			return
 		}
 	}
-}
-
-func newTypeScriptNoUnsafeDeclarationMerging(context Context) Rule {
-	return &typescriptNoUnsafeDeclarationMergingRule{Context: context, Name: "no-unsafe-declaration-merging"}
 }

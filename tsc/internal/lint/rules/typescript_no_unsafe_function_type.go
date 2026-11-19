@@ -9,12 +9,19 @@ type typescriptNoUnsafeFunctionTypeRule struct {
 	context Context
 }
 
+func newTypeScriptNoUnsafeFunctionType(context Context) Rule {
+	rule := &typescriptNoUnsafeFunctionTypeRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindTypeReference, ast.KindExpressionWithTypeArguments},
+	}
+}
+
 func (rule *typescriptNoUnsafeFunctionTypeRule) OnEnterNode(node *ast.Node) bool {
 	rule.unsafeFunction(node)
 	return true
 }
-
-func (rule *typescriptNoUnsafeFunctionTypeRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeFunctionTypeRule) unsafeFunction(node *ast.Node) {
 	var name *ast.Node
@@ -39,8 +46,4 @@ func (rule *typescriptNoUnsafeFunctionTypeRule) global(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func newTypeScriptNoUnsafeFunctionType(context Context) Rule {
-	return &typescriptNoUnsafeFunctionTypeRule{context: context}
 }

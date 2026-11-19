@@ -11,9 +11,16 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 )
 
-type Rule interface {
-	OnEnterNode(node *ast.Node) bool
-	OnExitNode(node *ast.Node)
+// Rule subscribes callbacks to node kinds. A nil kind list selects all kinds;
+// an empty list selects none. A false Enter result prunes only this rule's subtree,
+// including its Exit callback for that node. Nil callbacks are not invoked, and
+// Exit does not require an Enter callback.
+type Rule struct {
+	Enter          func(*ast.Node) bool
+	Exit           func(*ast.Node)
+	EnterKinds     []ast.Kind
+	ExitKinds      []ast.Kind
+	GetSuggestions func() map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
 type Context struct {
@@ -30,8 +37,5 @@ func (context Context) Range(node *ast.Node) core.TextRange {
 	return core.NewTextRange(scanner.GetTokenPosOfNode(node, context.File, false), node.End())
 }
 
+// Factory creates per-file rule state and returns its callbacks directly.
 type Factory func(context Context) Rule
-
-type SuggestionProvider interface {
-	Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction
-}

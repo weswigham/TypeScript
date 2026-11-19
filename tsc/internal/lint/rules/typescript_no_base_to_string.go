@@ -5,12 +5,26 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/checker"
-	"github.com/microsoft/TypeScript/tsc/internal/codefix"
+
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
 type typescriptNoBaseToStringRule struct{ context Context }
+
+func newTypeScriptNoBaseToString(context Context) Rule {
+	rule := &typescriptNoBaseToStringRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindCallExpression, ast.KindTemplateExpression},
+	}
+}
+
+func (rule *typescriptNoBaseToStringRule) OnEnterNode(node *ast.Node) bool {
+	rule.baseToString(node)
+	return true
+}
 
 func (rule *typescriptNoBaseToStringRule) baseCertainty(value *checker.Type, join bool, seen map[*checker.Type]bool) string {
 	if seen[value] {
@@ -210,19 +224,4 @@ func (rule *typescriptNoBaseToStringRule) baseToString(node *ast.Node) {
 			}
 		}
 	}
-}
-
-func (rule *typescriptNoBaseToStringRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
-}
-
-func (rule *typescriptNoBaseToStringRule) OnEnterNode(node *ast.Node) bool {
-	rule.baseToString(node)
-	return true
-}
-
-func (rule *typescriptNoBaseToStringRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoBaseToString(context Context) Rule {
-	return &typescriptNoBaseToStringRule{context: context}
 }

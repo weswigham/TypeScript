@@ -13,16 +13,19 @@ type operatorAssignmentRule struct {
 	context Context
 }
 
+func newOperatorAssignment(context Context) Rule {
+	rule := &operatorAssignmentRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *operatorAssignmentRule) OnEnterNode(node *ast.Node) bool {
 	rule.assignment(node)
 
 	return true
-}
-
-func (rule *operatorAssignmentRule) OnExitNode(node *ast.Node) {}
-
-func (rule *operatorAssignmentRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *operatorAssignmentRule) assignment(node *ast.Node) {
@@ -163,5 +166,3 @@ func expressionAssignable(node *ast.Node) bool {
 	property := ast.SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
 	return helpers.ExpressionLiteral(property) && property.Kind != ast.KindNoSubstitutionTemplateLiteral
 }
-
-func newOperatorAssignment(context Context) Rule { return &operatorAssignmentRule{context: context} }

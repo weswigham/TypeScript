@@ -8,6 +8,25 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noShadowRestrictedNamesRule struct {
+	context            Context
+	referencesBySymbol map[*ast.Symbol][]*ast.Node
+}
+
+func newNoShadowRestrictedNamesRule(context Context) Rule {
+	rule := &noShadowRestrictedNamesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
+}
+
+func (rule *noShadowRestrictedNamesRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkRestrictedBinding(node)
+	return true
+}
+
 func noShadowRestrictedNamesBinding(node *ast.Node) bool {
 	if node.Kind != ast.KindIdentifier || node.Parent == nil || node.Parent.Name() != node {
 		return false
@@ -18,22 +37,6 @@ func noShadowRestrictedNamesBinding(node *ast.Node) bool {
 	}
 	return false
 }
-
-type noShadowRestrictedNamesRule struct {
-	context            Context
-	referencesBySymbol map[*ast.Symbol][]*ast.Node
-}
-
-func newNoShadowRestrictedNamesRule(context Context) Rule {
-	return &noShadowRestrictedNamesRule{context: context}
-}
-
-func (rule *noShadowRestrictedNamesRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkRestrictedBinding(node)
-	return true
-}
-
-func (rule *noShadowRestrictedNamesRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noShadowRestrictedNamesRule) checkRestrictedBinding(node *ast.Node) {
 	if !noShadowRestrictedNamesBinding(node) {

@@ -11,6 +11,25 @@ import (
 
 type typescriptNoUnsafeAssignmentRule struct{ context Context }
 
+func newTypeScriptNoUnsafeAssignment(context Context) Rule {
+	rule := &typescriptNoUnsafeAssignmentRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindVariableDeclaration,
+			ast.KindParameter,
+			ast.KindPropertyDeclaration,
+			ast.KindBindingElement,
+			ast.KindBinaryExpression,
+			ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment,
+			ast.KindSpreadElement,
+			ast.KindJsxAttribute,
+		},
+	}
+}
+
 func (rule *typescriptNoUnsafeAssignmentRule) OnEnterNode(node *ast.Node) bool {
 	typeChecker := rule.context.GetChecker()
 	switch node.Kind {
@@ -57,8 +76,6 @@ func (rule *typescriptNoUnsafeAssignmentRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *typescriptNoUnsafeAssignmentRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeAssignmentRule) assignment(receiverNode, senderNode, reportingNode *ast.Node, compare bool, contextual *checker.Type) bool {
 	typeChecker := rule.context.GetChecker()
@@ -191,8 +208,4 @@ func typeSafetyPatternValue(node *ast.Node) *ast.Node {
 		return node.Name()
 	}
 	return node
-}
-
-func newTypeScriptNoUnsafeAssignment(context Context) Rule {
-	return &typescriptNoUnsafeAssignmentRule{context: context}
 }

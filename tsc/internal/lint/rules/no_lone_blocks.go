@@ -6,6 +6,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noLoneBlocksRule struct{ context Context }
+
+func newNoLoneBlocksRule(context Context) Rule {
+	rule := &noLoneBlocksRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBlock},
+	}
+}
+
+func (rule *noLoneBlocksRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkLoneBlock(node)
+	return true
+}
+
 func noLoneBlocksStatementList(node *ast.Node) []*ast.Node {
 	switch node.Kind {
 	case ast.KindSourceFile:
@@ -17,19 +33,6 @@ func noLoneBlocksStatementList(node *ast.Node) []*ast.Node {
 	}
 	return nil
 }
-
-type noLoneBlocksRule struct{ context Context }
-
-func newNoLoneBlocksRule(context Context) Rule {
-	return &noLoneBlocksRule{context: context}
-}
-
-func (rule *noLoneBlocksRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkLoneBlock(node)
-	return true
-}
-
-func (rule *noLoneBlocksRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noLoneBlocksRule) checkLoneBlock(node *ast.Node) {
 	if node.Kind != ast.KindBlock || node.Parent == nil || node.Parent.Kind == ast.KindClassStaticBlockDeclaration {

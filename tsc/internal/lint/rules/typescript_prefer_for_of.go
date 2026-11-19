@@ -10,12 +10,20 @@ type typescriptPreferForOfRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptPreferForOf(context Context) Rule {
+	rule := &typescriptPreferForOfRule{Context: context, Name: "prefer-for-of"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindForStatement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPreferForOfRule) OnEnterNode(node *ast.Node) bool {
 	rule.preferForOf(node)
 	return true
 }
-
-func (rule *typescriptPreferForOfRule) OnExitNode(node *ast.Node) {}
 
 func tsScopeNumber(node *ast.Node, value string) bool {
 	return node != nil && node.Kind == ast.KindNumericLiteral && node.Text() == value
@@ -89,8 +97,4 @@ func (rule *typescriptPreferForOfRule) preferForOf(node *ast.Node) {
 		}
 	}
 	rule.Context.Report(rule.Context.Range(node), diagnostics.Expected_a_for_of_loop_instead_of_a_for_loop_with_this_simple_iteration)
-}
-
-func newTypeScriptPreferForOf(context Context) Rule {
-	return &typescriptPreferForOfRule{Context: context, Name: "prefer-for-of"}
 }

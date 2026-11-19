@@ -17,13 +17,20 @@ type noObjCallsRule struct {
 	globals map[string]string
 }
 
+func newNoObjCalls(context Context) Rule {
+	rule := &noObjCallsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
+}
+
 func (rule *noObjCallsRule) OnEnterNode(node *ast.Node) bool {
 	rule.objectCall(node)
 
 	return true
 }
-
-func (rule *noObjCallsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noObjCallsRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -205,5 +212,3 @@ func (rule *noObjCallsRule) unmodifiedGlobal(name string) bool {
 }
 
 var bindingNonCallable = []string{"Atomics", "JSON", "Math", "Reflect", "Intl", "Temporal", "globalThis"}
-
-func newNoObjCalls(context Context) Rule { return &noObjCallsRule{context: context} }

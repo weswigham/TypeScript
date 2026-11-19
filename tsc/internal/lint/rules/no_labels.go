@@ -10,7 +10,16 @@ type noLabels struct {
 	context Context
 }
 
-func newNoLabels(context Context) Rule { return &noLabels{context: context} }
+func newNoLabels(context Context) Rule {
+	rule := &noLabels{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBreakStatement, ast.KindContinueStatement},
+		Exit:       rule.OnExitNode,
+		ExitKinds:  []ast.Kind{ast.KindLabeledStatement},
+	}
+}
 
 func (rule *noLabels) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBreakStatement || node.Kind == ast.KindContinueStatement {

@@ -17,11 +17,13 @@ type typeScriptNoMisusedSpread struct {
 }
 
 func newTypeScriptNoMisusedSpread(context Context) Rule {
-	return &typeScriptNoMisusedSpread{context: context}
-}
+	rule := &typeScriptNoMisusedSpread{context: context}
 
-func (rule *typeScriptNoMisusedSpread) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindSpreadAssignment, ast.KindJsxSpreadAttribute, ast.KindSpreadElement},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptNoMisusedSpread) OnEnterNode(node *ast.Node) bool {
@@ -29,7 +31,9 @@ func (rule *typeScriptNoMisusedSpread) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptNoMisusedSpread) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptNoMisusedSpread) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptNoMisusedSpread) constrained(node *ast.Node) *checker.Type {
 	typeChecker := rule.context.GetChecker()

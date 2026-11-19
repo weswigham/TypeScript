@@ -13,6 +13,40 @@ type typescriptNoMisusedPromisesRule struct {
 	checked map[*ast.Node]bool
 }
 
+func newTypeScriptNoMisusedPromises(context Context) Rule {
+	rule := &typescriptNoMisusedPromisesRule{context: context, checked: make(map[*ast.Node]bool)}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindIfStatement,
+			ast.KindWhileStatement,
+			ast.KindDoStatement,
+			ast.KindForStatement,
+			ast.KindConditionalExpression,
+			ast.KindBinaryExpression,
+			ast.KindPrefixUnaryExpression,
+			ast.KindCallExpression,
+			ast.KindSpreadAssignment,
+			ast.KindNewExpression,
+			ast.KindVariableDeclaration,
+			ast.KindReturnStatement,
+			ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment,
+			ast.KindMethodDeclaration,
+			ast.KindJsxAttribute,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindInterfaceDeclaration,
+		},
+	}
+}
+
+func (rule *typescriptNoMisusedPromisesRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkMisused(node)
+	return true
+}
+
 func (rule *typescriptNoMisusedPromisesRule) returnsPromise(node *ast.Node, value *checker.Type) bool {
 	if value == nil {
 		return false
@@ -344,15 +378,4 @@ func (rule *typescriptNoMisusedPromisesRule) misusedHeritage(node *ast.Node) {
 			}
 		}
 	}
-}
-
-func (rule *typescriptNoMisusedPromisesRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkMisused(node)
-	return true
-}
-
-func (rule *typescriptNoMisusedPromisesRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoMisusedPromises(context Context) Rule {
-	return &typescriptNoMisusedPromisesRule{context: context, checked: make(map[*ast.Node]bool)}
 }

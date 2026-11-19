@@ -13,7 +13,16 @@ type noExtraBind struct {
 	thisSeen map[*ast.Node]bool
 }
 
-func newNoExtraBind(context Context) Rule { return &noExtraBind{context: context} }
+func newNoExtraBind(context Context) Rule {
+	rule := &noExtraBind{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindThisKeyword},
+		Exit:       rule.OnExitNode,
+		ExitKinds:  []ast.Kind{ast.KindArrowFunction, ast.KindFunctionExpression},
+	}
+}
 
 func (rule *noExtraBind) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindThisKeyword {

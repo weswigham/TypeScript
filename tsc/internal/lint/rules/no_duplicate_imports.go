@@ -11,7 +11,14 @@ type noDuplicateImports struct {
 	context Context
 }
 
-func newNoDuplicateImports(context Context) Rule { return &noDuplicateImports{context: context} }
+func newNoDuplicateImports(context Context) Rule {
+	rule := &noDuplicateImports{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindExportDeclaration, ast.KindImportDeclaration},
+	}
+}
 
 func (rule *noDuplicateImports) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindExportDeclaration && rule.Boolean("includeExports") {
@@ -19,9 +26,6 @@ func (rule *noDuplicateImports) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noDuplicateImports) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noDuplicateImports) Options() map[string]any {

@@ -8,24 +8,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-type preferSpreadCoreRule struct {
+type preferSpreadRule struct {
 	context Context
 }
 
-func newPreferSpreadCoreRule(context Context) *preferSpreadCoreRule {
-	return &preferSpreadCoreRule{
+func newPreferSpread(context Context) Rule {
+	rule := &preferSpreadRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
 	}
 }
 
-func (rule *preferSpreadCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *preferSpreadRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkCall(node)
 	return true
 }
 
-func (rule *preferSpreadCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferSpreadCoreRule) checkCall(node *ast.Node) {
+func (rule *preferSpreadRule) checkCall(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression {
 		return
 	}
@@ -51,5 +54,3 @@ func (rule *preferSpreadCoreRule) checkCall(node *ast.Node) {
 		rule.context.Report(rule.context.Range(node), diagnostics.Use_the_spread_operator_instead_of_apply)
 	}
 }
-
-func newPreferSpreadCore(context Context) Rule { return newPreferSpreadCoreRule(context) }

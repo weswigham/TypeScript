@@ -10,12 +10,19 @@ type typescriptPreferLiteralEnumMemberRule struct {
 	context Context
 }
 
+func newTypeScriptPreferLiteralEnumMember(context Context) Rule {
+	rule := &typescriptPreferLiteralEnumMemberRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindEnumMember},
+	}
+}
+
 func (rule *typescriptPreferLiteralEnumMemberRule) OnEnterNode(node *ast.Node) bool {
 	rule.literalEnum(node)
 	return true
 }
-
-func (rule *typescriptPreferLiteralEnumMemberRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptPreferLiteralEnumMemberRule) literalEnum(node *ast.Node) {
 	if node.Kind != ast.KindEnumMember || node.Initializer() == nil {
@@ -97,8 +104,4 @@ func (rule *typescriptPreferLiteralEnumMemberRule) Options() map[string]any {
 		return options
 	}
 	return nil
-}
-
-func newTypeScriptPreferLiteralEnumMember(context Context) Rule {
-	return &typescriptPreferLiteralEnumMemberRule{context: context}
 }

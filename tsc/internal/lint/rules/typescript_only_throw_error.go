@@ -5,12 +5,28 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/checker"
-	"github.com/microsoft/TypeScript/tsc/internal/codefix"
+
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
 type typescriptOnlyThrowErrorRule struct{ context Context }
+
+func newTypeScriptOnlyThrowError(context Context) Rule {
+	rule := &typescriptOnlyThrowErrorRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindThrowStatement},
+	}
+}
+
+func (rule *typescriptOnlyThrowErrorRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindThrowStatement {
+		rule.throwError(node.Expression())
+	}
+	return true
+}
 
 func (rule *typescriptOnlyThrowErrorRule) errorLike(value *checker.Type) bool {
 	if value.Flags()&checker.TypeFlagsTypeParameter != 0 {
@@ -118,21 +134,4 @@ func (rule *typescriptOnlyThrowErrorRule) throwError(node *ast.Node) {
 		return
 	}
 	rule.context.Report(rule.context.Range(ast.SkipParentheses(node)), diagnostics.Expected_an_error_object_to_be_thrown)
-}
-
-func (rule *typescriptOnlyThrowErrorRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
-}
-
-func (rule *typescriptOnlyThrowErrorRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindThrowStatement {
-		rule.throwError(node.Expression())
-	}
-	return true
-}
-
-func (rule *typescriptOnlyThrowErrorRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptOnlyThrowError(context Context) Rule {
-	return &typescriptOnlyThrowErrorRule{context: context}
 }

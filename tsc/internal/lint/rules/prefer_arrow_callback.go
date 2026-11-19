@@ -19,18 +19,21 @@ type preferArrowCallbackRule struct {
 	references map[*ast.Symbol][]*ast.Node
 }
 
+func newPreferArrowCallback(context Context) Rule {
+	rule := &preferArrowCallbackRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionExpression},
+	}
+}
+
 func (rule *preferArrowCallbackRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindFunctionExpression {
 		rule.arrowCallback(node)
 	}
 
 	return true
-}
-
-func (rule *preferArrowCallbackRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferArrowCallbackRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferArrowCallbackRule) arrowCallback(node *ast.Node) {
@@ -298,5 +301,3 @@ func (rule *preferArrowCallbackRule) tokens(start, end int) []helpers.Declaratio
 	}
 	return result
 }
-
-func newPreferArrowCallback(context Context) Rule { return &preferArrowCallbackRule{context: context} }

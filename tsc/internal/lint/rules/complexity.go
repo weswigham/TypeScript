@@ -11,15 +11,28 @@ import (
 type complexityRule struct{ context Context }
 
 func newComplexityRule(context Context) Rule {
-	return &complexityRule{context: context}
+	rule := &complexityRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindPropertyDeclaration,
+			ast.KindClassStaticBlockDeclaration,
+		},
+	}
 }
 
 func (rule *complexityRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkComplexity(node)
 	return true
 }
-
-func (rule *complexityRule) OnExitNode(node *ast.Node) {}
 
 func (rule *complexityRule) checkComplexity(node *ast.Node) {
 	var roots []*ast.Node

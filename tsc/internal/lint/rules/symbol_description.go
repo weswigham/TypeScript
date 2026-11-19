@@ -9,7 +9,12 @@ import (
 type symbolDescriptionRule struct{ context Context }
 
 func newSymbolDescriptionRule(context Context) Rule {
-	return &symbolDescriptionRule{context: context}
+	rule := &symbolDescriptionRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
 }
 
 func (rule *symbolDescriptionRule) OnEnterNode(node *ast.Node) bool {
@@ -21,5 +26,3 @@ func (rule *symbolDescriptionRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *symbolDescriptionRule) OnExitNode(node *ast.Node) {}

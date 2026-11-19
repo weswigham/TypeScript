@@ -12,6 +12,15 @@ type typescriptNoUnsafeMemberAccessRule struct {
 	states  map[*ast.Node]int
 }
 
+func newTypeScriptNoUnsafeMemberAccess(context Context) Rule {
+	rule := &typescriptNoUnsafeMemberAccessRule{context: context, states: make(map[*ast.Node]int)}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+	}
+}
+
 func (rule *typescriptNoUnsafeMemberAccessRule) OnEnterNode(node *ast.Node) bool {
 	if !ast.IsAccessExpression(node) {
 		return true
@@ -46,8 +55,6 @@ func (rule *typescriptNoUnsafeMemberAccessRule) OnEnterNode(node *ast.Node) bool
 	}
 	return true
 }
-
-func (rule *typescriptNoUnsafeMemberAccessRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoUnsafeMemberAccessRule) member(node *ast.Node) int {
 	if state := rule.states[node]; state != 0 {
@@ -105,8 +112,4 @@ func (rule *typescriptNoUnsafeMemberAccessRule) optional(node *ast.Node) bool {
 		return node.AsPropertyAccessExpression().QuestionDotToken != nil
 	}
 	return node.AsElementAccessExpression().QuestionDotToken != nil
-}
-
-func newTypeScriptNoUnsafeMemberAccess(context Context) Rule {
-	return &typescriptNoUnsafeMemberAccessRule{context: context, states: make(map[*ast.Node]int)}
 }

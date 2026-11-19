@@ -14,6 +14,56 @@ type typescriptReturnAwaitRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptReturnAwait(context Context) Rule {
+	rule := &typescriptReturnAwaitRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindReturnStatement,
+		},
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptReturnAwaitRule) OnEnterNode(node *ast.Node) bool {
+	rule.enterAwaitFunction(node)
+	return true
+}
+
+func (rule *typescriptReturnAwaitRule) OnExitNode(node *ast.Node) { rule.exitAwaitFunction(node) }
+
 func (rule *typescriptReturnAwaitRule) enterAwaitFunction(node *ast.Node) {
 	if helpers.PromiseFunctionLike(node) {
 		rule.functions = append(rule.functions, node)
@@ -139,15 +189,4 @@ func (rule *typescriptReturnAwaitRule) action(diagnostic *ast.Diagnostic, descri
 
 func (rule *typescriptReturnAwaitRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
-}
-
-func (rule *typescriptReturnAwaitRule) OnEnterNode(node *ast.Node) bool {
-	rule.enterAwaitFunction(node)
-	return true
-}
-
-func (rule *typescriptReturnAwaitRule) OnExitNode(node *ast.Node) { rule.exitAwaitFunction(node) }
-
-func newTypeScriptReturnAwait(context Context) Rule {
-	return &typescriptReturnAwaitRule{context: context}
 }

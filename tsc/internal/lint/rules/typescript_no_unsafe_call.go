@@ -9,6 +9,15 @@ import (
 
 type typescriptNoUnsafeCallRule struct{ context Context }
 
+func newTypeScriptNoUnsafeCall(context Context) Rule {
+	rule := &typescriptNoUnsafeCallRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression},
+	}
+}
+
 func (rule *typescriptNoUnsafeCallRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression && node.Kind != ast.KindNewExpression && node.Kind != ast.KindTaggedTemplateExpression {
 		return true
@@ -60,8 +69,6 @@ func (rule *typescriptNoUnsafeCallRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typescriptNoUnsafeCallRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyBuiltinFunction(typeChecker *checker.Checker, value *checker.Type, visited map[*checker.Type]bool) bool {
 	if value == nil || visited[value] {
 		return false
@@ -94,8 +101,4 @@ func typeSafetyBuiltinFunction(typeChecker *checker.Checker, value *checker.Type
 		}
 	}
 	return false
-}
-
-func newTypeScriptNoUnsafeCall(context Context) Rule {
-	return &typescriptNoUnsafeCallRule{context: context}
 }

@@ -10,6 +10,15 @@ type funcStyleRule struct {
 	context Context
 }
 
+func newFuncStyle(context Context) Rule {
+	rule := &funcStyleRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction},
+	}
+}
+
 func (rule *funcStyleRule) OnEnterNode(node *ast.Node) bool {
 	options := helpers.SyntaxObject(rule.context, 1)
 	style := helpers.StringOptionValue(helpers.SyntaxOption(rule.context, 0), "expression")
@@ -68,11 +77,4 @@ func (rule *funcStyleRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(parent), diagnostics.Expected_a_function_declaration)
 	}
 	return true
-}
-
-func (rule *funcStyleRule) OnExitNode(node *ast.Node) {
-}
-
-func newFuncStyle(context Context) Rule {
-	return &funcStyleRule{context: context}
 }

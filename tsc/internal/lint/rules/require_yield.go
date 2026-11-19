@@ -7,24 +7,42 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type requireYieldCoreRule struct {
+type requireYieldRule struct {
 	context Context
 }
 
-func newRequireYieldCoreRule(context Context) *requireYieldCoreRule {
-	return &requireYieldCoreRule{
+func newRequireYield(context Context) Rule {
+	rule := &requireYieldRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
 	}
 }
 
-func (rule *requireYieldCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *requireYieldRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkYield(node)
 	return true
 }
 
-func (rule *requireYieldCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *requireYieldCoreRule) checkYield(node *ast.Node) {
+func (rule *requireYieldRule) checkYield(node *ast.Node) {
 	if !ast.IsFunctionLike(node) || node.BodyData() == nil || node.BodyData().AsteriskToken == nil || node.Body() == nil || node.Body().Kind != ast.KindBlock || len(node.Body().AsBlock().Statements.Nodes) == 0 {
 		return
 	}
@@ -48,5 +66,3 @@ func (rule *requireYieldCoreRule) checkYield(node *ast.Node) {
 		rule.context.Report(core.NewTextRange(start, end), diagnostics.This_generator_function_does_not_have_yield)
 	}
 }
-
-func newRequireYieldCore(context Context) Rule { return newRequireYieldCoreRule(context) }

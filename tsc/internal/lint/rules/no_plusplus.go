@@ -10,6 +10,15 @@ type noPlusplus struct {
 	context Context
 }
 
+func newNoPlusplus(context Context) Rule {
+	rule := &noPlusplus{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression},
+	}
+}
+
 func (rule *noPlusplus) OnEnterNode(node *ast.Node) bool {
 	operator := ast.KindUnknown
 	if node.Kind == ast.KindPrefixUnaryExpression {
@@ -30,8 +39,6 @@ func (rule *noPlusplus) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noPlusplus) OnExitNode(node *ast.Node) {}
-
 func noPlusplusAfterthought(node *ast.Node) bool {
 	for {
 		node = helpers.OuterParenthesizedExpression(node)
@@ -45,5 +52,3 @@ func noPlusplusAfterthought(node *ast.Node) bool {
 		return node.Parent.Kind == ast.KindForStatement && node.Parent.AsForStatement().Incrementor == node
 	}
 }
-
-func newNoPlusplus(context Context) Rule { return &noPlusplus{context: context} }

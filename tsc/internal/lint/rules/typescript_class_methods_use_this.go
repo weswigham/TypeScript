@@ -13,12 +13,25 @@ type typescriptClassMethodsUseThisRule struct {
 	context Context
 }
 
+func newTypeScriptClassMethodsUseThis(context Context) Rule {
+	rule := &typescriptClassMethodsUseThisRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+		},
+	}
+}
+
 func (rule *typescriptClassMethodsUseThisRule) OnEnterNode(node *ast.Node) bool {
 	rule.classThis(node)
 	return true
 }
-
-func (rule *typescriptClassMethodsUseThisRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptClassMethodsUseThisRule) classThis(node *ast.Node) {
 	if !helpers.FunctionHasBody(node) || node.Kind == ast.KindConstructor {
@@ -106,8 +119,4 @@ func typescriptClassMethodsUseThisUsesThis(node *ast.Node) bool {
 		return false
 	}
 	return node.ForEachChild(typescriptClassMethodsUseThisUsesThis)
-}
-
-func newTypeScriptClassMethodsUseThis(context Context) Rule {
-	return &typescriptClassMethodsUseThisRule{context: context}
 }

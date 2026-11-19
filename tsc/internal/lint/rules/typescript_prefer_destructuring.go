@@ -18,11 +18,13 @@ type typeScriptPreferDestructuring struct {
 }
 
 func newTypeScriptPreferDestructuring(context Context) Rule {
-	return &typeScriptPreferDestructuring{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
-}
+	rule := &typeScriptPreferDestructuring{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
 
-func (rule *typeScriptPreferDestructuring) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindVariableDeclaration, ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferDestructuring) OnEnterNode(node *ast.Node) bool {
@@ -32,7 +34,9 @@ func (rule *typeScriptPreferDestructuring) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptPreferDestructuring) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferDestructuring) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferDestructuring) destructuringEnabled(declaration bool, kind string) bool {
 	options := helpers.SemanticExpressionOption(rule.context, 0)

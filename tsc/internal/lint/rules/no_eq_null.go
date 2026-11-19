@@ -9,7 +9,14 @@ type noEqNull struct {
 	context Context
 }
 
-func newNoEqNull(context Context) Rule { return &noEqNull{context: context} }
+func newNoEqNull(context Context) Rule {
+	rule := &noEqNull{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
 
 func (rule *noEqNull) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBinaryExpression {
@@ -20,7 +27,4 @@ func (rule *noEqNull) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noEqNull) OnExitNode(node *ast.Node) {
 }

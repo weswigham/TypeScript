@@ -13,7 +13,24 @@ import (
 
 type requireAwait struct{ helpers.ReturnRuleContext }
 
-func (rule *requireAwait) OnEnterNode(node *ast.Node) bool { return true }
+func newRequireAwait(context Context) Rule {
+	rule := &requireAwait{Context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *requireAwait) OnExitNode(node *ast.Node) {
 	if !helpers.ReturnFunction(node) {
 		return
@@ -65,8 +82,4 @@ func (rule *requireAwait) requireAwait(node *ast.Node) {
 			break
 		}
 	})
-}
-
-func newRequireAwait(context Context) Rule {
-	return &requireAwait{Context: context}
 }

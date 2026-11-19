@@ -9,6 +9,15 @@ type typescriptNoDynamicDeleteRule struct {
 	context Context
 }
 
+func newTypeScriptNoDynamicDelete(context Context) Rule {
+	rule := &typescriptNoDynamicDeleteRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindDeleteExpression},
+	}
+}
+
 func (rule *typescriptNoDynamicDeleteRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindDeleteExpression {
 		argument := ast.SkipParentheses(node.Expression())
@@ -22,10 +31,4 @@ func (rule *typescriptNoDynamicDeleteRule) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *typescriptNoDynamicDeleteRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoDynamicDelete(context Context) Rule {
-	return &typescriptNoDynamicDeleteRule{context: context}
 }

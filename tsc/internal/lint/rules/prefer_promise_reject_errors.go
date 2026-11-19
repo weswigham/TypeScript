@@ -9,15 +9,18 @@ import (
 type preferPromiseRejectErrorsRule struct{ context Context }
 
 func newPreferPromiseRejectErrorsRule(context Context) Rule {
-	return &preferPromiseRejectErrorsRule{context: context}
+	rule := &preferPromiseRejectErrorsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
 }
 
 func (rule *preferPromiseRejectErrorsRule) OnEnterNode(node *ast.Node) bool {
 	rule.promiseRejection(node)
 	return true
 }
-
-func (rule *preferPromiseRejectErrorsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *preferPromiseRejectErrorsRule) promiseRejection(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression {

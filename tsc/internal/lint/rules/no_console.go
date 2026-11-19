@@ -18,15 +18,19 @@ type noConsoleRule struct {
 }
 
 func newNoConsoleRule(context Context) Rule {
-	return &noConsoleRule{context: context}
+	rule := &noConsoleRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *noConsoleRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkConsole(node)
 	return true
 }
-
-func (rule *noConsoleRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noConsoleRule) checkConsole(node *ast.Node) {
 	if !ast.IsAccessExpression(node) {

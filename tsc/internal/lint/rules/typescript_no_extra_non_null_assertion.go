@@ -13,6 +13,15 @@ type typescriptNoExtraNonNullAssertionRule struct {
 	context Context
 }
 
+func newTypeScriptNoExtraNonNullAssertion(context Context) Rule {
+	rule := &typescriptNoExtraNonNullAssertionRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNonNullExpression},
+	}
+}
+
 func (rule *typescriptNoExtraNonNullAssertionRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindNonNullExpression {
 		outer, parent := helpers.OuterParenthesizedNodeAndParent(node)
@@ -28,13 +37,7 @@ func (rule *typescriptNoExtraNonNullAssertionRule) OnEnterNode(node *ast.Node) b
 	return true
 }
 
-func (rule *typescriptNoExtraNonNullAssertionRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptNoExtraNonNullAssertionRule) fix(diagnostic *ast.Diagnostic, tracker *change.Tracker, description *ast.Diagnostic) {
 	name := "@typescript-eslint/no-extra-non-null-assertion"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), description, name, description))
-}
-
-func newTypeScriptNoExtraNonNullAssertion(context Context) Rule {
-	return &typescriptNoExtraNonNullAssertionRule{context: context}
 }

@@ -14,6 +14,15 @@ type noSelfAssign struct {
 	context Context
 }
 
+func newNoSelfAssign(context Context) Rule {
+	rule := &noSelfAssign{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *noSelfAssign) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBinaryExpression && !helpers.IsDestructuringAssignmentPattern(node) {
 		expression := node.AsBinaryExpression()
@@ -24,8 +33,6 @@ func (rule *noSelfAssign) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noSelfAssign) OnExitNode(node *ast.Node) {}
 
 func (rule *noSelfAssign) selfAssignment(left, right *ast.Node) {
 	if left == nil || right == nil {
@@ -97,5 +104,3 @@ func (rule *noSelfAssign) reportAssignment(node *ast.Node) {
 	}, text)
 	rule.context.Report(rule.context.Range(node), diagnostics.X_0_is_assigned_to_itself, text)
 }
-
-func newNoSelfAssign(context Context) Rule { return &noSelfAssign{context: context} }

@@ -9,7 +9,14 @@ type noCaseDeclarations struct {
 	context Context
 }
 
-func newNoCaseDeclarations(context Context) Rule { return &noCaseDeclarations{context: context} }
+func newNoCaseDeclarations(context Context) Rule {
+	rule := &noCaseDeclarations{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassDeclaration, ast.KindFunctionDeclaration, ast.KindVariableStatement},
+	}
+}
 
 func (rule *noCaseDeclarations) OnEnterNode(node *ast.Node) bool {
 	if node.Parent != nil && (node.Parent.Kind == ast.KindCaseClause || node.Parent.Kind == ast.KindDefaultClause) {
@@ -19,7 +26,4 @@ func (rule *noCaseDeclarations) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noCaseDeclarations) OnExitNode(node *ast.Node) {
 }

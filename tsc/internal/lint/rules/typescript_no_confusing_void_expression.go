@@ -14,6 +14,23 @@ type typescriptNoConfusingVoidExpressionRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptNoConfusingVoidExpression(context Context) Rule {
+	rule := &typescriptNoConfusingVoidExpressionRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression, ast.KindAwaitExpression, ast.KindTaggedTemplateExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNoConfusingVoidExpressionRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindCallExpression || node.Kind == ast.KindAwaitExpression || node.Kind == ast.KindTaggedTemplateExpression {
+		rule.confusingVoid(node)
+	}
+	return true
+}
+
 func noConfusingVoidExpressionOuter(node *ast.Node) (*ast.Node, *ast.Node) {
 	for node.Parent != nil && node.Parent.Kind == ast.KindParenthesizedExpression {
 		node = node.Parent
@@ -225,17 +242,4 @@ func (rule *typescriptNoConfusingVoidExpressionRule) suggest(diagnostic *ast.Dia
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[diagnostic] = append(rule.suggestions[diagnostic], rule.action(message, edits...))
-}
-
-func (rule *typescriptNoConfusingVoidExpressionRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindCallExpression || node.Kind == ast.KindAwaitExpression || node.Kind == ast.KindTaggedTemplateExpression {
-		rule.confusingVoid(node)
-	}
-	return true
-}
-
-func (rule *typescriptNoConfusingVoidExpressionRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoConfusingVoidExpression(context Context) Rule {
-	return &typescriptNoConfusingVoidExpressionRule{context: context}
 }

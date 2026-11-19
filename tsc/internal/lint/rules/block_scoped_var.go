@@ -7,6 +7,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
+type blockScopedVarRule struct{ context Context }
+
+func newBlockScopedVarRule(context Context) Rule {
+	rule := &blockScopedVarRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
+}
+
+func (rule *blockScopedVarRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkBlockScopedVar(node)
+	return true
+}
+
 func blockScopedVarReference(node *ast.Node) bool {
 	if node.Kind != ast.KindIdentifier {
 		return false
@@ -25,19 +41,6 @@ func blockScopedVarReference(node *ast.Node) bool {
 	}
 	return false
 }
-
-type blockScopedVarRule struct{ context Context }
-
-func newBlockScopedVarRule(context Context) Rule {
-	return &blockScopedVarRule{context: context}
-}
-
-func (rule *blockScopedVarRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkBlockScopedVar(node)
-	return true
-}
-
-func (rule *blockScopedVarRule) OnExitNode(node *ast.Node) {}
 
 func (rule *blockScopedVarRule) checkBlockScopedVar(node *ast.Node) {
 	if !blockScopedVarReference(node) {

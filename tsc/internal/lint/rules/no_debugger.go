@@ -10,6 +10,15 @@ type noDebugger struct {
 	context Context
 }
 
+func newNoDebugger(context Context) Rule {
+	rule := &noDebugger{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindDebuggerStatement},
+	}
+}
+
 func (rule *noDebugger) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindDebuggerStatement {
 		diagnostic := rule.context.Report(rule.context.Range(node), diagnostics.Unexpected_debugger_statement)
@@ -24,7 +33,3 @@ func (rule *noDebugger) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noDebugger) OnExitNode(node *ast.Node) {}
-
-func newNoDebugger(context Context) Rule { return &noDebugger{context: context} }

@@ -10,6 +10,34 @@ type constructorSuper struct {
 	helpers.SharedControlFlowContext
 }
 
+func newConstructorSuper(context Context) Rule {
+	rule := &constructorSuper{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *constructorSuper) OnEnterNode(node *ast.Node) bool {
 	return rule.EnterGraph(node, rule.transferState)
 }
@@ -74,8 +102,4 @@ func (rule *constructorSuper) checkGraph(graph *helpers.ControlFlowGraph) {
 			rule.ReportOnce(segment.Node, diagnostics.Unexpected_super_because_super_is_not_a_constructor)
 		}
 	}
-}
-
-func newConstructorSuper(context Context) Rule {
-	return &constructorSuper{Context: context}
 }

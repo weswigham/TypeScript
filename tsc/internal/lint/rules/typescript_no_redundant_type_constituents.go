@@ -17,19 +17,23 @@ type typeScriptNoRedundantTypeConstituents struct {
 }
 
 func newTypeScriptNoRedundantTypeConstituents(context Context) Rule {
-	return &typeScriptNoRedundantTypeConstituents{context: context}
-}
+	rule := &typeScriptNoRedundantTypeConstituents{context: context}
 
-func (rule *typeScriptNoRedundantTypeConstituents) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindUnionType, ast.KindIntersectionType},
+		GetSuggestions: rule.Suggestions,
+	}
 }
-
-func (rule *typeScriptNoRedundantTypeConstituents) OnEnterNode(node *ast.Node) bool { return true }
 
 func (rule *typeScriptNoRedundantTypeConstituents) OnExitNode(node *ast.Node) {
 	if node.Kind == ast.KindUnionType || node.Kind == ast.KindIntersectionType {
 		rule.redundant(node)
 	}
+}
+
+func (rule *typeScriptNoRedundantTypeConstituents) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
 }
 
 type typeScriptNoRedundantTypeConstituentsFlag struct {

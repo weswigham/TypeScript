@@ -6,6 +6,25 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noUnassignedVarsRule struct {
+	context            Context
+	referencesBySymbol map[*ast.Symbol][]*ast.Node
+}
+
+func newNoUnassignedVarsRule(context Context) Rule {
+	rule := &noUnassignedVarsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration},
+	}
+}
+
+func (rule *noUnassignedVarsRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkUnassigned(node)
+	return true
+}
+
 func noUnassignedVarsAmbient(node *ast.Node) bool {
 	for current := node; current != nil; current = current.Parent {
 		if current.Flags&ast.NodeFlagsAmbient != 0 || ast.IsDeclaration(current) && ast.GetCombinedModifierFlags(current)&ast.ModifierFlagsAmbient != 0 {
@@ -14,22 +33,6 @@ func noUnassignedVarsAmbient(node *ast.Node) bool {
 	}
 	return false
 }
-
-type noUnassignedVarsRule struct {
-	context            Context
-	referencesBySymbol map[*ast.Symbol][]*ast.Node
-}
-
-func newNoUnassignedVarsRule(context Context) Rule {
-	return &noUnassignedVarsRule{context: context}
-}
-
-func (rule *noUnassignedVarsRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkUnassigned(node)
-	return true
-}
-
-func (rule *noUnassignedVarsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUnassignedVarsRule) checkUnassigned(node *ast.Node) {
 	if node.Kind != ast.KindVariableDeclaration || node.Initializer() != nil || node.Name().Kind != ast.KindIdentifier || node.Parent.Kind != ast.KindVariableDeclarationList || node.Parent.Flags&ast.NodeFlagsConst != 0 || noUnassignedVarsAmbient(node) {

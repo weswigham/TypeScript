@@ -14,6 +14,15 @@ import (
 
 type noUnusedPrivateClassMembers struct{ helpers.UsageRuleContext }
 
+func newNoUnusedPrivateClassMembers(context Context) Rule {
+	rule := &noUnusedPrivateClassMembers{Context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUnusedPrivateClassMembers) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return false
@@ -21,7 +30,6 @@ func (rule *noUnusedPrivateClassMembers) OnEnterNode(node *ast.Node) bool {
 	rule.privateMembers(node)
 	return false
 }
-func (rule *noUnusedPrivateClassMembers) OnExitNode(node *ast.Node) {}
 
 type usagePrivate struct {
 	member   *ast.Node
@@ -112,8 +120,4 @@ func (rule *noUnusedPrivateClassMembers) privateMembers(root *ast.Node) {
 			rule.AddSuggestion(diagnostic, []*codefix.CodeFixAction{codefix.CreateCodeFixAction("no-unused-private-class-members", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_unused_private_class_member_0, name.Text()), "", nil)})
 		}
 	}
-}
-
-func newNoUnusedPrivateClassMembers(context Context) Rule {
-	return &noUnusedPrivateClassMembers{Context: context}
 }

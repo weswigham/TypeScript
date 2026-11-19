@@ -14,12 +14,19 @@ type typescriptNoWrapperObjectTypesRule struct {
 	context Context
 }
 
+func newTypeScriptNoWrapperObjectTypes(context Context) Rule {
+	rule := &typescriptNoWrapperObjectTypesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindTypeReference, ast.KindExpressionWithTypeArguments},
+	}
+}
+
 func (rule *typescriptNoWrapperObjectTypesRule) OnEnterNode(node *ast.Node) bool {
 	rule.wrapper(node)
 	return true
 }
-
-func (rule *typescriptNoWrapperObjectTypesRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoWrapperObjectTypesRule) wrapper(node *ast.Node) {
 	var name *ast.Node
@@ -70,8 +77,4 @@ func (rule *typescriptNoWrapperObjectTypesRule) fix(diagnostic *ast.Diagnostic, 
 
 func (rule *typescriptNoWrapperObjectTypesRule) Start(node *ast.Node) int {
 	return scanner.GetTokenPosOfNode(node, rule.context.File, false)
-}
-
-func newTypeScriptNoWrapperObjectTypes(context Context) Rule {
-	return &typescriptNoWrapperObjectTypesRule{context: context}
 }

@@ -12,16 +12,19 @@ type noUnneededTernaryRule struct {
 	context Context
 }
 
+func newNoUnneededTernary(context Context) Rule {
+	rule := &noUnneededTernaryRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindConditionalExpression},
+	}
+}
+
 func (rule *noUnneededTernaryRule) OnEnterNode(node *ast.Node) bool {
 	rule.ternary(node)
 
 	return true
-}
-
-func (rule *noUnneededTernaryRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUnneededTernaryRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *noUnneededTernaryRule) boolean(index int, name string, fallback bool) bool {
@@ -109,5 +112,3 @@ func expressionInvert(tracker *change.Tracker, node *ast.Node) *ast.Node {
 	}
 	return tracker.NewPrefixUnaryExpression(ast.KindExclamationToken, tracker.DeepCloneReparse(node))
 }
-
-func newNoUnneededTernary(context Context) Rule { return &noUnneededTernaryRule{context: context} }

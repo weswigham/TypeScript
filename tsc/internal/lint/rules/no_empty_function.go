@@ -16,7 +16,30 @@ type noEmptyFunction struct {
 	context Context
 }
 
-func newNoEmptyFunction(context Context) Rule { return &noEmptyFunction{context: context} }
+func newNoEmptyFunction(context Context) Rule {
+	rule := &noEmptyFunction{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
 
 func (rule *noEmptyFunction) OnEnterNode(node *ast.Node) bool {
 	if ast.IsFunctionLike(node) && helpers.IsEmptyCommentFreeBlock(rule.context, node.Body()) {
@@ -24,9 +47,6 @@ func (rule *noEmptyFunction) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noEmptyFunction) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noEmptyFunction) Options() map[string]any {

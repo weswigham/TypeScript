@@ -19,14 +19,101 @@ type typeScriptNoUnnecessaryTypeAssertion struct {
 }
 
 func newTypeScriptNoUnnecessaryTypeAssertion(context Context) Rule {
-	return &typeScriptNoUnnecessaryTypeAssertion{context: context}
+	rule := &typeScriptNoUnnecessaryTypeAssertion{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindNonNullExpression, ast.KindAsExpression, ast.KindTypeAssertionExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typeScriptNoUnnecessaryTypeAssertion) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindNonNullExpression {
+		rule.nonNull(node)
+		return true
+	}
+	if node.Kind != ast.KindAsExpression && node.Kind != ast.KindTypeAssertionExpression {
+		return true
+	}
+	for _, ignored := range typeScriptNoUnnecessaryTypeAssertionStrings(helpers.SemanticSyntaxOptions(rule.context)["typesToIgnore"]) {
+		if ignored == helpers.SemanticSyntaxText(rule.context, node.Type()) {
+			return true
+		}
+	}
+	c := rule.context.GetChecker()
+	cast, uncast := c.GetTypeAtLocation(node), c.GetTypeAtLocation(node.Expression())
+	constAssertion := node.Type().Kind == ast.KindTypeReference && node.Type().AsTypeReferenceNode().TypeName.Kind == ast.KindIdentifier && node.Type().AsTypeReferenceNode().TypeName.Text() == "const"
+	literal := cast.Flags()&checker.TypeFlagsLiteral != 0
+	if literal && constAssertion && !helpers.SemanticSyntaxBoolean(rule.context, "checkLiteralConstAssertions") {
+		return true
+	}
+	expression := ast.SkipParentheses(node.Expression())
+	if expression.Kind == ast.KindCallExpression {
+		callee := ast.SkipParentheses(expression.Expression())
+		if (callee.Kind == ast.KindFunctionExpression || callee.Kind == ast.KindArrowFunction) && callee.Type() == nil {
+			if signature := c.GetSignatureFromDeclaration(callee); signature != nil && c.GetReturnTypeOfSignature(signature).Flags() == checker.TypeFlagsUndefined {
+				uncast = c.GetVoidType()
+			}
+		}
+	}
+	parent := typeScriptNoUnnecessaryTypeAssertionOuter(node).Parent
+	inferred := !constAssertion
+	if literal {
+		inferred = expression.Kind != ast.KindTemplateExpression && parent != nil && (parent.Kind == ast.KindVariableDeclaration && parent.Parent.Flags&ast.NodeFlagsConst != 0 || parent.Kind == ast.KindPropertyDeclaration && ast.GetCombinedModifierFlags(parent)&ast.ModifierFlagsReadonly != 0)
+	}
+	if rule.unchanged(node, node.Expression(), uncast, cast) && inferred {
+		message := diagnostics.This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression
+		generic := typeScriptNoUnnecessaryTypeAssertionGenericCall(c, node.Expression())
+		if generic {
+			message = diagnostics.The_type_arguments_for_this_generic_call_may_be_inferred_from_the_assertion_Specify_them_explicitly_instead
+		}
+		diagnostic := rule.context.Report(rule.context.Range(node), message)
+		if !generic {
+			rule.remove(diagnostic, node, node.Expression())
+		}
+		return true
+	}
+	castAny := cast.Flags()&checker.TypeFlagsAny != 0 && parent != nil && parent.Kind != ast.KindAsExpression && parent.Kind != ast.KindTypeAssertionExpression && parent.Kind != ast.KindSpreadElement && parent.Kind != ast.KindSatisfiesExpression
+	var contextual *checker.Type
+	if !rule.skipContext(node, castAny) {
+		contextual = c.GetContextualType(node, checker.ContextFlagsNone)
+	}
+	if contextual != nil {
+		contextAny := contextual.Flags()&checker.TypeFlagsAny != 0
+		callArgument := parent != nil && (parent.Kind == ast.KindCallExpression || parent.Kind == ast.KindNewExpression) && slices.Contains(parent.Arguments(), typeScriptNoUnnecessaryTypeAssertionOuter(node))
+		anyAllowed := !typeScriptNoUnnecessaryTypeAssertionContains(c, contextual, checker.TypeFlagsAny)
+		if contextAny {
+			anyAllowed = callArgument && !typeScriptNoUnnecessaryTypeAssertionContains(c, cast, checker.TypeFlagsAny)
+		}
+		nullishUnion := cast.IsUnion() && (expression.Kind == ast.KindNullKeyword || expression.Kind == ast.KindIdentifier && expression.Text() == "undefined")
+		phantom := rule.genericContext(node) && (typeScriptNoUnnecessaryTypeAssertionEmpty(c, uncast) && len(typeScriptNoUnnecessaryTypeAssertionTypeArguments(c, uncast)) > 0 || typeScriptNoUnnecessaryTypeAssertionEmpty(c, contextual) && len(typeScriptNoUnnecessaryTypeAssertionTypeArguments(c, contextual)) > 0) && !typeScriptNoUnnecessaryTypeAssertionSameArguments(c, uncast, contextual)
+		if !constAssertion && !typeScriptNoUnnecessaryTypeAssertionContains(c, uncast, checker.TypeFlagsAny) && anyAllowed && !phantom && (castAny || !rule.genericsMismatch(uncast, contextual)) && (contextAny || c.IsTypeAssignableTo(uncast, contextual)) && !nullishUnion {
+			diagnostic := rule.context.Report(rule.context.Range(node), diagnostics.This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression)
+			rule.remove(diagnostic, node, node.Expression())
+			return true
+		}
+	}
+	if expression.Kind == ast.KindAsExpression || expression.Kind == ast.KindTypeAssertionExpression {
+		original := typeScriptNoUnnecessaryTypeAssertionOriginal(node)
+		originalType := c.GetTypeAtLocation(original)
+		message := diagnostics.This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression
+		unnecessary := cast.Flags()&checker.TypeFlagsAny == 0 && rule.unchanged(node, expression, originalType, cast)
+		if !unnecessary && contextual != nil && c.GetTypeAtLocation(expression).Flags()&checker.TypeFlagsAnyOrUnknown != 0 && c.IsTypeAssignableTo(originalType, contextual) {
+			unnecessary = true
+			message = diagnostics.This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression
+		}
+		if unnecessary {
+			diagnostic := rule.context.Report(rule.context.Range(node), message)
+			rule.remove(diagnostic, node, original)
+		}
+	}
+	return true
 }
 
 func (rule *typeScriptNoUnnecessaryTypeAssertion) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
-
-func (rule *typeScriptNoUnnecessaryTypeAssertion) OnExitNode(node *ast.Node) {}
 
 func (rule *typeScriptNoUnnecessaryTypeAssertion) fix(diagnostic *ast.Diagnostic, name string, edits []core.TextChange, suggestion *diagnostics.Message) {
 	if rule.context.NewTracker == nil {
@@ -461,89 +548,6 @@ func (rule *typeScriptNoUnnecessaryTypeAssertion) nonNull(node *ast.Node) {
 	}
 	diagnostic := rule.context.Report(rule.context.Range(node), message)
 	rule.remove(diagnostic, node, expression)
-}
-
-func (rule *typeScriptNoUnnecessaryTypeAssertion) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindNonNullExpression {
-		rule.nonNull(node)
-		return true
-	}
-	if node.Kind != ast.KindAsExpression && node.Kind != ast.KindTypeAssertionExpression {
-		return true
-	}
-	for _, ignored := range typeScriptNoUnnecessaryTypeAssertionStrings(helpers.SemanticSyntaxOptions(rule.context)["typesToIgnore"]) {
-		if ignored == helpers.SemanticSyntaxText(rule.context, node.Type()) {
-			return true
-		}
-	}
-	c := rule.context.GetChecker()
-	cast, uncast := c.GetTypeAtLocation(node), c.GetTypeAtLocation(node.Expression())
-	constAssertion := node.Type().Kind == ast.KindTypeReference && node.Type().AsTypeReferenceNode().TypeName.Kind == ast.KindIdentifier && node.Type().AsTypeReferenceNode().TypeName.Text() == "const"
-	literal := cast.Flags()&checker.TypeFlagsLiteral != 0
-	if literal && constAssertion && !helpers.SemanticSyntaxBoolean(rule.context, "checkLiteralConstAssertions") {
-		return true
-	}
-	expression := ast.SkipParentheses(node.Expression())
-	if expression.Kind == ast.KindCallExpression {
-		callee := ast.SkipParentheses(expression.Expression())
-		if (callee.Kind == ast.KindFunctionExpression || callee.Kind == ast.KindArrowFunction) && callee.Type() == nil {
-			if signature := c.GetSignatureFromDeclaration(callee); signature != nil && c.GetReturnTypeOfSignature(signature).Flags() == checker.TypeFlagsUndefined {
-				uncast = c.GetVoidType()
-			}
-		}
-	}
-	parent := typeScriptNoUnnecessaryTypeAssertionOuter(node).Parent
-	inferred := !constAssertion
-	if literal {
-		inferred = expression.Kind != ast.KindTemplateExpression && parent != nil && (parent.Kind == ast.KindVariableDeclaration && parent.Parent.Flags&ast.NodeFlagsConst != 0 || parent.Kind == ast.KindPropertyDeclaration && ast.GetCombinedModifierFlags(parent)&ast.ModifierFlagsReadonly != 0)
-	}
-	if rule.unchanged(node, node.Expression(), uncast, cast) && inferred {
-		message := diagnostics.This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression
-		generic := typeScriptNoUnnecessaryTypeAssertionGenericCall(c, node.Expression())
-		if generic {
-			message = diagnostics.The_type_arguments_for_this_generic_call_may_be_inferred_from_the_assertion_Specify_them_explicitly_instead
-		}
-		diagnostic := rule.context.Report(rule.context.Range(node), message)
-		if !generic {
-			rule.remove(diagnostic, node, node.Expression())
-		}
-		return true
-	}
-	castAny := cast.Flags()&checker.TypeFlagsAny != 0 && parent != nil && parent.Kind != ast.KindAsExpression && parent.Kind != ast.KindTypeAssertionExpression && parent.Kind != ast.KindSpreadElement && parent.Kind != ast.KindSatisfiesExpression
-	var contextual *checker.Type
-	if !rule.skipContext(node, castAny) {
-		contextual = c.GetContextualType(node, checker.ContextFlagsNone)
-	}
-	if contextual != nil {
-		contextAny := contextual.Flags()&checker.TypeFlagsAny != 0
-		callArgument := parent != nil && (parent.Kind == ast.KindCallExpression || parent.Kind == ast.KindNewExpression) && slices.Contains(parent.Arguments(), typeScriptNoUnnecessaryTypeAssertionOuter(node))
-		anyAllowed := !typeScriptNoUnnecessaryTypeAssertionContains(c, contextual, checker.TypeFlagsAny)
-		if contextAny {
-			anyAllowed = callArgument && !typeScriptNoUnnecessaryTypeAssertionContains(c, cast, checker.TypeFlagsAny)
-		}
-		nullishUnion := cast.IsUnion() && (expression.Kind == ast.KindNullKeyword || expression.Kind == ast.KindIdentifier && expression.Text() == "undefined")
-		phantom := rule.genericContext(node) && (typeScriptNoUnnecessaryTypeAssertionEmpty(c, uncast) && len(typeScriptNoUnnecessaryTypeAssertionTypeArguments(c, uncast)) > 0 || typeScriptNoUnnecessaryTypeAssertionEmpty(c, contextual) && len(typeScriptNoUnnecessaryTypeAssertionTypeArguments(c, contextual)) > 0) && !typeScriptNoUnnecessaryTypeAssertionSameArguments(c, uncast, contextual)
-		if !constAssertion && !typeScriptNoUnnecessaryTypeAssertionContains(c, uncast, checker.TypeFlagsAny) && anyAllowed && !phantom && (castAny || !rule.genericsMismatch(uncast, contextual)) && (contextAny || c.IsTypeAssignableTo(uncast, contextual)) && !nullishUnion {
-			diagnostic := rule.context.Report(rule.context.Range(node), diagnostics.This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression)
-			rule.remove(diagnostic, node, node.Expression())
-			return true
-		}
-	}
-	if expression.Kind == ast.KindAsExpression || expression.Kind == ast.KindTypeAssertionExpression {
-		original := typeScriptNoUnnecessaryTypeAssertionOriginal(node)
-		originalType := c.GetTypeAtLocation(original)
-		message := diagnostics.This_assertion_is_unnecessary_since_it_does_not_change_the_type_of_the_expression
-		unnecessary := cast.Flags()&checker.TypeFlagsAny == 0 && rule.unchanged(node, expression, originalType, cast)
-		if !unnecessary && contextual != nil && c.GetTypeAtLocation(expression).Flags()&checker.TypeFlagsAnyOrUnknown != 0 && c.IsTypeAssignableTo(originalType, contextual) {
-			unnecessary = true
-			message = diagnostics.This_assertion_is_unnecessary_since_the_receiver_accepts_the_original_type_of_the_expression
-		}
-		if unnecessary {
-			diagnostic := rule.context.Report(rule.context.Range(node), message)
-			rule.remove(diagnostic, node, original)
-		}
-	}
-	return true
 }
 
 func typeScriptNoUnnecessaryTypeAssertionTypeArguments(c *checker.Checker, value *checker.Type) []*checker.Type {

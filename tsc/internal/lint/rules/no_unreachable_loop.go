@@ -12,6 +12,34 @@ type noUnreachableLoop struct {
 	helpers.SharedControlFlowContext
 }
 
+func newNoUnreachableLoop(context Context) Rule {
+	rule := &noUnreachableLoop{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *noUnreachableLoop) OnEnterNode(node *ast.Node) bool { return rule.EnterGraph(node, nil) }
 
 func (rule *noUnreachableLoop) OnExitNode(node *ast.Node) {
@@ -44,8 +72,4 @@ func (rule *noUnreachableLoop) ignoreLoop(node *ast.Node) bool {
 		return slices.Contains(ignored, names[node.Kind])
 	}
 	return false
-}
-
-func newNoUnreachableLoop(context Context) Rule {
-	return &noUnreachableLoop{Context: context}
 }

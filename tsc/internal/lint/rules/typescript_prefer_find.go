@@ -18,11 +18,13 @@ type typeScriptPreferFind struct {
 }
 
 func newTypeScriptPreferFind(context Context) Rule {
-	return &typeScriptPreferFind{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
-}
+	rule := &typeScriptPreferFind{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
 
-func (rule *typeScriptPreferFind) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindElementAccessExpression, ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferFind) OnEnterNode(node *ast.Node) bool {
@@ -32,7 +34,9 @@ func (rule *typeScriptPreferFind) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptPreferFind) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferFind) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferFind) arrayish(value *checker.Type) bool {
 	seenArray := false

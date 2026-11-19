@@ -12,15 +12,18 @@ import (
 type noArrayConstructorRule struct{ context Context }
 
 func newNoArrayConstructorRule(context Context) Rule {
-	return &noArrayConstructorRule{context: context}
+	rule := &noArrayConstructorRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
 }
 
 func (rule *noArrayConstructorRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkArrayConstructor(node)
 	return true
 }
-
-func (rule *noArrayConstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noArrayConstructorRule) checkArrayConstructor(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression && node.Kind != ast.KindNewExpression {

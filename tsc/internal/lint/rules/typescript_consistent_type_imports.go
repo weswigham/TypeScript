@@ -16,6 +16,16 @@ type typescriptConsistentTypeImportsRule struct {
 	runtimeSymbols       map[*ast.Symbol]bool
 }
 
+func newTypeScriptConsistentTypeImports(context Context) Rule {
+	rule := &typescriptConsistentTypeImportsRule{Context: context, Name: "consistent-type-imports"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindSourceFile, ast.KindImportType, ast.KindImportDeclaration, ast.KindImportSpecifier},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptConsistentTypeImportsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindSourceFile && rule.StringOption("prefer", "type-imports") != "no-type-imports" {
 		rule.collectRuntimeReferences()
@@ -23,8 +33,6 @@ func (rule *typescriptConsistentTypeImportsRule) OnEnterNode(node *ast.Node) boo
 	rule.typeImports(node)
 	return true
 }
-
-func (rule *typescriptConsistentTypeImportsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptConsistentTypeImportsRule) collectRuntimeReferences() {
 	options := rule.Context.CompilerOptions
@@ -313,8 +321,4 @@ func (rule *typescriptConsistentTypeImportsRule) extractNamedTypeImports(binding
 		edits = append(edits, helpers.TsScopeEdit{Start: start, End: end, Text: ""})
 	}
 	return strings.Join(parts, ","), edits
-}
-
-func newTypeScriptConsistentTypeImports(context Context) Rule {
-	return &typescriptConsistentTypeImportsRule{Context: context, Name: "consistent-type-imports"}
 }

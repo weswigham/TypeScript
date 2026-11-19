@@ -10,13 +10,21 @@ type noUnmodifiedLoopCondition struct {
 	helpers.SharedControlFlowContext
 }
 
+func newNoUnmodifiedLoopCondition(context Context) Rule {
+	rule := &noUnmodifiedLoopCondition{Context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindWhileStatement, ast.KindDoStatement, ast.KindForStatement},
+	}
+}
+
 func (rule *noUnmodifiedLoopCondition) OnEnterNode(node *ast.Node) bool {
 	if helpers.ControlFlowLoopCondition(node) != nil {
 		rule.unmodifiedCondition(node)
 	}
 	return true
 }
-func (rule *noUnmodifiedLoopCondition) OnExitNode(node *ast.Node) {}
 
 type controlFlowCondition struct {
 	node, group *ast.Node
@@ -141,8 +149,4 @@ func (rule *noUnmodifiedLoopCondition) unmodifiedCondition(loop *ast.Node) {
 			rule.ReportOnce(item.node, diagnostics.X_0_is_not_modified_in_this_loop, item.node.Text())
 		}
 	}
-}
-
-func newNoUnmodifiedLoopCondition(context Context) Rule {
-	return &noUnmodifiedLoopCondition{Context: context}
 }

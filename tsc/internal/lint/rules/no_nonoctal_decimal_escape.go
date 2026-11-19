@@ -14,6 +14,16 @@ type noNonoctalDecimalEscape struct {
 	context Context
 }
 
+func newNoNonoctalDecimalEscape(context Context) Rule {
+	rule := &noNonoctalDecimalEscape{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindStringLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noNonoctalDecimalEscape) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindStringLiteral {
 		return true
@@ -55,10 +65,4 @@ func (rule *noNonoctalDecimalEscape) OnEnterNode(node *ast.Node) bool {
 		index++
 	}
 	return true
-}
-
-func (rule *noNonoctalDecimalEscape) OnExitNode(node *ast.Node) {}
-
-func newNoNonoctalDecimalEscape(context Context) Rule {
-	return &noNonoctalDecimalEscape{context: context}
 }

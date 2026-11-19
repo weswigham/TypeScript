@@ -8,6 +8,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noImportAssignRule struct{ context Context }
+
+func newNoImportAssignRule(context Context) Rule {
+	rule := &noImportAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
+}
+
+func (rule *noImportAssignRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkBindingWrite(node)
+	return true
+}
+
 func noImportAssignWriteNode(node *ast.Node) *ast.Node {
 	for current := node.Parent; current != nil; current = current.Parent {
 		switch current.Kind {
@@ -21,19 +37,6 @@ func noImportAssignWriteNode(node *ast.Node) *ast.Node {
 	}
 	return node
 }
-
-type noImportAssignRule struct{ context Context }
-
-func newNoImportAssignRule(context Context) Rule {
-	return &noImportAssignRule{context: context}
-}
-
-func (rule *noImportAssignRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkBindingWrite(node)
-	return true
-}
-
-func (rule *noImportAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noImportAssignRule) checkBindingWrite(node *ast.Node) {
 	if !helpers.SharedBindingReference(node) {

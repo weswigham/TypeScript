@@ -8,11 +8,41 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/jsnum"
 )
 
-var tsDuplicateEnumValue = diagnostics.Duplicate_enum_member_value_0
-
 type typescriptNoDuplicateEnumValuesRule struct {
 	context Context
 }
+
+func newTypeScriptNoDuplicateEnumValues(context Context) Rule {
+	rule := &typescriptNoDuplicateEnumValuesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindEnumDeclaration},
+	}
+}
+
+func (rule *typescriptNoDuplicateEnumValuesRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindEnumDeclaration {
+		seen := make(map[tsEnumValue]bool)
+		for _, member := range node.Members() {
+			value, ok := tsEnumLiteralValue(member.Initializer())
+			if !ok {
+				continue
+			}
+			if seen[value] {
+				text := value.text
+				if value.isNumber {
+					text = jsnum.Number(math.Float64frombits(value.number)).String()
+				}
+				rule.context.Report(rule.context.Range(member), tsDuplicateEnumValue, text)
+			}
+			seen[value] = true
+		}
+	}
+	return true
+}
+
+var tsDuplicateEnumValue = diagnostics.Duplicate_enum_member_value_0
 
 type tsEnumValue struct {
 	text     string
@@ -55,31 +85,4 @@ func tsEnumLiteralValue(node *ast.Node) (tsEnumValue, bool) {
 		return tsEnumValue{number: math.Float64bits(number), isNumber: true}, true
 	}
 	return tsEnumValue{}, false
-}
-
-func (rule *typescriptNoDuplicateEnumValuesRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindEnumDeclaration {
-		seen := make(map[tsEnumValue]bool)
-		for _, member := range node.Members() {
-			value, ok := tsEnumLiteralValue(member.Initializer())
-			if !ok {
-				continue
-			}
-			if seen[value] {
-				text := value.text
-				if value.isNumber {
-					text = jsnum.Number(math.Float64frombits(value.number)).String()
-				}
-				rule.context.Report(rule.context.Range(member), tsDuplicateEnumValue, text)
-			}
-			seen[value] = true
-		}
-	}
-	return true
-}
-
-func (rule *typescriptNoDuplicateEnumValuesRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoDuplicateEnumValues(context Context) Rule {
-	return &typescriptNoDuplicateEnumValuesRule{context: context}
 }

@@ -12,8 +12,14 @@ type typescriptNoUnusedPrivateClassMembersRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
-func (rule *typescriptNoUnusedPrivateClassMembersRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptNoUnusedPrivateClassMembers(context Context) Rule {
+	rule := &typescriptNoUnusedPrivateClassMembersRule{Context: context, Name: "no-unused-private-class-members"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoUnusedPrivateClassMembersRule) OnExitNode(node *ast.Node) {
@@ -180,8 +186,4 @@ func (rule *typescriptNoUnusedPrivateClassMembersRule) unusedPrivate() {
 			rule.Context.Report(rule.Context.Range(info.node), diagnostics.Private_class_member_0_is_defined_but_never_used, strings.TrimPrefix(info.node.Text(), "#"))
 		}
 	}
-}
-
-func newTypeScriptNoUnusedPrivateClassMembers(context Context) Rule {
-	return &typescriptNoUnusedPrivateClassMembersRule{Context: context, Name: "no-unused-private-class-members"}
 }

@@ -14,14 +14,57 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
+type typescriptBanTslintCommentRule struct {
+	context Context
+}
+
+func newTypeScriptBanTslintComment(context Context) Rule {
+	rule := &typescriptBanTslintCommentRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+	}
+}
+
+func (rule *typescriptBanTslintCommentRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind != ast.KindSourceFile {
+		return false
+	}
+	cursor := scanner.GetScannerForSourceFile(rule.context.File, 0)
+	cursor.SetSkipTrivia(true)
+	tokenScanner := scanner.NewScanner()
+	tokenScanner.SetText(rule.context.File.Text())
+	tokenScanner.SetSkipTrivia(false)
+	for position := 0; ; {
+		cursor.ResetPos(position)
+		atEnd := cursor.Scan() == ast.KindEndOfFile
+		start := cursor.TokenStart()
+		tokenScanner.ResetPos(position)
+		for tokenScanner.TokenEnd() < start {
+			kind := tokenScanner.Scan()
+			if kind == ast.KindSingleLineCommentTrivia || kind == ast.KindMultiLineCommentTrivia {
+				rule.checkComment(tokenScanner.TokenStart(), tokenScanner.TokenEnd(), kind)
+			}
+			if kind == ast.KindEndOfFile {
+				break
+			}
+		}
+		if atEnd {
+			break
+		}
+		token := astnav.GetTokenAtPosition(rule.context.File, start)
+		if token == nil || token.End() <= position {
+			break
+		}
+		position = token.End()
+	}
+	return false
+}
+
 var (
 	tsTslintCommentDetected = diagnostics.X_tslint_comment_detected_Colon_0
 	tsTslintDirective       = regexp.MustCompile(`^tslint:(enable|disable)(?:-(line|next-line))?`)
 )
-
-type typescriptBanTslintCommentRule struct {
-	context Context
-}
 
 func (rule *typescriptBanTslintCommentRule) checkComment(start int, end int, kind ast.Kind) {
 	text := rule.context.File.Text()
@@ -63,45 +106,4 @@ func (rule *typescriptBanTslintCommentRule) checkComment(start int, end int, kin
 	tracker.DeleteRange(rule.context.File, core.NewTextRange(removeStart, removeEnd))
 	const name = "@typescript-eslint/ban-tslint-comment"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_TSLint_comment), name, ast.NewCompilerDiagnostic(diagnostics.Remove_TSLint_comments)))
-}
-
-func (rule *typescriptBanTslintCommentRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind != ast.KindSourceFile {
-		return false
-	}
-	cursor := scanner.GetScannerForSourceFile(rule.context.File, 0)
-	cursor.SetSkipTrivia(true)
-	tokenScanner := scanner.NewScanner()
-	tokenScanner.SetText(rule.context.File.Text())
-	tokenScanner.SetSkipTrivia(false)
-	for position := 0; ; {
-		cursor.ResetPos(position)
-		atEnd := cursor.Scan() == ast.KindEndOfFile
-		start := cursor.TokenStart()
-		tokenScanner.ResetPos(position)
-		for tokenScanner.TokenEnd() < start {
-			kind := tokenScanner.Scan()
-			if kind == ast.KindSingleLineCommentTrivia || kind == ast.KindMultiLineCommentTrivia {
-				rule.checkComment(tokenScanner.TokenStart(), tokenScanner.TokenEnd(), kind)
-			}
-			if kind == ast.KindEndOfFile {
-				break
-			}
-		}
-		if atEnd {
-			break
-		}
-		token := astnav.GetTokenAtPosition(rule.context.File, start)
-		if token == nil || token.End() <= position {
-			break
-		}
-		position = token.End()
-	}
-	return false
-}
-
-func (rule *typescriptBanTslintCommentRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptBanTslintComment(context Context) Rule {
-	return &typescriptBanTslintCommentRule{context: context}
 }

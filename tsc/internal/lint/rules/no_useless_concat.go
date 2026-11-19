@@ -9,24 +9,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUselessConcatCoreRule struct {
+type noUselessConcatRule struct {
 	context Context
 }
 
-func newNoUselessConcatCoreRule(context Context) *noUselessConcatCoreRule {
-	return &noUselessConcatCoreRule{
+func newNoUselessConcat(context Context) Rule {
+	rule := &noUselessConcatRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
 	}
 }
 
-func (rule *noUselessConcatCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUselessConcatRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkConcat(node)
 	return true
 }
 
-func (rule *noUselessConcatCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUselessConcatCoreRule) checkConcat(node *ast.Node) {
+func (rule *noUselessConcatRule) checkConcat(node *ast.Node) {
 	if !literalConcatenation(node) {
 		return
 	}
@@ -50,5 +53,3 @@ func (rule *noUselessConcatCoreRule) checkConcat(node *ast.Node) {
 func literalConcatenation(node *ast.Node) bool {
 	return node.Kind == ast.KindBinaryExpression && node.AsBinaryExpression().OperatorToken.Kind == ast.KindPlusToken
 }
-
-func newNoUselessConcatCore(context Context) Rule { return newNoUselessConcatCoreRule(context) }

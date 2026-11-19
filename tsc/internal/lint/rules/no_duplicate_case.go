@@ -9,10 +9,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var noDuplicateCaseMessage = diagnostics.Duplicate_case_label
-
 type noDuplicateCase struct {
 	context Context
+}
+
+func newNoDuplicateCase(context Context) Rule {
+	rule := &noDuplicateCase{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSwitchStatement},
+	}
 }
 
 func (rule *noDuplicateCase) OnEnterNode(node *ast.Node) bool {
@@ -40,7 +47,7 @@ func (rule *noDuplicateCase) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noDuplicateCase) OnExitNode(node *ast.Node) {}
+var noDuplicateCaseMessage = diagnostics.Duplicate_case_label
 
 type expressionCaseToken struct {
 	kind ast.Kind
@@ -65,5 +72,3 @@ func expressionCaseTokens(file *ast.SourceFile, node *ast.Node) []expressionCase
 	}
 	return result
 }
-
-func newNoDuplicateCase(context Context) Rule { return &noDuplicateCase{context: context} }

@@ -108,8 +108,6 @@ func (rule *RegexSource) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAct
 	return rule.suggestions
 }
 
-func (rule *RegexSource) OnExitNode(node *ast.Node) {}
-
 func (rule *RegexSource) Start(node *ast.Node) int {
 	return scanner.GetTokenPosOfNode(node, rule.Context.File, false)
 }

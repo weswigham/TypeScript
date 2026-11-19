@@ -201,12 +201,13 @@ func TypeSafetyImplicitThis(context Context, node *ast.Node) bool {
 	return thisNode != nil && TypeSafetyAny(TypeSafetyConstrain(context.GetChecker(), context.GetChecker().GetTypeAtLocation(thisNode)))
 }
 
-func TypeSafetyNewArgumentSignature(typeChecker *checker.Checker, node *ast.Node) *TypeSafetyArgumentSignature {
-	result := &TypeSafetyArgumentSignature{}
+func TypeSafetyNewArgumentSignature(typeChecker *checker.Checker, node *ast.Node) TypeSafetyArgumentSignature {
+	result := TypeSafetyArgumentSignature{}
 	signature := typeChecker.GetResolvedSignature(node)
 	if signature == nil {
 		return result
 	}
+	result.parameters = make([]*checker.Type, 0, len(signature.Parameters()))
 	for _, parameter := range signature.Parameters() {
 		value := typeChecker.GetTypeOfSymbolAtLocation(parameter, node)
 		var declaration *ast.Node

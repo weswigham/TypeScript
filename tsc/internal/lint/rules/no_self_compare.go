@@ -13,6 +13,15 @@ type noSelfCompare struct {
 	context Context
 }
 
+func newNoSelfCompare(context Context) Rule {
+	rule := &noSelfCompare{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *noSelfCompare) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindBinaryExpression {
 		expression := node.AsBinaryExpression()
@@ -26,8 +35,6 @@ func (rule *noSelfCompare) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noSelfCompare) OnExitNode(node *ast.Node) {}
 
 func noSelfCompareTokens(context Context, node *ast.Node) []noSelfCompareToken {
 	var result []noSelfCompareToken
@@ -50,5 +57,3 @@ type noSelfCompareToken struct {
 	kind ast.Kind
 	text string
 }
-
-func newNoSelfCompare(context Context) Rule { return &noSelfCompare{context: context} }

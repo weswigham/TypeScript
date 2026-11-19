@@ -17,7 +17,83 @@ type typeScriptConsistentReturn struct {
 }
 
 func newTypeScriptConsistentReturn(context Context) Rule {
-	return &typeScriptConsistentReturn{context: context}
+	rule := &typeScriptConsistentReturn{context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typeScriptConsistentReturn) OnExitNode(node *ast.Node) {
+	if !ast.IsFunctionLike(node) || node.Body() == nil || node.Body().Kind != ast.KindBlock {
+		return
+	}
+	body := node.Body()
+	void := rule.void(node)
+	first, expectsValue := true, false
+	name := typeScriptConsistentReturnFunctionName(node)
+	upperName := strings.ToUpper(name[:1]) + name[1:]
+	ast.ForEachReturnStatement(body, func(statement *ast.Node) bool {
+		expression := statement.Expression()
+		if expression == nil && void {
+			return false
+		}
+		hasValue := expression != nil
+		if hasValue && helpers.SemanticSyntaxBoolean(rule.context, "treatUndefinedAsUnspecified") {
+			value := rule.context.GetChecker().GetTypeAtLocation(expression)
+			expression = ast.SkipParentheses(expression)
+			hasValue = value.Flags() != checker.TypeFlagsUndefined && expression.Kind != ast.KindVoidExpression && !(expression.Kind == ast.KindIdentifier && expression.Text() == "undefined")
+		}
+		if first {
+			first = false
+			expectsValue = hasValue
+		} else if hasValue != expectsValue {
+			message := diagnostics.X_0_expected_no_return_value
+			if expectsValue {
+				message = diagnostics.X_0_expected_a_return_value
+			}
+			rule.context.Report(rule.context.Range(statement), message, upperName)
+		}
+		return false
+	})
+	if !expectsValue || node.Kind == ast.KindConstructor {
+		return
+	}
+	if node.Kind == ast.KindFunctionDeclaration || node.Kind == ast.KindFunctionExpression {
+		if node.Name() != nil {
+			for _, character := range node.Name().Text() {
+				if unicode.IsUpper(character) {
+					return
+				}
+				break
+			}
+		}
+	}
+	flow := helpers.ReturnFlowAnalysis{}
+	if helpers.CompletionHasNormal(flow.Statement(body, nil)) {
+		target := node
+		if node.Name() != nil {
+			target = node.Name()
+		}
+		rule.context.Report(rule.context.Range(target), diagnostics.Expected_to_return_a_value_at_the_end_of_0, name)
+	}
 }
 
 func (rule *typeScriptConsistentReturn) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
@@ -76,61 +152,4 @@ func (rule *typeScriptConsistentReturn) void(node *ast.Node) bool {
 		}
 	}
 	return false
-}
-
-func (rule *typeScriptConsistentReturn) OnEnterNode(node *ast.Node) bool { return true }
-
-func (rule *typeScriptConsistentReturn) OnExitNode(node *ast.Node) {
-	if !ast.IsFunctionLike(node) || node.Body() == nil || node.Body().Kind != ast.KindBlock {
-		return
-	}
-	body := node.Body()
-	void := rule.void(node)
-	first, expectsValue := true, false
-	name := typeScriptConsistentReturnFunctionName(node)
-	upperName := strings.ToUpper(name[:1]) + name[1:]
-	ast.ForEachReturnStatement(body, func(statement *ast.Node) bool {
-		expression := statement.Expression()
-		if expression == nil && void {
-			return false
-		}
-		hasValue := expression != nil
-		if hasValue && helpers.SemanticSyntaxBoolean(rule.context, "treatUndefinedAsUnspecified") {
-			value := rule.context.GetChecker().GetTypeAtLocation(expression)
-			expression = ast.SkipParentheses(expression)
-			hasValue = value.Flags() != checker.TypeFlagsUndefined && expression.Kind != ast.KindVoidExpression && !(expression.Kind == ast.KindIdentifier && expression.Text() == "undefined")
-		}
-		if first {
-			first = false
-			expectsValue = hasValue
-		} else if hasValue != expectsValue {
-			message := diagnostics.X_0_expected_no_return_value
-			if expectsValue {
-				message = diagnostics.X_0_expected_a_return_value
-			}
-			rule.context.Report(rule.context.Range(statement), message, upperName)
-		}
-		return false
-	})
-	if !expectsValue || node.Kind == ast.KindConstructor {
-		return
-	}
-	if node.Kind == ast.KindFunctionDeclaration || node.Kind == ast.KindFunctionExpression {
-		if node.Name() != nil {
-			for _, character := range node.Name().Text() {
-				if unicode.IsUpper(character) {
-					return
-				}
-				break
-			}
-		}
-	}
-	flow := helpers.ReturnFlowAnalysis{}
-	if helpers.CompletionHasNormal(flow.Statement(body, nil)) {
-		target := node
-		if node.Name() != nil {
-			target = node.Name()
-		}
-		rule.context.Report(rule.context.Range(target), diagnostics.Expected_to_return_a_value_at_the_end_of_0, name)
-	}
 }

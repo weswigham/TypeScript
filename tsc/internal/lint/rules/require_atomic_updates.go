@@ -10,6 +10,15 @@ import (
 
 type requireAtomicUpdates struct{ helpers.UsageRuleContext }
 
+func newRequireAtomicUpdates(context Context) Rule {
+	rule := &requireAtomicUpdates{Context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *requireAtomicUpdates) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return false
@@ -20,7 +29,6 @@ func (rule *requireAtomicUpdates) OnEnterNode(node *ast.Node) bool {
 	}
 	return false
 }
-func (rule *requireAtomicUpdates) OnExitNode(node *ast.Node) {}
 
 func (rule *requireAtomicUpdates) atomicUpdates(graph *helpers.UsageGraph) {
 	if ast.GetFunctionFlags(graph.Owner)&(ast.FunctionFlagsAsync|ast.FunctionFlagsGenerator) == 0 {
@@ -90,8 +98,4 @@ func (rule *requireAtomicUpdates) atomicUpdates(graph *helpers.UsageGraph) {
 			}
 		}
 	}
-}
-
-func newRequireAtomicUpdates(context Context) Rule {
-	return &requireAtomicUpdates{Context: context}
 }

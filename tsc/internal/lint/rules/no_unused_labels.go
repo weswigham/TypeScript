@@ -12,24 +12,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUnusedLabelsCoreRule struct {
+type noUnusedLabelsRule struct {
 	context Context
 }
 
-func newNoUnusedLabelsCoreRule(context Context) *noUnusedLabelsCoreRule {
-	return &noUnusedLabelsCoreRule{
+func newNoUnusedLabels(context Context) Rule {
+	rule := &noUnusedLabelsRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindLabeledStatement},
 	}
 }
 
-func (rule *noUnusedLabelsCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUnusedLabelsRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkLabel(node)
 	return true
 }
 
-func (rule *noUnusedLabelsCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUnusedLabelsCoreRule) checkLabel(node *ast.Node) {
+func (rule *noUnusedLabelsRule) checkLabel(node *ast.Node) {
 	if node.Kind != ast.KindLabeledStatement {
 		return
 	}
@@ -76,7 +79,7 @@ func (rule *noUnusedLabelsCoreRule) checkLabel(node *ast.Node) {
 	rule.fixRange(diagnostic, start, bodyStart, "")
 }
 
-func (rule *noUnusedLabelsCoreRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
+func (rule *noUnusedLabelsRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
 	if rule.context.NewTracker == nil {
 		return
 	}
@@ -84,5 +87,3 @@ func (rule *noUnusedLabelsCoreRule) fixRange(diagnostic *ast.Diagnostic, start i
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), replacement)
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction("no-unused-labels", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Fix_0, "no-unused-labels"), "no-unused-labels", ast.NewCompilerDiagnostic(diagnostics.Fix_all_0, "no-unused-labels")))
 }
-
-func newNoUnusedLabelsCore(context Context) Rule { return newNoUnusedLabelsCoreRule(context) }

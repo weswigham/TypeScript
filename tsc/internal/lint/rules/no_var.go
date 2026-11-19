@@ -19,18 +19,21 @@ type noVarRule struct {
 	references map[*ast.Symbol][]*ast.Node
 }
 
+func newNoVar(context Context) Rule {
+	rule := &noVarRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclarationList},
+	}
+}
+
 func (rule *noVarRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindVariableDeclarationList {
 		rule.noVar(node)
 	}
 
 	return true
-}
-
-func (rule *noVarRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noVarRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *noVarRule) canLet(list *ast.Node) bool {
@@ -195,5 +198,3 @@ func (rule *noVarRule) symbol(node *ast.Node) *ast.Symbol {
 	}
 	return rule.context.GetChecker().GetSymbolAtLocation(node)
 }
-
-func newNoVar(context Context) Rule { return &noVarRule{context: context} }

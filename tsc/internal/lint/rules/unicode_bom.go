@@ -13,6 +13,13 @@ type unicodeBomRule struct {
 	context Context
 }
 
+func newUnicodeBom(context Context) Rule {
+	rule := &unicodeBomRule{context: context}
+	return Rule{
+		Enter: rule.OnEnterNode,
+	}
+}
+
 func (rule *unicodeBomRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindSourceFile {
 		hasBOM := strings.HasPrefix(rule.context.File.Text(), "\uFEFF")
@@ -32,13 +39,6 @@ func (rule *unicodeBomRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *unicodeBomRule) OnExitNode(node *ast.Node) {
-}
-
-func (rule *unicodeBomRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
-}
-
 func (rule *unicodeBomRule) fix(diagnostic *ast.Diagnostic, start, end int, replacement string) {
 	if rule.context.NewTracker == nil {
 		return
@@ -56,5 +56,3 @@ func (rule *unicodeBomRule) option(index int, fallback string) string {
 	}
 	return fallback
 }
-
-func newUnicodeBom(context Context) Rule { return &unicodeBomRule{context: context} }

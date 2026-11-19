@@ -15,11 +15,13 @@ type typeScriptPreferStringStartsEndsWith struct {
 }
 
 func newTypeScriptPreferStringStartsEndsWith(context Context) Rule {
-	return &typeScriptPreferStringStartsEndsWith{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
-}
+	rule := &typeScriptPreferStringStartsEndsWith{context: context, suggestions: make(map[*ast.Diagnostic][]*codefix.CodeFixAction)}
 
-func (rule *typeScriptPreferStringStartsEndsWith) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression, ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferStringStartsEndsWith) OnEnterNode(node *ast.Node) bool {
@@ -29,7 +31,9 @@ func (rule *typeScriptPreferStringStartsEndsWith) OnEnterNode(node *ast.Node) bo
 	return true
 }
 
-func (rule *typeScriptPreferStringStartsEndsWith) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferStringStartsEndsWith) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferStringStartsEndsWith) action(diagnostic *ast.Diagnostic, description *ast.Diagnostic, suggestion bool, edits ...helpers.SemanticExpressionEdit) {
 	if rule.context.NewTracker == nil {

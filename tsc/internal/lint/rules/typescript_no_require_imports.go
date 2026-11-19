@@ -10,12 +10,20 @@ type typescriptNoRequireImportsRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoRequireImports(context Context) Rule {
+	rule := &typescriptNoRequireImportsRule{Context: context, Name: "no-require-imports"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression, ast.KindExternalModuleReference},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoRequireImportsRule) OnEnterNode(node *ast.Node) bool {
 	rule.requireImports(node)
 	return true
 }
-
-func (rule *typescriptNoRequireImportsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoRequireImportsRule) requireImports(node *ast.Node) {
 	var path *ast.Node
@@ -47,8 +55,4 @@ func (rule *typescriptNoRequireImportsRule) requireImports(node *ast.Node) {
 		}
 	}
 	rule.Context.Report(rule.Context.Range(node), diagnostics.A_require_style_import_is_forbidden)
-}
-
-func newTypeScriptNoRequireImports(context Context) Rule {
-	return &typescriptNoRequireImportsRule{Context: context, Name: "no-require-imports"}
 }

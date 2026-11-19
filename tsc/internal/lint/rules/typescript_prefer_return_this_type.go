@@ -13,6 +13,16 @@ type typescriptPreferReturnThisTypeRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptPreferReturnThisType(context Context) Rule {
+	rule := &typescriptPreferReturnThisTypeRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindPropertyDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPreferReturnThisTypeRule) OnEnterNode(node *ast.Node) bool {
 	var function, class *ast.Node
 	if node.Parent != nil && ast.IsClassLike(node.Parent) {
@@ -80,8 +90,6 @@ func (rule *typescriptPreferReturnThisTypeRule) OnEnterNode(node *ast.Node) bool
 	return true
 }
 
-func (rule *typescriptPreferReturnThisTypeRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyClassReference(annotation *ast.Node, name string) *ast.Node {
 	if annotation.Kind == ast.KindTypeReference {
 		typeName := annotation.AsTypeReferenceNode().TypeName
@@ -97,8 +105,4 @@ func typeSafetyClassReference(annotation *ast.Node, name string) *ast.Node {
 		}
 	}
 	return nil
-}
-
-func newTypeScriptPreferReturnThisType(context Context) Rule {
-	return &typescriptPreferReturnThisTypeRule{context: context}
 }

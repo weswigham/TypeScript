@@ -14,6 +14,35 @@ type typescriptStrictVoidReturnRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptStrictVoidReturn(context Context) Rule {
+	rule := &typescriptStrictVoidReturnRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindArrayLiteralExpression,
+			ast.KindArrowFunction,
+			ast.KindBinaryExpression,
+			ast.KindCallExpression,
+			ast.KindNewExpression,
+			ast.KindReturnStatement,
+			ast.KindVariableDeclaration,
+			ast.KindJsxAttribute,
+			ast.KindObjectLiteralExpression,
+			ast.KindPropertyDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptStrictVoidReturnRule) OnEnterNode(node *ast.Node) bool {
+	rule.strictVoid(node)
+	return true
+}
+
 func (rule *typescriptStrictVoidReturnRule) voidFunctionType(value *checker.Type) bool {
 	signatures := helpers.SemanticCallSignatures(rule.context,
 
@@ -325,15 +354,4 @@ func (rule *typescriptStrictVoidReturnRule) suggest(diagnostic *ast.Diagnostic, 
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[diagnostic] = append(rule.suggestions[diagnostic], rule.action(message, edits...))
-}
-
-func (rule *typescriptStrictVoidReturnRule) OnEnterNode(node *ast.Node) bool {
-	rule.strictVoid(node)
-	return true
-}
-
-func (rule *typescriptStrictVoidReturnRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptStrictVoidReturn(context Context) Rule {
-	return &typescriptStrictVoidReturnRule{context: context}
 }

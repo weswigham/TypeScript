@@ -14,6 +14,15 @@ type capitalizedCommentsRule struct {
 	context Context
 }
 
+func newCapitalizedComments(context Context) Rule {
+	rule := &capitalizedCommentsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *capitalizedCommentsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return true
@@ -75,11 +84,4 @@ func (rule *capitalizedCommentsRule) OnEnterNode(node *ast.Node) bool {
 
 	}
 	return true
-}
-
-func (rule *capitalizedCommentsRule) OnExitNode(node *ast.Node) {
-}
-
-func newCapitalizedComments(context Context) Rule {
-	return &capitalizedCommentsRule{context: context}
 }

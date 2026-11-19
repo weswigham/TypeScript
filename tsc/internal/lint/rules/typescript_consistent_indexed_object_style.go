@@ -12,12 +12,20 @@ type typescriptConsistentIndexedObjectStyleRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptConsistentIndexedObjectStyle(context Context) Rule {
+	rule := &typescriptConsistentIndexedObjectStyleRule{Context: context, Name: "consistent-indexed-object-style"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindTypeReference, ast.KindMappedType, ast.KindTypeLiteral, ast.KindInterfaceDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptConsistentIndexedObjectStyleRule) OnEnterNode(node *ast.Node) bool {
 	rule.indexedObject(node)
 	return true
 }
-
-func (rule *typescriptConsistentIndexedObjectStyleRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptConsistentIndexedObjectStyleRule) deeplyReferences(node *ast.Node, binding *helpers.TsScopeBinding, seen map[*ast.Node]bool) bool {
 	if node == nil || seen[node] {
@@ -161,8 +169,4 @@ func (rule *typescriptConsistentIndexedObjectStyleRule) indexedObject(node *ast.
 		suggestion = ast.NewCompilerDiagnostic(diagnostics.Change_into_a_record_instead_of_an_index_signature)
 	}
 	rule.Replace(diagnostic, node, prefix+replacement+suffix, suggestion)
-}
-
-func newTypeScriptConsistentIndexedObjectStyle(context Context) Rule {
-	return &typescriptConsistentIndexedObjectStyleRule{Context: context, Name: "consistent-indexed-object-style"}
 }

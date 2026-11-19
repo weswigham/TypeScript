@@ -9,15 +9,18 @@ import (
 type noFuncAssignRule struct{ context Context }
 
 func newNoFuncAssignRule(context Context) Rule {
-	return &noFuncAssignRule{context: context}
+	rule := &noFuncAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *noFuncAssignRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkBindingWrite(node)
 	return true
 }
-
-func (rule *noFuncAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noFuncAssignRule) checkBindingWrite(node *ast.Node) {
 	if !helpers.SharedBindingReference(node) {

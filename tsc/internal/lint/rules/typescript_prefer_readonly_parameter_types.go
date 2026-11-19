@@ -18,11 +18,28 @@ type typeScriptPreferReadonlyParameterTypes struct {
 }
 
 func newTypeScriptPreferReadonlyParameterTypes(context Context) Rule {
-	return &typeScriptPreferReadonlyParameterTypes{context: context}
-}
+	rule := &typeScriptPreferReadonlyParameterTypes{context: context}
 
-func (rule *typeScriptPreferReadonlyParameterTypes) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptPreferReadonlyParameterTypes) OnEnterNode(node *ast.Node) bool {
@@ -30,7 +47,9 @@ func (rule *typeScriptPreferReadonlyParameterTypes) OnEnterNode(node *ast.Node) 
 	return true
 }
 
-func (rule *typeScriptPreferReadonlyParameterTypes) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptPreferReadonlyParameterTypes) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptPreferReadonlyParameterTypes) parameters(node *ast.Node) {
 	if !ast.IsFunctionLike(node) {

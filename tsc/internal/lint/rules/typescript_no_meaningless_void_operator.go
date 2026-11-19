@@ -15,6 +15,23 @@ type typescriptNoMeaninglessVoidOperatorRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoMeaninglessVoidOperator(context Context) Rule {
+	rule := &typescriptNoMeaninglessVoidOperatorRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindVoidExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNoMeaninglessVoidOperatorRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindVoidExpression {
+		rule.meaninglessVoid(node)
+	}
+	return true
+}
+
 func (rule *typescriptNoMeaninglessVoidOperatorRule) meaninglessVoid(node *ast.Node) {
 	inner := typeSafetyVoidArgument(node.Expression())
 	typeChecker := rule.context.GetChecker()
@@ -60,15 +77,6 @@ func (rule *typescriptNoMeaninglessVoidOperatorRule) meaninglessVoid(node *ast.N
 	}
 }
 
-func (rule *typescriptNoMeaninglessVoidOperatorRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindVoidExpression {
-		rule.meaninglessVoid(node)
-	}
-	return true
-}
-
-func (rule *typescriptNoMeaninglessVoidOperatorRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyVoidArgument(node *ast.Node) *ast.Node {
 	for {
 		node = ast.SkipParentheses(node)
@@ -84,8 +92,4 @@ func typeSafetyVoidArgument(node *ast.Node) *ast.Node {
 			return node
 		}
 	}
-}
-
-func newTypeScriptNoMeaninglessVoidOperator(context Context) Rule {
-	return &typescriptNoMeaninglessVoidOperatorRule{context: context}
 }

@@ -19,13 +19,20 @@ type logicalAssignmentOperatorsRule struct {
 	model       *helpers.TsScopeModel
 }
 
+func newLogicalAssignmentOperators(context Context) Rule {
+	rule := &logicalAssignmentOperatorsRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression, ast.KindIfStatement},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *logicalAssignmentOperatorsRule) OnEnterNode(node *ast.Node) bool {
 	rule.logicalAssignment(node)
 
 	return true
-}
-
-func (rule *logicalAssignmentOperatorsRule) OnExitNode(node *ast.Node) {
 }
 
 func (rule *logicalAssignmentOperatorsRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
@@ -377,8 +384,4 @@ func styleSame(left, right *ast.Node) bool {
 		return left.Kind == ast.KindElementAccessExpression && right.Kind == ast.KindElementAccessExpression && styleSame(left.AsElementAccessExpression().ArgumentExpression, right.AsElementAccessExpression().ArgumentExpression)
 	}
 	return helpers.SameStaticReference(left, right)
-}
-
-func newLogicalAssignmentOperators(context Context) Rule {
-	return &logicalAssignmentOperatorsRule{context: context}
 }

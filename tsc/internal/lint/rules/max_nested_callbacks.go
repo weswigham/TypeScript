@@ -10,6 +10,15 @@ type maxNestedCallbacksRule struct {
 	context Context
 }
 
+func newMaxNestedCallbacks(context Context) Rule {
+	rule := &maxNestedCallbacksRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindFunctionExpression, ast.KindArrowFunction},
+	}
+}
+
 func (rule *maxNestedCallbacksRule) OnEnterNode(node *ast.Node) bool {
 	constructors := helpers.BooleanOptionValue(helpers.SyntaxObject(rule.context, 0), "checkConstructorCallCallbacks", false)
 	if !maxNestedCallbacksCallback(node, constructors) {
@@ -27,9 +36,6 @@ func (rule *maxNestedCallbacksRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *maxNestedCallbacksRule) OnExitNode(node *ast.Node) {
-}
-
 func maxNestedCallbacksCallback(node *ast.Node, constructors bool) bool {
 	if node.Kind != ast.KindFunctionExpression && node.Kind != ast.KindArrowFunction {
 		return false
@@ -40,8 +46,4 @@ func maxNestedCallbacksCallback(node *ast.Node, constructors bool) bool {
 	}
 	parent := expression.Parent
 	return parent != nil && (parent.Kind == ast.KindCallExpression || constructors && parent.Kind == ast.KindNewExpression) && parent.Expression() != expression
-}
-
-func newMaxNestedCallbacks(context Context) Rule {
-	return &maxNestedCallbacksRule{context: context}
 }

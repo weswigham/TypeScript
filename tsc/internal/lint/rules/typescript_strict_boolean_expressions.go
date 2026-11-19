@@ -18,6 +18,53 @@ type typescriptStrictBooleanExpressionsRule struct {
 	checked     map[*ast.Node]bool
 }
 
+func newTypeScriptStrictBooleanExpressions(context Context) Rule {
+	rule := &typescriptStrictBooleanExpressionsRule{context: context, checked: map[*ast.Node]bool{}}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindSourceFile,
+			ast.KindIfStatement,
+			ast.KindConditionalExpression,
+			ast.KindWhileStatement,
+			ast.KindDoStatement,
+			ast.KindForStatement,
+			ast.KindPrefixUnaryExpression,
+			ast.KindBinaryExpression,
+			ast.KindCallExpression,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptStrictBooleanExpressionsRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindSourceFile {
+		helpers.SemanticRequireStrictNullChecks(rule.context)
+	}
+	if test, _ := helpers.SemanticConditionTest(node); test != nil {
+		rule.check(test, true)
+	}
+	if helpers.SemanticNegation(node) {
+		rule.check(node.AsPrefixUnaryExpression().Operand, true)
+	}
+	if node.Kind == ast.KindBinaryExpression {
+		operator := node.AsBinaryExpression().OperatorToken.Kind
+		if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
+			rule.check(node, false)
+		}
+	}
+	if node.Kind == ast.KindCallExpression {
+		if argument, predicate := helpers.SemanticAssertionArgument(rule.context, node); argument != nil && predicate.Kind() == checker.TypePredicateKindAssertsIdentifier && predicate.Type() == nil {
+			rule.check(argument, true)
+		}
+		if callback := helpers.SemanticPredicateCallback(rule.context, node); callback != nil {
+			rule.callback(callback)
+		}
+	}
+	return true
+}
+
 func (rule *typescriptStrictBooleanExpressionsRule) classify(values []*checker.Type) string {
 	variants := map[string]bool{}
 	booleanCount, trueBoolean := 0, false
@@ -279,33 +326,6 @@ func (rule *typescriptStrictBooleanExpressionsRule) check(node *ast.Node, condit
 	rule.conditionSuggestions(report, node, kind)
 }
 
-func (rule *typescriptStrictBooleanExpressionsRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindSourceFile {
-		helpers.SemanticRequireStrictNullChecks(rule.context)
-	}
-	if test, _ := helpers.SemanticConditionTest(node); test != nil {
-		rule.check(test, true)
-	}
-	if helpers.SemanticNegation(node) {
-		rule.check(node.AsPrefixUnaryExpression().Operand, true)
-	}
-	if node.Kind == ast.KindBinaryExpression {
-		operator := node.AsBinaryExpression().OperatorToken.Kind
-		if operator == ast.KindAmpersandAmpersandToken || operator == ast.KindBarBarToken {
-			rule.check(node, false)
-		}
-	}
-	if node.Kind == ast.KindCallExpression {
-		if argument, predicate := helpers.SemanticAssertionArgument(rule.context, node); argument != nil && predicate.Kind() == checker.TypePredicateKindAssertsIdentifier && predicate.Type() == nil {
-			rule.check(argument, true)
-		}
-		if callback := helpers.SemanticPredicateCallback(rule.context, node); callback != nil {
-			rule.callback(callback)
-		}
-	}
-	return true
-}
-
 func (rule *typescriptStrictBooleanExpressionsRule) callback(callback *ast.Node) {
 	inline := callback.Kind == ast.KindArrowFunction || callback.Kind == ast.KindFunctionExpression
 	if inline && ast.HasSyntacticModifier(callback, ast.ModifierFlagsAsync) {
@@ -355,8 +375,6 @@ func (rule *typescriptStrictBooleanExpressionsRule) callback(callback *ast.Node)
 	rule.suggest(report, callback, prefix+helpers.SemanticSourceText(rule.context, callback.Body()), diagnostics.Add_an_explicit_boolean_return_type_annotation)
 }
 
-func (rule *typescriptStrictBooleanExpressionsRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptStrictBooleanExpressionsRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
@@ -368,8 +386,4 @@ func (rule *typescriptStrictBooleanExpressionsRule) suggest(report *ast.Diagnost
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[report] = append(rule.suggestions[report], codefix.CreateCodeFixAction("@typescript-eslint/strict-boolean-expressions", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(message, args...), "", nil))
-}
-
-func newTypeScriptStrictBooleanExpressions(context Context) Rule {
-	return &typescriptStrictBooleanExpressionsRule{context: context, checked: map[*ast.Node]bool{}}
 }

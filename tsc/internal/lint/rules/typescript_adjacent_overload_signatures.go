@@ -6,11 +6,66 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var tsAdjacentSignature = diagnostics.All_0_signatures_should_be_adjacent
-
 type typescriptAdjacentOverloadSignaturesRule struct {
 	context Context
 }
+
+func newTypeScriptAdjacentOverloadSignatures(context Context) Rule {
+	rule := &typescriptAdjacentOverloadSignaturesRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindBlock,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindInterfaceDeclaration,
+			ast.KindModuleBlock,
+			ast.KindSourceFile,
+			ast.KindTypeLiteral,
+		},
+	}
+}
+
+func (rule *typescriptAdjacentOverloadSignaturesRule) OnEnterNode(node *ast.Node) bool {
+	var members []*ast.Node
+	switch node.Kind {
+	case ast.KindSourceFile, ast.KindBlock, ast.KindModuleBlock:
+		if node.Kind == ast.KindBlock && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
+			return true
+		}
+		members = node.Statements()
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
+		members = node.Members()
+	default:
+		return true
+	}
+	seen := make(map[tsOverloadName]bool)
+	var previous tsOverloadName
+	previousIsMethod := false
+	for _, member := range members {
+		if member.Kind == ast.KindSemicolonClassElement {
+			continue
+		}
+		method, ok := rule.memberName(member)
+		if !ok {
+			previousIsMethod = false
+			continue
+		}
+		if seen[method] && (!previousIsMethod || previous != method) {
+			name := method.name
+			if method.static {
+				name = "static " + name
+			}
+			rule.context.Report(rule.context.Range(member), tsAdjacentSignature, name)
+		}
+		seen[method] = true
+		previous, previousIsMethod = method, true
+	}
+	return true
+}
+
+var tsAdjacentSignature = diagnostics.All_0_signatures_should_be_adjacent
 
 type tsOverloadName struct {
 	name      string
@@ -65,48 +120,4 @@ func (rule *typescriptAdjacentOverloadSignaturesRule) memberName(node *ast.Node)
 		method.name = "\"" + method.name + "\""
 	}
 	return method, true
-}
-
-func (rule *typescriptAdjacentOverloadSignaturesRule) OnEnterNode(node *ast.Node) bool {
-	var members []*ast.Node
-	switch node.Kind {
-	case ast.KindSourceFile, ast.KindBlock, ast.KindModuleBlock:
-		if node.Kind == ast.KindBlock && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
-			return true
-		}
-		members = node.Statements()
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
-		members = node.Members()
-	default:
-		return true
-	}
-	seen := make(map[tsOverloadName]bool)
-	var previous tsOverloadName
-	previousIsMethod := false
-	for _, member := range members {
-		if member.Kind == ast.KindSemicolonClassElement {
-			continue
-		}
-		method, ok := rule.memberName(member)
-		if !ok {
-			previousIsMethod = false
-			continue
-		}
-		if seen[method] && (!previousIsMethod || previous != method) {
-			name := method.name
-			if method.static {
-				name = "static " + name
-			}
-			rule.context.Report(rule.context.Range(member), tsAdjacentSignature, name)
-		}
-		seen[method] = true
-		previous, previousIsMethod = method, true
-	}
-	return true
-}
-
-func (rule *typescriptAdjacentOverloadSignaturesRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptAdjacentOverloadSignatures(context Context) Rule {
-	return &typescriptAdjacentOverloadSignaturesRule{context: context}
 }

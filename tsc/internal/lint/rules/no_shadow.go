@@ -16,7 +16,43 @@ type noShadowRule struct {
 }
 
 func newNoShadowRule(context Context) Rule {
-	return &noShadowRule{LexicalScopeAnalysis: helpers.NewLexicalScopeAnalysis(context)}
+	rule := &noShadowRule{LexicalScopeAnalysis: helpers.NewLexicalScopeAnalysis(context)}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		Exit:  rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindSourceFile,
+			ast.KindBlock,
+			ast.KindModuleDeclaration,
+			ast.KindForStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+			ast.KindCatchClause,
+			ast.KindCaseBlock,
+			ast.KindTypeAliasDeclaration,
+			ast.KindInterfaceDeclaration,
+			ast.KindMappedType,
+			ast.KindEnumDeclaration,
+			ast.KindClassStaticBlockDeclaration,
+		},
+	}
 }
 
 func (rule *noShadowRule) OnEnterNode(node *ast.Node) bool {

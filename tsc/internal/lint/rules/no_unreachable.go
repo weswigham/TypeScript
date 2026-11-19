@@ -10,15 +10,40 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUnreachableConstructor struct {
-	hasSuperCall bool
-}
-
 type noUnreachable struct {
 	helpers.SharedControlFlowContext
 	states       map[*ast.Node]uint8
 	constructors []*noUnreachableConstructor
 	fields       []*ast.Node
+}
+
+func newNoUnreachable(context Context) Rule {
+	rule := &noUnreachable{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+			ast.KindCallExpression,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindConstructor, ast.KindSourceFile},
+	}
 }
 
 func (rule *noUnreachable) OnEnterNode(node *ast.Node) bool {
@@ -64,6 +89,10 @@ func (rule *noUnreachable) OnExitNode(node *ast.Node) {
 		return
 	}
 	rule.unreachable()
+}
+
+type noUnreachableConstructor struct {
+	hasSuperCall bool
 }
 
 func controlFlowUnreachableStatement(node *ast.Node) bool {
@@ -137,8 +166,4 @@ func (rule *noUnreachable) unreachable() {
 		end = node.End()
 	}
 	flush()
-}
-
-func newNoUnreachable(context Context) Rule {
-	return &noUnreachable{Context: context}
 }

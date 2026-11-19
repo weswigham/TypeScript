@@ -10,12 +10,19 @@ type typescriptInitDeclarationsRule struct {
 	context Context
 }
 
+func newTypeScriptInitDeclarations(context Context) Rule {
+	rule := &typescriptInitDeclarationsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration},
+	}
+}
+
 func (rule *typescriptInitDeclarationsRule) OnEnterNode(node *ast.Node) bool {
 	rule.initialization(node)
 	return true
 }
-
-func (rule *typescriptInitDeclarationsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptInitDeclarationsRule) initialization(node *ast.Node) {
 	if node.Kind != ast.KindVariableDeclaration || node.Parent.Kind != ast.KindVariableDeclarationList || node.Name().Kind != ast.KindIdentifier {
@@ -48,8 +55,4 @@ func (rule *typescriptInitDeclarationsRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptInitDeclarations(context Context) Rule {
-	return &typescriptInitDeclarationsRule{context: context}
 }

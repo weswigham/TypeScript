@@ -16,6 +16,21 @@ type typescriptAwaitThenableRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptAwaitThenable(context Context) Rule {
+	rule := &typescriptAwaitThenableRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindAwaitExpression, ast.KindForOfStatement, ast.KindVariableDeclarationList, ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptAwaitThenableRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkAwaitThenable(node)
+	return true
+}
+
 func (rule *typescriptAwaitThenableRule) iterableValues(value *checker.Type) []*checker.Type {
 	typeChecker := rule.context.GetChecker()
 	if checker.IsTupleType(value) {
@@ -144,15 +159,4 @@ func (rule *typescriptAwaitThenableRule) action(diagnostic *ast.Diagnostic, desc
 
 func (rule *typescriptAwaitThenableRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
-}
-
-func (rule *typescriptAwaitThenableRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkAwaitThenable(node)
-	return true
-}
-
-func (rule *typescriptAwaitThenableRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptAwaitThenable(context Context) Rule {
-	return &typescriptAwaitThenableRule{context: context}
 }

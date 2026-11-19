@@ -9,6 +9,15 @@ type noNestedTernary struct {
 	context Context
 }
 
+func newNoNestedTernary(context Context) Rule {
+	rule := &noNestedTernary{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindConditionalExpression},
+	}
+}
+
 func (rule *noNestedTernary) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindConditionalExpression {
 		expression := node.AsConditionalExpression()
@@ -18,7 +27,3 @@ func (rule *noNestedTernary) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noNestedTernary) OnExitNode(node *ast.Node) {}
-
-func newNoNestedTernary(context Context) Rule { return &noNestedTernary{context: context} }

@@ -6,6 +6,30 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noConstantCondition struct {
+	helpers.SharedControlFlowContext
+}
+
+func newNoConstantCondition(context Context) Rule {
+	rule := &noConstantCondition{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindIfStatement,
+			ast.KindConditionalExpression,
+			ast.KindWhileStatement,
+			ast.KindDoStatement,
+			ast.KindForStatement,
+		},
+	}
+}
+
+func (rule *noConstantCondition) OnEnterNode(node *ast.Node) bool {
+	rule.constantCondition(node)
+	return true
+}
+
 func controlFlowContainsYield(root *ast.Node) bool {
 	var visit func(*ast.Node) bool
 	visit = func(node *ast.Node) bool {
@@ -20,17 +44,6 @@ func controlFlowContainsYield(root *ast.Node) bool {
 	}
 	return visit(root)
 }
-
-type noConstantCondition struct {
-	helpers.SharedControlFlowContext
-}
-
-func (rule *noConstantCondition) OnEnterNode(node *ast.Node) bool {
-	rule.constantCondition(node)
-	return true
-}
-
-func (rule *noConstantCondition) OnExitNode(node *ast.Node) {}
 
 func (rule *noConstantCondition) constantCondition(node *ast.Node) {
 	var condition *ast.Node
@@ -55,8 +68,4 @@ func (rule *noConstantCondition) constantCondition(node *ast.Node) {
 	if condition != nil && (&noConstantBinaryExpression{context: rule.Context}).isConstant(condition, true) {
 		rule.ReportOnce(condition, diagnostics.Unexpected_constant_condition)
 	}
-}
-
-func newNoConstantCondition(context Context) Rule {
-	return &noConstantCondition{Context: context}
 }

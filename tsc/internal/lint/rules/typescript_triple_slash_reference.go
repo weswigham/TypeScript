@@ -15,12 +15,19 @@ type typescriptTripleSlashReferenceRule struct {
 	references []typescriptTripleSlashReference
 }
 
+func newTypeScriptTripleSlashReference(context Context) Rule {
+	rule := &typescriptTripleSlashReferenceRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile, ast.KindImportDeclaration, ast.KindImportEqualsDeclaration},
+	}
+}
+
 func (rule *typescriptTripleSlashReferenceRule) OnEnterNode(node *ast.Node) bool {
 	rule.tripleSlash(node)
 	return true
 }
-
-func (rule *typescriptTripleSlashReferenceRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptTripleSlashReferenceRule) tripleSlash(node *ast.Node) {
 	if node.Kind == ast.KindSourceFile {
@@ -86,7 +93,3 @@ type typescriptTripleSlashReference struct {
 }
 
 var typescriptTripleSlashReferencePattern = regexp.MustCompile(`^/[\t\n\v\f\r \x{00a0}\x{1680}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}\x{feff}]*<reference\s*(types|path|lib)\s*=\s*["|'](.*)["|']`)
-
-func newTypeScriptTripleSlashReference(context Context) Rule {
-	return &typescriptTripleSlashReferenceRule{context: context}
-}

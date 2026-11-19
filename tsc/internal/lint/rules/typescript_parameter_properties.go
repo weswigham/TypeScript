@@ -13,6 +13,17 @@ type typescriptParameterPropertiesRule struct {
 	context Context
 }
 
+func newTypeScriptParameterProperties(context Context) Rule {
+	rule := &typescriptParameterPropertiesRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindParameter},
+		Exit:       rule.OnExitNode,
+		ExitKinds:  []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+	}
+}
+
 func (rule *typescriptParameterPropertiesRule) OnEnterNode(node *ast.Node) bool {
 	rule.parameterProperty(node)
 	return true
@@ -117,8 +128,4 @@ func typescriptParameterPropertiesModifiers(node *ast.Node) string {
 		modifiers = append(modifiers, "readonly")
 	}
 	return strings.Join(modifiers, " ")
-}
-
-func newTypeScriptParameterProperties(context Context) Rule {
-	return &typescriptParameterPropertiesRule{context: context}
 }

@@ -19,6 +19,70 @@ type typescriptNoUnnecessaryConditionRule struct {
 	suggestions map[*ast.Diagnostic][]*codefix.CodeFixAction
 }
 
+func newTypeScriptNoUnnecessaryCondition(context Context) Rule {
+	rule := &typescriptNoUnnecessaryConditionRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindSourceFile,
+			ast.KindIfStatement,
+			ast.KindConditionalExpression,
+			ast.KindWhileStatement,
+			ast.KindDoStatement,
+			ast.KindForStatement,
+			ast.KindBinaryExpression,
+			ast.KindCallExpression,
+			ast.KindPropertyAccessExpression,
+			ast.KindElementAccessExpression,
+			ast.KindCaseClause,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptNoUnnecessaryConditionRule) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindSourceFile {
+		helpers.SemanticRequireStrictNullChecks(rule.context)
+	}
+	if test, loop := helpers.SemanticConditionTest(node); test != nil {
+		allowed := helpers.SemanticRuleOptions(rule.context.Options)["allowConstantLoopConditions"]
+		skip := false
+		if loop && (allowed == true || allowed == "always") {
+			skip = helpers.SemanticTypeAtLocation(rule.context, test).Flags()&checker.TypeFlagsBooleanLiteral != 0 && helpers.SemanticTruthyLiteral(helpers.SemanticTypeAtLocation(rule.context, test))
+		}
+		if loop && allowed == "only-allowed-literals" {
+			literal := ast.SkipParentheses(test)
+			skip = literal.Kind == ast.KindTrueKeyword || literal.Kind == ast.KindFalseKeyword || literal.Kind == ast.KindNumericLiteral && (literal.Text() == "1" || literal.Text() == "0")
+		}
+		if !skip {
+			rule.check(test)
+		}
+	}
+	if node.Kind == ast.KindBinaryExpression {
+		binary := node.AsBinaryExpression()
+		switch binary.OperatorToken.Kind {
+		case ast.KindQuestionQuestionToken, ast.KindQuestionQuestionEqualsToken:
+			rule.nullish(binary.Left)
+		case ast.KindAmpersandAmpersandToken, ast.KindBarBarToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken:
+			rule.check(binary.Left)
+		case ast.KindEqualsEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindExclamationEqualsEqualsToken, ast.KindLessThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanToken, ast.KindGreaterThanEqualsToken:
+			rule.comparison(node, binary.Left, binary.Right, binary.OperatorToken.Kind)
+		}
+	}
+	if node.Kind == ast.KindCallExpression {
+		rule.call(node)
+		rule.optional(node)
+	}
+	if node.Kind == ast.KindPropertyAccessExpression || node.Kind == ast.KindElementAccessExpression {
+		rule.optional(node)
+	}
+	if node.Kind == ast.KindCaseClause {
+		rule.comparison(node.AsCaseOrDefaultClause().Expression, node.Parent.Parent.AsSwitchStatement().Expression, node.AsCaseOrDefaultClause().Expression, ast.KindEqualsEqualsEqualsToken)
+	}
+	return true
+}
+
 func (rule *typescriptNoUnnecessaryConditionRule) arrayIndex(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	if node.Kind != ast.KindElementAccessExpression {
@@ -432,50 +496,6 @@ func (rule *typescriptNoUnnecessaryConditionRule) call(node *ast.Node) {
 	}
 }
 
-func (rule *typescriptNoUnnecessaryConditionRule) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindSourceFile {
-		helpers.SemanticRequireStrictNullChecks(rule.context)
-	}
-	if test, loop := helpers.SemanticConditionTest(node); test != nil {
-		allowed := helpers.SemanticRuleOptions(rule.context.Options)["allowConstantLoopConditions"]
-		skip := false
-		if loop && (allowed == true || allowed == "always") {
-			skip = helpers.SemanticTypeAtLocation(rule.context, test).Flags()&checker.TypeFlagsBooleanLiteral != 0 && helpers.SemanticTruthyLiteral(helpers.SemanticTypeAtLocation(rule.context, test))
-		}
-		if loop && allowed == "only-allowed-literals" {
-			literal := ast.SkipParentheses(test)
-			skip = literal.Kind == ast.KindTrueKeyword || literal.Kind == ast.KindFalseKeyword || literal.Kind == ast.KindNumericLiteral && (literal.Text() == "1" || literal.Text() == "0")
-		}
-		if !skip {
-			rule.check(test)
-		}
-	}
-	if node.Kind == ast.KindBinaryExpression {
-		binary := node.AsBinaryExpression()
-		switch binary.OperatorToken.Kind {
-		case ast.KindQuestionQuestionToken, ast.KindQuestionQuestionEqualsToken:
-			rule.nullish(binary.Left)
-		case ast.KindAmpersandAmpersandToken, ast.KindBarBarToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken:
-			rule.check(binary.Left)
-		case ast.KindEqualsEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindExclamationEqualsEqualsToken, ast.KindLessThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanToken, ast.KindGreaterThanEqualsToken:
-			rule.comparison(node, binary.Left, binary.Right, binary.OperatorToken.Kind)
-		}
-	}
-	if node.Kind == ast.KindCallExpression {
-		rule.call(node)
-		rule.optional(node)
-	}
-	if node.Kind == ast.KindPropertyAccessExpression || node.Kind == ast.KindElementAccessExpression {
-		rule.optional(node)
-	}
-	if node.Kind == ast.KindCaseClause {
-		rule.comparison(node.AsCaseOrDefaultClause().Expression, node.Parent.Parent.AsSwitchStatement().Expression, node.AsCaseOrDefaultClause().Expression, ast.KindEqualsEqualsEqualsToken)
-	}
-	return true
-}
-
-func (rule *typescriptNoUnnecessaryConditionRule) OnExitNode(node *ast.Node) {}
-
 func (rule *typescriptNoUnnecessaryConditionRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
@@ -487,8 +507,4 @@ func (rule *typescriptNoUnnecessaryConditionRule) suggest(report *ast.Diagnostic
 		rule.suggestions = make(map[*ast.Diagnostic][]*codefix.CodeFixAction)
 	}
 	rule.suggestions[report] = append(rule.suggestions[report], codefix.CreateCodeFixAction("@typescript-eslint/no-unnecessary-condition", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(message, args...), "", nil))
-}
-
-func newTypeScriptNoUnnecessaryCondition(context Context) Rule {
-	return &typescriptNoUnnecessaryConditionRule{context: context}
 }

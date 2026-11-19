@@ -12,15 +12,19 @@ type noExtraBooleanCast struct {
 	context Context
 }
 
-func newNoExtraBooleanCast(context Context) Rule { return &noExtraBooleanCast{context: context} }
+func newNoExtraBooleanCast(context Context) Rule {
+	rule := &noExtraBooleanCast{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPrefixUnaryExpression, ast.KindCallExpression},
+	}
+}
 
 func (rule *noExtraBooleanCast) OnEnterNode(node *ast.Node) bool {
 	rule.booleanCast(node)
 
 	return true
-}
-
-func (rule *noExtraBooleanCast) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noExtraBooleanCast) Options() map[string]any {

@@ -17,13 +17,20 @@ type idDenylistRule struct {
 	globals map[string]string
 }
 
+func newIdDenylist(context Context) Rule {
+	rule := &idDenylistRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier, ast.KindPrivateIdentifier},
+	}
+}
+
 func (rule *idDenylistRule) OnEnterNode(node *ast.Node) bool {
 	rule.identifier(node)
 
 	return true
 }
-
-func (rule *idDenylistRule) OnExitNode(node *ast.Node) {}
 
 func (rule *idDenylistRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -146,5 +153,3 @@ func (rule *idDenylistRule) knownGlobal(name string) bool {
 	}
 	return slices.Contains(helpers.BindingBuiltins, name)
 }
-
-func newIdDenylist(context Context) Rule { return &idDenylistRule{context: context} }

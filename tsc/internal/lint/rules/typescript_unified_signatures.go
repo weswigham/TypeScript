@@ -16,6 +16,24 @@ type typescriptUnifiedSignaturesRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptUnifiedSignatures(context Context) Rule {
+	rule := &typescriptUnifiedSignaturesRule{context: context}
+
+	return Rule{
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindClassDeclaration,
+			ast.KindInterfaceDeclaration,
+			ast.KindModuleBlock,
+			ast.KindSourceFile,
+			ast.KindTypeLiteral,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptUnifiedSignaturesRule) OnExitNode(node *ast.Node) { rule.unifiedSignatures(node) }
+
 func unifiedSignaturesSkipParens(node *ast.Node) *ast.Node {
 	for node != nil && node.Kind == ast.KindParenthesizedType {
 		node = node.AsParenthesizedTypeNode().Type
@@ -325,12 +343,4 @@ func (rule *typescriptUnifiedSignaturesRule) unifiedSignatures(node *ast.Node) {
 			}
 		}
 	}
-}
-
-func (rule *typescriptUnifiedSignaturesRule) OnEnterNode(node *ast.Node) bool { return true }
-
-func (rule *typescriptUnifiedSignaturesRule) OnExitNode(node *ast.Node) { rule.unifiedSignatures(node) }
-
-func newTypeScriptUnifiedSignatures(context Context) Rule {
-	return &typescriptUnifiedSignaturesRule{context: context}
 }

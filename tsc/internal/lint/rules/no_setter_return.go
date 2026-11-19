@@ -10,6 +10,15 @@ type noSetterReturn struct {
 	context Context
 }
 
+func newNoSetterReturn(context Context) Rule {
+	rule := &noSetterReturn{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindArrowFunction, ast.KindReturnStatement},
+	}
+}
+
 func (rule *noSetterReturn) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindReturnStatement && node.Expression() != nil {
 		for parent := node.Parent; parent != nil; parent = parent.Parent {
@@ -25,8 +34,6 @@ func (rule *noSetterReturn) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noSetterReturn) OnExitNode(node *ast.Node) {}
 
 func (rule *noSetterReturn) isSetter(node *ast.Node) bool {
 	if node.Kind == ast.KindSetAccessor {
@@ -72,5 +79,3 @@ func (rule *noSetterReturn) globalMethodArgument(node *ast.Node, object, method 
 	identifier := ast.SkipParentheses(callee.Expression())
 	return ok && name == method && identifier.Kind == ast.KindIdentifier && identifier.Text() == object && helpers.StatementBuiltin(rule.context, identifier, true)
 }
-
-func newNoSetterReturn(context Context) Rule { return &noSetterReturn{context: context} }

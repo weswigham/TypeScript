@@ -11,33 +11,16 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var tsPreferConstructor = diagnostics.The_generic_type_arguments_should_be_specified_as_part_of_the_constructor_type_arguments
-
-var tsPreferTypeAnnotation = diagnostics.The_generic_type_arguments_should_be_specified_as_part_of_the_type_annotation
-
 type typescriptConsistentGenericConstructorsRule struct {
 	context Context
 }
 
-func (rule *typescriptConsistentGenericConstructorsRule) isBuiltInArray(name *ast.Node) bool {
-	switch name.Text() {
-	case "Float32Array", "Float64Array", "Int16Array", "Int32Array", "Int8Array", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray":
-		symbol := rule.context.GetChecker().GetSymbolAtLocation(name)
-		for scope := name.Parent; scope != nil; scope = scope.Parent {
-			if scope.Locals().Get(name.Text()) != nil {
-				return false
-			}
-		}
-		if symbol != nil {
-			for _, declaration := range symbol.Declarations() {
-				if ast.GetSourceFileOfNode(declaration) == rule.context.File {
-					return false
-				}
-			}
-		}
-		return true
-	default:
-		return false
+func newTypeScriptConsistentGenericConstructors(context Context) Rule {
+	rule := &typescriptConsistentGenericConstructorsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindParameter, ast.KindPropertyDeclaration, ast.KindVariableDeclaration},
 	}
 }
 
@@ -131,6 +114,32 @@ func (rule *typescriptConsistentGenericConstructorsRule) OnEnterNode(node *ast.N
 	return true
 }
 
+var tsPreferConstructor = diagnostics.The_generic_type_arguments_should_be_specified_as_part_of_the_constructor_type_arguments
+
+var tsPreferTypeAnnotation = diagnostics.The_generic_type_arguments_should_be_specified_as_part_of_the_type_annotation
+
+func (rule *typescriptConsistentGenericConstructorsRule) isBuiltInArray(name *ast.Node) bool {
+	switch name.Text() {
+	case "Float32Array", "Float64Array", "Int16Array", "Int32Array", "Int8Array", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray":
+		symbol := rule.context.GetChecker().GetSymbolAtLocation(name)
+		for scope := name.Parent; scope != nil; scope = scope.Parent {
+			if scope.Locals().Get(name.Text()) != nil {
+				return false
+			}
+		}
+		if symbol != nil {
+			for _, declaration := range symbol.Declarations() {
+				if ast.GetSourceFileOfNode(declaration) == rule.context.File {
+					return false
+				}
+			}
+		}
+		return true
+	default:
+		return false
+	}
+}
+
 func (rule *typescriptConsistentGenericConstructorsRule) moveToAnnotation(node, rhs, callee *ast.Node) {
 	text := rule.context.File.Text()
 	tokenScanner := scanner.GetScannerForSourceFile(rule.context.File, rhs.Expression().End())
@@ -150,10 +159,4 @@ func (rule *typescriptConsistentGenericConstructorsRule) moveToAnnotation(node, 
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(position, position), ": "+callee.Text()+text[start:end])
 	const name = "@typescript-eslint/consistent-generic-constructors"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Move_generic_type_arguments_to_the_type_annotation), name, ast.NewCompilerDiagnostic(diagnostics.Move_generic_type_arguments_to_type_annotations)))
-}
-
-func (rule *typescriptConsistentGenericConstructorsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptConsistentGenericConstructors(context Context) Rule {
-	return &typescriptConsistentGenericConstructorsRule{context: context}
 }

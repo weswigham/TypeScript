@@ -11,15 +11,18 @@ import (
 type noRestrictedGlobalsRule struct{ context Context }
 
 func newNoRestrictedGlobalsRule(context Context) Rule {
-	return &noRestrictedGlobalsRule{context: context}
+	rule := &noRestrictedGlobalsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+	}
 }
 
 func (rule *noRestrictedGlobalsRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkRestrictedGlobal(node)
 	return true
 }
-
-func (rule *noRestrictedGlobalsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noRestrictedGlobalsRule) checkRestrictedGlobal(node *ast.Node) {
 	options := rule.context.Options

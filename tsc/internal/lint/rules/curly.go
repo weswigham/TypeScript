@@ -14,6 +14,22 @@ type curlyRule struct {
 	context Context
 }
 
+func newCurly(context Context) Rule {
+	rule := &curlyRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindDoStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+			ast.KindForStatement,
+			ast.KindIfStatement,
+			ast.KindWhileStatement,
+		},
+	}
+}
+
 func (rule *curlyRule) OnEnterNode(node *ast.Node) bool {
 	var checks []curlyBraceCheck
 	if node.Kind == ast.KindIfStatement {
@@ -89,9 +105,6 @@ func (rule *curlyRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *curlyRule) OnExitNode(node *ast.Node) {
-}
-
 type curlyBraceCheck struct {
 	body      *ast.Node
 	name      string
@@ -154,8 +167,4 @@ func curlyBracesNecessary(body *ast.Node) bool {
 		}
 	}
 	return false
-}
-
-func newCurly(context Context) Rule {
-	return &curlyRule{context: context}
 }

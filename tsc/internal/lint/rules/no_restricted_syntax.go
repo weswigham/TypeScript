@@ -9,17 +9,10 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/selectors"
 )
 
-type restrictedSyntaxSelector struct {
-	text, message string
-	selector      *selectors.Selector
-}
-
 type noRestrictedSyntax struct {
 	context   Context
 	selectors []restrictedSyntaxSelector
 }
-
-func (rule *noRestrictedSyntax) OnEnterNode(node *ast.Node) bool { return true }
 
 func newNoRestrictedSyntax(context Context) Rule {
 	rule := &noRestrictedSyntax{context: context}
@@ -45,7 +38,11 @@ func newNoRestrictedSyntax(context Context) Rule {
 			rule.selectors = append(rule.selectors, entry)
 		}
 	}
-	return rule
+
+	return Rule{
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
 }
 
 func (rule *noRestrictedSyntax) OnExitNode(node *ast.Node) {
@@ -72,4 +69,9 @@ func (rule *noRestrictedSyntax) OnExitNode(node *ast.Node) {
 		}
 	}
 	visit(root)
+}
+
+type restrictedSyntaxSelector struct {
+	text, message string
+	selector      *selectors.Selector
 }

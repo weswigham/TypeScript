@@ -12,8 +12,14 @@ type typescriptNoRedeclareRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
-func (rule *typescriptNoRedeclareRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptNoRedeclare(context Context) Rule {
+	rule := &typescriptNoRedeclareRule{Context: context, Name: "no-redeclare"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoRedeclareRule) OnExitNode(node *ast.Node) {
@@ -80,8 +86,4 @@ func (rule *typescriptNoRedeclareRule) redeclare(binding *helpers.TsScopeBinding
 			rule.Context.Report(rule.Context.Range(identifier), diagnostics.X_0_is_already_defined, binding.Name)
 		}
 	}
-}
-
-func newTypeScriptNoRedeclare(context Context) Rule {
-	return &typescriptNoRedeclareRule{Context: context, Name: "no-redeclare"}
 }

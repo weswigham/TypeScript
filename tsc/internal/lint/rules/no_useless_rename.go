@@ -9,30 +9,33 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUselessRenameCoreRule struct {
+type noUselessRenameRule struct {
 	context             Context
 	ignoreDestructuring bool
 	ignoreImport        bool
 	ignoreExport        bool
 }
 
-func newNoUselessRenameCoreRule(context Context) *noUselessRenameCoreRule {
-	return &noUselessRenameCoreRule{
+func newNoUselessRename(context Context) Rule {
+	rule := &noUselessRenameRule{
 		context:             context,
 		ignoreDestructuring: helpers.ExpressionBooleanOption(context, "ignoreDestructuring", false),
 		ignoreImport:        helpers.ExpressionBooleanOption(context, "ignoreImport", false),
 		ignoreExport:        helpers.ExpressionBooleanOption(context, "ignoreExport", false),
 	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBindingElement, ast.KindExportSpecifier, ast.KindImportSpecifier, ast.KindPropertyAssignment},
+	}
 }
 
-func (rule *noUselessRenameCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUselessRenameRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkRename(node)
 	return true
 }
 
-func (rule *noUselessRenameCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUselessRenameCoreRule) checkRename(node *ast.Node) {
+func (rule *noUselessRenameRule) checkRename(node *ast.Node) {
 	var key, replacement, target *ast.Node
 	var kind string
 	defaultValue := false
@@ -100,7 +103,7 @@ func (rule *noUselessRenameCoreRule) checkRename(node *ast.Node) {
 	rule.fixRange(diagnostic, start, node.End(), text)
 }
 
-func (rule *noUselessRenameCoreRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
+func (rule *noUselessRenameRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
 	if rule.context.NewTracker == nil {
 		return
 	}
@@ -108,5 +111,3 @@ func (rule *noUselessRenameCoreRule) fixRange(diagnostic *ast.Diagnostic, start 
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), replacement)
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction("no-useless-rename", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Fix_0, "no-useless-rename"), "no-useless-rename", ast.NewCompilerDiagnostic(diagnostics.Fix_all_0, "no-useless-rename")))
 }
-
-func newNoUselessRenameCore(context Context) Rule { return newNoUselessRenameCoreRule(context) }

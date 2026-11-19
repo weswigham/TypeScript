@@ -11,6 +11,15 @@ import (
 
 type typescriptRestrictPlusOperandsRule struct{ context Context }
 
+func newTypeScriptRestrictPlusOperands(context Context) Rule {
+	rule := &typescriptRestrictPlusOperandsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *typescriptRestrictPlusOperandsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindBinaryExpression {
 		return true
@@ -82,8 +91,6 @@ func (rule *typescriptRestrictPlusOperandsRule) OnEnterNode(node *ast.Node) bool
 	return true
 }
 
-func (rule *typescriptRestrictPlusOperandsRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyObjects(value *checker.Type) bool {
 	parts := helpers.TypeSafetyUnionParts(value)
 	if value.IsIntersection() {
@@ -95,8 +102,4 @@ func typeSafetyObjects(value *checker.Type) bool {
 		}
 	}
 	return true
-}
-
-func newTypeScriptRestrictPlusOperands(context Context) Rule {
-	return &typescriptRestrictPlusOperandsRule{context: context}
 }

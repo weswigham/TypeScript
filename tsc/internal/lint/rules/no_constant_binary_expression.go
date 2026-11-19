@@ -8,15 +8,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var (
-	constantBinaryOperandMessage = diagnostics.Unexpected_constant_binary_expression_Compares_constantly_with_the_0_hand_side_of_the_1
-	constantShortCircuitMessage  = diagnostics.Unexpected_constant_0_on_the_left_hand_side_of_a_1_expression
-	constantAlwaysNewMessage     = diagnostics.Unexpected_comparison_to_newly_constructed_object_These_two_values_can_never_be_equal
-	constantBothAlwaysNewMessage = diagnostics.Unexpected_comparison_of_two_newly_constructed_objects_These_two_values_can_never_be_equal
-)
-
 type noConstantBinaryExpression struct {
 	context Context
+}
+
+func newNoConstantBinaryExpression(context Context) Rule {
+	rule := &noConstantBinaryExpression{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
 }
 
 func (rule *noConstantBinaryExpression) OnEnterNode(node *ast.Node) bool {
@@ -58,7 +60,12 @@ func (rule *noConstantBinaryExpression) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noConstantBinaryExpression) OnExitNode(node *ast.Node) {}
+var (
+	constantBinaryOperandMessage = diagnostics.Unexpected_constant_binary_expression_Compares_constantly_with_the_0_hand_side_of_the_1
+	constantShortCircuitMessage  = diagnostics.Unexpected_constant_0_on_the_left_hand_side_of_a_1_expression
+	constantAlwaysNewMessage     = diagnostics.Unexpected_comparison_to_newly_constructed_object_These_two_values_can_never_be_equal
+	constantBothAlwaysNewMessage = diagnostics.Unexpected_comparison_of_two_newly_constructed_objects_These_two_values_can_never_be_equal
+)
 
 func (rule *noConstantBinaryExpression) isStaticLiteral(node *ast.Node) bool {
 	if constantBinaryLiteral(node) || node.Kind == ast.KindNoSubstitutionTemplateLiteral {
@@ -388,8 +395,4 @@ func (rule *noConstantBinaryExpression) isLogicalIdentity(node *ast.Node, operat
 		}
 	}
 	return false
-}
-
-func newNoConstantBinaryExpression(context Context) Rule {
-	return &noConstantBinaryExpression{context: context}
 }

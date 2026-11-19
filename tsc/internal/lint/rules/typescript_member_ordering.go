@@ -17,6 +17,21 @@ type typescriptMemberOrderingRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptMemberOrdering(context Context) Rule {
+	rule := &typescriptMemberOrderingRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typescriptMemberOrderingRule) OnEnterNode(node *ast.Node) bool {
+	rule.memberOrdering(node)
+	return true
+}
+
 func memberOrderingDefaultOrder() []any {
 	order := []any{"signature", "call-signature"}
 	for _, kind := range []string{"field", "accessor", "get", "set", "method"} {
@@ -447,15 +462,4 @@ func (rule *typescriptMemberOrderingRule) memberOrdering(node *ast.Node) {
 	}
 	check(members[:switchIndex])
 	check(members[switchIndex:])
-}
-
-func (rule *typescriptMemberOrderingRule) OnEnterNode(node *ast.Node) bool {
-	rule.memberOrdering(node)
-	return true
-}
-
-func (rule *typescriptMemberOrderingRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptMemberOrdering(context Context) Rule {
-	return &typescriptMemberOrderingRule{context: context}
 }

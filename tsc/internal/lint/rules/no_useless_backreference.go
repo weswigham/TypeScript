@@ -12,6 +12,16 @@ import (
 
 type noUselessBackreference struct{ helpers.RegexSource }
 
+func newNoUselessBackreference(context Context) Rule {
+	rule := &noUselessBackreference{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUselessBackreference) OnEnterNode(node *ast.Node) bool {
 	input := rule.Input(node)
 	if input == nil || !input.KnownPattern {
@@ -103,8 +113,4 @@ func regexBackreferenceProblem(reference, capture *scanner.RegExpLintNode) int {
 		}
 	}
 	return -1
-}
-
-func newNoUselessBackreference(context Context) Rule {
-	return &noUselessBackreference{RegexSource: helpers.NewRegexSource(context)}
 }

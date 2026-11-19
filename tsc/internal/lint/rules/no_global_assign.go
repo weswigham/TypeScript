@@ -17,13 +17,20 @@ type noGlobalAssignRule struct {
 	globals map[string]string
 }
 
+func newNoGlobalAssign(context Context) Rule {
+	rule := &noGlobalAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
+}
+
 func (rule *noGlobalAssignRule) OnEnterNode(node *ast.Node) bool {
 	rule.globalWrite(node)
 
 	return true
 }
-
-func (rule *noGlobalAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noGlobalAssignRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -125,5 +132,3 @@ func (rule *noGlobalAssignRule) options(index int) map[string]any {
 	}
 	return nil
 }
-
-func newNoGlobalAssign(context Context) Rule { return &noGlobalAssignRule{context: context} }

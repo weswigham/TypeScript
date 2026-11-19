@@ -16,11 +16,13 @@ type typeScriptUnboundMethod struct {
 }
 
 func newTypeScriptUnboundMethod(context Context) Rule {
-	return &typeScriptUnboundMethod{context: context}
-}
+	rule := &typeScriptUnboundMethod{context: context}
 
-func (rule *typeScriptUnboundMethod) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindObjectBindingPattern, ast.KindObjectLiteralExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typeScriptUnboundMethod) OnEnterNode(node *ast.Node) bool {
@@ -28,7 +30,9 @@ func (rule *typeScriptUnboundMethod) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typeScriptUnboundMethod) OnExitNode(node *ast.Node) {}
+func (rule *typeScriptUnboundMethod) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
+}
 
 func (rule *typeScriptUnboundMethod) unbound(node *ast.Node) {
 	c := rule.context.GetChecker()

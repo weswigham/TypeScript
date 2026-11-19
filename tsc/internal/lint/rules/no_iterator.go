@@ -10,7 +10,14 @@ type noIterator struct {
 	context Context
 }
 
-func newNoIterator(context Context) Rule { return &noIterator{context: context} }
+func newNoIterator(context Context) Rule {
+	rule := &noIterator{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+	}
+}
 
 func (rule *noIterator) OnEnterNode(node *ast.Node) bool {
 	if helpers.StatementPropertyName(node) == "__iterator__" {
@@ -18,7 +25,4 @@ func (rule *noIterator) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noIterator) OnExitNode(node *ast.Node) {
 }

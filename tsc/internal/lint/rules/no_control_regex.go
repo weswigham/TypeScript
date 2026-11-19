@@ -12,6 +12,16 @@ import (
 
 type noControlRegex struct{ helpers.RegexSource }
 
+func newNoControlRegex(context Context) Rule {
+	rule := &noControlRegex{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noControlRegex) OnEnterNode(node *ast.Node) bool {
 	input := rule.DirectInput(node)
 	if input == nil || !input.KnownPattern {
@@ -41,8 +51,4 @@ func (rule *noControlRegex) controls(input *helpers.RegexInput, parsed *scanner.
 		}
 		rule.Context.Report(rule.Context.Range(node), diagnostics.Unexpected_control_character_s_in_regular_expression_Colon_0, strings.Join(controls, ", "))
 	}
-}
-
-func newNoControlRegex(context Context) Rule {
-	return &noControlRegex{RegexSource: helpers.NewRegexSource(context)}
 }

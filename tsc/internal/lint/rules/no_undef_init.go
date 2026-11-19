@@ -11,15 +11,18 @@ import (
 type noUndefInitRule struct{ context Context }
 
 func newNoUndefInitRule(context Context) Rule {
-	return &noUndefInitRule{context: context}
+	rule := &noUndefInitRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration},
+	}
 }
 
 func (rule *noUndefInitRule) OnEnterNode(node *ast.Node) bool {
 	rule.undefinedInitializer(node)
 	return true
 }
-
-func (rule *noUndefInitRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUndefInitRule) undefinedInitializer(node *ast.Node) {
 	if node.Kind != ast.KindVariableDeclaration || node.Initializer() == nil || node.Parent.Kind != ast.KindVariableDeclarationList || node.Parent.Flags&(ast.NodeFlagsConst|ast.NodeFlagsUsing|ast.NodeFlagsAwaitUsing) != 0 {

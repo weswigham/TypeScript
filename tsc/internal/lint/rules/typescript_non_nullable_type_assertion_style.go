@@ -12,6 +12,15 @@ import (
 
 type typescriptNonNullableTypeAssertionStyleRule struct{ context Context }
 
+func newTypeScriptNonNullableTypeAssertionStyle(context Context) Rule {
+	rule := &typescriptNonNullableTypeAssertionStyleRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindAsExpression, ast.KindTypeAssertionExpression},
+	}
+}
+
 func (rule *typescriptNonNullableTypeAssertionStyleRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindAsExpression && node.Kind != ast.KindTypeAssertionExpression {
 		return true
@@ -50,8 +59,6 @@ func (rule *typescriptNonNullableTypeAssertionStyleRule) OnEnterNode(node *ast.N
 	return true
 }
 
-func (rule *typescriptNonNullableTypeAssertionStyleRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyAssertionCouldBeNullish(c *checker.Checker, typeValue *checker.Type) bool {
 	if typeValue.Flags()&checker.TypeFlagsTypeParameter != 0 {
 		constraint := c.GetConstraintOfTypeParameter(typeValue)
@@ -66,8 +73,4 @@ func typeSafetyAssertionCouldBeNullish(c *checker.Checker, typeValue *checker.Ty
 		return false
 	}
 	return typeValue.Flags()&(checker.TypeFlagsNull|checker.TypeFlagsUndefined) != 0
-}
-
-func newTypeScriptNonNullableTypeAssertionStyle(context Context) Rule {
-	return &typescriptNonNullableTypeAssertionStyleRule{context: context}
 }

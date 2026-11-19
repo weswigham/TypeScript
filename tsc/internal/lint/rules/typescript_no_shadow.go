@@ -14,8 +14,14 @@ type typescriptNoShadowRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
-func (rule *typescriptNoShadowRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptNoShadow(context Context) Rule {
+	rule := &typescriptNoShadowRule{Context: context, Name: "no-shadow"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoShadowRule) OnExitNode(node *ast.Node) {
@@ -95,8 +101,4 @@ func (rule *typescriptNoShadowRule) shadow(binding *helpers.TsScopeBinding) {
 		message = diagnostics.Enum_members_are_added_to_the_enum_scope_so_references_to_0_in_enum_member_initializers_resolve_to_this_member_instead_of_the_declaration_in_the_upper_scope_on_line_1_column_2
 	}
 	rule.Context.Report(rule.Context.Range(identifier), message, binding.Name, line, column)
-}
-
-func newTypeScriptNoShadow(context Context) Rule {
-	return &typescriptNoShadowRule{Context: context, Name: "no-shadow"}
 }

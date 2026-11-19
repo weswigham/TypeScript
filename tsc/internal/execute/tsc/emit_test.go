@@ -15,8 +15,11 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
+	"github.com/microsoft/TypeScript/tsc/internal/diagnosticwriter"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/incremental"
 	"github.com/microsoft/TypeScript/tsc/internal/lint"
+	"github.com/microsoft/TypeScript/tsc/internal/locale"
+	"github.com/microsoft/TypeScript/tsc/internal/parser"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs"
@@ -71,6 +74,47 @@ func TestLintFixStaleSource(t *testing.T) {
 	text, ok := fs.ReadFile("/project/input.ts")
 	assert.Assert(t, ok)
 	assert.Equal(t, text, "export {};")
+}
+
+type diagnosticWriteCounter struct {
+	bytes.Buffer
+	writes int
+}
+
+func (writer *diagnosticWriteCounter) Write(data []byte) (int, error) {
+	writer.writes++
+	return writer.Buffer.Write(data)
+}
+
+func TestDiagnosticReporterWritesCompleteDiagnostic(t *testing.T) {
+	t.Parallel()
+	for _, pretty := range []bool{false, true} {
+		name := "plain"
+		if pretty {
+			name = "pretty"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			const source = "const value = '\U0001F642'; debugger;\r\n"
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: "/project/input.ts", PathKey: "/project/input.ts"}, source, core.ScriptKindTS)
+			diagnostic := ast.NewDiagnostic(file, core.NewTextRange(strings.Index(source, "debugger"), len(source)-2), diagnostics.Unexpected_debugger_statement).
+				AddRelatedInfo(ast.NewDiagnostic(file, core.NewTextRange(0, 5), diagnostics.Cannot_find_name_0, "missing"))
+			sys := &timingTestSystem{fs: vfstest.FromMap(map[string]string{"/project/input.ts": source}, tspath.CaseSensitive)}
+			options := &core.CompilerOptions{Pretty: core.BoolToTristate(pretty)}
+			var expected strings.Builder
+			formatOptions := getFormatOptsOfSys(sys, locale.Default)
+			if pretty {
+				diagnosticwriter.FormatDiagnosticWithColorAndContext(&expected, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOptions)
+				expected.WriteString(formatOptions.NewLine)
+			} else {
+				diagnosticwriter.WriteFormatDiagnostic(&expected, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOptions)
+			}
+			var actual diagnosticWriteCounter
+			CreateDiagnosticReporter(sys, &actual, locale.Default, options)(diagnostic)
+			assert.Equal(t, actual.String(), expected.String())
+			assert.Equal(t, actual.writes, 1)
+		})
+	}
 }
 
 func TestFormattingDiagnosticsDoNotBlockEmit(t *testing.T) {

@@ -10,6 +10,15 @@ type noNewWrappers struct {
 	context Context
 }
 
+func newNoNewWrappers(context Context) Rule {
+	rule := &noNewWrappers{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNewExpression},
+	}
+}
+
 func (rule *noNewWrappers) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindNewExpression {
 		callee := ast.SkipParentheses(node.Expression())
@@ -22,7 +31,3 @@ func (rule *noNewWrappers) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noNewWrappers) OnExitNode(node *ast.Node) {}
-
-func newNoNewWrappers(context Context) Rule { return &noNewWrappers{context: context} }

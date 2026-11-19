@@ -12,12 +12,20 @@ type typescriptNoNonNullAssertedOptionalChainRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoNonNullAssertedOptionalChain(context Context) Rule {
+	rule := &typescriptNoNonNullAssertedOptionalChainRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindNonNullExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoNonNullAssertedOptionalChainRule) OnEnterNode(node *ast.Node) bool {
 	rule.nonNullChain(node)
 	return true
 }
-
-func (rule *typescriptNoNonNullAssertedOptionalChainRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoNonNullAssertedOptionalChainRule) nonNullChain(node *ast.Node) {
 	if node.Kind != ast.KindNonNullExpression {
@@ -44,8 +52,4 @@ func (rule *typescriptNoNonNullAssertedOptionalChainRule) suggest(diagnostic *as
 	tracker := rule.context.NewTracker()
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), text)
 	rule.AddSuggestion(diagnostic, "@typescript-eslint/no-non-null-asserted-optional-chain", tracker.GetTextChanges(), description)
-}
-
-func newTypeScriptNoNonNullAssertedOptionalChain(context Context) Rule {
-	return &typescriptNoNonNullAssertedOptionalChainRule{context: context}
 }

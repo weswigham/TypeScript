@@ -10,6 +10,15 @@ type maxClassesPerFileRule struct {
 	context Context
 }
 
+func newMaxClassesPerFile(context Context) Rule {
+	rule := &maxClassesPerFileRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *maxClassesPerFileRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return true
@@ -26,11 +35,4 @@ func (rule *maxClassesPerFileRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.File_has_too_many_classes_0_Maximum_allowed_is_1, count, maximum)
 	}
 	return true
-}
-
-func (rule *maxClassesPerFileRule) OnExitNode(node *ast.Node) {
-}
-
-func newMaxClassesPerFile(context Context) Rule {
-	return &maxClassesPerFileRule{context: context}
 }

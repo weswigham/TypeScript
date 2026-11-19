@@ -15,6 +15,17 @@ type typescriptNoUnnecessaryQualifierRule struct {
 	failed     *ast.Node
 }
 
+func newTypeScriptNoUnnecessaryQualifier(context Context) Rule {
+	rule := &typescriptNoUnnecessaryQualifierRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindModuleBlock, ast.KindEnumDeclaration, ast.KindQualifiedName, ast.KindPropertyAccessExpression},
+		Exit:       rule.OnExitNode,
+		ExitKinds:  []ast.Kind{ast.KindModuleBlock, ast.KindEnumDeclaration, ast.KindQualifiedName, ast.KindPropertyAccessExpression},
+	}
+}
+
 func (rule *typescriptNoUnnecessaryQualifierRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindModuleBlock {
 		rule.namespaces = append(rule.namespaces, node.Parent)
@@ -77,8 +88,4 @@ func (rule *typescriptNoUnnecessaryQualifierRule) OnExitNode(node *ast.Node) {
 	if node.Kind == ast.KindModuleBlock || node.Kind == ast.KindEnumDeclaration {
 		rule.namespaces = rule.namespaces[:len(rule.namespaces)-1]
 	}
-}
-
-func newTypeScriptNoUnnecessaryQualifier(context Context) Rule {
-	return &typescriptNoUnnecessaryQualifierRule{context: context}
 }

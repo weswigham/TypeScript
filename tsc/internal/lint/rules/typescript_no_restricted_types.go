@@ -16,12 +16,36 @@ type typescriptNoRestrictedTypesRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoRestrictedTypes(context Context) Rule {
+	rule := &typescriptNoRestrictedTypesRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindTypeReference,
+			ast.KindExpressionWithTypeArguments,
+			ast.KindTupleType,
+			ast.KindTypeLiteral,
+			ast.KindBigIntKeyword,
+			ast.KindBooleanKeyword,
+			ast.KindNeverKeyword,
+			ast.KindNumberKeyword,
+			ast.KindObjectKeyword,
+			ast.KindStringKeyword,
+			ast.KindSymbolKeyword,
+			ast.KindUndefinedKeyword,
+			ast.KindUnknownKeyword,
+			ast.KindVoidKeyword,
+			ast.KindNullKeyword,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoRestrictedTypesRule) OnEnterNode(node *ast.Node) bool {
 	rule.restricted(node)
 	return true
 }
-
-func (rule *typescriptNoRestrictedTypesRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoRestrictedTypesRule) restricted(node *ast.Node) {
 	types, _ := rule.Options()["types"].(map[string]any)
@@ -128,8 +152,4 @@ func typescriptNoRestrictedTypesRemoveSpace(text string) string {
 		}
 		return character
 	}, text)
-}
-
-func newTypeScriptNoRestrictedTypes(context Context) Rule {
-	return &typescriptNoRestrictedTypesRule{context: context}
 }

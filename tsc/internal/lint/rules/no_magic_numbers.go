@@ -15,7 +15,14 @@ type noMagicNumbers struct {
 	name    string
 }
 
-func newNoMagicNumbers(context Context) Rule { return &noMagicNumbers{context: context} }
+func newNoMagicNumbers(context Context) Rule {
+	rule := &noMagicNumbers{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBigIntLiteral, ast.KindNumericLiteral},
+	}
+}
 
 func (rule *noMagicNumbers) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindNumericLiteral || node.Kind == ast.KindBigIntLiteral {
@@ -23,9 +30,6 @@ func (rule *noMagicNumbers) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noMagicNumbers) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noMagicNumbers) Options() map[string]any {

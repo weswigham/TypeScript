@@ -18,6 +18,48 @@ type strictRule struct {
 	strictMode   string
 }
 
+func newStrict(context Context) Rule {
+	rule := &strictRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+		},
+		Exit: rule.OnExitNode,
+		ExitKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+		},
+	}
+}
+
 func (rule *strictRule) OnEnterNode(node *ast.Node) bool {
 	rule.strictEnter(node)
 
@@ -28,10 +70,6 @@ func (rule *strictRule) OnExitNode(node *ast.Node) {
 	if rule.strictMode == "function" && helpers.StyleFunction(node) {
 		rule.strictScopes = rule.strictScopes[:len(rule.strictScopes)-1]
 	}
-}
-
-func (rule *strictRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *strictRule) option(index int, fallback string) string {
@@ -165,5 +203,3 @@ func styleInClass(node *ast.Node) bool {
 	}
 	return false
 }
-
-func newStrict(context Context) Rule { return &strictRule{context: context} }

@@ -9,15 +9,18 @@ import (
 type noObjectConstructorRule struct{ context Context }
 
 func newNoObjectConstructorRule(context Context) Rule {
-	return &noObjectConstructorRule{context: context}
+	rule := &noObjectConstructorRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
 }
 
 func (rule *noObjectConstructorRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkConstructor(node)
 	return true
 }
-
-func (rule *noObjectConstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noObjectConstructorRule) checkConstructor(node *ast.Node) {
 	if node.Kind != ast.KindNewExpression && (node.Kind != ast.KindCallExpression) {

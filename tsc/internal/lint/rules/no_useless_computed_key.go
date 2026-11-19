@@ -10,26 +10,29 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUselessComputedKeyCoreRule struct {
+type noUselessComputedKeyRule struct {
 	context                Context
 	enforceForClassMembers bool
 }
 
-func newNoUselessComputedKeyCoreRule(context Context) *noUselessComputedKeyCoreRule {
-	return &noUselessComputedKeyCoreRule{
+func newNoUselessComputedKey(context Context) Rule {
+	rule := &noUselessComputedKeyRule{
 		context:                context,
 		enforceForClassMembers: helpers.ExpressionBooleanOption(context, "enforceForClassMembers", true),
 	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindComputedPropertyName},
+	}
 }
 
-func (rule *noUselessComputedKeyCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUselessComputedKeyRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkComputedKey(node)
 	return true
 }
 
-func (rule *noUselessComputedKeyCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUselessComputedKeyCoreRule) checkComputedKey(node *ast.Node) {
+func (rule *noUselessComputedKeyRule) checkComputedKey(node *ast.Node) {
 	if node.Kind != ast.KindComputedPropertyName {
 		return
 	}
@@ -70,15 +73,11 @@ func (rule *noUselessComputedKeyCoreRule) checkComputedKey(node *ast.Node) {
 	rule.fixRange(diagnostic, start, node.End(), raw)
 }
 
-func (rule *noUselessComputedKeyCoreRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
+func (rule *noUselessComputedKeyRule) fixRange(diagnostic *ast.Diagnostic, start int, end int, replacement string) {
 	if rule.context.NewTracker == nil {
 		return
 	}
 	tracker := rule.context.NewTracker()
 	tracker.ReplaceTextRangeWithText(rule.context.File, core.NewTextRange(start, end), replacement)
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction("no-useless-computed-key", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Fix_0, "no-useless-computed-key"), "no-useless-computed-key", ast.NewCompilerDiagnostic(diagnostics.Fix_all_0, "no-useless-computed-key")))
-}
-
-func newNoUselessComputedKeyCore(context Context) Rule {
-	return newNoUselessComputedKeyCoreRule(context)
 }

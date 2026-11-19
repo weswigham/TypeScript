@@ -10,6 +10,15 @@ type noThrowLiteral struct {
 	context Context
 }
 
+func newNoThrowLiteral(context Context) Rule {
+	rule := &noThrowLiteral{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindThrowStatement},
+	}
+}
+
 func (rule *noThrowLiteral) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindThrowStatement && node.Expression() != nil {
 		expression := ast.SkipParentheses(node.Expression())
@@ -21,7 +30,3 @@ func (rule *noThrowLiteral) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noThrowLiteral) OnExitNode(node *ast.Node) {}
-
-func newNoThrowLiteral(context Context) Rule { return &noThrowLiteral{context: context} }

@@ -10,7 +10,22 @@ type noDupeClassMembers struct {
 	context Context
 }
 
-func newNoDupeClassMembers(context Context) Rule { return &noDupeClassMembers{context: context} }
+func newNoDupeClassMembers(context Context) Rule {
+	rule := &noDupeClassMembers{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+	}
+}
+
+func (rule *noDupeClassMembers) OnEnterNode(node *ast.Node) bool {
+	if ast.IsClassLike(node) {
+		rule.duplicateMembers(node.Members())
+	}
+
+	return true
+}
 
 func (rule *noDupeClassMembers) duplicateMembers(members []*ast.Node) {
 	type memberKey struct {
@@ -42,15 +57,4 @@ func (rule *noDupeClassMembers) duplicateMembers(members []*ast.Node) {
 		}
 		seen[key] |= mask
 	}
-}
-
-func (rule *noDupeClassMembers) OnEnterNode(node *ast.Node) bool {
-	if ast.IsClassLike(node) {
-		rule.duplicateMembers(node.Members())
-	}
-
-	return true
-}
-
-func (rule *noDupeClassMembers) OnExitNode(node *ast.Node) {
 }

@@ -5,24 +5,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 )
 
-type noUnsafeFinallyCoreRule struct {
+type noUnsafeFinallyRule struct {
 	context Context
 }
 
-func newNoUnsafeFinallyCoreRule(context Context) *noUnsafeFinallyCoreRule {
-	return &noUnsafeFinallyCoreRule{
+func newNoUnsafeFinally(context Context) Rule {
+	rule := &noUnsafeFinallyRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBreakStatement, ast.KindContinueStatement, ast.KindReturnStatement, ast.KindThrowStatement},
 	}
 }
 
-func (rule *noUnsafeFinallyCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUnsafeFinallyRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkFinally(node)
 	return true
 }
 
-func (rule *noUnsafeFinallyCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUnsafeFinallyCoreRule) checkFinally(node *ast.Node) {
+func (rule *noUnsafeFinallyRule) checkFinally(node *ast.Node) {
 	var nodeType string
 	var label *ast.Node
 	switch node.Kind {
@@ -61,5 +64,3 @@ func (rule *noUnsafeFinallyCoreRule) checkFinally(node *ast.Node) {
 		}
 	}
 }
-
-func newNoUnsafeFinallyCore(context Context) Rule { return newNoUnsafeFinallyCoreRule(context) }

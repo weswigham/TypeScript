@@ -19,18 +19,21 @@ type preferConstRule struct {
 	references map[*ast.Symbol][]*ast.Node
 }
 
+func newPreferConst(context Context) Rule {
+	rule := &preferConstRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclarationList},
+	}
+}
+
 func (rule *preferConstRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindVariableDeclarationList {
 		rule.preferConst(node)
 	}
 
 	return true
-}
-
-func (rule *preferConstRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferConstRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferConstRule) constBinding(binding, declaration, list *ast.Node) declarationConst {
@@ -286,5 +289,3 @@ func declarationTargets(node *ast.Node) ([]*ast.Node, bool) {
 	}
 	return result, invalid
 }
-
-func newPreferConst(context Context) Rule { return &preferConstRule{context: context} }

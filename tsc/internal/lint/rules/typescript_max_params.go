@@ -10,12 +10,28 @@ type typescriptMaxParamsRule struct {
 	context Context
 }
 
+func newTypeScriptMaxParams(context Context) Rule {
+	rule := &typescriptMaxParamsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindFunctionType,
+		},
+	}
+}
+
 func (rule *typescriptMaxParamsRule) OnEnterNode(node *ast.Node) bool {
 	rule.parameters(node)
 	return true
 }
-
-func (rule *typescriptMaxParamsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptMaxParamsRule) parameters(node *ast.Node) {
 	if !helpers.TypescriptExecutableFunction(node) && node.Kind != ast.KindFunctionType {
@@ -55,5 +71,3 @@ func (rule *typescriptMaxParamsRule) option(index int) any {
 	}
 	return nil
 }
-
-func newTypeScriptMaxParams(context Context) Rule { return &typescriptMaxParamsRule{context: context} }

@@ -10,12 +10,20 @@ type typescriptNoNonNullAssertedNullishCoalescingRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoNonNullAssertedNullishCoalescing(context Context) Rule {
+	rule := &typescriptNoNonNullAssertedNullishCoalescingRule{Context: context, Name: "no-non-null-asserted-nullish-coalescing"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindBinaryExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoNonNullAssertedNullishCoalescingRule) OnEnterNode(node *ast.Node) bool {
 	rule.nonNullCoalescing(node)
 	return true
 }
-
-func (rule *typescriptNoNonNullAssertedNullishCoalescingRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoNonNullAssertedNullishCoalescingRule) nonNullCoalescing(node *ast.Node) {
 	if node.Kind != ast.KindBinaryExpression || node.AsBinaryExpression().OperatorToken.Kind != ast.KindQuestionQuestionToken {
@@ -47,8 +55,4 @@ func (rule *typescriptNoNonNullAssertedNullishCoalescingRule) nonNullCoalescing(
 	}
 	diagnostic := rule.Context.Report(rule.Context.Range(left), diagnostics.The_nullish_coalescing_operator_is_designed_to_handle_undefined_and_null_using_a_non_null_assertion_is_not_needed)
 	rule.Edits(diagnostic, ast.NewCompilerDiagnostic(diagnostics.Remove_the_non_null_assertion), helpers.TsScopeEdit{Start: left.End() - 1, End: left.End(), Text: ""})
-}
-
-func newTypeScriptNoNonNullAssertedNullishCoalescing(context Context) Rule {
-	return &typescriptNoNonNullAssertedNullishCoalescingRule{Context: context, Name: "no-non-null-asserted-nullish-coalescing"}
 }

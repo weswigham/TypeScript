@@ -13,6 +13,15 @@ type arrowBodyStyleRule struct {
 	context Context
 }
 
+func newArrowBodyStyle(context Context) Rule {
+	rule := &arrowBodyStyleRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindArrowFunction},
+	}
+}
+
 func (rule *arrowBodyStyleRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindArrowFunction {
 		return true
@@ -60,11 +69,4 @@ func (rule *arrowBodyStyleRule) OnEnterNode(node *ast.Node) bool {
 		})
 	}
 	return true
-}
-
-func (rule *arrowBodyStyleRule) OnExitNode(node *ast.Node) {
-}
-
-func newArrowBodyStyle(context Context) Rule {
-	return &arrowBodyStyleRule{context: context}
 }

@@ -17,6 +17,15 @@ type forDirectionRule struct {
 	model   *helpers.TsScopeModel
 }
 
+func newForDirection(context Context) Rule {
+	rule := &forDirectionRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindForStatement},
+	}
+}
+
 func (rule *forDirectionRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindForStatement {
 		rule.forDirection(node)
@@ -24,8 +33,6 @@ func (rule *forDirectionRule) OnEnterNode(node *ast.Node) bool {
 
 	return true
 }
-
-func (rule *forDirectionRule) OnExitNode(node *ast.Node) {}
 
 func (rule *forDirectionRule) Binding(node *ast.Node) *helpers.TsScopeBinding {
 	model := rule.Bindings()
@@ -237,5 +244,3 @@ func (rule *forDirectionRule) stable(binding *helpers.TsScopeBinding) bool {
 	}
 	return true
 }
-
-func newForDirection(context Context) Rule { return &forDirectionRule{context: context} }

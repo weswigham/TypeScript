@@ -9,6 +9,15 @@ type noCaller struct {
 	context Context
 }
 
+func newNoCaller(context Context) Rule {
+	rule := &noCaller{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression},
+	}
+}
+
 func (rule *noCaller) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindPropertyAccessExpression {
 		object := ast.SkipParentheses(node.Expression())
@@ -19,7 +28,3 @@ func (rule *noCaller) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noCaller) OnExitNode(node *ast.Node) {}
-
-func newNoCaller(context Context) Rule { return &noCaller{context: context} }

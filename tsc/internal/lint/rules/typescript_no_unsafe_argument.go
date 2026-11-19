@@ -9,6 +9,15 @@ import (
 
 type typescriptNoUnsafeArgumentRule struct{ context Context }
 
+func newTypeScriptNoUnsafeArgument(context Context) Rule {
+	rule := &typescriptNoUnsafeArgumentRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression},
+	}
+}
+
 func (rule *typescriptNoUnsafeArgumentRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression && node.Kind != ast.KindNewExpression && node.Kind != ast.KindTaggedTemplateExpression {
 		return true
@@ -58,10 +67,4 @@ func (rule *typescriptNoUnsafeArgumentRule) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *typescriptNoUnsafeArgumentRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoUnsafeArgument(context Context) Rule {
-	return &typescriptNoUnsafeArgumentRule{context: context}
 }

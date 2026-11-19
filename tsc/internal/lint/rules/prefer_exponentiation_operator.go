@@ -18,6 +18,15 @@ type preferExponentiationOperatorRule struct {
 	globalWrites map[string]bool
 }
 
+func newPreferExponentiationOperator(context Context) Rule {
+	rule := &preferExponentiationOperatorRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindSourceFile},
+	}
+}
+
 func (rule *preferExponentiationOperatorRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindSourceFile {
 		rule.writes = make(map[*ast.Symbol]bool)
@@ -38,12 +47,6 @@ func (rule *preferExponentiationOperatorRule) OnEnterNode(node *ast.Node) bool {
 	rule.exponentiation(node)
 
 	return true
-}
-
-func (rule *preferExponentiationOperatorRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferExponentiationOperatorRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferExponentiationOperatorRule) comments(start, end int) bool {
@@ -269,8 +272,4 @@ func nodePropertyExpression(node *ast.Node) *ast.Node {
 		return node.AsElementAccessExpression().ArgumentExpression
 	}
 	return node.Name()
-}
-
-func newPreferExponentiationOperator(context Context) Rule {
-	return &preferExponentiationOperatorRule{context: context}
 }

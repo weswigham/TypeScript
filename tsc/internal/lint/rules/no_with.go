@@ -7,28 +7,29 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noWithCoreRule struct {
+type noWithRule struct {
 	context Context
 }
 
-func newNoWithCoreRule(context Context) *noWithCoreRule {
-	return &noWithCoreRule{
+func newNoWith(context Context) Rule {
+	rule := &noWithRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindWithStatement},
 	}
 }
 
-func (rule *noWithCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noWithRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkWith(node)
 	return true
 }
 
-func (rule *noWithCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noWithCoreRule) checkWith(node *ast.Node) {
+func (rule *noWithRule) checkWith(node *ast.Node) {
 	if node.Kind == ast.KindWithStatement {
 		start := scanner.GetTokenPosOfNode(node, rule.context.File, false)
 		rule.context.Report(core.NewTextRange(start, start+4), diagnostics.Unexpected_use_of_with_statement)
 	}
 }
-
-func newNoWithCore(context Context) Rule { return newNoWithCoreRule(context) }

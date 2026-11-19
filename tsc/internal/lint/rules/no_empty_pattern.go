@@ -6,10 +6,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
-var noEmptyPatternMessage = diagnostics.Unexpected_empty_0_pattern
-
 type noEmptyPattern struct {
 	context Context
+}
+
+func newNoEmptyPattern(context Context) Rule {
+	rule := &noEmptyPattern{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindArrayBindingPattern, ast.KindArrayLiteralExpression, ast.KindObjectBindingPattern, ast.KindObjectLiteralExpression},
+	}
 }
 
 func (rule *noEmptyPattern) OnEnterNode(node *ast.Node) bool {
@@ -43,6 +50,4 @@ func (rule *noEmptyPattern) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noEmptyPattern) OnExitNode(node *ast.Node) {}
-
-func newNoEmptyPattern(context Context) Rule { return &noEmptyPattern{context: context} }
+var noEmptyPatternMessage = diagnostics.Unexpected_empty_0_pattern

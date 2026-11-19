@@ -19,18 +19,21 @@ type preferObjectSpreadRule struct {
 	references map[*ast.Symbol][]*ast.Node
 }
 
+func newPreferObjectSpread(context Context) Rule {
+	rule := &preferObjectSpreadRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
+}
+
 func (rule *preferObjectSpreadRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindCallExpression {
 		rule.objectSpread(node)
 	}
 
 	return true
-}
-
-func (rule *preferObjectSpreadRule) OnExitNode(node *ast.Node) {}
-
-func (rule *preferObjectSpreadRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *preferObjectSpreadRule) builtinPath(node *ast.Node, seen map[*ast.Symbol]bool) string {
@@ -302,5 +305,3 @@ func (rule *preferObjectSpreadRule) tokens(start, end int) []helpers.Declaration
 	}
 	return result
 }
-
-func newPreferObjectSpread(context Context) Rule { return &preferObjectSpreadRule{context: context} }

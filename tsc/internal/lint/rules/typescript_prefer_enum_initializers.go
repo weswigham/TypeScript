@@ -15,12 +15,20 @@ type typescriptPreferEnumInitializersRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptPreferEnumInitializers(context Context) Rule {
+	rule := &typescriptPreferEnumInitializersRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindEnumDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPreferEnumInitializersRule) OnEnterNode(node *ast.Node) bool {
 	rule.enumInitializers(node)
 	return true
 }
-
-func (rule *typescriptPreferEnumInitializersRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptPreferEnumInitializersRule) enumInitializers(node *ast.Node) {
 	if node.Kind != ast.KindEnumDeclaration {
@@ -50,8 +58,4 @@ func (rule *typescriptPreferEnumInitializersRule) suggest(diagnostic *ast.Diagno
 
 func (rule *typescriptPreferEnumInitializersRule) Start(node *ast.Node) int {
 	return scanner.GetTokenPosOfNode(node, rule.context.File, false)
-}
-
-func newTypeScriptPreferEnumInitializers(context Context) Rule {
-	return &typescriptPreferEnumInitializersRule{context: context}
 }

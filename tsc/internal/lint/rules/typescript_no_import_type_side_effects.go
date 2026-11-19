@@ -13,14 +13,21 @@ type typescriptNoImportTypeSideEffectsRule struct {
 	context Context
 }
 
+func newTypeScriptNoImportTypeSideEffects(context Context) Rule {
+	rule := &typescriptNoImportTypeSideEffectsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindImportDeclaration},
+	}
+}
+
 func (rule *typescriptNoImportTypeSideEffectsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindImportDeclaration {
 		rule.importTypes(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoImportTypeSideEffectsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoImportTypeSideEffectsRule) importTypes(node *ast.Node) {
 	clause := node.AsImportDeclaration().ImportClause
@@ -58,8 +65,4 @@ func (rule *typescriptNoImportTypeSideEffectsRule) importTypes(node *ast.Node) {
 func (rule *typescriptNoImportTypeSideEffectsRule) fix(diagnostic *ast.Diagnostic, tracker *change.Tracker, description *ast.Diagnostic) {
 	name := "@typescript-eslint/no-import-type-side-effects"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), description, name, description))
-}
-
-func newTypeScriptNoImportTypeSideEffects(context Context) Rule {
-	return &typescriptNoImportTypeSideEffectsRule{context: context}
 }

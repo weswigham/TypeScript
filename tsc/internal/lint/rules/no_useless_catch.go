@@ -5,24 +5,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 )
 
-type noUselessCatchCoreRule struct {
+type noUselessCatchRule struct {
 	context Context
 }
 
-func newNoUselessCatchCoreRule(context Context) *noUselessCatchCoreRule {
-	return &noUselessCatchCoreRule{
+func newNoUselessCatch(context Context) Rule {
+	rule := &noUselessCatchRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCatchClause},
 	}
 }
 
-func (rule *noUselessCatchCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUselessCatchRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkCatch(node)
 	return true
 }
 
-func (rule *noUselessCatchCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUselessCatchCoreRule) checkCatch(node *ast.Node) {
+func (rule *noUselessCatchRule) checkCatch(node *ast.Node) {
 	if node.Kind != ast.KindCatchClause {
 		return
 	}
@@ -44,5 +47,3 @@ func (rule *noUselessCatchCoreRule) checkCatch(node *ast.Node) {
 		rule.context.Report(rule.context.Range(node.Parent), diagnostics.Unnecessary_try_Slashcatch_wrapper)
 	}
 }
-
-func newNoUselessCatchCore(context Context) Rule { return newNoUselessCatchCoreRule(context) }

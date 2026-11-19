@@ -19,14 +19,21 @@ type typescriptBanTsCommentRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptBanTsComment(context Context) Rule {
+	rule := &typescriptBanTsCommentRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptBanTsCommentRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindSourceFile {
 		rule.comments()
 	}
 	return false
 }
-
-func (rule *typescriptBanTsCommentRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptBanTsCommentRule) comments() {
 	file := rule.context.File
@@ -140,7 +147,3 @@ var (
 	typescriptBanTSCommentDirective = regexp.MustCompile(`^/*[\t\v\f \r\n\x{00a0}\x{feff}]*@ts-(expect-error|ignore)(.*)`)
 	typescriptBanTSCommentPragma    = regexp.MustCompile(`^///?[\t\v\f \r\n\x{00a0}\x{feff}]*@ts-(check|nocheck)(.*)$`)
 )
-
-func newTypeScriptBanTsComment(context Context) Rule {
-	return &typescriptBanTsCommentRule{context: context}
-}

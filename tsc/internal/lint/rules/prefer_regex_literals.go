@@ -13,6 +13,16 @@ import (
 
 type preferRegexLiterals struct{ helpers.RegexSource }
 
+func newPreferRegexLiterals(context Context) Rule {
+	rule := &preferRegexLiterals{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *preferRegexLiterals) OnEnterNode(node *ast.Node) bool {
 	input := rule.Input(node)
 	if input != nil && !input.Literal {
@@ -154,8 +164,4 @@ func (rule *preferRegexLiterals) preferLiteral(input *helpers.RegexInput) {
 			rule.literalSuggestion(diagnostic, input, pattern, merged, ast.NewCompilerDiagnostic(diagnostics.Replace_with_a_regular_expression_literal_with_flags_0, merged), false)
 		}
 	}
-}
-
-func newPreferRegexLiterals(context Context) Rule {
-	return &preferRegexLiterals{RegexSource: helpers.NewRegexSource(context)}
 }

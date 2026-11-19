@@ -12,12 +12,19 @@ type typescriptNoThisAliasRule struct {
 	context Context
 }
 
+func newTypeScriptNoThisAlias(context Context) Rule {
+	rule := &typescriptNoThisAliasRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration, ast.KindBinaryExpression},
+	}
+}
+
 func (rule *typescriptNoThisAliasRule) OnEnterNode(node *ast.Node) bool {
 	rule.thisAlias(node)
 	return true
 }
-
-func (rule *typescriptNoThisAliasRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoThisAliasRule) thisAlias(node *ast.Node) {
 	var target, value *ast.Node
@@ -55,8 +62,4 @@ func (rule *typescriptNoThisAliasRule) Options() map[string]any {
 		return options
 	}
 	return nil
-}
-
-func newTypeScriptNoThisAlias(context Context) Rule {
-	return &typescriptNoThisAliasRule{context: context}
 }

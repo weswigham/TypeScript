@@ -9,15 +9,18 @@ import (
 type noNewNativeNonconstructorRule struct{ context Context }
 
 func newNoNewNativeNonconstructorRule(context Context) Rule {
-	return &noNewNativeNonconstructorRule{context: context}
+	rule := &noNewNativeNonconstructorRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNewExpression},
+	}
 }
 
 func (rule *noNewNativeNonconstructorRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkConstructor(node)
 	return true
 }
-
-func (rule *noNewNativeNonconstructorRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noNewNativeNonconstructorRule) checkConstructor(node *ast.Node) {
 	if node.Kind != ast.KindNewExpression {

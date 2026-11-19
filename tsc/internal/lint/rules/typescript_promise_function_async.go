@@ -14,6 +14,16 @@ type typescriptPromiseFunctionAsyncRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptPromiseFunctionAsync(context Context) Rule {
+	rule := &typescriptPromiseFunctionAsyncRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindArrowFunction, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindMethodDeclaration},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPromiseFunctionAsyncRule) OnEnterNode(node *ast.Node) bool {
 	option := ""
 	switch node.Kind {
@@ -82,10 +92,4 @@ func (rule *typescriptPromiseFunctionAsyncRule) OnEnterNode(node *ast.Node) bool
 		rule.AddSuggestion(diagnostic, "@typescript-eslint/promise-function-async", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Mark_the_function_async))
 	}
 	return true
-}
-
-func (rule *typescriptPromiseFunctionAsyncRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptPromiseFunctionAsync(context Context) Rule {
-	return &typescriptPromiseFunctionAsyncRule{context: context}
 }

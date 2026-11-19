@@ -10,24 +10,27 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noUnexpectedMultilineCoreRule struct {
+type noUnexpectedMultilineRule struct {
 	context Context
 }
 
-func newNoUnexpectedMultilineCoreRule(context Context) *noUnexpectedMultilineCoreRule {
-	return &noUnexpectedMultilineCoreRule{
+func newNoUnexpectedMultiline(context Context) Rule {
+	rule := &noUnexpectedMultilineRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindCallExpression, ast.KindElementAccessExpression, ast.KindTaggedTemplateExpression},
 	}
 }
 
-func (rule *noUnexpectedMultilineCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noUnexpectedMultilineRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkMultiline(node)
 	return true
 }
 
-func (rule *noUnexpectedMultilineCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noUnexpectedMultilineCoreRule) checkMultiline(node *ast.Node) {
+func (rule *noUnexpectedMultilineRule) checkMultiline(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		expression := node.AsCallExpression()
@@ -60,8 +63,4 @@ func (rule *noUnexpectedMultilineCoreRule) checkMultiline(node *ast.Node) {
 		start := scanner.GetTokenPosOfNode(operator, rule.context.File, false)
 		helpers.ReportAfterLineBreak(rule.context, start, operator.End(), diagnostics.Unexpected_newline_between_numerator_and_division_operator)
 	}
-}
-
-func newNoUnexpectedMultilineCore(context Context) Rule {
-	return newNoUnexpectedMultilineCoreRule(context)
 }

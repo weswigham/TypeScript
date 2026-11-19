@@ -9,6 +9,15 @@ type defaultCaseLastRule struct {
 	context Context
 }
 
+func newDefaultCaseLast(context Context) Rule {
+	rule := &defaultCaseLastRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCaseBlock},
+	}
+}
+
 func (rule *defaultCaseLastRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindCaseBlock {
 		clauses := node.AsCaseBlock().Clauses.Nodes
@@ -20,11 +29,4 @@ func (rule *defaultCaseLastRule) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *defaultCaseLastRule) OnExitNode(node *ast.Node) {
-}
-
-func newDefaultCaseLast(context Context) Rule {
-	return &defaultCaseLastRule{context: context}
 }

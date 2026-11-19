@@ -10,15 +10,18 @@ import (
 type noClassAssignRule struct{ context Context }
 
 func newNoClassAssignRule(context Context) Rule {
-	return &noClassAssignRule{context: context}
+	rule := &noClassAssignRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindIdentifier},
+	}
 }
 
 func (rule *noClassAssignRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkBindingWrite(node)
 	return true
 }
-
-func (rule *noClassAssignRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noClassAssignRule) checkBindingWrite(node *ast.Node) {
 	if node.Kind != ast.KindIdentifier || !ast.IsAssignmentTarget(node) {

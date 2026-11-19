@@ -16,12 +16,19 @@ type typescriptConsistentTypeDefinitionsRule struct {
 	context Context
 }
 
+func newTypeScriptConsistentTypeDefinitions(context Context) Rule {
+	rule := &typescriptConsistentTypeDefinitionsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindTypeAliasDeclaration, ast.KindInterfaceDeclaration},
+	}
+}
+
 func (rule *typescriptConsistentTypeDefinitionsRule) OnEnterNode(node *ast.Node) bool {
 	rule.typeDefinitions(node)
 	return true
 }
-
-func (rule *typescriptConsistentTypeDefinitionsRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptConsistentTypeDefinitionsRule) typeDefinitions(node *ast.Node) {
 	mode := helpers.StringOptionValue(rule.option(0), "interface")
@@ -130,8 +137,4 @@ func (rule *typescriptConsistentTypeDefinitionsRule) keywordRange(node *ast.Node
 func (rule *typescriptConsistentTypeDefinitionsRule) fix(diagnostic *ast.Diagnostic, tracker *change.Tracker, description *ast.Diagnostic) {
 	name := "@typescript-eslint/consistent-type-definitions"
 	diagnostic.SetCodeFixes(codefix.CreateCodeFixAction(name, tracker.GetTextChanges(), description, name, description))
-}
-
-func newTypeScriptConsistentTypeDefinitions(context Context) Rule {
-	return &typescriptConsistentTypeDefinitionsRule{context: context}
 }

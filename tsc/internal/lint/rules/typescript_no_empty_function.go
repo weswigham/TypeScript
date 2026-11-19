@@ -16,14 +16,30 @@ type typescriptNoEmptyFunctionRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptNoEmptyFunction(context Context) Rule {
+	rule := &typescriptNoEmptyFunctionRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoEmptyFunctionRule) OnEnterNode(node *ast.Node) bool {
 	if helpers.FunctionHasBody(node) && helpers.IsEmptyCommentFreeBlock(rule.context, node.Body()) {
 		rule.emptyFunction(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoEmptyFunctionRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoEmptyFunctionRule) emptyFunction(node *ast.Node) {
 	allow := helpers.TypescriptSyntaxStrings(rule.Options()["allow"])
@@ -91,8 +107,4 @@ func (rule *typescriptNoEmptyFunctionRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptNoEmptyFunction(context Context) Rule {
-	return &typescriptNoEmptyFunctionRule{context: context}
 }

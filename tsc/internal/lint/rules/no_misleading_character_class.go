@@ -16,6 +16,16 @@ type noMisleadingCharacterClass struct {
 	checked map[*ast.Node]bool
 }
 
+func newNoMisleadingCharacterClass(context Context) Rule {
+	rule := &noMisleadingCharacterClass{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noMisleadingCharacterClass) OnEnterNode(node *ast.Node) bool {
 	input := rule.Input(node)
 	if input == nil || rule.checked[node] {
@@ -136,7 +146,3 @@ func regexCombiningCharacter(value rune) bool {
 func regexEmojiModifier(value rune) bool { return value >= 0x1f3fb && value <= 0x1f3ff }
 
 func regexRegionalIndicator(value rune) bool { return value >= 0x1f1e6 && value <= 0x1f1ff }
-
-func newNoMisleadingCharacterClass(context Context) Rule {
-	return &noMisleadingCharacterClass{RegexSource: helpers.NewRegexSource(context)}
-}

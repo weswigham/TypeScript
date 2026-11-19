@@ -10,14 +10,21 @@ type typescriptNoExtraneousClassRule struct {
 	context Context
 }
 
+func newTypeScriptNoExtraneousClass(context Context) Rule {
+	rule := &typescriptNoExtraneousClassRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+	}
+}
+
 func (rule *typescriptNoExtraneousClassRule) OnEnterNode(node *ast.Node) bool {
 	if ast.IsClassLike(node) {
 		rule.extraneousClass(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoExtraneousClassRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoExtraneousClassRule) extraneousClass(node *ast.Node) {
 	if ast.GetHeritageClause(node, ast.KindExtendsKeyword) != nil {
@@ -80,8 +87,4 @@ func (rule *typescriptNoExtraneousClassRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptNoExtraneousClass(context Context) Rule {
-	return &typescriptNoExtraneousClassRule{context: context}
 }

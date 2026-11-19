@@ -12,12 +12,19 @@ type typescriptNoMagicNumbersRule struct {
 	context Context
 }
 
+func newTypeScriptNoMagicNumbers(context Context) Rule {
+	rule := &typescriptNoMagicNumbersRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBigIntLiteral, ast.KindNumericLiteral},
+	}
+}
+
 func (rule *typescriptNoMagicNumbersRule) OnEnterNode(node *ast.Node) bool {
 	rule.magicNumber(node)
 	return true
 }
-
-func (rule *typescriptNoMagicNumbersRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoMagicNumbersRule) magicNumber(node *ast.Node) {
 	if node.Kind != ast.KindNumericLiteral && node.Kind != ast.KindBigIntLiteral {
@@ -140,8 +147,4 @@ func (rule *typescriptNoMagicNumbersRule) Boolean(name string, fallback bool) bo
 
 func (rule *typescriptNoMagicNumbersRule) Start(node *ast.Node) int {
 	return scanner.GetTokenPosOfNode(node, rule.context.File, false)
-}
-
-func newTypeScriptNoMagicNumbers(context Context) Rule {
-	return &typescriptNoMagicNumbersRule{context: context}
 }

@@ -12,12 +12,27 @@ type typescriptExplicitFunctionReturnTypeRule struct {
 	context Context
 }
 
+func newTypeScriptExplicitFunctionReturnType(context Context) Rule {
+	rule := &typescriptExplicitFunctionReturnTypeRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+		},
+	}
+}
+
 func (rule *typescriptExplicitFunctionReturnTypeRule) OnEnterNode(node *ast.Node) bool {
 	rule.returnType(node)
 	return true
 }
-
-func (rule *typescriptExplicitFunctionReturnTypeRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptExplicitFunctionReturnTypeRule) returnType(node *ast.Node) {
 	if !helpers.FunctionHasBody(node) || node.Type() != nil || node.Kind == ast.KindConstructor || node.Kind == ast.KindSetAccessor {
@@ -133,8 +148,4 @@ func (rule *typescriptExplicitFunctionReturnTypeRule) option(index int) any {
 		return rule.context.Options[index]
 	}
 	return nil
-}
-
-func newTypeScriptExplicitFunctionReturnType(context Context) Rule {
-	return &typescriptExplicitFunctionReturnTypeRule{context: context}
 }

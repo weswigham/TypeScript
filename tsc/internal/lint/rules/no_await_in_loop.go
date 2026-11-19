@@ -9,7 +9,14 @@ type noAwaitInLoop struct {
 	context Context
 }
 
-func newNoAwaitInLoop(context Context) Rule { return &noAwaitInLoop{context: context} }
+func newNoAwaitInLoop(context Context) Rule {
+	rule := &noAwaitInLoop{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindAwaitExpression, ast.KindForOfStatement, ast.KindVariableDeclarationList},
+	}
+}
 
 func (rule *noAwaitInLoop) OnEnterNode(node *ast.Node) bool {
 	await := node.Kind == ast.KindAwaitExpression || node.Kind == ast.KindForOfStatement && node.AsForInOrOfStatement().AwaitModifier != nil || node.Kind == ast.KindVariableDeclarationList && node.Flags&ast.NodeFlagsAwaitUsing == ast.NodeFlagsAwaitUsing
@@ -37,7 +44,4 @@ func (rule *noAwaitInLoop) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noAwaitInLoop) OnExitNode(node *ast.Node) {
 }

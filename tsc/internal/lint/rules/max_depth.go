@@ -10,6 +10,25 @@ type maxDepthRule struct {
 	context Context
 }
 
+func newMaxDepth(context Context) Rule {
+	rule := &maxDepthRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindIfStatement,
+			ast.KindSwitchStatement,
+			ast.KindTryStatement,
+			ast.KindDoStatement,
+			ast.KindWhileStatement,
+			ast.KindWithStatement,
+			ast.KindForStatement,
+			ast.KindForInStatement,
+			ast.KindForOfStatement,
+		},
+	}
+}
+
 func (rule *maxDepthRule) OnEnterNode(node *ast.Node) bool {
 	if !maxDepthNode(node) {
 		return true
@@ -29,9 +48,6 @@ func (rule *maxDepthRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *maxDepthRule) OnExitNode(node *ast.Node) {
-}
-
 func maxDepthNode(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIfStatement:
@@ -40,8 +56,4 @@ func maxDepthNode(node *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func newMaxDepth(context Context) Rule {
-	return &maxDepthRule{context: context}
 }

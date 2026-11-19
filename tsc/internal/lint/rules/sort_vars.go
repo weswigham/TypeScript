@@ -16,19 +16,21 @@ type sortVarsRule struct {
 	context Context
 }
 
+func newSortVars(context Context) Rule {
+	rule := &sortVarsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclarationList},
+	}
+}
+
 func (rule *sortVarsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindVariableDeclarationList {
 		rule.sortVars(node)
 	}
 
 	return true
-}
-
-func (rule *sortVarsRule) OnExitNode(node *ast.Node) {
-}
-
-func (rule *sortVarsRule) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return nil
 }
 
 func (rule *sortVarsRule) fix(diagnostic *ast.Diagnostic, start, end int, replacement string) {
@@ -108,5 +110,3 @@ func (rule *sortVarsRule) Start(node *ast.Node) int {
 func (rule *sortVarsRule) Text(node *ast.Node) string {
 	return rule.context.File.Text()[rule.Start(node):node.End()]
 }
-
-func newSortVars(context Context) Rule { return &sortVarsRule{context: context} }

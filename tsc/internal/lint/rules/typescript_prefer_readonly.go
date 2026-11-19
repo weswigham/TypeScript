@@ -18,19 +18,23 @@ type typeScriptPreferReadonly struct {
 }
 
 func newTypeScriptPreferReadonly(context Context) Rule {
-	return &typeScriptPreferReadonly{context: context}
-}
+	rule := &typeScriptPreferReadonly{context: context}
 
-func (rule *typeScriptPreferReadonly) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
-	return rule.suggestions
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+		GetSuggestions: rule.Suggestions,
+	}
 }
-
-func (rule *typeScriptPreferReadonly) OnEnterNode(node *ast.Node) bool { return true }
 
 func (rule *typeScriptPreferReadonly) OnExitNode(node *ast.Node) {
 	if ast.IsClassLike(node) {
 		rule.readonlyMembers(node)
 	}
+}
+
+func (rule *typeScriptPreferReadonly) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
+	return rule.suggestions
 }
 
 func (rule *typeScriptPreferReadonly) Text(node *ast.Node) string {

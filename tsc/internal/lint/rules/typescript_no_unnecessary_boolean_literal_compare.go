@@ -12,10 +12,13 @@ import (
 
 type typescriptNoUnnecessaryBooleanLiteralCompareRule struct{ context Context }
 
-func noUnnecessaryBooleanLiteralCompareReplace(context Context, node *ast.Node, text string) []*codefix.CodeFixAction {
-	tracker := context.NewTracker()
-	tracker.ReplaceTextRangeWithText(context.File, core.NewTextRange(scanner.GetTokenPosOfNode(node, context.File, false), node.End()), text)
-	return []*codefix.CodeFixAction{codefix.CreateCodeFixAction("@typescript-eslint/no-unnecessary-boolean-literal-compare", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_unnecessary_boolean_comparison), "", nil)}
+func newTypeScriptNoUnnecessaryBooleanLiteralCompare(context Context) Rule {
+	rule := &typescriptNoUnnecessaryBooleanLiteralCompareRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile, ast.KindBinaryExpression},
+	}
 }
 
 func (rule *typescriptNoUnnecessaryBooleanLiteralCompareRule) OnEnterNode(node *ast.Node) bool {
@@ -114,8 +117,8 @@ func (rule *typescriptNoUnnecessaryBooleanLiteralCompareRule) OnEnterNode(node *
 	return true
 }
 
-func (rule *typescriptNoUnnecessaryBooleanLiteralCompareRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoUnnecessaryBooleanLiteralCompare(context Context) Rule {
-	return &typescriptNoUnnecessaryBooleanLiteralCompareRule{context: context}
+func noUnnecessaryBooleanLiteralCompareReplace(context Context, node *ast.Node, text string) []*codefix.CodeFixAction {
+	tracker := context.NewTracker()
+	tracker.ReplaceTextRangeWithText(context.File, core.NewTextRange(scanner.GetTokenPosOfNode(node, context.File, false), node.End()), text)
+	return []*codefix.CodeFixAction{codefix.CreateCodeFixAction("@typescript-eslint/no-unnecessary-boolean-literal-compare", tracker.GetTextChanges(), ast.NewCompilerDiagnostic(diagnostics.Remove_unnecessary_boolean_comparison), "", nil)}
 }

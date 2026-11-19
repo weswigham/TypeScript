@@ -13,6 +13,16 @@ import (
 
 type preferNamedCaptureGroup struct{ helpers.RegexSource }
 
+func newPreferNamedCaptureGroup(context Context) Rule {
+	rule := &preferNamedCaptureGroup{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *preferNamedCaptureGroup) OnEnterNode(node *ast.Node) bool {
 	input := rule.Input(node)
 	if input == nil || !input.KnownPattern {
@@ -51,8 +61,4 @@ func (rule *preferNamedCaptureGroup) named(input *helpers.RegexInput, parsed *sc
 		rule.Edit(diagnostic, "prefer-named-capture-group", input.Start+capture.Start+1, input.Start+capture.Start+1, fmt.Sprintf("?<temp%d>", maximum+1), ast.NewCompilerDiagnostic(diagnostics.Add_name_to_capture_group), true)
 		rule.Edit(diagnostic, "prefer-named-capture-group", input.Start+capture.Start+1, input.Start+capture.Start+1, "?:", ast.NewCompilerDiagnostic(diagnostics.Convert_group_to_non_capturing), true)
 	}
-}
-
-func newPreferNamedCaptureGroup(context Context) Rule {
-	return &preferNamedCaptureGroup{RegexSource: helpers.NewRegexSource(context)}
 }

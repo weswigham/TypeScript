@@ -8,6 +8,34 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noUnderscoreDangleRule struct{ context Context }
+
+func newNoUnderscoreDangleRule(context Context) Rule {
+	rule := &noUnderscoreDangleRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindArrowFunction,
+			ast.KindConstructor,
+			ast.KindElementAccessExpression,
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindGetAccessor,
+			ast.KindMethodDeclaration,
+			ast.KindPropertyAccessExpression,
+			ast.KindPropertyDeclaration,
+			ast.KindSetAccessor,
+			ast.KindVariableDeclaration,
+		},
+	}
+}
+
+func (rule *noUnderscoreDangleRule) OnEnterNode(node *ast.Node) bool {
+	rule.underscore(node)
+	return true
+}
+
 func noUnderscoreDangleName(node *ast.Node) (string, bool) {
 	if node == nil {
 		return "", false
@@ -20,19 +48,6 @@ func noUnderscoreDangleName(node *ast.Node) (string, bool) {
 	}
 	return strings.TrimPrefix(node.Text(), "#"), node.Kind == ast.KindPrivateIdentifier
 }
-
-type noUnderscoreDangleRule struct{ context Context }
-
-func newNoUnderscoreDangleRule(context Context) Rule {
-	return &noUnderscoreDangleRule{context: context}
-}
-
-func (rule *noUnderscoreDangleRule) OnEnterNode(node *ast.Node) bool {
-	rule.underscore(node)
-	return true
-}
-
-func (rule *noUnderscoreDangleRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noUnderscoreDangleRule) underscore(node *ast.Node) {
 	switch node.Kind {

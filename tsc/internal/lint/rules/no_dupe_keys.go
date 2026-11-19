@@ -10,7 +10,22 @@ type noDupeKeys struct {
 	context Context
 }
 
-func newNoDupeKeys(context Context) Rule { return &noDupeKeys{context: context} }
+func newNoDupeKeys(context Context) Rule {
+	rule := &noDupeKeys{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindObjectLiteralExpression},
+	}
+}
+
+func (rule *noDupeKeys) OnEnterNode(node *ast.Node) bool {
+	if node.Kind == ast.KindObjectLiteralExpression && !helpers.SourceDestructuring(node) {
+		rule.duplicateMembers(node.AsObjectLiteralExpression().Properties.Nodes)
+	}
+
+	return true
+}
 
 func (rule *noDupeKeys) duplicateMembers(members []*ast.Node) {
 	seen := make(map[string]uint8)
@@ -37,15 +52,4 @@ func (rule *noDupeKeys) duplicateMembers(members []*ast.Node) {
 		}
 		seen[name] |= mask
 	}
-}
-
-func (rule *noDupeKeys) OnEnterNode(node *ast.Node) bool {
-	if node.Kind == ast.KindObjectLiteralExpression && !helpers.SourceDestructuring(node) {
-		rule.duplicateMembers(node.AsObjectLiteralExpression().Properties.Nodes)
-	}
-
-	return true
-}
-
-func (rule *noDupeKeys) OnExitNode(node *ast.Node) {
 }

@@ -10,6 +10,21 @@ type classMethodsUseThisRule struct {
 	context Context
 }
 
+func newClassMethodsUseThis(context Context) Rule {
+	rule := &classMethodsUseThisRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindArrowFunction,
+			ast.KindFunctionExpression,
+			ast.KindGetAccessor,
+			ast.KindMethodDeclaration,
+			ast.KindSetAccessor,
+		},
+	}
+}
+
 func (rule *classMethodsUseThisRule) OnEnterNode(node *ast.Node) bool {
 	member := node
 	if node.Kind == ast.KindFunctionExpression || node.Kind == ast.KindArrowFunction {
@@ -60,11 +75,4 @@ func (rule *classMethodsUseThisRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.Expected_this_to_be_used_by_class_0, name)
 	}
 	return true
-}
-
-func (rule *classMethodsUseThisRule) OnExitNode(node *ast.Node) {
-}
-
-func newClassMethodsUseThis(context Context) Rule {
-	return &classMethodsUseThisRule{context: context}
 }

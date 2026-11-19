@@ -10,12 +10,20 @@ type typescriptArrayTypeRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptArrayType(context Context) Rule {
+	rule := &typescriptArrayTypeRule{Context: context, Name: "array-type"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindArrayType, ast.KindTypeReference},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptArrayTypeRule) OnEnterNode(node *ast.Node) bool {
 	rule.arrayType(node)
 	return true
 }
-
-func (rule *typescriptArrayTypeRule) OnExitNode(node *ast.Node) {}
 
 func tsScopeUnwrapType(node *ast.Node) *ast.Node {
 	for node != nil && node.Kind == ast.KindParenthesizedType {
@@ -130,8 +138,4 @@ func (rule *typescriptArrayTypeRule) arrayType(node *ast.Node) {
 	}
 	diagnostic := rule.Context.Report(rule.Context.Range(node), message, name.Text(), display, prefix+display+suffix)
 	rule.Edits(diagnostic, nil, helpers.TsScopeEdit{Start: rule.Start(node), End: rule.Start(element), Text: prefix}, helpers.TsScopeEdit{Start: element.End(), End: node.End(), Text: suffix})
-}
-
-func newTypeScriptArrayType(context Context) Rule {
-	return &typescriptArrayTypeRule{Context: context, Name: "array-type"}
 }

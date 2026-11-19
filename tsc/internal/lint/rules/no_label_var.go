@@ -8,7 +8,12 @@ import (
 type noLabelVarRule struct{ context Context }
 
 func newNoLabelVarRule(context Context) Rule {
-	return &noLabelVarRule{context: context}
+	rule := &noLabelVarRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindLabeledStatement},
+	}
 }
 
 func (rule *noLabelVarRule) OnEnterNode(node *ast.Node) bool {
@@ -20,5 +25,3 @@ func (rule *noLabelVarRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noLabelVarRule) OnExitNode(node *ast.Node) {}

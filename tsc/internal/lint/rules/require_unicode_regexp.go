@@ -10,6 +10,16 @@ import (
 
 type requireUnicodeRegexp struct{ helpers.RegexSource }
 
+func newRequireUnicodeRegexp(context Context) Rule {
+	rule := &requireUnicodeRegexp{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *requireUnicodeRegexp) OnEnterNode(node *ast.Node) bool {
 	input := rule.Input(node)
 	if input != nil {
@@ -40,8 +50,4 @@ func (rule *requireUnicodeRegexp) unicodeFlag(input *helpers.RegexInput) {
 	}
 	diagnostic := rule.Context.Report(rule.Context.Range(input.Node), message)
 	rule.FlagSuggestion(diagnostic, "require-unicode-regexp", input, required, description)
-}
-
-func newRequireUnicodeRegexp(context Context) Rule {
-	return &requireUnicodeRegexp{RegexSource: helpers.NewRegexSource(context)}
 }

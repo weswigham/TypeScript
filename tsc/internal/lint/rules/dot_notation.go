@@ -14,6 +14,15 @@ type dotNotationRule struct {
 	context Context
 }
 
+func newDotNotation(context Context) Rule {
+	rule := &dotNotationRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindPropertyAccessExpression, ast.KindElementAccessExpression},
+	}
+}
+
 func (rule *dotNotationRule) OnEnterNode(node *ast.Node) bool {
 	options := helpers.SyntaxObject(rule.context, 0)
 	allowKeywords := helpers.BooleanOptionValue(options, "allowKeywords", true)
@@ -72,11 +81,4 @@ func (rule *dotNotationRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *dotNotationRule) OnExitNode(node *ast.Node) {
-}
-
 var dotNotationIdentifier = regexp.MustCompile(`^[a-zA-Z_$][a-zA-Z0-9_$]*$`)
-
-func newDotNotation(context Context) Rule {
-	return &dotNotationRule{context: context}
-}

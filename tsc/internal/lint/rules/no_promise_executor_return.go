@@ -14,15 +14,19 @@ type noPromiseExecutorReturnRule struct {
 }
 
 func newNoPromiseExecutorReturnRule(context Context) Rule {
-	return &noPromiseExecutorReturnRule{context: context}
+	rule := &noPromiseExecutorReturnRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindArrowFunction, ast.KindReturnStatement},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *noPromiseExecutorReturnRule) OnEnterNode(node *ast.Node) bool {
 	rule.checkPromiseReturn(node)
 	return true
 }
-
-func (rule *noPromiseExecutorReturnRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noPromiseExecutorReturnRule) checkPromiseReturn(node *ast.Node) {
 	var expression *ast.Node

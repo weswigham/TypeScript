@@ -10,6 +10,15 @@ type noVoid struct {
 	context Context
 }
 
+func newNoVoid(context Context) Rule {
+	rule := &noVoid{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVoidExpression},
+	}
+}
+
 func (rule *noVoid) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindVoidExpression {
 		if helpers.ExpressionBooleanOption(rule.context, "allowAsStatement", false) {
@@ -22,7 +31,3 @@ func (rule *noVoid) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noVoid) OnExitNode(node *ast.Node) {}
-
-func newNoVoid(context Context) Rule { return &noVoid{context: context} }

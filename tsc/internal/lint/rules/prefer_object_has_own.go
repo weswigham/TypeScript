@@ -12,15 +12,18 @@ import (
 type preferObjectHasOwnRule struct{ context Context }
 
 func newPreferObjectHasOwnRule(context Context) Rule {
-	return &preferObjectHasOwnRule{context: context}
+	rule := &preferObjectHasOwnRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression},
+	}
 }
 
 func (rule *preferObjectHasOwnRule) OnEnterNode(node *ast.Node) bool {
 	rule.objectHasOwn(node)
 	return true
 }
-
-func (rule *preferObjectHasOwnRule) OnExitNode(node *ast.Node) {}
 
 func (rule *preferObjectHasOwnRule) objectHasOwn(node *ast.Node) {
 	if node.Kind != ast.KindCallExpression || helpers.SharedOptionalChainBoundary(node.Expression()) {

@@ -14,17 +14,22 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-type noWarningCommentsCoreRule struct {
+type noWarningCommentsRule struct {
 	context Context
 }
 
-func newNoWarningCommentsCoreRule(context Context) *noWarningCommentsCoreRule {
-	return &noWarningCommentsCoreRule{
+func newNoWarningComments(context Context) Rule {
+	rule := &noWarningCommentsRule{
 		context: context,
+	}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindSourceFile},
 	}
 }
 
-func (rule *noWarningCommentsCoreRule) OnEnterNode(node *ast.Node) bool {
+func (rule *noWarningCommentsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindSourceFile {
 		rule.checkWarningComments(node)
 		return false
@@ -32,9 +37,7 @@ func (rule *noWarningCommentsCoreRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noWarningCommentsCoreRule) OnExitNode(node *ast.Node) {}
-
-func (rule *noWarningCommentsCoreRule) checkWarningComments(node *ast.Node) {
+func (rule *noWarningCommentsRule) checkWarningComments(node *ast.Node) {
 	terms := []string{"todo", "fixme", "xxx"}
 	location, decoration := "start", ""
 	if len(rule.context.Options) > 0 {
@@ -156,5 +159,3 @@ func warningCommentTerms(value any, fallback []string) []string {
 	}
 	return fallback
 }
-
-func newNoWarningCommentsCore(context Context) Rule { return newNoWarningCommentsCoreRule(context) }

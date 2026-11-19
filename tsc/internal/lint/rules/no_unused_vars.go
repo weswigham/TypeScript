@@ -15,6 +15,15 @@ import (
 
 type noUnusedVars struct{ helpers.UsageRuleContext }
 
+func newNoUnusedVars(context Context) Rule {
+	rule := &noUnusedVars{Context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noUnusedVars) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindSourceFile {
 		return false
@@ -23,7 +32,6 @@ func (rule *noUnusedVars) OnEnterNode(node *ast.Node) bool {
 	rule.unusedVariables()
 	return false
 }
-func (rule *noUnusedVars) OnExitNode(node *ast.Node) {}
 
 func usageInitializer(node *ast.Node) *ast.Node {
 	switch node.Kind {
@@ -403,8 +411,4 @@ func (rule *noUnusedVars) unsafeRemoval(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func newNoUnusedVars(context Context) Rule {
-	return &noUnusedVars{Context: context}
 }

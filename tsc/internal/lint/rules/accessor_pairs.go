@@ -14,6 +14,21 @@ type accessorPairsRule struct {
 	context Context
 }
 
+func newAccessorPairs(context Context) Rule {
+	rule := &accessorPairsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindObjectLiteralExpression,
+			ast.KindTypeLiteral,
+			ast.KindInterfaceDeclaration,
+		},
+	}
+}
+
 func (rule *accessorPairsRule) OnEnterNode(node *ast.Node) bool {
 	var members []*ast.Node
 	isClass := ast.IsClassLike(node)
@@ -93,9 +108,6 @@ func (rule *accessorPairsRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *accessorPairsRule) OnExitNode(node *ast.Node) {
-}
-
 func (rule *accessorPairsRule) key(node *ast.Node) string {
 	name := node.Name()
 	if text, ok := helpers.StaticDeclarationNameText(name); ok {
@@ -114,8 +126,4 @@ func (rule *accessorPairsRule) key(node *ast.Node) string {
 		fmt.Fprintf(&result, "%d:%s;", kind, lexer.TokenText())
 	}
 	return "tokens:" + result.String()
-}
-
-func newAccessorPairs(context Context) Rule {
-	return &accessorPairsRule{context: context}
 }

@@ -12,7 +12,14 @@ type noBitwise struct {
 	context Context
 }
 
-func newNoBitwise(context Context) Rule { return &noBitwise{context: context} }
+func newNoBitwise(context Context) Rule {
+	rule := &noBitwise{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression, ast.KindPrefixUnaryExpression},
+	}
+}
 
 func (rule *noBitwise) OnEnterNode(node *ast.Node) bool {
 	operator := ast.KindUnknown
@@ -33,9 +40,6 @@ func (rule *noBitwise) OnEnterNode(node *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (rule *noBitwise) OnExitNode(node *ast.Node) {
 }
 
 func (rule *noBitwise) Options() map[string]any {

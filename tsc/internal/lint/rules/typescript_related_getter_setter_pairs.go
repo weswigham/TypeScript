@@ -8,6 +8,15 @@ import (
 
 type typescriptRelatedGetterSetterPairsRule struct{ context Context }
 
+func newTypeScriptRelatedGetterSetterPairs(context Context) Rule {
+	rule := &typescriptRelatedGetterSetterPairsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral},
+	}
+}
+
 func (rule *typescriptRelatedGetterSetterPairsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindClassDeclaration && node.Kind != ast.KindClassExpression && node.Kind != ast.KindInterfaceDeclaration && node.Kind != ast.KindTypeLiteral {
 		return true
@@ -56,10 +65,4 @@ func (rule *typescriptRelatedGetterSetterPairsRule) OnEnterNode(node *ast.Node) 
 		}
 	}
 	return true
-}
-
-func (rule *typescriptRelatedGetterSetterPairsRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptRelatedGetterSetterPairs(context Context) Rule {
-	return &typescriptRelatedGetterSetterPairsRule{context: context}
 }

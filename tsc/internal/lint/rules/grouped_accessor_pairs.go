@@ -14,6 +14,21 @@ type groupedAccessorPairsRule struct {
 	context Context
 }
 
+func newGroupedAccessorPairs(context Context) Rule {
+	rule := &groupedAccessorPairsRule{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+			ast.KindObjectLiteralExpression,
+			ast.KindTypeLiteral,
+			ast.KindInterfaceDeclaration,
+		},
+	}
+}
+
 func (rule *groupedAccessorPairsRule) OnEnterNode(node *ast.Node) bool {
 	var members []*ast.Node
 	isClass := ast.IsClassLike(node)
@@ -71,9 +86,6 @@ func (rule *groupedAccessorPairsRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *groupedAccessorPairsRule) OnExitNode(node *ast.Node) {
-}
-
 func (rule *groupedAccessorPairsRule) key(node *ast.Node) string {
 	name := node.Name()
 	if text, ok := helpers.StaticDeclarationNameText(name); ok {
@@ -92,8 +104,4 @@ func (rule *groupedAccessorPairsRule) key(node *ast.Node) string {
 		fmt.Fprintf(&result, "%d:%s;", kind, lexer.TokenText())
 	}
 	return "tokens:" + result.String()
-}
-
-func newGroupedAccessorPairs(context Context) Rule {
-	return &groupedAccessorPairsRule{context: context}
 }

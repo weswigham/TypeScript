@@ -18,14 +18,93 @@ type typeScriptNoUnnecessaryTypeParameters struct {
 }
 
 func newTypeScriptNoUnnecessaryTypeParameters(context Context) Rule {
-	return &typeScriptNoUnnecessaryTypeParameters{context: context}
+	rule := &typeScriptNoUnnecessaryTypeParameters{context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindMethodDeclaration,
+			ast.KindConstructor,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression,
+		},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
+func (rule *typeScriptNoUnnecessaryTypeParameters) OnEnterNode(node *ast.Node) bool {
+	class := ast.IsClassLike(node)
+	if !class && !ast.IsFunctionLike(node) {
+		return true
+	}
+	parameters := node.TypeParameters()
+	if len(parameters) == 0 {
+		return true
+	}
+	counts := make(map[*ast.Symbol]int)
+	if class {
+		for _, parameter := range parameters {
+			rule.collect(parameter, counts, true)
+		}
+		for _, member := range node.Members() {
+			rule.collect(member, counts, true)
+		}
+	} else {
+		rule.collect(node, counts, false)
+	}
+	for index, parameter := range parameters {
+		references := rule.references(node, parameter)
+		if rule.repeated(node, parameter, references) {
+			continue
+		}
+		count := counts[rule.context.GetChecker().GetSymbolAtLocation(parameter.Name())]
+		if count == 0 || count > 2 {
+			continue
+		}
+		uses, descriptor := "used only once", "function"
+		if count == 1 {
+			uses = "never used"
+		}
+		if class {
+			descriptor = "class"
+		}
+		diagnostic := rule.context.Report(rule.context.Range(parameter), diagnostics.Type_parameter_0_is_1_in_the_2_signature, parameter.Name().Text(), uses, descriptor)
+		start, end := helpers.SemanticSyntaxStart(rule.context, parameter), parameter.End()
+		if len(parameters) == 1 {
+			start = helpers.SemanticSyntaxStart(rule.context, node) + strings.LastIndex(rule.context.File.Text()[helpers.SemanticSyntaxStart(rule.context, node):start], "<")
+			end += strings.Index(rule.context.File.Text()[end:], ">") + 1
+		} else if index == 0 {
+			end = helpers.SemanticSyntaxStart(rule.context, parameters[1])
+		} else {
+			start = parameters[index-1].End() + strings.LastIndex(rule.context.File.Text()[parameters[index-1].End():start], ",")
+		}
+		edits := []core.TextChange{helpers.SemanticSyntaxEdit(start, end, helpers.SemanticSyntaxComments(rule.context, start, end))}
+		for _, reference := range references {
+			if reference.Pos() >= start && reference.End() <= end {
+				continue
+			}
+			edits = append(edits, helpers.SemanticSyntaxEdit(helpers.SemanticSyntaxStart(rule.context, reference), reference.End(), rule.replacement(parameter, reference)))
+		}
+		rule.fix(diagnostic, "no-unnecessary-type-parameters", edits, diagnostics.Replace_all_usages_of_type_parameter_with_its_constraint)
+	}
+	return true
 }
 
 func (rule *typeScriptNoUnnecessaryTypeParameters) Suggestions() map[*ast.Diagnostic][]*codefix.CodeFixAction {
 	return rule.suggestions
 }
-
-func (rule *typeScriptNoUnnecessaryTypeParameters) OnExitNode(node *ast.Node) {}
 
 func (rule *typeScriptNoUnnecessaryTypeParameters) fix(diagnostic *ast.Diagnostic, name string, edits []core.TextChange, suggestion *diagnostics.Message) {
 	if rule.context.NewTracker == nil {
@@ -242,62 +321,4 @@ func (rule *typeScriptNoUnnecessaryTypeParameters) replacement(parameter, refere
 		}
 	}
 	return text
-}
-
-func (rule *typeScriptNoUnnecessaryTypeParameters) OnEnterNode(node *ast.Node) bool {
-	class := ast.IsClassLike(node)
-	if !class && !ast.IsFunctionLike(node) {
-		return true
-	}
-	parameters := node.TypeParameters()
-	if len(parameters) == 0 {
-		return true
-	}
-	counts := make(map[*ast.Symbol]int)
-	if class {
-		for _, parameter := range parameters {
-			rule.collect(parameter, counts, true)
-		}
-		for _, member := range node.Members() {
-			rule.collect(member, counts, true)
-		}
-	} else {
-		rule.collect(node, counts, false)
-	}
-	for index, parameter := range parameters {
-		references := rule.references(node, parameter)
-		if rule.repeated(node, parameter, references) {
-			continue
-		}
-		count := counts[rule.context.GetChecker().GetSymbolAtLocation(parameter.Name())]
-		if count == 0 || count > 2 {
-			continue
-		}
-		uses, descriptor := "used only once", "function"
-		if count == 1 {
-			uses = "never used"
-		}
-		if class {
-			descriptor = "class"
-		}
-		diagnostic := rule.context.Report(rule.context.Range(parameter), diagnostics.Type_parameter_0_is_1_in_the_2_signature, parameter.Name().Text(), uses, descriptor)
-		start, end := helpers.SemanticSyntaxStart(rule.context, parameter), parameter.End()
-		if len(parameters) == 1 {
-			start = helpers.SemanticSyntaxStart(rule.context, node) + strings.LastIndex(rule.context.File.Text()[helpers.SemanticSyntaxStart(rule.context, node):start], "<")
-			end += strings.Index(rule.context.File.Text()[end:], ">") + 1
-		} else if index == 0 {
-			end = helpers.SemanticSyntaxStart(rule.context, parameters[1])
-		} else {
-			start = parameters[index-1].End() + strings.LastIndex(rule.context.File.Text()[parameters[index-1].End():start], ",")
-		}
-		edits := []core.TextChange{helpers.SemanticSyntaxEdit(start, end, helpers.SemanticSyntaxComments(rule.context, start, end))}
-		for _, reference := range references {
-			if reference.Pos() >= start && reference.End() <= end {
-				continue
-			}
-			edits = append(edits, helpers.SemanticSyntaxEdit(helpers.SemanticSyntaxStart(rule.context, reference), reference.End(), rule.replacement(parameter, reference)))
-		}
-		rule.fix(diagnostic, "no-unnecessary-type-parameters", edits, diagnostics.Replace_all_usages_of_type_parameter_with_its_constraint)
-	}
-	return true
 }

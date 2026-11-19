@@ -9,6 +9,26 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/lint/rules/helpers"
 )
 
+type noLoopFuncRule struct {
+	context            Context
+	referencesBySymbol map[*ast.Symbol][]*ast.Node
+	skippedIIFEs       map[*ast.Node]bool
+}
+
+func newNoLoopFuncRule(context Context) Rule {
+	rule := &noLoopFuncRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindArrowFunction, ast.KindFunctionDeclaration, ast.KindFunctionExpression},
+	}
+}
+
+func (rule *noLoopFuncRule) OnEnterNode(node *ast.Node) bool {
+	rule.checkLoopFunction(node)
+	return true
+}
+
 func noLoopFuncContains(outer, inner *ast.Node) bool {
 	for node := inner; node != nil; node = node.Parent {
 		if node == outer {
@@ -26,23 +46,6 @@ func noLoopFuncVariableScope(node *ast.Node) *ast.Node {
 	}
 	return nil
 }
-
-type noLoopFuncRule struct {
-	context            Context
-	referencesBySymbol map[*ast.Symbol][]*ast.Node
-	skippedIIFEs       map[*ast.Node]bool
-}
-
-func newNoLoopFuncRule(context Context) Rule {
-	return &noLoopFuncRule{context: context}
-}
-
-func (rule *noLoopFuncRule) OnEnterNode(node *ast.Node) bool {
-	rule.checkLoopFunction(node)
-	return true
-}
-
-func (rule *noLoopFuncRule) OnExitNode(node *ast.Node) {}
 
 func (rule *noLoopFuncRule) checkLoopFunction(node *ast.Node) {
 	if node.Kind != ast.KindFunctionDeclaration && node.Kind != ast.KindFunctionExpression && node.Kind != ast.KindArrowFunction {

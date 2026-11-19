@@ -8,7 +8,12 @@ import (
 type noConstructorReturnRule struct{ context Context }
 
 func newNoConstructorReturnRule(context Context) Rule {
-	return &noConstructorReturnRule{context: context}
+	rule := &noConstructorReturnRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindReturnStatement},
+	}
 }
 
 func (rule *noConstructorReturnRule) OnEnterNode(node *ast.Node) bool {
@@ -25,5 +30,3 @@ func (rule *noConstructorReturnRule) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noConstructorReturnRule) OnExitNode(node *ast.Node) {}

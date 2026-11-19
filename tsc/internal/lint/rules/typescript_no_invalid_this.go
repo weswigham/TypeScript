@@ -15,12 +15,20 @@ type typescriptNoInvalidThisRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
+func newTypeScriptNoInvalidThis(context Context) Rule {
+	rule := &typescriptNoInvalidThisRule{Context: context, Name: "no-invalid-this"}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindThisKeyword},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptNoInvalidThisRule) OnEnterNode(node *ast.Node) bool {
 	rule.invalidThis(node)
 	return true
 }
-
-func (rule *typescriptNoInvalidThisRule) OnExitNode(node *ast.Node) {}
 
 func tsScopeThisArgument(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
@@ -176,8 +184,4 @@ func (rule *typescriptNoInvalidThisRule) invalidThis(node *ast.Node) {
 	if ast.IsExternalModule(rule.Context.File) {
 		rule.Context.Report(rule.Context.Range(node), diagnostics.Unexpected_this)
 	}
-}
-
-func newTypeScriptNoInvalidThis(context Context) Rule {
-	return &typescriptNoInvalidThisRule{Context: context, Name: "no-invalid-this"}
 }

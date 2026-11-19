@@ -9,15 +9,18 @@ import (
 type validTypeofRule struct{ context Context }
 
 func newValidTypeofRule(context Context) Rule {
-	return &validTypeofRule{context: context}
+	rule := &validTypeofRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindTypeOfExpression},
+	}
 }
 
 func (rule *validTypeofRule) OnEnterNode(node *ast.Node) bool {
 	rule.typeofComparison(node)
 	return true
 }
-
-func (rule *validTypeofRule) OnExitNode(node *ast.Node) {}
 
 func (rule *validTypeofRule) typeofComparison(node *ast.Node) {
 	if node.Kind != ast.KindTypeOfExpression {

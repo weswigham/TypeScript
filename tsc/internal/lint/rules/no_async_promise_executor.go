@@ -7,10 +7,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var noAsyncPromiseExecutorMessage = diagnostics.Promise_executor_functions_should_not_be_async
-
 type noAsyncPromiseExecutor struct {
 	context Context
+}
+
+func newNoAsyncPromiseExecutor(context Context) Rule {
+	rule := &noAsyncPromiseExecutor{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindNewExpression},
+	}
 }
 
 func (rule *noAsyncPromiseExecutor) OnEnterNode(node *ast.Node) bool {
@@ -38,7 +45,7 @@ func (rule *noAsyncPromiseExecutor) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *noAsyncPromiseExecutor) OnExitNode(node *ast.Node) {}
+var noAsyncPromiseExecutorMessage = diagnostics.Promise_executor_functions_should_not_be_async
 
 func expressionGlobalReference(context Context, node *ast.Node) bool {
 	if node.Kind != ast.KindIdentifier {
@@ -61,8 +68,4 @@ func expressionGlobalReference(context Context, node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func newNoAsyncPromiseExecutor(context Context) Rule {
-	return &noAsyncPromiseExecutor{context: context}
 }

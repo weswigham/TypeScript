@@ -9,6 +9,15 @@ type noNegatedCondition struct {
 	context Context
 }
 
+func newNoNegatedCondition(context Context) Rule {
+	rule := &noNegatedCondition{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindConditionalExpression, ast.KindIfStatement},
+	}
+}
+
 func (rule *noNegatedCondition) OnEnterNode(node *ast.Node) bool {
 	var condition *ast.Node
 	if node.Kind == ast.KindConditionalExpression {
@@ -27,7 +36,3 @@ func (rule *noNegatedCondition) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noNegatedCondition) OnExitNode(node *ast.Node) {}
-
-func newNoNegatedCondition(context Context) Rule { return &noNegatedCondition{context: context} }

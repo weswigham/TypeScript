@@ -10,14 +10,21 @@ type typescriptNoDupeClassMembersRule struct {
 	context Context
 }
 
+func newTypeScriptNoDupeClassMembers(context Context) Rule {
+	rule := &typescriptNoDupeClassMembersRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindClassDeclaration, ast.KindClassExpression},
+	}
+}
+
 func (rule *typescriptNoDupeClassMembersRule) OnEnterNode(node *ast.Node) bool {
 	if ast.IsClassLike(node) {
 		rule.duplicateMembers(node)
 	}
 	return true
 }
-
-func (rule *typescriptNoDupeClassMembersRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoDupeClassMembersRule) duplicateMembers(node *ast.Node) {
 	type key struct {
@@ -46,8 +53,4 @@ func (rule *typescriptNoDupeClassMembersRule) duplicateMembers(node *ast.Node) {
 		}
 		seen[memberKey] |= mask
 	}
-}
-
-func newTypeScriptNoDupeClassMembers(context Context) Rule {
-	return &typescriptNoDupeClassMembersRule{context: context}
 }

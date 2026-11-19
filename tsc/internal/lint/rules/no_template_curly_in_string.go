@@ -11,6 +11,15 @@ type noTemplateCurlyInString struct {
 	context Context
 }
 
+func newNoTemplateCurlyInString(context Context) Rule {
+	rule := &noTemplateCurlyInString{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindStringLiteral},
+	}
+}
+
 func (rule *noTemplateCurlyInString) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindStringLiteral {
 		text := node.Text()
@@ -23,10 +32,4 @@ func (rule *noTemplateCurlyInString) OnEnterNode(node *ast.Node) bool {
 		}
 	}
 	return true
-}
-
-func (rule *noTemplateCurlyInString) OnExitNode(node *ast.Node) {}
-
-func newNoTemplateCurlyInString(context Context) Rule {
-	return &noTemplateCurlyInString{context: context}
 }

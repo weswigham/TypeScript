@@ -14,6 +14,16 @@ type typescriptPreferReduceTypeParameterRule struct {
 	helpers.DiagnosticSuggestions
 }
 
+func newTypeScriptPreferReduceTypeParameter(context Context) Rule {
+	rule := &typescriptPreferReduceTypeParameterRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindCallExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *typescriptPreferReduceTypeParameterRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindCallExpression || len(node.Arguments()) < 2 {
 		return true
@@ -44,8 +54,6 @@ func (rule *typescriptPreferReduceTypeParameterRule) OnEnterNode(node *ast.Node)
 	return true
 }
 
-func (rule *typescriptPreferReduceTypeParameterRule) OnExitNode(node *ast.Node) {}
-
 func typeSafetyArrayConstituents(c *checker.Checker, value *checker.Type) bool {
 	if value.Flags()&checker.TypeFlagsUnionOrIntersection != 0 {
 		for _, part := range value.Types() {
@@ -56,8 +64,4 @@ func typeSafetyArrayConstituents(c *checker.Checker, value *checker.Type) bool {
 		return true
 	}
 	return c.IsArrayType(value) || checker.IsTupleType(value)
-}
-
-func newTypeScriptPreferReduceTypeParameter(context Context) Rule {
-	return &typescriptPreferReduceTypeParameterRule{context: context}
 }

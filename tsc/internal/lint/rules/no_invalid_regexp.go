@@ -11,6 +11,16 @@ import (
 
 type noInvalidRegexp struct{ helpers.RegexSource }
 
+func newNoInvalidRegexp(context Context) Rule {
+	rule := &noInvalidRegexp{RegexSource: helpers.NewRegexSource(context)}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindRegularExpressionLiteral, ast.KindCallExpression, ast.KindNewExpression},
+		GetSuggestions: rule.Suggestions,
+	}
+}
+
 func (rule *noInvalidRegexp) OnEnterNode(node *ast.Node) bool {
 	input := rule.DirectInput(node)
 	if input != nil && !input.Literal {
@@ -71,8 +81,4 @@ func (rule *noInvalidRegexp) invalid(input *helpers.RegexInput) {
 	if message != "" {
 		rule.Context.Report(rule.Context.Range(input.Node), diagnostics.X_0, message)
 	}
-}
-
-func newNoInvalidRegexp(context Context) Rule {
-	return &noInvalidRegexp{RegexSource: helpers.NewRegexSource(context)}
 }

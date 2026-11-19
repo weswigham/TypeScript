@@ -9,20 +9,20 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/scanner"
 )
 
-var (
-	tsNoEmptyInterface          = diagnostics.An_empty_interface_declaration_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead
-	tsNoEmptyInterfaceWithSuper = diagnostics.An_interface_declaring_no_members_is_equivalent_to_its_supertype
-	tsNoEmptyObject             = diagnostics.The_empty_object_type_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead
-)
-
 type typescriptNoEmptyObjectTypeRule struct {
 	helpers.DiagnosticSuggestions
 	context     Context
 	namePattern *regex.Pattern
 }
 
-func (rule *typescriptNoEmptyObjectTypeRule) Text(node *ast.Node) string {
-	return rule.context.File.Text()[scanner.GetTokenPosOfNode(node, rule.context.File, false):node.End()]
+func newTypeScriptNoEmptyObjectType(context Context) Rule {
+	rule := &typescriptNoEmptyObjectTypeRule{context: context}
+
+	return Rule{
+		Enter:          rule.OnEnterNode,
+		EnterKinds:     []ast.Kind{ast.KindInterfaceDeclaration, ast.KindTypeLiteral},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoEmptyObjectTypeRule) OnEnterNode(node *ast.Node) bool {
@@ -118,12 +118,16 @@ func (rule *typescriptNoEmptyObjectTypeRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *typescriptNoEmptyObjectTypeRule) allowedName(name *ast.Node) bool {
-	return rule.namePattern != nil && rule.namePattern.MatchString(name.Text())
+var (
+	tsNoEmptyInterface          = diagnostics.An_empty_interface_declaration_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead
+	tsNoEmptyInterfaceWithSuper = diagnostics.An_interface_declaring_no_members_is_equivalent_to_its_supertype
+	tsNoEmptyObject             = diagnostics.The_empty_object_type_allows_any_non_nullish_value_including_literals_like_0_and_If_that_s_what_you_want_disable_this_lint_rule_with_an_inline_comment_or_configure_the_0_rule_option_If_you_want_a_type_meaning_any_object_you_probably_want_object_instead_If_you_want_a_type_meaning_any_value_you_probably_want_unknown_instead
+)
+
+func (rule *typescriptNoEmptyObjectTypeRule) Text(node *ast.Node) string {
+	return rule.context.File.Text()[scanner.GetTokenPosOfNode(node, rule.context.File, false):node.End()]
 }
 
-func (rule *typescriptNoEmptyObjectTypeRule) OnExitNode(node *ast.Node) {}
-
-func newTypeScriptNoEmptyObjectType(context Context) Rule {
-	return &typescriptNoEmptyObjectTypeRule{context: context}
+func (rule *typescriptNoEmptyObjectTypeRule) allowedName(name *ast.Node) bool {
+	return rule.namePattern != nil && rule.namePattern.MatchString(name.Text())
 }

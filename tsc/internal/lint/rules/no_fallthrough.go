@@ -15,7 +15,36 @@ type noFallthrough struct {
 	helpers.SharedControlFlowContext
 }
 
+func newNoFallthrough(context Context) Rule {
+	rule := &noFallthrough{Context: context}
+
+	return Rule{
+		Enter: rule.OnEnterNode,
+		EnterKinds: []ast.Kind{
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindJSDocSignature,
+			ast.KindConstructSignature,
+			ast.KindIndexSignature,
+			ast.KindFunctionType,
+			ast.KindConstructorType,
+			ast.KindSourceFile,
+			ast.KindClassStaticBlockDeclaration,
+		},
+		Exit:      rule.OnExitNode,
+		ExitKinds: []ast.Kind{ast.KindSourceFile},
+	}
+}
+
 func (rule *noFallthrough) OnEnterNode(node *ast.Node) bool { return rule.EnterGraph(node, nil) }
+
 func (rule *noFallthrough) OnExitNode(node *ast.Node) {
 	if node.Kind != ast.KindSourceFile {
 		return
@@ -105,8 +134,4 @@ func (rule *noFallthrough) fallthroughCase(clause helpers.ControlFlowCase) {
 		message = diagnostics.Expected_a_break_statement_before_default
 	}
 	rule.ReportOnce(clause.Next, message)
-}
-
-func newNoFallthrough(context Context) Rule {
-	return &noFallthrough{Context: context}
 }

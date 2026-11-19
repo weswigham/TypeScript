@@ -11,8 +11,14 @@ type typescriptNoUnusedVarsRule struct {
 	helpers.TypescriptScopeRuleContext
 }
 
-func (rule *typescriptNoUnusedVarsRule) OnEnterNode(node *ast.Node) bool {
-	return true
+func newTypeScriptNoUnusedVars(context Context) Rule {
+	rule := &typescriptNoUnusedVarsRule{Context: context, Name: "no-unused-vars"}
+
+	return Rule{
+		Exit:           rule.OnExitNode,
+		ExitKinds:      []ast.Kind{ast.KindSourceFile},
+		GetSuggestions: rule.Suggestions,
+	}
 }
 
 func (rule *typescriptNoUnusedVarsRule) OnExitNode(node *ast.Node) {
@@ -248,8 +254,4 @@ func (rule *typescriptNoUnusedVarsRule) unusedImportFix(diagnostic *ast.Diagnost
 		}
 	}
 	rule.Edits(diagnostic, suggestion, helpers.TsScopeEdit{Start: start, End: end, Text: ""})
-}
-
-func newTypeScriptNoUnusedVars(context Context) Rule {
-	return &typescriptNoUnusedVarsRule{Context: context, Name: "no-unused-vars"}
 }

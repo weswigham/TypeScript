@@ -9,12 +9,19 @@ type typescriptNoMisusedNewRule struct {
 	context Context
 }
 
+func newTypeScriptNoMisusedNew(context Context) Rule {
+	rule := &typescriptNoMisusedNewRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindMethodSignature, ast.KindMethodDeclaration, ast.KindConstructSignature},
+	}
+}
+
 func (rule *typescriptNoMisusedNewRule) OnEnterNode(node *ast.Node) bool {
 	rule.misusedNew(node)
 	return true
 }
-
-func (rule *typescriptNoMisusedNewRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoMisusedNewRule) misusedNew(node *ast.Node) {
 	name := node.Name()
@@ -41,8 +48,4 @@ func (rule *typescriptNoMisusedNewRule) misusedNew(node *ast.Node) {
 	} else {
 		rule.context.Report(rule.context.Range(node), diagnostics.Interfaces_cannot_be_constructed_only_classes)
 	}
-}
-
-func newTypeScriptNoMisusedNew(context Context) Rule {
-	return &typescriptNoMisusedNewRule{context: context}
 }

@@ -13,6 +13,15 @@ type eqeqeqRule struct {
 	context Context
 }
 
+func newEqeqeq(context Context) Rule {
+	rule := &eqeqeqRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindBinaryExpression},
+	}
+}
+
 func (rule *eqeqeqRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindBinaryExpression {
 		return true
@@ -59,9 +68,6 @@ func (rule *eqeqeqRule) OnEnterNode(node *ast.Node) bool {
 	return true
 }
 
-func (rule *eqeqeqRule) OnExitNode(node *ast.Node) {
-}
-
 func eqeqeqLiteralType(node *ast.Node) string {
 	switch node.Kind {
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
@@ -76,8 +82,4 @@ func eqeqeqLiteralType(node *ast.Node) string {
 		return "object"
 	}
 	return ""
-}
-
-func newEqeqeq(context Context) Rule {
-	return &eqeqeqRule{context: context}
 }

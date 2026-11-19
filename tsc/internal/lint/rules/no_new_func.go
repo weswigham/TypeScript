@@ -10,6 +10,15 @@ type noNewFunc struct {
 	context Context
 }
 
+func newNoNewFunc(context Context) Rule {
+	rule := &noNewFunc{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindCallExpression, ast.KindNewExpression},
+	}
+}
+
 func (rule *noNewFunc) OnEnterNode(node *ast.Node) bool {
 	if node.Kind == ast.KindCallExpression || node.Kind == ast.KindNewExpression {
 		callee := ast.SkipParentheses(node.Expression())
@@ -26,7 +35,3 @@ func (rule *noNewFunc) OnEnterNode(node *ast.Node) bool {
 	}
 	return true
 }
-
-func (rule *noNewFunc) OnExitNode(node *ast.Node) {}
-
-func newNoNewFunc(context Context) Rule { return &noNewFunc{context: context} }

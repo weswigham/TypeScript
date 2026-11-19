@@ -9,12 +9,19 @@ type typescriptNoNamespaceRule struct {
 	context Context
 }
 
+func newTypeScriptNoNamespace(context Context) Rule {
+	rule := &typescriptNoNamespaceRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindModuleDeclaration},
+	}
+}
+
 func (rule *typescriptNoNamespaceRule) OnEnterNode(node *ast.Node) bool {
 	rule.namespace(node)
 	return true
 }
-
-func (rule *typescriptNoNamespaceRule) OnExitNode(node *ast.Node) {}
 
 func (rule *typescriptNoNamespaceRule) namespace(node *ast.Node) {
 	if node.Kind != ast.KindModuleDeclaration || node.Name().Kind == ast.KindStringLiteral || node.Name().Text() == "global" || node.Parent.Kind == ast.KindModuleDeclaration {
@@ -46,8 +53,4 @@ func (rule *typescriptNoNamespaceRule) Options() map[string]any {
 		return options
 	}
 	return nil
-}
-
-func newTypeScriptNoNamespace(context Context) Rule {
-	return &typescriptNoNamespaceRule{context: context}
 }

@@ -10,6 +10,15 @@ type initDeclarationsRule struct {
 	context Context
 }
 
+func newInitDeclarations(context Context) Rule {
+	rule := &initDeclarationsRule{context: context}
+
+	return Rule{
+		Enter:      rule.OnEnterNode,
+		EnterKinds: []ast.Kind{ast.KindVariableDeclaration},
+	}
+}
+
 func (rule *initDeclarationsRule) OnEnterNode(node *ast.Node) bool {
 	if node.Kind != ast.KindVariableDeclaration {
 		return true
@@ -35,11 +44,4 @@ func (rule *initDeclarationsRule) OnEnterNode(node *ast.Node) bool {
 		rule.context.Report(rule.context.Range(node), diagnostics.Variable_0_should_not_be_initialized_on_declaration, declaration.Name().Text())
 	}
 	return true
-}
-
-func (rule *initDeclarationsRule) OnExitNode(node *ast.Node) {
-}
-
-func newInitDeclarations(context Context) Rule {
-	return &initDeclarationsRule{context: context}
 }
