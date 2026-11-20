@@ -6,19 +6,18 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/microsoft/TypeScript/tsc/internal/bundled"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	linthost "github.com/microsoft/TypeScript/tsc/internal/lint/host"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp"
 	"github.com/microsoft/TypeScript/tsc/internal/pprof"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs/osvfs"
 )
 
-func runLSP(args []string) int {
+func runLSP(parent context.Context, args []string) int {
 	flag := flag.NewFlagSet("lsp", flag.ContinueOnError)
 	stdio := flag.Bool("stdio", false, "use stdio for communication")
 	pprofDir := flag.String("pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
@@ -47,10 +46,17 @@ func runLSP(args []string) int {
 	typingsLocation := osvfs.GetGlobalTypingsCacheLocation()
 	cwd := tspath.RootedDirectoryPathFromAbsolute(core.Must(os.Getwd()))
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	ctx, stop := context.WithCancel(parent)
 	defer stop()
+	lintCommand := linthost.CommandFromContext(ctx)
 
 	s := lsp.NewServer(&lsp.ServerOptions{
+		ResolveLintCommand: func() ([]string, error) {
+			if lintCommand != nil {
+				return lintCommand, nil
+			}
+			return linthost.ResolveCommand()
+		},
 		In:                 lsp.ToReader(os.Stdin),
 		Out:                lsp.ToWriter(os.Stdout),
 		Err:                os.Stderr,

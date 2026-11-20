@@ -157,14 +157,23 @@ func (rule *RegexSource) constructor(node *ast.Node, depth int) bool {
 		return true
 	}
 	if node.Kind == ast.KindPropertyAccessExpression || node.Kind == ast.KindElementAccessExpression {
-		name := node.Name()
-		if node.Kind == ast.KindElementAccessExpression {
-			name = node.AsElementAccessExpression().ArgumentExpression
-		}
-		if name == nil || name.Text() != "RegExp" {
+		object := ast.SkipParentheses(node.Expression())
+		if !ast.IsIdentifier(object) || object.Text() != "globalThis" && object.Text() != "window" && object.Text() != "global" && object.Text() != "self" {
 			return false
 		}
-		object := ast.SkipParentheses(node.Expression())
+		var name string
+		if node.Kind == ast.KindElementAccessExpression {
+			var known bool
+			name, known = rule.StaticString(node.AsElementAccessExpression().ArgumentExpression, depth+1)
+			if !known {
+				return false
+			}
+		} else if property := node.Name(); property != nil {
+			name = property.Text()
+		}
+		if name != "RegExp" {
+			return false
+		}
 		return rule.global(object, "globalThis") || rule.global(object, "window") || rule.global(object, "global") || rule.global(object, "self")
 	}
 	if node.Kind == ast.KindIdentifier && rule.Context.GetChecker != nil {
@@ -179,7 +188,16 @@ func (rule *RegexSource) constructor(node *ast.Node, depth int) bool {
 					if name == nil {
 						name = declaration.Name()
 					}
-					if name != nil && name.Text() == "RegExp" && declaration.Parent != nil && declaration.Parent.Parent != nil {
+					matches := false
+					if name != nil {
+						if name.Kind == ast.KindComputedPropertyName {
+							value, known := rule.StaticString(name.AsComputedPropertyName().Expression, depth+1)
+							matches = known && value == "RegExp"
+						} else if ast.IsIdentifier(name) || ast.IsStringLiteralLike(name) {
+							matches = name.Text() == "RegExp"
+						}
+					}
+					if matches && declaration.Parent != nil && declaration.Parent.Parent != nil {
 						initializer := declaration.Parent.Parent.Initializer()
 						if initializer != nil && (rule.global(initializer, "globalThis") || rule.global(initializer, "window") || rule.global(initializer, "global")) {
 							return true

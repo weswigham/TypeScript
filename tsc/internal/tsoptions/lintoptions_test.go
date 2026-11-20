@@ -25,6 +25,59 @@ func TestLintOptionsInheritance(t *testing.T) {
 	assert.Equal(t, config.LintRules()["no-debugger"], "error")
 }
 
+func TestLintPluginOptionsInheritance(t *testing.T) {
+	t.Parallel()
+	fs := tsoptionstest.NewVFSWithSymlinks(map[string]string{
+		"/project/config/base.json": `{"lint":{"plugins":{"local":"./rules.mjs","package":"example-plugin"},"ignores":["./generated/**"],"overrides":[{"files":["../src/**/*.ts"],"rules":{"no-debugger":"warn"}}],"reportUnusedDisableDirectives":"warn"}}`,
+		"/project/tsconfig.json":    `{"extends":"./config/base.json","files":["input.ts"],"lint":{"plugins":{"extra":"./extra.mjs"}}}`,
+		"/project/input.ts":         "",
+	}, nil, "/project", tspath.CaseSensitive)
+	config, errors := tsoptions.GetParsedCommandLineOfConfigFilePath("/project/tsconfig.json", "/project/tsconfig.json", nil, nil, tsoptions.NewDefaultParseConfigHost(fs), nil)
+	assert.Equal(t, len(errors), 0)
+	assert.Equal(t, len(config.Errors), 0)
+	options := config.ParsedConfig.Lint
+	assert.DeepEqual(t, options.Plugins, map[string]string{"local": "/project/config/rules.mjs", "package": "example-plugin", "extra": "/project/extra.mjs"})
+	assert.Equal(t, options.PluginResolveFrom("package"), tspath.RootedDirectoryPath("/project/config"))
+	assert.DeepEqual(t, options.Ignores, []string{"/project/config/generated/**"})
+	assert.Equal(t, len(options.Overrides), 1)
+	assert.DeepEqual(t, options.Overrides[0].Files, []string{"/project/src/**/*.ts"})
+	assert.DeepEqual(t, options.Overrides[0].Rules, map[string]any{"no-debugger": "warning"})
+	assert.Equal(t, options.ReportUnusedDisableDirectives, "warning")
+
+	serialized, err := json.Marshal(tsoptions.ConvertToTSConfig(config, ""))
+	assert.NilError(t, err)
+	var shown map[string]any
+	assert.NilError(t, json.Unmarshal(serialized, &shown))
+	roundTrip := tsoptions.ParseJsonConfigFileContent(shown, tsoptions.NewDefaultParseConfigHost(fs), "/project", nil, "/project/tsconfig.json", nil, nil)
+	assert.Equal(t, len(roundTrip.Errors), 0)
+	assert.Assert(t, options.Equals(roundTrip.ParsedConfig.Lint))
+}
+
+func TestLintPluginOptionsValidation(t *testing.T) {
+	t.Parallel()
+	fs := tsoptionstest.NewVFSWithSymlinks(map[string]string{"/project/input.ts": ""}, nil, "/project", tspath.CaseSensitive)
+	for _, value := range []any{
+		map[string]any{"plugins": []any{"example"}},
+		map[string]any{"plugins": map[string]any{"local": true}},
+		map[string]any{"plugins": map[string]any{"": "./rules.mjs"}},
+		map[string]any{"plugins": map[string]any{"local": ""}},
+		map[string]any{"plugins": map[string]any{"local": map[string]any{"specifier": "./rules.mjs", "unknown": true}}},
+		map[string]any{"configFile": true},
+		map[string]any{"configFile": ""},
+		map[string]any{"ignores": "generated"},
+		map[string]any{"ignores": []any{""}},
+		map[string]any{"overrides": true},
+		map[string]any{"overrides": []any{true}},
+		map[string]any{"overrides": []any{map[string]any{"files": true}}},
+		map[string]any{"overrides": []any{map[string]any{"rules": map[string]any{"rule": []any{}}}}},
+		map[string]any{"overrides": []any{map[string]any{"configFile": "./not-allowed.js"}}},
+		map[string]any{"reportUnusedDisableDirectives": "invalid"},
+	} {
+		config := tsoptions.ParseJsonConfigFileContent(map[string]any{"files": []string{"input.ts"}, "lint": value}, tsoptions.NewDefaultParseConfigHost(fs), "/project", nil, "/project/tsconfig.json", nil, nil)
+		assert.Assert(t, len(config.Errors) > 0, "accepted invalid lint options: %v", value)
+	}
+}
+
 func TestLintOptionsOverrides(t *testing.T) {
 	t.Parallel()
 	for _, value := range []string{`"off"`, `null`, `"warning"`} {

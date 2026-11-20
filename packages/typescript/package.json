@@ -93,6 +93,18 @@
         "./ast/clone": {
             "@typescript/source": "./src/ast/clone.ts",
             "default": "./dist/ast/clone.js"
+        },
+        "./lint-plugin": {
+            "@typescript/source": "./src/lint/plugin.ts",
+            "default": "./dist/lint/plugin.js"
+        },
+        "./lint-plugin/testing": {
+            "@typescript/source": "./src/lint/testing.ts",
+            "default": "./dist/lint/testing.js"
+        },
+        "./lint-shim": {
+            "@typescript/source": "./src/lint/shim.ts",
+            "default": "./dist/lint/shim.js"
         }
     },
     "scripts": {
@@ -101,13 +113,21 @@
         "generate:ast": "node ../../tools/scripts/tsc/generate-ts-ast.ts",
         "generate:encoder": "npm run node -- ../../tools/scripts/tsc/generate-encoder.ts",
         "generate:sync": "npm run node -- scripts/generateSync.ts",
-        "build": "tsc -b",
-        "build:test": "tsc -b test",
+        "build": "tsc -b && node scripts/buildLint.ts",
+        "build:test": "tsc -b test && node scripts/buildLint.ts",
         "test:only": "npm run node -- --test './test/**/*.test.ts'",
         "test": "npm run test:only"
     },
+    "optionalDependencies": {
+        "@typescript-eslint/scope-manager": "8.73.0",
+        "@typescript-eslint/types": "8.73.0",
+        "@typescript-eslint/visitor-keys": "8.73.0",
+        "eslint": "10.15.0"
+    },
     "devDependencies": {
         "@types/node": "^22.20.1",
+        "@typescript-eslint/typescript-estree": "8.73.0",
+        "esbuild": "^0.28.2",
         "tinybench": "^6.1.6",
         "vscode-jsonrpc": "^9.0.2"
     }

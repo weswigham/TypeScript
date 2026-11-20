@@ -212,9 +212,16 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         compileOnSave: "Compile this project when a file is saved in a supporting editor.",
         contentMappers: "External content mapper packages and the file extensions they handle. Execution must be enabled separately with --runExternalCode.",
         generate: "Code generation commands and their input and output patterns. Execution requires --generate or --generateOnly together with --runExternalCode.",
-        lint: "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly.",
+        lint: "Lint rules, plugins, ignores, and ordered file overrides. Severity-only overrides retain inherited options; tuples with options replace them. Paths and file patterns are relative to the declaring configuration. Execution requires --lint or --lintOnly; JavaScript plugins additionally require --runExternalCode.",
     };
     const lintSeverity: JSONSchema = { enum: ["off", "warn", "warning", "error", 0, 1, 2] };
+    const lintRules: JSONSchema = {
+        type: ["object", "null"],
+        additionalProperties: {
+            anyOf: [lintSeverity, { type: "null" }, { type: "array", minItems: 1, items: [lintSeverity], additionalItems: true }],
+        },
+    };
+    const lintPatterns: JSONSchema = { type: ["array", "null"], items: { type: "string", minLength: 1 } };
     const properties: Record<string, JSONSchema> = {
         $schema: { type: "string", description: "The JSON schema used to validate this configuration." },
     };
@@ -222,16 +229,31 @@ export function generateConfigSchema(kind: "tsconfig" | "jsconfig") {
         const schema = option.name === "lint" ? {
             type: ["object", "null"],
             properties: {
-                rules: {
+                rules: lintRules,
+                plugins: {
                     type: ["object", "null"],
                     additionalProperties: {
                         anyOf: [
-                            lintSeverity,
-                            { type: "null" },
-                            { type: "array", minItems: 1, items: [lintSeverity], additionalItems: true },
+                            { type: "string", minLength: 1 },
+                            {
+                                type: "object",
+                                properties: { specifier: { type: "string", minLength: 1 }, resolveFrom: { type: "string", minLength: 1 } },
+                                required: ["specifier"],
+                                additionalProperties: false,
+                            },
                         ],
                     },
                 },
+                ignores: lintPatterns,
+                overrides: {
+                    type: ["array", "null"],
+                    items: {
+                        type: "object",
+                        properties: { name: { type: "string" }, files: lintPatterns, ignores: lintPatterns, rules: lintRules },
+                        additionalProperties: false,
+                    },
+                },
+                reportUnusedDisableDirectives: lintSeverity,
             },
             additionalProperties: false,
         } : option.elementOptions && option.elementOptions !== "extends"

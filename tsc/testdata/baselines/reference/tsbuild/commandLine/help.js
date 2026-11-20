@@ -159,7 +159,7 @@ Generate pprof CPU/memory profiles to the given directory.
 Set the number of checkers per project.
 
 [94m--runExternalCode[39m
-Allow external content mapper plugins and code generation commands to execute code during compilation.
+Allow external content mappers, lint plugins, and code generation commands to execute code during compilation.
 
 [94m--verbose, -v[39m
 Enable verbose logging.

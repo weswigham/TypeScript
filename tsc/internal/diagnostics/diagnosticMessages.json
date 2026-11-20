@@ -9128,7 +9128,7 @@
         "category": "Message",
         "code": 18167
     },
-    "Allow external content mapper plugins and code generation commands to execute code during compilation.": {
+    "Allow external content mappers, lint plugins, and code generation commands to execute code during compilation.": {
         "category": "Message",
         "code": 18168
     },
@@ -11867,6 +11867,22 @@
     "Add comment inside empty {0}.": {
         "category": "Message",
         "code": 24370
+    },
+    "Lint plugins require the '--runExternalCode' command-line flag to be enabled.": {
+        "category": "Error",
+        "code": 95210
+    },
+    "Lint plugin failed: {0}": {
+        "category": "Error",
+        "code": 95211
+    },
+    "Custom lint rule report.": {
+        "category": "Error",
+        "code": 95212
+    },
+    "Unused lint disable directive.": {
+        "category": "Warning",
+        "code": 95213
     },
     "Invalid lint rule options for '{0}': {1}": {
         "category": "Error",

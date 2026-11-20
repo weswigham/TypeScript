@@ -42,7 +42,7 @@ func TestLintFixWriteFailure(t *testing.T) {
 	config.ParsedConfig.Lint = &tsoptions.LintOptions{Rules: map[string]string{"no-debugger": "error"}}
 	program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: compiler.NewCompilerHost(fs, bundled.LibPath(), nil, nil, nil)})
 	sys := &timingTestSystem{fs: fs, clock: &controlledClock{now: time.Unix(0, 0)}}
-	result, _ := EmitAndReportStatistics(EmitInput{
+	result, _ := EmitAndReportStatistics(t.Context(), EmitInput{
 		Sys: sys, Program: program, ProgramLike: program, Config: config,
 		ReportDiagnostic: QuietDiagnosticReporter, ReportErrorSummary: QuietDiagnosticsReporter,
 		Writer: io.Discard, CompileTimes: &CompileTimes{},
@@ -157,7 +157,7 @@ func TestFormattingDiagnosticsDoNotBlockEmit(t *testing.T) {
 					if incrementalMode {
 						programLike = incremental.NewProgram(program, nil, incremental.CreateHost(host), sys.Now, false)
 					}
-					result, _ := EmitAndReportStatistics(EmitInput{
+					result, _ := EmitAndReportStatistics(t.Context(), EmitInput{
 						Sys:                   sys,
 						Program:               program,
 						ProgramLike:           programLike,
@@ -186,6 +186,41 @@ func TestFormattingDiagnosticsDoNotBlockEmit(t *testing.T) {
 					assert.Equal(t, text, test.text)
 				})
 			}
+		})
+	}
+}
+
+func TestEmitCancellation(t *testing.T) {
+	t.Parallel()
+	for _, mode := range []string{"regular", "incremental"} {
+		t.Run(mode, func(t *testing.T) {
+			t.Parallel()
+			fs := vfstest.FromMap(map[string]string{"/project/input.ts": "export const value = 1;"}, tspath.CaseSensitive)
+			sys := &timingTestSystem{fs: fs, clock: &controlledClock{now: time.Unix(0, 0)}}
+			options := &core.CompilerOptions{NoLib: core.TSTrue}
+			if mode == "incremental" {
+				options.Incremental = core.TSTrue
+				options.TsBuildInfoFile = "/project/cache.tsbuildinfo"
+			}
+			config := tsoptions.NewParsedCommandLine(options, []tspath.RootedFilePath{"/project/input.ts"}, nil, "/project", tspath.CaseSensitive)
+			host := compiler.NewCompilerHost(fs, "/lib", nil, nil, nil)
+			program := compiler.NewProgram(compiler.ProgramOptions{Config: config, Host: host})
+			var programLike compiler.ProgramLike = program
+			if mode == "incremental" {
+				programLike = incremental.NewProgram(program, nil, incremental.CreateHost(host), sys.Now, false)
+			}
+			ctx, cancel := context.WithCancel(t.Context())
+			cancel()
+			result, statistics := EmitAndReportStatistics(ctx, EmitInput{
+				Sys: sys, Program: program, ProgramLike: programLike, Config: config,
+				ReportDiagnostic: QuietDiagnosticReporter, ReportErrorSummary: QuietDiagnosticsReporter,
+				Writer: io.Discard, CompileTimes: &CompileTimes{},
+			})
+			assert.Equal(t, result.Status, ExitStatusDiagnosticsPresent_OutputsSkipped)
+			assert.Assert(t, result.EmitResult != nil && result.EmitResult.EmitSkipped)
+			assert.Assert(t, !fs.FileExists("/project/input.js"))
+			assert.Assert(t, !fs.FileExists("/project/cache.tsbuildinfo"))
+			assert.Assert(t, statistics == nil)
 		})
 	}
 }
@@ -350,7 +385,7 @@ export const make = (): Box => ({ value: "ok" });
 		}
 		incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), clock.NestedEmitNow, false)
 		times := &CompileTimes{}
-		EmitFilesAndReportErrors(EmitInput{
+		EmitFilesAndReportErrors(t.Context(), EmitInput{
 			Sys:                sys,
 			ProgramLike:        incrementalProgram,
 			Program:            program,

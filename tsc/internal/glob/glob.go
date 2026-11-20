@@ -263,7 +263,9 @@ func match(elems []element, input string) (ok bool) {
 
 		case star:
 			var segInput string
+			originalLength := len(input)
 			segInput, input = split(input)
+			hasSlash := len(segInput) < originalLength
 
 			elemEnd := len(elems)
 			for i, e := range elems {
@@ -274,6 +276,12 @@ func match(elems []element, input string) (ok bool) {
 			}
 			segElems := elems[:elemEnd]
 			elems = elems[elemEnd:]
+			if len(elems) != 0 {
+				if !hasSlash {
+					return false
+				}
+				elems = elems[1:]
+			}
 
 			// A trailing * matches the entire segment.
 			if len(segElems) == 0 {

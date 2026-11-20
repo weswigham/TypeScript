@@ -25,6 +25,7 @@ import {
     type ClientSocketOptions,
     type ClientSpawnOptions,
     getAPIProcessArgs,
+    getAPIProcessEnv,
     isSpawnOptions,
     resolveExePath,
 } from "../options.ts";
@@ -109,6 +110,7 @@ export class Client {
 
             this.process = spawn(resolveExePath(options), args, {
                 stdio: ["pipe", "pipe", "inherit"],
+                env: getAPIProcessEnv(),
             });
 
             this.process.once("error", error => {

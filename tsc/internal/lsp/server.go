@@ -25,6 +25,8 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/ipc"
 	"github.com/microsoft/TypeScript/tsc/internal/json"
 	"github.com/microsoft/TypeScript/tsc/internal/jsonrpc"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
+	linthost "github.com/microsoft/TypeScript/tsc/internal/lint/host"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/ls"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
@@ -41,9 +43,10 @@ import (
 )
 
 type ServerOptions struct {
-	In  Reader
-	Out Writer
-	Err io.Writer
+	ResolveLintCommand func() ([]string, error)
+	In                 Reader
+	Out                Writer
+	Err                io.Writer
 
 	Cwd                tspath.RootedDirectoryPath
 	FS                 vfs.FS
@@ -64,6 +67,7 @@ func NewServer(opts *ServerOptions) *Server {
 	}
 
 	s := &Server{
+		resolveLintCommand:    opts.ResolveLintCommand,
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
@@ -174,7 +178,8 @@ type Server struct {
 	w             Writer
 	backgroundCtx context.Context
 
-	stderr io.Writer
+	stderr             io.Writer
+	resolveLintCommand func() ([]string, error)
 
 	logger                  *logger
 	initStarted             atomic.Bool
@@ -1767,7 +1772,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 	s.telemetryEnabled = enableTelemetry
 
+	var lintHost lint.Host
+	if runExternalCode {
+		lintHost = api.NewLintHost(s.backgroundCtx, s.contentMapperSpawner(), linthost.Options{CurrentDirectory: cwd, Stderr: s.stderr, ResolveCommand: s.resolveLintCommand})
+	}
 	s.session = project.NewSession(&project.SessionInit{
+		LintHost:      lintHost,
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
 			CurrentDirectory:       cwd,

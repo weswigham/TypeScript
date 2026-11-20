@@ -86,10 +86,15 @@ func tscBuildCompilation(ctx context.Context, sys tsc.System, buildCommand *tsop
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
+	lintHost := newLintPluginHost(ctx, sys, buildCommand.CompilerOptions)
+	if lintHost != nil {
+		defer lintHost.Close()
+	}
 	orchestrator := build.NewOrchestrator(build.Options{
-		Sys:     sys,
-		Command: buildCommand,
-		Testing: testing,
+		Sys:      sys,
+		Command:  buildCommand,
+		Testing:  testing,
+		LintHost: lintHost,
 	})
 	return orchestrator.Start(ctx)
 }
@@ -315,6 +320,10 @@ func performIncrementalCompilation(
 	testing tsc.CommandLineTesting,
 	formatting tsc.FormatResult,
 ) tsc.CommandLineResult {
+	lintHost := newLintPluginHost(ctx, sys, config.CompilerOptions())
+	if lintHost != nil {
+		defer lintHost.Close()
+	}
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
 	contentMapperProject := getContentMapperProject(contentMapperHost, config)
 	if contentMapperProject != nil {
@@ -347,7 +356,8 @@ func performIncrementalCompilation(
 	if contentMapperHost != nil {
 		compileTimes.ContentMapperTimes = contentMapperHost.Timings()
 	}
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
+		LintHost:              lintHost,
 		Sys:                   sys,
 		ProgramLike:           incrementalProgram,
 		Program:               incrementalProgram.GetProgram(),
@@ -383,6 +393,10 @@ func performCompilation(
 	testing tsc.CommandLineTesting,
 	formatting tsc.FormatResult,
 ) tsc.CommandLineResult {
+	lintHost := newLintPluginHost(ctx, sys, config.CompilerOptions())
+	if lintHost != nil {
+		defer lintHost.Close()
+	}
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
 	contentMapperProject := getContentMapperProject(contentMapperHost, config)
 	if contentMapperProject != nil {
@@ -409,7 +423,8 @@ func performCompilation(
 	if contentMapperHost != nil {
 		compileTimes.ContentMapperTimes = contentMapperHost.Timings()
 	}
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
+		LintHost:              lintHost,
 		Sys:                   sys,
 		ProgramLike:           program,
 		Program:               program,

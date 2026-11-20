@@ -31,6 +31,7 @@ func GetTraceWithWriterFromSys(w io.Writer, locale locale.Locale, testing Comman
 }
 
 type EmitInput struct {
+	LintHost              lint.Host
 	FormattingDiagnostics []*ast.Diagnostic
 	Sys                   System
 	ProgramLike           compiler.ProgramLike
@@ -48,9 +49,9 @@ type EmitInput struct {
 	fixDiagnostics        []*ast.Diagnostic
 }
 
-func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
+func EmitAndReportStatistics(ctx context.Context, input EmitInput) (CompileAndEmitResult, *Statistics) {
 	var statistics *Statistics
-	result := EmitFilesAndReportErrors(input)
+	result := EmitFilesAndReportErrors(ctx, input)
 	if result.Status != ExitStatusSuccess {
 		// compile exited early
 		return result, nil
@@ -78,10 +79,15 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 	return result, statistics
 }
 
-func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
+func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
 	result.Program = input.ProgramLike
-	ctx := context.Background()
+	result.EmitResult = &compiler.EmitResult{EmitSkipped: true}
+	result.Status = ExitStatusDiagnosticsPresent_OutputsSkipped
+	ctx = lint.WithHost(ctx, input.LintHost)
+	if ctx.Err() != nil {
+		return result
+	}
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,
@@ -119,8 +125,14 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			return diags
 		},
 	)
+	if ctx.Err() != nil {
+		return result
+	}
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	lintDiagnostics := lint.GetDiagnostics(ctx, input.Program)
+	if ctx.Err() != nil {
+		return result
+	}
 	if input.Config.CompilerOptions().Fix.IsTrue() && input.fixPass < 10 {
 		changed, errors := ApplyLintFixes(input.Sys.FS(), input.Program, lintDiagnostics)
 		input.fixDiagnostics = append(input.fixDiagnostics, errors...)
@@ -134,7 +146,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 				input.ProgramLike = input.Program
 			}
 			input.fixPass++
-			result = EmitFilesAndReportErrors(input)
+			result = EmitFilesAndReportErrors(ctx, input)
 			result.FixedFiles = append(changed, result.FixedFiles...)
 			return result
 		}
@@ -145,6 +157,9 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			WriteFile: input.WriteFile,
 		})
 		result.times.emitTime += input.Sys.Now().Sub(emitStart)
+	}
+	if ctx.Err() != nil {
+		return result
 	}
 	if emitResult != nil {
 		allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)

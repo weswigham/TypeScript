@@ -2,13 +2,16 @@ package project
 
 import (
 	"context"
+	"errors"
 	"slices"
 	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
+	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/contentmapper"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsutil"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp/lsproto"
 	"github.com/microsoft/TypeScript/tsc/internal/project/logging"
@@ -27,6 +30,9 @@ type SnapshotHost struct {
 	extendedConfigCache     *ExtendedConfigCache
 	programCounter          *programCounter
 	contentMapperHost       contentmapper.Host
+	lintPluginHost          lint.Host
+	lintCache               lint.Cache
+	lintWatchFilesChanged   func()
 
 	snapshotID atomic.Uint64
 }
@@ -44,8 +50,24 @@ func (l *SourceFileLease) SourceFile() *ast.SourceFile {
 
 func (l *SourceFileLease) Release() {
 	l.releaseOnce.Do(func() {
-		l.cache.Deref(l.key)
+		if l.cache != nil {
+			l.cache.Deref(l.key)
+		}
 	})
+}
+
+func NewBorrowedSourceFileLease(file *ast.SourceFile) *SourceFileLease {
+	return &SourceFileLease{sourceFile: file}
+}
+
+func (s *SnapshotHost) LintPluginHost() lint.Host { return s.lintPluginHost }
+
+func (s *SnapshotHost) GetLintDiagnostics(ctx context.Context, program *compiler.Program, files []*ast.SourceFile) []*ast.Diagnostic {
+	result := s.lintCache.GetDiagnostics(lint.WithHost(ctx, s.lintPluginHost), program, files)
+	if s.lintWatchFilesChanged != nil {
+		s.lintWatchFilesChanged()
+	}
+	return result
 }
 
 func (s *SnapshotHost) nextSnapshotID() uint64 {
@@ -93,12 +115,44 @@ func NewSnapshotHost(init *SessionInit) *SnapshotHost {
 		extendedConfigCache:     NewExtendedConfigCache(),
 		programCounter:          &programCounter{},
 		contentMapperHost:       newContentMapperHost(init),
+		lintPluginHost:          init.LintHost,
 	}
 }
 
 // NewRootSnapshot creates an independent root snapshot.
 func (s *SnapshotHost) NewRootSnapshot() *Snapshot {
 	return s.newRootSnapshot(0, false)
+}
+
+// NewIndependentSnapshot allocates an identity for a root that will be exposed directly,
+// rather than used as the identity-free seed for a later snapshot update.
+func (s *SnapshotHost) NewIndependentSnapshot() *Snapshot {
+	return s.newRootSnapshot(s.nextSnapshotID(), false)
+}
+
+// NewProgramSnapshot exposes an existing compiler program through a synthetic
+// project in a snapshot. The program remains owned by its original host.
+func (s *SnapshotHost) NewProgramSnapshot(program *compiler.Program, id SyntheticProjectID, handle Handle) (*Snapshot, *Project, error) {
+	if program == nil || program.CommandLine() == nil {
+		return nil, nil, errors.New("a program snapshot requires a program with a parsed command line")
+	}
+	snapshot := s.NewIndependentSnapshot()
+	if id == "" {
+		id = NewSyntheticProjectID(int(snapshot.ID()))
+	}
+	if handle == 0 {
+		handle = Handle(nextProjectHandle.Add(1))
+	}
+	project := &Project{
+		Kind:             KindSynthetic,
+		id:               id.AsID(),
+		handle:           handle,
+		projectDirectory: program.GetCurrentDirectory(),
+		CommandLine:      program.CommandLine(),
+		Program:          program,
+	}
+	snapshot.ProjectCollection.syntheticProjects = map[SyntheticProjectID]*Project{id: project}
+	return snapshot, project, nil
 }
 
 // RetainSnapshot adds a reference to a snapshot owned by this host.
@@ -194,6 +248,9 @@ func (s *SnapshotHost) DefaultLibraryPath() tspath.RootedDirectoryPath {
 }
 
 func (s *SnapshotHost) Close() {
+	if s.lintPluginHost != nil {
+		_ = s.lintPluginHost.Close()
+	}
 	if s.contentMapperHost != nil {
 		_ = s.contentMapperHost.Close()
 	}

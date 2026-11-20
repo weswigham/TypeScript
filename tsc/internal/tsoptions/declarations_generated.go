@@ -311,7 +311,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Command_line_Options,
 		IsCommandLineOnly:       true,
-		Description:             diagnostics.Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation,
+		Description:             diagnostics.Allow_external_content_mappers_lint_plugins_and_code_generation_commands_to_execute_code_during_compilation,
 		DefaultValueDescription: false,
 	},
 }

@@ -1626,7 +1626,7 @@ export const options: OptionsModel = {
                 group: "commonOptionsWithBuild",
                 category: diagnostic("Command-line Options"),
                 isCommandLineOnly: true,
-                description: diagnostic("Allow external content mapper plugins and code generation commands to execute code during compilation."),
+                description: diagnostic("Allow external content mappers, lint plugins, and code generation commands to execute code during compilation."),
                 defaultValueDescription: false,
             },
         },

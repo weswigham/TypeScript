@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
 	"github.com/microsoft/TypeScript/tsc/internal/json"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/locale"
 	"github.com/microsoft/TypeScript/tsc/internal/ls"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
@@ -74,7 +75,7 @@ type SessionOptions struct {
 	LoggingEnabled         bool
 	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
-	// RunExternalCode allows configured content mappers to run their (external) processes,
+	// RunExternalCode allows configured content mappers and lint plugins to run external code,
 	// gated on workspace trust by the client. It corresponds to the --runExternalCode CLI flag.
 	RunExternalCode       bool
 	InitialWorkspaceRoots []tspath.RootedDirectoryPath
@@ -83,13 +84,14 @@ type SessionOptions struct {
 }
 
 type SessionInit struct {
+	LintHost      lint.Host
 	BackgroundCtx context.Context
 	Options       *SessionOptions
 	FS            vfs.FS
 	Client        Client
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
-	// Spawner launches content mapper processes. It is nil when the host cannot spawn processes.
+	// Spawner launches external-code processes. It is nil when the host cannot spawn processes.
 	Spawner                 contentmapper.Spawner
 	ContentMapperLogger     contentmapper.Logger
 	ParseCache              *ParseCache
@@ -189,7 +191,11 @@ type Session struct {
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
-	watches *watchRegistry
+	watches             *watchRegistry
+	lintWatchMu         sync.Mutex
+	lintWatch           *WatchedFiles[lintWatchState]
+	lintWatchPending    atomic.Bool
+	lintWatchGeneration atomic.Uint64
 
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
@@ -249,6 +255,7 @@ func NewSession(init *SessionInit) *Session {
 	if snapshotHost.contentMapperHost != nil {
 		session.contentMapperTimings = snapshotHost.contentMapperHost.Timings()
 	}
+	snapshotHost.lintWatchFilesChanged = session.scheduleLintWatchUpdate
 
 	return session
 }
@@ -424,6 +431,9 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	snapshot := s.Snapshot()
 	configFileRegistry := snapshot.ConfigFileRegistry
 	contentMapperExtensions, contentMapperWatchedFiles := snapshot.contentMapperWatchState()
+	if s.invalidateLintPlugins(changes) {
+		hasRelevantChange = true
+	}
 	for _, change := range changes {
 		var kind FileChangeKind
 		switch change.Type {

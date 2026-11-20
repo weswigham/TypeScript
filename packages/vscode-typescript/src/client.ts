@@ -1,3 +1,4 @@
+import * as path from "node:path";
 import * as vscode from "vscode";
 
 import { CancellationToken } from "vscode-languageclient";
@@ -220,6 +221,11 @@ export class Client implements vscode.Disposable {
         const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
             ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
+        const lintHostArgs: string[] = [];
+        if (this.exe.apiPackageJsonPath) {
+            lintHostArgs.push("--internal-lint-host", process.execPath, path.join(path.dirname(this.exe.apiPackageJsonPath), "dist", "lint", "shim.js"));
+            if (process.versions.electron) env.ELECTRON_RUN_AS_NODE = "1";
+        }
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.
             if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
@@ -234,13 +240,13 @@ export class Client implements vscode.Disposable {
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: [...lintHostArgs, "--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },
             debug: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: [...lintHostArgs, "--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },

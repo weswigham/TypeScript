@@ -183,7 +183,7 @@ func (l *LanguageService) getFixAllQuickFixes(
 			continue
 		}
 
-		if !hasMultipleFixableDiagnostics(ctx, program, file, provider.ErrorCodes) {
+		if !l.hasMultipleFixableDiagnostics(ctx, program, file, provider.ErrorCodes) {
 			continue
 		}
 
@@ -217,8 +217,8 @@ func (l *LanguageService) getFixAllQuickFixes(
 // hasMultipleFixableDiagnostics returns true if the file has at least 2 diagnostics
 // matching the given error codes. Checks all diagnostic sources (semantic,
 // syntactic, suggestion, declaration) to match ProvideDiagnostics.
-func hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile, errorCodes []int32) bool {
-	allDiags := getAllDiagnostics(ctx, program, file)
+func (l *LanguageService) hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile, errorCodes []int32) bool {
+	allDiags := l.getAllDiagnostics(ctx, program, file)
 	count := 0
 	for _, d := range allDiags {
 		if isFixableDiagnostic(d, errorCodes) {
@@ -271,7 +271,7 @@ func (l *LanguageService) createFixAllAction(
 ) (*lsproto.CommandOrCodeAction, error) {
 	kind := lsproto.CodeActionKindSourceFixAllTs
 	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
-	for uri, edits := range l.codeFixWorkspaceChanges(program, codefix.CombineCodeFixes(lintCodeFixes(ctx, program, file)).Changes) {
+	for uri, edits := range l.codeFixWorkspaceChanges(program, codefix.CombineCodeFixes(l.lintCodeFixes(ctx, program, file)).Changes) {
 		lspChanges[uri] = append(lspChanges[uri], edits...)
 	}
 

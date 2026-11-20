@@ -248,7 +248,7 @@ func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator
 		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
-			t.compileAndEmit(orchestrator, path)
+			t.compileAndEmit(ctx, orchestrator, path)
 			t.updateDownstream(orchestrator, path)
 		} else {
 			if t.resolved != nil {
@@ -320,7 +320,7 @@ func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 	}
 }
 
-func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathKey) {
+func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrator, path tspath.PathKey) {
 	t.errors = nil
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.result.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
@@ -360,7 +360,8 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 	t.result.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Sys.Now, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	result, statistics := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, statistics := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
+		LintHost:           orchestrator.lintPluginHost,
 		Sys:                orchestrator.opts.Sys,
 		ProgramLike:        t.result.program,
 		Program:            program,
@@ -376,6 +377,11 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.PathK
 		TestingMTimesCache:    orchestrator.host.mTimes,
 		FormattingDiagnostics: t.formatDiagnostics,
 	})
+	if ctx.Err() != nil {
+		t.result.exitStatus = result.Status
+		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+		return
+	}
 	if updated, ok := result.Program.(*incremental.Program); ok {
 		t.result.program = updated
 	}

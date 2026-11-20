@@ -19,15 +19,17 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/execute/tsc"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/watchmanager"
 	"github.com/microsoft/TypeScript/tsc/internal/fswatch"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs/cachedvfs"
 )
 
 type Options struct {
-	Sys     tsc.System
-	Command *tsoptions.ParsedBuildCommandLine
-	Testing tsc.CommandLineTesting
+	Sys      tsc.System
+	Command  *tsoptions.ParsedBuildCommandLine
+	Testing  tsc.CommandLineTesting
+	LintHost lint.Host
 }
 type OrchestratorResult struct {
 	Result        tsc.CommandLineResult
@@ -74,6 +76,7 @@ type Orchestrator struct {
 	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
 	// the session context is cancelled (see contentmapper.New).
 	contentMapperHost contentmapper.Host
+	lintPluginHost    lint.Host
 
 	// order generation result
 	tasks          *collections.SyncMap[tspath.PathKey, *BuildTask]
@@ -314,6 +317,7 @@ func (o *Orchestrator) BuildReferences(ctx context.Context, project string) *Orc
 }
 
 func (o *Orchestrator) start(ctx context.Context, project string, onlyReferences bool) *OrchestratorResult {
+	o.lintPluginHost = o.opts.LintHost
 	o.contentMapperHost = tsc.NewContentMapperHost(ctx, o.opts.Sys, o.opts.Command.CompilerOptions)
 	if o.contentMapperHost != nil && (!o.opts.Command.CompilerOptions.Watch.IsTrue() || o.opts.Testing == nil) {
 		defer o.contentMapperHost.Close()
@@ -340,6 +344,10 @@ func (o *Orchestrator) start(ctx context.Context, project string, onlyReferences
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.Watch(ctx)
 		result.Result.Watcher = o
+		// Stopping a watch is successful even if its initial build was canceled.
+		if ctx.Err() != nil && len(result.Errors) == 0 {
+			result.Result.Status = tsc.ExitStatusSuccess
+		}
 	}
 	return result
 }

@@ -2002,7 +2002,7 @@
     "Expected_a_line_break_after_the_opening_brace_18165": "Expected a line break after the opening brace.",
     "Run_configured_code_generation_commands_before_compiling_18166": "Run configured code generation commands before compiling.",
     "Run_configured_code_generation_commands_without_compiling_18167": "Run configured code generation commands without compiling.",
-    "Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilatio_18168": "Allow external content mapper plugins and code generation commands to execute code during compilation.",
+    "Allow_external_content_mappers_lint_plugins_and_code_generation_commands_to_execute_code_during_comp_18168": "Allow external content mappers, lint plugins, and code generation commands to execute code during compilation.",
     "Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled_18169": "Code generation requires the '--runExternalCode' command line flag to be enabled.",
     "Code_generation_command_0_failed_Colon_1_18170": "Code generation command '{0}' failed: {1}",
     "Code_generation_outputs_0_and_1_overlap_18171": "Code generation outputs '{0}' and '{1}' overlap.",
@@ -3035,5 +3035,9 @@
     "Organize_Imports_95206": "Organize Imports",
     "Remove_Unused_Imports_95207": "Remove Unused Imports",
     "Sort_Imports_95208": "Sort Imports",
-    "JSDoc_comment_95209": "JSDoc comment"
+    "JSDoc_comment_95209": "JSDoc comment",
+    "Lint_plugins_require_the_runExternalCode_command_line_flag_to_be_enabled_95210": "Lint plugins require the '--runExternalCode' command-line flag to be enabled.",
+    "Lint_plugin_failed_Colon_0_95211": "Lint plugin failed: {0}",
+    "Custom_lint_rule_report_95212": "Custom lint rule report.",
+    "Unused_lint_disable_directive_95213": "Unused lint disable directive."
 }

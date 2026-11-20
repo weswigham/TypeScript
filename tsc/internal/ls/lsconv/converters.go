@@ -542,7 +542,9 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	if sourceText == "" {
 		sourceText = "ts"
 	}
-	if opts.visualStudio {
+	if diagnostic.LintRuleName() != "" {
+		code = &lsproto.IntegerOrString{String: new(diagnostic.LintRuleName())}
+	} else if opts.visualStudio {
 		code = &lsproto.IntegerOrString{
 			String: new(fmt.Sprintf("TS%d", diagnostic.Code())),
 		}

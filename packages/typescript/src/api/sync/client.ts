@@ -37,7 +37,11 @@ export class Client {
     private closed = false;
     private maxResponseBytesPerPage: number | undefined;
 
-    constructor(options: ClientOptions) {
+    constructor(options: ClientOptions | SyncRpcChannel) {
+        if (options instanceof SyncRpcChannel) {
+            this.channel = options;
+            return;
+        }
         if (!isSpawnOptions(options)) {
             throw new Error("Socket connections are not yet supported in the sync client");
         }
@@ -83,6 +87,14 @@ export class Client {
                 });
             }
         }
+    }
+
+    static async connect(pipe: string): Promise<Client> {
+        return new Client(await SyncRpcChannel.connect(pipe));
+    }
+
+    serve(handler: (name: string, payload: string) => string | Promise<string>): Promise<void> {
+        return this.channel.serve(handler);
     }
 
     apiRequest<K extends keyof APIMethodInfo>(method: K, params?: APIMethodInfo[K]["params"]): APIMethodInfo[K]["result"] {

@@ -108,6 +108,7 @@ func (r *watchRegistry) IsPending(id WatcherID) bool {
 type PatternsAndIgnored struct {
 	directoriesOutsideWorkspace []tspath.RootedDirectoryPath
 	patternsInsideWorkspace     []string
+	directWatchers              []*lsproto.FileSystemWatcher
 	ignored                     map[tspath.RootedDirectoryPath]struct{}
 }
 
@@ -168,6 +169,7 @@ type WatchedFiles[T any] struct {
 	computeWatchersOnce      sync.Once
 	workspaceWatchers        []*lsproto.FileSystemWatcher
 	outsideWorkspaceWatchers []*lsproto.FileSystemWatcher
+	directWatchers           []*lsproto.FileSystemWatcher
 	ignored                  map[tspath.RootedDirectoryPath]struct{}
 	id                       uint64
 }
@@ -253,6 +255,12 @@ func (w *WatchedFiles[T]) Watchers() Watchers {
 			})
 			changed = true
 		}
+		if !slices.EqualFunc(w.directWatchers, result.directWatchers, func(a, b *lsproto.FileSystemWatcher) bool {
+			return toFileSystemWatcherKey(a) == toFileSystemWatcherKey(b)
+		}) {
+			w.directWatchers = result.directWatchers
+			changed = true
+		}
 		if changed {
 			w.id = watcherID.Add(1)
 		}
@@ -262,7 +270,7 @@ func (w *WatchedFiles[T]) Watchers() Watchers {
 	defer w.mu.RUnlock()
 	return Watchers{
 		WatcherID:                WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)),
-		WorkspaceWatchers:        w.workspaceWatchers,
+		WorkspaceWatchers:        slices.Concat(w.workspaceWatchers, w.directWatchers),
 		OutsideWorkspaceWatchers: w.outsideWorkspaceWatchers,
 		IgnoredPaths:             maps.Clone(w.ignored),
 	}
@@ -296,6 +304,7 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		computeGlobPatterns:          w.computeGlobPatterns,
 		workspaceWatchers:            w.workspaceWatchers,
 		outsideWorkspaceWatchers:     w.outsideWorkspaceWatchers,
+		directWatchers:               w.directWatchers,
 		input:                        input,
 	}
 }

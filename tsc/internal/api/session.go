@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/api/requestfilesystem"
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/astnav"
+	"github.com/microsoft/TypeScript/tsc/internal/binder"
 	"github.com/microsoft/TypeScript/tsc/internal/checker"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
@@ -31,6 +32,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/ipc"
 	"github.com/microsoft/TypeScript/tsc/internal/jsnum"
 	"github.com/microsoft/TypeScript/tsc/internal/json"
+	linthost "github.com/microsoft/TypeScript/tsc/internal/lint/host"
 	"github.com/microsoft/TypeScript/tsc/internal/ls"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/autoimport"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
@@ -105,6 +107,7 @@ type snapshotData struct {
 	snapshot   *project.Snapshot
 	fileSystem vfs.FS
 	refCount   int
+	readOnly   bool
 
 	openProjects collections.Set[tspath.PathKey]
 	openFiles    collections.Set[tspath.PathKey]
@@ -577,8 +580,9 @@ type Session struct {
 	// snapshot creation bookkeeping takes it for writing. This is what
 	// lets queries against an existing snapshot run concurrently with the building of
 	// the next one.
-	snapshots   map[SnapshotID]*snapshotData
-	snapshotsMu sync.RWMutex
+	snapshots          map[SnapshotID]*snapshotData
+	snapshotsMu        sync.RWMutex
+	nextSnapshotHandle atomic.Uint64
 
 	// openProjects, openFiles, and createdPrograms are the canonical LSP-state resources
 	// owned by this API client. Guarded by languageServerUpdateMu.
@@ -631,6 +635,11 @@ func NewLSPSession(projectSession *project.Session, options *SessionOptions) *Se
 
 // NewStandaloneSession creates an API session with an independently owned snapshot host.
 func NewStandaloneSession(init *project.SessionInit, options *SessionOptions) *Session {
+	if init.Options.RunExternalCode && init.Spawner != nil && init.LintHost == nil {
+		initCopy := *init
+		initCopy.LintHost = NewLintHost(init.BackgroundCtx, init.Spawner, linthost.Options{CurrentDirectory: init.Options.CurrentDirectory})
+		init = &initCopy
+	}
 	snapshotHost := project.NewSnapshotHost(init)
 	s := newSession(snapshotHost, nil, options)
 	s.ownsSnapshotHost = true
@@ -652,6 +661,7 @@ func newSession(snapshotHost *project.SnapshotHost, withLocale func(context.Cont
 		programResolutionContexts: make(map[uint64]*programResolutionContext),
 		sourceFileLeases:          make(map[SourceFileLeaseID]*project.SourceFileLease),
 	}
+	s.nextSnapshotHandle.Store(1 << 52)
 	if options != nil {
 		s.useBinaryResponses = options.UseBinaryResponses
 	}
@@ -1455,8 +1465,8 @@ func (s *Session) handleCreateSnapshot(ctx context.Context, params *CreateSnapsh
 		return nil, err
 	}
 
-	response := s.createSnapshotResponse(snapshot, nil, &params.SnapshotRequestChangesParams)
 	s.registerSnapshot(snapshot, openState, snapshotFileSystem)
+	response := s.createSnapshotResponse(snapshot, nil, &params.SnapshotRequestChangesParams)
 	return response, nil
 }
 
@@ -1466,6 +1476,9 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		return nil, err
 	}
 	defer func() { _ = s.releaseSnapshot(params.Snapshot) }()
+	if baseSD.readOnly {
+		return nil, fmt.Errorf("%w: this program snapshot cannot be updated", ErrClientError)
+	}
 
 	changes := params.Changes
 	if changes == nil {
@@ -1511,8 +1524,8 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		return nil, err
 	}
 
-	response := s.createSnapshotResponse(snapshot, baseSD.snapshot, &changes.SnapshotRequestChangesParams)
 	s.registerSnapshot(snapshot, openState, snapshotFileSystem)
+	response := s.createSnapshotResponse(snapshot, baseSD.snapshot, &changes.SnapshotRequestChangesParams)
 	return response, nil
 }
 
@@ -1789,32 +1802,52 @@ func (s *Session) reconcileSnapshotOpens(apiRequest *project.APISnapshotRequest,
 	return state
 }
 
-func (s *Session) registerSnapshot(snapshot *project.Snapshot, openState snapshotOpenState, fileSystem vfs.FS) {
+func (s *Session) registerSnapshot(snapshot *project.Snapshot, openState snapshotOpenState, fileSystem vfs.FS) SnapshotID {
 	// If the same snapshot ID is returned (no changes), we increment the ref count
 	// so each client-side Snapshot can be disposed independently.
-	handle := snapshotHandle(snapshot)
 	s.snapshotsMu.Lock()
-	sd, exists := s.snapshots[handle]
-	if exists {
-		// Same snapshot already stored — release the caller's ref since
-		// the stored snapshot already has one, and bump the API refcount.
-		snapshot.Deref()
-		sd.refCount++
-	} else {
-		sd = &snapshotData{
-			handle:                  handle,
-			snapshot:                snapshot,
-			fileSystem:              fileSystem,
-			refCount:                1,
-			openProjects:            *openState.openProjects.Clone(),
-			openFiles:               *openState.openFiles.Clone(),
-			symbolRegistry:          make(map[SymbolID]*ast.Symbol),
-			symbolCanonicalProjects: make(map[SymbolID]project.Handle),
-			projectRegistries:       make(map[project.Handle]*projectRegistryData),
+	defer s.snapshotsMu.Unlock()
+	for _, sd := range s.snapshots {
+		if sd.snapshot == snapshot {
+			// The same snapshot may be registered through a different project
+			// session. Keep the existing API handle and balance the incoming ref.
+			snapshot.Deref()
+			sd.refCount++
+			return sd.handle
 		}
-		s.snapshots[handle] = sd
 	}
-	s.snapshotsMu.Unlock()
+	handle := snapshotHandle(snapshot)
+	if _, exists := s.snapshots[handle]; exists {
+		for {
+			handle = SnapshotID(s.nextSnapshotHandle.Add(1))
+			if _, exists := s.snapshots[handle]; !exists {
+				break
+			}
+		}
+	}
+	s.snapshots[handle] = &snapshotData{
+		handle:                  handle,
+		snapshot:                snapshot,
+		fileSystem:              fileSystem,
+		refCount:                1,
+		openProjects:            *openState.openProjects.Clone(),
+		openFiles:               *openState.openFiles.Clone(),
+		symbolRegistry:          make(map[SymbolID]*ast.Symbol),
+		symbolCanonicalProjects: make(map[SymbolID]project.Handle),
+		projectRegistries:       make(map[project.Handle]*projectRegistryData),
+	}
+	return handle
+}
+
+func (s *Session) snapshotHandle(snapshot *project.Snapshot) SnapshotID {
+	s.snapshotsMu.RLock()
+	defer s.snapshotsMu.RUnlock()
+	for handle, sd := range s.snapshots {
+		if sd.snapshot == snapshot {
+			return handle
+		}
+	}
+	panic("snapshot was not registered with the API session")
 }
 
 func (s *Session) handleGetCurrentLanguageServerSnapshot(ctx context.Context, params *GetCurrentLanguageServerSnapshotParams) (*CreateSnapshotResponse, error) {
@@ -1849,8 +1882,8 @@ func (s *Session) handleGetCurrentLanguageServerSnapshot(ctx context.Context, pa
 	}
 
 	update.commit(s, snapshot)
-	response := s.createSnapshotResponse(snapshot, baseSnapshot, &changes.SnapshotRequestChangesParams)
 	s.registerSnapshot(snapshot, snapshotOpenState{openProjects: s.openProjects, openFiles: s.openFiles}, nil)
+	response := s.createSnapshotResponse(snapshot, baseSnapshot, &changes.SnapshotRequestChangesParams)
 	return response, nil
 }
 
@@ -1896,8 +1929,9 @@ func (s *Session) handleCreateBuildOrchestrator(ctx context.Context, params *Cre
 		command.BuildOptions = params.BuildOptions
 	}
 	orchestrator := build.NewOrchestrator(build.Options{
-		Sys:     buildSys,
-		Command: command,
+		Sys:      buildSys,
+		Command:  command,
+		LintHost: s.snapshotHost.LintPluginHost(),
 	})
 	createdOrchestratorResponse.BuildOrchestratorID = NewBuildOrchestratorID()
 	s.buildMu.Lock()
@@ -2224,6 +2258,22 @@ func (s *Session) acquireCachedSourceFile(descriptor SourceFileDescriptor) (*pro
 		return nil, fmt.Errorf("%w: invalid source file descriptor: %w", ErrClientError, err)
 	}
 	lease := s.snapshotHost.AcquireExistingSourceFile(key)
+	if lease == nil {
+		s.snapshotsMu.RLock()
+		defer s.snapshotsMu.RUnlock()
+		for _, snapshot := range s.snapshots {
+			for _, proj := range snapshot.snapshot.ProjectCollection.Projects() {
+				program := proj.GetProgram()
+				if program == nil {
+					continue
+				}
+				if file := program.GetSourceFile(descriptor.FileName); file != nil && newSourceFileDescriptor(file) == descriptor {
+					binder.BindSourceFile(file)
+					return project.NewBorrowedSourceFileLease(file), nil
+				}
+			}
+		}
+	}
 	if lease == nil {
 		return nil, fmt.Errorf("%w: source file is not available", ErrClientError)
 	}
@@ -5138,7 +5188,7 @@ func (s *Session) createSnapshotResponse(snapshot *project.Snapshot, base *proje
 				projectResponses = append(projectResponses, NewProjectResponse(proj))
 			}
 		}
-		return &CreateSnapshotResponse{Snapshot: snapshotHandle(snapshot), Projects: projectResponses, Operation: operation}
+		return &CreateSnapshotResponse{Snapshot: s.snapshotHandle(snapshot), Projects: projectResponses, Operation: operation}
 	}
 
 	projectResponses := make([]*ProjectResponse, 0)
@@ -5157,7 +5207,7 @@ func (s *Session) createSnapshotResponse(snapshot *project.Snapshot, base *proje
 		},
 	)
 	return &CreateSnapshotResponse{
-		Snapshot:  snapshotHandle(snapshot),
+		Snapshot:  s.snapshotHandle(snapshot),
 		Projects:  projectResponses,
 		Changes:   computeSnapshotChanges(base, snapshot),
 		Operation: operation,
@@ -5470,7 +5520,6 @@ func (s *Session) handleGetGlobalDiagnostics(ctx context.Context, params *GetPro
 	if err != nil {
 		return nil, err
 	}
-
 	proj, err := sd.getProject(params.Project)
 	if err != nil {
 		return nil, err
@@ -5488,7 +5537,8 @@ func (s *Session) handleGetGlobalDiagnostics(ctx context.Context, params *GetPro
 	// compiler.Program.GetGlobalDiagnostics only reports for the internal pool.
 	program.GetSemanticDiagnostics(ctx, nil)
 
-	diags := core.Filter(proj.GetProjectDiagnostics(ctx), func(d *ast.Diagnostic) bool {
+	diags := append(program.GetGlobalDiagnostics(ctx), proj.GetProjectDiagnostics(ctx)...)
+	diags = core.Filter(compiler.SortAndDeduplicateDiagnostics(diags), func(d *ast.Diagnostic) bool {
 		return d.File() == nil
 	})
 	return NewDiagnosticResponses(diags), nil

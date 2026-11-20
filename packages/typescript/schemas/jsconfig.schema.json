@@ -175,11 +175,140 @@
                             }
                         ]
                     }
+                },
+                "plugins": {
+                    "type": [
+                        "object",
+                        "null"
+                    ],
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "specifier": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "resolveFrom": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                },
+                                "required": [
+                                    "specifier"
+                                ],
+                                "additionalProperties": false
+                            }
+                        ]
+                    }
+                },
+                "ignores": {
+                    "type": [
+                        "array",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "overrides": {
+                    "type": [
+                        "array",
+                        "null"
+                    ],
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "files": {
+                                "type": [
+                                    "array",
+                                    "null"
+                                ],
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "ignores": {
+                                "type": [
+                                    "array",
+                                    "null"
+                                ],
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "rules": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "additionalProperties": {
+                                    "anyOf": [
+                                        {
+                                            "enum": [
+                                                "off",
+                                                "warn",
+                                                "warning",
+                                                "error",
+                                                0,
+                                                1,
+                                                2
+                                            ]
+                                        },
+                                        {
+                                            "type": "null"
+                                        },
+                                        {
+                                            "type": "array",
+                                            "minItems": 1,
+                                            "items": [
+                                                {
+                                                    "enum": [
+                                                        "off",
+                                                        "warn",
+                                                        "warning",
+                                                        "error",
+                                                        0,
+                                                        1,
+                                                        2
+                                                    ]
+                                                }
+                                            ],
+                                            "additionalItems": true
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "reportUnusedDisableDirectives": {
+                    "enum": [
+                        "off",
+                        "warn",
+                        "warning",
+                        "error",
+                        0,
+                        1,
+                        2
+                    ]
                 }
             },
             "additionalProperties": false,
-            "description": "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly.",
-            "markdownDescription": "Lint rules, inherited per rule. Severity-only overrides retain inherited options; tuples with options replace them. Enabled rule options are validated against the supported ESLint and typescript-eslint schemas. Project-owned declaration files are included; ESLint disable and enable comments are supported. Execution requires --lint or --lintOnly."
+            "description": "Lint rules, plugins, ignores, and ordered file overrides. Severity-only overrides retain inherited options; tuples with options replace them. Paths and file patterns are relative to the declaring configuration. Execution requires --lint or --lintOnly; JavaScript plugins additionally require --runExternalCode.",
+            "markdownDescription": "Lint rules, plugins, ignores, and ordered file overrides. Severity-only overrides retain inherited options; tuples with options replace them. Paths and file patterns are relative to the declaring configuration. Execution requires --lint or --lintOnly; JavaScript plugins additionally require --runExternalCode."
         },
         "contentMappers": {
             "anyOf": [

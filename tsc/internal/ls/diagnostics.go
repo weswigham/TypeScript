@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
 	"github.com/microsoft/TypeScript/tsc/internal/diagnostics"
-	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
 	"github.com/microsoft/TypeScript/tsc/internal/lsp/lsproto"
 	"github.com/microsoft/TypeScript/tsc/internal/spanmap"
@@ -16,7 +15,8 @@ import (
 
 // getAllDiagnostics collects all diagnostics for a file: syntactic, semantic,
 // suggestion, and (when declarations are emitted) declaration diagnostics.
-func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+func (l *LanguageService) getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+	ctx = l.lintContext(ctx)
 	var diags []*ast.Diagnostic
 	files := append([]*ast.SourceFile{file}, file.SupplementalSourceFiles()...)
 	for _, sourceFile := range files {
@@ -26,8 +26,8 @@ func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast
 		if program.Options().GetEmitDeclarations() {
 			diags = append(diags, program.GetDeclarationDiagnostics(ctx, sourceFile)...)
 		}
-		diags = append(diags, lint.GetDiagnosticsForFile(ctx, program, sourceFile)...)
 	}
+	diags = append(diags, l.lintDiagnostics(ctx, program, file)...)
 	return diags
 }
 
@@ -43,7 +43,7 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 		}, nil
 	}
 
-	diagnostics := getAllDiagnostics(ctx, program, file)
+	diagnostics := l.getAllDiagnostics(ctx, program, file)
 
 	return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
 		FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
@@ -85,7 +85,7 @@ func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[
 // file, and so has no meaningful position to report against the original file.
 func isSynthesizedContentMappedDiagnostic(diag *ast.Diagnostic) bool {
 	file := diag.File()
-	if file == nil || file.SpanMap() == nil || diag.Source() != "" {
+	if file == nil || file.SpanMap() == nil || diag.Source() != "" || diag.Code() == diagnostics.Lint_plugin_failed_Colon_0.Code() {
 		return false
 	}
 	_, fidelity := file.SpanMap().VirtualToOriginalSpan(diag.Loc())

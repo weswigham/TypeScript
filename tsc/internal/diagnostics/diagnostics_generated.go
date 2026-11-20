@@ -4008,7 +4008,7 @@ var Run_configured_code_generation_commands_before_compiling = &Message{code: 18
 
 var Run_configured_code_generation_commands_without_compiling = &Message{code: 18167, category: CategoryMessage, key: "Run_configured_code_generation_commands_without_compiling_18167", text: "Run configured code generation commands without compiling."}
 
-var Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation = &Message{code: 18168, category: CategoryMessage, key: "Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilatio_18168", text: "Allow external content mapper plugins and code generation commands to execute code during compilation."}
+var Allow_external_content_mappers_lint_plugins_and_code_generation_commands_to_execute_code_during_compilation = &Message{code: 18168, category: CategoryMessage, key: "Allow_external_content_mappers_lint_plugins_and_code_generation_commands_to_execute_code_during_comp_18168", text: "Allow external content mappers, lint plugins, and code generation commands to execute code during compilation."}
 
 var Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled = &Message{code: 18169, category: CategoryError, key: "Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled_18169", text: "Code generation requires the '--runExternalCode' command line flag to be enabled."}
 
@@ -6076,6 +6076,14 @@ var Sort_Imports = &Message{code: 95208, category: CategoryMessage, key: "Sort_I
 
 var JSDoc_comment = &Message{code: 95209, category: CategoryMessage, key: "JSDoc_comment_95209", text: "JSDoc comment"}
 
+var Lint_plugins_require_the_runExternalCode_command_line_flag_to_be_enabled = &Message{code: 95210, category: CategoryError, key: "Lint_plugins_require_the_runExternalCode_command_line_flag_to_be_enabled_95210", text: "Lint plugins require the '--runExternalCode' command-line flag to be enabled."}
+
+var Lint_plugin_failed_Colon_0 = &Message{code: 95211, category: CategoryError, key: "Lint_plugin_failed_Colon_0_95211", text: "Lint plugin failed: {0}"}
+
+var Custom_lint_rule_report = &Message{code: 95212, category: CategoryError, key: "Custom_lint_rule_report_95212", text: "Custom lint rule report."}
+
+var Unused_lint_disable_directive = &Message{code: 95213, category: CategoryWarning, key: "Unused_lint_disable_directive_95213", text: "Unused lint disable directive."}
+
 var allMessages = [...]**Message{
 	&Unterminated_string_literal,
 	&Identifier_expected,
@@ -8080,7 +8088,7 @@ var allMessages = [...]**Message{
 	&Expected_a_line_break_after_the_opening_brace,
 	&Run_configured_code_generation_commands_before_compiling,
 	&Run_configured_code_generation_commands_without_compiling,
-	&Allow_external_content_mapper_plugins_and_code_generation_commands_to_execute_code_during_compilation,
+	&Allow_external_content_mappers_lint_plugins_and_code_generation_commands_to_execute_code_during_compilation,
 	&Code_generation_requires_the_runExternalCode_command_line_flag_to_be_enabled,
 	&Code_generation_command_0_failed_Colon_1,
 	&Code_generation_outputs_0_and_1_overlap,
@@ -9114,4 +9122,8 @@ var allMessages = [...]**Message{
 	&Remove_Unused_Imports,
 	&Sort_Imports,
 	&JSDoc_comment,
+	&Lint_plugins_require_the_runExternalCode_command_line_flag_to_be_enabled,
+	&Lint_plugin_failed_Colon_0,
+	&Custom_lint_rule_report,
+	&Unused_lint_disable_directive,
 }

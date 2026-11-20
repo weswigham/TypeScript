@@ -126,7 +126,7 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 }
 
 func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
-	allDiags := getAllDiagnostics(ctx, fixContext.Program, fixContext.SourceFile)
+	allDiags := fixContext.LS.getAllDiagnostics(ctx, fixContext.Program, fixContext.SourceFile)
 
 	ch, done := fixContext.Program.GetTypeCheckerForFile(ctx, fixContext.SourceFile)
 	defer done()

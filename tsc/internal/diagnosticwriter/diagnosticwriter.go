@@ -243,7 +243,7 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 	}
 
 	writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
-	fmt.Fprintf(output, "%s %s%d: %s", foregroundColorEscapeGrey, diagnosticPrefix(diagnostic), diagnostic.Code(), resetEscapeSequence)
+	fmt.Fprintf(output, "%s %s: %s", foregroundColorEscapeGrey, diagnosticCode(diagnostic), resetEscapeSequence)
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 
 	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
@@ -390,6 +390,15 @@ func diagnosticPrefix(diagnostic Diagnostic) string {
 		return source
 	}
 	return "TS"
+}
+
+func diagnosticCode(diagnostic Diagnostic) string {
+	if lint, ok := diagnostic.(interface{ LintRuleName() string }); ok {
+		if name := lint.LintRuleName(); name != "" {
+			return name
+		}
+	}
+	return diagnosticPrefix(diagnostic) + strconv.FormatInt(int64(diagnostic.Code()), 10)
 }
 
 func getCategoryFormat(category diagnostics.Category) string {
@@ -581,7 +590,7 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, int(character)+1)
 	}
 
-	fmt.Fprintf(output, "%s %s%d: ", diagnostic.Category().Name(), diagnosticPrefix(diagnostic), diagnostic.Code())
+	fmt.Fprintf(output, "%s %s: ", diagnostic.Category().Name(), diagnosticCode(diagnostic))
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 	fmt.Fprint(output, formatOpts.NewLine)
 }

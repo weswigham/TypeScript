@@ -49,7 +49,7 @@ func (l *LanguageService) lintCodeActions(ctx context.Context, program *compiler
 	if params.Context == nil || !wantsQuickFixes(params.Context.Only) {
 		return nil
 	}
-	diagnostics := lint.GetDiagnosticsForFile(ctx, program, file)
+	diagnostics := l.lintDiagnostics(ctx, program, file)
 	return l.lintCodeActionsForDiagnostics(ctx, program, diagnostics, params)
 }
 
@@ -66,7 +66,7 @@ func (l *LanguageService) lintCodeActionsForDiagnostics(ctx context.Context, pro
 			continue
 		}
 		for _, supplied := range params.Context.Diagnostics {
-			if supplied.Code == nil || supplied.Code.Integer == nil || *supplied.Code.Integer != diagnostic.Code() || supplied.Range != location ||
+			if !matchesLintDiagnosticCode(supplied.Code, diagnostic) || supplied.Range != location ||
 				supplied.Source != nil && *supplied.Source != "ts" {
 				continue
 			}
@@ -116,12 +116,44 @@ func (l *LanguageService) lintCodeActionsForDiagnostics(ctx context.Context, pro
 	return actions
 }
 
-func lintCodeFixes(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*codefix.CodeFixAction {
+func matchesLintDiagnosticCode(code *lsproto.IntegerOrString, diagnostic *ast.Diagnostic) bool {
+	if code == nil {
+		return false
+	}
+	if name := diagnostic.LintRuleName(); name != "" {
+		return code.String != nil && *code.String == name
+	}
+	return code.Integer != nil && *code.Integer == diagnostic.Code()
+}
+
+func (l *LanguageService) lintCodeFixes(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*codefix.CodeFixAction {
 	var fixes []*codefix.CodeFixAction
-	for _, diagnostic := range lint.GetDiagnosticsForFile(ctx, program, file) {
+	for _, diagnostic := range l.lintDiagnostics(ctx, program, file) {
 		if actions := diagnostic.CodeFixes(); len(actions) > 0 {
 			fixes = append(fixes, actions[0])
 		}
 	}
 	return fixes
+}
+
+func (l *LanguageService) lintDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+	files := append([]*ast.SourceFile{file}, file.SupplementalSourceFiles()...)
+	if provider, ok := l.host.(interface {
+		GetLintProjectBinding(projectID string, program *compiler.Program) *lint.ProjectBinding
+	}); ok {
+		ctx = lint.WithProjectBinding(ctx, provider.GetLintProjectBinding(l.projectID.String(), program))
+	}
+	if provider, ok := l.host.(interface {
+		GetLintDiagnostics(ctx context.Context, program *compiler.Program, files []*ast.SourceFile) []*ast.Diagnostic
+	}); ok {
+		return provider.GetLintDiagnostics(ctx, program, files)
+	}
+	return lint.GetDiagnosticsForFiles(l.lintContext(ctx), program, files)
+}
+
+func (l *LanguageService) lintContext(ctx context.Context) context.Context {
+	if provider, ok := l.host.(interface{ LintPluginHost() lint.Host }); ok {
+		return lint.WithHost(ctx, provider.LintPluginHost())
+	}
+	return ctx
 }

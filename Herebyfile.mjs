@@ -2442,7 +2442,10 @@ async function buildMainNativePreviewPackage(platforms) {
     const mainPackage = {
         ...inputPackageJson,
         name: mainNativePreviewPackage.npmPackageName,
-        optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+        optionalDependencies: {
+            ...inputPackageJson.optionalDependencies,
+            ...Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+        },
     };
 
     const mainPackageDir = mainNativePreviewPackage.npmDir;
@@ -2467,21 +2470,23 @@ async function buildMainNativePreviewPackage(platforms) {
     await runCheckAPIDeclarations();
     await cpRecursive(path.join(inputDir, "dist"), path.join(mainPackageDir, "dist"));
 
-    // Validate that .d.ts files contain no external imports (all imports must start with "." or "#").
+    // Core API declarations are self-contained; optional lint declarations may refer to their declared dependencies.
     const dtsFiles = await globFiles(`${mainPackageDir}/dist/**/*.d.ts`);
     const importErrors = [];
     for (const dtsFile of dtsFiles) {
         const content = await fs.promises.readFile(dtsFile, "utf-8");
         const relPath = path.relative(mainPackageDir, dtsFile);
+        const lintDeclaration = relPath.replace(/\\/g, "/").startsWith("dist/lint/");
+        const optionalLintImport = specifier => lintDeclaration && Object.keys(inputPackageJson.optionalDependencies ?? {}).some(name => specifier === name || specifier.startsWith(name + "/"));
         for (const [i, line] of content.split("\n").entries()) {
             // Match: import ... from "specifier" / export ... from "specifier"
             const fromMatch = line.match(/(?:import|export)\s.*?\sfrom\s+["']([^"']+)["']/);
-            if (fromMatch && !fromMatch[1].startsWith(".") && !fromMatch[1].startsWith("#")) {
+            if (fromMatch && !fromMatch[1].startsWith(".") && !fromMatch[1].startsWith("#") && !optionalLintImport(fromMatch[1])) {
                 importErrors.push(`${relPath}:${i + 1}: external import declaration "${fromMatch[1]}"`);
             }
             // Match: import("specifier")
             for (const m of line.matchAll(/import\(["']([^"']+)["']\)/g)) {
-                if (!m[1].startsWith(".") && !m[1].startsWith("#")) {
+                if (!m[1].startsWith(".") && !m[1].startsWith("#") && !optionalLintImport(m[1])) {
                     importErrors.push(`${relPath}:${i + 1}: external dynamic import "${m[1]}"`);
                 }
             }

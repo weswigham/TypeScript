@@ -1,0 +1,25 @@
+input.ts(6,24): error TS24242: Unexpected combined character in character class.
+input.ts(8,18): error TS24242: Unexpected combined character in character class.
+
+
+==== tsconfig.json (0 errors) ====
+    {
+        "compilerOptions": { "target": "esnext" },
+        "lint": { "rules": { "no-misleading-character-class": "error" } },
+        "files": ["input.ts"]
+    }
+    
+==== input.ts (2 errors) ====
+    declare const callbacks: (() => unknown)[];
+    let index = 0;
+    callbacks[index++]();
+    globalThis[index++]("[a\\u0301]");
+    const property = "RegExp";
+    globalThis[property]("[a\\u0301]");
+                           ~~~~~~~~
+!!! error TS24242: Unexpected combined character in character class.
+    const { [property]: FromGlobal } = globalThis;
+    new FromGlobal("[a\\u0301]");
+                     ~~~~~~~~
+!!! error TS24242: Unexpected combined character in character class.
+    

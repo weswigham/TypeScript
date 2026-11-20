@@ -14,13 +14,16 @@ import (
 )
 
 type lintDirective struct {
-	position int
-	line     int
-	kind     string
-	rules    []string
+	location  core.TextRange
+	position  int
+	line      int
+	kind      string
+	rules     []string
+	used      bool
+	usedRules map[string]bool
 }
 
-func parseDirectives(file *ast.SourceFile) ([]lintDirective, []*ast.Diagnostic) {
+func parseDirectives(file *ast.SourceFile, customRules map[string]bool) ([]lintDirective, []*ast.Diagnostic) {
 	var directives []lintDirective
 	var errors []*ast.Diagnostic
 	for location := range scanner.GetCommentRanges(file) {
@@ -44,7 +47,7 @@ func parseDirectives(file *ast.SourceFile) ([]lintDirective, []*ast.Diagnostic) 
 				names = names[:reason]
 			}
 		}
-		directive := lintDirective{position: location.End(), line: -1, kind: kind}
+		directive := lintDirective{location: location, position: location.End(), line: -1, kind: kind}
 		invalid := ""
 		if kind == "disable-line" || kind == "disable-next-line" {
 			first := scanner.GetECMALineOfPosition(file, location.Pos())
@@ -66,7 +69,7 @@ func parseDirectives(file *ast.SourceFile) ([]lintDirective, []*ast.Diagnostic) 
 				if name == "" {
 					continue
 				}
-				if _, exists := rules.Factories[name]; !exists {
+				if _, exists := rules.Factories[name]; !exists && !customRules[name] {
 					errors = append(errors, ast.NewDiagnostic(file, location, diagnostics.Unknown_lint_rule_0, name))
 				}
 				directive.rules = append(directive.rules, name)
@@ -83,18 +86,52 @@ func parseDirectives(file *ast.SourceFile) ([]lintDirective, []*ast.Diagnostic) 
 
 func isSuppressed(file *ast.SourceFile, directives []lintDirective, name string, location core.TextRange) bool {
 	line := scanner.GetECMALineOfPosition(file, location.Pos())
-	disabled := false
-	for _, directive := range directives {
+	suppression := -1
+	for index := range directives {
+		directive := &directives[index]
 		if len(directive.rules) != 0 && !slices.Contains(directive.rules, name) {
 			continue
 		}
 		if directive.line >= 0 {
 			if directive.line == line {
-				return true
+				suppression = index
 			}
 		} else if directive.position <= location.Pos() {
-			disabled = directive.kind == "disable"
+			if directive.kind == "disable" {
+				suppression = index
+			} else {
+				suppression = -1
+			}
 		}
 	}
-	return disabled
+	if suppression < 0 {
+		return false
+	}
+	directive := &directives[suppression]
+	directive.used = true
+	if len(directive.rules) > 1 {
+		if directive.usedRules == nil {
+			directive.usedRules = make(map[string]bool)
+		}
+		directive.usedRules[name] = true
+	}
+	return true
+}
+
+func unusedDirectiveDiagnostics(file *ast.SourceFile, directives []lintDirective, severity string) []*ast.Diagnostic {
+	var result []*ast.Diagnostic
+	for _, directive := range directives {
+		if directive.kind == "enable" {
+			continue
+		}
+		unused := !directive.used || len(directive.rules) > 1 && slices.ContainsFunc(directive.rules, func(name string) bool { return !directive.usedRules[name] })
+		if unused {
+			diagnostic := ast.NewDiagnostic(file, directive.location, diagnostics.Unused_lint_disable_directive)
+			if severity == "error" {
+				diagnostic.SetCategory(diagnostics.CategoryError)
+			}
+			result = append(result, diagnostic)
+		}
+	}
+	return result
 }

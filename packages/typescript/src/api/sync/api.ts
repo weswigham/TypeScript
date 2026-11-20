@@ -384,8 +384,11 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
     readonly printer: Printer;
     readonly debug: DebugHandlers;
 
-    constructor(options: APIOptions | LSPConnectionOptions = {}) {
-        this.client = new Client(options);
+    constructor(options?: APIOptions | LSPConnectionOptions);
+    /** @internal */
+    constructor(options: APIOptions | LSPConnectionOptions, client: Client);
+    constructor(options: APIOptions | LSPConnectionOptions = {}, client?: Client) {
+        this.client = client ?? new Client(options);
         this.sourceFileCache = new SourceFileCache<Symbol>();
         this.printer = new Printer(this.client);
         this.debug = new DebugHandlers(this.client, this.ensureInitialized);
@@ -942,7 +945,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
             const requestParams = owner.prepareCreateSnapshotParams(params);
             const data = owner.client.apiRequest("createSnapshot", requestParams);
 
-            const snapshot = new Snapshot(
+            const snapshot: Snapshot = new Snapshot(
                 data,
                 owner.toPath!,
                 owner,
@@ -965,7 +968,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
             const requestParams = owner.prepareCreateSnapshotParams(params);
             const data = yield* apiRequest("createSnapshot", requestParams);
 
-            const snapshot = new Snapshot(
+            const snapshot: Snapshot = new Snapshot(
                 data,
                 owner.toPath!,
                 owner,
@@ -981,6 +984,24 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
             return snapshot;
         }
         return cacheGeneratorMethod(owner, "createSnapshot", createSnapshot, gen);
+    }
+
+    /** @internal */
+    attachSnapshot(data: CreateSnapshotResponse): Snapshot {
+        this.ensureInitialized();
+        if (!this.toPath) throw new Error("Initialize the API before attaching a native snapshot");
+        const snapshot: Snapshot = new Snapshot(
+            data,
+            this.toPath!,
+            this,
+            () => {
+                this.activeSnapshots.delete(snapshot.id);
+                this.sourceFileCache.releaseSnapshot(snapshot.id);
+            },
+            this.createSnapshotUpdater(() => snapshot),
+        );
+        this.activeSnapshots.set(snapshot.id, snapshot);
+        return snapshot;
     }
 
     private get updateSnapshot(): {
@@ -1006,7 +1027,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
                     return baseSnapshot;
                 }
                 owner.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
-                const snapshot = new Snapshot(
+                const snapshot: Snapshot = new Snapshot(
                     data,
                     owner.toPath!,
                     owner,
@@ -1035,7 +1056,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
                     return baseSnapshot;
                 }
                 owner.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
-                const snapshot = new Snapshot(
+                const snapshot: Snapshot = new Snapshot(
                     data,
                     owner.toPath!,
                     owner,
@@ -1133,7 +1154,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
             if (baseSnapshot) {
                 owner.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
             }
-            const snapshot = new Snapshot(
+            const snapshot: Snapshot = new Snapshot(
                 data,
                 owner.toPath!,
                 owner,
@@ -1167,7 +1188,7 @@ export class API<FromLSP extends boolean = false> implements FormatDiagnosticsHo
             if (baseSnapshot) {
                 owner.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
             }
-            const snapshot = new Snapshot(
+            const snapshot: Snapshot = new Snapshot(
                 data,
                 owner.toPath!,
                 owner,
@@ -1473,11 +1494,13 @@ export function getSymbol(declaration: Declaration): Symbol {
 export declare namespace getSymbol {
     function gen(declaration: Declaration): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]>;
 }
-getSymbol.gen = function* (declaration: Declaration): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]> {
-    const api = getNodeAPI(declaration);
-    if (!api) throw new Error("Source file not found for declaration");
-    return yield* api.getSymbol.gen(declaration);
-};
+Object.assign(getSymbol, {
+    gen: function* (declaration: Declaration): Generator<ProtocolRequest, Symbol, ProtocolResponse["result"]> {
+        const api = getNodeAPI(declaration);
+        if (!api) throw new Error("Source file not found for declaration");
+        return yield* api.getSymbol.gen(declaration);
+    },
+});
 
 /** An independently retained source file and its disposable remote-lifetime lease. */
 export class RetainedSourceFile {
@@ -2938,6 +2961,10 @@ export class Program<Id extends ProjectId = ProjectId> implements FormatDiagnost
         this.id = project.id;
         this.project = project;
         this.toPath = toPath;
+    }
+
+    getTypeChecker(): Checker {
+        return this.project.checker;
     }
 
     getCurrentDirectory(): RootedDirectoryPath {

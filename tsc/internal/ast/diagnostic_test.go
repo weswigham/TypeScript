@@ -98,3 +98,20 @@ func TestExternalDiagnosticIdentity(t *testing.T) {
 	}
 	assert.Equal(t, len(collection.GetDiagnostics()), len(diagnostics))
 }
+
+func TestLintDiagnosticIdentity(t *testing.T) {
+	t.Parallel()
+	file := &SourceFile{parseOptions: SourceFileParseOptions{FileName: "/src/file.ts", PathKey: "/src/file.ts"}}
+	location := core.NewTextRange(1, 2)
+	first := NewLintDiagnostic(file, location, diagnostics.CategoryError, "local/first", "message", "same text")
+	differentRule := NewLintDiagnostic(file, location, diagnostics.CategoryError, "local/second", "message", "same text")
+	differentMessage := NewLintDiagnostic(file, location, diagnostics.CategoryError, "local/first", "other", "same text")
+	var collection DiagnosticsCollection
+	for _, diagnostic := range []*Diagnostic{first, differentRule, differentMessage} {
+		assert.Equal(t, diagnostic.Source(), "")
+		collection.Add(diagnostic)
+	}
+	assert.Equal(t, len(collection.GetDiagnostics()), 3)
+	assert.Assert(t, CompareDiagnostics(first, differentRule) != 0)
+	assert.Assert(t, CompareDiagnostics(first, differentMessage) != 0)
+}

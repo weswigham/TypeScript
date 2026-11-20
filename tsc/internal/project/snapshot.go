@@ -11,8 +11,10 @@ import (
 
 	"github.com/microsoft/TypeScript/tsc/internal/ast"
 	"github.com/microsoft/TypeScript/tsc/internal/collections"
+	"github.com/microsoft/TypeScript/tsc/internal/compiler"
 	"github.com/microsoft/TypeScript/tsc/internal/contentmapper"
 	"github.com/microsoft/TypeScript/tsc/internal/core"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/ls"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/autoimport"
 	"github.com/microsoft/TypeScript/tsc/internal/ls/lsconv"
@@ -106,6 +108,20 @@ func (host *SnapshotHost) newSnapshot(
 	s.refCount.Store(1)
 	s.converters = lsconv.NewConverters(host.options.PositionEncoding, s.LSPLineMap)
 	return s
+}
+
+func (s *Snapshot) LintPluginHost() lint.Host { return s.host.lintPluginHost }
+
+func (s *Snapshot) GetLintDiagnostics(ctx context.Context, program *compiler.Program, files []*ast.SourceFile) []*ast.Diagnostic {
+	return s.host.GetLintDiagnostics(ctx, program, files)
+}
+
+func (s *Snapshot) GetLintProjectBinding(projectID string, program *compiler.Program) *lint.ProjectBinding {
+	project := s.ProjectCollection.GetProject(ID(projectID))
+	if project == nil || project.Program != program {
+		return nil
+	}
+	return &lint.ProjectBinding{Snapshot: s, Handle: uint64(project.Handle())}
 }
 
 func snapshotOverlays(fs *SnapshotFS) map[tspath.PathKey]*Overlay {
@@ -250,6 +266,10 @@ func (s *Snapshot) AutoImportRegistry() *autoimport.Registry {
 
 func (s *Snapshot) ID() uint64 {
 	return s.id
+}
+
+func (s *Snapshot) Retain() {
+	s.ref()
 }
 
 func (s *Snapshot) CaseSensitivity() tspath.CaseSensitivity {

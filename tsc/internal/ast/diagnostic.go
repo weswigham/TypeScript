@@ -39,7 +39,9 @@ type Diagnostic struct {
 	// source, when non-empty, is a custom prefix (e.g. a content mapper's name) shown instead of "TS"
 	// before the code. It marks the diagnostic as coming from an external source whose ranges point
 	// into the file's original, untransformed text.
-	source string
+	source        string
+	lintRuleName  string
+	lintMessageID string
 	// Original message; may be nil.
 	message *diagnostics.Message
 	// messageText is an already-localized message used when message is nil, e.g. a diagnostic
@@ -65,6 +67,8 @@ func (d *Diagnostic) Loc() core.TextRange                       { return d.loc }
 func (d *Diagnostic) Code() int32                               { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
 func (d *Diagnostic) Source() string                            { return d.source }
+func (d *Diagnostic) LintRuleName() string                      { return d.lintRuleName }
+func (d *Diagnostic) LintMessageID() string                     { return d.lintMessageID }
 func (d *Diagnostic) MessageText() string                       { return d.messageText }
 func (d *Diagnostic) MessageKey() diagnostics.Key               { return d.messageKey }
 func (d *Diagnostic) MessageArgs() []string                     { return d.messageArgs }
@@ -256,6 +260,18 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 	return NewDiagnostic(nil, core.UndefinedTextRange(), message, args...)
 }
 
+func NewLintDiagnostic(file *SourceFile, loc core.TextRange, category diagnostics.Category, ruleName string, messageID string, messageText string) *Diagnostic {
+	return &Diagnostic{
+		file:          file,
+		loc:           loc,
+		code:          diagnostics.Custom_lint_rule_report.Code(),
+		category:      category,
+		lintRuleName:  ruleName,
+		lintMessageID: messageID,
+		messageText:   messageText,
+	}
+}
+
 // NewExternalDiagnostic creates a diagnostic reported by an external source such as a content mapper.
 // The message text is already localized (the external source owns localization) and the code is shown
 // with the given source prefix (e.g. "vue") instead of "TS". The location refers to the file's original,
@@ -427,6 +443,8 @@ func EqualDiagnosticsNoRelatedInfo(d1, d2 *Diagnostic) bool {
 		d1.Code() == d2.Code() &&
 		d1.Category() == d2.Category() &&
 		d1.Source() == d2.Source() &&
+		d1.LintRuleName() == d2.LintRuleName() &&
+		d1.LintMessageID() == d2.LintMessageID() &&
 		getDiagnosticMessageIdentity(d1) == getDiagnosticMessageIdentity(d2) &&
 		slices.Equal(d1.MessageArgs(), d2.MessageArgs()) &&
 		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain)
@@ -520,6 +538,14 @@ func CompareDiagnostics(d1, d2 *Diagnostic) int {
 		return c
 	}
 	c = strings.Compare(d1.Source(), d2.Source())
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.LintRuleName(), d2.LintRuleName())
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.LintMessageID(), d2.LintMessageID())
 	if c != 0 {
 		return c
 	}

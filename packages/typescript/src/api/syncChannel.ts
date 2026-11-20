@@ -41,6 +41,12 @@ interface StdinWithHandle extends Writable {
     unref: () => void;
 }
 
+interface AttachedTransport {
+    readFd: number;
+    writeFd: number;
+    close(): void;
+}
+
 import {
     binHeaderSize,
     MSGPACK_BIN16,
@@ -50,6 +56,7 @@ import {
     MSGPACK_UINT8,
     writeBinHeader,
 } from "./node/msgpack.ts";
+import { getAPIProcessEnv } from "./options.ts";
 
 // ── MessageType constants ────────────────────────────────────────────
 // Sent by channel (parent → child)
@@ -108,7 +115,8 @@ export function createPipePath(): string {
  * single thread — do not share an instance across worker threads.
  */
 export class SyncRpcChannel {
-    private child: ChildProcess;
+    private child: ChildProcess | undefined;
+    private attached: AttachedTransport | undefined;
     private readFd: number;
     private writeFd: number;
     private pipeFd: number | undefined;
@@ -143,8 +151,14 @@ export class SyncRpcChannel {
     // Write buffer – assembles entire tuples for a single writeSync.
     private writeBuf = Buffer.allocUnsafe(65536);
 
-    constructor(exe: string, args: string[], collectTiming = false) {
+    constructor(exe: string | AttachedTransport, args: string[] = [], collectTiming = false) {
         this.collectTiming = collectTiming;
+        if (typeof exe !== "string") {
+            this.attached = exe;
+            this.readFd = exe.readFd;
+            this.writeFd = exe.writeFd;
+            return;
+        }
         const isWindows = process.platform === "win32";
 
         if (isWindows) {
@@ -156,6 +170,7 @@ export class SyncRpcChannel {
             const pipePath = createPipePath();
             this.child = spawn(exe, [...args, "--pipe", pipePath], {
                 stdio: ["ignore", "ignore", "inherit"],
+                env: getAPIProcessEnv(),
             });
 
             // Retry openSync until the child creates the named pipe.
@@ -186,6 +201,7 @@ export class SyncRpcChannel {
             // POSIX: use stdio pipe file descriptors directly.
             this.child = spawn(exe, args, {
                 stdio: ["pipe", "pipe", "inherit"],
+                env: getAPIProcessEnv(),
             });
 
             const stdout = this.child.stdout! as StdoutWithHandle;
@@ -226,6 +242,51 @@ export class SyncRpcChannel {
 
     // ── Public API ──────────────────────────────────────────────────
 
+    static async connect(pipe: string): Promise<SyncRpcChannel> {
+        if (process.platform === "win32") {
+            const fd = openSync(pipe, "r+");
+            return new SyncRpcChannel({ readFd: fd, writeFd: fd, close: () => closeSync(fd) });
+        }
+        const { createConnection } = await import("node:net");
+        const socket = createConnection(pipe);
+        await new Promise<void>((resolve, reject) => {
+            socket.once("connect", resolve);
+            socket.once("error", reject);
+        });
+        const connected = socket as typeof socket & { _handle: StdioHandle; };
+        socket.pause();
+        socket.unref();
+        if (typeof connected._handle.fd !== "number" || !connected._handle.setBlocking) {
+            socket.destroy();
+            throw new Error("The API socket does not support synchronous I/O");
+        }
+        connected._handle.setBlocking(true);
+        return new SyncRpcChannel({
+            readFd: connected._handle.fd,
+            writeFd: connected._handle.fd,
+            close: () => {
+                socket.destroy();
+            },
+        });
+    }
+
+    async serve(handler: (name: string, payload: string) => string | Promise<string>): Promise<void> {
+        while (this.readFd >= 0) {
+            this.readTuple();
+            if (this._msgType !== MSG_CALL) throw new Error(`Expected native API call, received ${this._msgType}`);
+            const name = this._msgName.toString("utf8");
+            const payload = this._msgPayload.toString("utf8");
+            try {
+                const result = await handler(name, payload);
+                this.writeTuple(MSG_CALL_RESPONSE, this.getMethodBuf(name), result);
+            }
+            catch (error) {
+                const message = error instanceof Error ? error.stack ?? error.message : String(error);
+                this.writeTuple(MSG_CALL_ERROR, this.getMethodBuf(name), message);
+            }
+        }
+    }
+
     /**
      * Send a request and synchronously wait for the response (string).
      * Handles Call (callback) messages from the child inline.
@@ -256,7 +317,14 @@ export class SyncRpcChannel {
 
     /** Kill the child process and release resources. */
     close(): void {
+        if (this.attached) {
+            this.readFd = this.writeFd = -1;
+            this.attached.close();
+            this.attached = undefined;
+            return;
+        }
         try {
+            if (!this.child) return;
             liveChildren.delete(this.child);
             if (this.pipeFd !== undefined) {
                 closeSync(this.pipeFd);
@@ -517,6 +585,7 @@ export class SyncRpcChannel {
 
     /** Build an EOF error with the child's exit code/signal if available. */
     private eofError(): Error {
+        if (!this.child) return new Error("Unexpected EOF while reading from the attached API connection");
         const code = this.child.exitCode;
         const signal = this.child.signalCode;
         const detail = signal ? `killed by signal ${signal}` : code !== null ? `exited with code ${code}` : "unknown reason";

@@ -112,6 +112,10 @@ export function encodeWtf8(text: string): Uint8Array {
 }
 
 export class Wtf8Decoder extends TextDecoder {
+    constructor(label = "utf-8", options?: ConstructorParameters<typeof TextDecoder>[1]) {
+        super(label, { ignoreBOM: true, ...options });
+    }
+
     override decode(input?: DecodeInput, options?: DecodeOptions): string {
         if (input == null) {
             return super.decode(undefined, options);

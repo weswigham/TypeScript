@@ -67,7 +67,7 @@ func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Cont
 }
 
 func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
-	allDiags := getAllDiagnostics(context, fixContext.Program, fixContext.SourceFile)
+	allDiags := fixContext.LS.getAllDiagnostics(context, fixContext.Program, fixContext.SourceFile)
 
 	typeChecker, done := fixContext.Program.GetTypeCheckerForFile(context, fixContext.SourceFile)
 	defer done()

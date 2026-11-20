@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/TypeScript/tsc/internal/execute/tsc"
 	"github.com/microsoft/TypeScript/tsc/internal/execute/watchmanager"
 	"github.com/microsoft/TypeScript/tsc/internal/fswatch"
+	"github.com/microsoft/TypeScript/tsc/internal/lint"
 	"github.com/microsoft/TypeScript/tsc/internal/tsoptions"
 	"github.com/microsoft/TypeScript/tsc/internal/tspath"
 	"github.com/microsoft/TypeScript/tsc/internal/vfs/cachedvfs"
@@ -75,6 +76,7 @@ type Watcher struct {
 	// contentmapper.New).
 	contentMapperHost    contentmapper.Host
 	contentMapperProject contentmapper.Project
+	lintPluginHost       lint.Host
 
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
@@ -138,6 +140,10 @@ func createWatcher(
 }
 
 func (w *Watcher) start(ctx context.Context) {
+	w.lintPluginHost = newLintPluginHost(ctx, w.sys, w.config.CompilerOptions())
+	if w.lintPluginHost != nil && w.testing == nil {
+		defer w.lintPluginHost.Close()
+	}
 	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
 	if w.contentMapperHost != nil && w.testing == nil {
 		defer w.contentMapperHost.Close()
@@ -482,7 +488,7 @@ func (w *Watcher) doBuild(ctx context.Context) error {
 
 		if w.tryUpdateProgram(host) {
 			w.fastPathBuilds++
-			result := w.compileAndEmit()
+			result := w.compileAndEmit(ctx)
 			cached.DisableAndClearCache()
 
 			w.configMtimes = make(map[tspath.RootedFilePath]time.Time, len(w.configFilePaths))
@@ -541,7 +547,7 @@ func (w *Watcher) doBuild(ctx context.Context) error {
 	w.programReady = true
 	w.fullBuilds++
 
-	result := w.compileAndEmit()
+	result := w.compileAndEmit(ctx)
 	cached.DisableAndClearCache()
 
 	caseSensitivity := w.sys.FS().CaseSensitivity()
@@ -657,7 +663,7 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[tspath.RootedPath]fsw
 	}
 }
 
-func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
+func (w *Watcher) compileAndEmit(ctx context.Context) tsc.CompileAndEmitResult {
 	if w.config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
 		tsc.ReportGenerationStatistics(w.sys.Writer(), w.preBuild.Generation.Timings, w.testing)
 	}
@@ -672,7 +678,8 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 		}
 		return tsc.CompileAndEmitResult{Status: status, Diagnostics: w.preBuild.Diagnostics, EmitResult: &compiler.EmitResult{EmitSkipped: true}}
 	}
-	result := tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+	result := tsc.EmitFilesAndReportErrors(ctx, tsc.EmitInput{
+		LintHost:              w.lintPluginHost,
 		FormattingDiagnostics: w.formatDiagnostics,
 		Sys:                   w.sys,
 		ProgramLike:           w.program,

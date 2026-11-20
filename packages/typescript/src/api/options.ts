@@ -23,7 +23,7 @@ export interface ClientSpawnOptions {
     fs?: FileSystemCallbacks | undefined;
     /** Whether file names are case-sensitive. Inferred from the client filesystem when omitted. */
     useCaseSensitiveFileNames?: boolean | undefined;
-    /** Allow trusted projects to execute configured external content mapper processes. */
+    /** Allow trusted projects to execute configured content mappers and lint plugins. */
     runExternalCode?: boolean | undefined;
     /** Maximum encoded byte size of each batch response page. Defaults to 300 million bytes. Individual responses can be larger than this size, but this controls where batch pages are cutoff. */
     maxResponseBytesPerPage?: number | undefined;
@@ -51,13 +51,24 @@ export function resolveExePath(options: ClientSpawnOptions): string {
 }
 
 export function getAPIProcessArgs(options: ClientSpawnOptions, async: boolean): string[] {
-    const args = ["--api"];
+    const args = [
+        "--internal-lint-host",
+        process.execPath,
+        fileURLToPath(new URL("../../dist/lint/shim.js", import.meta.url)),
+        "--api",
+    ];
     if (async) args.push("--async");
     args.push("--cwd", options.cwd ?? process.cwd());
     args.push(`--useCaseSensitiveFileNames=${options.useCaseSensitiveFileNames ?? inferUseCaseSensitiveFileNames()}`);
     if (options.runExternalCode) args.push("--runExternalCode");
     if (options.collectTiming) args.push("--timing");
     return args;
+}
+
+export function getAPIProcessEnv(): NodeJS.ProcessEnv {
+    const env: NodeJS.ProcessEnv = { ...process.env };
+    if (process.versions.electron) env.ELECTRON_RUN_AS_NODE = "1";
+    return env;
 }
 
 function inferUseCaseSensitiveFileNames(): boolean {

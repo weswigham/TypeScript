@@ -213,7 +213,7 @@ func parseOwnConfigOfJsonSourceFile(
 		generate, generateErrors = parseGenerateCommands(jsonObject.GetOrZero("generate"), basePath)
 		errors = append(errors, generateErrors...)
 		var lintErrors []*ast.Diagnostic
-		lint, lintErrors = parseLintOptions(jsonObject.GetOrZero("lint"))
+		lint, lintErrors = parseLintOptions(jsonObject.GetOrZero("lint"), basePath)
 		errors = append(errors, lintErrors...)
 	}
 	if jsonObject, ok := json.(*collections.OrderedMap[string, any]); len(rootCompilerOptions) != 0 && ok && !jsonObject.Has("compilerOptions") {
@@ -947,7 +947,7 @@ func parseOwnConfigOfJson(
 	errors = append(append(errors, err...), err2...)
 	formattingOptions, formatErrors := parseFormattingOptions(json.GetOrZero("formattingOptions"), basePath)
 	errors = append(errors, formatErrors...)
-	lint, lintErrors := parseLintOptions(json.GetOrZero("lint"))
+	lint, lintErrors := parseLintOptions(json.GetOrZero("lint"), basePath)
 	errors = append(errors, lintErrors...)
 	generate, generateErrors := parseGenerateCommands(json.GetOrZero("generate"), basePath)
 	errors = append(errors, generateErrors...)
